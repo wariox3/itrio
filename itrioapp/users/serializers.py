@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from users.models import User
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -21,5 +21,6 @@ class UserListSerializer(serializers.ModelSerializer):
         return {
             'id': instance['id'],
             'username': instance['username'],
-            'email': instance['email']
+            'email': instance['email'],
+            'codigo_cliente_fk': instance['codigo_cliente_fk']
         }
