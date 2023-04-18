@@ -12,7 +12,5 @@ pip3 install -r requerimientos.txt
 cd itrioapp
 python3 manage.py runserver
 # Migrar la base de datos -> Debe estar creada
-python3 manage.py migrate --database=bd_seguridad
-python3 manage.py migrate --database=bd_general
-
+python3 manage.py migrate
 ```

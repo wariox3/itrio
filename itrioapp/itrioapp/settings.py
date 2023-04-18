@@ -40,6 +40,7 @@ SHARED_APPS = (
     'django.contrib.admin',
     'django_tenants',
     'inquilino',
+    'users'
 )
 
 TENANT_APPS = (
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
     'django_tenants',
     'inquilino',
     'general',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -98,7 +100,7 @@ WSGI_APPLICATION = 'itrioapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': 'bditrio',
+        'NAME': 'bdprueba',
         'USER': 'mario',
         'PASSWORD': '70143086',
         'HOST': 'localhost',
@@ -161,12 +163,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=3),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
+
+AUTH_USER_MODEL = 'users.User'
