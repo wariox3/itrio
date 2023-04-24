@@ -10,7 +10,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         user = User(**validated_data)
         user.email = user.username;
-        user.set_password(validated_data['password'])
+        user.dominio = "app.muupservicios.online";
+        user.set_password(validated_data['password'])    
         user.save()
         return User
 
@@ -23,5 +24,6 @@ class UserListSerializer(serializers.ModelSerializer):
             'id': instance['id'],
             'username': instance['username'],
             'email': instance['email'],
-            'codigo_cliente_fk': instance['codigo_cliente_fk']
+            'codigo_cliente_fk': instance['codigo_cliente_fk'],
+            'dominio': instance['dominio']
         }

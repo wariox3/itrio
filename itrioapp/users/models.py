@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 
+from django.dispatch import receiver
+from django.urls import reverse
+from django.core.mail import send_mail  
+
 class UserManager(BaseUserManager):
     def _create_user(self, username, email, name,last_name, password, is_staff, is_superuser, **extra_fields):
         user = self.model(
@@ -30,6 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
     codigo_cliente_fk = models.IntegerField(null=True)
+    dominio = models.CharField(max_length = 50, null = True)
     objects = UserManager()
 
     class Meta:
@@ -40,4 +45,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email','name','last_name']
 
     def __str__(self):
-        return f'{self.name} {self.last_name}'
+        return f'{self.name} {self.last_name}'    

@@ -29,7 +29,7 @@ SHARED_APPS = (
     'django.contrib.admin',
     'django_tenants',
     'inquilino',
-    'users'
+    'users',
 )
 
 TENANT_APPS = (
@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt',  
-    'django_rest_passwordreset',  
+    'rest_framework_simplejwt',   
     'drf_yasg',
     'django_tenants',
     "corsheaders",
@@ -185,3 +184,11 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
+
+# Email por consola
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIT_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = 'SG.oDN9basdaECvH5asdasw.gXVEgtD1asqSkn-EW'

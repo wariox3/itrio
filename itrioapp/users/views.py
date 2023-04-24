@@ -8,7 +8,7 @@ class UsuarioViewSet(viewsets.GenericViewSet):
     list_serializer_class = UserListSerializer
     def get_queryset(self):
         if self.queryset is None:
-            self.queryset = self.serializer_class.Meta.model.objects.all().values('id', 'username', 'email', 'codigo_cliente_fk')
+            self.queryset = self.serializer_class.Meta.model.objects.all().values('id', 'username', 'email', 'codigo_cliente_fk', 'dominio')
         return self.queryset
 
     def list(self, request):

@@ -27,5 +27,4 @@ urlpatterns = [
     path('seguridad/', include("users.urls")),
     path('seguridad/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('seguridad/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 ] 
