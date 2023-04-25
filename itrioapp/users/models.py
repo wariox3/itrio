@@ -45,4 +45,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email','name','last_name']
 
     def __str__(self):
-        return f'{self.name} {self.last_name}'    
+        return f'{self.name} {self.last_name}'   
+
+class Verificacion(models.Model):
+    codigo_usuario_fk = models.IntegerField(null=True)
+    token = models.CharField(max_length=50)
+    estado_usado = models.BooleanField(default = True)
+    vence = models.DateField(null=True)

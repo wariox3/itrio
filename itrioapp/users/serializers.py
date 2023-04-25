@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User
+from users.models import User, Verificacion
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # Serializers define the API representation.
@@ -41,3 +41,13 @@ class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'dominio']  
+
+class VerificacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Verificacion
+        fields = ['id', 'codigo_usuario_fk']
+    
+    def create(self, validated_data):
+        verificacion = Verificacion(**validated_data)                
+        verificacion.save()
+        return Verificacion

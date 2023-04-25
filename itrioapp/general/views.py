@@ -24,6 +24,7 @@ class PruebaView(APIView):
     def get(self, request):
         return Response("Hola mundo")
 
+# Basados en ModelViewSet
 class ContactoViewSet(viewsets.ModelViewSet):
     queryset = Contacto.objects.all()
     serializer_class = ContactoSerializer    
