@@ -1,7 +1,16 @@
 from rest_framework import serializers
 from users.models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # Serializers define the API representation.
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    pass
+
+class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -27,3 +36,8 @@ class UserListSerializer(serializers.ModelSerializer):
             'codigo_cliente_fk': instance['codigo_cliente_fk'],
             'dominio': instance['dominio']
         }
+    
+class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'dominio']  

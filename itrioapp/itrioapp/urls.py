@@ -6,6 +6,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from users.views import Login
 schema_view = get_schema_view(
    openapi.Info(
       title="Documentacion ERP",
@@ -25,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('general/', include("general.urls")),
     path('seguridad/', include("users.urls")),
+    path('seguridad/login/', Login.as_view(), name='login'),
     path('seguridad/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('seguridad/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ] 
