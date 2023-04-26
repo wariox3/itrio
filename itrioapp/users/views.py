@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import GenericViewSet
-from users.serializers import UserSerializer, UserListSerializer, UserDetalleSerializer, CustomTokenObtainPairSerializer, CustomUserSerializer, VerificacionSerializer
+from rest_framework.views import APIView
+from users.serializers import UserSerializer, UserListSerializer, UserDetalleSerializer, CustomTokenObtainPairSerializer, CustomUserSerializer, VerificacionSerializer, VerificacionSerializerAPIView
 from django.shortcuts import get_object_or_404
 from users.models import User, Verificacion
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -83,3 +83,25 @@ class VerificacionViewSet(GenericViewSet):
             )
             return Response({'message':'Verificacion creada'}, status=status.HTTP_201_CREATED)
         return Response({'message:':'Errores en el registro', 'errors': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+class VerificacionAPIView(APIView):
+
+    def get(self, request):
+        verificaciones = Verificacion.objects.all()
+        verificaciones_serializer = VerificacionSerializer(verificaciones, many = True)  
+        return Response(verificaciones_serializer.data)
+    
+    def post(self, request, *args, **kwargs):
+        verificacion_serializer = VerificacionSerializerAPIView(data = request.data)
+        if verificacion_serializer.is_valid():
+            verificacion_serializer.save()
+            mensaje = "La url es: www.prueba.com/verificar/" + secrets.token_urlsafe(20)    
+            send_mail(
+                "Asunto del mensaje",
+                mensaje,
+                "from@example.com",
+                ["to@example.com"],
+                fail_silently=False,
+            )            
+            return Response(verificacion_serializer.data)
+        return Response(verificacion_serializer.errors)
