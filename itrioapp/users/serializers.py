@@ -58,4 +58,4 @@ class VerificacionSerializerAPIView(serializers.ModelSerializer):
     class Meta:
         model = Verificacion
         fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence']
-        read_only_fields = ('token', 'estado_usado', 'vence')         
+        read_only_fields = ('token', 'estado_usado', 'vence')              

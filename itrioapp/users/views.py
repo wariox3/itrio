@@ -94,6 +94,7 @@ class VerificacionAPIView(APIView):
     def post(self, request, *args, **kwargs):
         verificacion_serializer = VerificacionSerializerAPIView(data = request.data)
         if verificacion_serializer.is_valid():
+            verificacion_serializer.token = 'Hola'
             verificacion_serializer.save()
             mensaje = "La url es: www.prueba.com/verificar/" + secrets.token_urlsafe(20)    
             send_mail(
