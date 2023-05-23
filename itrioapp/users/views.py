@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.views import APIView
-from users.serializers import UserSerializer, UserListSerializer, UserDetalleSerializer, CustomTokenObtainPairSerializer, CustomUserSerializer, VerificacionSerializer, VerificacionSerializerAPIView
+from users.serializers import UserSerializer, UserListSerializer, UserDetalleSerializer, CustomTokenObtainPairSerializer, CustomUserSerializer, VerificacionSerializer
 from django.shortcuts import get_object_or_404
 from users.models import User, Verificacion
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -35,6 +35,7 @@ class UsuarioViewSet(GenericViewSet):
         user_serializer = self.serializer_class(data=request.data)
         if user_serializer.is_valid():
             user_serializer.save()
+            #Enviar verificacion (metodo)
             return Response({'message':'Usuario registrado', 'user': 'usuario'}, status=status.HTTP_201_CREATED)
         return Response({'message:':'Errores en el registro', 'errors': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -65,25 +66,6 @@ class Login(TokenObtainPairView):
                 }, status=status.HTTP_200_OK)
             return Response({'error':'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
 
-class VerificacionViewSet(GenericViewSet):
-    model = Verificacion
-    serializer_class = VerificacionSerializer
-    
-    def create(self, request):
-        verificacion_serializer = self.serializer_class(data=request.data)
-        if verificacion_serializer.is_valid():
-            verificacion_serializer.save()
-            mensaje = "La url es: www.prueba.com/verificar/" + secrets.token_urlsafe(20)    
-            send_mail(
-                "Asunto del mensaje",
-                mensaje,
-                "from@example.com",
-                ["to@example.com"],
-                fail_silently=False,
-            )
-            return Response({'message':'Verificacion creada'}, status=status.HTTP_201_CREATED)
-        return Response({'message:':'Errores en el registro', 'errors': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    
 class VerificacionAPIView(APIView):
 
     def get(self, request):
@@ -91,18 +73,20 @@ class VerificacionAPIView(APIView):
         verificaciones_serializer = VerificacionSerializer(verificaciones, many = True)  
         return Response(verificaciones_serializer.data)
     
-    def post(self, request, *args, **kwargs):
-        verificacion_serializer = VerificacionSerializerAPIView(data = request.data)
-        if verificacion_serializer.is_valid():
-            verificacion_serializer.token = 'Hola'
+    def post(self, request, *args, **kwargs):   
+        verificacion_data = request.data
+        token = secrets.token_urlsafe(20)
+        verificacion_data["token"] = token
+        verificacion_serializer = VerificacionSerializer(data = verificacion_data)        
+        if verificacion_serializer.is_valid():            
             verificacion_serializer.save()
-            mensaje = "La url es: www.prueba.com/verificar/" + secrets.token_urlsafe(20)    
+            mensaje = "La url es: www.prueba.com/verificar/" + token    
             send_mail(
                 "Asunto del mensaje",
                 mensaje,
                 "from@example.com",
                 ["to@example.com"],
                 fail_silently=False,
-            )            
-            return Response(verificacion_serializer.data)
-        return Response(verificacion_serializer.errors)
+            )    
+            return Response({'message':'Verificacion creada'}, status=status.HTTP_201_CREATED)
+        return Response({'message:':'Errores en el registro', 'errors': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

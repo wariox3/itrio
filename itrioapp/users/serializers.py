@@ -45,17 +45,4 @@ class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
 class VerificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Verificacion
-        fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence']
-        read_only_fields = ('token', 'estado_usado', 'vence')
-        
-    def create(self, validated_data):
-        verificacion = Verificacion(**validated_data)                
-        verificacion.save()
-        return Verificacion
-
-#Esta es para probar con APIView
-class VerificacionSerializerAPIView(serializers.ModelSerializer):
-    class Meta:
-        model = Verificacion
-        fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence']
-        read_only_fields = ('token', 'estado_usado', 'vence')              
+        fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence']                 

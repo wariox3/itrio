@@ -50,5 +50,5 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Verificacion(models.Model):
     codigo_usuario_fk = models.IntegerField(null=True)
     token = models.CharField(max_length=50)
-    estado_usado = models.BooleanField(default = True)
+    estado_usado = models.BooleanField(default = False)
     vence = models.DateField(null=True)
