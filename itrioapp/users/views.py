@@ -36,6 +36,11 @@ class UsuarioViewSet(GenericViewSet):
         if user_serializer.is_valid():
             user_serializer.save()
             #Enviar verificacion (metodo)
+            ultimo_registro = User.objects.filter(username=request.data.get('username'))
+            for user in ultimo_registro:
+                request.data['codigo_usuario_fk'] = user.id
+                verificacionAPIView = VerificacionAPIView()
+                verificacionAPIView.post(request)
             return Response({'message':'Usuario registrado', 'user': 'usuario'}, status=status.HTTP_201_CREATED)
         return Response({'message:':'Errores en el registro', 'errors': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
