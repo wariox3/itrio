@@ -9,7 +9,7 @@ from users.models import User, Verificacion
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
 from django.core.mail import send_mail
-from datetime import datetime
+from datetime import datetime, timedelta, date
 import secrets
 
 class UsuarioViewSet(GenericViewSet):
@@ -83,8 +83,9 @@ class VerificacionAPIView(APIView):
         verificacion_data = request.data
         token = secrets.token_urlsafe(20)
         verificacion_data["token"] = token
+        verificacion_data["vence"] = datetime.now().date() + timedelta(days=1)
         verificacion_serializer = VerificacionSerializer(data = verificacion_data)        
-        if verificacion_serializer.is_valid():            
+        if verificacion_serializer.is_valid(): 
             verificacion_serializer.save()
             mensaje = "La url es: www.prueba.com/verificar/" + token    
             send_mail(

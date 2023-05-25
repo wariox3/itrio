@@ -8,5 +8,5 @@ router.register('usuario', UsuarioViewSet, basename="usuarios")
 urlpatterns = [
     path('', include(router.urls)),      
     path('verificacion/', VerificacionAPIView.as_view(), name = 'verificacion'),
-    path('verificacion/token', VerificacionTokenAPIView.as_view(), name = 'verificacion'),
+    path('verificacion/token/', VerificacionTokenAPIView.as_view(), name = 'verificacion'),
 ]
