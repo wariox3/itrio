@@ -9,6 +9,7 @@ from users.models import User, Verificacion
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
 from django.core.mail import send_mail
+from datetime import datetime
 import secrets
 
 class UsuarioViewSet(GenericViewSet):
@@ -95,3 +96,21 @@ class VerificacionAPIView(APIView):
             )    
             return Response({'message':'Verificacion creada'}, status=status.HTTP_201_CREATED)
         return Response({'message:':'Errores en el registro', 'errors': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+class VerificacionTokenAPIView(APIView):
+
+    def post(self, request):
+        tokenUrl = request.data.get('token')
+        try:
+            usuarioVerificacion = Verificacion.objects.get(token=tokenUrl)
+            if(usuarioVerificacion):
+                if(usuarioVerificacion.estado_usado == False):
+                    fechaActual = datetime.now().date()
+                    if(fechaActual < usuarioVerificacion.vence):
+                        usuarioVerificacion.estado_usado = True
+                        usuarioVerificacion.save()
+                        return Response({'message': "Token validado con exitosamente"}, status=status.HTTP_200_OK)
+                    return Response({'message':'Errores con el token', 'errors': "Token ya se encuentra vencido por favor generar uno nuevo" }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'message':'Errores con el token', 'errors': "Token ya se encuentra en uso" }, status=status.HTTP_400_BAD_REQUEST)
+        except Verificacion.DoesNotExist:
+            return Response({'message':'Errores con el token',  'errors':'No existe el token'}, status=status.HTTP_400_BAD_REQUEST)
