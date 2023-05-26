@@ -61,7 +61,7 @@ class Login(TokenObtainPairView):
             password=password
         )
 
-        if user:
+        if user is not None:
             login_serializer = self.serializer_class(data=request.data)
             if login_serializer.is_valid():
                 user_serializer = CustomUserSerializer(user)
@@ -71,6 +71,7 @@ class Login(TokenObtainPairView):
                     'user':user_serializer.data
                 }, status=status.HTTP_200_OK)
             return Response({'error':'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error':'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)        
 
 class VerificacionAPIView(APIView):
 
