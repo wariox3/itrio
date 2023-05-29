@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.request import Request
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.views import APIView
 from users.serializers import UserSerializer, UserListSerializer, UserDetalleSerializer, CustomTokenObtainPairSerializer, CustomUserSerializer, VerificacionSerializer
@@ -35,15 +36,13 @@ class UsuarioViewSet(GenericViewSet):
     def create(self, request):
         user_serializer = self.serializer_class(data=request.data)
         if user_serializer.is_valid():
-            user_serializer.save()
+            user = user_serializer.save()
             #Enviar verificacion (metodo)
-            ultimo_registro = User.objects.filter(username=request.data.get('username'))
-            for user in ultimo_registro:
-                request.data['codigo_usuario_fk'] = user.id
-                verificacionAPIView = VerificacionAPIView()
-                verificacionAPIView.post(request)
-            return Response({'message':'Usuario registrado', 'user': 'usuario'}, status=status.HTTP_201_CREATED)
-        return Response({'message:':'Errores en el registro', 'errors': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            request.data['codigo_usuario_fk'] = user.id
+            verificacionAPIView = VerificacionNuevo()
+            verificacionAPIView.post(request)
+            return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'mensaje:':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         user = self.get_object(pk)
@@ -73,13 +72,7 @@ class Login(TokenObtainPairView):
             return Response({'error':'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'error':'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)        
 
-class VerificacionAPIView(APIView):
-
-    def get(self, request):
-        verificaciones = Verificacion.objects.all()
-        verificaciones_serializer = VerificacionSerializer(verificaciones, many = True)  
-        return Response(verificaciones_serializer.data)
-    
+class VerificacionNuevo(APIView):
     def post(self, request, *args, **kwargs):   
         verificacion_data = request.data
         token = secrets.token_urlsafe(20)
@@ -96,10 +89,10 @@ class VerificacionAPIView(APIView):
                 ["to@example.com"],
                 fail_silently=False,
             )    
-            return Response({'message':'Verificacion creada'}, status=status.HTTP_201_CREATED)
-        return Response({'message:':'Errores en el registro', 'errors': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'verificacion': verificacion_data}, status=status.HTTP_201_CREATED)
+        return Response({'mensaje:':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-class VerificacionTokenAPIView(APIView):
+class VerificacionToken(APIView):
 
     def post(self, request):
         tokenUrl = request.data.get('token')
@@ -110,9 +103,9 @@ class VerificacionTokenAPIView(APIView):
                     fechaActual = datetime.now().date()
                     if(fechaActual < usuarioVerificacion.vence):
                         usuarioVerificacion.estado_usado = True
-                        usuarioVerificacion.save()
+                        #usuarioVerificacion.save()
                         return Response({'message': "Token validado con exitosamente"}, status=status.HTTP_200_OK)
                     return Response({'message':'Errores con el token', 'errors': "Token ya se encuentra vencido por favor generar uno nuevo" }, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'message':'Errores con el token', 'errors': "Token ya se encuentra en uso" }, status=status.HTTP_400_BAD_REQUEST)
         except Verificacion.DoesNotExist:
-            return Response({'message':'Errores con el token',  'errors':'No existe el token'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'errorMensaje':'Ocurrio un error'}, status=status.HTTP_400_BAD_REQUEST)
