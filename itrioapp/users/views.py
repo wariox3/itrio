@@ -42,7 +42,7 @@ class UsuarioViewSet(GenericViewSet):
             verificacionAPIView = VerificacionNuevo()
             verificacionAPIView.post(request)
             return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
-        return Response({'mensaje:':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         user = self.get_object(pk)
@@ -90,7 +90,7 @@ class VerificacionNuevo(APIView):
                 fail_silently=False,
             )    
             return Response({'verificacion': verificacion_data}, status=status.HTTP_201_CREATED)
-        return Response({'mensaje:':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class VerificacionToken(APIView):
 
