@@ -96,16 +96,18 @@ class VerificacionToken(APIView):
 
     def post(self, request):
         tokenUrl = request.data.get('token')
-        try:
-            usuarioVerificacion = Verificacion.objects.get(token=tokenUrl)
-            if(usuarioVerificacion):
-                if(usuarioVerificacion.estado_usado == False):
-                    fechaActual = datetime.now().date()
-                    if(fechaActual < usuarioVerificacion.vence):
-                        usuarioVerificacion.estado_usado = True
-                        #usuarioVerificacion.save()
-                        return Response({'message': "Token validado con exitosamente"}, status=status.HTTP_200_OK)
-                    return Response({'message':'Errores con el token', 'errors': "Token ya se encuentra vencido por favor generar uno nuevo" }, status=status.HTTP_400_BAD_REQUEST)
-                return Response({'message':'Errores con el token', 'errors': "Token ya se encuentra en uso" }, status=status.HTTP_400_BAD_REQUEST)
-        except Verificacion.DoesNotExist:
-            return Response({'errorMensaje':'Ocurrio un error'}, status=status.HTTP_400_BAD_REQUEST)
+        verificacion = Verificacion.objects.filter(token=tokenUrl).first()
+        if verificacion:
+            if verificacion.estado_usado == False:
+                fechaActual = datetime.now().date()
+                if fechaActual <= verificacion.vence:
+                    verificacion.estado_usado = True
+                    verificacion.save()
+                    usuario = User.objects.get(id = verificacion.codigo_usuario_fk)
+                    usuario.is_active = True
+                    usuario.save()
+                    return Response({'verificacion': True}, status=status.HTTP_200_OK)
+                return Response({'mensaje':'El token de la verificacion esta vencido', 'codigo': 6}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'La verificacion ya fue usada', 'codigo': 5}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'No se ha encontrado la verificacion', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)
+
