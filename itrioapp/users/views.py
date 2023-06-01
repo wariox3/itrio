@@ -9,8 +9,11 @@ from django.shortcuts import get_object_or_404
 from users.models import User, Verificacion
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
-from django.core.mail import send_mail
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
+from decouple import config
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
 import secrets
 
 class UsuarioViewSet(GenericViewSet):
@@ -81,14 +84,14 @@ class VerificacionNuevo(APIView):
         verificacion_serializer = VerificacionSerializer(data = verificacion_data)        
         if verificacion_serializer.is_valid(): 
             verificacion_serializer.save()
-            mensaje = "La url es: www.prueba.com/verificar/" + token    
-            send_mail(
-                "Asunto del mensaje",
-                mensaje,
-                "from@example.com",
-                ["to@example.com"],
-                fail_silently=False,
-            )    
+            usuario = User.objects.get(id = verificacion_data.get('codigo_usuario_fk'))
+            message = Mail(
+                from_email='tisemantica@gmail.com',
+                to_emails=usuario.email,
+                subject='Debe verrificar su cuenta',
+                html_content='Enlace para verificar http://muup.online/varificacion/' + token)
+            sg = SendGridAPIClient(config('KEY_SENDGRID'))
+            response = sg.send(message)    
             return Response({'verificacion': verificacion_data}, status=status.HTTP_201_CREATED)
         return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
-from .bd import CONFIGURACIONBD
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -89,7 +89,17 @@ WSGI_APPLICATION = 'itrioapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = CONFIGURACIONBD
+DATABASES = {
+        'default': {
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME': 'bditrio',
+        'USER': config('DATABASE_USER'),
+        'PASSWORD': config('DATABASE_CLAVE'),
+        'HOST': config('DATABASE_HOST'),
+        'PORT': '5432',
+    }
+}
+
 
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',

@@ -6,6 +6,7 @@ from general.serializers import ContactoSerializer, ItemSerializer
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.core.mail import send_mail
+from decouple import config 
 
 def vistaTamplate(request):
     return render(request, "general/prueba.html")
@@ -22,7 +23,8 @@ def vista(request):
 
 class PruebaView(APIView):
     def get(self, request):
-        return Response("Hola mundo")
+        prueba = config('KEY_SENDGRID')
+        return Response("Hola mundo" + prueba)
 
 # Basados en ModelViewSet
 class ContactoViewSet(viewsets.ModelViewSet):
