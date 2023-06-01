@@ -107,7 +107,7 @@ class VerificacionToken(APIView):
                     usuario.is_active = True
                     usuario.save()
                     return Response({'verificacion': True}, status=status.HTTP_200_OK)
-                return Response({'mensaje':'El token de la verificacion esta vencido', 'codigo': 6}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'mensaje':'La verificacion ya fue usada', 'codigo': 5}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje':'El token de la verificacion esta vencido', 'codigo': 6, 'codigoUsuario': verificacion.codigo_usuario_fk}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'La verificacion ya fue usada', 'codigo': 5, 'codigoUsuario': verificacion.codigo_usuario_fk}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'No se ha encontrado la verificacion', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)
 
