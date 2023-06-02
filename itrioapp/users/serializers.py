@@ -46,4 +46,4 @@ class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
 class VerificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Verificacion
-        fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence']                 
+        fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence', 'accion']                 

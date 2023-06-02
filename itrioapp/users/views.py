@@ -41,7 +41,8 @@ class UsuarioViewSet(GenericViewSet):
         if user_serializer.is_valid():
             user = user_serializer.save()
             #Enviar verificacion (metodo)
-            request.data['codigo_usuario_fk'] = user.id
+            request.data['username'] = user.username
+            request.data['accion'] = 'registro'
             verificacionAPIView = VerificacionNuevo()
             verificacionAPIView.post(request)
             return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
@@ -77,23 +78,35 @@ class Login(TokenObtainPairView):
 
 class VerificacionNuevo(APIView):
     def post(self, request, *args, **kwargs):   
-        verificacion_data = request.data
+        verificacion_data = request.data    
         token = secrets.token_urlsafe(20)
         verificacion_data["token"] = token
         verificacion_data["vence"] = datetime.now().date() + timedelta(days=1)
         verificacion_serializer = VerificacionSerializer(data = verificacion_data)        
-        if verificacion_serializer.is_valid(): 
-            verificacion_serializer.save()
-            usuario = User.objects.get(id = verificacion_data.get('codigo_usuario_fk'))
-            message = Mail(
-                from_email='tisemantica@gmail.com',
-                to_emails=usuario.email,
-                subject='Debe verrificar su cuenta',
-                html_content='Enlace para verificar http://muup.online/varificacion/' + token)
-            sg = SendGridAPIClient(config('KEY_SENDGRID'))
-            response = sg.send(message)    
-            return Response({'verificacion': verificacion_data}, status=status.HTTP_201_CREATED)
-        return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        usuario = User.objects.get(username = verificacion_data.get('username'))
+        if usuario:
+            verificacion_data["codigo_usuario_fk"] = usuario.id
+            if verificacion_serializer.is_valid():                                             
+                verificacion_serializer.save()
+                if verificacion_data.get('accion') == 'registro':
+                    message = Mail(
+                        from_email='tisemantica@gmail.com',
+                        to_emails=usuario.email,
+                        subject='Debe verificar su cuenta',
+                        html_content='Enlace para verificar http://muup.online/varificacion/' + token)
+                    sg = SendGridAPIClient(config('KEY_SENDGRID'))
+                    sg.send(message)    
+                if verificacion_data.get('accion') == 'clave':
+                    message = Mail(
+                        from_email='tisemantica@gmail.com',
+                        to_emails=usuario.email,
+                        subject='Cambio de clave',
+                        html_content='Enlace para cambiar la clave http://muup.online/clave/cambiar/' + token)
+                    sg = SendGridAPIClient(config('KEY_SENDGRID'))
+                    sg.send(message) 
+                return Response({'verificacion': verificacion_data}, status=status.HTTP_201_CREATED)            
+            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'El usuario para recuperar la clave no existe', 'codigo':8, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 class VerificacionToken(APIView):
 
@@ -109,8 +122,18 @@ class VerificacionToken(APIView):
                     usuario = User.objects.get(id = verificacion.codigo_usuario_fk)
                     usuario.is_active = True
                     usuario.save()
-                    return Response({'verificacion': True}, status=status.HTTP_200_OK)
+                    verificacionSerializer = VerificacionSerializer(verificacion)                
+                    return Response({'verificado': True, 'verificacion': verificacionSerializer.data}, status=status.HTTP_200_OK)
                 return Response({'mensaje':'El token de la verificacion esta vencido', 'codigo': 6, 'codigoUsuario': verificacion.codigo_usuario_fk}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'La verificacion ya fue usada', 'codigo': 5, 'codigoUsuario': verificacion.codigo_usuario_fk}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'No se ha encontrado la verificacion', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)
 
+class ClaveCambiar(APIView):
+
+    def post(self, request):    
+        codigoUsuario = request.data.get('id')
+        clave = request.data.get('password')
+        usuario = User.objects.get(id = codigoUsuario)
+        usuario.set_password(clave)
+        usuario.save()
+        return Response({'cambio': True}, status=status.HTTP_200_OK)

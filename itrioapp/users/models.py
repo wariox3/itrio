@@ -52,3 +52,4 @@ class Verificacion(models.Model):
     token = models.CharField(max_length=50)
     estado_usado = models.BooleanField(default = False)
     vence = models.DateField(null=True)
+    accion = models.CharField(max_length=10, default='registro')

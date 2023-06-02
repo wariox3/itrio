@@ -5,18 +5,13 @@ Para instalar el proyecto debes seguir las siguientes instrucciones en la termin
 ```sh
 git clone
 cd itrio
-crear archivo itrioapp/itrioapp/bd.py
-CONFIGURACIONBD = {
-        'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': 'bd',
-        'USER': 'user',
-        'PASSWORD': 'clave',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+crear archivo al nivel de manage.py llamado .env con estas variables
+
+DATABASE_USER='user'
+DATABASE_CLAVE='clave'
+DATABASE_HOST='lcoalhost'
+KEY_SENDGRID='xx'
+
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requerimientos.txt
