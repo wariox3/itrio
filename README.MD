@@ -9,7 +9,9 @@ crear archivo al nivel de manage.py llamado .env con estas variables
 
 DATABASE_USER='user'
 DATABASE_CLAVE='clave'
-DATABASE_HOST='lcoalhost'
+DATABASE_HOST='localhost'
+DATABASE_NAME='bdprueba'
+DATABASE_PORT='5432'
 KEY_SENDGRID='xx'
 
 python3 -m venv venv

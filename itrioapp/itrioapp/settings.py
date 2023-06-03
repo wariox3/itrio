@@ -92,11 +92,11 @@ WSGI_APPLICATION = 'itrioapp.wsgi.application'
 DATABASES = {
         'default': {
         'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': 'bditrio',
+        'NAME': config('DATABASE_NAME'),
         'USER': config('DATABASE_USER'),
         'PASSWORD': config('DATABASE_CLAVE'),
         'HOST': config('DATABASE_HOST'),
-        'PORT': '5432',
+        'PORT': config('DATABASE_PORT'),
     }
 }
 
