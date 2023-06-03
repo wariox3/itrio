@@ -29,7 +29,7 @@ SHARED_APPS = (
     'django.contrib.admin',
     'django_tenants',
     'inquilino',
-    'users',
+    'seguridad',
 )
 
 TENANT_APPS = (
@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'inquilino',
     'general',
-    'users'
+    'seguridad'
 ]
 
 MIDDLEWARE = [
@@ -162,7 +162,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'seguridad.User'
 
 CORS_ALLOWED_ORIGINS = [
     "https://example.com",
