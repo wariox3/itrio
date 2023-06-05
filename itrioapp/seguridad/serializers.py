@@ -25,23 +25,21 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.save()
         return user
 
+class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name', 'last_name']
+
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = ['id', 'username', 'email', 'dominio', 'codigo_cliente_fk', 'name', 'last_name']
     
-    def to_representation(self, instance):
-        return {
-            'id': instance['id'],
-            'username': instance['username'],
-            'email': instance['email'],
-            'codigo_cliente_fk': instance['codigo_cliente_fk'],
-            'dominio': instance['dominio']
-        }
-    
+        
 class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'dominio']  
+        fields = ['id', 'username', 'dominio', 'name', 'last_name']  
 
 class VerificacionSerializer(serializers.ModelSerializer):
     class Meta:
