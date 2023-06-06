@@ -1,16 +1,15 @@
 from django.urls import path, include
-from general.views import ContactoViewSet, ItemViewSet, PruebaView
-from . import views
+from .views.prueba import PruebaView
+from .views.item import ItemViewSet
+from .views.contacto import ContactoViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'contactos', ContactoViewSet)
-router.register(r'items', ItemViewSet)
+router.register(r'contacto', ContactoViewSet)
+router.register(r'item', ItemViewSet)
 
 
 urlpatterns = [    
     path('', include(router.urls)),
-    path('prueba/', PruebaView.as_view(), name='prueba'),
-    path('vista/', views.vista, name='vista'),
-    path('vistatemplate/', views.vistaTamplate, name='vistatemplate'),
+    path('prueba/', PruebaView.as_view(), name='prueba')
 ]

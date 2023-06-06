@@ -1,0 +1,9 @@
+[
+    {
+      "model": "general.models.identificacion",
+      "pk": "CC",
+      "fields": {
+        "nombre": "cedula"
+      }
+    }
+]

@@ -197,3 +197,4 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
+#FIXTURE_DIRS =  BASE_DIR / "fixtures"
