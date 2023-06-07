@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
-
-from django.dispatch import receiver
-from django.urls import reverse
-from django.core.mail import send_mail  
+from inquilino.models import Empresa
 
 class UserManager(BaseUserManager):
     def _create_user(self, username, email, name,last_name, password, is_staff, is_superuser, **extra_fields):
@@ -33,7 +30,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length = 255, null = True)
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
-    codigo_cliente_fk = models.IntegerField(null=True)
     dominio = models.CharField(max_length = 50, null = True)
     objects = UserManager()
 
@@ -53,3 +49,10 @@ class Verificacion(models.Model):
     estado_usado = models.BooleanField(default = False)
     vence = models.DateField(null=True)
     accion = models.CharField(max_length=10, default='registro')
+
+class UsuarioEmpresa(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = "seguridad_usuario_empresa"

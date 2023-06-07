@@ -1,20 +1,8 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.viewsets import GenericViewSet
-from rest_framework.views import APIView
-from seguridad.serializers import UserSerializer, UserListSerializer, UserDetalleSerializer, CustomTokenObtainPairSerializer, CustomUserSerializer, VerificacionSerializer
-from django.shortcuts import get_object_or_404
-from seguridad.models import User, Verificacion
+from seguridad.serializers import CustomTokenObtainPairSerializer, CustomUserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
-from datetime import datetime, timedelta
-from decouple import config
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-
-import secrets
     
 class Login(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

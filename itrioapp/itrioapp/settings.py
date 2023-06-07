@@ -105,7 +105,7 @@ DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
 )
 
-TENANT_MODEL = "inquilino.Cliente" # app.Model
+TENANT_MODEL = "inquilino.Empresa" # app.Model
 TENANT_DOMAIN_MODEL = "inquilino.Dominio"  # app.Model
 
 # Password validation

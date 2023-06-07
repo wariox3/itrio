@@ -1,12 +1,11 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.views import APIView
-from seguridad.serializers import UserSerializer, UserUpdateSerializer, UserListSerializer, UserDetalleSerializer
+from seguridad.serializers import UserSerializer, UserUpdateSerializer, UserListSerializer, UserDetalleSerializer, UsuarioEmpresaSerializador
 from django.shortcuts import get_object_or_404
-from seguridad.models import User
+from seguridad.models import User, UsuarioEmpresa
 from .verificacion import VerificacionNuevo
 
 class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
@@ -56,4 +55,12 @@ class ClaveCambiar(APIView):
         usuario = User.objects.get(id = codigoUsuario)
         usuario.set_password(clave)
         usuario.save()
+        return Response({'cambio': True}, status=status.HTTP_200_OK)
+
+class UsuarioEmpresa(APIView):
+
+    def get(self, request): 
+        #queryset = UsuarioEmpresa.objects.all()
+        #serializer_class = UsuarioEmpresaSerializador(queryset, many=True)
+        #return Response(serializer_class.data, status=status.HTTP_200_OK)
         return Response({'cambio': True}, status=status.HTTP_200_OK)

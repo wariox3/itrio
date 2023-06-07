@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from seguridad.models import User, Verificacion
+from seguridad.models import User, Verificacion, UsuarioEmpresa
+from inquilino.models import Empresa
+from inquilino.serializers import EmpresaSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # Serializers define the API representation.
@@ -12,6 +14,7 @@ class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'username']
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = User
         fields = ['id', 'username', 'password']
@@ -33,8 +36,7 @@ class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'dominio', 'codigo_cliente_fk', 'name', 'last_name']
-    
+        fields = ['id', 'username', 'email', 'dominio', 'name', 'last_name']    
         
 class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -44,4 +46,23 @@ class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
 class VerificacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Verificacion
-        fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence', 'accion']                 
+        fields = ['id', 'codigo_usuario_fk', 'token', 'estado_usado', 'vence', 'accion']      
+
+class UsuarioEmpresaSerializador(serializers.HyperlinkedModelSerializer):
+    # se renderiza por to_representation
+    #usuario = UserListSerializer()
+    # se renderiza por to_representation
+    #empresa = .StringRelatserializersedField()
+    usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())
+    class Meta:
+        model = UsuarioEmpresa
+        fields = ['usuario', 'empresa']
+    
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'usuario_id': instance.usuario_id,
+            'empresa_id': instance.empresa_id,
+            'empresa': instance.empresa.schema_name
+        }
