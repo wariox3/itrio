@@ -81,7 +81,7 @@ class EmpresaNuevoAPIView(APIView):
                 if config('ENV') == 'dev':
                     dominio = '.localhost'
                 else:
-                    dominio = '.muup.online'                
+                    dominio = '.muupservicios.online'                
                 call_command('create_tenant', schema_name=empresa, domain_domain=empresa+dominio, domain_is_primary='0') 
                 empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa}).first()                        
                 data = {'usuario': usuario, 'empresa': empresaValidacion.id}
