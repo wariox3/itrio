@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views.usuario import UsuarioViewSet, ClaveCambiar, UsuarioEmpresa
+from .views.usuario import UsuarioViewSet, ClaveCambiar, UsuarioEmpresaAPIView, EmpresaNuevoAPIView
 from .views.usuario_empresa import UsuarioEmpresaViewSet
 from .views.verificacion import VerificacionNuevo, VerificacionToken
 
@@ -13,5 +13,6 @@ urlpatterns = [
     path('verificacion/nuevo/', VerificacionNuevo.as_view(), name = 'verificacion_nuevo'),
     path('verificacion/token/', VerificacionToken.as_view(), name = 'verificacion_token'),
     path('clave/cambiar/', ClaveCambiar.as_view(), name = 'clave_cambiar'),
-    path('usuario/empresa/<str:usuario_id>/', UsuarioEmpresa.as_view(), name = 'usuario_empresa'),
+    path('usuario/empresa/<str:usuario_id>/', UsuarioEmpresaAPIView.as_view(), name = 'usuario_empresa'),
+    path('empresa/nuevo/', EmpresaNuevoAPIView.as_view(), name = 'empresa_nuevo'),
 ]

@@ -12,6 +12,8 @@ DATABASE_CLAVE='clave'
 DATABASE_HOST='localhost'
 DATABASE_NAME='bdprueba'
 DATABASE_PORT='5432'
+#Entorno
+ENV='dev'
 KEY_SENDGRID='xx'
 
 python3 -m venv venv

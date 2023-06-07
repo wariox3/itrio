@@ -7,6 +7,8 @@ from seguridad.serializers import UserSerializer, UserUpdateSerializer, UserList
 from django.shortcuts import get_object_or_404
 from seguridad.models import User, UsuarioEmpresa
 from .verificacion import VerificacionNuevo
+from django.core.management import call_command
+from decouple import config
 
 class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     model = User
@@ -57,10 +59,34 @@ class ClaveCambiar(APIView):
         usuario.save()
         return Response({'cambio': True}, status=status.HTTP_200_OK)
 
-class UsuarioEmpresa(APIView):
+class UsuarioEmpresaAPIView(APIView):
 
-    def get(self, request): 
-        #queryset = UsuarioEmpresa.objects.all()
-        #serializer_class = UsuarioEmpresaSerializador(queryset, many=True)
-        #return Response(serializer_class.data, status=status.HTTP_200_OK)
-        return Response({'cambio': True}, status=status.HTTP_200_OK)
+    def get(self, request, usuario_id): 
+        queryset = UsuarioEmpresa.objects.filter(usuario_id = usuario_id)
+        serializer_class = UsuarioEmpresaSerializador(queryset, many=True)
+        return Response(serializer_class.data, status=status.HTTP_200_OK)
+
+class EmpresaNuevoAPIView(APIView):
+
+    def post(self, request): 
+        try:            
+            empresa = request.data.get('empresa')
+            usuario = request.data.get('usuario')
+            if empresa and usuario:
+                #buscar que empresa no exista  one_entry = Entry.objects.get(pk=1)
+                if config('ENV') == 'dev':
+                    dominio = '.localhost'
+                else:
+                    dominio = '.muup.online'                
+                call_command('create_tenant', schema_name=empresa, domain_domain=empresa+dominio, domain_is_primary='0') 
+                #buscar la empresa que se creo filter por schema_name -> tabla empresa
+                #crea usuario_empresa
+                #request.data['usuario'] = usuario
+                #request.data['empresa'] = 'registro'
+                #verificacionAPIView = VerificacionNuevo() -> la clase para crear automatica 
+                #verificacionAPIView.post(request)
+                return Response({'empresa': True}, status=status.HTTP_200_OK)            
+            return Response({'mensaje': "Debe suministrar empresa y usuario"}, status=status.HTTP_400_BAD_REQUEST)            
+        except FileNotFoundError:
+            return Response({'mensaje': True}, status=status.HTTP_400_BAD_REQUEST)            
+        
