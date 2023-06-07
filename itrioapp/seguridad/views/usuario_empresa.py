@@ -7,3 +7,6 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
     queryset = UsuarioEmpresa.objects.all()
     serializer_class = UsuarioEmpresaSerializador    
     permission_classes = [permissions.IsAuthenticated]
+    
+    def create(self, request):
+        pass

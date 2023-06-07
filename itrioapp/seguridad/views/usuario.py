@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from seguridad.serializers import UserSerializer, UserUpdateSerializer, UserListSerializer, UserDetalleSerializer, UsuarioEmpresaSerializador
 from django.shortcuts import get_object_or_404
 from seguridad.models import User, UsuarioEmpresa
+from seguridad.views.usuario_empresa import UsuarioEmpresaViewSet
+from inquilino.models import Empresa
 from .verificacion import VerificacionNuevo
 from django.core.management import call_command
 from decouple import config
@@ -73,19 +75,21 @@ class EmpresaNuevoAPIView(APIView):
             empresa = request.data.get('empresa')
             usuario = request.data.get('usuario')
             if empresa and usuario:
-                #buscar que empresa no exista  one_entry = Entry.objects.get(pk=1)
+                empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa})
+                if empresaValidacion:
+                    return Response({'mensaje': "La empresa ya existe"}, status=status.HTTP_400_BAD_REQUEST)
                 if config('ENV') == 'dev':
                     dominio = '.localhost'
                 else:
                     dominio = '.muup.online'                
                 call_command('create_tenant', schema_name=empresa, domain_domain=empresa+dominio, domain_is_primary='0') 
-                #buscar la empresa que se creo filter por schema_name -> tabla empresa
-                #crea usuario_empresa
-                #request.data['usuario'] = usuario
-                #request.data['empresa'] = 'registro'
-                #verificacionAPIView = VerificacionNuevo() -> la clase para crear automatica 
-                #verificacionAPIView.post(request)
-                return Response({'empresa': True}, status=status.HTTP_200_OK)            
+                empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa}).first()                        
+                data = {'usuario': usuario, 'empresa': empresaValidacion.id}
+                usuario_empresa_serializer = UsuarioEmpresaSerializador(data=data)            
+                if usuario_empresa_serializer.is_valid():
+                    usuario_empresa_serializer.save()               
+                    return Response({'empresa': True}, status=status.HTTP_200_OK)            
+                return Response({'mensaje':'Errores en la creacion usuario empresa', 'validaciones': usuario_empresa_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje': "Debe suministrar empresa y usuario"}, status=status.HTTP_400_BAD_REQUEST)            
         except FileNotFoundError:
             return Response({'mensaje': True}, status=status.HTTP_400_BAD_REQUEST)            
