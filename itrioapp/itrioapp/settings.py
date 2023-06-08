@@ -164,8 +164,7 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'seguridad.User'
 
-CORS_ALLOWED_ORIGINS = ['*'
-]
+CORS_ALLOWED_ORIGINS = ['*']
 
 CORS_ALLOW_METHODS = [
     "DELETE",
