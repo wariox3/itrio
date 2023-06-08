@@ -23,7 +23,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user = User(**validated_data)
         user.email = user.username;
         user.is_active = False;
-        user.dominio = "app.muupservicios.online";
+        user.dominio = "muupservicios.online";
         user.set_password(validated_data['password'])    
         user.save()
         return user
