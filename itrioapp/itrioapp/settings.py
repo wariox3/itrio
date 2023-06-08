@@ -175,6 +175,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://159.203.57.104",
     "http://muup.online",
     'http://localhost:4200',
+    'http://muupservicios.online'
 ]
 
 CORS_ALLOW_METHODS = [
