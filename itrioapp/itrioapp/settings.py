@@ -173,14 +173,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://159.203.62.234",
     "http://179.15.105.37",
     "http://159.203.57.104",
+    "http://muupservicios.online",
     "http://muup.online",
     'http://localhost:4200',
-]
-
-CORS_ORIGIN_WHITELIST = [
-    "http://muup.online",
-    "http://muupservicios.online",
-    "http://159.203.57.104",
 ]
 
 CORS_ALLOW_METHODS = [
