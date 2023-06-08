@@ -164,11 +164,24 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = 'seguridad.User'
 
-CORS_ALLOWED_ORIGINS = ['*']
+CORS_ALLOWED_ORIGINS = [
+    "https://example.com",
+    "https://sub.example.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+    "http://127.0.0.1:4200",
+    "http://159.203.62.234",
+    "http://179.15.105.37",
+    "http://159.203.57.104",
+    "http://muup.online",
+    'http://localhost:4200',
+]
 
-CORS_ORIGIN_ALLOW_ALL = False
-
-CORS_ALLOW_CREDENTIALS= True
+CORS_ORIGIN_WHITELIST = [
+    "http://muup.online",
+    "http://muupservicios.online",
+    "http://159.203.57.104",
+]
 
 CORS_ALLOW_METHODS = [
     "DELETE",
