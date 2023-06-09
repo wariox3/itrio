@@ -1,8 +1,11 @@
-from general.models.contacto import Contacto
+from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona
 from rest_framework import serializers
 
 class ContactoSerializador(serializers.HyperlinkedModelSerializer):
-
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
+    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
     class Meta:
         model = Contacto
         fields = [
