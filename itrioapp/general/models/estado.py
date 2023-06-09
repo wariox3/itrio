@@ -1,12 +1,11 @@
 from django.db import models
 from general.models.pais import Pais
 
-class Departamento(models.Model):
+class Estado(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50)
-    #Relaciones    
+    codigo = models.CharField(max_length=10, null=True)
     pais = models.ForeignKey(Pais, on_delete=models.CASCADE)
 
-
     class Meta:
-        db_table = "gen_departamento"
+        db_table = "gen_estado"
