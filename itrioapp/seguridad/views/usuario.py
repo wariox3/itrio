@@ -78,7 +78,7 @@ class EmpresaNuevoAPIView(APIView):
             if empresa and usuario:
                 empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa})
                 if empresaValidacion:
-                    return Response({'mensaje': "La empresa ya existe"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 if config('ENV') == 'dev':
                     dominio = '.localhost'
                 else:
