@@ -88,6 +88,7 @@ class EmpresaNuevoAPIView(APIView):
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', schema_name='demo', verbosity=0) 
                 #Asi no se deben ejecutar los fixtures
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/pais.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/estado.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/identificacion.json")
                 
                 empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa}).first()                        
