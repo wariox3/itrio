@@ -97,8 +97,8 @@ class EmpresaNuevoAPIView(APIView):
                 if usuario_empresa_serializer.is_valid():
                     usuario_empresa_serializer.save()               
                     return Response({'empresa': True}, status=status.HTTP_200_OK)            
-                return Response({'mensaje':'Errores en la creacion usuario empresa', 'validaciones': usuario_empresa_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'mensaje': "Debe suministrar empresa y usuario"}, status=status.HTTP_400_BAD_REQUEST)            
+                return Response({'mensaje':'Errores en la creacion usuario empresa', 'codigo':12, 'validaciones': usuario_empresa_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje': 'Debe suministrar un nombre para laempresa y el usuario', 'codigo':11}, status=status.HTTP_400_BAD_REQUEST)            
         except FileNotFoundError:
-            return Response({'mensaje': True}, status=status.HTTP_400_BAD_REQUEST)            
+            return Response({'mensaje': 'Inesperado e indefinido', 'codigo':0}, status=status.HTTP_400_BAD_REQUEST)            
         
