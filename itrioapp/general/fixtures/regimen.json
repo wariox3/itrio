@@ -1,0 +1,12 @@
+[
+  {
+    "model": "general.regimen",
+    "pk": 1,
+    "fields": {"nombre": "Ordinario comun"}
+  },
+  {
+    "model": "general.regimen",
+    "pk": 2,
+    "fields": {"nombre": "Simple"}
+  }
+]

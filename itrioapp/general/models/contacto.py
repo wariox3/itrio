@@ -16,7 +16,7 @@ class Contacto(models.Model):
     codigo_postal = models.CharField(max_length=20, null=True)
     telefono = models.CharField(max_length=50)
     celular = models.CharField(max_length=50)
-    correo = models.CharField(max_length=200)
+    correo = models.EmailField(max_length = 255, unique = True)
     #Relaciones    
     identificacion = models.ForeignKey(Identificacion, on_delete=models.CASCADE)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
