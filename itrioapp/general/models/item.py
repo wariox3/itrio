@@ -6,7 +6,7 @@ class Item(models.Model):
     referencia = models.CharField(max_length=50, null=True)
     costo = models.FloatField(default=0)
     precio = models.FloatField(default=0)
-    
+
 
     class Meta:
         db_table = "gen_item"  

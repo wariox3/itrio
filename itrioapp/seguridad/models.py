@@ -55,4 +55,6 @@ class UsuarioEmpresa(models.Model):
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     
     class Meta:
+        unique_together = ('usuario', 'empresa')
         db_table = "seguridad_usuario_empresa"
+        
