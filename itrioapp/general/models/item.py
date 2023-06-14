@@ -7,6 +7,5 @@ class Item(models.Model):
     costo = models.FloatField(default=0)
     precio = models.FloatField(default=0)
 
-
     class Meta:
         db_table = "gen_item"  

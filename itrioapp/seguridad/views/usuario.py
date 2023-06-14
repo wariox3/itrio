@@ -89,6 +89,7 @@ class EmpresaNuevoAPIView(APIView):
                 #Asi no se deben ejecutar los fixtures
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/pais.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/estado.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/ciudad.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/identificacion.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/tipo_persona.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/regimen.json")
