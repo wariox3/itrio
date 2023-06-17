@@ -29,7 +29,7 @@ class PruebaView(APIView):
         client = session.client('s3',
                         config=Config(s3={'addressing_style': 'virtual'}),
                         region_name=config('DO_REGION'),
-                        endpoint_url='https://sfo3.digitaloceanspaces.com',
+                        endpoint_url='https://fra1.digitaloceanspaces.com',                        
                         aws_access_key_id=config('DO_CLAVE_ACCESO'),
                         aws_secret_access_key=config('DO_CLAVE_SECRETA'))             
         
@@ -42,19 +42,18 @@ class PruebaView(APIView):
         #for obj in response['Contents']:
         #    print(obj['Key'])
         pathArchivo = '/home/desarrollo/Escritorio/Captura.JPG';
-        with open(pathArchivo, 'rb') as archivo:
+        """with open(pathArchivo, 'rb') as archivo:
             contenido = archivo.read()
             contenido_codificado = base64.b64encode(contenido)
             contenido_codificado_str = contenido_codificado.decode('utf-8')
             metadata = magic.from_file(pathArchivo, mime=True)
-            client.put_object(Bucket='semantica',
-                    Key='itrio/Captura.JPG',
+            client.put_object(Bucket='itrio',
+                    Key='prueba/Captura.JPG',
                     Body=contenido_codificado_str,
                     ACL='private',
-                    Metadata={
-                        'ContentType': metadata
-                    }
-                    )      
+                    ContentType=metadata,
+                    )"""
+        client.upload_file(pathArchivo, 'itrio', 'prueba/Captura.JPG')
         prueba = config('KEY_SENDGRID')
         return Response("Hola mundo" + prueba)
 
