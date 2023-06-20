@@ -81,8 +81,10 @@ class EmpresaNuevoAPIView(APIView):
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 if config('ENV') == 'dev':
                     dominio = '.localhost'
-                else:
-                    dominio = '.muupservicios.online'                
+                if config('ENV') == 'test':
+                    dominio = '.muupservicios.online'
+                if config('ENV') == 'prod':
+                    dominio = '.redofice.com'
                 call_command('create_tenant', schema_name=empresa, domain_domain=empresa+dominio, domain_is_primary='0') 
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', '--schema', 'demo')
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', schema_name='demo', verbosity=0) 
