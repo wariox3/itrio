@@ -95,6 +95,8 @@ class EmpresaNuevoAPIView(APIView):
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/identificacion.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/tipo_persona.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/regimen.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/movimiento_clase.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/movimiento_tipo.json")
                 
                 empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa}).first()                        
                 data = {'usuario': usuario, 'empresa': empresaValidacion.id}

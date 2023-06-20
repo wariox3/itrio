@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from general.models.movimiento import Movimiento
-from general.models.detalle import Detalle
+from general.models.movimiento_detalle import MovimientoDetalle
 from general.serializers.detalle import DetalleSerializer
 
 
@@ -17,6 +17,6 @@ class MovimientoSerializer(serializers.HyperlinkedModelSerializer):
         movimiento.save()        
         detalles = validated_data.get('detalles')
         for detalle in detalles:
-          Detalle.objects.create(movimiento=movimiento, **detalle)
+          MovimientoDetalle.objects.create(movimiento=movimiento, **detalle)
         return validated_data   
         

@@ -1,0 +1,7 @@
+[
+  {
+    "model": "general.movimientoTipo",
+    "pk": 1,
+    "fields": {"nombre": "Factura venta", "movimiento_clase_id": 1}
+  }
+]
