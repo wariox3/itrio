@@ -1,5 +1,5 @@
 import boto3
-import magic
+#import magic
 from decouple import config 
 from botocore.config import Config
 
@@ -29,7 +29,8 @@ class SpaceDo():
 
     def put(self, pathArchivo):                      
         with open(pathArchivo, 'rb') as file:
-            metadata = magic.from_file(pathArchivo, mime=True)
+            #metadata = magic.from_file(pathArchivo, mime=True)
+            metadata = ''
             self.client.put_object(Bucket='itrio',
                     Key='prueba/Captura.JPG',
                     Body=file,

@@ -5,4 +5,4 @@ class ItemImpuestoSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = ItemImpuesto
-        fields = ['impuesto_id']
+        fields = ['item_id', 'impuesto_id']
