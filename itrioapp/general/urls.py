@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .views.prueba import PruebaView
 from .views.item import ItemViewSet
+from .views.impuesto import ImpuestoViewSet
 from .views.item_impuesto import ItemImpuestoViewSet
 from .views.contacto import ContactoViewSet
 from .views.movimiento import MovimientoViewSet
@@ -17,6 +18,7 @@ router.register(r'tipopersona', TipoPersonaViewSet)
 router.register(r'identificacion', IdentificacionViewSet)
 router.register(r'contacto', ContactoViewSet)
 router.register(r'item', ItemViewSet)
+router.register(r'impuesto', ImpuestoViewSet)
 router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'movimiento', MovimientoViewSet)
 

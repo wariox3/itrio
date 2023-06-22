@@ -17,7 +17,7 @@ class ItemViewSet(viewsets.ModelViewSet):
             item = itemSerializador.save()            
             impuestos = data.get('impuestos')
             for impuesto in impuestos:                
-                datosImpuestoItem = {"item":item.id,"impuesto":impuesto}                                
+                datosImpuestoItem = {"item":item.id,"impuesto":impuesto}
                 itemImpuestoSerializador = ItemImpuestoSerializer(data=datosImpuestoItem)
                 if itemImpuestoSerializador.is_valid():
                     itemImpuestoSerializador.save()                
@@ -40,6 +40,9 @@ class ItemViewSet(viewsets.ModelViewSet):
                 itemImpuestoSerializador = ItemImpuestoSerializer(data=datosImpuestoItem)
                 if itemImpuestoSerializador.is_valid():
                     itemImpuestoSerializador.save()
+            for impuesto in impuestosEliminar:                
+                impuestoEliminar = ItemImpuesto.objects.get(item_id=pk, impuesto_id=impuesto)
+                impuestoEliminar.delete()            
             return Response({'item':itemSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': itemSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 

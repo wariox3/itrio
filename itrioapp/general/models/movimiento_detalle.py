@@ -15,3 +15,4 @@ class MovimientoDetalle(models.Model):
 
     class Meta:
         db_table = "gen_movimiento_detalle"
+        ordering = ['id', 'movimiento', 'item', 'cantidad']

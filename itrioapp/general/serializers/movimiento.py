@@ -1,22 +1,12 @@
 from rest_framework import serializers
 from general.models.movimiento import Movimiento
-from general.models.movimiento_detalle import MovimientoDetalle
-from general.serializers.detalle import DetalleSerializer
-
-
+from general.models.movimiento_tipo import MovimientoTipo
 
 class MovimientoSerializer(serializers.HyperlinkedModelSerializer):
-    detalles = DetalleSerializer(many=True)
-
+    
+    movimiento_tipo = serializers.PrimaryKeyRelatedField(queryset=MovimientoTipo.objects.all())
+    
     class Meta:
         model = Movimiento
-        fields = ['id', 'detalles']
-
-    def create(self, validated_data):
-        movimiento = Movimiento()
-        movimiento.save()        
-        detalles = validated_data.get('detalles')
-        for detalle in detalles:
-          MovimientoDetalle.objects.create(movimiento=movimiento, **detalle)
-        return validated_data   
+        fields = ['id', 'movimiento_tipo']
         
