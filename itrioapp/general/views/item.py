@@ -24,27 +24,24 @@ class ItemViewSet(viewsets.ModelViewSet):
             return Response({'item':itemSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': itemSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    def update(self, request, pk=None, *args, **kwargs):        
-        instance = self.get_object()
+    def update(self, request, pk=None, *args, **kwargs):
+        item = self.get_object()
         data = {"nombre": request.data.get('nombre')}
-        itemSerializador = self.serializer_class(instance=instance, data=data, partial=True)
+        itemSerializador = self.serializer_class(instance=item, data=data, partial=True)
         if itemSerializador.is_valid():
             itemSerializador.save()
-            itemImpuestos = ItemImpuesto.objects.filter(item_id=pk).values('impuesto')
-            print(type(itemImpuestos))
+            itemImpuestos = ItemImpuesto.objects.filter(item_id=pk).values('impuesto')        
             impuestosActuales = set(itemImpuestos.values_list('impuesto', flat=True))            
-            impuestos = set(request.data.get('impuestos'))            
-            print(impuestosActuales)     
-            print(impuestos)       
-            todos = impuestosActuales.union(impuestos)
-            print(todos)
-            #set_a = {'col', 'mex', 'bol'}
-            #set_b = {'pe', 'bol'}
-            #set_c = set_a.union(set_b)
-            #print(set_c)
+            impuestos = set(request.data.get('impuestos'))                    
+            impuestosEliminar = impuestosActuales.difference(impuestos)  
+            impuestosAdicionar = impuestos.difference(impuestosActuales)    
+            for impuesto in impuestosAdicionar:                
+                datosImpuestoItem = {"item":item.id,"impuesto":impuesto}                                
+                itemImpuestoSerializador = ItemImpuestoSerializer(data=datosImpuestoItem)
+                if itemImpuestoSerializador.is_valid():
+                    itemImpuestoSerializador.save()
             return Response({'item':itemSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': itemSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-
 
     def handle_exception(self, exc):
         response = super().handle_exception(exc)
