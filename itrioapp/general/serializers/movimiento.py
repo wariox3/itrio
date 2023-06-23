@@ -8,5 +8,5 @@ class MovimientoSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Movimiento
-        fields = ['id', 'movimiento_tipo']
+        fields = ['id', 'movimiento_tipo', 'subtotal', 'descuento', 'impuesto', 'total_bruto', 'total']
         

@@ -8,4 +8,4 @@ class MovimientoDetalleSerializer(serializers.HyperlinkedModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
     class Meta:
         model = MovimientoDetalle
-        fields = ['movimiento', 'item', 'cantidad']
+        fields = ['movimiento', 'item', 'cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total']
