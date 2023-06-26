@@ -33,7 +33,7 @@ class VerificacionNuevo(APIView):
                         from_email='tisemantica@gmail.com',
                         to_emails=usuario.email,
                         subject='Debe verificar su cuenta',
-                        html_content='Enlace para verificar http://muup.online/varificacion/' + token)
+                        html_content='Enlace para verificar http://muup.online/auth/verificacion/' + token)
                     sg = SendGridAPIClient(config('KEY_SENDGRID'))
                     sg.send(message)    
                 if verificacion_data.get('accion') == 'clave':
