@@ -41,7 +41,7 @@ class VerificacionNuevo(APIView):
                         from_email='tisemantica@gmail.com',
                         to_emails=usuario.email,
                         subject='Cambio de clave',
-                        html_content='Enlace para cambiar la clave http://muup.online/clave/cambiar/' + token)
+                        html_content='Enlace para cambiar la clave http://muup.online/auth/clave/cambiar/' + token)
                     sg = SendGridAPIClient(config('KEY_SENDGRID'))
                     sg.send(message) 
                 return Response({'verificacion': verificacion_data}, status=status.HTTP_201_CREATED)            
