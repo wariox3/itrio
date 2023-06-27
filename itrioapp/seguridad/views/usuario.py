@@ -73,10 +73,11 @@ class EmpresaNuevoAPIView(APIView):
 
     def post(self, request): 
         try:            
-            empresa = request.data.get('empresa')
+            subdominio = request.data.get('subdominio')
             usuario = request.data.get('usuario')
-            if empresa and usuario:
-                empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa})
+            nombre = request.data.get('nombre')
+            if subdominio and usuario and nombre:
+                empresaValidacion = Empresa.objects.filter(**{'schema_name':subdominio})
                 if empresaValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 if config('ENV') == 'dev':
@@ -85,27 +86,27 @@ class EmpresaNuevoAPIView(APIView):
                     dominio = '.muupservicios.online'
                 if config('ENV') == 'prod':
                     dominio = '.redofice.com'
-                call_command('create_tenant', schema_name=empresa, domain_domain=empresa+dominio, domain_is_primary='0') 
+                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0') 
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', '--schema', 'demo')
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', schema_name='demo', verbosity=0) 
                 #Asi no se deben ejecutar los fixtures
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/pais.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/estado.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/ciudad.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/identificacion.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/tipo_persona.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/regimen.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/movimiento_clase.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={empresa} general/fixtures/movimiento_tipo.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/pais.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/estado.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/ciudad.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/identificacion.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/tipo_persona.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/regimen.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/movimiento_clase.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/movimiento_tipo.json")
                 
-                empresaValidacion = Empresa.objects.filter(**{'schema_name':empresa}).first()                        
+                empresaValidacion = Empresa.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario, 'empresa': empresaValidacion.id}
                 usuario_empresa_serializer = UsuarioEmpresaSerializador(data=data)            
                 if usuario_empresa_serializer.is_valid():
                     usuario_empresa_serializer.save()               
                     return Response({'empresa': True}, status=status.HTTP_200_OK)            
                 return Response({'mensaje':'Errores en la creacion usuario empresa', 'codigo':12, 'validaciones': usuario_empresa_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'mensaje': 'Debe suministrar un nombre para laempresa y el usuario', 'codigo':11}, status=status.HTTP_400_BAD_REQUEST)            
+            return Response({'mensaje': 'Debe suministrar un subdominio, nombre y el usuario', 'codigo':11}, status=status.HTTP_400_BAD_REQUEST)            
         except FileNotFoundError:
             return Response({'mensaje': 'Inesperado e indefinido', 'codigo':0}, status=status.HTTP_400_BAD_REQUEST)            
         

@@ -18,13 +18,13 @@ import secrets
 
 class VerificacionNuevo(APIView):
     def post(self, request, *args, **kwargs):   
-        verificacion_data = request.data    
-        token = secrets.token_urlsafe(20)
-        verificacion_data["token"] = token
-        verificacion_data["vence"] = datetime.now().date() + timedelta(days=1)
-        verificacion_serializer = VerificacionSerializer(data = verificacion_data)        
-        usuario = User.objects.get(username = verificacion_data.get('username'))
-        if usuario:
+        try:
+            verificacion_data = request.data
+            token = secrets.token_urlsafe(20)
+            verificacion_data["token"] = token
+            verificacion_data["vence"] = datetime.now().date() + timedelta(days=1)
+            verificacion_serializer = VerificacionSerializer(data = verificacion_data)        
+            usuario = User.objects.get(username = verificacion_data.get('username'))
             verificacion_data["codigo_usuario_fk"] = usuario.id
             if verificacion_serializer.is_valid():                                             
                 verificacion_serializer.save()
@@ -46,7 +46,8 @@ class VerificacionNuevo(APIView):
                     sg.send(message) 
                 return Response({'verificacion': verificacion_data}, status=status.HTTP_201_CREATED)            
             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'mensaje':'El usuario para recuperar la clave no existe', 'codigo':8, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'mensaje':'El usuario para recuperar la clave no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
 
 class VerificacionToken(APIView):
 

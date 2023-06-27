@@ -64,5 +64,7 @@ class UsuarioEmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,
             'usuario_id': instance.usuario_id,
             'empresa_id': instance.empresa_id,
-            'empresa': instance.empresa.schema_name
+            'subdominio': instance.empresa.schema_name,
+            'nombre': instance.empresa.nombre,
+            'imagen': instance.empresa.imagen
         }
