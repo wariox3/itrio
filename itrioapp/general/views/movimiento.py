@@ -45,18 +45,3 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                             movimientoImpuestoSerializador.save() 
             return Response({'movimiento':movimientoSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': movimientoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-    def handle_exception(self, exc):
-        response = super().handle_exception(exc)
-
-        if response is None:
-            return None
-
-        if response.status_code == 400:
-            response.data = {
-                'mensaje': 'Mensajes de validacion',
-                'codigo': 14,
-                'validacion': response.data
-            }
-
-        return response
