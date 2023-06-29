@@ -11,7 +11,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
     serializer_class = EmpresaSerializer    
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=False, methods=["post"], url_path=r'consulta-nombre',)
+    @action(detail=False, methods=["post"], url_path=r'consulta-subdominio',)
     def all_post_author(self, request):
         try:
             nombre = request.data.get('nombre')
@@ -19,4 +19,4 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             serializer = EmpresaSerializer(empresa)
             return Response({'empresa':serializer.data}, status=status.HTTP_200_OK)    
         except Empresa.DoesNotExist:
-            return Response({'mensaje':'No existe el registro', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'No existe el registro', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)
