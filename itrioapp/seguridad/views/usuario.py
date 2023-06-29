@@ -76,6 +76,7 @@ class EmpresaNuevoAPIView(APIView):
             subdominio = request.data.get('subdominio')
             usuario = request.data.get('usuario')
             nombre = request.data.get('nombre')
+            imagen = request.data.get('imagen')
             if subdominio and usuario and nombre:
                 empresaValidacion = Empresa.objects.filter(**{'schema_name':subdominio})
                 if empresaValidacion:
@@ -86,7 +87,7 @@ class EmpresaNuevoAPIView(APIView):
                     dominio = '.muupservicios.online'
                 if config('ENV') == 'prod':
                     dominio = '.redofice.com'
-                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0') 
+                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagen) 
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', '--schema', 'demo')
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', schema_name='demo', verbosity=0) 
                 #Asi no se deben ejecutar los fixtures
