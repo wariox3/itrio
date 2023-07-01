@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from seguridad.models import User, UsuarioEmpresa
 from seguridad.views.usuario_empresa import UsuarioEmpresaViewSet
 from inquilino.models import Empresa
-from .verificacion import VerificacionNuevo
+from .verificacion import VerificacionViewSet
 from django.core.management import call_command
 import os
 from decouple import config
@@ -34,8 +34,8 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             #Enviar verificacion (metodo)
             request.data['username'] = user.username
             request.data['accion'] = 'registro'
-            verificacionAPIView = VerificacionNuevo()
-            verificacionAPIView.post(request)
+            verificacionAPIView = VerificacionViewSet()
+            verificacionAPIView.create(request)
             return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
         return Response({'mensaje':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -74,10 +74,10 @@ class EmpresaNuevoAPIView(APIView):
     def post(self, request): 
         try:            
             subdominio = request.data.get('subdominio')
-            usuario = request.data.get('usuario')
+            parametroUsuario = request.data.get('usuario')
             nombre = request.data.get('nombre')
             imagen = request.data.get('imagen')
-            if subdominio and usuario and nombre:
+            if subdominio and parametroUsuario and nombre:
                 empresaValidacion = Empresa.objects.filter(**{'schema_name':subdominio})
                 if empresaValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
@@ -87,6 +87,7 @@ class EmpresaNuevoAPIView(APIView):
                     dominio = '.muupservicios.online'
                 if config('ENV') == 'prod':
                     dominio = '.redofice.com'
+                usuario = User.objects.get(pk=parametroUsuario)
                 call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagen) 
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', '--schema', 'demo')
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', schema_name='demo', verbosity=0) 
@@ -100,8 +101,8 @@ class EmpresaNuevoAPIView(APIView):
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/movimiento_clase.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/movimiento_tipo.json")
                 
-                empresaValidacion = Empresa.objects.filter(**{'schema_name':subdominio}).first()                        
-                data = {'usuario': usuario, 'empresa': empresaValidacion.id}
+                empresa = Empresa.objects.filter(**{'schema_name':subdominio}).first()                        
+                data = {'usuario': usuario.id, 'empresa': empresa.id}
                 usuario_empresa_serializer = UsuarioEmpresaSerializador(data=data)            
                 if usuario_empresa_serializer.is_valid():
                     usuario_empresa_serializer.save()               
@@ -110,4 +111,6 @@ class EmpresaNuevoAPIView(APIView):
             return Response({'mensaje': 'Debe suministrar un subdominio, nombre y el usuario', 'codigo':11}, status=status.HTTP_400_BAD_REQUEST)            
         except FileNotFoundError:
             return Response({'mensaje': 'Inesperado e indefinido', 'codigo':0}, status=status.HTTP_400_BAD_REQUEST)            
+        except User.DoesNotExist:
+            return Response({'mensaje':'No existe el usuario para crear la empresa', 'codigo':17}, status=status.HTTP_400_BAD_REQUEST)
         

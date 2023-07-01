@@ -44,11 +44,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f'{self.name} {self.last_name}'   
 
 class Verificacion(models.Model):
-    codigo_usuario_fk = models.IntegerField(null=True)
+    usuario_id = models.IntegerField(null=True)
+    empresa_id = models.IntegerField(null=True)
     token = models.CharField(max_length=50)
     estado_usado = models.BooleanField(default = False)
     vence = models.DateField(null=True)
     accion = models.CharField(max_length=10, default='registro')
+    usuario_invitado_username = models.EmailField(max_length = 255, null=True)
 
 class UsuarioEmpresa(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
