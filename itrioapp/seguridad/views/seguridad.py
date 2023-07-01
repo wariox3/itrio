@@ -24,5 +24,5 @@ class Login(TokenObtainPairView):
                     'refresh-token': login_serializer.validated_data.get('refresh'),
                     'user':user_serializer.data
                 }, status=status.HTTP_200_OK)
-            return Response({'error':'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'error':'Contraseña o nombre de usuario incorrectos'}, status=status.HTTP_400_BAD_REQUEST)        
+            return Response({'error':'Contraseña o nombre de usuario incorrectos', 'codigo':7}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'mensaje':'Contraseña o nombre de usuario incorrectos', 'codigo':7}, status=status.HTTP_400_BAD_REQUEST)        
