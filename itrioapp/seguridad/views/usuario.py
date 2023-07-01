@@ -52,16 +52,22 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             return Response({'actualizacion': True, 'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)            
         return Response({'mensaje':'Errores en la actualizacion del usuario', 'codigo':10, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-class ClaveCambiar(APIView):
+class CambiarClave(APIView):
 
     def post(self, request):    
-        codigoUsuario = request.data.get('id')
-        clave = request.data.get('password')
-        usuario = User.objects.get(id = codigoUsuario)
-        usuario.set_password(clave)
-        usuario.save()
-        return Response({'cambio': True}, status=status.HTTP_200_OK)
-
+        try:
+            raw = request.data        
+            codigoUsuario = raw.get('usuario_id')
+            clave = raw.get('password')
+            if codigoUsuario and clave:
+                usuario = User.objects.get(pk=codigoUsuario)
+                usuario.set_password(clave)
+                usuario.save()
+                return Response({'cambio': True}, status=status.HTTP_200_OK)
+            return Response({'mensaje':'Faltan parametros para el consumo de la api', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
+        
 class UsuarioEmpresaAPIView(APIView):
 
     def get(self, request, usuario_id): 
