@@ -57,13 +57,14 @@ class UsuarioEmpresaSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())
     class Meta:
         model = UsuarioEmpresa
-        fields = ['usuario', 'empresa']
+        fields = ['usuario', 'empresa', 'rol']
     
     def to_representation(self, instance):
         return {
             'id': instance.id,
             'usuario_id': instance.usuario_id,
             'empresa_id': instance.empresa_id,
+            'rol': instance.rol,
             'subdominio': instance.empresa.schema_name,
             'nombre': instance.empresa.nombre,
             'imagen': instance.empresa.imagen

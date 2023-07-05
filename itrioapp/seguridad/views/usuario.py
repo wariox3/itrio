@@ -108,7 +108,7 @@ class EmpresaNuevoAPIView(APIView):
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/movimiento_tipo.json")
                 
                 empresa = Empresa.objects.filter(**{'schema_name':subdominio}).first()                        
-                data = {'usuario': usuario.id, 'empresa': empresa.id}
+                data = {'usuario': usuario.id, 'empresa': empresa.id, 'rol': 'propietario'}
                 usuario_empresa_serializer = UsuarioEmpresaSerializador(data=data)            
                 if usuario_empresa_serializer.is_valid():
                     usuario_empresa_serializer.save()               

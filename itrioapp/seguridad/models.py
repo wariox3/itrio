@@ -55,6 +55,7 @@ class Verificacion(models.Model):
     usuario_invitado_username = models.EmailField(max_length = 255, null=True)
 
 class UsuarioEmpresa(models.Model):
+    rol = models.CharField(max_length=20, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     

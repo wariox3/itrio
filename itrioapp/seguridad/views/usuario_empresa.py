@@ -19,7 +19,7 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
             verificacion = Verificacion.objects.get(token=token)
             if User.objects.filter(username=verificacion.usuario_invitado_username).exists():
                 usuario = User.objects.get(username=verificacion.usuario_invitado_username)                
-                data = {'usuario': usuario.id, 'empresa': verificacion.empresa_id}
+                data = {'usuario': usuario.id, 'empresa': verificacion.empresa_id, 'rol':'invitado'}
                 usuario_empresa_serializador = UsuarioEmpresaSerializador(data=data)            
                 if usuario_empresa_serializador.is_valid():
                     usuario_empresa_serializador.save() 
