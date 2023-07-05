@@ -2,8 +2,9 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from seguridad.models import UsuarioEmpresa, Verificacion, User
-
+from inquilino.models import Empresa
 from seguridad.serializers import UsuarioEmpresaSerializador
+from inquilino.serializers import EmpresaSerializer
 
 
 class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
@@ -29,3 +30,18 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':"El usuario invitado no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
         except Verificacion.DoesNotExist:
             return Response({'mensaje':"La verificacion no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=["post"], url_path=r'validar',)
+    def validar(self, request):
+        raw = request.data
+        usuario_id = raw.get('usuario')
+        empresa_id = raw.get('empresa')
+        if usuario_id and empresa_id:            
+            if UsuarioEmpresa.objects.filter(usuario_id=usuario_id, empresa_id=empresa_id).exists():                
+                empresa = Empresa.objects.get(pk=empresa_id)
+                empresaSerializer = EmpresaSerializer(empresa)
+                return Response({'validar': True, 'empresa': empresaSerializer.data}, status=status.HTTP_200_OK)                
+            else:
+                return Response({'validar': False}, status=status.HTTP_200_OK) 
+        else:
+            return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
