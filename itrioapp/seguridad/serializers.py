@@ -21,7 +21,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     
     def create(self, validated_data):
         user = User(**validated_data)
-        user.email = user.username;
+        user.correo = user.username;
         user.is_active = False;
         user.dominio = "muupservicios.online";
         user.set_password(validated_data['password'])    
@@ -31,17 +31,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['name', 'last_name']
+        fields = ['nombre_corto', 'nombre', 'apellido', 'telefono']
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'dominio', 'name', 'last_name']    
+        fields = ['id', 'username', 'correo', 'dominio', 'nombre_corto', 'nombre', 'apellido', 'telefono']    
         
 class UserDetalleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'dominio', 'name', 'last_name']  
+        fields = ['id', 'username', 'dominio', 'nombre_corto', 'nombre', 'apellido', 'correo', 'telefono']  
 
 class VerificacionSerializer(serializers.ModelSerializer):
     class Meta:

@@ -41,10 +41,10 @@ class VerificacionViewSet(viewsets.ModelViewSet):
                 correo = Correo()
                 if accion == 'registro':                
                     contenido='Enlace para verificar http://muup.online/auth/verificacion/' + token                    
-                    correo.enviar(usuario.email, 'Debe verificar su cuenta redoffice', contenido)   
+                    correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido)   
                 if accion == 'clave':
                     contenido='Enlace para cambiar la clave http://muup.online/auth/clave/cambiar/' + token
-                    correo.enviar(usuario.email, 'Debe verificar su cuenta redoffice', contenido) 
+                    correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido) 
                 if accion == 'invitar':                
                     contenido = 'Siga este enlace para aceptar la invitacion http://muup.online/auth/xxxx/xxx/' + token                    
                     correo.enviar(invitado, 'Invitacion a redoffice', contenido)                                            
