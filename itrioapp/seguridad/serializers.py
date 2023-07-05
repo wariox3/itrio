@@ -11,7 +11,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username']
+        fields = ['id', 'username', 'nombre_corto']
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
 
