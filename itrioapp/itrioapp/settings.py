@@ -34,6 +34,8 @@ SHARED_APPS = (
 
 TENANT_APPS = (
     'general',
+    'contabilidad',
+    'venta'
 )
 
 INSTALLED_APPS = [
@@ -49,8 +51,10 @@ INSTALLED_APPS = [
     'django_tenants',
     "corsheaders",
     'inquilino',
+    'seguridad',
     'general',
-    'seguridad'
+    'contabilidad',
+    'venta'    
 ]
 
 MIDDLEWARE = [

@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from seguridad.models import UsuarioEmpresa, Verificacion, User
 from inquilino.models import Empresa
 from seguridad.serializers import UsuarioEmpresaSerializador
+from seguridad.serializers import UsuarioEmpresaConsultaEmpresaSerializador
 from inquilino.serializers import EmpresaSerializer
 
 
@@ -43,5 +44,16 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'validar': True, 'empresa': empresaSerializer.data}, status=status.HTTP_200_OK)                
             else:
                 return Response({'validar': False}, status=status.HTTP_200_OK) 
+        else:
+            return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'consulta-empresa',)
+    def consulta_empresa(self, request):
+        raw = request.data
+        empresa_id = raw.get('empresa_id')
+        if empresa_id:  
+            usuarioEmpresa = UsuarioEmpresa.objects.filter(empresa_id=empresa_id)                         
+            usuarioEmpresaSerializer = UsuarioEmpresaConsultaEmpresaSerializador(usuarioEmpresa, many=True)
+            return Response({'usuarios': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)

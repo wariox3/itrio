@@ -4,6 +4,7 @@ from general.models.movimiento import Movimiento
 from general.serializers.movimiento import MovimientoSerializer
 from general.serializers.movimiento_detalle import MovimientoDetalleSerializer
 from general.serializers.movimiento_impuesto import MovimientoImpuestoSerializer
+from rest_framework.decorators import action
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = Movimiento.objects.all()
@@ -45,3 +46,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                             movimientoImpuestoSerializador.save() 
             return Response({'movimiento':movimientoSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': movimientoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=["post"], url_path=r'aprobar',)
+    def aprobar(self, request):
+        try:
+            raw = request.data
+            codigoMovimiento = raw.get('movimiento_id')
+            if codigoMovimiento:
+                movimiento = Movimiento.objects.get(pk=codigoMovimiento)
+                return Response({'mensaje':'Se aprobo'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except Movimiento.DoesNotExist:
+            return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)

@@ -12,8 +12,9 @@ class Movimiento(models.Model):
     base_impuesto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     impuesto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    movimiento_tipo = models.ForeignKey(MovimientoTipo, on_delete=models.CASCADE, related_name='movimientos')
-    contacto = models.ForeignKey(Contacto, null=True, on_delete=models.CASCADE, related_name='movimientos')
+    estado_aprobado = models.BooleanField(default = False)
+    movimiento_tipo = models.ForeignKey(MovimientoTipo, on_delete=models.CASCADE, related_name='gen_movimientos')
+    contacto = models.ForeignKey(Contacto, null=True, on_delete=models.CASCADE, related_name='gen_movimientos')
 
     class Meta:
         db_table = "gen_movimiento"

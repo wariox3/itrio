@@ -24,6 +24,7 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('general/', include("general.urls")),
+    path('contabilidad/', include("contabilidad.urls")),
     path('seguridad/', include("seguridad.urls")),
     path('inquilino/', include("inquilino.urls")),
     path('seguridad/login/', Login.as_view(), name='login'),

@@ -49,10 +49,6 @@ class VerificacionSerializer(serializers.ModelSerializer):
         fields = ['id', 'token', 'estado_usado', 'vence', 'accion', 'usuario_id', 'empresa_id', 'usuario_invitado_username']      
 
 class UsuarioEmpresaSerializador(serializers.HyperlinkedModelSerializer):
-    # se renderiza por to_representation
-    #usuario = UserListSerializer()
-    # se renderiza por to_representation
-    #empresa = .StringRelatserializersedField()
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())
     class Meta:
@@ -69,3 +65,18 @@ class UsuarioEmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.empresa.nombre,
             'imagen': instance.empresa.imagen
         }
+    
+class UsuarioEmpresaConsultaEmpresaSerializador(serializers.ModelSerializer):
+    usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    class Meta:
+        model = UsuarioEmpresa
+        fields = ['id', 'usuario']
+    
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'empresa_id': instance.empresa_id,
+            'usuario_id': instance.usuario_id,            
+            'rol': instance.rol,
+            'username': instance.usuario.username
+        }        
