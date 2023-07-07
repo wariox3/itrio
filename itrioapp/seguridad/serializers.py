@@ -21,9 +21,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     
     def create(self, validated_data):
         user = User(**validated_data)
-        user.correo = user.username;
-        user.is_active = False;
-        user.dominio = "muupservicios.online";
+        user.correo = user.username
+        arrCadena = user.username.split("@")
+        user.nombre_corto = arrCadena[0]
+        user.is_active = False
+        user.dominio = "muupservicios.online"
         user.set_password(validated_data['password'])    
         user.save()
         return user
