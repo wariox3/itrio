@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from seguridad.models import UsuarioEmpresa, Verificacion, User
 from inquilino.models import Empresa
-from seguridad.serializers import UsuarioEmpresaSerializador
-from seguridad.serializers import UsuarioEmpresaConsultaEmpresaSerializador
+from seguridad.serializers import UsuarioEmpresaSerializador, UsuarioEmpresaConsultaEmpresaSerializador
 from inquilino.serializers import EmpresaSerializer
 
 
@@ -79,3 +78,14 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
             return Response({'usuarios': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'consulta-usuario',)
+    def consulta_usuario(self, request):
+        raw = request.data
+        usuario_id = raw.get('usuario_id')
+        if usuario_id:  
+            usuarioEmpresa = UsuarioEmpresa.objects.filter(usuario_id=usuario_id).order_by('-rol')                         
+            usuarioEmpresaSerializer = UsuarioEmpresaSerializador(usuarioEmpresa, many=True)
+            return Response({'empresas': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
+        else:
+            return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        

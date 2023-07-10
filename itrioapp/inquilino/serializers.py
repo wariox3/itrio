@@ -12,3 +12,8 @@ class EmpresaSerializer(serializers.ModelSerializer):
             'subdominio': instance.schema_name,
             'nombre': instance.nombre,
         } 
+    
+class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Empresa
+        fields = ['nombre']    

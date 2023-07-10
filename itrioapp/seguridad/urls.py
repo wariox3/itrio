@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views.usuario import UsuarioViewSet, CambiarClave, UsuarioEmpresaAPIView, EmpresaNuevoAPIView
+from .views.usuario import UsuarioViewSet, CambiarClave
 from .views.usuario_empresa import UsuarioEmpresaViewSet
 from .views.verificacion import VerificacionViewSet
 
@@ -11,7 +11,5 @@ router.register(r'usuarioempresa', UsuarioEmpresaViewSet, basename="usuario_empr
 
 urlpatterns = [
     path('', include(router.urls)),      
-    path('cambiar-clave/', CambiarClave.as_view(), name = 'cambiar_clave'),
-    path('usuario/empresa/<str:usuario_id>/', UsuarioEmpresaAPIView.as_view(), name = 'usuario_empresa'),
-    path('empresa/nuevo/', EmpresaNuevoAPIView.as_view(), name = 'empresa_nuevo'),
+    path('cambiar-clave/', CambiarClave.as_view(), name = 'cambiar_clave')
 ]
