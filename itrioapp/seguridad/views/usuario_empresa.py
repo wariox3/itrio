@@ -19,16 +19,22 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
             raw = request.data
             token = raw.get('token')
             verificacion = Verificacion.objects.get(token=token)
-            if User.objects.filter(username=verificacion.usuario_invitado_username).exists():
-                usuario = User.objects.get(username=verificacion.usuario_invitado_username)                
-                data = {'usuario': usuario.id, 'empresa': verificacion.empresa_id, 'rol':'invitado'}
-                usuario_empresa_serializador = UsuarioEmpresaSerializador(data=data)            
-                if usuario_empresa_serializador.is_valid():
-                    usuario_empresa_serializador.save() 
-                    return Response({'confirmar': True}, status=status.HTTP_200_OK)
-                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuario_empresa_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+            if verificacion.estado_usado == False:
+                if User.objects.filter(username=verificacion.usuario_invitado_username).exists():
+                    usuario = User.objects.get(username=verificacion.usuario_invitado_username)                
+                    data = {'usuario': usuario.id, 'empresa': verificacion.empresa_id, 'rol':'invitado'}
+                    usuario_empresa_serializador = UsuarioEmpresaSerializador(data=data)            
+                    if usuario_empresa_serializador.is_valid():
+                        usuario_empresa_serializador.save()
+                        verificacion.estado_usado = True
+                        verificacion.save() 
+                        return Response({'confirmar': True}, status=status.HTTP_200_OK)
+                    return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuario_empresa_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje':"El usuario invitado no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)            
             else:
-                return Response({'mensaje':"El usuario invitado no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'mensaje':"El token ya fue usado", 'codigo': 6}, status=status.HTTP_400_BAD_REQUEST)
+
         except Verificacion.DoesNotExist:
             return Response({'mensaje':"La verificacion no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
 

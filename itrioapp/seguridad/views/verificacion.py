@@ -2,7 +2,7 @@ import secrets
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from seguridad.serializers import VerificacionSerializer
-from seguridad.models import User, Verificacion
+from seguridad.models import User, Verificacion, UsuarioEmpresa
 from inquilino.models import Empresa
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
@@ -33,6 +33,8 @@ class VerificacionViewSet(viewsets.ModelViewSet):
                         usuarioInvitado = User.objects.get(username = invitado)
                         if usuarioInvitado.id == usuario.id:
                             return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
+                        if UsuarioEmpresa.objects.filter(usuario_id=usuarioInvitado.id, empresa_id=empresa.id).exists():
+                            return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje':'Debe especificar el correo para invitar', 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)                
             verificacion_serializer = VerificacionSerializer(data = raw)
