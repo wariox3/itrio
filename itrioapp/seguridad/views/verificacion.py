@@ -48,7 +48,7 @@ class VerificacionViewSet(viewsets.ModelViewSet):
                     contenido='Enlace para cambiar la clave http://muup.online/auth/clave/cambiar/' + token
                     correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido) 
                 if accion == 'invitar':                
-                    contenido = 'Siga este enlace para aceptar la invitacion http://muup.online/auth/xxxx/xxx/' + token                    
+                    contenido = 'Siga este enlace para aceptar la invitacion https://muup.online/auth/login/' + token                    
                     correo.enviar(invitado, 'Invitacion a redoffice', contenido)                                            
                 return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
