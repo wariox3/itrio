@@ -15,6 +15,8 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'confirmar',)
     def confirmar(self, request):
+        usuarioSesion = request.user
+        #return Response("Hola mundo" + str(Usuario.id),status=status.HTTP_200_OK)
         try:
             raw = request.data
             token = raw.get('token')
@@ -22,19 +24,24 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
             if verificacion.estado_usado == False:
                 if User.objects.filter(username=verificacion.usuario_invitado_username).exists():
                     usuario = User.objects.get(username=verificacion.usuario_invitado_username)                
-                    data = {'usuario': usuario.id, 'empresa': verificacion.empresa_id, 'rol':'invitado'}
-                    usuario_empresa_serializador = UsuarioEmpresaSerializador(data=data)            
-                    if usuario_empresa_serializador.is_valid():
-                        usuario_empresa_serializador.save()
-                        verificacion.estado_usado = True
-                        verificacion.save() 
-                        return Response({'confirmar': True}, status=status.HTTP_200_OK)
-                    return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuario_empresa_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                    if not UsuarioEmpresa.objects.filter(usuario_id=usuario.id, empresa_id=verificacion.empresa_id).exists():
+                        if usuario.id == usuarioSesion.id:
+                            data = {'usuario': usuario.id, 'empresa': verificacion.empresa_id, 'rol':'invitado'}
+                            usuario_empresa_serializador = UsuarioEmpresaSerializador(data=data)            
+                            if usuario_empresa_serializador.is_valid():
+                                usuario_empresa_serializador.save()
+                                verificacion.estado_usado = True
+                                verificacion.save() 
+                                return Response({'confirmar': True}, status=status.HTTP_200_OK)
+                            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuario_empresa_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        else:
+                            return Response({'mensaje':"El usuario que inicio sesion no es el usuario invitado", 'codigo': 21}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'mensaje':"El usuario invitado no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)            
+                    return Response({'mensaje':"El usuario invitado no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
             else:
                 return Response({'mensaje':"El token ya fue usado", 'codigo': 6}, status=status.HTTP_400_BAD_REQUEST)
-
         except Verificacion.DoesNotExist:
             return Response({'mensaje':"La verificacion no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
 
@@ -58,7 +65,7 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
         raw = request.data
         empresa_id = raw.get('empresa_id')
         if empresa_id:  
-            usuarioEmpresa = UsuarioEmpresa.objects.filter(empresa_id=empresa_id)                         
+            usuarioEmpresa = UsuarioEmpresa.objects.filter(empresa_id=empresa_id).order_by('-rol')                         
             usuarioEmpresaSerializer = UsuarioEmpresaConsultaEmpresaSerializador(usuarioEmpresa, many=True)
             return Response({'usuarios': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:

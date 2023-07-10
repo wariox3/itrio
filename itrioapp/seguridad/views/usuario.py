@@ -71,7 +71,7 @@ class CambiarClave(APIView):
 class UsuarioEmpresaAPIView(APIView):
 
     def get(self, request, usuario_id): 
-        queryset = UsuarioEmpresa.objects.filter(usuario_id = usuario_id)
+        queryset = UsuarioEmpresa.objects.filter(usuario_id = usuario_id).order_by('-rol')
         serializer_class = UsuarioEmpresaSerializador(queryset, many=True)
         return Response(serializer_class.data, status=status.HTTP_200_OK)
 
