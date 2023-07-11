@@ -75,8 +75,8 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             return Response({'actualizacion': True, 'empresa': empresaSerializador.data}, status=status.HTTP_201_CREATED)            
         return Response({'mensaje':'Errores en la actualizacion', 'codigo':23, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, *args, **kwargs):
-        empresa = self.get_object()        
+    def destroy(self, request, pk=None, *args, **kwargs):
+        empresa = self.get_object(pk)        
         self.perform_destroy(empresa)
         return Response(status=status.HTTP_200_OK)
 
