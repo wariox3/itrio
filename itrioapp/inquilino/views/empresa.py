@@ -36,7 +36,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 if config('ENV') == 'prod':
                     dominio = '.redofice.com'
                 usuario = User.objects.get(pk=parametroUsuario)
-                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagen) 
+                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagen, usuario_id=usuario.id, plan_id=1, usuarios=1)
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', '--schema', 'demo')
                 #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', schema_name='demo', verbosity=0) 
                 #Asi no se deben ejecutar los fixtures

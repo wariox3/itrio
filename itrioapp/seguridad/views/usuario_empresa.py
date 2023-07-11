@@ -16,6 +16,9 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
         usuarioEmpresa = self.get_object()
         if usuarioEmpresa.rol == 'invitado':
             self.perform_destroy(usuarioEmpresa)
+            empresa = Empresa.objects.get(pk=usuarioEmpresa.empresa_id)
+            empresa.usuarios -= 1
+            empresa.save()
             return Response(status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':"El usuario propietario no se puede eliminar", 'codigo': 22}, status=status.HTTP_400_BAD_REQUEST)
@@ -39,7 +42,10 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
                             if usuario_empresa_serializador.is_valid():
                                 usuario_empresa_serializador.save()
                                 verificacion.estado_usado = True
-                                verificacion.save() 
+                                verificacion.save()
+                                empresa = Empresa.objects.get(pk=verificacion.empresa_id) 
+                                empresa.usuarios += 1
+                                empresa.save()
                                 return Response({'confirmar': True}, status=status.HTTP_200_OK)
                             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuario_empresa_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                         else:

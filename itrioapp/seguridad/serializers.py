@@ -57,6 +57,10 @@ class UsuarioEmpresaSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['usuario', 'empresa', 'rol']
     
     def to_representation(self, instance):
+        plan = instance.empresa.plan
+        planNombre = None
+        if plan:
+            planNombre = plan.nombre
         return {
             'id': instance.id,
             'usuario_id': instance.usuario_id,
@@ -64,7 +68,10 @@ class UsuarioEmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'rol': instance.rol,
             'subdominio': instance.empresa.schema_name,
             'nombre': instance.empresa.nombre,
-            'imagen': instance.empresa.imagen
+            'imagen': instance.empresa.imagen,
+            'usuarios': instance.empresa.usuarios,
+            'plan_id': instance.empresa.plan_id,
+            'plan_nombre': planNombre
         }
     
 class UsuarioEmpresaConsultaEmpresaSerializador(serializers.ModelSerializer):
