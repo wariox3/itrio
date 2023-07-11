@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from seguridad.models import User, Verificacion, UsuarioEmpresa
 from inquilino.models import Empresa
-from inquilino.serializers import EmpresaSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 # Serializers define the API representation.
