@@ -46,6 +46,10 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
                         return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
                     if UsuarioEmpresa.objects.filter(usuario_id=usuarioInvitado.id, empresa_id=empresa.id).exists():
                         return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
+                if empresa.plan:
+                    if empresa.plan.limite_usuarios > 0:
+                        if empresa.plan.limite_usuarios >= empresa.usuarios:
+                            return Response({'mensaje':'La empresa supera el numero de usuarios segun el plan, si quiere invitar nuevos usuarios debe incrementar el plan', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
                 verificacion_serializer = VerificacionSerializer(data = raw)
                 if verificacion_serializer.is_valid():                                             
                     verificacion_serializer.save()
