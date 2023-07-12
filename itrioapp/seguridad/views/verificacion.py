@@ -22,18 +22,19 @@ class VerificacionViewSet(viewsets.ModelViewSet):
             if accion == 'clave' or accion == 'registro':
                 usuario = User.objects.get(username = raw.get('username'))
                 raw["usuario_id"] = usuario.id
-            verificacion_serializer = VerificacionSerializer(data = raw)
-            if verificacion_serializer.is_valid():                                             
-                verificacion_serializer.save()
-                correo = Correo()
-                if accion == 'registro':                
-                    contenido='Enlace para verificar http://muup.online/auth/verificacion/' + token                    
-                    correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido)   
-                if accion == 'clave':
-                    contenido='Enlace para cambiar la clave http://muup.online/auth/clave/cambiar/' + token
-                    correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido) 
-                return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
-            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                verificacion_serializer = VerificacionSerializer(data = raw)
+                if verificacion_serializer.is_valid():                                             
+                    verificacion_serializer.save()
+                    correo = Correo()
+                    if accion == 'registro':                
+                        contenido='Enlace para verificar http://muup.online/auth/verificacion/' + token                    
+                        correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido)   
+                    if accion == 'clave':
+                        contenido='Enlace para cambiar la clave http://muup.online/auth/clave/cambiar/' + token
+                        correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido) 
+                    return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
+                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'La accion de la verificacion invalida', 'codigo':24}, status=status.HTTP_400_BAD_REQUEST)            
         except User.DoesNotExist:
             return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:
