@@ -18,25 +18,10 @@ class VerificacionViewSet(viewsets.ModelViewSet):
             accion = raw.get('accion')
             token = secrets.token_urlsafe(20)            
             raw["token"] = token
-            raw["vence"] = datetime.now().date() + timedelta(days=1)
-            invitado = raw.get('invitado')
+            raw["vence"] = datetime.now().date() + timedelta(days=1)        
             if accion == 'clave' or accion == 'registro':
                 usuario = User.objects.get(username = raw.get('username'))
                 raw["usuario_id"] = usuario.id
-            if accion == 'invitar':
-                empresa = Empresa.objects.get(pk=raw.get('empresa_id'))
-                usuario = User.objects.get(pk=raw.get('usuario_id'))
-                raw["empresa_id"] = empresa.id
-                if invitado:
-                    raw["usuario_invitado_username"] = invitado
-                    if User.objects.filter(username=invitado).exists():
-                        usuarioInvitado = User.objects.get(username = invitado)
-                        if usuarioInvitado.id == usuario.id:
-                            return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
-                        if UsuarioEmpresa.objects.filter(usuario_id=usuarioInvitado.id, empresa_id=empresa.id).exists():
-                            return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    return Response({'mensaje':'Debe especificar el correo para invitar', 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)                
             verificacion_serializer = VerificacionSerializer(data = raw)
             if verificacion_serializer.is_valid():                                             
                 verificacion_serializer.save()
@@ -47,9 +32,6 @@ class VerificacionViewSet(viewsets.ModelViewSet):
                 if accion == 'clave':
                     contenido='Enlace para cambiar la clave http://muup.online/auth/clave/cambiar/' + token
                     correo.enviar(usuario.correo, 'Debe verificar su cuenta redoffice', contenido) 
-                if accion == 'invitar':                
-                    contenido = 'Siga este enlace para aceptar la invitacion http://muup.online/auth/login/' + token                    
-                    correo.enviar(invitado, 'Invitacion a redoffice', contenido)                                            
                 return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:

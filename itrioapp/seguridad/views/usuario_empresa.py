@@ -1,11 +1,13 @@
+import secrets
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from seguridad.models import UsuarioEmpresa, Verificacion, User
 from inquilino.models import Empresa
-from seguridad.serializers import UsuarioEmpresaSerializador, UsuarioEmpresaConsultaEmpresaSerializador
+from seguridad.serializers import UsuarioEmpresaSerializador, UsuarioEmpresaConsultaEmpresaSerializador, VerificacionSerializer
 from inquilino.serializers import EmpresaSerializer
-
+from datetime import datetime, timedelta
+from utilidades.correo import Correo
 
 class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
     queryset = UsuarioEmpresa.objects.all()
@@ -22,7 +24,42 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':"El usuario propietario no se puede eliminar", 'codigo': 22}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+    @action(detail=False, methods=["post"], url_path=r'invitar',)
+    def invitar(self, request):
+        try:
+            raw = request.data
+            invitado = raw.get('invitado')
+            empresa_id = raw.get('empresa_id')
+            usuario_id = raw.get('usuario_id')
+            if invitado and empresa_id and usuario_id:
+                empresa = Empresa.objects.get(pk=empresa_id)
+                usuario = User.objects.get(pk=usuario_id)
+                token = secrets.token_urlsafe(20)            
+                raw["token"] = token
+                raw["vence"] = datetime.now().date() + timedelta(days=1)
+                raw["empresa_id"] = empresa.id
+                raw["usuario_invitado_username"] = invitado
+                if User.objects.filter(username=invitado).exists():
+                    usuarioInvitado = User.objects.get(username = invitado)
+                    if usuarioInvitado.id == usuario.id:
+                        return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
+                    if UsuarioEmpresa.objects.filter(usuario_id=usuarioInvitado.id, empresa_id=empresa.id).exists():
+                        return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
+                verificacion_serializer = VerificacionSerializer(data = raw)
+                if verificacion_serializer.is_valid():                                             
+                    verificacion_serializer.save()
+                    correo = Correo()               
+                    contenido = 'Siga este enlace para aceptar la invitacion http://muup.online/auth/login/' + token                    
+                    correo.enviar(invitado, 'Invitacion a redoffice', contenido)                                            
+                    return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
+                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)                    
+            else:
+                return Response({'mensaje':'Faltal parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                
+        except User.DoesNotExist:
+            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
+        except Empresa.DoesNotExist:
+            return Response({'mensaje':'La empresa no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST) 
 
     @action(detail=False, methods=["post"], url_path=r'confirmar',)
     def confirmar(self, request):
