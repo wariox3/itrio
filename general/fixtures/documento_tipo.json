@@ -1,0 +1,7 @@
+[
+  {
+    "model": "general.documentoTipo",
+    "pk": 1,
+    "fields": {"nombre": "Factura venta", "documento_clase_id": 1}
+  }
+]
