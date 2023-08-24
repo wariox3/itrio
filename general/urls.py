@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views.prueba import PruebaView
+from .views.prueba import PruebaView, enviar_coreo
 from .views.general import ListaView
 from .views.item import ItemViewSet
 from .views.impuesto import ImpuestoViewSet
@@ -23,9 +23,9 @@ router.register(r'impuesto', ImpuestoViewSet)
 router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'documento', MovimientoViewSet)
 
-
 urlpatterns = [    
     path('', include(router.urls)),
     path('funcionalidad/lista/', ListaView.as_view(), name='general'),
-    path('prueba/', PruebaView.as_view(), name='prueba')
+    path('prueba/', PruebaView.as_view(), name='prueba'),
+    path('prueba/enviar-correo/', enviar_coreo, name='prueba-enviar-correo')
 ]

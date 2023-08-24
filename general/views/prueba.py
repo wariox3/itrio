@@ -1,25 +1,17 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.core.mail import send_mail
-from decouple import config 
-from utilidades.space_do import SpaceDo
+from rest_framework.decorators import api_view
 from general.models.item import Item
+from utilidades.correo import Correo
+from decouple import config 
 import random
 
-def vistaTamplate(request):
-    return render(request, "general/prueba.html")
-
-def vista(request):
-    send_mail(
-        "Subject here",
-        "Here is the message.",
-        "from@example.com",
-        ["to@example.com"],
-        fail_silently=False,
-    )
-    return HttpResponse("Hola mundo")
+@api_view(['GET'])
+def enviar_coreo(request):
+    correo = Correo() 
+    contenido='Hola mundo!'
+    correo.enviar('maestradaz3@gmail.com', 'Correo de prueba', contenido) 
+    return Response({"message": "Hello, world!"})
 
 class PruebaView(APIView):
     def get(self, request):
