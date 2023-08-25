@@ -46,4 +46,18 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'ciudad': instance.ciudad.nombre,
             'regimen': instance.regimen.nombre,
             'tipo_persona': instance.tipo_persona.nombre,
+        }     
+
+class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
+    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
+    class Meta:
+        model = Contacto 
+        
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,            
+            'nombre_corto': instance.nombre_corto
         }        
