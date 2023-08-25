@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views.prueba import PruebaView, enviar_coreo
-from .views.general import ListaAdministradorView, ListaAutocompletarView, ListaMovimientoView
+from .views.general import ListaAdministradorView, ListaAutocompletarView, ListaDocumentoView
 from .views.item import ItemViewSet
 from .views.impuesto import ImpuestoViewSet
 from .views.item_impuesto import ItemImpuestoViewSet
@@ -26,7 +26,7 @@ router.register(r'documento', MovimientoViewSet)
 urlpatterns = [    
     path('', include(router.urls)),
     path('funcionalidad/lista-administrador/', ListaAdministradorView.as_view(), name='general'),
-    path('funcionalidad/lista-movimiento/', ListaMovimientoView.as_view(), name='general'),
+    path('funcionalidad/lista-documento/', ListaDocumentoView.as_view(), name='general'),
     path('funcionalidad/lista-autocompletar/', ListaAutocompletarView.as_view(), name='general'),
     path('prueba/', PruebaView.as_view(), name='prueba'),
     path('prueba/enviar-correo/', enviar_coreo, name='prueba-enviar-correo')

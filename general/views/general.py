@@ -42,7 +42,7 @@ class ListaAdministradorView(APIView):
             return Response({"propiedades":fields_info, "registros": serializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
-class ListaMovimientoView(APIView):
+class ListaDocumentoView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
