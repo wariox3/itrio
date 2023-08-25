@@ -7,11 +7,11 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Documento
         fields = ['id', 'documento_tipo', 'subtotal', 'descuento', 'impuesto', 'total_bruto', 'total']
-        
+
     def to_representation(self, instance):
         return {
             'id': instance.id,            
-            'documento_tipo': instance.documento_tipo,
+            'documento_tipo_id': instance.documento_tipo_id,
             'subtotal': instance.subtotal,
             'descuento': instance.descuento,
             'impuesto': instance.impuesto,

@@ -5,7 +5,7 @@ from .views.item import ItemViewSet
 from .views.impuesto import ImpuestoViewSet
 from .views.item_impuesto import ItemImpuestoViewSet
 from .views.contacto import ContactoViewSet
-from .views.movimiento import MovimientoViewSet
+from .views.documento import DocumentoViewSet
 from .views.identificacion import IdentificacionViewSet
 from .views.ciudad import CiudadViewSet
 from .views.tipo_persona import TipoPersonaViewSet
@@ -21,7 +21,7 @@ router.register(r'contacto', ContactoViewSet)
 router.register(r'item', ItemViewSet)
 router.register(r'impuesto', ImpuestoViewSet)
 router.register(r'itemimpuesto', ItemImpuestoViewSet)
-router.register(r'documento', MovimientoViewSet)
+router.register(r'documento', DocumentoViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
