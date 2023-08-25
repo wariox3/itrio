@@ -16,3 +16,14 @@ class ItemSerializador(serializers.HyperlinkedModelSerializer):
             'costo': instance.costo,
             'precio': instance.precio
         } 
+    
+class ItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = Item
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,            
+            'nombre': instance.nombre,
+        }     
