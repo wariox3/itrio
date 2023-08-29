@@ -19,6 +19,6 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'total' :  instance.total,
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence,
-            'contacto' : instance.contacto,
+            'contacto_id' : instance.contacto,
             'numero' : instance.numero
         }
