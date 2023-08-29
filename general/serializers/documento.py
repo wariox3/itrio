@@ -6,7 +6,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     class Meta:
         model = Documento
-        fields = ['id', 'documento_tipo', 'subtotal', 'descuento', 'impuesto', 'total_bruto', 'total', 'fecha', 'contacto_id', 'numero', 'fecha_vence', 'contacto_nombre']
+        fields = ['id', 'documento_tipo', 'subtotal', 'descuento', 'impuesto', 'total_bruto', 'total', 'fecha', 'contacto', 'numero', 'fecha_vence']
 
     def to_representation(self, instance):
         return {
@@ -20,6 +20,5 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence,
             'contacto_id' : instance.contacto_id,
-            'contacto_nombre': instance.contacto_nombre_corto,
             'numero' : instance.numero
         }
