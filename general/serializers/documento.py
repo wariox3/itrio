@@ -8,9 +8,14 @@ class ContactoSerializador(serializers.ModelSerializer):
         model = Contacto
         fields = ['nombre_corto', 'numero_identificacion']
 
+class DocumentoTipoSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = DocumentoTipo
+        fields = ['documento_tipo_id', 'nombre']
+
 class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
-    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())
+    documentoTipo = DocumentoTipoSerializador()
     contacto = ContactoSerializador()    
     class Meta:
         model = Documento
-        fields = ['id', 'documento_tipo', 'subtotal', 'descuento', 'impuesto', 'total_bruto', 'total', 'fecha', 'contacto', 'numero', 'fecha_vence']
+        fields = ['id', 'subtotal', 'descuento', 'impuesto', 'total_bruto', 'total', 'fecha', 'contacto', 'numero', 'fecha_vence']
