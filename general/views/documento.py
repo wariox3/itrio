@@ -47,6 +47,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'documento': documentoSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
+    @action(detail=False, methods=["post"], url_path=r'eliminar',)
+    def eliminar(self, request):
+        try:
+            raw = request.data
+            documentos = raw.get('documentos')
+            if documentos:  
+                for documento in documentos:
+                    documentoEliminar = Documento.objects.get(pk=documento)  
+                    if documentoEliminar:
+                        documentoEliminar.delete()   
+                return Response({'mensaje':'Registros eliminados'}, status=status.HTTP_200_OK)
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except Documento.DoesNotExist:
+            return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'aprobar',)
     def aprobar(self, request):
         try:
