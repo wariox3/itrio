@@ -1,8 +1,10 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from general.models.documento import Documento
+from general.models.documento_detalle import DocumentoDetalle
 from general.serializers.documento import DocumentoSerializador
-from general.serializers.documento_detalle import DocumentoDetalleSerializer
+from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializer
 from rest_framework.decorators import action
 
@@ -10,6 +12,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
     serializer_class = DocumentoSerializador
     permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        pass
 
     def create(self, request):
         raw = request.data
@@ -29,7 +34,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     "total_bruto":detalle['total_bruto'],
                     "total":detalle['total']
                 }
-                detalleSerializador = DocumentoDetalleSerializer(data=datosDetalle)
+                detalleSerializador = DocumentoDetalleSerializador(data=datosDetalle)
                 if detalleSerializador.is_valid():
                     documentoDetalle = detalleSerializador.save() 
                     impuestos = detalle.get('impuestos')
@@ -44,9 +49,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documentoImpuestoSerializador = DocumentoImpuestoSerializer(data=datosDocumentoImpuesto)
                         if documentoImpuestoSerializador.is_valid():
                             documentoImpuestoSerializador.save() 
+                else:
+                    return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
             return Response({'documento': documentoSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
+    def retrieve(self, request, pk=None):
+        queryset = Documento.objects.all()
+        documento = get_object_or_404(queryset, pk=pk)
+        documentoSerializador = DocumentoSerializador(documento)
+        documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
+        documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+        documentoRespuesta = documentoSerializador.data
+        documentoRespuesta['detalles'] = documentoDetallesSerializador.data
+        return Response({'documento':documentoRespuesta}, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
     def eliminar(self, request):
         try:
