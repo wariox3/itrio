@@ -21,15 +21,18 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'subtotal', 'descuento', 'impuesto', 'total_bruto', 'total', 'fecha', 'contacto', 'numero', 'fecha_vence']
 
     def to_representation(self, instance):
-        return {
-            'id': instance.id,            
-            'subtotal': instance.subtotal,
-            'descuento': instance.descuento,
-            'impuesto': instance.impuesto,
-            'total_bruto': instance.total_bruto,
-            'total' :  instance.total,
-            'fecha' : instance.fecha,
-            'fecha_vence' : instance.fecha_vence,
-            'contacto_id' : instance.contacto_id,
-            'numero' : instance.numero
-        }
+        representation = super().to_representation(instance)  # Obtener la representación predeterminada del objeto
+
+        # Obtener la representación de los objetos relacionados
+        documento_tipo_representation = representation.pop('documentoTipo')
+        contacto_representation = representation.pop('contacto')
+        
+        # Agregar los campos del serializador DocumentoTipoSerializador
+        for field, value in documento_tipo_representation.items():
+            representation[field] = value
+
+        # Agregar los campos del serializador ContactoSerializador
+        for field, value in contacto_representation.items():
+            representation[field] = value
+        
+        return representation
