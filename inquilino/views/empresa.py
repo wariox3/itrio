@@ -51,6 +51,8 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/regimen.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/documento_clase.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/documento_tipo.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/forma_pago.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/metodo_pago.json")
                 
                 empresa = Empresa.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario.id, 'empresa': empresa.id, 'rol': 'propietario'}

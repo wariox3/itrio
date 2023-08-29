@@ -1,0 +1,12 @@
+[
+  {
+    "model": "general.formaPago",
+    "pk": 1,
+    "fields": {"nombre": "Contado"}
+  },
+  {
+    "model": "general.formaPago",
+    "pk": 2,
+    "fields": {"nombre": "Credito"}
+  }
+]

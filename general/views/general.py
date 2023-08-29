@@ -4,9 +4,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from general.models.item import Item
 from general.models.contacto import Contacto
+from general.models.forma_pago import FormaPago
+from general.models.metodo_pago import MetodoPago
 from general.models.documento import Documento
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador
 from general.serializers.contacto import ContactoSerializador, ContactoListaAutocompletarSerializador
+from general.serializers.forma_pago import FormaPagoSerializador, FormaPagoListaAutocompletarSerializador
+from general.serializers.metodo_pago import MetodoPagoSerializador, MetodoPagoListaAutocompletarSerializador
 from general.serializers.documento import DocumentoSerializador
 from rest_framework.permissions import IsAuthenticated
 
