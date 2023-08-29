@@ -11,7 +11,7 @@ class ContactoSerializador(serializers.ModelSerializer):
 class DocumentoTipoSerializador(serializers.ModelSerializer):
     class Meta:
         model = DocumentoTipo
-        fields = ['documento_tipo_id', 'nombre']
+        fields = ['id', 'nombre']
 
 class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
     documentoTipo = DocumentoTipoSerializador()
