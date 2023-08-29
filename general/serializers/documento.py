@@ -9,12 +9,14 @@ class ContactoSerializador(serializers.ModelSerializer):
         fields = ['nombre_corto', 'numero_identificacion']
 
 class DocumentoTipoSerializador(serializers.ModelSerializer):
+    documento_tipo_id = serializers.IntegerField(source='id')
+    
     class Meta:
         model = DocumentoTipo
-        fields = ['id', 'nombre']
+        fields = ['documento_tipo_id', 'nombre']
 
 class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
-    documentoTipo = DocumentoTipoSerializador()
+    documentoTipo = DocumentoTipoSerializador(source='documento_tipo')
     contacto = ContactoSerializador()    
     class Meta:
         model = Documento
