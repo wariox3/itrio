@@ -23,21 +23,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documento = documentoSerializador.save()            
             detalles = raw.get('detalles')
             for detalle in detalles:                
-                datosDetalle = {
-                    "documento":documento.id, 
-                    "item":detalle['item'], 
-                    "cantidad":detalle['cantidad'],
-                    "precio":detalle['precio'],                    
-                    "porcentaje_descuento":detalle['porcentaje_descuento'],
-                    "descuento":detalle['descuento'],
-                    "subtotal":detalle['subtotal'],
-                    "total_bruto":detalle['total_bruto'],
-                    "total":detalle['total']
-                }
-                detalleSerializador = DocumentoDetalleSerializador(data=datosDetalle)
+                detalle['documento'] = documento.id
+                detalleSerializador = DocumentoDetalleSerializador(data=detalle)
                 if detalleSerializador.is_valid():
                     documentoDetalle = detalleSerializador.save() 
-                    impuestos = detalle.get('impuestos')
+                    """impuestos = detalle.get('impuestos')
                     for impuesto in impuestos:
                         datosDocumentoImpuesto = {
                             "documento_detalle":documentoDetalle.id, 
@@ -48,7 +38,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         }
                         documentoImpuestoSerializador = DocumentoImpuestoSerializer(data=datosDocumentoImpuesto)
                         if documentoImpuestoSerializador.is_valid():
-                            documentoImpuestoSerializador.save() 
+                            documentoImpuestoSerializador.save()""" 
                 else:
                     return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
             return Response({'documento': documentoSerializador.data}, status=status.HTTP_200_OK)
@@ -63,6 +53,28 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documentoRespuesta = documentoSerializador.data
         documentoRespuesta['detalles'] = documentoDetallesSerializador.data
         return Response({'documento':documentoRespuesta}, status=status.HTTP_200_OK)
+
+    def update(self, request, pk=None):
+        raw = request.data
+        documento = Documento.objects.get(pk=pk)
+        documentoSerializador = DocumentoSerializador(documento, data=raw, partial=True)
+        if documentoSerializador.is_valid():
+            documentoSerializador.save()
+            detalles = raw.get('detalles')
+            if detalles is not None:
+                for detalle in detalles:                
+                    if detalle.get('documento_detalle_id'):
+                        documentoDetalle = DocumentoDetalle.objects.get(pk=detalle['documento_detalle_id'])
+                        detalleSerializador = DocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
+                    else:
+                        detalle['documento'] = documento.id
+                        detalleSerializador = DocumentoDetalleSerializador(data=detalle)
+                    if detalleSerializador.is_valid():
+                        detalleSerializador.save() 
+                    else:
+                        return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
+            return Response({'documento': documentoSerializador.data}, status=status.HTTP_200_OK)                    
+        return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
     def eliminar(self, request):
