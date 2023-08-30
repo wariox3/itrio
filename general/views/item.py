@@ -1,9 +1,10 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from general.models.item import Item
 from general.models.item_impuesto import ItemImpuesto
 from general.serializers.item import ItemSerializador
-from general.serializers.item_impuesto import ItemImpuestoSerializer
+from general.serializers.item_impuesto import ItemImpuestoSerializador
 from rest_framework.decorators import action
 from django.db.models import Count, Q, F
 
@@ -12,14 +13,15 @@ class ItemViewSet(viewsets.ModelViewSet):
     serializer_class = ItemSerializador
     permission_classes = [permissions.IsAuthenticated]
 
-    def list(self, request):
-        items = Item.objects.all()
-        raw = request.data
-        filtros = raw.get('filtro')
-        if filtros:
-            items.filter(nombre="mario")
-        ItemSerializador = ItemSerializador(items, many=True)
-        return Response(ItemSerializador.data, status=status.HTTP_200_OK)
+    def retrieve(self, request, pk=None):
+        queryset = Item.objects.all()
+        item = get_object_or_404(queryset, pk=pk)
+        itemSerializador = ItemSerializador(item)
+        itemImpuestos = ItemImpuesto.objects.filter(item=pk)
+        itemImpuestosSerializador = ItemImpuestoSerializador(itemImpuestos, many=True)
+        itemRespuesta = itemSerializador.data
+        itemRespuesta['impuestos'] = itemImpuestosSerializador.data
+        return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
 
     def create(self, request):
         data = request.data
