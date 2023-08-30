@@ -78,7 +78,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 for detalle in detallesEliminados:                                
                     documentoDetalle = DocumentoDetalle.objects.get(pk=detalle)
                     documentoDetalle.delete()
-            return Response({'documento': documentoSerializador.data}, status=status.HTTP_200_OK)                    
+            documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
+            documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+            documentoRespuesta = documentoSerializador.data
+            documentoRespuesta['detalles'] = documentoDetallesSerializador.data                    
+            return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)                    
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
