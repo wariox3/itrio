@@ -67,8 +67,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             detalles = raw.get('detalles')
             if detalles is not None:
                 for detalle in detalles:                
-                    if detalle.get('documento_detalle_id'):
-                        documentoDetalle = DocumentoDetalle.objects.get(pk=detalle['documento_detalle_id'])
+                    if detalle.get('id'):
+                        documentoDetalle = DocumentoDetalle.objects.get(pk=detalle['id'])
                         detalleSerializador = DocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
                     else:
                         detalle['documento'] = documento.id
