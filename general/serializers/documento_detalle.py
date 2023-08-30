@@ -11,11 +11,15 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['documento', 'item', 'cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total']
 
     def to_representation(self, instance):
+        item = instance.item
+        item_nombre = ""
+        if item is not None:
+            item_nombre = item.nombre
         return {
             'id': instance.id,            
             'documento': instance.documento_id,
             'item': instance.item_id,
-            'item_nombre': instance.item.nombre,
+            'item_nombre': item_nombre,
             'cantidad': instance.cantidad,
             'precio': instance.precio,
             'porcentaje_descuento': instance.porcentaje_descuento,
