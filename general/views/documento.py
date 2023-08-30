@@ -41,7 +41,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             documentoImpuestoSerializador.save()""" 
                 else:
                     return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
-            return Response({'documento': documentoSerializador.data}, status=status.HTTP_200_OK)
+            documentoDetalles = DocumentoDetalle.objects.filter(documento=documento.id)
+            documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+            documentoRespuesta = documentoSerializador.data
+            documentoRespuesta['detalles'] = documentoDetallesSerializador.data
+            return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     def retrieve(self, request, pk=None):
