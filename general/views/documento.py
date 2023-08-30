@@ -73,6 +73,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         detalleSerializador.save() 
                     else:
                         return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
+            detallesEliminados = raw.get('detalles_eliminados')
+            if detallesEliminados is not None:
+                for detalle in detallesEliminados:                                
+                    documentoDetalle = DocumentoDetalle.objects.get(pk=detalle)
+                    documentoDetalle.delete()
             return Response({'documento': documentoSerializador.data}, status=status.HTTP_200_OK)                    
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
