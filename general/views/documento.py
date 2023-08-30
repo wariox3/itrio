@@ -108,11 +108,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def aprobar(self, request):
         try:
             raw = request.data
-            codigoDocumento = raw.get('documento_id')
+            codigoDocumento = raw.get('id')
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
-                return Response({'mensaje':'Se aprobo'}, status=status.HTTP_200_OK)
+                documento.estado_aprobado = True
+                documento.save()
+                return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Documento.DoesNotExist:
-            return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
