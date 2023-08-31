@@ -31,7 +31,7 @@ class ItemViewSet(viewsets.ModelViewSet):
             impuestos = data.get('impuestos')
             if impuestos is not None:
                 for impuesto in impuestos:                
-                    datosImpuestoItem = {"item":item.id,"impuesto":impuesto}
+                    datosImpuestoItem = {"item":item.id,"impuesto":impuesto['impuesto']}
                     itemImpuestoSerializador = ItemImpuestoSerializador(data=datosImpuestoItem)
                     if itemImpuestoSerializador.is_valid():
                         itemImpuestoSerializador.save()                
