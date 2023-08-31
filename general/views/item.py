@@ -53,7 +53,7 @@ class ItemViewSet(viewsets.ModelViewSet):
             if impuestosNuevos is not None:
                 for impuesto in impuestosNuevos:                
                     impuesto['item'] = item.id
-                    itemImpuestoSerializador = ItemImpuestoSerializador(data=impuesto['impuesto'])
+                    itemImpuestoSerializador = ItemImpuestoSerializador(data=impuesto)
                     if itemImpuestoSerializador.is_valid():
                         itemImpuestoSerializador.save() 
             impuestosEliminados = raw.get('impuestos_eliminados')
