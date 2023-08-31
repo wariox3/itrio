@@ -46,35 +46,6 @@ class ListaAdministradorView(APIView):
             return Response({"propiedades":fields_info, "registros": serializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
-class ListaDocumentoView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        raw = request.data
-        codigoDocumentoTipo = raw.get('documento_tipo_id')
-        if codigoDocumentoTipo:
-            desplazar = raw.get('desplazar', 0)
-            limite = raw.get('limite', 50)    
-            cantidadLimite = raw.get('cantidad_limite', 5000)    
-            filtros = raw.get('filtros')
-            ordenamientos = raw.get('ordenamientos')                    
-            items = Documento.objects.all()
-            if filtros:
-                for filtro in filtros:
-                    items = items.filter(**{filtro['propiedad']: filtro['valor1']})
-            if ordenamientos:
-                items = items.order_by(*ordenamientos)              
-            items = items[desplazar:limite+desplazar]
-            itemsCantidad = Documento.objects.all()[:cantidadLimite].count()
-            serializador = DocumentoSerializador(items, many=True) 
-            fields_info = []
-            model_fields = DocumentoSerializador().get_fields()
-            for field_name, field_instance in model_fields.items():
-                field_type = field_instance.__class__.__name__
-                fields_info.append({"nombre": field_name, "tipo": field_type})       
-            return Response({"propiedades":fields_info, "registros": serializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
-        return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
 class ListaAutocompletarView(APIView):
     permission_classes = (IsAuthenticated,)
 

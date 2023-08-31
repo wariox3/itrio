@@ -89,6 +89,33 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)                    
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=["post"], url_path=r'lista',)
+    def lista(self, request):
+        raw = request.data
+        codigoDocumentoTipo = raw.get('documento_tipo_id')
+        if codigoDocumentoTipo:
+            desplazar = raw.get('desplazar', 0)
+            limite = raw.get('limite', 50)    
+            limiteTotal = raw.get('limite_total', 5000)                
+            filtros = raw.get('filtros')
+            ordenamientos = raw.get('ordenamientos')                         
+            documentos = Documento.objects.all()
+            if filtros:
+                for filtro in filtros:
+                    documentos = documentos.filter(**{filtro['propiedad']: filtro['valor_1']})
+            if ordenamientos:
+                documentos = documentos.order_by(*ordenamientos)              
+            documentos = documentos[desplazar:limite+desplazar]
+            itemsCantidad = Documento.objects.all()[:limiteTotal].count()
+            serializador = DocumentoSerializador(documentos, many=True) 
+            fields_info = []
+            model_fields = DocumentoSerializador().get_fields()
+            for field_name, field_instance in model_fields.items():
+                field_type = field_instance.__class__.__name__
+                fields_info.append({"nombre": field_name, "tipo": field_type})       
+            return Response({"propiedades":fields_info, "registros": serializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
+        return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
     def eliminar(self, request):
         try:
@@ -118,3 +145,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Documento.DoesNotExist:
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'excel',)
+    def excel(self, request):
+        raw = request.data
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 50)    
+        limiteTotal = raw.get('limite_total', 5000)                
+        filtros = raw.get('filtros')
+        ordenamientos = raw.get('ordenamientos')  
+        prueba = self.lista(desplazar, limite, limiteTotal, filtros, ordenamientos)
+        return Response({'prueba': prueba}, status=status.HTTP_200_OK)        
+    
+    @staticmethod
+    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
+        return "hola mundo"
