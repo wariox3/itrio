@@ -18,6 +18,7 @@ class ItemImpuestoDetalleSerializador(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
         return {          
+            'id': instance.id,
             'impuesto_id': instance.impuesto_id,
             'impuesto_nombre': instance.impuesto.nombre,
             'impuesto_porcentaje': instance.impuesto.porcentaje,
