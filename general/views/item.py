@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from general.models.item import Item
 from general.models.item_impuesto import ItemImpuesto
 from general.serializers.item import ItemSerializador
-from general.serializers.item_impuesto import ItemImpuestoSerializador
+from general.serializers.item_impuesto import ItemImpuestoSerializador, ItemImpuestoDetalleSerializador
 from rest_framework.decorators import action
 from django.db.models import Count, Q, F
 
@@ -18,7 +18,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         item = get_object_or_404(queryset, pk=pk)
         itemSerializador = ItemSerializador(item)
         itemImpuestos = ItemImpuesto.objects.filter(item=pk)
-        itemImpuestosSerializador = ItemImpuestoSerializador(itemImpuestos, many=True)
+        itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
         itemRespuesta = itemSerializador.data
         itemRespuesta['impuestos'] = itemImpuestosSerializador.data
         return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
@@ -29,34 +29,43 @@ class ItemViewSet(viewsets.ModelViewSet):
         if itemSerializador.is_valid():
             item = itemSerializador.save()            
             impuestos = data.get('impuestos')
-            for impuesto in impuestos:                
-                datosImpuestoItem = {"item":item.id,"impuesto":impuesto}
-                itemImpuestoSerializador = ItemImpuestoSerializer(data=datosImpuestoItem)
-                if itemImpuestoSerializador.is_valid():
-                    itemImpuestoSerializador.save()                
-            return Response({'item':itemSerializador.data}, status=status.HTTP_200_OK)
+            if impuestos is not None:
+                for impuesto in impuestos:                
+                    datosImpuestoItem = {"item":item.id,"impuesto":impuesto}
+                    itemImpuestoSerializador = ItemImpuestoSerializador(data=datosImpuestoItem)
+                    if itemImpuestoSerializador.is_valid():
+                        itemImpuestoSerializador.save()                
+            itemImpuestos = ItemImpuesto.objects.filter(item=item.id)
+            itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
+            itemRespuesta = itemSerializador.data
+            itemRespuesta['impuestos'] = itemImpuestosSerializador.data
+            return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': itemSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None, *args, **kwargs):
-        item = self.get_object()
-        data = {"nombre": request.data.get('nombre')}
+        raw = request.data
+        item = self.get_object()    
+        data = {"nombre": raw.get('nombre')}
         itemSerializador = self.serializer_class(instance=item, data=data, partial=True)
         if itemSerializador.is_valid():
             itemSerializador.save()
-            itemImpuestos = ItemImpuesto.objects.filter(item_id=pk).values('impuesto')        
-            impuestosActuales = set(itemImpuestos.values_list('impuesto', flat=True))            
-            impuestos = set(request.data.get('impuestos'))                    
-            impuestosEliminar = impuestosActuales.difference(impuestos)  
-            impuestosAdicionar = impuestos.difference(impuestosActuales)    
-            for impuesto in impuestosAdicionar:                
-                datosImpuestoItem = {"item":item.id,"impuesto":impuesto}                                
-                itemImpuestoSerializador = ItemImpuestoSerializer(data=datosImpuestoItem)
-                if itemImpuestoSerializador.is_valid():
-                    itemImpuestoSerializador.save()
-            for impuesto in impuestosEliminar:                
-                impuestoEliminar = ItemImpuesto.objects.get(item_id=pk, impuesto_id=impuesto)
-                impuestoEliminar.delete()            
-            return Response({'item':itemSerializador.data}, status=status.HTTP_200_OK)
+            impuestosNuevos = raw.get('impuestos')
+            if impuestosNuevos is not None:
+                for impuesto in impuestosNuevos:                
+                    impuesto['item'] = item.id
+                    itemImpuestoSerializador = ItemImpuestoSerializador(data=impuesto)
+                    if itemImpuestoSerializador.is_valid():
+                        itemImpuestoSerializador.save() 
+            impuestosEliminados = raw.get('impuestos_eliminados')
+            if impuestosEliminados is not None:
+                for itemImpuestoEliminado in impuestosEliminados:                                
+                    itemImpuesto = ItemImpuesto.objects.get(pk=itemImpuestoEliminado)
+                    itemImpuesto.delete()
+            itemImpuestos = ItemImpuesto.objects.filter(item=item.id)
+            itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
+            itemRespuesta = itemSerializador.data
+            itemRespuesta['impuestos'] = itemImpuestosSerializador.data                    
+            return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': itemSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=["post"], url_path=r'lista',)

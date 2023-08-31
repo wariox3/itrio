@@ -9,3 +9,18 @@ class ItemImpuestoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ItemImpuesto
         fields = ['item', 'impuesto']
+
+class ItemImpuestoDetalleSerializador(serializers.HyperlinkedModelSerializer):
+    impuesto = serializers.PrimaryKeyRelatedField(queryset=Impuesto.objects.all())
+    class Meta:
+        model = ItemImpuesto
+        fields = ['item', 'impuesto']  
+
+    def to_representation(self, instance):
+        return {          
+            'impuesto_id': instance.impuesto_id,
+            'impuesto_nombre': instance.impuesto.nombre,
+            'impuesto_porcentaje': instance.impuesto.porcentaje,
+            'impuesto_venta': instance.impuesto.venta,
+            'impuesto_compra': instance.impuesto.compra
+        }          
