@@ -1,12 +1,14 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
 from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
 from general.serializers.documento import DocumentoSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializer
 from rest_framework.decorators import action
+from openpyxl import Workbook
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -98,22 +100,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             limite = raw.get('limite', 50)    
             limiteTotal = raw.get('limite_total', 5000)                
             filtros = raw.get('filtros')
-            ordenamientos = raw.get('ordenamientos')                         
-            documentos = Documento.objects.all()
-            if filtros:
-                for filtro in filtros:
-                    documentos = documentos.filter(**{filtro['propiedad']: filtro['valor_1']})
-            if ordenamientos:
-                documentos = documentos.order_by(*ordenamientos)              
-            documentos = documentos[desplazar:limite+desplazar]
-            itemsCantidad = Documento.objects.all()[:limiteTotal].count()
-            serializador = DocumentoSerializador(documentos, many=True) 
-            fields_info = []
-            model_fields = DocumentoSerializador().get_fields()
-            for field_name, field_instance in model_fields.items():
-                field_type = field_instance.__class__.__name__
-                fields_info.append({"nombre": field_name, "tipo": field_type})       
-            return Response({"propiedades":fields_info, "registros": serializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
+            ordenamientos = raw.get('ordenamientos')                                     
+            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
+            return Response(respuesta, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
@@ -154,9 +143,45 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         limiteTotal = raw.get('limite_total', 5000)                
         filtros = raw.get('filtros')
         ordenamientos = raw.get('ordenamientos')  
-        prueba = self.lista(desplazar, limite, limiteTotal, filtros, ordenamientos)
-        return Response({'prueba': prueba}, status=status.HTTP_200_OK)        
+        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
+        
+        # Crear un libro de Excel y una hoja
+        wb = Workbook()
+        ws = wb.active
+
+        # Agregar encabezados de columna
+        field_names = [field for field in DocumentoSerializador().get_fields()]
+        ws.append(field_names)
+
+        # Agregar datos al archivo Excel
+        for row in respuesta['registros']:
+            row_data = [row[field] for field in field_names]
+            ws.append(row_data)
+
+        # Crear el archivo Excel en memoria
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
+        wb.save(response)
+        return response    
+        #return Response(respuesta, status=status.HTTP_200_OK)        
     
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-        return "hola mundo"
+        documentos = Documento.objects.all()
+        if filtros:
+            for filtro in filtros:
+                documentos = documentos.filter(**{filtro['propiedad']: filtro['valor_1']})
+        if ordenamientos:
+            documentos = documentos.order_by(*ordenamientos)              
+        documentos = documentos[desplazar:limite+desplazar]
+        itemsCantidad = Documento.objects.all()[:limiteTotal].count()
+        serializador = DocumentoSerializador(documentos, many=True) 
+        campos = []
+        camposSerializador = DocumentoSerializador().get_fields()
+        for nombre, field_instance in camposSerializador.items():
+            tipo = field_instance.__class__.__name__
+            etiqueta = field_instance.label or nombre
+            campos.append({"nombre": nombre, "tipo": tipo, "etiqueta": etiqueta}) 
+          
+        respuesta = {'propiedades': campos, 'registros': serializador.data, "cantidad_registros": itemsCantidad}
+        return respuesta
