@@ -17,7 +17,7 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             item_nombre = item.nombre
         return {
             'id': instance.id,            
-            'documento': instance.documento_id,
+            'documento_id': instance.documento_id,
             'item': instance.item_id,
             'item_nombre': item_nombre,
             'cantidad': instance.cantidad,

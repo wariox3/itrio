@@ -5,4 +5,4 @@ from general.serializers.impuesto import ImpuestoSerializer
 class ImpuestoViewSet(viewsets.ModelViewSet):
     queryset = Impuesto.objects.all()
     serializer_class = ImpuestoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]  

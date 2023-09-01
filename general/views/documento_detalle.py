@@ -5,7 +5,7 @@ from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
 from general.serializers.documento import DocumentoSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
-from general.serializers.documento_impuesto import DocumentoImpuestoSerializer
+from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from rest_framework.decorators import action
 
 class DocumentoDetalleViewSet(viewsets.ModelViewSet):

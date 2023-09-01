@@ -12,7 +12,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     impuesto = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Impuesto')
     total = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Total')
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
-    contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all())
+    contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     class Meta:
         model = Documento

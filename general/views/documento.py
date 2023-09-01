@@ -4,9 +4,10 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
+from general.models.documento_impuesto import DocumentoImpuesto
 from general.serializers.documento import DocumentoSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
-from general.serializers.documento_impuesto import DocumentoImpuestoSerializer
+from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from rest_framework.decorators import action
 from openpyxl import Workbook
 
@@ -24,30 +25,35 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if documentoSerializador.is_valid():
             documento = documentoSerializador.save()            
             detalles = raw.get('detalles')
-            for detalle in detalles:                
-                detalle['documento'] = documento.id
-                detalleSerializador = DocumentoDetalleSerializador(data=detalle)
-                if detalleSerializador.is_valid():
-                    documentoDetalle = detalleSerializador.save() 
-                    """impuestos = detalle.get('impuestos')
-                    for impuesto in impuestos:
-                        datosDocumentoImpuesto = {
-                            "documento_detalle":documentoDetalle.id, 
-                            "impuesto":impuesto['impuesto'],
-                            "base":impuesto['base'],
-                            "porcentaje":impuesto['porcentaje'],
-                            "total":impuesto['total']
-                        }
-                        documentoImpuestoSerializador = DocumentoImpuestoSerializer(data=datosDocumentoImpuesto)
-                        if documentoImpuestoSerializador.is_valid():
-                            documentoImpuestoSerializador.save()""" 
-                else:
-                    return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
-            documentoDetalles = DocumentoDetalle.objects.filter(documento=documento.id)
-            documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
-            documentoRespuesta = documentoSerializador.data
-            documentoRespuesta['detalles'] = documentoDetallesSerializador.data
-            return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
+            if detalles is not None:
+                for detalle in detalles:                
+                    detalle['documento'] = documento.id
+                    detalleSerializador = DocumentoDetalleSerializador(data=detalle)
+                    if detalleSerializador.is_valid():
+                        documentoDetalle = detalleSerializador.save() 
+                        impuestos = detalle.get('impuestos')
+                        if impuestos is not None:
+                            for impuesto in impuestos:
+                                datosDocumentoImpuesto = {
+                                    "documento_detalle":documentoDetalle.id, 
+                                    "impuesto":impuesto['impuesto'],
+                                    "base":impuesto['base'],
+                                    "porcentaje":impuesto['porcentaje'],
+                                    "total":impuesto['total']
+                                }
+                                documentoImpuestoSerializador = DocumentoImpuestoSerializador(data=datosDocumentoImpuesto)
+                                if documentoImpuestoSerializador.is_valid():
+                                    documentoImpuestoSerializador.save()
+                                else:
+                                    return Response({'mensaje':'Errores de validacion detalle impuesto', 'codigo':14, 'validaciones': documentoImpuestoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
+                    else:
+                        return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
+                documentoDetalles = DocumentoDetalle.objects.filter(documento=documento.id)
+                documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+                documentoRespuesta = documentoSerializador.data
+                documentoRespuesta['detalles'] = documentoDetallesSerializador.data
+                return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     def retrieve(self, request, pk=None):
@@ -56,8 +62,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documentoSerializador = DocumentoSerializador(documento)
         documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
         documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+        detalles = documentoDetallesSerializador.data
+        for detalle in detalles:
+            documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+            documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
+            detalle['impuestos'] = documentoImpuestosSerializador.data
         documentoRespuesta = documentoSerializador.data
-        documentoRespuesta['detalles'] = documentoDetallesSerializador.data
+        documentoRespuesta['detalles'] = detalles
         return Response({'documento':documentoRespuesta}, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
