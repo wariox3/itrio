@@ -97,14 +97,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         impuestos = detalle.get('impuestos')
                         if impuestos is not None:
                             for impuesto in impuestos:
-                                datosDocumentoImpuesto = {
+                                """datosDocumentoImpuesto = {
                                     "documento_detalle":documentoDetalle.id, 
                                     "impuesto":impuesto['impuesto'],
                                     "base":impuesto['base'],
                                     "porcentaje":impuesto['porcentaje'],
                                     "total":impuesto['total']
-                                }
-                                documentoImpuestoSerializador = DocumentoImpuestoSerializador(data=datosDocumentoImpuesto)
+                                }"""
+                                if impuesto.get('id'):
+                                    documentoImpuesto = DocumentoImpuesto.objects.get(pk=impuesto['id'])
+                                    documentoImpuestoSerializador = DocumentoImpuestoSerializador(documentoImpuesto, data=impuesto, partial=True)    
+                                else:
+                                    impuesto['documento_detalle'] = documentoDetalle.id
+                                    documentoImpuestoSerializador = DocumentoImpuestoSerializador(data=impuesto)                            
                                 if documentoImpuestoSerializador.is_valid():
                                     documentoImpuestoSerializador.save()
                                 else:
