@@ -1,5 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from general.models.documento import Documento
@@ -8,8 +9,8 @@ from general.models.documento_impuesto import DocumentoImpuesto
 from general.serializers.documento import DocumentoSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
-from rest_framework.decorators import action
 from openpyxl import Workbook
+from reportlab.pdfgen import canvas
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -203,8 +204,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
         wb.save(response)
-        return response    
-        #return Response(respuesta, status=status.HTTP_200_OK)        
+        return response          
+    
+    @action(detail=False, methods=["post"], url_path=r'imprimir',)
+    def imprimir(self, request):
+        raw = request.data
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
+        p = canvas.Canvas(response)
+        p.setFont("Courier", 28)
+        p.drawString(0, 0, "Hola mundo")
+        p.drawString(60, 750, "Hola mundo")
+        p.showPage()
+        p.save()
+        return response
     
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
