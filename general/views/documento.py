@@ -108,6 +108,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documentoImpuestoSerializador.save()
                                 else:
                                     return Response({'mensaje':'Errores de validacion detalle impuesto', 'codigo':14, 'validaciones': documentoImpuestoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                        
+                        impuestosEliminados = detalle.get('impuestos_eliminados')
+                        if impuestosEliminados is not None:
+                            for documentoImpuesto in impuestosEliminados:                                
+                                documentoImpuesto = DocumentoImpuesto.objects.get(pk=documentoImpuesto)
+                                documentoImpuesto.delete()                         
                     else:
                         return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
             detallesEliminados = raw.get('detalles_eliminados')
