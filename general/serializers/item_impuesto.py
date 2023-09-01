@@ -21,6 +21,7 @@ class ItemImpuestoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,
             'impuesto_id': instance.impuesto_id,
             'impuesto_nombre': instance.impuesto.nombre,
+            'impuesto_nombre_extendido': instance.impuesto.nombre_extendido,
             'impuesto_porcentaje': instance.impuesto.porcentaje,
             'impuesto_venta': instance.impuesto.venta,
             'impuesto_compra': instance.impuesto.compra
