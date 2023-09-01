@@ -50,8 +50,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
                 documentoDetalles = DocumentoDetalle.objects.filter(documento=documento.id)
                 documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+                detalles = documentoDetallesSerializador.data
+                for detalle in detalles:
+                    documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+                    documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
+                    detalle['impuestos'] = documentoImpuestosSerializador.data
                 documentoRespuesta = documentoSerializador.data
-                documentoRespuesta['detalles'] = documentoDetallesSerializador.data
+                documentoRespuesta['detalles'] = detalles
                 return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -112,8 +117,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documentoDetalle.delete()
             documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
             documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+            detalles = documentoDetallesSerializador.data
+            for detalle in detalles:
+                documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+                documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
+                detalle['impuestos'] = documentoImpuestosSerializador.data
             documentoRespuesta = documentoSerializador.data
-            documentoRespuesta['detalles'] = documentoDetallesSerializador.data                    
+            documentoRespuesta['detalles'] = detalles                   
             return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)                    
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
