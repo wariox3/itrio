@@ -15,6 +15,7 @@ inflection==0.5.1
 jmespath==1.0.1
 openpyxl==3.1.2
 packaging==23.1
+Pillow==10.0.0
 psycopg2-binary==2.9.7
 PyJWT==2.8.0
 python-dateutil==2.8.2
@@ -22,6 +23,7 @@ python-decouple==3.8
 python-http-client==3.3.7
 pytz==2023.3
 PyYAML==6.0.1
+reportlab==4.0.4
 s3transfer==0.6.2
 sendgrid==6.10.0
 six==1.16.0
