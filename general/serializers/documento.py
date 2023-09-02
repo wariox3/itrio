@@ -50,7 +50,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'numero' : instance.numero,
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence, 
-            'contacto_id' : instance.contacto,
+            'contacto_id' : instance.contacto_id,
             'contacto_nombre_corto' : contacto_nombre_corto,
             'descuento': instance.descuento,
             'subtotal': instance.subtotal,            
