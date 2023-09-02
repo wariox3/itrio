@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento_impuesto import DocumentoImpuesto
-from general.serializers.documento import DocumentoSerializador
+from general.serializers.documento import DocumentoSerializador, DocumentoRetrieveSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from openpyxl import Workbook
@@ -65,7 +65,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         queryset = Documento.objects.all()
         documento = get_object_or_404(queryset, pk=pk)
-        documentoSerializador = DocumentoSerializador(documento)
+        documentoSerializador = DocumentoRetrieveSerializador(documento)
         documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
         documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
         detalles = documentoDetallesSerializador.data

@@ -32,3 +32,28 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'contacto' : instance.contacto_id,            
             'documento_tipo': instance.documento_tipo_id
         }
+    
+class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
+    contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
+    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
+    class Meta:
+        model = Documento
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo']
+
+    def to_representation(self, instance):
+        contacto = instance.contacto
+        contacto_nombre_corto = ""
+        if contacto is not None:
+            contacto_nombre_corto = contacto.nombre_corto
+        return {
+            'id': instance.id,            
+            'numero' : instance.numero,
+            'fecha' : instance.fecha,
+            'fecha_vence' : instance.fecha_vence, 
+            'contacto_nombre_corto' : contacto_nombre_corto,           
+            'descuento': instance.descuento,
+            'subtotal': instance.subtotal,            
+            'impuesto': instance.impuesto,
+            'total' :  instance.total,        
+            'estado_aprobado' : instance.estado_aprobado
+        }
