@@ -18,6 +18,6 @@ class MetodoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSeria
         
     def to_representation(self, instance):
         return {
-            'id': instance.id,            
-            'nombre': instance.nombre
+            'metodo_pago_id': instance.id,            
+            'metodo_pogo_nombre': instance.nombre
         }           

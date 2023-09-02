@@ -19,6 +19,6 @@ class FormaPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerial
         
     def to_representation(self, instance):
         return {
-            'id': instance.id,            
-            'nombre': instance.nombre
+            'forma_pago_id': instance.id,            
+            'forma_pago_nombre': instance.nombre
         }     

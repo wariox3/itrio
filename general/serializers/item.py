@@ -24,6 +24,6 @@ class ItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer)
 
     def to_representation(self, instance):
         return {
-            'id': instance.id,            
-            'nombre': instance.nombre,
+            'item_id': instance.id,            
+            'item_nombre': instance.nombre,
         }     

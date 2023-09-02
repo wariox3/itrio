@@ -14,4 +14,14 @@ class ImpuestoSerializer(serializers.HyperlinkedModelSerializer):
             'nombre_extendido' : instance.nombre_extendido,
             'porcentaje': instance.porcentaje
         }         
-        
+
+class ImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = Impuesto
+
+    def to_representation(self, instance):
+        return {
+            'impuesto_id': instance.id,            
+            'impuesto_nombre': instance.nombre,
+        }             

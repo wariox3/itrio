@@ -58,6 +58,6 @@ class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
         
     def to_representation(self, instance):
         return {
-            'id': instance.id,            
-            'nombre_corto': instance.nombre_corto
+            'contacto_id': instance.id,            
+            'contacto_nombre_corto': instance.nombre_corto
         }        
