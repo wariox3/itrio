@@ -11,6 +11,7 @@ from .views.identificacion import IdentificacionViewSet
 from .views.ciudad import CiudadViewSet
 from .views.tipo_persona import TipoPersonaViewSet
 from .views.regimen import RegimenViewSet
+from .views.metodo_pago import MetodoPagoViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -24,6 +25,7 @@ router.register(r'impuesto', ImpuestoViewSet)
 router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'documento', DocumentoViewSet)
 router.register(r'documentodetalle', DocumentoDetalleViewSet)
+router.register(r'metodopago', MetodoPagoViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
