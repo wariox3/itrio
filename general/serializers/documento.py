@@ -50,10 +50,12 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'numero' : instance.numero,
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence, 
-            'contacto_nombre_corto' : contacto_nombre_corto,           
+            'contacto_id' : instance.contacto,
+            'contacto_nombre_corto' : contacto_nombre_corto,
             'descuento': instance.descuento,
             'subtotal': instance.subtotal,            
             'impuesto': instance.impuesto,
             'total' :  instance.total,        
-            'estado_aprobado' : instance.estado_aprobado
+            'estado_aprobado' : instance.estado_aprobado,
+            'documento_tipo_id' : instance.documento_tipo_id
         }
