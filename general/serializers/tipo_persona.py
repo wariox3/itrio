@@ -13,4 +13,15 @@ class TipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,            
             'nombre': instance.nombre,
-        }        
+        }   
+         
+class TipoPersonaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = TipoPersona
+
+    def to_representation(self, instance):
+        return {
+            'tipo_persona_id': instance.id,            
+            'tipo_persona_nombre': instance.nombre,
+        }       

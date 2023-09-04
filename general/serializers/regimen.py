@@ -14,3 +14,14 @@ class RegimenSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,            
             'nombre': instance.nombre,
         }        
+
+class RegimenListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = Regimen
+
+    def to_representation(self, instance):
+        return {
+            'regimen_id': instance.id,            
+            'regimen_nombre': instance.nombre,
+        }       
