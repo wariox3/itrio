@@ -26,6 +26,6 @@ class ImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
             'impuesto_nombre': instance.nombre,
             'impuesto_nombre_extendido': instance.nombre_extendido,
             'impuesto_porcentaje': instance.porcentaje,
-            'impuesto_compra': instance.nombre_compra,
-            'impuesto_venta': instance.nombre_venta,
+            'impuesto_compra': instance.compra,
+            'impuesto_venta': instance.venta,
         }             
