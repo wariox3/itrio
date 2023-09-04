@@ -14,3 +14,14 @@ class IdentificacionSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,            
             'nombre': instance.nombre,
         }        
+
+class IdentificacionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = Identificacion
+
+    def to_representation(self, instance):
+        return {
+            'identificacion_id': instance.id,            
+            'identificacion_nombre': instance.nombre,
+        }     
