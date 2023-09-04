@@ -58,7 +58,8 @@ class ListaAutocompletarView(APIView):
     def post(self, request):
         raw = request.data
         codigoModelo = raw.get('modelo')
-        if codigoModelo:      
+        limite = raw.get('limite')
+        if codigoModelo and (limite or limite == 0):      
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')
             modelo = globals()[codigoModelo]
@@ -70,7 +71,8 @@ class ListaAutocompletarView(APIView):
                     items = items.filter(**{filtro['propiedad']: filtro['valor1']})
             if ordenamientos:
                 items = items.order_by(*ordenamientos)                          
-            items = items[0:10]
+            if limite > 0:
+                items = items[0:limite]
             datos = serializador(items, many=True)    
             return Response({"registros": datos.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
