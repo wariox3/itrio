@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from general.models.impuesto import Impuesto
 
-class ImpuestoSerializer(serializers.HyperlinkedModelSerializer):
+class ImpuestoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Impuesto
