@@ -24,4 +24,5 @@ class ImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
         return {
             'impuesto_id': instance.id,            
             'impuesto_nombre': instance.nombre,
+            'impuesto_nombre_extendido': instance.nombre_extendido,
         }             
