@@ -13,4 +13,15 @@ class CiudadSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,            
             'nombre': instance.nombre,
-        }        
+        }  
+     
+class CiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = Ciudad
+
+    def to_representation(self, instance):
+        return {
+            'ciudad_id': instance.id,            
+            'ciudad_nombre': instance.nombre,
+        }           

@@ -9,6 +9,7 @@ from general.models.metodo_pago import MetodoPago
 from general.models.documento import Documento
 from general.models.impuesto import Impuesto
 from general.models.identificacion import Identificacion
+from general.models.ciudad import Ciudad
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador
 from general.serializers.contacto import ContactoSerializador, ContactoListaAutocompletarSerializador
 from general.serializers.forma_pago import FormaPagoSerializador, FormaPagoListaAutocompletarSerializador
@@ -16,6 +17,7 @@ from general.serializers.metodo_pago import MetodoPagoSerializador, MetodoPagoLi
 from general.serializers.documento import DocumentoSerializador
 from general.serializers.impuesto import ImpuestoSerializador, ImpuestoListaAutocompletarSerializador
 from general.serializers.identificacion import IdentificacionSerializador, IdentificacionListaAutocompletarSerializador
+from general.serializers.ciudad import CiudadSerializador, CiudadListaAutocompletarSerializador
 from rest_framework.permissions import IsAuthenticated
 
 class ListaAdministradorView(APIView):
