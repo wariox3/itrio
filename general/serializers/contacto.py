@@ -42,10 +42,14 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'telefono': instance.telefono,
             'celular': instance.celular,
             'correo': instance.correo,
-            'identificacion': instance.identificacion.nombre,
-            'ciudad': instance.ciudad.nombre,
-            'regimen': instance.regimen.nombre,
-            'tipo_persona': instance.tipo_persona.nombre,
+            'identificacion_id': instance.identificacion_id,
+            'identificacion_nombre': instance.identificacion.nombre,
+            'ciudad_id': instance.ciudad_id,
+            'ciudad_nombre': instance.ciudad.nombre,
+            'regimen_id': instance.regimen_id,
+            'regimen_nombre': instance.regimen.nombre,
+            'tipo_persona_id': instance.tipo_persona_id,
+            'tipo_persona_nombre': instance.tipo_persona.nombre,
         }     
 
 class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
