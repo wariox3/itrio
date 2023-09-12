@@ -11,6 +11,8 @@ from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from openpyxl import Workbook
 from reportlab.pdfgen import canvas
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -207,12 +209,74 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
         raw = request.data
+        
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
         p = canvas.Canvas(response)
-        p.setFont("Courier", 28)
-        p.drawString(0, 0, "Hola mundo")
-        p.drawString(60, 750, "Hola mundo")
+        stylesheet = getSampleStyleSheet()
+        normalStyle = stylesheet['Normal']
+
+        paragraph = Paragraph("El pago se realizará en un plazo de tres meses desde la emisión de esta factura, se realizará mediante transferencia bancaria.", normalStyle)
+
+        paragraph.wrapOn(p, 200, 400)
+        paragraph.drawOn(p, 50, 350)
+        
+        #Información del emisor
+        p.setFont("Helvetica", 10)
+        p.drawString(270, 790, "Razón social")
+        p.drawString(270, 778, "Identificación - NIT")
+        p.drawString(270, 766, "Dirección")
+        p.drawString(270, 754, "Telefóno - celular")
+
+        #Información factura
+        p.setFont("Helvetica-Bold", 11,5)
+        p.drawString(450, 742, "FACTURA N°:11111")
+        p.setFont("Helvetica", 10)
+        p.drawRightString(550, 730, "Fecha:03 de enero de 2013")
+        p.drawAlignedString
+
+        #Información del cliente
+        p.setFont("Helvetica-Bold", 10)
+        p.drawString(50, 720, "Datos cliente")
+        p.setFont("Helvetica", 10)
+        p.drawString(50, 705, "Razón social")
+        p.drawString(50, 690, "Dirección")
+        p.drawString(50, 675, "Ciudad")
+        p.drawString(50, 660, "Correo")
+        p.drawString(50, 645, "Telefóno")
+
+        productos = [
+            {"nombre": "Producto 1", "cantidad": 1, "base": 10.0, "iva": 10.0, "total": 10.0},
+            {"nombre": "Producto 2", "cantidad": 2, "base": 20.0, "iva": 20.0, "total": 20.0},
+            # Agrega más productos aquí
+        ]
+
+        # Línea separadora
+        p.line(50, 630, 550, 630)
+
+        # Encabezado de la tabla de productos
+        p.setFont("Helvetica-Bold", 10)
+        p.drawString(70, 615, "Descripción / Producto")
+        p.drawString(200, 615, "Cantidad")
+        p.drawString(300, 615, "Base")
+        p.drawString(400, 615, "IVA")
+        p.drawString(500, 615, "Total")
+        
+        y = 600  # Posición vertical inicial de la tabla
+        p.setFont("Helvetica", 10)
+        for producto in productos:
+            p.drawString(70, y, producto["nombre"])
+            p.drawString(200, y, str(producto["cantidad"]))
+            p.drawString(300, y, f"${producto['base']:.2f}")
+            p.drawString(400, y, f"${producto['iva']:.2f}")
+            p.drawString(500, y, f"${producto['total']:.2f}")
+            y -= 20  # Mover hacia arriba para la siguiente fila
+
+        # Calcular el total
+        total = sum(producto["base"] for producto in productos)
+        p.drawString(350, y - 20, "Total:")
+        p.drawString(450, y - 20, f"${total:.2f}")
+        
         p.showPage()
         p.save()
         return response
@@ -237,3 +301,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
           
         respuesta = {'propiedades': campos, 'registros': serializador.data, "cantidad_registros": itemsCantidad}
         return respuesta
+    
+    def emitir():
+        return []
