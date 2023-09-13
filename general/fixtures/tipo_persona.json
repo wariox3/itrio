@@ -2,7 +2,7 @@
   {
     "model": "general.TipoPersona",
     "pk": 1,
-    "fields": {"nombre": "Juridica"}
+    "fields": {"nombre": "Jurídica"}
   },
   {
     "model": "general.TipoPersona",

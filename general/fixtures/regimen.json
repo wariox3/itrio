@@ -2,7 +2,7 @@
   {
     "model": "general.regimen",
     "pk": 1,
-    "fields": {"nombre": "Ordinario comun"}
+    "fields": {"nombre": "Ordinario común"}
   },
   {
     "model": "general.regimen",
