@@ -12,6 +12,7 @@ from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from openpyxl import Workbook
 from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
 
 class DocumentoViewSet(viewsets.ModelViewSet):
@@ -209,73 +210,85 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
         raw = request.data
+        codigoDocumento = raw.get('documento_id')
+        
+        try:
+            documento = Documento.objects.get(pk=codigoDocumento)
+            contacto = documento.contacto
+            documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
+            
+        except Documento.DoesNotExist:
+            pass
         
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
-        p = canvas.Canvas(response)
+        p = canvas.Canvas(response, pagesize=letter)
+        p.setPageSize(letter)
         stylesheet = getSampleStyleSheet()
         normalStyle = stylesheet['Normal']
 
-        paragraph = Paragraph("El pago se realizará en un plazo de tres meses desde la emisión de esta factura, se realizará mediante transferencia bancaria.", normalStyle)
+        # paragraph = Paragraph("El pago se realizará en un plazo de tres meses desde la emisión de esta factura, se realizará mediante transferencia bancaria.", normalStyle)
 
-        paragraph.wrapOn(p, 200, 400)
-        paragraph.drawOn(p, 50, 350)
+        # paragraph.wrapOn(p, 200, 400)
+        # paragraph.drawOn(p, 50, 350)
         
         #Información del emisor
         p.setFont("Helvetica", 10)
-        p.drawString(270, 790, "Razón social")
-        p.drawString(270, 778, "Identificación - NIT")
-        p.drawString(270, 766, "Dirección")
-        p.drawString(270, 754, "Telefóno - celular")
+        p.drawString(270, 740, "Razón social")
+        p.drawString(270, 726, "Identificación - NIT")
+        p.drawString(270, 712, "Dirección")
+        p.drawString(270, 698, "Telefóno - celular")
 
         #Información factura
         p.setFont("Helvetica-Bold", 11,5)
-        p.drawString(450, 742, "FACTURA N°:11111")
+        p.drawRightString(550, 690, f"FACTURA N°: {documento.numero}")
         p.setFont("Helvetica", 10)
-        p.drawRightString(550, 730, "Fecha:03 de enero de 2013")
+        p.drawRightString(550, 676, f"Fecha: {documento.fecha}")
         p.drawAlignedString
 
-        #Información del cliente
+        # #Información del cliente
         p.setFont("Helvetica-Bold", 10)
-        p.drawString(50, 720, "Datos cliente")
+        p.drawString(50, 670, "Datos cliente")
         p.setFont("Helvetica", 10)
-        p.drawString(50, 705, "Razón social")
-        p.drawString(50, 690, "Dirección")
-        p.drawString(50, 675, "Ciudad")
-        p.drawString(50, 660, "Correo")
-        p.drawString(50, 645, "Telefóno")
-
-        productos = [
-            {"nombre": "Producto 1", "cantidad": 1, "base": 10.0, "iva": 10.0, "total": 10.0},
-            {"nombre": "Producto 2", "cantidad": 2, "base": 20.0, "iva": 20.0, "total": 20.0},
-            # Agrega más productos aquí
-        ]
+        nombre_corto = getattr(contacto, 'nombre_corto', 'Vacio' if not contacto else '')
+        p.drawString(50, 650, str(nombre_corto))
+        p.drawString(50, 636, str(contacto.direccion))
+        p.drawString(50, 622, str(contacto.ciudad.nombre))
+        p.drawString(50, 608, str(contacto.correo))
+        p.drawString(50, 594, str(contacto.telefono))
 
         # Línea separadora
-        p.line(50, 630, 550, 630)
+        p.setStrokeColorRGB(200/255, 200/255, 200/255)
+        p.line(50, 580, 550, 580)
+        p.setStrokeColorRGB(0, 0, 0) 
 
         # Encabezado de la tabla de productos
         p.setFont("Helvetica-Bold", 10)
-        p.drawString(70, 615, "Descripción / Producto")
-        p.drawString(200, 615, "Cantidad")
-        p.drawString(300, 615, "Base")
-        p.drawString(400, 615, "IVA")
-        p.drawString(500, 615, "Total")
+        p.drawString(60, 555, "Descripción / Producto")
+        p.drawString(310, 555, "Cantidad")
+        p.drawString(380, 555, "Desc %")
+        p.drawString(440, 555, "Subtotal")
+        p.drawString(520, 555, "Total")
         
-        y = 600  # Posición vertical inicial de la tabla
+        y = 520  # Posición vertical inicial de la tabla
         p.setFont("Helvetica", 10)
-        for producto in productos:
-            p.drawString(70, y, producto["nombre"])
-            p.drawString(200, y, str(producto["cantidad"]))
-            p.drawString(300, y, f"${producto['base']:.2f}")
-            p.drawString(400, y, f"${producto['iva']:.2f}")
-            p.drawString(500, y, f"${producto['total']:.2f}")
-            y -= 20  # Mover hacia arriba para la siguiente fila
+        for detalle in documentoDetalles:
+            p.setStrokeColorRGB(200/255, 200/255, 200/255)
+            p.line(50, y + 15, 550, y + 15)
+            p.setStrokeColorRGB(0, 0, 0) 
+            p.drawString(70, y, str(detalle.item.nombre[:30]))
+            p.drawRightString(350, y, str(detalle.cantidad))
+            p.drawRightString(420, y, str(detalle.porcentaje_descuento))
+            p.drawRightString(480, y, str(detalle.subtotal))
+            p.drawRightString(550, y, str(detalle.total))
+            # p.drawString(400, y, f"${producto['iva']:.2f}")
+            # p.drawString(500, y, f"${producto['total']:.2f}")
+            y -= 30  # Mover hacia arriba para la siguiente fila
 
         # Calcular el total
-        total = sum(producto["base"] for producto in productos)
-        p.drawString(350, y - 20, "Total:")
-        p.drawString(450, y - 20, f"${total:.2f}")
+        # total = sum(producto["base"] for producto in productos)
+        # p.drawString(350, y - 20, "Total:")
+        # p.drawString(450, y - 20, f"${total:.2f}")
         
         p.showPage()
         p.save()
