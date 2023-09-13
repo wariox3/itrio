@@ -224,7 +224,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
         p = canvas.Canvas(response, pagesize=letter)
 
-        locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
+        try:
+            locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
+        except locale.Error:
+            pass
 
         def draw_header():
             p.setFont("Helvetica", 10)
