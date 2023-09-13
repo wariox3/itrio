@@ -14,6 +14,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
+import locale
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -223,6 +224,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
         p = canvas.Canvas(response, pagesize=letter)
 
+        locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
+
         def draw_header():
             p.setFont("Helvetica", 10)
             p.drawString(270, 740, "Razón social")
@@ -254,15 +257,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica-Bold", 10)
             p.drawString(60, 555, "Descripción / Producto")
             p.drawString(310, 555, "Cantidad")
-            p.drawString(380, 555, "Desc %")
+            p.drawString(380, 555, "Desc")
             p.drawString(440, 555, "Subtotal")
             p.drawString(520, 555, "Total")
             p.setFont("Helvetica", 10)
 
         def draw_totals(p, total, y):
             p.setFont("Helvetica", 10)
-            p.drawString(350, y - 20, "Subtotal:")
-            p.drawString(450, y - 20, f"${total:.2f}")
+            p.drawString(50, y - 20, "Subtotal:")
+            p.drawString(50, y - 20, f"${total:.2f}")
+            p.drawString(450, y - 20, locale.currency(total, grouping=True))
 
         y = 520
         page_number = 1
@@ -275,10 +279,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.line(50, y + 15, 550, y + 15)
             p.setStrokeColorRGB(0, 0, 0)
             p.drawString(70, y, str(detalle.item.nombre[:30]))
-            p.drawRightString(350, y, str(detalle.cantidad))
-            p.drawRightString(420, y, str(detalle.porcentaje_descuento))
-            p.drawRightString(480, y, str(detalle.subtotal))
-            p.drawRightString(550, y, str(detalle.total))
+            p.drawRightString(350, y, str(int(detalle.cantidad)))
+            p.drawRightString(400, y, str(int(detalle.porcentaje_descuento)))
+            p.drawRightString(480, y, f"${locale.format_string('%d', int(detalle.subtotal), grouping=True)}")
+            p.drawRightString(550, y, f"${locale.format_string('%d', int(detalle.total), grouping=True)}")
             y -= 30
             detalles_en_pagina += 1
 
