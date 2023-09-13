@@ -229,6 +229,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except locale.Error:
             pass
 
+        stylesheet = getSampleStyleSheet()
+        normalStyle = stylesheet['Normal']
+
+        paragraph = Paragraph("El pago se realizará en un plazo de tres meses desde la emisión de esta factura, se realizará mediante transferencia bancaria.", normalStyle)
+
         def draw_header():
 
             #Emisor
@@ -279,6 +284,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawRightString(550, y -20, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
             p.drawString(400, y -40, "Total general")
             p.drawRightString(550, y -40, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
+
+            #Comentario
+            paragraph.wrapOn(p, 280, 400)
+            paragraph.drawOn(p, 50, y-45)
 
         y = 520
         page_number = 1
