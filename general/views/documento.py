@@ -211,6 +211,99 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def imprimir(self, request):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
+
+        try:
+            documento = Documento.objects.get(pk=codigoDocumento)
+            contacto = documento.contacto
+            documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
+        except Documento.DoesNotExist:
+            pass
+
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
+        p = canvas.Canvas(response, pagesize=letter)
+
+        def draw_header():
+            p.setFont("Helvetica", 10)
+            p.drawString(270, 740, "Razón social")
+            p.drawString(270, 726, "Identificación - NIT")
+            p.drawString(270, 712, "Dirección")
+            p.drawString(270, 698, "Teléfono - celular")
+
+            p.setFont("Helvetica-Bold", 11.5)
+            p.drawRightString(550, 690, f"FACTURA N°: {documento.numero}")
+            p.setFont("Helvetica", 10)
+            p.drawRightString(550, 676, f"Fecha: {documento.fecha}")
+
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(50, 670, "Datos cliente")
+            p.setFont("Helvetica", 10)
+            nombre_corto = getattr(contacto, 'nombre_corto', 'Vacio' if not contacto else '')
+            p.drawString(50, 650, str(nombre_corto))
+            p.drawString(50, 636, str(contacto.direccion))
+            p.drawString(50, 622, str(contacto.ciudad.nombre))
+            p.drawString(50, 608, str(contacto.correo))
+            p.drawString(50, 594, str(contacto.telefono))
+
+            # Línea separadora
+            p.setStrokeColorRGB(200/255, 200/255, 200/255)
+            p.line(50, 580, 550, 580)
+            p.setStrokeColorRGB(0, 0, 0)
+
+            # Encabezado de la tabla de productos
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(60, 555, "Descripción / Producto")
+            p.drawString(310, 555, "Cantidad")
+            p.drawString(380, 555, "Desc %")
+            p.drawString(440, 555, "Subtotal")
+            p.drawString(520, 555, "Total")
+            p.setFont("Helvetica", 10)
+
+        def draw_totals(p, total, y):
+            p.setFont("Helvetica", 10)
+            p.drawString(350, y - 20, "Subtotal:")
+            p.drawString(450, y - 20, f"${total:.2f}")
+
+        y = 520
+        page_number = 1
+        detalles_en_pagina = 0
+
+        draw_header()
+
+        for index, detalle in enumerate(documentoDetalles):
+            p.setStrokeColorRGB(200/255, 200/255, 200/255)
+            p.line(50, y + 15, 550, y + 15)
+            p.setStrokeColorRGB(0, 0, 0)
+            p.drawString(70, y, str(detalle.item.nombre[:30]))
+            p.drawRightString(350, y, str(detalle.cantidad))
+            p.drawRightString(420, y, str(detalle.porcentaje_descuento))
+            p.drawRightString(480, y, str(detalle.subtotal))
+            p.drawRightString(550, y, str(detalle.total))
+            y -= 30
+            detalles_en_pagina += 1
+
+            if detalles_en_pagina == 10 or index == len(documentoDetalles) - 1:
+                total = sum(det.subtotal for det in documentoDetalles[:index+1])
+                if detalles_en_pagina < 10 and index != len(documentoDetalles) - 1:
+                    # Si no hay 10 detalles en la página y no es la última página, muestra los totales
+                    draw_totals(p, total, y)
+
+                if index != len(documentoDetalles) - 1:
+                    # Si no es la última página, crea una nueva página
+                    p.showPage()
+                    page_number += 1
+                    y = 520
+                    draw_header()
+                    detalles_en_pagina = 0
+
+        p.save()
+        return response
+
+
+
+    # def imprimir(self, request):
+        raw = request.data
+        codigoDocumento = raw.get('documento_id')
         
         try:
             documento = Documento.objects.get(pk=codigoDocumento)
