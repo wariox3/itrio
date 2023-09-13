@@ -230,18 +230,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             pass
 
         def draw_header():
+
+            #Emisor
             p.setFont("Helvetica", 10)
             p.drawString(270, 740, "Razón social")
             p.drawString(270, 726, "Identificación - NIT")
             p.drawString(270, 712, "Dirección")
             p.drawString(270, 698, "Teléfono - celular")
-
             p.setFont("Helvetica-Bold", 11.5)
             p.drawRightString(550, 690, f"FACTURA N°: {documento.numero}")
             p.setFont("Helvetica", 10)
             p.drawRightString(550, 676, f"Fecha: {documento.fecha}")
-
             p.setFont("Helvetica-Bold", 10)
+
+            #Cliente
             p.drawString(50, 670, "Datos cliente")
             p.setFont("Helvetica", 10)
             nombre_corto = getattr(contacto, 'nombre_corto', 'Vacio' if not contacto else '')
@@ -251,12 +253,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawString(50, 608, str(contacto.correo))
             p.drawString(50, 594, str(contacto.telefono))
 
-            # Línea separadora
+            #Linea separadora
             p.setStrokeColorRGB(200/255, 200/255, 200/255)
             p.line(50, 580, 550, 580)
             p.setStrokeColorRGB(0, 0, 0)
 
-            # Encabezado de la tabla de productos
+            #Encabezado detalles
             p.setFont("Helvetica-Bold", 10)
             p.drawString(60, 555, "Descripción / Producto")
             p.drawString(310, 555, "Cantidad")
@@ -265,11 +267,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawString(520, 555, "Total")
             p.setFont("Helvetica", 10)
 
-        def draw_totals(p, total, y):
-            p.setFont("Helvetica", 10)
-            p.drawString(50, y - 20, "Subtotal:")
-            p.drawString(50, y - 20, f"${total:.2f}")
-            p.drawString(450, y - 20, locale.currency(total, grouping=True))
+        def draw_totals(p, y):
+            #Linea separadora
+            p.setStrokeColorRGB(200/255, 200/255, 200/255)
+            p.line(400, y, 550, y)
+            p.setStrokeColorRGB(0, 0, 0)
+
+            #Bloque totales
+            p.setFont("Helvetica-Bold", 10)
+            p.drawString(400, y -20, "Subtotal")
+            p.drawRightString(550, y -20, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
+            p.drawString(400, y -40, "Total general")
+            p.drawRightString(550, y -40, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
 
         y = 520
         page_number = 1
@@ -290,13 +299,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             detalles_en_pagina += 1
 
             if detalles_en_pagina == 10 or index == len(documentoDetalles) - 1:
-                total = sum(det.subtotal for det in documentoDetalles[:index+1])
-                if detalles_en_pagina < 10 and index != len(documentoDetalles) - 1:
-                    # Si no hay 10 detalles en la página y no es la última página, muestra los totales
-                    draw_totals(p, total, y)
+                draw_totals(p, y)
 
                 if index != len(documentoDetalles) - 1:
-                    # Si no es la última página, crea una nueva página
                     p.showPage()
                     page_number += 1
                     y = 520
@@ -305,6 +310,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         p.save()
         return response
+
     
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
