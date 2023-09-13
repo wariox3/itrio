@@ -273,21 +273,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica", 10)
 
         def draw_totals(p, y):
+            #dejo el llamado de y en caso de que se requiera que se construya de manera dinamica
             #Linea separadora
             p.setStrokeColorRGB(200/255, 200/255, 200/255)
-            p.line(400, y, 550, y)
+            p.line(400, 215, 550, 215)
             p.setStrokeColorRGB(0, 0, 0)
 
             #Bloque totales
             p.setFont("Helvetica-Bold", 10)
-            p.drawString(400, y -20, "Subtotal")
-            p.drawRightString(550, y -20, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
-            p.drawString(400, y -40, "Total general")
-            p.drawRightString(550, y -40, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
+            p.drawString(400, 200, "Subtotal")
+            p.drawRightString(550, 200, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
+            p.drawString(400, 180, "Total general")
+            p.drawRightString(550, 180, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
 
             #Comentario
             paragraph.wrapOn(p, 280, 400)
-            paragraph.drawOn(p, 50, y-45)
+            paragraph.drawOn(p, 50, 180)
 
         y = 520
         page_number = 1
