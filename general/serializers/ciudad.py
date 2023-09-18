@@ -32,6 +32,6 @@ class CiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerialize
         nombre_completo = f"{nombre_ciudad} - {nombre_estado}"
 
         return {
-            'id': instance.id,            
-            'nombre': nombre_completo,
-        }        
+            'ciudad_id': instance.id,            
+            'ciudad_nombre': nombre_completo,
+        } 
