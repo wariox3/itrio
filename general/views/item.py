@@ -90,7 +90,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         ItemSerializador = ItemSerializador(items, many=True)
         return Response({"registros": ItemSerializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
 
-    def destroy(self, request, *args, **kwargs):
+    def destroy(self):
         item = self.get_object()
 
         # Verificar si el contacto está siendo utilizado en algún documento

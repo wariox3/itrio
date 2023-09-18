@@ -10,10 +10,15 @@ class CiudadSerializador(serializers.HyperlinkedModelSerializer):
             ]  
         
     def to_representation(self, instance):
+        nombre_ciudad = instance.nombre
+        nombre_estado = instance.estado.nombre
+
+        nombre_completo = f"{nombre_ciudad} - {nombre_estado}"
+
         return {
             'id': instance.id,            
-            'nombre': instance.nombre,
-        }  
+            'nombre': nombre_completo,
+        }
      
 class CiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     

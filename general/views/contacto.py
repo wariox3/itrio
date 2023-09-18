@@ -10,12 +10,12 @@ class ContactoViewSet(viewsets.ModelViewSet):
     serializer_class = ContactoSerializador    
     permission_classes = [permissions.IsAuthenticated]
     
-    def destroy(self, request, *args, **kwargs):
+    def destroy(self):
         contacto = self.get_object()
 
         # Verificar si el contacto está siendo utilizado en algún documento
         if Documento.objects.filter(contacto=contacto).exists():
-            return Response({'mensaje':'No se puede eliminar el contacto, se encuentras usado en un documento'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':'La eliminación de este elemento no es posible, ya que está vinculado a un documento en uso.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Si no está siendo utilizado en documentos, se puede eliminar
         contacto.delete()
