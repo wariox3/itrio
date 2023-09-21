@@ -27,6 +27,7 @@ class UsuarioInquilinoSerializador(serializers.HyperlinkedModelSerializer):
             'usuarios': instance.inquilino.usuarios,
             'usuarios_base': usuariosBase,
             'plan_id': instance.inquilino.plan_id,
+            'empresa_id': instance.inquilino.empresa_id,
             'plan_nombre': planNombre            
         }
     
