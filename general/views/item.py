@@ -7,7 +7,6 @@ from general.models.item_impuesto import ItemImpuesto
 from general.serializers.item import ItemSerializador
 from general.serializers.item_impuesto import ItemImpuestoSerializador, ItemImpuestoDetalleSerializador
 from rest_framework.decorators import action
-from django.db.models import Count, Q, F
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
