@@ -6,7 +6,7 @@ from seguridad.models import User
 from inquilino.models import Inquilino, UsuarioInquilino, Verificacion
 from inquilino.serializers.inquilino import InquilinoSerializador
 from inquilino.serializers.usuario_inquilino import UsuarioInquilinoSerializador, UsuarioInquilinoConsultaInquilinoSerializador
-from inquilino.serializers.verificacion import VerificacionSerializer
+from inquilino.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
 
@@ -34,31 +34,31 @@ class UsuarioInquilinoViewSet(viewsets.ModelViewSet):
             inquilino_id = raw.get('inquilino_id')
             usuario_id = raw.get('usuario_id')
             if invitado and inquilino_id and usuario_id:
-                empresa = Inquilino.objects.get(pk=inquilino_id)
+                inquilino = Inquilino.objects.get(pk=inquilino_id)
                 usuario = User.objects.get(pk=usuario_id)
                 token = secrets.token_urlsafe(20)            
                 raw["token"] = token
                 raw["vence"] = datetime.now().date() + timedelta(days=1)
-                raw["inquilino_id"] = empresa.id
+                raw["inquilino_id"] = inquilino.id
                 raw["usuario_invitado_username"] = invitado
                 if User.objects.filter(username=invitado).exists():
                     usuarioInvitado = User.objects.get(username = invitado)
                     if usuarioInvitado.id == usuario.id:
                         return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
-                    if UsuarioInquilino.objects.filter(usuario_id=usuarioInvitado.id, inquilino_id=empresa.id).exists():
+                    if UsuarioInquilino.objects.filter(usuario_id=usuarioInvitado.id, inquilino_id=inquilino.id).exists():
                         return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
-                if empresa.plan:
-                    if empresa.plan.limite_usuarios > 0:
-                        if empresa.plan.limite_usuarios >= empresa.usuarios:
+                if inquilino.plan:
+                    if inquilino.plan.limite_usuarios > 0:
+                        if inquilino.plan.limite_usuarios >= inquilino.usuarios:
                             return Response({'mensaje':'La empresa supera el numero de usuarios segun el plan, si quiere invitar nuevos usuarios debe incrementar el plan', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
-                verificacion_serializer = VerificacionSerializer(data = raw)
-                if verificacion_serializer.is_valid():                                             
-                    verificacion_serializer.save()
+                verificacionSerializador = VerificacionSerializador(data = raw)
+                if verificacionSerializador.is_valid():                                             
+                    verificacionSerializador.save()
                     correo = Correo()               
                     contenido = 'Siga este enlace para aceptar la invitacion http://muup.online/auth/login/' + token                    
                     correo.enviar(invitado, 'Invitacion a redoffice', contenido)                                            
-                    return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
-                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)                    
+                    return Response({'verificacion': verificacionSerializador.data}, status=status.HTTP_201_CREATED)
+                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacionSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
             else:
                 return Response({'mensaje':'Faltal parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                
         except User.DoesNotExist:
@@ -69,7 +69,6 @@ class UsuarioInquilinoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'confirmar',)
     def confirmar(self, request):
         usuarioSesion = request.user
-        #return Response("Hola mundo" + str(Usuario.id),status=status.HTTP_200_OK)
         try:
             raw = request.data
             token = raw.get('token')
@@ -79,17 +78,17 @@ class UsuarioInquilinoViewSet(viewsets.ModelViewSet):
                     usuario = User.objects.get(username=verificacion.usuario_invitado_username)                
                     if not UsuarioInquilino.objects.filter(usuario_id=usuario.id, inquilino_id=verificacion.inquilino_id).exists():
                         if usuario.id == usuarioSesion.id:
-                            data = {'usuario': usuario.id, 'empresa': verificacion.inquilino_id, 'rol':'invitado'}
-                            usuario_empresa_serializador = UsuarioInquilinoSerializador(data=data)            
-                            if usuario_empresa_serializador.is_valid():
-                                usuario_empresa_serializador.save()
+                            data = {'usuario': usuario.id, 'inquilino': verificacion.inquilino_id, 'rol':'invitado'}
+                            usuarioInquilinoSerializador = UsuarioInquilinoSerializador(data=data)            
+                            if usuarioInquilinoSerializador.is_valid():
+                                usuarioInquilinoSerializador.save()
                                 verificacion.estado_usado = True
                                 verificacion.save()
-                                empresa = Inquilino.objects.get(pk=verificacion.inquilino_id) 
-                                empresa.usuarios += 1
-                                empresa.save()
+                                inquilino = Inquilino.objects.get(pk=verificacion.inquilino_id) 
+                                inquilino.usuarios += 1
+                                inquilino.save()
                                 return Response({'confirmar': True}, status=status.HTTP_200_OK)
-                            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuario_empresa_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuarioInquilinoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                         else:
                             return Response({'mensaje':"El usuario que inicio sesion no es el usuario invitado", 'codigo': 21}, status=status.HTTP_400_BAD_REQUEST)
                     else:
@@ -105,25 +104,25 @@ class UsuarioInquilinoViewSet(viewsets.ModelViewSet):
     def validar(self, request):
         raw = request.data
         usuario_id = raw.get('usuario')
-        inquilino_id = raw.get('empresa')
+        inquilino_id = raw.get('inquilino_id')
         if usuario_id and inquilino_id:            
             if UsuarioInquilino.objects.filter(usuario_id=usuario_id, inquilino_id=inquilino_id).exists():                
-                empresa = Inquilino.objects.get(pk=inquilino_id)
-                empresaSerializer = InquilinoSerializador(empresa)
-                return Response({'validar': True, 'empresa': empresaSerializer.data}, status=status.HTTP_200_OK)                
+                inquilino = Inquilino.objects.get(pk=inquilino_id)
+                inquilinoSerializador = InquilinoSerializador(inquilino)
+                return Response({'validar': True, 'empresa': inquilinoSerializador.data}, status=status.HTTP_200_OK)                
             else:
                 return Response({'validar': False}, status=status.HTTP_200_OK) 
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         
-    @action(detail=False, methods=["post"], url_path=r'consulta-empresa',)
-    def consulta_empresa(self, request):
+    @action(detail=False, methods=["post"], url_path=r'consulta-inquilino',)
+    def consulta_inquilino(self, request):
         raw = request.data
         inquilino_id = raw.get('inquilino_id')
         if inquilino_id:  
-            usuarioEmpresa = UsuarioInquilino.objects.filter(inquilino_id=inquilino_id).order_by('-rol')                         
-            usuarioEmpresaSerializer = UsuarioInquilinoConsultaInquilinoSerializador(usuarioEmpresa, many=True)
-            return Response({'usuarios': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
+            usuarioInquilino = UsuarioInquilino.objects.filter(inquilino_id=inquilino_id).order_by('-rol')                         
+            usuarioInquilinoSerializer = UsuarioInquilinoConsultaInquilinoSerializador(usuarioInquilino, many=True)
+            return Response({'usuarios': usuarioInquilinoSerializer.data}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         

@@ -4,7 +4,7 @@ from general.models.ciudad import Ciudad
 from general.models.tipo_persona import TipoPersona
 from general.models.regimen import Regimen
 
-class Contacto(models.Model):        
+class Empresa(models.Model):        
     numero_identificacion = models.CharField(max_length=20)
     digito_verificacion = models.CharField(max_length=1, null=True)
     nombre_corto = models.CharField(max_length=200)

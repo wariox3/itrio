@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404
 from seguridad.models import User
 from inquilino.models import Verificacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
-from inquilino.serializers.verificacion import VerificacionSerializer
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
 from decouple import config

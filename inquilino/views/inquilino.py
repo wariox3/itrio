@@ -25,12 +25,11 @@ class InquilinoViewSet(viewsets.ModelViewSet):
         try:            
             subdominio = request.data.get('subdominio')
             parametroUsuario = request.data.get('usuario')
-            nombre = request.data.get('nombre')
-            imagen = request.data.get('imagen')
+            nombre = request.data.get('nombre')            
             plan_id = request.data.get('plan_id')
             if subdominio and parametroUsuario and nombre and plan_id:
-                empresaValidacion = Inquilino.objects.filter(**{'schema_name':subdominio})
-                if empresaValidacion:
+                inquilinoValidacion = Inquilino.objects.filter(**{'schema_name':subdominio})
+                if inquilinoValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 if config('ENV') == 'dev':
                     dominio = '.localhost'
@@ -40,9 +39,6 @@ class InquilinoViewSet(viewsets.ModelViewSet):
                     dominio = '.redofice.com'
                 usuario = User.objects.get(pk=parametroUsuario)
                 call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=f"{config('ENV')}/empresa/logo_defecto.jpg", usuario_id=usuario.id, plan_id=plan_id, usuarios=1)
-                #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', '--schema', 'demo')
-                #call_command('tenant_command', 'loaddata', 'general/fixtures/identificacion.json', schema_name='demo', verbosity=0) 
-                #Asi no se deben ejecutar los fixtures
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/pais.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/estado.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/ciudad.json")
@@ -57,11 +53,12 @@ class InquilinoViewSet(viewsets.ModelViewSet):
                 
                 inquilino = Inquilino.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario.id, 'inquilino': inquilino.id, 'rol': 'propietario'}
-                usuario_empresa_serializer = UsuarioInquilinoSerializador(data=data)            
-                if usuario_empresa_serializer.is_valid():
-                    usuario_empresa_serializer.save()               
-                    return Response({'empresa': usuario_empresa_serializer.data}, status=status.HTTP_200_OK)            
-                return Response({'mensaje':'Errores en la creacion usuario empresa', 'codigo':12, 'validaciones': usuario_empresa_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                usuarioInquilinoSerializador = UsuarioInquilinoSerializador(data=data)            
+                if usuarioInquilinoSerializador.is_valid():
+                    usuarioInquilinoSerializador.save()
+                                  
+                    return Response({'empresa': usuarioInquilinoSerializador.data}, status=status.HTTP_200_OK)            
+                return Response({'mensaje':'Errores en la creacion usuario empresa', 'codigo':12, 'validaciones': usuarioInquilinoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje': 'Debe suministrar un subdominio, plan, nombre y el usuario', 'codigo':11}, status=status.HTTP_400_BAD_REQUEST)            
         except FileNotFoundError:
             return Response({'mensaje': 'Inesperado e indefinido', 'codigo':0}, status=status.HTTP_400_BAD_REQUEST)            
