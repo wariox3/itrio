@@ -73,7 +73,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                         usuario = User.objects.get(id = verificacion.usuario_id)
                         usuario.is_active = True
                         usuario.save()
-                        verificacionSerializer = VerificacionSerializer(verificacion)                
+                        verificacionSerializer = VerificacionSerializador(verificacion)                
                         return Response({'verificado': True, 'verificacion': verificacionSerializer.data}, status=status.HTTP_200_OK)
                     return Response({'mensaje':'El token de la verificacion esta vencido', 'codigo': 6, 'codigoUsuario': verificacion.usuario_id}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'mensaje':'La verificacion ya fue usada', 'codigo': 5, 'codigoUsuario': verificacion.usuario_id}, status=status.HTTP_400_BAD_REQUEST)
@@ -92,7 +92,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 raw["vence"] = datetime.now().date() + timedelta(days=1)                                    
                 raw["usuario_id"] = usuario.id
                 raw["accion"] = "clave"
-                verificacion_serializer = VerificacionSerializer(data = raw)
+                verificacion_serializer = VerificacionSerializador(data = raw)
                 if verificacion_serializer.is_valid():                                             
                     verificacion_serializer.save()
                     correo = Correo() 

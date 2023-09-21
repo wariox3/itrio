@@ -27,6 +27,7 @@ class InquilinoViewSet(viewsets.ModelViewSet):
             parametroUsuario = request.data.get('usuario')
             nombre = request.data.get('nombre')            
             plan_id = request.data.get('plan_id')
+            
             if subdominio and parametroUsuario and nombre and plan_id:
                 inquilinoValidacion = Inquilino.objects.filter(**{'schema_name':subdominio})
                 if inquilinoValidacion:
