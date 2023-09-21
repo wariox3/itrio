@@ -3,8 +3,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from inquilino.models import Inquilino
+from general.models.empresa import Empresa
 from inquilino.serializers.inquilino import InquilinoSerializador, InquilinoActualizarSerializador
 from inquilino.serializers.usuario_inquilino import UsuarioInquilinoSerializador
+from general.serializers.empresa import EmpresaSerializador
+
 from seguridad.models import User
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
@@ -24,11 +27,16 @@ class InquilinoViewSet(viewsets.ModelViewSet):
     def create(self, request):
         try:            
             subdominio = request.data.get('subdominio')
-            parametroUsuario = request.data.get('usuario')
-            nombre = request.data.get('nombre')            
+            usuario_id = request.data.get('usuario_id')
             plan_id = request.data.get('plan_id')
-            
-            if subdominio and parametroUsuario and nombre and plan_id:
+            nombre = request.data.get('nombre')                        
+            numero_identificacion = request.data.get('numero_identificacion')
+            direccion = request.data.get('direccion')
+            telefono = request.data.get('telefono')
+            correo = request.data.get('correo')
+            identificacion = request.data.get('identificacion_id')
+            ciudad = request.data.get('ciudad_id')
+            if subdominio and usuario_id and nombre and plan_id and numero_identificacion and direccion and telefono and correo and identificacion and ciudad:
                 inquilinoValidacion = Inquilino.objects.filter(**{'schema_name':subdominio})
                 if inquilinoValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
@@ -38,7 +46,7 @@ class InquilinoViewSet(viewsets.ModelViewSet):
                     dominio = '.muupservicios.online'
                 if config('ENV') == 'prod':
                     dominio = '.redofice.com'
-                usuario = User.objects.get(pk=parametroUsuario)
+                usuario = User.objects.get(pk=usuario_id)
                 call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=f"{config('ENV')}/empresa/logo_defecto.jpg", usuario_id=usuario.id, plan_id=plan_id, usuarios=1)
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/pais.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/estado.json")
@@ -57,12 +65,9 @@ class InquilinoViewSet(viewsets.ModelViewSet):
                 usuarioInquilinoSerializador = UsuarioInquilinoSerializador(data=data)            
                 if usuarioInquilinoSerializador.is_valid():
                     usuarioInquilinoSerializador.save()
-                                  
                     return Response({'empresa': usuarioInquilinoSerializador.data}, status=status.HTTP_200_OK)            
-                return Response({'mensaje':'Errores en la creacion usuario empresa', 'codigo':12, 'validaciones': usuarioInquilinoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'mensaje': 'Debe suministrar un subdominio, plan, nombre y el usuario', 'codigo':11}, status=status.HTTP_400_BAD_REQUEST)            
-        except FileNotFoundError:
-            return Response({'mensaje': 'Inesperado e indefinido', 'codigo':0}, status=status.HTTP_400_BAD_REQUEST)            
+                return Response({'mensaje':'Errores en la creacion del inquilino', 'codigo':12, 'validaciones': usuarioInquilinoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje': 'Faltan datos para el consumo de la api', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                   
         except User.DoesNotExist:
             return Response({'mensaje':'No existe el usuario para crear la empresa', 'codigo':17}, status=status.HTTP_400_BAD_REQUEST)
 
