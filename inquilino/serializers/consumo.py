@@ -1,14 +1,13 @@
 from rest_framework import serializers
-from inquilino.models import Empresa, Plan, Consumo, Verificacion, UsuarioEmpresa, Movimiento
-from seguridad.models import User
+from inquilino.models import Consumo
     
 class ConsumoSerializador(serializers.ModelSerializer):
     class Meta:
         model = Consumo
-        fields = ['empresa']
+        fields = ['inquilino']
     
     def to_representation(self, instance):
         return {
             'id': instance.id,            
-            'empresa': instance.nombre,
+            'inquilino': instance.nombre,
         }   

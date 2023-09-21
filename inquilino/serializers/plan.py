@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from inquilino.models import Empresa, Plan, Consumo, Verificacion, UsuarioEmpresa, Movimiento
-from seguridad.models import User       
+from inquilino.models import Plan       
 
 class PlanSerializador(serializers.ModelSerializer):
     class Meta:

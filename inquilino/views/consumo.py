@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from inquilino.models import Consumo, UsuarioEmpresa
+from inquilino.models import Consumo, UsuarioInquilino
 from inquilino.serializers.consumo import ConsumoSerializador
 from django.utils import timezone
 from datetime import datetime
@@ -14,7 +14,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'generar',)
     def generar(self, request):
-        usuariosEmpresas = UsuarioEmpresa.objects.all()
+        usuariosEmpresas = UsuarioInquilino.objects.all()
         consumos = []
         for usuarioEmpresa in usuariosEmpresas:            
             vrPlan = usuarioEmpresa.empresa.plan.precio

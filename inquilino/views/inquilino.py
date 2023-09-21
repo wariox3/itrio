@@ -2,9 +2,9 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from inquilino.models import Empresa
-from inquilino.serializers.empresa import EmpresaSerializer, EmpresaActualizarSerializador
-from inquilino.serializers.usuario_empresa import UsuarioEmpresaSerializador
+from inquilino.models import Inquilino
+from inquilino.serializers.inquilino import InquilinoSerializador, InquilinoActualizarSerializador
+from inquilino.serializers.usuario_inquilino import UsuarioInquilinoSerializador
 from seguridad.models import User
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
@@ -13,13 +13,13 @@ from utilidades.space_do import SpaceDo
 import os
 
 
-class EmpresaViewSet(viewsets.ModelViewSet):
-    queryset = Empresa.objects.all()
-    serializer_class = EmpresaSerializer    
+class InquilinoViewSet(viewsets.ModelViewSet):
+    queryset = Inquilino.objects.all()
+    serializer_class = InquilinoSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, pk):
-        return get_object_or_404(Empresa, pk=pk)
+        return get_object_or_404(Inquilino, pk=pk)
 
     def create(self, request):
         try:            
@@ -29,7 +29,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             imagen = request.data.get('imagen')
             plan_id = request.data.get('plan_id')
             if subdominio and parametroUsuario and nombre and plan_id:
-                empresaValidacion = Empresa.objects.filter(**{'schema_name':subdominio})
+                empresaValidacion = Inquilino.objects.filter(**{'schema_name':subdominio})
                 if empresaValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 if config('ENV') == 'dev':
@@ -55,9 +55,9 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/metodo_pago.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/impuesto.json")
                 
-                empresa = Empresa.objects.filter(**{'schema_name':subdominio}).first()                        
-                data = {'usuario': usuario.id, 'empresa': empresa.id, 'rol': 'propietario'}
-                usuario_empresa_serializer = UsuarioEmpresaSerializador(data=data)            
+                inquilino = Inquilino.objects.filter(**{'schema_name':subdominio}).first()                        
+                data = {'usuario': usuario.id, 'inquilino': inquilino.id, 'rol': 'propietario'}
+                usuario_empresa_serializer = UsuarioInquilinoSerializador(data=data)            
                 if usuario_empresa_serializer.is_valid():
                     usuario_empresa_serializer.save()               
                     return Response({'empresa': usuario_empresa_serializer.data}, status=status.HTTP_200_OK)            
@@ -75,7 +75,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         empresa = self.get_object(pk)
-        empresaSerializador = EmpresaActualizarSerializador(empresa, data=request.data)
+        empresaSerializador = InquilinoActualizarSerializador(empresa, data=request.data)
         if empresaSerializador.is_valid():
             empresaSerializador.save()
             return Response({'actualizacion': True, 'empresa': empresaSerializador.data}, status=status.HTTP_201_CREATED)            
@@ -90,19 +90,19 @@ class EmpresaViewSet(viewsets.ModelViewSet):
     def consulta_subdominio(self, request):
         try:
             subdominio = request.data.get('subdominio')
-            empresa = Empresa.objects.get(schema_name=subdominio)
-            serializer = EmpresaSerializer(empresa)
+            empresa = Inquilino.objects.get(schema_name=subdominio)
+            serializer = InquilinoSerializador(empresa)
             return Response({'empresa':serializer.data}, status=status.HTTP_200_OK)    
-        except Empresa.DoesNotExist:
+        except Inquilino.DoesNotExist:
             return Response({'mensaje':'No existe el registro', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)
         
     @action(detail=False, methods=["post"], url_path=r'validar',)
     def validar(self, request):
         try:
             subdominio = request.data.get('subdominio')
-            Empresa.objects.get(schema_name=subdominio)
+            Inquilino.objects.get(schema_name=subdominio)
             return Response({'validar':False}, status=status.HTTP_200_OK)    
-        except Empresa.DoesNotExist:
+        except Inquilino.DoesNotExist:
             return Response({'validar':True}, status=status.HTTP_200_OK)        
         
     @action(detail=False, methods=["post"], url_path=r'cargar-logo',)
@@ -112,7 +112,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             empresa_id = raw.get('empresa_id')
             imagenB64 = raw.get('imagenB64')
             if empresa_id:
-                empresa = Empresa.objects.get(pk=empresa_id)
+                empresa = Inquilino.objects.get(pk=empresa_id)
                 arrDatosB64 = imagenB64.split(",")
                 base64Crudo = arrDatosB64[1]
                 arrTipo = arrDatosB64[0].split(";")
@@ -126,7 +126,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'cargar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except Inquilino.DoesNotExist:
             return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)  
 
     @action(detail=False, methods=["post"], url_path=r'limpiar-logo',)
@@ -135,7 +135,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             raw = request.data
             empresa_id = raw.get('empresa_id')    
             if empresa_id:
-                empresa = Empresa.objects.get(pk=empresa_id)                
+                empresa = Inquilino.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
                 empresa.imagen = f"{config('ENV')}/empresa/logo_defecto.jpg"
@@ -143,5 +143,5 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'limpiar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except Inquilino.DoesNotExist:
             return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)               

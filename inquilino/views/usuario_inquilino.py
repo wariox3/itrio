@@ -3,23 +3,23 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from seguridad.models import User
-from inquilino.models import Empresa, UsuarioEmpresa, Verificacion
-from inquilino.serializers.empresa import EmpresaSerializer
-from inquilino.serializers.usuario_empresa import UsuarioEmpresaSerializador, UsuarioEmpresaConsultaEmpresaSerializador
+from inquilino.models import Inquilino, UsuarioInquilino, Verificacion
+from inquilino.serializers.inquilino import InquilinoSerializador
+from inquilino.serializers.usuario_inquilino import UsuarioInquilinoSerializador, UsuarioInquilinoConsultaInquilinoSerializador
 from inquilino.serializers.verificacion import VerificacionSerializer
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
 
-class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
-    queryset = UsuarioEmpresa.objects.all()
-    serializer_class = UsuarioEmpresaSerializador    
+class UsuarioInquilinoViewSet(viewsets.ModelViewSet):
+    queryset = UsuarioInquilino.objects.all()
+    serializer_class = UsuarioInquilinoSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
     def destroy(self, request, *args, **kwargs):
         usuarioEmpresa = self.get_object()
         if usuarioEmpresa.rol == 'invitado':
             self.perform_destroy(usuarioEmpresa)
-            empresa = Empresa.objects.get(pk=usuarioEmpresa.empresa_id)
+            empresa = Inquilino.objects.get(pk=usuarioEmpresa.inquilino_id)
             empresa.usuarios -= 1
             empresa.save()
             return Response(status=status.HTTP_200_OK)
@@ -31,21 +31,21 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
         try:
             raw = request.data
             invitado = raw.get('invitado')
-            empresa_id = raw.get('empresa_id')
+            inquilino_id = raw.get('inquilino_id')
             usuario_id = raw.get('usuario_id')
-            if invitado and empresa_id and usuario_id:
-                empresa = Empresa.objects.get(pk=empresa_id)
+            if invitado and inquilino_id and usuario_id:
+                empresa = Inquilino.objects.get(pk=inquilino_id)
                 usuario = User.objects.get(pk=usuario_id)
                 token = secrets.token_urlsafe(20)            
                 raw["token"] = token
                 raw["vence"] = datetime.now().date() + timedelta(days=1)
-                raw["empresa_id"] = empresa.id
+                raw["inquilino_id"] = empresa.id
                 raw["usuario_invitado_username"] = invitado
                 if User.objects.filter(username=invitado).exists():
                     usuarioInvitado = User.objects.get(username = invitado)
                     if usuarioInvitado.id == usuario.id:
                         return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
-                    if UsuarioEmpresa.objects.filter(usuario_id=usuarioInvitado.id, empresa_id=empresa.id).exists():
+                    if UsuarioInquilino.objects.filter(usuario_id=usuarioInvitado.id, inquilino_id=empresa.id).exists():
                         return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
                 if empresa.plan:
                     if empresa.plan.limite_usuarios > 0:
@@ -63,7 +63,7 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltal parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                
         except User.DoesNotExist:
             return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except Inquilino.DoesNotExist:
             return Response({'mensaje':'La empresa no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST) 
 
     @action(detail=False, methods=["post"], url_path=r'confirmar',)
@@ -77,15 +77,15 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
             if verificacion.estado_usado == False:
                 if User.objects.filter(username=verificacion.usuario_invitado_username).exists():
                     usuario = User.objects.get(username=verificacion.usuario_invitado_username)                
-                    if not UsuarioEmpresa.objects.filter(usuario_id=usuario.id, empresa_id=verificacion.empresa_id).exists():
+                    if not UsuarioInquilino.objects.filter(usuario_id=usuario.id, inquilino_id=verificacion.inquilino_id).exists():
                         if usuario.id == usuarioSesion.id:
-                            data = {'usuario': usuario.id, 'empresa': verificacion.empresa_id, 'rol':'invitado'}
-                            usuario_empresa_serializador = UsuarioEmpresaSerializador(data=data)            
+                            data = {'usuario': usuario.id, 'empresa': verificacion.inquilino_id, 'rol':'invitado'}
+                            usuario_empresa_serializador = UsuarioInquilinoSerializador(data=data)            
                             if usuario_empresa_serializador.is_valid():
                                 usuario_empresa_serializador.save()
                                 verificacion.estado_usado = True
                                 verificacion.save()
-                                empresa = Empresa.objects.get(pk=verificacion.empresa_id) 
+                                empresa = Inquilino.objects.get(pk=verificacion.inquilino_id) 
                                 empresa.usuarios += 1
                                 empresa.save()
                                 return Response({'confirmar': True}, status=status.HTTP_200_OK)
@@ -105,11 +105,11 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
     def validar(self, request):
         raw = request.data
         usuario_id = raw.get('usuario')
-        empresa_id = raw.get('empresa')
-        if usuario_id and empresa_id:            
-            if UsuarioEmpresa.objects.filter(usuario_id=usuario_id, empresa_id=empresa_id).exists():                
-                empresa = Empresa.objects.get(pk=empresa_id)
-                empresaSerializer = EmpresaSerializer(empresa)
+        inquilino_id = raw.get('empresa')
+        if usuario_id and inquilino_id:            
+            if UsuarioInquilino.objects.filter(usuario_id=usuario_id, inquilino_id=inquilino_id).exists():                
+                empresa = Inquilino.objects.get(pk=inquilino_id)
+                empresaSerializer = InquilinoSerializador(empresa)
                 return Response({'validar': True, 'empresa': empresaSerializer.data}, status=status.HTTP_200_OK)                
             else:
                 return Response({'validar': False}, status=status.HTTP_200_OK) 
@@ -119,10 +119,10 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'consulta-empresa',)
     def consulta_empresa(self, request):
         raw = request.data
-        empresa_id = raw.get('empresa_id')
-        if empresa_id:  
-            usuarioEmpresa = UsuarioEmpresa.objects.filter(empresa_id=empresa_id).order_by('-rol')                         
-            usuarioEmpresaSerializer = UsuarioEmpresaConsultaEmpresaSerializador(usuarioEmpresa, many=True)
+        inquilino_id = raw.get('inquilino_id')
+        if inquilino_id:  
+            usuarioEmpresa = UsuarioInquilino.objects.filter(inquilino_id=inquilino_id).order_by('-rol')                         
+            usuarioEmpresaSerializer = UsuarioInquilinoConsultaInquilinoSerializador(usuarioEmpresa, many=True)
             return Response({'usuarios': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
@@ -132,8 +132,8 @@ class UsuarioEmpresaViewSet(viewsets.ModelViewSet):
         raw = request.data
         usuario_id = raw.get('usuario_id')
         if usuario_id:  
-            usuarioEmpresa = UsuarioEmpresa.objects.filter(usuario_id=usuario_id).order_by('-rol')                         
-            usuarioEmpresaSerializer = UsuarioEmpresaSerializador(usuarioEmpresa, many=True)
+            usuarioEmpresa = UsuarioInquilino.objects.filter(usuario_id=usuario_id).order_by('-rol')                         
+            usuarioEmpresaSerializer = UsuarioInquilinoSerializador(usuarioEmpresa, many=True)
             return Response({'empresas': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        

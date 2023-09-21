@@ -15,14 +15,14 @@ class Plan(models.Model):
     class Meta:
         db_table = "inq_plan"
 
-class Empresa(TenantMixin):
+class Inquilino(TenantMixin):
     schema_name = models.CharField(max_length=100)
     nombre = models.CharField(max_length=200, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
     imagen = models.TextField(null=True)
     usuario_id = models.IntegerField(null=True)
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, null=True)   
-    usuarios = models.IntegerField(default=1)   
+    usuarios = models.IntegerField(default=1) 
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, null=True)         
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
     auto_drop_schema = True
@@ -31,7 +31,7 @@ class Empresa(TenantMixin):
         return self.schema_name
     
     class Meta:
-        db_table = "inq_empresa"
+        db_table = "inq_inquilino"
 
 class Dominio(DomainMixin):
     pass
@@ -55,7 +55,7 @@ class Consumo(models.Model):
 
 class Verificacion(models.Model):
     usuario_id = models.IntegerField(null=True)
-    empresa_id = models.IntegerField(null=True)
+    inquilino_id = models.IntegerField(null=True)
     token = models.CharField(max_length=50)
     estado_usado = models.BooleanField(default = False)
     vence = models.DateField(null=True)
@@ -65,14 +65,14 @@ class Verificacion(models.Model):
     class Meta:
         db_table = "inq_verificacion" 
 
-class UsuarioEmpresa(models.Model):
+class UsuarioInquilino(models.Model):
     rol = models.CharField(max_length=20, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    inquilino = models.ForeignKey(Inquilino, on_delete=models.CASCADE)
     
     class Meta:
-        unique_together = ('usuario', 'empresa')
-        db_table = "inq_usuario_empresa"        
+        unique_together = ('usuario', 'inquilino')
+        db_table = "inq_usuario_inquilino"        
 
 class Movimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)

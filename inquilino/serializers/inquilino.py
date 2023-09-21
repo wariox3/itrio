@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from inquilino.models import Empresa, Plan
+from inquilino.models import Inquilino, Plan
 
-class EmpresaSerializer(serializers.ModelSerializer):
+class InquilinoSerializador(serializers.ModelSerializer):
     class Meta:
-        model = Empresa
+        model = Inquilino
         fields = ['id', 'schema_name']
     
     def to_representation(self, instance):
@@ -15,8 +15,8 @@ class EmpresaSerializer(serializers.ModelSerializer):
             'imagen': f"https://itrio.fra1.digitaloceanspaces.com/{instance.imagen}"
         } 
     
-class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
+class InquilinoActualizarSerializador(serializers.HyperlinkedModelSerializer):
     plan = serializers.PrimaryKeyRelatedField(queryset=Plan.objects.all())
     class Meta:
-        model = Empresa
+        model = Inquilino
         fields = ['nombre', 'plan']         
