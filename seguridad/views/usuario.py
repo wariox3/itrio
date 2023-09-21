@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from seguridad.models import User
 from inquilino.models import Verificacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
+from inquilino.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
 from decouple import config
@@ -35,7 +36,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             raw["usuario_id"] = usuario.id
             raw["token"] = token
             raw["vence"] = datetime.now().date() + timedelta(days=1) 
-            verificacion_serializer = VerificacionSerializer(data = raw)
+            verificacion_serializer = VerificacionSerializador(data = raw)
             if verificacion_serializer.is_valid():                                             
                 verificacion_serializer.save()
                 correo = Correo()             
