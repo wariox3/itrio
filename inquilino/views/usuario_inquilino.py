@@ -133,6 +133,6 @@ class UsuarioInquilinoViewSet(viewsets.ModelViewSet):
         if usuario_id:  
             usuarioEmpresa = UsuarioInquilino.objects.filter(usuario_id=usuario_id).order_by('-rol')                         
             usuarioEmpresaSerializer = UsuarioInquilinoSerializador(usuarioEmpresa, many=True)
-            return Response({'empresas': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
+            return Response({'inquilinos': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
