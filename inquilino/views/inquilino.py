@@ -30,13 +30,7 @@ class InquilinoViewSet(viewsets.ModelViewSet):
             usuario_id = request.data.get('usuario_id')
             plan_id = request.data.get('plan_id')
             nombre = request.data.get('nombre')                        
-            numero_identificacion = request.data.get('numero_identificacion')
-            direccion = request.data.get('direccion')
-            telefono = request.data.get('telefono')
-            correo = request.data.get('correo')
-            identificacion = request.data.get('identificacion_id')
-            ciudad = request.data.get('ciudad_id')
-            if subdominio and usuario_id and nombre and plan_id and numero_identificacion and direccion and telefono and correo and identificacion and ciudad:
+            if subdominio and usuario_id and nombre and plan_id:
                 inquilinoValidacion = Inquilino.objects.filter(**{'schema_name':subdominio})
                 if inquilinoValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
@@ -47,7 +41,7 @@ class InquilinoViewSet(viewsets.ModelViewSet):
                 if config('ENV') == 'prod':
                     dominio = '.redofice.com'
                 usuario = User.objects.get(pk=usuario_id)
-                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=f"{config('ENV')}/empresa/logo_defecto.jpg", usuario_id=usuario.id, plan_id=plan_id, usuarios=1)
+                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=f"{config('ENV')}/empresa/logo_defecto.jpg", usuario_id=usuario.id, plan_id=plan_id, usuarios=1, empresa_id=0)
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/pais.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/estado.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/ciudad.json")

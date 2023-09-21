@@ -22,6 +22,7 @@ class Inquilino(TenantMixin):
     imagen = models.TextField(null=True)
     usuario_id = models.IntegerField(null=True)
     usuarios = models.IntegerField(default=1) 
+    empresa_id = models.IntegerField(default=None, null=True)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, null=True)         
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
