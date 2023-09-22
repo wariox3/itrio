@@ -1,0 +1,47 @@
+[
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 1,
+    "fields": {"nombre": "Registro civil de nacimiento", "pais": "CO", "codigo":"11", "orden":3}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 2,
+    "fields": {"nombre": "Tarjeta de identidad", "pais": "CO", "codigo":"12", "orden":4}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 3,
+    "fields": {"nombre": "Cédula de ciudadanía", "pais": "CO", "codigo":"13", "orden":2}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 4,
+    "fields": {"nombre": "Tarjeta de extranjería", "pais": "CO", "codigo":"21", "orden":5}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 5,
+    "fields": {"nombre": "Cédula de extranjería", "pais": "CO", "codigo":"22", "orden":6}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 6,
+    "fields": {"nombre": "Número de identificación tributaria ", "codigo":"31", "pais": "CO", "orden":1}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 7,
+    "fields": {"nombre": "Pasaporte", "pais": "CO", "codigo":"41", "orden":7}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 8,
+    "fields": {"nombre": "Tipo de documento extranjero", "pais": "CO", "codigo":"42", "orden":8}
+  },
+  {
+    "model": "inquilino.inquilinoIdentificacion",
+    "pk": 9,
+    "fields": {"nombre": "Sin identificación del exterior", "pais": "CO", "codigo":"43", "orden":9}
+  }
+]

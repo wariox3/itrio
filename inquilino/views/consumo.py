@@ -14,18 +14,18 @@ class ConsumoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'generar',)
     def generar(self, request):
-        usuariosEmpresas = UsuarioInquilino.objects.all()
+        usuariosInquilinos = UsuarioInquilino.objects.all()
         consumos = []
-        for usuarioEmpresa in usuariosEmpresas:            
-            vrPlan = usuarioEmpresa.empresa.plan.precio
+        for usuarioInquilino in usuariosInquilinos:            
+            vrPlan = usuarioInquilino.inquilino.plan.precio
             vrPlanDia = vrPlan / 30
             consumo = Consumo(
                 fecha = timezone.now().date(), 
-                empresa_id=usuarioEmpresa.empresa_id,
-                empresa=usuarioEmpresa.empresa.nombre,
-                usuarios=usuarioEmpresa.empresa.usuarios,
-                plan=usuarioEmpresa.empresa.plan,
-                usuario=usuarioEmpresa.usuario,
+                inquilino_id=usuarioInquilino.inquilino_id,
+                inquilino=usuarioInquilino.inquilino.nombre,
+                usuarios=usuarioInquilino.inquilino.usuarios,
+                plan=usuarioInquilino.inquilino.plan,
+                usuario=usuarioInquilino.usuario,
                 vr_plan=vrPlanDia,
                 vr_usuario_adicional=0,
                 vr_total=vrPlanDia)

@@ -1,16 +1,16 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from inquilino.models import Movimiento, Consumo
-from inquilino.serializers.movimiento import MovimientoSerializador
+from inquilino.models import InquilinoMovimiento, Consumo
+from inquilino.serializers.movimiento import InquilinoMovimientoSerializador
 from seguridad.models import User
 from django.db.models import Sum, Max, Q
 from datetime import datetime, timedelta
 from django.utils import timezone
 
 class MovimientoViewSet(viewsets.ModelViewSet):
-    queryset = Movimiento.objects.all()
-    serializer_class = MovimientoSerializador    
+    queryset = InquilinoMovimiento.objects.all()
+    serializer_class = InquilinoMovimientoSerializador    
     permission_classes = [permissions.IsAuthenticated]    
 
     @action(detail=False, methods=["post"], url_path=r'generar-factura',)
@@ -23,7 +23,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 vr_total=Sum('vr_total'))
             facturas = []
             for consumoUsuario in consumosUsuarios:
-                movimiento = Movimiento(
+                movimiento = InquilinoMovimiento(
                     tipo = "FACTURA",
                     fecha = timezone.now().date(),
                     vr_total = consumoUsuario['vr_total'],
@@ -35,7 +35,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 usuario.vr_saldo += consumoUsuario['vr_total']
                 usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
                 usuario.save()
-            Movimiento.objects.bulk_create(facturas)
+            InquilinoMovimiento.objects.bulk_create(facturas)
             return Response({'proceso':True}, status=status.HTTP_200_OK)  
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
@@ -45,8 +45,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         raw = request.data
         usuario_id = raw.get('usuario_id')
         if usuario_id:
-            movimientos = Movimiento.objects.filter(usuario_id=usuario_id)
-            movimientosSerializador = MovimientoSerializador(movimientos, many=True)
+            movimientos = InquilinoMovimiento.objects.filter(usuario_id=usuario_id)
+            movimientosSerializador = InquilinoMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)      

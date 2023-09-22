@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from inquilino.models import Movimiento
+from inquilino.models import InquilinoMovimiento
 
-class MovimientoSerializador(serializers.ModelSerializer):
+class InquilinoMovimientoSerializador(serializers.ModelSerializer):
     class Meta:
-        model = Movimiento
+        model = InquilinoMovimiento
         fields = ['fecha']
     
     def to_representation(self, instance):

@@ -5,6 +5,7 @@ from .views.consumo import ConsumoViewSet
 from .views.usuario_inquilino import UsuarioInquilinoViewSet
 from .views.verificacion import VerificacionViewSet
 from .views.movimiento import MovimientoViewSet
+from .views.general import ListaAutocompletarView
 from rest_framework import routers
 
 
@@ -17,5 +18,6 @@ router.register(r'verificacion', VerificacionViewSet)
 router.register(r'movimiento', MovimientoViewSet)
 
 urlpatterns = [    
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('funcionalidad/lista-autocompletar/', ListaAutocompletarView.as_view(), name='inquilino'),
 ]

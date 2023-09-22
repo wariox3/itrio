@@ -1,0 +1,167 @@
+[
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 1,
+    "fields": {"nombre": "Antioquia", "pais": "CO", "codigo":"05"}
+  },  
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 2,
+    "fields": {"nombre": "Atlántico", "pais": "CO", "codigo":"08"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 3,
+    "fields": {"nombre": "Bogotá", "pais": "CO", "codigo":"11"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 4,
+    "fields": {"nombre": "Bolívar", "pais": "CO", "codigo":"13"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 5,
+    "fields": {"nombre": "Boyacá", "pais": "CO", "codigo":"15"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 6,
+    "fields": {"nombre": "Caldas", "pais": "CO", "codigo":"17"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 7,
+    "fields": {"nombre": "Caquetá", "pais": "CO", "codigo":"18"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 8,
+    "fields": {"nombre": "Cauca", "pais": "CO", "codigo":"19"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 9,
+    "fields": {"nombre": "Cesar", "pais": "CO", "codigo":"20"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 10,
+    "fields": {"nombre": "Córdoba", "pais": "CO", "codigo":"23"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 11,
+    "fields": {"nombre": "Cundinamarca", "pais": "CO", "codigo":"25"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 12,
+    "fields": {"nombre": "Chocó", "pais": "CO", "codigo":"27"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 13,
+    "fields": {"nombre": "Huila", "pais": "CO", "codigo":"41"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 14,
+    "fields": {"nombre": "La Guajira", "pais": "CO", "codigo":"44"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 15,
+    "fields": {"nombre": "Magdalena", "pais": "CO", "codigo":"47"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 16,
+    "fields": {"nombre": "Meta", "pais": "CO", "codigo":"50"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 17,
+    "fields": {"nombre": "Nariño", "pais": "CO", "codigo":"52"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 18,
+    "fields": {"nombre": "Norte de Santander", "pais": "CO", "codigo":"54"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 19,
+    "fields": {"nombre": "Quindío", "pais": "CO", "codigo":"63"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 20,
+    "fields": {"nombre": "Risaralda", "pais": "CO", "codigo":"66"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 21,
+    "fields": {"nombre": "Santander", "pais": "CO", "codigo":"68"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 22,
+    "fields": {"nombre": "Sucre", "pais": "CO", "codigo":"70"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 23,
+    "fields": {"nombre": "Tolima", "pais": "CO", "codigo":"73"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 24,
+    "fields": {"nombre": "Valle del Cauca", "pais": "CO", "codigo":"76"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 25,
+    "fields": {"nombre": "Arauca", "pais": "CO", "codigo":"81"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 26,
+    "fields": {"nombre": "Casanare", "pais": "CO", "codigo":"85"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 27,
+    "fields": {"nombre": "Putumayo", "pais": "CO", "codigo":"86"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 28,
+    "fields": {"nombre": "San Andrés y Providencia", "pais": "CO", "codigo":"88"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 29,
+    "fields": {"nombre": "Amazonas", "pais": "CO", "codigo":"91"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 30,
+    "fields": {"nombre": "Guainía", "pais": "CO", "codigo":"94"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 31,
+    "fields": {"nombre": "Guaviare", "pais": "CO", "codigo":"95"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 32,
+    "fields": {"nombre": "Vaupés", "pais": "CO", "codigo":"97"}
+  }, 
+  {
+    "model": "inquilino.inquilinoEstado",
+    "pk": 33,
+    "fields": {"nombre": "Vichada", "pais": "CO", "codigo":"99"}
+  }
+]

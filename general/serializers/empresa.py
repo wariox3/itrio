@@ -9,6 +9,7 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Empresa
         fields = [
+            'id',
             'identificacion', 
             'numero_identificacion',
             'digito_verificacion',

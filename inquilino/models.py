@@ -2,6 +2,45 @@ from django.db import models
 from django_tenants.models import TenantMixin, DomainMixin
 from seguridad.models import User
 
+class InquilinoPais(models.Model):
+    id = models.CharField(primary_key=True, max_length=2)
+    nombre = models.CharField(max_length=50, null=True)
+    codigo = models.CharField(max_length=10, null=True)
+    
+    class Meta:
+        db_table = "inq_pais"
+
+class InquilinoEstado(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    codigo = models.CharField(max_length=10, null=True)
+    pais = models.ForeignKey(InquilinoPais, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "inq_estado"
+
+class InquilinoCiudad(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    nombre = models.CharField(max_length=50) 
+    latitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    codigo_postal = models.CharField(max_length=10, null=True)
+    porcentaje_impuesto = models.DecimalField(max_digits=5, decimal_places=2, default=0)  
+    estado = models.ForeignKey(InquilinoEstado, on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = "inq_ciudad"        
+
+class InquilinoIdentificacion(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    nombre = models.CharField(max_length=50)    
+    orden = models.BigIntegerField(default=0)
+    codigo = models.CharField(max_length=10, null=True)
+    pais = models.ForeignKey(InquilinoPais, on_delete=models.CASCADE, null=True)
+    
+    class Meta:
+        db_table = "inq_identificacion"
+
 class Plan(models.Model):
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=50, null=True)
@@ -22,7 +61,6 @@ class Inquilino(TenantMixin):
     imagen = models.TextField(null=True)
     usuario_id = models.IntegerField(null=True)
     usuarios = models.IntegerField(default=1) 
-    empresa_id = models.IntegerField(default=None, null=True)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, null=True)         
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
@@ -42,8 +80,8 @@ class Dominio(DomainMixin):
 
 class Consumo(models.Model):
     fecha = models.DateField(null=True)
-    empresa_id = models.IntegerField(null=True)
-    empresa = models.CharField(max_length=200, null=True)    
+    inquilino_id = models.IntegerField(null=True)
+    inquilino = models.CharField(max_length=200, null=True)    
     usuarios = models.IntegerField(default=0) 
     vr_plan = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_usuario_adicional = models.DecimalField(max_digits=16, decimal_places=2, default=0)
@@ -75,7 +113,7 @@ class UsuarioInquilino(models.Model):
         unique_together = ('usuario', 'inquilino')
         db_table = "inq_usuario_inquilino"        
 
-class Movimiento(models.Model):
+class InquilinoMovimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)
     fecha = models.DateField(null=True)    
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)

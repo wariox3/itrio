@@ -1,0 +1,7 @@
+[
+  {
+    "model": "inquilino.inquilinoPais",
+    "pk": "CO",
+    "fields": {"nombre": "Colombia", "codigo":"169"}
+  }
+]

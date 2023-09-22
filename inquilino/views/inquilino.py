@@ -7,12 +7,12 @@ from general.models.empresa import Empresa
 from inquilino.serializers.inquilino import InquilinoSerializador, InquilinoActualizarSerializador
 from inquilino.serializers.usuario_inquilino import UsuarioInquilinoSerializador
 from general.serializers.empresa import EmpresaSerializador
-
 from seguridad.models import User
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
 from decouple import config
 from utilidades.space_do import SpaceDo
+from django_tenants.utils import schema_context
 import os
 
 
@@ -29,8 +29,15 @@ class InquilinoViewSet(viewsets.ModelViewSet):
             subdominio = request.data.get('subdominio')
             usuario_id = request.data.get('usuario_id')
             plan_id = request.data.get('plan_id')
-            nombre = request.data.get('nombre')                        
-            if subdominio and usuario_id and nombre and plan_id:
+            nombre = request.data.get('nombre')  
+            identificacion = request.data.get('identificacion_id')
+            numero_identificacion = request.data.get('numero_identificacion')
+            digito_verificacion = request.data.get('digito_verificacion')
+            direccion = request.data.get('direccion')
+            telefono = request.data.get('telefono')
+            correo = request.data.get('correo')
+            ciudad = request.data.get('ciudad_id')
+            if subdominio and usuario_id and nombre and plan_id and identificacion and numero_identificacion and digito_verificacion and direccion and telefono and correo and ciudad:
                 inquilinoValidacion = Inquilino.objects.filter(**{'schema_name':subdominio})
                 if inquilinoValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
@@ -41,7 +48,7 @@ class InquilinoViewSet(viewsets.ModelViewSet):
                 if config('ENV') == 'prod':
                     dominio = '.redofice.com'
                 usuario = User.objects.get(pk=usuario_id)
-                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=f"{config('ENV')}/empresa/logo_defecto.jpg", usuario_id=usuario.id, plan_id=plan_id, usuarios=1, empresa_id=0)
+                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=f"{config('ENV')}/empresa/logo_defecto.jpg", usuario_id=usuario.id, plan_id=plan_id, usuarios=1)
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/pais.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/estado.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/ciudad.json")
@@ -52,14 +59,31 @@ class InquilinoViewSet(viewsets.ModelViewSet):
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/documento_tipo.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/forma_pago.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/metodo_pago.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/impuesto.json")
-                
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/impuesto.json")            
+
                 inquilino = Inquilino.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario.id, 'inquilino': inquilino.id, 'rol': 'propietario'}
                 usuarioInquilinoSerializador = UsuarioInquilinoSerializador(data=data)            
                 if usuarioInquilinoSerializador.is_valid():
                     usuarioInquilinoSerializador.save()
-                    return Response({'empresa': usuarioInquilinoSerializador.data}, status=status.HTTP_200_OK)            
+                    with schema_context(subdominio):
+                        data = {
+                            'id':1,
+                            'identificacion': identificacion,                            
+                            'numero_identificacion': numero_identificacion,
+                            'digito_verificacion': digito_verificacion,
+                            'nombre_corto': nombre,
+                            'direccion': direccion,
+                            'telefono': telefono,
+                            'correo': correo,
+                            'ciudad': ciudad,
+                            'tipo_persona': 1,
+                            'regimen':1}
+                        empresaSerializador = EmpresaSerializador(data=data)                        
+                        if empresaSerializador.is_valid():
+                            empresaSerializador.save()
+                            return Response({'inquilino': usuarioInquilinoSerializador.data}, status=status.HTTP_200_OK)            
+                        return Response({'mensaje':'Errores en la creacion de la empresa', 'codigo':12, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)        
                 return Response({'mensaje':'Errores en la creacion del inquilino', 'codigo':12, 'validaciones': usuarioInquilinoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje': 'Faltan datos para el consumo de la api', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                   
         except User.DoesNotExist:

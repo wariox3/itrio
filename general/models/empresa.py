@@ -4,7 +4,8 @@ from general.models.ciudad import Ciudad
 from general.models.tipo_persona import TipoPersona
 from general.models.regimen import Regimen
 
-class Empresa(models.Model):        
+class Empresa(models.Model):   
+    id = models.BigIntegerField(primary_key=True)     
     numero_identificacion = models.CharField(max_length=20)
     digito_verificacion = models.CharField(max_length=1)
     nombre_corto = models.CharField(max_length=200)
