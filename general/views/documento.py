@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento_impuesto import DocumentoImpuesto
+from general.models.empresa import Empresa
+from general.models.resolucion import Resolucion
 from general.serializers.documento import DocumentoSerializador, DocumentoRetrieveSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
@@ -15,6 +17,9 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
 import locale
+from reportlab.lib.utils import ImageReader
+from reportlab.lib.units import inch
+from decouple import config
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -217,6 +222,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documento = Documento.objects.get(pk=codigoDocumento)
             contacto = documento.contacto
             documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
+            empresa = Empresa.objects.get(pk=documento.empresa.id)
+            resolucion = Resolucion.objects.get(pk=documento.resolucion.id)
         except Documento.DoesNotExist:
             pass
 
@@ -236,12 +243,32 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         def draw_header():
 
+            region = config('DO_REGION')
+            bucket = config('DO_BUCKET')
+
+            imagen_defecto_url = 'https://itrio.fra1.cdn.digitaloceanspaces.com/test/empresa/logo_defecto.jpg'
+
+            # Intenta cargar la imagen desde la URL
+
+            logo_url = f'https://{region}.{bucket}.cdn.digitaloceanspaces.com/test/empresa/logo_contenedor_{empresa.id}.jpg'
+            try:
+                logo = ImageReader(logo_url)
+            except Exception as e:
+                # Si se produce un error, establece la URL en la imagen de defecto
+                logo_url = imagen_defecto_url
+                logo = ImageReader(logo_url)
+
+            tamano_cuadrado = 1 * inch
+            coord_x = 50
+            coord_y = 680
+            p.drawImage(logo, coord_x, coord_y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
+
             #Emisor
             p.setFont("Helvetica", 10)
-            p.drawString(270, 740, "Razón social")
-            p.drawString(270, 726, "Identificación - NIT")
-            p.drawString(270, 712, "Dirección")
-            p.drawString(270, 698, "Teléfono - celular")
+            p.drawString(250, 740, empresa.nombre_corto if empresa.nombre_corto else "")
+            p.drawString(250, 726, empresa.numero_identificacion if empresa.numero_identificacion else "")
+            p.drawString(250, 712, empresa.direccion if empresa.direccion else "")
+            p.drawString(250, 698, empresa.telefono if empresa.telefono else "")
             p.setFont("Helvetica-Bold", 11.5)
             p.drawRightString(550, 690, f"FACTURA N°: {documento.numero}")
             p.setFont("Helvetica", 10)
@@ -249,7 +276,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica-Bold", 10)
 
             #Cliente
-            p.drawString(50, 670, "Datos cliente")
+            p.drawString(50, 665, "Datos cliente")
             p.setFont("Helvetica", 10)
             nombre_corto = getattr(contacto, 'nombre_corto', 'Vacio' if not contacto else '')
             p.drawString(50, 650, str(nombre_corto))
@@ -343,5 +370,100 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         respuesta = {'propiedades': campos, 'registros': serializador.data, "cantidad_registros": itemsCantidad}
         return respuesta
     
-    def emitir():
-        return []
+    @action(detail=False, methods=["post"], url_path=r'emitir',)
+    def emitir(self, request):
+        try:
+            raw = request.data
+            codigoDocumento = raw.get('id')
+            if codigoDocumento:
+                documento = Documento.objects.get(pk=codigoDocumento)
+                if documento.estado_aprobado == True:
+
+                    #Se construye el obejto inicial
+
+                    data_factura = {
+                        'dat_suscriptor' : '',
+                        'dat_nitFacturador': '',
+                        'dat_claveTecnica' : '',
+                        'dat_setPruebas' : '',
+                        'dat_tipoAmbiente' : '',
+                        'res_numero' : '',
+                        'res_prefijo' : '',
+                        'res_fechaDesde' : '',
+                        'res_fechaHasta' : '',
+                        'res_desde' : '',
+                        'res_hasta' : '',
+                        'doc_codigo' : '',
+                        'doc_tipo' : '',
+                        'doc_tipo_operacion' : '',
+                        'doc_codigoDocumento' : '',
+                        'doc_formaPago' : '',
+                        'doc_cue' : '',
+                        'doc_prefijo' : '',
+                        'doc_numero' : '',
+                        'doc_fecha' : '',
+                        'doc_fecha_vence' : '',
+                        'doc_orden_compra' : '',
+                        'doc_hora' : '',
+                        'doc_hora2' : '',
+                        'doc_subtotal' : '',
+                        'doc_baseIva' : '',
+                        'doc_iva' :'',
+                        'doc_inc' : '',
+                        'doc_ica' : '',
+                        'doc_total' : '',
+                        'ref_cue' : '',
+                        'ref_codigoExterno' : '',
+                        'ref_numero' : '',
+                        'ref_prefijo' : '',
+                        'ref_fecha' : '',
+                        'em_tipoPersona' : '',
+                        'em_numeroIdentificacion' : '',
+                        'em_digitoVerificacion' : '',
+                        'em_nombreCompleto' : '',
+                        'em_matriculaMercantil' : '',
+                        'em_codigoCiudad' : '',
+                        'em_nombreCiudad' : '',
+                        'em_codigoPostal' : '',
+                        'em_codigoDepartamento' : '',
+                        'em_nombreDepartamento' : '',
+                        'em_correo' :'',
+                        'em_direccion' : '',
+                        'ad_tipoIdentificacion' : '',
+                        'ad_numeroIdentificacion' : '',
+                        'ad_digitoVerificacion' : '',
+                        'ad_nombreCompleto' : '',
+                        'ad_tipoPersona' : '',
+                        'ad_regimen' : '',
+                        'ad_responsabilidadFiscal' : '',
+                        'ad_direccion' : '',
+                        'ad_barrio' : '',
+                        'ad_codigoPostal' : '',
+                        'ad_telefono' : '',
+                        'ad_correo' : '',
+                        'ad_codigoCIUU' : '',
+                        'ad_codigoCiudad' : '',
+                        'ad_nombreCiudad' : '',
+                        'ad_codigoDepartamento' : '',
+                        'ad_nombreDepartamento' : '',
+                    }
+
+                    
+
+
+                    # Verificar si la solicitud fue exitosa (código de respuesta 200)
+                    # if response.status_code == 200:
+                    #     # Procesar la respuesta de la API aquí
+                    #     data = response.json()  # Suponiendo que la API responde en formato JSON
+                    #     # ...
+
+                    #     # Guardar el documento u realizar otras acciones necesarias
+                    #     documento.save()
+                    # else:
+                    #     return Response({'mensaje': 'La API externa respondió con un error', 'codigo': 2}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                else:
+                    return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        except Documento.DoesNotExist:
+            return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
