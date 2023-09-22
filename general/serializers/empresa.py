@@ -19,7 +19,9 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'telefono',
             'correo',
             'tipo_persona',
-            'regimen']  
+            'regimen',
+            'imagen',
+            'contenedor_id']  
         
     def to_representation(self, instance):
         return {

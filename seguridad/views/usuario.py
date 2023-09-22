@@ -6,9 +6,9 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from seguridad.models import User
-from inquilino.models import Verificacion
+from contenedor.models import Verificacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
-from inquilino.serializers.verificacion import VerificacionSerializador
+from contenedor.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
 from decouple import config

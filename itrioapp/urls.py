@@ -26,7 +26,7 @@ urlpatterns = [
     path('general/', include("general.urls")),
     path('contabilidad/', include("contabilidad.urls")),
     path('seguridad/', include("seguridad.urls")),
-    path('inquilino/', include("inquilino.urls")),
+    path('contenedor/', include("contenedor.urls")),
     path('seguridad/login/', Login.as_view(), name='login'),
     path('seguridad/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('seguridad/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

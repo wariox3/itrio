@@ -12,6 +12,8 @@ class Empresa(models.Model):
     direccion = models.CharField(max_length=50)
     telefono = models.CharField(max_length=50)
     correo = models.EmailField(max_length = 255)
+    imagen = models.TextField(null=True)
+    contenedor_id = models.IntegerField()     
     identificacion = models.ForeignKey(Identificacion, on_delete=models.CASCADE)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
     tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.CASCADE)   

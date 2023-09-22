@@ -28,7 +28,7 @@ SHARED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django_tenants',
-    'inquilino',
+    'contenedor',
     'seguridad',
 )
 
@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'django_tenants',
     "corsheaders",
-    'inquilino',
+    'contenedor',
     'seguridad',
     'general',
     'contabilidad'    
@@ -107,8 +107,8 @@ DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
 )
 
-TENANT_MODEL = "inquilino.Inquilino" # app.Model
-TENANT_DOMAIN_MODEL = "inquilino.Dominio"  # app.Model
+TENANT_MODEL = "contenedor.Contenedor" # app.Model
+TENANT_DOMAIN_MODEL = "contenedor.Dominio"  # app.Model
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
