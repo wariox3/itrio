@@ -224,6 +224,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
             empresa = Empresa.objects.get(pk=documento.empresa.id)
             resolucion = Resolucion.objects.get(pk=documento.resolucion.id)
+            documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle__in=documentoDetalles)
         except Documento.DoesNotExist:
             pass
 
@@ -310,8 +311,38 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica-Bold", 10)
             p.drawString(400, 200, "Subtotal")
             p.drawRightString(550, 200, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
-            p.drawString(400, 180, "Total general")
-            p.drawRightString(550, 180, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
+            
+            # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
+            impuesto_totals = {}
+
+            # Recorrer los objetos DocumentoImpuesto
+            for impuesto in documentoImpuestos:
+                impuesto_id = impuesto.impuesto.id  # ID del impuesto
+                nombre_impuesto = impuesto.impuesto.nombre_extendido  # Nombre del impuesto
+                total = impuesto.total
+
+                # Verificar si el impuesto_id ya existe en el diccionario
+                if impuesto_id in impuesto_totals:
+                    # Si existe, sumar el total al valor existente
+                    impuesto_totals[impuesto_id]['total'] += total
+                else:
+                    # Si no existe, crear una nueva entrada en el diccionario con el total y el nombre del impuesto
+                    impuesto_totals[impuesto_id] = {'total': total, 'nombre': nombre_impuesto}
+
+            # Definir la posición "y" inicial
+            y = 180
+
+            # Recorrer el diccionario de totales de impuestos
+            for impuesto_id, data in impuesto_totals.items():
+                nombre_impuesto = data['nombre']
+                total_acumulado = data['total']
+                
+                p.drawString(400, y, nombre_impuesto)
+                p.drawRightString(550, y, f"${locale.format_string('%d', int(total_acumulado), grouping=True)}")
+                y -= 20
+
+            p.drawString(400, y, "Total general")
+            p.drawRightString(550, y, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
 
             #Comentario
             paragraph.wrapOn(p, 280, 400)
