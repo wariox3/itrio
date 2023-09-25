@@ -1,5 +1,6 @@
 from general.models.empresa import Empresa, Ciudad, Identificacion, Regimen, TipoPersona
 from rest_framework import serializers
+from decouple import config
 
 class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
@@ -24,6 +25,8 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'contenedor_id']  
         
     def to_representation(self, instance):
+        region = config('DO_REGION')
+        bucket = config('DO_BUCKET')
         return {
             'id': instance.id,            
             'numero_identificacion': instance.numero_identificacion,
@@ -32,5 +35,5 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'direccion': instance.direccion,
             'telefono': instance.telefono,
             'correo': instance.correo,
-            'imagen': instance.imagen
+            'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         }            
