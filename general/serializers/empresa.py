@@ -31,5 +31,6 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'nombre_corto': instance.nombre_corto,
             'direccion': instance.direccion,
             'telefono': instance.telefono,
-            'correo': instance.correo
+            'correo': instance.correo,
+            'imagen': instance.imagen
         }            
