@@ -287,6 +287,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawString(50, 608, str(contacto.correo))
             p.drawString(50, 594, str(contacto.telefono))
 
+            #resolución
+            p.drawRightString(550, 622, f"FACTURA ELECTRÓNICA DE VENTA No. {resolucion.prefijo} {documento.numero}")
+            # p.drawRightString(550, 622, f"FACTURA ELECTRÓNICA DE VENTA No. {resolucion.prefijo} {documento.numero}")
             #Linea separadora
             p.setStrokeColorRGB(200/255, 200/255, 200/255)
             p.line(50, 580, 550, 580)
