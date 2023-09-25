@@ -250,7 +250,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             # Intenta cargar la imagen desde la URL
 
-            logo_url = f'https://{region}.{bucket}.cdn.digitaloceanspaces.com/test/empresa/logo_contenedor_{empresa.id}.jpg'
+            logo_url = f'https://{region}.{bucket}.cdn.digitaloceanspaces.com/{empresa.imagen}'
             try:
                 logo = ImageReader(logo_url)
             except Exception as e:
