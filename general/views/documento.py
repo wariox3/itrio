@@ -223,8 +223,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             contacto = documento.contacto
             documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
             empresa = Empresa.objects.get(pk=documento.empresa.id)
-            resolucion = Resolucion.objects.get(pk=documento.resolucion.id)
             documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle__in=documentoDetalles)
+            if documento.resolucion_id is not None:
+                resolucion = Resolucion.objects.get(pk=documento.resolucion.id)
         except Documento.DoesNotExist:
             pass
 
