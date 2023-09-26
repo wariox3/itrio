@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from general.models.empresa import Empresa
-from general.serializers.empresa import EmpresaSerializador
+from general.models.empresa import Empresa, Ciudad, Identificacion
+from general.serializers.empresa import EmpresaSerializador, EmpresaActualizarSerializador
 
 
 class EmpresaViewSet(viewsets.ModelViewSet):
@@ -18,4 +18,12 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             if empresaSerializador.is_valid():
                 empresaSerializador.save()                         
                 return Response({'empresa': empresaSerializador.data}, status=status.HTTP_200_OK)
-            return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)    
+            return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def update(self, request, pk=None):
+        empresa = self.get_object(pk)
+        empresaSerializador = EmpresaActualizarSerializador(empresa, data=request.data)
+        if empresaSerializador.is_valid():
+            empresaSerializador.save()
+            return Response({'actualizacion': True, 'empresa': empresaSerializador.data}, status=status.HTTP_201_CREATED)            
+        return Response({'mensaje':'Errores en la actualizacion', 'codigo':23, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
