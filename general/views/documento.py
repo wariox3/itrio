@@ -359,11 +359,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         draw_header()
 
-        impuestos_unicos = []
-
         for index, detalle in enumerate(documentoDetalles):
             documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle__in=documentoDetalles)
-
+            impuestos_unicos = []
             # Iterar sobre los impuestos relacionados con el detalle actual
             for impuesto_detalle in documentoImpuestos:
                 nombre_impuesto = impuesto_detalle.impuesto.nombre
