@@ -43,4 +43,4 @@ class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
     class Meta:
         model = Empresa
-        fields = ['nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion']
+        fields = ['id', 'nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion']
