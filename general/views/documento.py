@@ -298,6 +298,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             #Encabezado detalles
             p.setFont("Helvetica-Bold", 10)
             p.drawString(60, 555, "Descripción / Producto")
+            p.drawString(250, 555, "Impuestos")
             p.drawString(310, 555, "Cantidad")
             p.drawString(380, 555, "Desc")
             p.drawString(440, 555, "Subtotal")
@@ -358,11 +359,27 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         draw_header()
 
+        impuestos_unicos = []
+
         for index, detalle in enumerate(documentoDetalles):
+            documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle__in=documentoDetalles)
+
+            # Iterar sobre los impuestos relacionados con el detalle actual
+            for impuesto_detalle in documentoImpuestos:
+                nombre_impuesto = impuesto_detalle.impuesto.nombre
+                
+                # Si el nombre del impuesto no está en la lista de impuestos únicos, agrégalo
+                if nombre_impuesto not in impuestos_unicos:
+                    impuestos_unicos.append(nombre_impuesto)
+
+                # Ahora, puedes imprimir los nombres de impuestos únicos en una línea
+                impuestos_str = ', '.join(impuestos_unicos)
+
             p.setStrokeColorRGB(200/255, 200/255, 200/255)
             p.line(50, y + 15, 550, y + 15)
             p.setStrokeColorRGB(0, 0, 0)
-            p.drawString(70, y, str(detalle.item.nombre[:30]))
+            p.drawString(60, y, str(detalle.item.nombre[:30]))
+            p.drawString(250, y, impuestos_str)
             p.drawRightString(350, y, str(int(detalle.cantidad)))
             p.drawRightString(400, y, str(int(detalle.porcentaje_descuento)))
             p.drawRightString(480, y, f"${locale.format_string('%d', int(detalle.subtotal), grouping=True)}")
