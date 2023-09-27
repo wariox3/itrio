@@ -30,6 +30,9 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,            
             'numero_identificacion': instance.numero_identificacion,
+            'identificacion_id': instance.identificacion.id,
+            'ciudad_id': instance.ciudad.id,
+            'ciudad_nombre': instance.ciudad.nombre,
             'digito_verificacion': instance.digito_verificacion,
             'nombre_corto': instance.nombre_corto,
             'direccion': instance.direccion,
