@@ -3,6 +3,7 @@ from contenedor.models import Contenedor, Plan
 from decouple import config
 
 class ContenedorSerializador(serializers.ModelSerializer):
+    plan = serializers.PrimaryKeyRelatedField(queryset=Plan.objects.all())
     class Meta:
         model = Contenedor
         fields = ['id', 'schema_name']
@@ -15,6 +16,8 @@ class ContenedorSerializador(serializers.ModelSerializer):
             'subdominio': instance.schema_name,
             'nombre': instance.nombre,
             'plan_id': instance.plan_id,
+            'plan_usuarios_base': instance.plan.usuarios_base,
+            'plan_limite_usuarios': instance.plan.limite_usuarios,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         } 
     

@@ -142,7 +142,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 arrTipo = arrDatosB64[0].split(";")
                 arrData = arrTipo[0].split(":")
                 contentType = arrData[1]
-                archivo = f"{config('ENV')}/empresa/logo_{empresa_id}.jpg"
+                archivo = f"{config('ENV')}/contenedor/logo_{empresa_id}.jpg"
                 spaceDo = SpaceDo()
                 spaceDo.putB64(archivo, base64Crudo, contentType)
                 empresa.imagen = archivo
@@ -162,7 +162,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 empresa = Contenedor.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
-                empresa.imagen = f"{config('ENV')}/empresa/logo_defecto.jpg"
+                empresa.imagen = f"{config('ENV')}/contenedor/logo_defecto.jpg"
                 empresa.save()
                 return Response({'limpiar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
