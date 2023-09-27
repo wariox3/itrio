@@ -25,6 +25,10 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'contenedor_id']  
         
     def to_representation(self, instance):
+        nombre_ciudad = instance.ciudad.nombre
+        nombre_estado = instance.ciudad.estado.nombre
+
+        nombre_completo = f"{nombre_ciudad} - {nombre_estado}"
         region = config('DO_REGION')
         bucket = config('DO_BUCKET')
         return {
@@ -32,7 +36,7 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'numero_identificacion': instance.numero_identificacion,
             'identificacion_id': instance.identificacion.id,
             'ciudad_id': instance.ciudad.id,
-            'ciudad_nombre': instance.ciudad.nombre,
+            'ciudad_nombre': nombre_completo,
             'digito_verificacion': instance.digito_verificacion,
             'nombre_corto': instance.nombre_corto,
             'direccion': instance.direccion,
