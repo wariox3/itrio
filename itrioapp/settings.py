@@ -181,13 +181,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://muupservicios.online",
     "http://muup.online",
     'http://localhost:4200',
-    "http://*.localhost:4200",
-    "http://demo.localhost:4200",
     "http://190.249.212.131",
 ]
 
+
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://(\w+\.)?muup\.online$",
+    r"http?://(\w+\.)?localhost:4200"
 ]
 
 CORS_ALLOW_METHODS = [
