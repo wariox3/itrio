@@ -182,6 +182,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://muup.online",
     'http://localhost:4200',
     "http://*.localhost:4200",
+    "http://demo.localhost:4200",
     "http://190.249.212.131",
 ]
 
