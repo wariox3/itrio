@@ -22,7 +22,8 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'tipo_persona',
             'regimen',
             'imagen',
-            'contenedor_id']  
+            'contenedor_id',
+            'suscriptor']  
         
     def to_representation(self, instance):
         nombre_ciudad = instance.ciudad.nombre

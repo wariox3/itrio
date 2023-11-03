@@ -15,7 +15,6 @@ class Contacto(models.Model):
     direccion = models.CharField(max_length=50)
     barrio = models.CharField(max_length=200, null=True)
     codigo_ciuu = models.CharField(max_length=200, null=True)
-    codigo_postal = models.CharField(max_length=20, null=True)
     telefono = models.CharField(max_length=50)
     celular = models.CharField(max_length=50)
     correo = models.EmailField(max_length = 255)
