@@ -20,6 +20,7 @@ import locale
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from decouple import config
+from .kiai import enviar_software_estrategico
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -429,81 +430,103 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def emitir(self, request):
         try:
             raw = request.data
-            codigoDocumento = raw.get('id')
+            codigoDocumento = raw.get('documento_id')
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
                 if documento.estado_aprobado == True:
+                    empresa = Empresa.objects.get(pk=1)
 
                     #Se construye el obejto inicial
 
-                    data_factura = {
-                        'dat_suscriptor' : '',
-                        'dat_nitFacturador': '',
+                    datos_factura = {
+                        'dat_suscriptor' : empresa.suscriptor,
+                        'dat_nitFacturador': empresa.numero_identificacion,
                         'dat_claveTecnica' : '',
                         'dat_setPruebas' : '',
-                        'dat_tipoAmbiente' : '',
-                        'res_numero' : '',
-                        'res_prefijo' : '',
-                        'res_fechaDesde' : '',
-                        'res_fechaHasta' : '',
-                        'res_desde' : '',
-                        'res_hasta' : '',
-                        'doc_codigo' : '',
-                        'doc_tipo' : '',
-                        'doc_tipo_operacion' : '',
+                        'dat_tipoAmbiente' : 2,
+                        'res_numero' : 18760000001,
+                        'res_prefijo' : 'FA',
+                        'res_fechaDesde' : '2023-05-03',
+                        'res_fechaHasta' : '2024-05-03',
+                        'res_desde' : '1001',
+                        'res_hasta' : '4000',
+                        'doc_codigo' : codigoDocumento,
+                        'doc_tipo' : documento.documento_tipo.documento_clase.codigo_dian,
+                        'doc_tipo_operacion' : 10,
                         'doc_codigoDocumento' : '',
-                        'doc_formaPago' : '',
+                        'doc_formaPago' : documento.metodo_pago.id,
+                        'doc_comentarios' : '',
                         'doc_cue' : '',
                         'doc_prefijo' : '',
-                        'doc_numero' : '',
-                        'doc_fecha' : '',
-                        'doc_fecha_vence' : '',
+                        'doc_numero' : documento.numero,
+                        'doc_fecha' : documento.fecha,
+                        'doc_fecha_vence' : documento.fecha_vence,
                         'doc_orden_compra' : '',
-                        'doc_hora' : '',
-                        'doc_hora2' : '',
-                        'doc_subtotal' : '',
-                        'doc_baseIva' : '',
-                        'doc_iva' :'',
-                        'doc_inc' : '',
-                        'doc_ica' : '',
-                        'doc_total' : '',
+                        'doc_hora' : '12:00:00-05:00',
+                        'doc_hora2' : '12:00:00',
+                        'doc_subtotal' : documento.subtotal,
+                        'doc_baseIva' : documento.base_impuesto,
+                        'doc_iva' : 0,
+                        'doc_inc' : 0,
+                        'doc_ica' : 0,
+                        'doc_total' : documento.total,
                         'ref_cue' : '',
                         'ref_codigoExterno' : '',
-                        'ref_numero' : '',
+                        'ref_numero' : '18760000001',
                         'ref_prefijo' : '',
                         'ref_fecha' : '',
-                        'em_tipoPersona' : '',
-                        'em_numeroIdentificacion' : '',
-                        'em_digitoVerificacion' : '',
-                        'em_nombreCompleto' : '',
+                        'em_tipoPersona' : empresa.tipo_persona.id,
+                        'em_numeroIdentificacion' : empresa.numero_identificacion,
+                        'em_digitoVerificacion' : empresa.digito_verificacion,
+                        'em_nombreCompleto' : empresa.nombre_corto,
                         'em_matriculaMercantil' : '',
-                        'em_codigoCiudad' : '',
-                        'em_nombreCiudad' : '',
-                        'em_codigoPostal' : '',
-                        'em_codigoDepartamento' : '',
-                        'em_nombreDepartamento' : '',
-                        'em_correo' :'',
-                        'em_direccion' : '',
-                        'ad_tipoIdentificacion' : '',
-                        'ad_numeroIdentificacion' : '',
-                        'ad_digitoVerificacion' : '',
-                        'ad_nombreCompleto' : '',
-                        'ad_tipoPersona' : '',
-                        'ad_regimen' : '',
+                        'em_codigoCiudad' : empresa.ciudad.codigo_postal,
+                        'em_nombreCiudad' : empresa.ciudad.nombre,
+                        'em_codigoPostal' : empresa.ciudad.codigo_postal,
+                        'em_codigoDepartamento' : empresa.ciudad.estado.codigo,
+                        'em_nombreDepartamento' : empresa.ciudad.estado.nombre,
+                        'em_correo' : empresa.correo,
+                        'em_direccion' : empresa.direccion,
+                        'ad_tipoIdentificacion' : documento.contacto.identificacion.codigo,
+                        'ad_numeroIdentificacion' : documento.contacto.numero_identificacion,
+                        'ad_digitoVerificacion' : documento.contacto.digito_verificacion,
+                        'ad_nombreCompleto' : documento.contacto.nombre_corto,
+                        'ad_tipoPersona' : documento.contacto.tipo_persona.id,
+                        'ad_regimen' : documento.contacto.regimen.id,
                         'ad_responsabilidadFiscal' : '',
-                        'ad_direccion' : '',
-                        'ad_barrio' : '',
-                        'ad_codigoPostal' : '',
-                        'ad_telefono' : '',
-                        'ad_correo' : '',
-                        'ad_codigoCIUU' : '',
-                        'ad_codigoCiudad' : '',
-                        'ad_nombreCiudad' : '',
-                        'ad_codigoDepartamento' : '',
-                        'ad_nombreDepartamento' : '',
+                        'ad_direccion' : documento.contacto.direccion,
+                        'ad_barrio' : documento.contacto.barrio,
+                        'ad_codigoPostal' : documento.contacto.ciudad.codigo_postal,
+                        'ad_telefono' : documento.contacto.telefono,
+                        'ad_correo' : documento.contacto.correo,
+                        'ad_codigoCIUU' : documento.contacto.codigo_ciuu,
+                        'ad_codigoCiudad' : documento.contacto.ciudad.codigo_postal,
+                        'ad_nombreCiudad' : documento.contacto.ciudad.nombre,
+                        'ad_codigoDepartamento' : documento.contacto.ciudad.estado.codigo,
+                        'ad_nombreDepartamento' : documento.contacto.ciudad.estado.nombre,
                     }
 
-                    
+                    arr_item = []
+                    cantidad_items = 0
+                    documentoDetalles = DocumentoDetalle.objects.filter(documento=codigoDocumento)
+                    for documentoDetalle in documentoDetalles:
+                        cantidad_items += 1
+                        arr_item.append({
+                            "item_id": cantidad_items,
+                            "item_codigo": documentoDetalle.pk,
+                            "item_nombre": documentoDetalle.item.nombre,
+                            "item_cantidad": "{:.2f}".format(documentoDetalle.cantidad),
+                            "item_precio": "{:.2f}".format(documentoDetalle.precio),
+                            "item_subtotal": "{:.2f}".format(documentoDetalle.subtotal),
+                            "item_base_iva": "{:.2f}".format(0),
+                            "item_iva": "{:.2f}".format(0),
+                            "item_porcentaje_iva": "{:.2f}".format(0)
+                        })
+
+                    datos_factura['doc_itemes'] = arr_item
+                    datos_factura['doc_cantidad_item'] = cantidad_items
+
+                    proceso_factura_electronica = enviar_software_estrategico(datos_factura)
 
 
                     # Verificar si la solicitud fue exitosa (código de respuesta 200)

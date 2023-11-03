@@ -2,6 +2,6 @@
   {
     "model": "general.documentoClase",
     "pk": 1,
-    "fields": {"nombre": "Factura venta"}
+    "fields": {"nombre": "Factura venta", "codigo_dian": "01"}
   }
 ]
