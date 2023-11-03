@@ -2,6 +2,7 @@ from django.urls import path, include
 from .views.prueba import PruebaView, enviar_coreo
 from .views.general import ListaAdministradorView, ListaAutocompletarView
 from .views.item import ItemViewSet
+from .views.resolucion import ResolucionViewSet
 from .views.impuesto import ImpuestoViewSet
 from .views.item_impuesto import ItemImpuestoViewSet
 from .views.contacto import ContactoViewSet
@@ -22,6 +23,7 @@ router.register(r'tipopersona', TipoPersonaViewSet)
 router.register(r'identificacion', IdentificacionViewSet)
 router.register(r'contacto', ContactoViewSet)
 router.register(r'item', ItemViewSet)
+router.register(r'resolucion', ResolucionViewSet)
 router.register(r'impuesto', ImpuestoViewSet)
 router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'documento', DocumentoViewSet)
