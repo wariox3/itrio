@@ -5,8 +5,8 @@ class Resolucion(models.Model):
     numero = models.CharField(max_length=50)
     consecutivo_desde = models.IntegerField()
     consecutivo_hasta = models.IntegerField()
-    fechaDesde = models.DateField()
-    fechaHasta = models.DateField()
+    fecha_desde = models.DateField()
+    fecha_hasta = models.DateField()
 
     class Meta:
         db_table = "gen_resolucion"

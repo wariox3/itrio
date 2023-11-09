@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from general.models.resolucion import Resolucion
 
-class ResolucionSerializer(serializers.HyperlinkedModelSerializer):
+class ResolucionSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Resolucion
