@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 import requests
-
+import json
 
 
 def enviar_software_estrategico(data):
@@ -20,7 +20,7 @@ def enviar_software_estrategico(data):
         url = "https://apps.kiai.co/api/ConValidacionPrevia/CrearSetPrueba"
 
     arr_software_estrategico = arr_kiai(data)
-    json_data = JsonResponse(arr_software_estrategico)
+    json_data = JsonResponse(arr_software_estrategico, safe=False)
 
     headers = {'Content-Type': 'application/json'}
     auth = ("900395252", "tufactura.co@softwareestrategico.com")
@@ -248,4 +248,4 @@ def arr_kiai(arr_factura):
             "CodigoConcepto": codigo_concepto,
         }
 
-    return arr_datos
+    return 8
