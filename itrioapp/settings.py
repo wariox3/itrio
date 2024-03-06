@@ -188,6 +188,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://(\w+\.)?muup\.online$",
+    r"^https?://(\w+\.)?reddoc\.online$",
     r"http?://(\w+\.)?localhost:4200"
     r"http?://(\w+\.)?localhost:8000"
 ]
