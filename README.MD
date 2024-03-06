@@ -22,9 +22,9 @@ DO_CLAVE_SECRETA="xyz"
 DO_REGION="xyz"
 DO_BUCKET="xyz"
 
-python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requerimientos.txt
+python3.10 -m venv ~/.venvs/itrio
+source ~/.venvs/itrio/bin/activate
+pip3 install -r requirements.txt
 cd itrioapp
 python3 manage.py runserver
 # Migrar la base de datos -> Debe estar creada
