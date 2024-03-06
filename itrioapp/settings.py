@@ -174,20 +174,22 @@ CORS_ALLOWED_ORIGINS = [
     "https://sub.example.com",
     "http://localhost:8080",
     "http://127.0.0.1:9000",
-    "http://127.0.0.1:4200",
+    "http://127.0.0.1:8000",
     "http://159.203.62.234",
     "http://179.15.105.37",
     "http://159.203.57.104",
-    "http://muupservicios.online",
-    "http://muup.online",
+    "http://reddocapi.online",
+    "http://reddoc.online",
     'http://localhost:4200',
     "http://190.249.212.131",
+    
 ]
 
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://(\w+\.)?muup\.online$",
     r"http?://(\w+\.)?localhost:4200"
+    r"http?://(\w+\.)?localhost:8000"
 ]
 
 CORS_ALLOW_METHODS = [

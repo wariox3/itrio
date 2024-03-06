@@ -20,13 +20,13 @@ def enviar_software_estrategico(data):
         url = "https://apps.kiai.co/api/ConValidacionPrevia/CrearSetPrueba"
 
     arr_software_estrategico = arr_kiai(data)
-    json_data = JsonResponse(arr_software_estrategico, safe=False)
+    json_data = json.dumps(arr_software_estrategico)
 
     headers = {'Content-Type': 'application/json'}
     auth = ("900395252", "tufactura.co@softwareestrategico.com")
 
     try:
-        response = requests.post(url, data=json_data, headers=headers, auth=auth, timeout=5)
+        response = requests.post(url, data=json_data, headers=headers, auth=auth, timeout=20)
 
         # Verificar el estado de la respuesta
         response.raise_for_status()
@@ -34,10 +34,10 @@ def enviar_software_estrategico(data):
         # Obtener la respuesta como JSON
         resp = response.json()
 
-        # if resp:
-        #     if 'Message' in resp:
-        #         if 'ExceptionMessage' in resp:
-        #             datos = resp['ExceptionMessage']
+        if resp:
+             if 'Message' in resp:
+                 if 'ExceptionMessage' in resp:
+                     datos = resp['ExceptionMessage']
         #             ar_respuesta = GenRespuestaFacturaElectronica()
         #             ar_respuesta.fecha = timezone.now()
         #             ar_respuesta.codigo_documento = data.get('doc_codigo')
@@ -155,7 +155,7 @@ def arr_kiai(arr_factura):
                 "DoeaCorreo": arr_factura['ad_correo'],
                 "DoeaTelefono": arr_factura['ad_telefono'],
                 "TiotCodigo": arr_factura['ad_tipoPersona'],
-                "RegCodigo": '0' + str(arr_factura['ad_regimen']),
+                "RegCodigo": "49",
                 "CopcCodigo": arr_factura['ad_codigoPostal'],
                 "DoeaManejoAdjuntos": 1,
             },
@@ -231,11 +231,6 @@ def arr_kiai(arr_factura):
             ],
             "ImpuestosRetenidosLinea": [],
             "CargosDescuentosLinea": [],
-            # "DoeiNumeroRadicadoRemesa": item['item_radicado_remesa'] if item['item_radicado_remesa'] else "",
-            # "DoeiNumeroConsecutivoRemesa": item['item_consecutivo_remesa'] if item['item_consecutivo_remesa'] else "",
-            # "DoeiValorFleteRemesa": item['item_flete_remesa'] if item['item_flete_remesa'] else 0,
-            # "DoeiCantidadFleteRemesa": item['item_cantidad_flete_remesa'] if item['item_cantidad_flete_remesa'] else 0,
-            # "DoeiUnimCodigoRemesa": item['item_unidad_medida_remesa'] if item['item_unidad_medida_remesa'] else "",
         })
 
     if tipo == '91' or tipo == '92':
@@ -248,4 +243,4 @@ def arr_kiai(arr_factura):
             "CodigoConcepto": codigo_concepto,
         }
 
-    return 8
+    return arr_datos

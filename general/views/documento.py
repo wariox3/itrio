@@ -464,12 +464,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'doc_orden_compra' : '',
                         'doc_hora' : '12:00:00-05:00',
                         'doc_hora2' : '12:00:00',
-                        'doc_subtotal' : documento.subtotal,
-                        'doc_baseIva' : documento.base_impuesto,
+                        'doc_subtotal' : float(documento.subtotal),
+                        'doc_baseIva' : float(documento.base_impuesto),
                         'doc_iva' : 0,
                         'doc_inc' : 0,
                         'doc_ica' : 0,
-                        'doc_total' : documento.total,
+                        'doc_total' : float(documento.total),
                         'ref_cue' : '',
                         'ref_codigoExterno' : '',
                         'ref_numero' : '18760000001',
@@ -515,12 +515,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             "item_id": cantidad_items,
                             "item_codigo": documentoDetalle.pk,
                             "item_nombre": documentoDetalle.item.nombre,
-                            "item_cantidad": "{:.2f}".format(documentoDetalle.cantidad),
-                            "item_precio": "{:.2f}".format(documentoDetalle.precio),
-                            "item_subtotal": "{:.2f}".format(documentoDetalle.subtotal),
-                            "item_base_iva": "{:.2f}".format(0),
-                            "item_iva": "{:.2f}".format(0),
-                            "item_porcentaje_iva": "{:.2f}".format(0)
+                            "item_cantidad": float(documentoDetalle.cantidad),
+                            "item_precio": float(documentoDetalle.precio),
+                            "item_subtotal": float(documentoDetalle.subtotal),
+                            "item_base_iva": float(0),
+                            "item_iva": float(0),
+                            "item_porcentaje_iva": float(0)
                         })
 
                     datos_factura['doc_itemes'] = arr_item
