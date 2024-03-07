@@ -19,17 +19,19 @@ class ContenedorEstado(models.Model):
     class Meta:
         db_table = "cnt_estado"
 
-class ContenedorCiudad(models.Model):
+class ContenedorRegimen(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50) 
-    latitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    codigo_postal = models.CharField(max_length=10, null=True)
-    porcentaje_impuesto = models.DecimalField(max_digits=5, decimal_places=2, default=0)  
-    estado = models.ForeignKey(ContenedorEstado, on_delete=models.CASCADE)
     
     class Meta:
-        db_table = "cnt_ciudad"        
+        db_table = "cnt_regimen"        
+
+class ContenedorTipoPersona(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    nombre = models.CharField(max_length=50) 
+    
+    class Meta:
+        db_table = "cnt_tipo_persona"    
 
 class ContenedorIdentificacion(models.Model):
     id = models.BigIntegerField(primary_key=True)
