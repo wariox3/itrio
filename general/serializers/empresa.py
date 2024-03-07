@@ -52,6 +52,8 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
 class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
+    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
     class Meta:
         model = Empresa
-        fields = ['nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion', 'suscriptor']
+        fields = ['nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion', 'suscriptor', 'tipo_persona', 'regimen']
