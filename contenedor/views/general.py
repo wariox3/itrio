@@ -4,8 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from contenedor.models import ContenedorIdentificacion
 from contenedor.models import ContenedorCiudad
+from contenedor.models import ContenedorRegimen
+from contenedor.models import ContenedorTipoPersona
 from contenedor.serializers.identificacion import ContenedorIdentificacionSerializador, ContenedorIdentificacionListaAutocompletarSerializador
 from contenedor.serializers.ciudad import ContenedorCiudadSerializador, ContenedorCiudadListaAutocompletarSerializador
+from contenedor.serializers.regimen import ContenedorRegimenSerializador, ContenedorRegimenListaAutocompletarSerializador
+from contenedor.serializers.tipo_persona import ContenedorTipoPersonaSerializador, ContenedorTipoPersonaListaAutocompletarSerializador
 from rest_framework.permissions import IsAuthenticated
 
 class ListaAutocompletarView(APIView):
