@@ -43,6 +43,9 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'direccion': instance.direccion,
             'telefono': instance.telefono,
             'correo': instance.correo,
+            'regimen': instance.regimen.id,
+            'tipo_persona': instance.tipo_persona.id,
+            'suscriptor': instance.suscriptor,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         }   
 
