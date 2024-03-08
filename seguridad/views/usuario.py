@@ -95,8 +95,9 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 verificacion_serializer = VerificacionSerializador(data = raw)
                 if verificacion_serializer.is_valid():                                             
                     verificacion_serializer.save()
+                    dominio = config('DOMINIO')
                     correo = Correo() 
-                    contenido='Enlace para cambiar la clave http://muup.online/auth/clave/cambiar/' + token
+                    contenido='Enlace para cambiar la clave http://' + dominio + '/auth/clave/cambiar/' + token
                     correo.enviar(usuario.correo, 'Solicitud cambio clave', contenido) 
                     return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
                 return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

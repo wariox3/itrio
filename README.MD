@@ -14,6 +14,7 @@ DATABASE_NAME='bdprueba'
 DATABASE_PORT='5432'
 #Entorno
 ENV='dev'
+DOMINIO='reddoc.online'
 #Credenciales sendgrid
 KEY_SENDGRID='xyz'
 #Credenciales S#
