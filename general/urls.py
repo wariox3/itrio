@@ -13,6 +13,8 @@ from .views.ciudad import CiudadViewSet
 from .views.tipo_persona import TipoPersonaViewSet
 from .views.regimen import RegimenViewSet
 from .views.metodo_pago import MetodoPagoViewSet
+from .views.precio import PrecioViewSet
+from .views.precio_detalle import PrecioDetalleViewSet
 from .views.empresa import EmpresaViewSet
 from rest_framework import routers
 
@@ -29,6 +31,8 @@ router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'documento', DocumentoViewSet)
 router.register(r'documentodetalle', DocumentoDetalleViewSet)
 router.register(r'metodopago', MetodoPagoViewSet)
+router.register(r'precio', PrecioViewSet)
+router.register(r'preciodetalle', PrecioDetalleViewSet)
 router.register(r'empresa', EmpresaViewSet)
 
 urlpatterns = [    
