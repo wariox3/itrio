@@ -29,7 +29,21 @@ class ContenedorCiudad(models.Model):
     estado = models.ForeignKey(ContenedorEstado, on_delete=models.CASCADE)
     
     class Meta:
-        db_table = "cnt_ciudad"        
+        db_table = "cnt_ciudad"      
+        
+class ContenedorRegimen(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    nombre = models.CharField(max_length=50) 
+    
+    class Meta:
+        db_table = "cnt_regimen"  
+
+class ContenedorTipoPersona(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    nombre = models.CharField(max_length=50) 
+    
+    class Meta:
+        db_table = "cnt_tipo_persona"  
 
 class ContenedorIdentificacion(models.Model):
     id = models.BigIntegerField(primary_key=True)

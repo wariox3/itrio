@@ -1,0 +1,12 @@
+[
+  {
+    "model": "contenedor.contenedorRegimen",
+    "pk": 1,
+    "fields": {"nombre": "Ordinario común"}
+  },
+  {
+    "model": "contenedor.contenedorRegimen",
+    "pk": 2,
+    "fields": {"nombre": "Simple"}
+  }
+]

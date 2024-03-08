@@ -43,12 +43,17 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'direccion': instance.direccion,
             'telefono': instance.telefono,
             'correo': instance.correo,
+            'regimen': instance.regimen.id,
+            'tipo_persona': instance.tipo_persona.id,
+            'suscriptor': instance.suscriptor,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         }   
 
 class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
+    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
     class Meta:
         model = Empresa
-        fields = ['nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion']
+        fields = ['nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion', 'suscriptor', 'tipo_persona', 'regimen']
