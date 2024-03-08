@@ -23,7 +23,7 @@ class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
             'rol': instance.rol,
             'subdominio': instance.contenedor.schema_name,
             'nombre': instance.contenedor.nombre,
-            'imagen': f"https://itrio.fra1.digitaloceanspaces.com/{instance.contenedor.imagen}",
+            'imagen': f"https://semantica.sfo3.digitaloceanspaces.com/itrio/{instance.contenedor.imagen}",
             'usuarios': instance.contenedor.usuarios,
             'usuarios_base': usuariosBase,
             'plan_id': instance.contenedor.plan_id,
