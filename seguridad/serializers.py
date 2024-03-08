@@ -20,7 +20,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.nombre_corto = arrCadena[0]
         user.is_active = False
         user.dominio = "muupservicios.online"
-        user.imagen = f"{config('ENV')}/usuario/imagen_defecto.jpg"
+        user.imagen = f"usuario/imagen_defecto.jpg"
         user.set_password(validated_data['password'])    
         user.save()
         return user
@@ -37,7 +37,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'telefono': instance.telefono,
             'idioma': instance.idioma,
             'vr_saldo': instance.vr_saldo,
-            'imagen': f"https://itrio.fra1.digitaloceanspaces.com/{instance.imagen}",
+            'imagen': f"https://semantica.sfo3.digitaloceanspaces.com/itrio/{config('ENV')}/{instance.imagen}",
             'fecha_limite_pago': instance.fecha_limite_pago
         }
 
