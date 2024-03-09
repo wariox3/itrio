@@ -20,7 +20,8 @@ import locale
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from decouple import config
-from .kiai import enviar_software_estrategico
+from utilidades.wolframio import enviar
+import json
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -404,7 +405,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         p.save()
         return response
 
-    
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
         documentos = Documento.objects.all()
@@ -439,106 +439,101 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     #Se construye el obejto inicial
 
                     datos_factura = {
-                        'dat_suscriptor' : empresa.suscriptor,
-                        'dat_nitFacturador': empresa.numero_identificacion,
-                        'dat_claveTecnica' : documento.resolucion.clave_tecnica,
-                        'dat_setPruebas' : documento.resolucion.set_prueba,
-                        'dat_tipoAmbiente' : documento.resolucion.ambiente,
-                        'res_numero' : documento.resolucion.numero,
-                        'res_prefijo' : documento.resolucion.prefijo,
-                        'res_fechaDesde' : documento.resolucion.fecha_desde,
-                        'res_fechaHasta' : documento.resolucion.fecha_hasta,
-                        'res_desde' : documento.resolucion.consecutivo_desde,
-                        'res_hasta' : documento.resolucion.consecutivo_hasta,
-                        'doc_codigo' : codigoDocumento,
-                        'doc_tipo' : documento.documento_tipo.documento_clase.codigo_dian,
-                        'doc_tipo_operacion' : 10,
-                        'doc_codigoDocumento' : '',
-                        'doc_formaPago' : documento.metodo_pago.id,
-                        'doc_comentarios' : '',
-                        'doc_cue' : '',
-                        'doc_prefijo' : '',
-                        'doc_numero' : documento.numero,
-                        'doc_fecha' : documento.fecha,
-                        'doc_fecha_vence' : documento.fecha_vence,
-                        'doc_orden_compra' : '',
-                        'doc_hora' : '12:00:00-05:00',
-                        'doc_hora2' : '12:00:00',
-                        'doc_subtotal' : float(documento.subtotal),
-                        'doc_baseIva' : float(documento.base_impuesto),
-                        'doc_iva' : 0,
-                        'doc_inc' : 0,
-                        'doc_ica' : 0,
-                        'doc_total' : float(documento.total),
-                        'ref_cue' : '',
-                        'ref_codigoExterno' : '',
-                        'ref_numero' : '18760000001',
-                        'ref_prefijo' : '',
-                        'ref_fecha' : '',
-                        'em_tipoPersona' : empresa.tipo_persona.id,
-                        'em_numeroIdentificacion' : empresa.numero_identificacion,
-                        'em_digitoVerificacion' : empresa.digito_verificacion,
-                        'em_nombreCompleto' : empresa.nombre_corto,
-                        'em_matriculaMercantil' : '',
-                        'em_codigoCiudad' : empresa.ciudad.codigo_postal,
-                        'em_nombreCiudad' : empresa.ciudad.nombre,
-                        'em_codigoPostal' : empresa.ciudad.codigo_postal,
-                        'em_codigoDepartamento' : empresa.ciudad.estado.codigo,
-                        'em_nombreDepartamento' : empresa.ciudad.estado.nombre,
-                        'em_correo' : empresa.correo,
-                        'em_direccion' : empresa.direccion,
-                        'ad_tipoIdentificacion' : documento.contacto.identificacion.codigo,
-                        'ad_numeroIdentificacion' : documento.contacto.numero_identificacion,
-                        'ad_digitoVerificacion' : documento.contacto.digito_verificacion,
-                        'ad_nombreCompleto' : documento.contacto.nombre_corto,
-                        'ad_tipoPersona' : documento.contacto.tipo_persona.id,
-                        'ad_regimen' : documento.contacto.regimen.id,
-                        'ad_responsabilidadFiscal' : '',
-                        'ad_direccion' : documento.contacto.direccion,
-                        'ad_barrio' : documento.contacto.barrio,
-                        'ad_codigoPostal' : documento.contacto.ciudad.codigo_postal,
-                        'ad_telefono' : documento.contacto.telefono,
-                        'ad_correo' : documento.contacto.correo,
-                        'ad_codigoCIUU' : documento.contacto.codigo_ciuu,
-                        'ad_codigoCiudad' : documento.contacto.ciudad.codigo_postal,
-                        'ad_nombreCiudad' : documento.contacto.ciudad.nombre,
-                        'ad_codigoDepartamento' : documento.contacto.ciudad.estado.codigo,
-                        'ad_nombreDepartamento' : documento.contacto.ciudad.estado.nombre,
+                        "cuentaId": 1,
+                        "documentoClaseID" : 1,
+                        "documento" : {
+                            "ambiente" : documento.resolucion.ambiente,
+                            "prefijo" : documento.resolucion.prefijo,
+                            "numero" : documento.resolucion.numero,
+                            "fecha" : documento.fecha,
+                            "hora" : '12:00:00-05:00',
+                            "fecha_vence" : documento.fecha_vence,
+                            "tipo_operacion" : 10,
+                            "moneda" : "COP",
+                            "resolucion" : documento.resolucion.numero,
+                            "forma_pago" : documento.metodo_pago.id,
+                            "cantidad_detalles" :1,
+                            "subtotal" : float(documento.subtotal),
+                            "subtotal_mas_impuestos" : float(documento.subtotal + documento.impuesto),
+                            "base" : float(documento.base_impuesto),
+                            "total_impuestos" : documento.impuesto,
+                            "total_descuentos" : documento.descuento,
+                            "total_cargos" : 0,
+                            "total_anticipos" : 0,
+                            "total_documento" : documento.total,
+                            "total_iva" : 0,
+                            "total_consumo" : 0,
+                            "total_ica" : 0,
+                            "adquiriente" : {
+                                "identificacion" : documento.contacto.identificacion.codigo,
+                                "numero_identificacion" : documento.contacto.numero_identificacion,
+                                "digito_verificacion" : documento.contacto.digito_verificacion,
+                                "razon_social" : documento.contacto.nombre_corto,
+                                "pais" : "CO",
+                                "ciudad" : documento.contacto.ciudad.codigo_postal,
+                                "direccion" : documento.contacto.direccion,
+                                "obligaciones" : "0-99",
+                                "nombres" : documento.contacto.nombre1,
+                                "apellidos" : documento.contacto.apellido1,
+                                "correo" : documento.contacto.correo,
+                                "telefono" : documento.contacto.telefono,
+                                "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
+                                "regimen_tributario" : documento.contacto.regimen.id,
+                                "codigo_postal" : documento.contacto.ciudad.codigo_postal,
+                                "responsable" : 1,
+                                "nacional" : 1
+                            },
+                        }
                     }
+                    arr_medio_pago = []
+
+                    arr_medio_pago.append({
+                        "medio_pago": 31,
+                        "descripcion": "",
+                    })
+
+                    datos_factura['documento']['medios_pago'] = arr_medio_pago
 
                     arr_item = []
+                    arr_impuestos = []
                     cantidad_items = 0
                     documentoDetalles = DocumentoDetalle.objects.filter(documento=codigoDocumento)
                     for documentoDetalle in documentoDetalles:
                         cantidad_items += 1
                         arr_item.append({
-                            "item_id": cantidad_items,
-                            "item_codigo": documentoDetalle.pk,
-                            "item_nombre": documentoDetalle.item.nombre,
-                            "item_cantidad": float(documentoDetalle.cantidad),
-                            "item_precio": float(documentoDetalle.precio),
-                            "item_subtotal": float(documentoDetalle.subtotal),
-                            "item_base_iva": float(0),
-                            "item_iva": float(0),
-                            "item_porcentaje_iva": float(0)
+                            "consecutivo": cantidad_items,
+                            "codigo": documentoDetalle.item.codigo,
+                            "descripcion" : documentoDetalle.item.nombre,
+                            "marca" : "",
+                            "modelo" : "",
+                            "observacion" : "",
+                            "cantidad" : float(documentoDetalle.cantidad),
+                            "cantidad_empque": float(documentoDetalle.cantidad),
+                            "obserquio" : 0,
+                            "precio_unitario" : float(documentoDetalle.precio),
+                            "precio_referencia" : float(documentoDetalle.precio),
+                            "valor" : float(documentoDetalle.precio),
+                            "total_descuentos" : float(documentoDetalle.descuento),
+                            "total_cargos" : 0,
+                            "total_impuestos" : 0,
+                            "base" : 0,
+                            "subtotal" : float(documentoDetalle.subtotal)
                         })
 
-                    datos_factura['doc_itemes'] = arr_item
+                        documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documentoDetalle=documentoDetalle.id)
+                        for documentoImpuestoDetalle in documentoImpuestoDetalles:
+                            arr_impuestos.append({
+                                "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
+                                "total" : float(documentoImpuestoDetalle.total),
+                                "porcentual" : documentoImpuestoDetalle.porcentaje
+                            })
+                    
+
+                    datos_factura['documento']['detalles'] = arr_item
                     datos_factura['doc_cantidad_item'] = cantidad_items
+                    
+                    arr_documento = enviar(datos_factura)
 
-                    proceso_factura_electronica = enviar_software_estrategico(datos_factura)
-
-
-                    # Verificar si la solicitud fue exitosa (código de respuesta 200)
-                    # if response.status_code == 200:
-                    #     # Procesar la respuesta de la API aquí
-                    #     data = response.json()  # Suponiendo que la API responde en formato JSON
-                    #     # ...
-
-                    #     # Guardar el documento u realizar otras acciones necesarias
-                    #     documento.save()
-                    # else:
-                    #     return Response({'mensaje': 'La API externa respondió con un error', 'codigo': 2}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
             else:
