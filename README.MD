@@ -26,7 +26,7 @@ DO_BUCKET="xyz"
 python3.10 -m venv ~/.venvs/itrio
 source ~/.venvs/itrio/bin/activate
 pip3 install -r requirements.txt
-cd itrioapp
+cd itrio
 python3 manage.py runserver
 # Migrar la base de datos -> Debe estar creada
 python3 manage.py migrate
