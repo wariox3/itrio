@@ -34,7 +34,8 @@ SHARED_APPS = (
 
 TENANT_APPS = (
     'general',
-    'contabilidad'
+    'contabilidad',
+    'cartera'
 )
 
 INSTALLED_APPS = [
@@ -52,7 +53,8 @@ INSTALLED_APPS = [
     'contenedor',
     'seguridad',
     'general',
-    'contabilidad'    
+    'contabilidad',
+    'cartera'    
 ]
 
 MIDDLEWARE = [
