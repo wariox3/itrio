@@ -404,27 +404,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         p.save()
         return response
-
-    @staticmethod
-    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-        documentos = Documento.objects.all()
-        if filtros:
-            for filtro in filtros:
-                documentos = documentos.filter(**{filtro['propiedad']: filtro['valor_1']})
-        if ordenamientos:
-            documentos = documentos.order_by(*ordenamientos)              
-        documentos = documentos[desplazar:limite+desplazar]
-        itemsCantidad = Documento.objects.all()[:limiteTotal].count()
-        serializador = DocumentoSerializador(documentos, many=True) 
-        campos = []
-        camposSerializador = DocumentoSerializador().get_fields()
-        for nombre, field_instance in camposSerializador.items():
-            tipo = field_instance.__class__.__name__
-            titulo = field_instance.label or nombre
-            campos.append({"nombre": nombre, "tipo": tipo, "titulo": titulo}) 
-          
-        respuesta = {'propiedades': campos, 'registros': serializador.data, "cantidad_registros": itemsCantidad}
-        return respuesta
     
     @action(detail=False, methods=["post"], url_path=r'emitir',)
     def emitir(self, request):
@@ -540,3 +519,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         except Documento.DoesNotExist:
             return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @staticmethod
+    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
+        documentos = Documento.objects.all()
+        if filtros:
+            for filtro in filtros:
+                documentos = documentos.filter(**{filtro['propiedad']: filtro['valor_1']})
+        if ordenamientos:
+            documentos = documentos.order_by(*ordenamientos)              
+        documentos = documentos[desplazar:limite+desplazar]
+        itemsCantidad = Documento.objects.all()[:limiteTotal].count()
+        serializador = DocumentoSerializador(documentos, many=True)           
+        respuesta = {'documentos': serializador.data, "cantidad_registros": itemsCantidad}
+        return respuesta
