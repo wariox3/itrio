@@ -9,6 +9,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Contacto
         fields = [
+            'id',
             'identificacion', 
             'numero_identificacion',
             'digito_verificacion',
