@@ -440,14 +440,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
                     datos_factura = {
                         "cuentaId": 1,
-                        "documentoClaseID" : 1,
+                        "documentoClaseId" : 1,
                         "documento" : {
                             "ambiente" : documento.resolucion.ambiente,
                             "prefijo" : documento.resolucion.prefijo,
-                            "numero" : documento.resolucion.numero,
-                            "fecha" : documento.fecha,
-                            "hora" : '12:00:00-05:00',
-                            "fecha_vence" : documento.fecha_vence,
+                            "numero" : documento.numero,
+                            "fecha" : str(documento.fecha),
+                            "hora" : str("12:00:00-05:00"),
+                            "fecha_vence" : str(documento.fecha_vence),
                             "tipo_operacion" : 10,
                             "moneda" : "COP",
                             "resolucion" : documento.resolucion.numero,
@@ -456,11 +456,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             "subtotal" : float(documento.subtotal),
                             "subtotal_mas_impuestos" : float(documento.subtotal + documento.impuesto),
                             "base" : float(documento.base_impuesto),
-                            "total_impuestos" : documento.impuesto,
-                            "total_descuentos" : documento.descuento,
+                            "total_impuestos" : float(documento.impuesto),
+                            "total_descuentos" : float(documento.descuento),
                             "total_cargos" : 0,
                             "total_anticipos" : 0,
-                            "total_documento" : documento.total,
+                            "total_documento" : float(documento.total),
                             "total_iva" : 0,
                             "total_consumo" : 0,
                             "total_ica" : 0,
@@ -520,7 +520,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             "subtotal" : float(documentoDetalle.subtotal)
                         })
 
-                        documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documentoDetalle=documentoDetalle.id)
+                        documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
                         for documentoImpuestoDetalle in documentoImpuestoDetalles:
                             arr_impuestos.append({
                                 "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
