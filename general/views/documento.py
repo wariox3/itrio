@@ -420,8 +420,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         camposSerializador = DocumentoSerializador().get_fields()
         for nombre, field_instance in camposSerializador.items():
             tipo = field_instance.__class__.__name__
-            etiqueta = field_instance.label or nombre
-            campos.append({"nombre": nombre, "tipo": tipo, "titulo": etiqueta}) 
+            titulo = field_instance.label or nombre
+            campos.append({"nombre": nombre, "tipo": tipo, "titulo": titulo}) 
           
         respuesta = {'propiedades': campos, 'registros': serializador.data, "cantidad_registros": itemsCantidad}
         return respuesta
