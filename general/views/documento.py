@@ -474,10 +474,30 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     datos_factura['documento']['medios_pago'] = arr_medio_pago
 
                     arr_item = []
-                    arr_impuestos = []
+                    impuestos_agrupados = {}
                     cantidad_items = 0
                     documentoDetalles = DocumentoDetalle.objects.filter(documento=codigoDocumento)
                     for documentoDetalle in documentoDetalles:
+                        arr_impuestos = []
+                        documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
+                        for documentoImpuestoDetalle in documentoImpuestoDetalles:
+                            arr_impuestos.append({
+                                "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
+                                "total" : float(documentoImpuestoDetalle.total),
+                                "porcentual" : float(documentoImpuestoDetalle.porcentaje)
+                            })
+
+                            impuesto_id = documentoImpuestoDetalle.impuesto_id
+                            impuesto = {
+                                "tipo_impuesto": impuesto_id,
+                                "total": 0,
+                                "porcentual": float(documentoImpuestoDetalle.porcentaje),
+                            }
+
+                            if impuesto_id not in impuestos_agrupados:
+                                impuestos_agrupados[impuesto_id] = impuesto
+                                impuestos_agrupados[impuesto_id]["total"] += float(documentoImpuestoDetalle.total)
+
                         cantidad_items += 1
                         arr_item.append({
                             "consecutivo": cantidad_items,
@@ -496,20 +516,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             "total_cargos" : 0,
                             "total_impuestos" : 0,
                             "base" : 0,
-                            "subtotal" : float(documentoDetalle.subtotal)
+                            "subtotal" : float(documentoDetalle.subtotal),
+                            "impuestos" : arr_impuestos
                         })
-
-                        documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
-                        for documentoImpuestoDetalle in documentoImpuestoDetalles:
-                            arr_impuestos.append({
-                                "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
-                                "total" : float(documentoImpuestoDetalle.total),
-                                "porcentual" : documentoImpuestoDetalle.porcentaje
-                            })
                     
-
                     datos_factura['documento']['detalles'] = arr_item
                     datos_factura['doc_cantidad_item'] = cantidad_items
+                    datos_factura['documento']['impuestos'] = list(impuestos_agrupados.values())
+
                     
                     arr_documento = enviar(datos_factura)
 
