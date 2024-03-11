@@ -32,15 +32,26 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
         
     def to_representation(self, instance):
         return {
-            'id': instance.id,            
+            'id': instance.id,
+            'identificacion': instance.identificacion.abreviatura, 
             'numero_identificacion': instance.numero_identificacion,
-            'identificacion_nombre': instance.identificacion.nombre,            
-            'nombre_corto': instance.nombre_corto,            
+            'digito_verificacion': instance.digito_verificacion,
+            'nombre_corto': instance.nombre_corto,
+            'nombre1': instance.nombre1,
+            'nombre2': instance.nombre2,
+            'apellido1': instance.apellido1,
+            'apellido2': instance.apellido2,
             'correo': instance.correo,
             'telefono': instance.telefono,
             'celular': instance.celular,
-            'direccion': instance.direccion,        
-            'ciudad_nombre': instance.ciudad.nombre,
+            'direccion': instance.direccion,  
+            'ciudad': instance.ciudad.nombre,
+            'barrio': instance.barrio,
+            'codigo_postal': instance.codigo_postal,
+            'tipo_persona': instance.tipo_persona.nombre,
+            'regimen': instance.regimen.nombre,  
+            'codigo_ciuu': instance.codigo_ciuu
+
         }     
 
 class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
@@ -55,4 +66,19 @@ class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
         return {
             'contacto_id': instance.id,            
             'contacto_nombre_corto': instance.nombre_corto
-        }        
+        }       
+
+'''#Esto fue una prueba para retornar solo los campos de la peticion, se puede borrar
+class ContactoSerializadorV2(serializers.ModelSerializer):
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
+    class Meta:
+        model = Contacto
+        fields = '__all__'   
+
+    def __init__(self, *args, fields=None, **kwargs):
+        super(ContactoSerializadorV2, self).__init__(*args, **kwargs)
+        if fields:
+            allowed = set(fields)
+            existing = set(self.fields.keys())
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)                   '''

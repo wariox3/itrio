@@ -50,13 +50,13 @@ class ListaAdministradorView(APIView):
             items = items[desplazar:limite+desplazar]
             itemsCantidad = model.objects.all()[:cantidadLimite].count()
             serializador = serializer(items, many=True) 
-            fields_info = []
+            '''fields_info = []
             model_fields = serializer().get_fields()
             for field_name, field_instance in model_fields.items():
                 nombre_verbose_name = model._meta.get_field(field_name).verbose_name
                 field_type = field_instance.__class__.__name__
-                fields_info.append({"nombre": field_name, "tipo": field_type, "titulo":field_name.upper(), "titulo2": nombre_verbose_name})       
-            return Response({"propiedades":fields_info, "registros": serializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
+                fields_info.append({"nombre": field_name, "tipo": field_type, "titulo":field_name.upper(), "titulo2": nombre_verbose_name})'''
+            return Response({"registros": serializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
 class ListaAutocompletarView(APIView):

@@ -4,12 +4,11 @@ from general.models.documento import Documento
 from general.serializers.contacto import ContactoSerializador
 from rest_framework.response import Response
 
-
 class ContactoViewSet(viewsets.ModelViewSet):
     queryset = Contacto.objects.all()
     serializer_class = ContactoSerializador    
-    permission_classes = [permissions.IsAuthenticated]
-    
+    permission_classes = [permissions.IsAuthenticated]               
+
     def destroy(self):
         contacto = self.get_object()
 
