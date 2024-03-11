@@ -11,7 +11,7 @@ class DocumentoDetalle(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     porcentaje_descuento = models.DecimalField(max_digits=3, decimal_places=2, default=0)
     documento = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='detalles')
-    documento_fectado = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='detalles_afectado', null=True)
+    documento_afectado = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='detalles_afectado', null=True)
     item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
 
     class Meta:
