@@ -9,7 +9,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
     serializer_class = ContactoSerializador    
     permission_classes = [permissions.IsAuthenticated]               
 
-    def destroy(self):
+    '''def destroy(self):
         contacto = self.get_object()
 
         # Verificar si el contacto está siendo utilizado en algún documento
@@ -18,4 +18,4 @@ class ContactoViewSet(viewsets.ModelViewSet):
 
         # Si no está siendo utilizado en documentos, se puede eliminar
         contacto.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)'''
