@@ -418,7 +418,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     #Se construye el obejto inicial
 
                     datos_factura = {
-                        "cuentaId": 1,
+                        "cuentaId": empresa.reddoc_id,
                         "documentoClaseId" : 1,
                         "documento" : {
                             "ambiente" : documento.resolucion.ambiente,
