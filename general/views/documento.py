@@ -427,22 +427,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             "fecha" : str(documento.fecha),
                             "hora" : str("12:00:00-05:00"),
                             "fecha_vence" : str(documento.fecha_vence),
-                            "tipo_operacion" : 10,
+                            "tipo_operacion" : str(10),
                             "moneda" : "COP",
                             "resolucion" : documento.resolucion.numero,
                             "forma_pago" : documento.metodo_pago.id,
                             "cantidad_detalles" :1,
-                            "subtotal" : float(documento.subtotal),
-                            "subtotal_mas_impuestos" : float(documento.subtotal + documento.impuesto),
-                            "base" : float(documento.base_impuesto),
-                            "total_impuestos" : float(documento.impuesto),
-                            "total_descuentos" : float(documento.descuento),
-                            "total_cargos" : 0,
-                            "total_anticipos" : 0,
-                            "total_documento" : float(documento.total),
-                            "total_iva" : 0,
-                            "total_consumo" : 0,
-                            "total_ica" : 0,
+                            "subtotal" : str(documento.subtotal),
+                            "subtotal_mas_impuestos" : str(documento.subtotal + documento.impuesto),
+                            "base" : str(documento.base_impuesto),
+                            "total_impuestos" : str(documento.impuesto),
+                            "total_descuentos" : str(documento.descuento),
+                            "total_cargos" : str(0),
+                            "total_anticipos" : str(0),
+                            "total_documento" : str(documento.total),
+                            "total_iva" : str(0),
+                            "total_consumo" : str(0),
+                            "total_ica" : str(0),
                             "adquiriente" : {
                                 "identificacion" : documento.contacto.identificacion.codigo,
                                 "numero_identificacion" : documento.contacto.numero_identificacion,
@@ -483,11 +483,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
                         for documentoImpuestoDetalle in documentoImpuestoDetalles:
                             impuesto_id = documentoImpuestoDetalle.impuesto_id
-                            total = float(documentoImpuestoDetalle.total)
+                            total = documentoImpuestoDetalle.total
                             arr_impuestos.append({
                                 "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
-                                "total" : float(documentoImpuestoDetalle.total),
-                                "porcentual" : float(documentoImpuestoDetalle.porcentaje)
+                                "total" : str(documentoImpuestoDetalle.total),
+                                "porcentual" : str(documentoImpuestoDetalle.porcentaje)
                             })
 
                             if impuesto_id in impuestos_agrupados:
@@ -503,17 +503,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             "marca" : "",
                             "modelo" : "",
                             "observacion" : "",
-                            "cantidad" : float(documentoDetalle.cantidad),
-                            "cantidad_empque": float(documentoDetalle.cantidad),
-                            "obserquio" : 0,
-                            "precio_unitario" : float(documentoDetalle.precio),
-                            "precio_referencia" : float(documentoDetalle.precio),
-                            "valor" : float(documentoDetalle.precio),
-                            "total_descuentos" : float(documentoDetalle.descuento),
-                            "total_cargos" : 0,
-                            "total_impuestos" : 0,
-                            "base" : 0,
-                            "subtotal" : float(documentoDetalle.subtotal),
+                            "cantidad" : str(documentoDetalle.cantidad),
+                            "cantidad_empque": str(documentoDetalle.cantidad),
+                            "obserquio" : str(0),
+                            "precio_unitario" : str(documentoDetalle.precio),
+                            "precio_referencia" : str(documentoDetalle.precio),
+                            "valor" : str(documentoDetalle.precio),
+                            "total_descuentos" : str(documentoDetalle.descuento),
+                            "total_cargos" : str(0),
+                            "total_impuestos" : str(0),
+                            "base" : str(0),
+                            "subtotal" : str(documentoDetalle.subtotal),
                             "impuestos" : arr_impuestos
                         })
 
@@ -521,8 +521,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     for impuesto_id, total in impuestos_agrupados.items():
                         arr_impuestos.append({
                             "tipo_impuesto": impuesto_id,
-                            "total": total,
-                            "porcentual" : 19
+                            "total": str(total),
+                            "porcentual" : str(19.00)
                         })
                     
                     datos_factura['documento']['detalles'] = arr_item
