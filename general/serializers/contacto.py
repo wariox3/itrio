@@ -33,7 +33,8 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):
         return {
             'id': instance.id,
-            'identificacion': instance.identificacion.abreviatura, 
+            'identificacion_id': instance.identificacion_id, 
+            'identificacion_abreviatura': instance.identificacion.abreviatura, 
             'numero_identificacion': instance.numero_identificacion,
             'digito_verificacion': instance.digito_verificacion,
             'nombre_corto': instance.nombre_corto,
@@ -48,8 +49,10 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'ciudad': instance.ciudad.nombre,
             'barrio': instance.barrio,
             'codigo_postal': instance.codigo_postal,
+            'tipo_persona_id': instance.tipo_persona_id,
             'tipo_persona': instance.tipo_persona.nombre,
-            'regimen': instance.regimen.nombre,  
+            'regimen_id': instance.regimen_id,
+            'regimen_nombre': instance.regimen.nombre,  
             'codigo_ciuu': instance.codigo_ciuu
 
         }     
