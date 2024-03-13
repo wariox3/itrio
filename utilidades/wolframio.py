@@ -5,8 +5,8 @@ import requests
 import json
 
 
-def enviar(data):
-    url = "http://localhost/wolframio/public/index.php/api/documento/nuevo"
+def consumirPost(data, url):
+    url = "http://localhost/wolframio/public/index.php/" + url
 
     json_data = json.dumps(data)
 

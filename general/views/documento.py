@@ -20,7 +20,7 @@ import locale
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from decouple import config
-from utilidades.wolframio import enviar
+from utilidades.wolframio import consumirPost
 import json
 
 class DocumentoViewSet(viewsets.ModelViewSet):
@@ -410,6 +410,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         try:
             raw = request.data
             codigoDocumento = raw.get('documento_id')
+            url = "api/documento/nuevo"
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
                 if documento.estado_aprobado == True:
@@ -529,7 +530,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     datos_factura['doc_cantidad_item'] = cantidad_items
                     datos_factura['documento']['impuestos'] = arr_impuestos
 
-                    arr_documento = enviar(datos_factura)
+                    arr_documento = consumirPost(datos_factura, url)
 
                 else:
                     return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)

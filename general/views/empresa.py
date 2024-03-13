@@ -5,6 +5,7 @@ from general.serializers.empresa import EmpresaSerializador, EmpresaActualizarSe
 from rest_framework.decorators import action
 from decouple import config
 from utilidades.space_do import SpaceDo
+from utilidades.wolframio import consumirPost
 
 
 class EmpresaViewSet(viewsets.ModelViewSet):
@@ -70,4 +71,31 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:
-            return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)      
+            return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=["post"], url_path=r'activar',)
+    def activar_cuenta_wolframio(self, request):
+        try:
+            raw = request.data
+            empresa_id = raw.get('empresa_id')
+            if empresa_id:
+                empresa = Empresa.objects.get(pk=empresa_id)
+                datos = ""
+                url = "/api/cuenta/nuevo"
+                datos = {
+                    "numeroIdentificacion" : empresa.numero_identificacion,
+                    "nombre" : empresa.nombre_corto,
+                    "celular" : empresa.telefono,
+                    "correo" : empresa.correo,
+                    "ciudadId" : empresa.ciudad.id,
+                    "identificacionId" : empresa.identificacion.id
+                }
+
+                respuesta = consumirPost(datos, url)
+                
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        except Empresa.DoesNotExist:
+            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
