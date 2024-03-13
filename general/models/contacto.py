@@ -3,6 +3,8 @@ from general.models.identificacion import Identificacion
 from general.models.ciudad import Ciudad
 from general.models.tipo_persona import TipoPersona
 from general.models.regimen import Regimen
+from general.models.asesor import Asesor
+from general.models.precio import Precio
 
 class Contacto(models.Model):        
     numero_identificacion = models.CharField(max_length=20, verbose_name='NIT')
@@ -24,6 +26,8 @@ class Contacto(models.Model):
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
     tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.CASCADE)   
     regimen = models.ForeignKey(Regimen, on_delete=models.CASCADE)
+    asesor = models.ForeignKey(Asesor, null=True, on_delete=models.CASCADE)
+    precio = models.ForeignKey(Precio, null=True, on_delete=models.CASCADE)
     
     class Meta:
         db_table = "gen_contacto"

@@ -16,6 +16,7 @@ from .views.metodo_pago import MetodoPagoViewSet
 from .views.precio import PrecioViewSet
 from .views.precio_detalle import PrecioDetalleViewSet
 from .views.cuenta_banco import CuentaBancoViewSet
+from .views.asesor import AsesorViewSet
 from .views.empresa import EmpresaViewSet
 from rest_framework import routers
 
@@ -34,7 +35,8 @@ router.register(r'documentodetalle', DocumentoDetalleViewSet)
 router.register(r'metodopago', MetodoPagoViewSet)
 router.register(r'precio', PrecioViewSet)
 router.register(r'preciodetalle', PrecioDetalleViewSet)
-router.register(r'cuentabanco', PrecioDetalleViewSet)
+router.register(r'cuentabanco', CuentaBancoViewSet)
+router.register(r'asesor', AsesorViewSet)
 router.register(r'empresa', EmpresaViewSet)
 
 urlpatterns = [    

@@ -1,4 +1,4 @@
-from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona
+from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona, Asesor, Precio
 from rest_framework import serializers
 
 class ContactoSerializador(serializers.HyperlinkedModelSerializer):
@@ -6,6 +6,8 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
     regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
+    asesor = serializers.PrimaryKeyRelatedField(queryset=Asesor.objects.all(), allow_null=True)
+    precio = serializers.PrimaryKeyRelatedField(queryset=Precio.objects.all(), allow_null=True)
     class Meta:
         model = Contacto
         fields = [
@@ -20,17 +22,28 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'apellido2',
             'direccion',
             'ciudad',
+            'barrio',
             'codigo_postal',
             'telefono',
             'celular',
             'correo',
             'tipo_persona',
-            'regimen',
-            'barrio',
-            'codigo_ciuu'
+            'regimen',            
+            'codigo_ciuu',
+            'asesor',
+            'precio'
             ]  
         
     def to_representation(self, instance):
+        asesor = instance.asesor
+        asesor_nombre_corto = None
+        if asesor:
+            asesor_nombre_corto = asesor.nombre_corto
+
+        precio = instance.precio
+        precio_nombre = None
+        if precio:
+            precio_nombre = precio.nombre
         return {
             'id': instance.id,
             'identificacion_id': instance.identificacion_id, 
@@ -54,7 +67,11 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'tipo_persona': instance.tipo_persona.nombre,
             'regimen_id': instance.regimen_id,
             'regimen_nombre': instance.regimen.nombre,  
-            'codigo_ciuu': instance.codigo_ciuu
+            'codigo_ciuu': instance.codigo_ciuu,
+            'asesor_id': instance.asesor_id,
+            'asesor_nombre_corto': asesor_nombre_corto,
+            'precio_id': instance.precio_id,
+            'precio_nombre': precio_nombre
 
         }     
 
