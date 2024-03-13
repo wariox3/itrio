@@ -6,7 +6,7 @@ import json
 
 
 def consumirPost(data, url):
-    url = "http://localhost/wolframio/public/index.php/" + url
+    url = "http://localhost/wolframio/public/index.php" + url
 
     json_data = json.dumps(data)
 
@@ -29,6 +29,6 @@ def consumirPost(data, url):
         # Manejar cualquier otra excepción
         print(f"Error inesperado: {err}")
 
-    return JsonResponse("Enviado")
+    return resp
 
 

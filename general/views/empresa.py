@@ -93,9 +93,17 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
                 respuesta = consumirPost(datos, url)
                 
+                if 'id' in respuesta:
+                    rededoc_id = respuesta.get('id')
+                    empresa.reddoc_id = rededoc_id
+                    empresa.save()
+                else:
+                    validacion = respuesta.get('validacion')
+                    return Response({'mensaje': {validacion}, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                
+                return Response({'validar':True}, status=status.HTTP_200_OK)        
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
 
         except Empresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)

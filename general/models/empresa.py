@@ -14,7 +14,7 @@ class Empresa(models.Model):
     correo = models.EmailField(max_length = 255)
     imagen = models.TextField(null=True)
     contenedor_id = models.IntegerField()     
-    reddoc_id = models.IntegerField(null=True)     
+    rededoc_id = models.IntegerField(null=True)     
     identificacion = models.ForeignKey(Identificacion, on_delete=models.CASCADE)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
     tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.CASCADE)   
