@@ -1,4 +1,4 @@
-from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona, Asesor, Precio
+from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona, Asesor, Precio, PlazoPago
 from rest_framework import serializers
 
 class ContactoSerializador(serializers.HyperlinkedModelSerializer):
@@ -8,6 +8,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
     regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
     asesor = serializers.PrimaryKeyRelatedField(queryset=Asesor.objects.all(), allow_null=True)
     precio = serializers.PrimaryKeyRelatedField(queryset=Precio.objects.all(), allow_null=True)
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)
     class Meta:
         model = Contacto
         fields = [
@@ -31,7 +32,8 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'regimen',            
             'codigo_ciuu',
             'asesor',
-            'precio'
+            'precio',
+            'plazo_pago'
             ]  
         
     def to_representation(self, instance):
@@ -39,11 +41,14 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
         asesor_nombre_corto = None
         if asesor:
             asesor_nombre_corto = asesor.nombre_corto
-
         precio = instance.precio
         precio_nombre = None
         if precio:
             precio_nombre = precio.nombre
+        plazo_pago = instance.plazo_pago
+        plazo_pago_nombre = None
+        if precio:
+            plazo_pago_nombre = plazo_pago.nombre            
         return {
             'id': instance.id,
             'identificacion_id': instance.identificacion_id, 
@@ -71,8 +76,9 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'asesor_id': instance.asesor_id,
             'asesor_nombre_corto': asesor_nombre_corto,
             'precio_id': instance.precio_id,
-            'precio_nombre': precio_nombre
-
+            'precio_nombre': precio_nombre,
+            'plazo_pago_id': instance.plazo_pago_id,
+            'plazo_pago_nombre': plazo_pago_nombre
         }     
 
 class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):

@@ -15,6 +15,7 @@ from general.models.regimen import Regimen
 from general.models.resolucion import Resolucion
 from general.models.asesor import Asesor
 from general.models.precio import Precio
+from general.models.plazo_pago import PlazoPago
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador
 from general.serializers.contacto import ContactoSerializador, ContactoListaAutocompletarSerializador
 from general.serializers.forma_pago import FormaPagoSerializador, FormaPagoListaAutocompletarSerializador
@@ -28,6 +29,7 @@ from general.serializers.regimen import RegimenSerializador, RegimenListaAutocom
 from general.serializers.resolucion import ResolucionSerializador
 from general.serializers.asesor import AsesorSerializador, AsesorListaAutocompletarSerializador
 from general.serializers.precio import PrecioSerializador, PrecioListaAutocompletarSerializador
+from general.serializers.plazo_pago import PlazoPagoSerializador, PlazoPagoListaAutocompletarSerializador
 
 from rest_framework.permissions import IsAuthenticated
 

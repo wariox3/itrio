@@ -5,6 +5,7 @@ from general.models.tipo_persona import TipoPersona
 from general.models.regimen import Regimen
 from general.models.asesor import Asesor
 from general.models.precio import Precio
+from general.models.plazo_pago import PlazoPago
 
 class Contacto(models.Model):        
     numero_identificacion = models.CharField(max_length=20, verbose_name='NIT')
@@ -28,6 +29,7 @@ class Contacto(models.Model):
     regimen = models.ForeignKey(Regimen, on_delete=models.CASCADE)
     asesor = models.ForeignKey(Asesor, null=True, on_delete=models.CASCADE)
     precio = models.ForeignKey(Precio, null=True, on_delete=models.CASCADE)
+    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.CASCADE)
     
     class Meta:
         db_table = "gen_contacto"
