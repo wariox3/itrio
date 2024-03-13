@@ -13,6 +13,8 @@ from general.models.ciudad import Ciudad
 from general.models.tipo_persona import TipoPersona
 from general.models.regimen import Regimen
 from general.models.resolucion import Resolucion
+from general.models.asesor import Asesor
+from general.models.precio import Precio
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador
 from general.serializers.contacto import ContactoSerializador, ContactoListaAutocompletarSerializador
 from general.serializers.forma_pago import FormaPagoSerializador, FormaPagoListaAutocompletarSerializador
@@ -24,6 +26,9 @@ from general.serializers.identificacion import IdentificacionSerializador, Ident
 from general.serializers.ciudad import CiudadSerializador, CiudadListaAutocompletarSerializador
 from general.serializers.regimen import RegimenSerializador, RegimenListaAutocompletarSerializador
 from general.serializers.resolucion import ResolucionSerializador
+from general.serializers.asesor import AsesorSerializador, AsesorListaAutocompletarSerializador
+from general.serializers.precio import PrecioSerializador, PrecioListaAutocompletarSerializador
+
 from rest_framework.permissions import IsAuthenticated
 
 class ListaAdministradorView(APIView):

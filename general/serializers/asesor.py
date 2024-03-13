@@ -26,5 +26,5 @@ class AsesorListaAutocompletarSerializador(serializers.HyperlinkedModelSerialize
     def to_representation(self, instance):
         return {
             'asesor_id': instance.id,            
-            'asesor_nombre_corto': instance.nombre_corto
+            'asesor_nombre': instance.nombre_corto
         }       

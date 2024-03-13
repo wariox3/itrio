@@ -14,3 +14,13 @@ class PrecioSerializador(serializers.HyperlinkedModelSerializer):
             'tipo': instance.tipo,
             'fecha_vence': instance.fecha_vence,
         }    
+    
+class PrecioListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Precio 
+        
+    def to_representation(self, instance):
+        return {
+            'precio_id': instance.id,            
+            'precio_nombre': instance.nombre
+        }      
