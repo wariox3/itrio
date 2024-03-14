@@ -550,5 +550,5 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documentos = documentos[desplazar:limite+desplazar]
         itemsCantidad = Documento.objects.all()[:limiteTotal].count()
         serializador = DocumentoSerializador(documentos, many=True)           
-        respuesta = {'documentos': serializador.data, "cantidad_registros": itemsCantidad}
+        respuesta = {'registros': serializador.data, "cantidad_registros": itemsCantidad}
         return respuesta
