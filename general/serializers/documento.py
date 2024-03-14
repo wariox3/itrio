@@ -10,6 +10,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     fecha = serializers.DateField(allow_null=True, label='Fecha')
     fecha_vence = serializers.DateField(allow_null=True, label='Vence')
     descuento = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Descuento')
+    base_impuesto = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Base Impuesto')
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Subtotal')    
     impuesto = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Impuesto')
     total = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Total')
@@ -20,7 +21,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto']
 
     def to_representation(self, instance):
         return {
@@ -29,6 +30,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence,            
             'descuento': instance.descuento,
+            'base_impuesto': instance.base_impuesto,           
             'subtotal': instance.subtotal,            
             'impuesto': instance.impuesto,
             'total' :  instance.total,        
@@ -44,7 +46,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto']
 
     def to_representation(self, instance):
         contacto = instance.contacto
@@ -63,6 +65,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'contacto_id' : instance.contacto_id,
             'contacto_nombre_corto' : contacto_nombre_corto,
             'descuento': instance.descuento,
+            'base_impuesto': instance.base_impuesto,
             'subtotal': instance.subtotal,            
             'impuesto': instance.impuesto,
             'total' :  instance.total,        
