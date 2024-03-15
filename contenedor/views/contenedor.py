@@ -41,7 +41,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 contenedorValidacion = Contenedor.objects.filter(**{'schema_name':subdominio})
                 if contenedorValidacion:
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
-                dominio = '.' + config('DOMINIO')
+                dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
                 imagenReferencia = f"{config('ENV')}/empresa/logo_defecto.jpg"
                 call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1)
