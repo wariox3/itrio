@@ -250,12 +250,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             region = config('DO_REGION')
             bucket = config('DO_BUCKET')
+            entorno = config('ENV')
 
-            imagen_defecto_url = 'https://itrio.fra1.cdn.digitaloceanspaces.com/test/empresa/logo_defecto.jpg'
+            imagen_defecto_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
 
             # Intenta cargar la imagen desde la URL
 
-            logo_url = f'https://{region}.{bucket}.cdn.digitaloceanspaces.com/{empresa.imagen}'
+            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{empresa.imagen}'
             try:
                 logo = ImageReader(logo_url)
             except Exception as e:
@@ -269,10 +270,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawImage(logo, coord_x, coord_y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
 
             #Emisor
+            emisorDireccion = empresa.direccion if empresa.direccion is not None else ""
             p.setFont("Helvetica", 10)
             p.drawString(250, 740, empresa.nombre_corto if empresa.nombre_corto else "")
             p.drawString(250, 726, empresa.numero_identificacion if empresa.numero_identificacion else "")
-            p.drawString(250, 712, empresa.direccion if empresa.direccion else "")
+            p.drawString(250, 712, emisorDireccion)
             p.drawString(250, 698, empresa.telefono if empresa.telefono else "")
             p.setFont("Helvetica-Bold", 11.5)
             p.drawRightString(550, 690, f"FACTURA N°: {documento.numero}")
@@ -281,14 +283,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica-Bold", 10)
 
             #Cliente
+            clienteNombre = ""
+            clienteCiudad = ""
+            clienteCorreo = ""
+            clienteTelefono = ""
+            if contacto is not None:
+                 clienteNombre = contacto.nombre_corto
+                 clienteCiudad = contacto.ciudad.nombre
+                 clienteCorreo = contacto.correo
+                 clienteTelefono = contacto.telefono
+
             p.drawString(50, 665, "Datos cliente")
             p.setFont("Helvetica", 10)
-            nombre_corto = getattr(contacto, 'nombre_corto', 'Vacio' if not contacto else '')
-            p.drawString(50, 650, str(nombre_corto))
-            p.drawString(50, 636, str(contacto.direccion))
-            p.drawString(50, 622, str(contacto.ciudad.nombre))
-            p.drawString(50, 608, str(contacto.correo))
-            p.drawString(50, 594, str(contacto.telefono))
+            p.drawString(50, 650, str(clienteNombre))
+            p.drawString(50, 636, str(emisorDireccion))
+            p.drawString(50, 622, str(clienteCiudad))
+            p.drawString(50, 608, str(clienteCorreo))
+            p.drawString(50, 594, str(clienteTelefono))
 
             #resolución
             if resolucion:
@@ -379,11 +390,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
                 # Ahora, puedes imprimir los nombres de impuestos únicos en una línea
                 impuestos_str = ', '.join(impuestos_unicos)
+            itemNombre = ""
+            if detalle.item is not None:
+                itemNombre = detalle.item.nombre[:30]
 
             p.setStrokeColorRGB(200/255, 200/255, 200/255)
             p.line(50, y + 15, 550, y + 15)
             p.setStrokeColorRGB(0, 0, 0)
-            p.drawString(60, y, str(detalle.item.nombre[:30]))
+            p.drawString(60, y, str(itemNombre))
             p.drawString(250, y, impuestos_str)
             p.drawRightString(350, y, str(int(detalle.cantidad)))
             p.drawRightString(400, y, str(int(detalle.porcentaje_descuento)))
