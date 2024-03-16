@@ -39,7 +39,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             verificacion_serializer = VerificacionSerializador(data = raw)
             if verificacion_serializer.is_valid():                                             
                 verificacion_serializer.save()
-                dominio = '.' + config('DOMINIO_FRONTEND')
+                dominio = + config('DOMINIO_FRONTEND')
                 correo = Correo()             
                 contenido='Enlace para verificar http://' + dominio + '/auth/verificacion/' + token                    
                 correo.enviar(usuario.correo, 'Debe verificar su cuenta reddoc', contenido)   
