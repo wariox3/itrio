@@ -88,14 +88,3 @@ class ItemViewSet(viewsets.ModelViewSet):
         #print(consulta_sql)
         ItemSerializador = ItemSerializador(items, many=True)
         return Response({"registros": ItemSerializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
-
-    def destroy(self):
-        item = self.get_object()
-
-        # Verificar si el contacto está siendo utilizado en algún documento
-        if DocumentoDetalle.objects.filter(item=item).exists():
-            return Response({'mensaje':'La eliminación de este elemento no es posible, ya que está vinculado a un documento en uso.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Si no está siendo utilizado en documentos, se puede eliminar
-        item.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
