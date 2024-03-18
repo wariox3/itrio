@@ -144,12 +144,12 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 arrTipo = arrDatosB64[0].split(";")
                 arrData = arrTipo[0].split(":")
                 contentType = arrData[1]
-                archivo = f"{config('ENV')}/usuario/imagen_{usuario_id}.jpg"
+                archivo = f"itrio/{config('ENV')}/usuario/imagen_{usuario_id}.jpg"
                 spaceDo = SpaceDo()
                 spaceDo.putB64(archivo, base64Crudo, contentType)
                 usuario.imagen = archivo
                 usuario.save()
-                return Response({'cargar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
+                return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
@@ -164,9 +164,9 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 usuario = User.objects.get(pk=usuario_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(usuario.imagen)
-                usuario.imagen = f"{config('ENV')}/usuario/imagen_defecto.jpg"
+                usuario.imagen = f"itrio/{config('ENV')}/usuario/imagen_defecto.jpg"
                 usuario.save()
-                return Response({'limpiar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{usuario.imagen}"}, status=status.HTTP_200_OK)                  
+                return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{usuario.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:

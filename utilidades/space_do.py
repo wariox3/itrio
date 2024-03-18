@@ -22,7 +22,7 @@ class SpaceDo():
         self.client = session.client('s3',
                             config=Config(s3={'addressing_style': 'virtual'}),
                             region_name=config('DO_REGION'),
-                            endpoint_url='https://fra1.digitaloceanspaces.com',                        
+                            endpoint_url=f"https://{config('DO_REGION')}.digitaloceanspaces.com",                        
                             aws_access_key_id=config('DO_CLAVE_ACCESO'),
                             aws_secret_access_key=config('DO_CLAVE_SECRETA')) 
 
