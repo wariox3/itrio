@@ -5,7 +5,7 @@ class ItemSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Item
-        fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio']
+        fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'existencia', 'disponible']
 
     def to_representation(self, instance):
         return {
@@ -14,7 +14,12 @@ class ItemSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre,
             'referencia': instance.referencia,
             'costo': instance.costo,
-            'precio': instance.precio
+            'precio': instance.precio,
+            'producto': instance.producto,
+            'servicio': instance.servicio,
+            'inventario': instance.inventario,
+            'existencia': instance.existencia,
+            'disponible': instance.disponible,
         } 
     
 class ItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
