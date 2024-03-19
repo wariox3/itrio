@@ -55,6 +55,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/documento_tipo.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/forma_pago.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/metodo_pago.json")
+                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/plazo_pago.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/impuesto.json")            
 
                 contenedor = Contenedor.objects.filter(**{'schema_name':subdominio}).first()                        
