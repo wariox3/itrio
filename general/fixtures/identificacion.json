@@ -22,7 +22,7 @@
   {
     "model": "general.identificacion",
     "pk": 5,
-    "fields": {"nombre": "Cédula de extranjería", "pais": "CO", "codigo":"22", "orden":6, "abreviatura":"RC"}
+    "fields": {"nombre": "Cédula de extranjería", "pais": "CO", "codigo":"22", "orden":6, "abreviatura":"CE"}
   },
   {
     "model": "general.identificacion",
