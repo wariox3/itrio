@@ -20,7 +20,7 @@ class Contacto(models.Model):
     codigo_ciuu = models.CharField(max_length=200, null=True, verbose_name='CIUU')
     codigo_postal = models.CharField(max_length=20, null=True, verbose_name='C_Postal')
     telefono = models.CharField(max_length=50, verbose_name='Telefono')
-    celular = models.CharField(max_length=50, verbose_name='Celular')
+    celular = models.CharField(max_length=50, null=True, verbose_name='Celular')
     correo = models.EmailField(max_length = 255, verbose_name='Correo')
     #Relaciones    
     identificacion = models.ForeignKey(Identificacion, on_delete=models.CASCADE)
