@@ -389,7 +389,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setStrokeColorRGB(0, 0, 0)
 
             #Bloque totales
-            p.setFont("Helvetica-Bold", 10)
+            p.setFont("Helvetica-Bold", 8)
             p.drawString(400, 200, "Subtotal")
             p.drawRightString(550, 200, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
             
@@ -480,22 +480,24 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     draw_header()
                     detalles_en_pagina = 0
         def draw_footer():
-            # Línea tenue
-            p.setStrokeColorRGB(0.8, 0.8, 0.8)  # Color tenue (gris claro)
-            p.setLineWidth(0.5)  # Grosor de la línea
+            p.setFont("Helvetica", 8)
+
+            p.drawString(50,100, "NUMERO DE AUTORIZACIÓN: " + documento.resolucion.numero)
+
+            p.drawString(50, 90, "GENERADO POR: Reddoc")
+            p.drawString(250, 90, "PROVEEDOR TECNOLOGICO: SOFTGIC")
+
+            p.setStrokeColorRGB(0.8, 0.8, 0.8)
+            p.setLineWidth(0.5)
             p.line(50, 45, 250, 45)
             p.setStrokeColorRGB(0, 0, 0)
-
-            # Texto "ELABORADO POR"
-            p.setFont("Helvetica-Bold", 10)
+            p.setFont("Helvetica-Bold", 8)
             p.drawCentredString(150, 30, "ELABORADO POR")
 
             p.setStrokeColorRGB(0.8, 0.8, 0.8)  # Color tenue (gris claro)
             p.setLineWidth(0.5)  # Grosor de la línea
             p.line(270, 45, 550, 45)  # Coordenadas para dibujar la segunda línea
             p.setStrokeColorRGB(0, 0, 0)  # Restaurar el color a negro
-
-            # Texto "ACEPTADA, FIRMADA Y/O SELLO Y FECHA"
             p.drawCentredString(410, 30, "ACEPTADA, FIRMADA Y/O SELLO Y FECHA")
 
         draw_footer()
