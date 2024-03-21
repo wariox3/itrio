@@ -21,6 +21,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from decouple import config
 from utilidades.wolframio import consumirPost
+from utilidades.utilidades import convertir_a_letras
 import json
 
 class DocumentoViewSet(viewsets.ModelViewSet):
@@ -481,6 +482,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     detalles_en_pagina = 0
         def draw_footer():
 
+            #valorLetras = convertir_a_letras(int(documento.total))
+            valorLetras = convertir_a_letras(int(1569321))
+
             consecutivoDesde = ""
             consecutivoHasta = ""
             if resolucion:
@@ -489,6 +493,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             p.setFont("Helvetica", 8)
 
+            p.drawString(50, 120, str(valorLetras))
             p.drawString(50, 110, "CUFE/CUDE:  ")
 
             p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:   " + str(documento.resolucion.numero))
