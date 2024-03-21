@@ -482,8 +482,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     detalles_en_pagina = 0
         def draw_footer():
 
-            #valorLetras = convertir_a_letras(int(documento.total))
-            valorLetras = convertir_a_letras(int(1569321))
+            valorLetras = convertir_a_letras(int(documento.total))
 
             consecutivoDesde = ""
             consecutivoHasta = ""
