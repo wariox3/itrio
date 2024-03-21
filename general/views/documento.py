@@ -271,18 +271,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             #Emisor
             emisorDireccion = empresa.direccion if empresa.direccion is not None else ""
-            p.setFont("Helvetica-Bold", 11.5)
+            p.setFont("Helvetica-Bold", 8.5)
             p.drawString(150, 740, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
-            p.setFont("Helvetica", 10)
+            p.setFont("Helvetica", 8)
             p.drawString(150, 726, "PERSONA " + empresa.tipo_persona.nombre.upper() if empresa.tipo_persona.nombre else "")
             p.drawString(150, 712, "NIT: " + empresa.numero_identificacion + "-" +  empresa.digito_verificacion)
             p.drawString(150, 698, empresa.direccion.upper() + " " +empresa.ciudad.nombre.upper() if empresa.direccion else "")
             p.drawString(150, 684, "TELEFONO " + empresa.telefono if empresa.telefono else "")
-            p.setFont("Helvetica-Bold", 11.5)
+            p.setFont("Helvetica-Bold", 8)
             p.drawRightString(550, 690, f"FACTURA N°: {documento.numero}")
             p.setFont("Helvetica", 10)
             p.drawRightString(550, 676, f"Fecha: {documento.fecha}")
-            p.setFont("Helvetica-Bold", 10)
+            p.setFont("Helvetica-Bold", 8)
 
             #Cliente
             clienteNombre = ""
@@ -306,20 +306,32 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawString(120, 650, str(clienteNombre))
             
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 636, "NIT: ")
+            p.drawString(50, 640, "NIT: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 636, str(clienteIdentificacion))
+            p.drawString(120, 640, str(clienteIdentificacion))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 622, "DIRECCIÓN: ")
+            p.drawString(50, 630, "DIRECCIÓN: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 622, str(clienteDireccion))
+            p.drawString(120, 630, str(clienteDireccion))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(50, 620, "CIUDAD: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(120, 620, str(clienteCiudad))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(50, 610, "TELÉFONO: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(120, 610, str(clienteTelefono))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(50, 600, "CORREO: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(120, 600, str(clienteCorreo))
 
 
-            #p.drawString(50, 636, str(emisorDireccion))
-            #p.drawString(50, 622, str(clienteCiudad))
-            #p.drawString(50, 608, str(clienteCorreo))
-            #p.drawString(50, 594, str(clienteTelefono))
+
 
             #resolución
             if resolucion:
