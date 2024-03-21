@@ -16,6 +16,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
+from reportlab.lib.styles import ParagraphStyle
 import locale
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
@@ -242,10 +243,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except locale.Error:
             pass
 
-        stylesheet = getSampleStyleSheet()
+        stylesheet = {
+        'Normal': ParagraphStyle(name='Normal', fontName='Helvetica', fontSize=9),
+        # Otros estilos que puedas tener
+}
         normalStyle = stylesheet['Normal']
 
-        paragraph = Paragraph("El pago se realizará en un plazo de tres meses desde la emisión de esta factura, se realizará mediante transferencia bancaria.", normalStyle)
+        p.setFont("Helvetica-Bold", 9)
+        informacionPago = Paragraph("INFORMACIÓN DE PAGO: ", normalStyle)
+        comentario = Paragraph("COMENTARIOS:  " + str(documento.comentario), normalStyle)
 
         def draw_header():
 
@@ -391,7 +397,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(400, 200, "Subtotal")
+            p.drawString(400, 200, "SUTOTAL")
             p.drawRightString(550, 200, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
             
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
@@ -412,7 +418,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     impuesto_totals[impuesto_id] = {'total': total, 'nombre': nombre_impuesto}
 
             # Definir la posición "y" inicial
-            y = 180
+            y = 190
 
             # Recorrer el diccionario de totales de impuestos
             for impuesto_id, data in impuesto_totals.items():
@@ -421,14 +427,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                 p.drawString(400, y, nombre_impuesto)
                 p.drawRightString(550, y, f"${locale.format_string('%d', int(total_acumulado), grouping=True)}")
-                y -= 20
+                y -= 10
 
-            p.drawString(400, y, "Total general")
+            p.drawString(400, y, "TOTAL GENERAL")
             p.drawRightString(550, y, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
 
-            #Comentario
-            paragraph.wrapOn(p, 280, 400)
-            paragraph.drawOn(p, 50, 180)
+            #informacion pago
+            informacionPago.wrapOn(p, 280, 400)
+            informacionPago.drawOn(p, 50, 155)
+
+
+            #comentarios
+            comentario.wrapOn(p, 280, 400)
+            comentario.drawOn(p, 50, 200)
             
 
         y = 555
@@ -490,13 +501,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 consecutivoDesde = documento.resolucion.consecutivo_desde
                 consecutivoHasta = documento.resolucion.consecutivo_hasta
 
+            cue = ""
+            if documento.cue:
+                cue = documento.cue
+
             p.setFont("Helvetica", 8)
 
             p.drawString(50, 120, str(valorLetras))
-            p.drawString(50, 110, "CUFE/CUDE:  ")
+            p.drawString(50, 110, "CUFE/CUDE:  " + cue)
 
             p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:   " + str(documento.resolucion.numero))
             p.drawString(250, 100, "RANGO AUTORIZADO DESDE:   " + str(consecutivoDesde) + " HASTA " + str(consecutivoHasta))
+            p.drawRightString(550, 100, "VIGENCIA: " + str(documento.resolucion.fecha_hasta))
 
 
             p.drawString(50, 90, "GENERADO POR: Reddoc")
