@@ -23,7 +23,11 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
         model = Documento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto']
 
-    def to_representation(self, instance):
+    def to_representation(self, instance):        
+        contacto = instance.contacto
+        contacto_nombre_corto = None
+        if contacto:
+            contacto_nombre_corto = contacto.nombre_corto
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -37,7 +41,9 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_aprobado' : instance.estado_aprobado,
             'contacto' : instance.contacto_id,            
             'documento_tipo': instance.documento_tipo_id,
-            'metodo_pago': instance.metodo_pago_id
+            'metodo_pago': instance.metodo_pago_id,
+            'contacto_id': instance.contacto_id,
+            'contacto_nombre_corto': contacto_nombre_corto
         }
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
