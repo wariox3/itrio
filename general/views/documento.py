@@ -271,18 +271,51 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             #Emisor
             emisorDireccion = empresa.direccion if empresa.direccion is not None else ""
-            p.setFont("Helvetica-Bold", 8.5)
-            p.drawString(150, 740, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
+            p.setFont("Helvetica-Bold", 9)
+            p.drawString(150, 720, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
             p.setFont("Helvetica", 8)
-            p.drawString(150, 726, "PERSONA " + empresa.tipo_persona.nombre.upper() if empresa.tipo_persona.nombre else "")
-            p.drawString(150, 712, "NIT: " + empresa.numero_identificacion + "-" +  empresa.digito_verificacion)
-            p.drawString(150, 698, empresa.direccion.upper() + " " +empresa.ciudad.nombre.upper() if empresa.direccion else "")
-            p.drawString(150, 684, "TELEFONO " + empresa.telefono if empresa.telefono else "")
+            p.drawString(150, 710, "PERSONA " + empresa.tipo_persona.nombre.upper() if empresa.tipo_persona.nombre else "")
+            p.drawString(150, 700, "NIT: " + empresa.numero_identificacion + "-" +  empresa.digito_verificacion)
+            p.drawString(150, 690, empresa.direccion.upper() + " " +empresa.ciudad.nombre.upper() if empresa.direccion else "")
+            p.drawString(150, 680, "TELEFONO " + empresa.telefono if empresa.telefono else "")
+
+            #Datos factura
+            p.setFont("Helvetica-Bold", 9)
+            p.drawRightString(550, 720, documento.documento_tipo.nombre)
+            p.setFont("Helvetica", 9)
+            if documento.resolucion:
+                if documento.numero:
+                    texto_resolucion = documento.resolucion.prefijo + documento.numero
+                else:
+                    texto_resolucion = documento.resolucion.prefijo
+            else:
+                texto_resolucion = ""
+            p.setFont("Helvetica-Bold", 9)
+            p.drawCentredString(470, 710, texto_resolucion)
+            p.drawString(390, 690, "FECHA EMISIÓN: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(550, 690, str(documento.fecha))
+
             p.setFont("Helvetica-Bold", 8)
-            p.drawRightString(550, 690, f"FACTURA N°: {documento.numero}")
-            p.setFont("Helvetica", 10)
-            p.drawRightString(550, 676, f"Fecha: {documento.fecha}")
+            p.drawString(390, 680, "FECHA VENCIMIENTO: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(550, 680, str(documento.fecha_vence))
+
             p.setFont("Helvetica-Bold", 8)
+            p.drawString(390, 670, "FORMA PAGO: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(550, 670, str(documento.metodo_pago.nombre.upper()))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(390, 660, "PLAZO PAGO: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(550, 660, "")
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(390, 650, "DOC SOPORTE: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(550, 650, "")
+
 
             #Cliente
             clienteNombre = ""
@@ -332,13 +365,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
 
 
-
             #resolución
             if resolucion:
                 texto_resolucion = f"FACTURA ELECTRÓNICA DE VENTA No. {resolucion.prefijo} {documento.numero}"
             else:
                 texto_resolucion = f"FACTURA ELECTRÓNICA DE VENTA No. {documento.numero}"
-            p.drawRightString(550, 622, texto_resolucion)
+            #p.drawRightString(550, 622, texto_resolucion)
             # p.drawRightString(550, 622, f"FACTURA ELECTRÓNICA DE VENTA No. {resolucion.prefijo} {documento.numero}")
             #Linea separadora
             p.setStrokeColorRGB(200/255, 200/255, 200/255)
