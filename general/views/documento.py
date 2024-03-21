@@ -480,9 +480,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     draw_header()
                     detalles_en_pagina = 0
         def draw_footer():
+
+            consecutivoDesde = ""
+            consecutivoHasta = ""
+            if resolucion:
+                consecutivoDesde = documento.resolucion.consecutivo_desde
+                consecutivoHasta = documento.resolucion.consecutivo_hasta
+
             p.setFont("Helvetica", 8)
 
-            p.drawString(50,100, "NUMERO DE AUTORIZACIÓN: " + documento.resolucion.numero)
+            p.drawString(50, 110, "CUFE/CUDE:  ")
+
+            p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:   " + str(documento.resolucion.numero))
+            p.drawString(250, 100, "RANGO AUTORIZADO DESDE:   " + str(consecutivoDesde) + " HASTA " + str(consecutivoHasta))
+
 
             p.drawString(50, 90, "GENERADO POR: Reddoc")
             p.drawString(250, 90, "PROVEEDOR TECNOLOGICO: SOFTGIC")
