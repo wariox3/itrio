@@ -378,7 +378,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawString(390, 575, "PRECIO")
             p.drawString(430, 575, "DESC")
             p.drawString(470, 575, "IVA")
-            p.drawString(500, 575, "TOTAL")
+            p.drawString(505, 575, "TOTAL")
             p.setFont("Helvetica", 8)
 
         def draw_totals(p, y):
@@ -428,6 +428,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             #Comentario
             paragraph.wrapOn(p, 280, 400)
             paragraph.drawOn(p, 50, 180)
+            
 
         y = 555
         page_number = 1
@@ -478,6 +479,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     y = 520
                     draw_header()
                     detalles_en_pagina = 0
+        def draw_footer():
+            # Línea tenue
+            p.setStrokeColorRGB(0.8, 0.8, 0.8)  # Color tenue (gris claro)
+            p.setLineWidth(0.5)  # Grosor de la línea
+            p.line(50, 45, 250, 45)
+            p.setStrokeColorRGB(0, 0, 0)
+
+            # Texto "ELABORADO POR"
+            p.setFont("Helvetica-Bold", 10)
+            p.drawCentredString(150, 30, "ELABORADO POR")
+
+            p.setStrokeColorRGB(0.8, 0.8, 0.8)  # Color tenue (gris claro)
+            p.setLineWidth(0.5)  # Grosor de la línea
+            p.line(270, 45, 550, 45)  # Coordenadas para dibujar la segunda línea
+            p.setStrokeColorRGB(0, 0, 0)  # Restaurar el color a negro
+
+            # Texto "ACEPTADA, FIRMADA Y/O SELLO Y FECHA"
+            p.drawCentredString(410, 30, "ACEPTADA, FIRMADA Y/O SELLO Y FECHA")
+
+        draw_footer()
 
         p.save()
         return response
