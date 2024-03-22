@@ -43,7 +43,8 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'documento_tipo': instance.documento_tipo_id,
             'metodo_pago': instance.metodo_pago_id,
             'contacto_id': instance.contacto_id,
-            'contacto_nombre_corto': contacto_nombre_corto
+            'contacto_nombre_corto': contacto_nombre_corto,
+            'estado_anulado' : instance.estado_anulado
         }
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
@@ -52,7 +53,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado']
 
     def to_representation(self, instance):
         contacto = instance.contacto
@@ -78,5 +79,6 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'estado_aprobado' : instance.estado_aprobado,
             'documento_tipo_id' : instance.documento_tipo_id,
             'metodo_pago_id' : instance.metodo_pago_id,
-            'metodo_pago_nombre' : metodo_pago_nombre
+            'metodo_pago_nombre' : metodo_pago_nombre,
+            'estado_anulado' :instance.estado_anulado
         }
