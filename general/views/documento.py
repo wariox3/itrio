@@ -225,6 +225,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         codigoDocumento = raw.get('documento_id')
 
         try:
+            locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
+        except locale.Error:
+            pass
+
+        try:
             documento = Documento.objects.get(pk=codigoDocumento)
             contacto = documento.contacto
             documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
@@ -240,10 +245,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
         p = canvas.Canvas(response, pagesize=letter)
 
-        try:
-            locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
-        except locale.Error:
-            pass
 
         estilo_helvetica = ParagraphStyle(
         name='HelveticaStyle',
@@ -325,27 +326,28 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 texto_resolucion = ""
             p.setFont("Helvetica-Bold", 9)
             p.drawCentredString(x + 460, 710, texto_resolucion)
-            p.drawString(x + 390, 660, "FECHA EMISIÓN: ")
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 350, 660, "FECHA EMISIÓN: ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 660, str(documento.fecha))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 390, 650, "FECHA VENCIMIENTO: ")
+            p.drawString(x + 350, 650, "FECHA VENCIMIENTO: ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 650, str(documento.fecha_vence))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 390, 640, "FORMA PAGO: ")
+            p.drawString(x + 350, 640, "FORMA PAGO: ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 640, str(documento.metodo_pago.nombre.upper()))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 390, 630, "PLAZO PAGO: ")
+            p.drawString(x + 350, 630, "PLAZO PAGO: ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 630, "")
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 390, 620, "DOC SOPORTE: ")
+            p.drawString(x + 350, 620, "DOC SOPORTE: ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 620, "")
 
