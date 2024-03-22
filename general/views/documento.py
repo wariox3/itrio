@@ -559,9 +559,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawRightString(550, 100, str(fechaVigencia))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 90, "GENERADO POR: REDDOC")
+            p.drawString(x, 90, "GENERADO POR: ")
             p.setFont("Helvetica", 8)
-            p.drawString(160, 90, "REDDOC")
+            p.drawString(110, 90, "REDDOC")
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(250, 90, "PROVEEDOR TECNOLOGICO: SOFTGIC")
