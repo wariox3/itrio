@@ -262,7 +262,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         informacionPago = Paragraph("<b>" + informacion_pago_texto + "</b>", estilo_helvetica)
         comentario = Paragraph("<b>" + comentario_texto + "</b>" + comentario_contenido, estilo_helvetica)
 
-        qr_code_drawing = generar_qr(documento.qr)
+        qr = ""
+        if documento.qr:
+            qr = documento.qr
+        qr_code_drawing = generar_qr(qr)
 
         # Dibujar el código QR en el lienzo en la posición deseada
         x_pos = 340
