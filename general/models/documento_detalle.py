@@ -9,7 +9,7 @@ class DocumentoDetalle(models.Model):
     descuento = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     total_bruto = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=12, decimal_places=6, default=0)
-    porcentaje_descuento = models.DecimalField(max_digits=3, decimal_places=3, default=0)
+    porcentaje_descuento = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     documento = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='detalles')
     documento_afectado = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='detalles_afectado', null=True)
     item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
