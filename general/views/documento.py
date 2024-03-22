@@ -224,9 +224,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
 
-        
-        locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
-
+        try:
+            locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
+        except locale.Error:
+            pass
 
         try:
             documento = Documento.objects.get(pk=codigoDocumento)
