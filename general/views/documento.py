@@ -417,7 +417,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 230, "SUTOTAL")
-            p.drawRightString(x + 140, 230, f"$ {locale.format_string('%d', int(documento.subtotal), grouping=True)}")
+            p.drawRightString(x + 140, 230, f"$ {locale.format('%d', documento.subtotal, grouping=True)}")
             
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
             impuesto_totals = {}
@@ -444,12 +444,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 nombre_impuesto = data['nombre']
                 total_acumulado = data['total']
                 
-                p.drawString(x, y, nombre_impuesto)
-                p.drawRightString(x + 140, y, f"$ {locale.format_string('%d', int(total_acumulado), grouping=True)}")
+                p.drawString(x, y, nombre_impuesto.upper())
+                p.drawRightString(x + 140, y, f"$ {locale.format('%d', total_acumulado, grouping=True)}")
                 y -= 10
 
             p.drawString(x, y, "TOTAL GENERAL")
-            p.drawRightString(x + 140, y, f"$ {locale.format_string('%d', int(documento.total), grouping=True)}")
+            p.drawRightString(x + 140, y, f"$ {locale.format('%d', documento.total, grouping=True)}")
 
             #informacion pago
             ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 380)
