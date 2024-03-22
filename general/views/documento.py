@@ -274,10 +274,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             tamano_cuadrado = 1 * inch
             coord_x = 50
             coord_y = 680
+
+            #borde tabla detalles
             p.drawImage(logo, coord_x, coord_y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
+            p.setStrokeColorRGB(0.8, 0.8, 0.8)
+            #recuadro1
+            p.rect(47, 570, 505, 15)
+            #recuadro2
+            p.rect(47, 175, 505, 395)
+
 
             #Emisor
-            emisorDireccion = empresa.direccion if empresa.direccion is not None else ""
             p.setFont("Helvetica-Bold", 9)
             p.drawString(150, 720, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
             p.setFont("Helvetica", 8)
@@ -372,9 +379,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
 
             #Linea separadora
-            p.setStrokeColorRGB(200/255, 200/255, 200/255)
-            p.line(50, 590, 550, 590)  # Ajustando las coordenadas de inicio y finalización 10 espacios más arriba
-            p.setStrokeColorRGB(0, 0, 0)
+            #p.setStrokeColorRGB(200/255, 200/255, 200/255)
+            #p.line(50, 590, 550, 590)  # Ajustando las coordenadas de inicio y finalización 10 espacios más arriba
+            #p.setStrokeColorRGB(0, 0, 0)
 
             #Encabezado detalles
             p.setFont("Helvetica-Bold", 8)
@@ -389,11 +396,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica", 8)
 
         def draw_totals(p, y):
-            #dejo el llamado de y en caso de que se requiera que se construya de manera dinamica
-            #Linea separadora
-            #p.setStrokeColorRGB(200/255, 200/255, 200/255)
-            #p.line(400, 215, 550, 215)
-            #p.setStrokeColorRGB(0, 0, 0)
 
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
@@ -514,18 +516,41 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if documento.cue:
                 cue = documento.cue
 
-            p.setFont("Helvetica", 8)
-
+            p.setFont("Helvetica-Bold", 8)
             p.drawString(50, 120, str(valorLetras))
-            p.drawString(50, 110, "CUFE/CUDE:  " + cue)
 
-            p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:   " + str(numero))
-            p.drawString(250, 100, "RANGO AUTORIZADO DESDE:   " + str(consecutivoDesde) + " HASTA " + str(consecutivoHasta))
-            p.drawRightString(550, 100, "VIGENCIA: " + str(fechaVigencia))
+            p.drawString(50, 110, "CUFE/CUDE: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(105, 110, str(cue))
 
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:")
+            p.setFont("Helvetica", 8)
+            p.drawString(170, 100, str(numero))
 
-            p.drawString(50, 90, "GENERADO POR: Reddoc")
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(250, 100, "RANGO AUTORIZADO DESDE: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(370, 100, str(consecutivoDesde))
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(400, 100, "HASTA: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(432, 100, str(consecutivoHasta))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(465, 100, "VIGENCIA: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(550, 100, str(fechaVigencia))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(50, 90, "GENERADO POR: REDDOC")
+            p.setFont("Helvetica", 8)
+            p.drawString(160, 90, "REDDOC")
+
+            p.setFont("Helvetica-Bold", 8)
             p.drawString(250, 90, "PROVEEDOR TECNOLOGICO: SOFTGIC")
+            p.setFont("Helvetica", 8)
+            p.drawString(410, 90, "SOFTGIC S.A.S")
 
             p.setStrokeColorRGB(0.8, 0.8, 0.8)
             p.setLineWidth(0.5)
