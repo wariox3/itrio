@@ -243,15 +243,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except locale.Error:
             pass
 
-        stylesheet = {
-        'Normal': ParagraphStyle(name='Normal', fontName='Helvetica', fontSize=9),
-        # Otros estilos que puedas tener
-        }
-        normalStyle = stylesheet['Normal']
+        estilo_helvetica = ParagraphStyle(
+        name='HelveticaStyle',
+        fontName='Helvetica',
+        fontSize=8,
+        )
 
-        p.setFont("Helvetica-Bold", 9)
-        informacionPago = Paragraph("INFORMACIÓN DE PAGO:  ", normalStyle)
-        comentario = Paragraph("COMENTARIOS:   " + str(documento.comentario), normalStyle)
+        # Crear los Paragraph con los estilos correspondientes
+        informacion_pago_texto = "INFORMACIÓN DE PAGO: "
+        comentario_texto = "COMENTARIOS:   "
+
+        # Para el texto del comentario, mantenlo en estilo normal
+        comentario_contenido = str(documento.comentario)
+
+        # Crear los Paragraph con los estilos correspondientes
+        informacionPago = Paragraph("<b>" + informacion_pago_texto + "</b>", estilo_helvetica)
+        comentario = Paragraph("<b>" + comentario_texto + "</b>" + comentario_contenido, estilo_helvetica)
 
         def draw_header():
 
@@ -273,29 +280,29 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             tamano_cuadrado = 1 * inch
             x = 35
-            coord_y = 680
+            y = 680
 
             #borde tabla detalles
-            p.drawImage(logo, x, coord_y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
+            p.drawImage(logo, x, y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
             p.setStrokeColorRGB(0.8, 0.8, 0.8)
             #recuadro1
             p.rect(x, 570, 542, 15)
             #recuadro2
-            p.rect(x, 175, 542, 395)
+            p.rect(x, 240, 542, 330)
 
 
             #Emisor
             p.setFont("Helvetica-Bold", 9)
-            p.drawString(150, 720, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
+            p.drawString(x + 75, 720, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
             p.setFont("Helvetica", 8)
-            p.drawString(150, 710, "PERSONA " + empresa.tipo_persona.nombre.upper() if empresa.tipo_persona.nombre else "")
-            p.drawString(150, 700, "NIT: " + empresa.numero_identificacion + "-" +  empresa.digito_verificacion)
-            p.drawString(150, 690, empresa.direccion.upper() + " " +empresa.ciudad.nombre.upper() if empresa.direccion else "")
-            p.drawString(150, 680, "TEL: " + empresa.telefono if empresa.telefono else "")
+            p.drawString(x + 75, 710, "PERSONA " + empresa.tipo_persona.nombre.upper() if empresa.tipo_persona.nombre else "")
+            p.drawString(x + 75, 700, "NIT: " + empresa.numero_identificacion + "-" +  empresa.digito_verificacion)
+            p.drawString(x + 75, 690, empresa.direccion.upper() + " " +empresa.ciudad.nombre.upper() if empresa.direccion else "")
+            p.drawString(x + 75, 680, "TEL: " + empresa.telefono if empresa.telefono else "")
 
             #Datos factura
             p.setFont("Helvetica-Bold", 9)
-            p.drawRightString(550, 720, documento.documento_tipo.nombre)
+            p.drawRightString(x + 540, 720, documento.documento_tipo.nombre)
             p.setFont("Helvetica", 9)
             if documento.resolucion:
                 if documento.numero:
@@ -305,30 +312,30 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             else:
                 texto_resolucion = ""
             p.setFont("Helvetica-Bold", 9)
-            p.drawCentredString(470, 710, texto_resolucion)
-            p.drawString(390, 660, "FECHA EMISIÓN: ")
+            p.drawCentredString(x + 460, 710, texto_resolucion)
+            p.drawString(x + 390, 660, "FECHA EMISIÓN: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(550, 660, str(documento.fecha))
+            p.drawRightString(x + 540, 660, str(documento.fecha))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(390, 650, "FECHA VENCIMIENTO: ")
+            p.drawString(x + 390, 650, "FECHA VENCIMIENTO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(550, 650, str(documento.fecha_vence))
+            p.drawRightString(x + 540, 650, str(documento.fecha_vence))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(390, 640, "FORMA PAGO: ")
+            p.drawString(x + 390, 640, "FORMA PAGO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(550, 640, str(documento.metodo_pago.nombre.upper()))
+            p.drawRightString(x + 540, 640, str(documento.metodo_pago.nombre.upper()))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(390, 630, "PLAZO PAGO: ")
+            p.drawString(x + 390, 630, "PLAZO PAGO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(550, 630, "")
+            p.drawRightString(x + 540, 630, "")
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(390, 620, "DOC SOPORTE: ")
+            p.drawString(x + 390, 620, "DOC SOPORTE: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(550, 620, "")
+            p.drawRightString(x + 540, 620, "")
 
 
             #Cliente
@@ -350,57 +357,53 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 650, "CLIENTE: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 650, str(clienteNombre))
+            p.drawString(x + 60, 650, str(clienteNombre))
             
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 640, "NIT: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 640, str(clienteIdentificacion))
+            p.drawString(x + 60, 640, str(clienteIdentificacion))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 630, "DIRECCIÓN: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 630, str(clienteDireccion))
+            p.drawString(x + 60, 630, str(clienteDireccion))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 620, "CIUDAD: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 620, str(clienteCiudad))
+            p.drawString(x + 60, 620, str(clienteCiudad))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 610, "TELÉFONO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 610, str(clienteTelefono))
+            p.drawString(x + 60, 610, str(clienteTelefono))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 600, "CORREO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 600, str(clienteCorreo))
-
-
-            #Linea separadora
-            #p.setStrokeColorRGB(200/255, 200/255, 200/255)
-            #p.line(50, 590, 550, 590)  # Ajustando las coordenadas de inicio y finalización 10 espacios más arriba
-            #p.setStrokeColorRGB(0, 0, 0)
+            p.drawString(x + 60, 600, str(clienteCorreo))
 
             #Encabezado detalles
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 575, "#")
-            p.drawString(70, 575, "COD")
+            p.drawString(x + 5, 575, "#")
+            p.drawString(x + 30, 575, "COD")
             p.drawString(200, 575, "ITEM")
-            p.drawString(350, 575, "CANT")
-            p.drawString(390, 575, "PRECIO")
-            p.drawString(430, 575, "DESC")
-            p.drawString(470, 575, "IVA")
-            p.drawString(505, 575, "TOTAL")
+            p.drawString(x + 320, 575, "CANT")
+            p.drawString(x + 360, 575, "PRECIO")
+            p.drawString(x + 410, 575, "DESC")
+            p.drawString(x + 450, 575, "IVA")
+            p.drawString(x + 490, 575, "TOTAL")
             p.setFont("Helvetica", 8)
 
         def draw_totals(p, y):
 
+            x = 430
+
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(400, 230, "SUTOTAL")
-            p.drawRightString(550, 230, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
+            p.drawString(x, 230, "SUTOTAL")
+            p.drawRightString(x + 140, 230, f"$ {locale.format_string('%d', int(documento.subtotal), grouping=True)}")
             
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
             impuesto_totals = {}
@@ -427,12 +430,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 nombre_impuesto = data['nombre']
                 total_acumulado = data['total']
                 
-                p.drawString(400, y, nombre_impuesto)
-                p.drawRightString(550, y, f"${locale.format_string('%d', int(total_acumulado), grouping=True)}")
+                p.drawString(x, y, nombre_impuesto)
+                p.drawRightString(x + 140, y, f"$ {locale.format_string('%d', int(total_acumulado), grouping=True)}")
                 y -= 10
 
-            p.drawString(400, y, "TOTAL GENERAL")
-            p.drawRightString(550, y, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
+            p.drawString(x, y, "TOTAL GENERAL")
+            p.drawRightString(x + 140, y, f"$ {locale.format_string('%d', int(documento.total), grouping=True)}")
 
             #informacion pago
             ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 400)
@@ -441,8 +444,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 320, 400)
             
-            x = 50
-            y = 240 - alto_texto
+            x = 38
+            y = 235 - alto_texto
             y2 = 160
             comentario.drawOn(p, x, y)
             informacionPago.drawOn(p, x, y2)
@@ -452,6 +455,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         detalles_en_pagina = 0
 
         draw_header()
+        x = 35
 
         for index, detalle in enumerate(documentoDetalles):
             impuestos_detalle = documentoImpuestos.filter(documento_detalle_id=detalle.id)
@@ -470,16 +474,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if detalle.item is not None:
                 itemNombre = detalle.item.nombre[:100]
 
-            #p.setStrokeColorRGB(200/255, 200/255, 200/255)
-            #p.line(50, y + 15, 550, y + 15)
-            #p.setStrokeColorRGB(0, 0, 0)
-            p.drawCentredString(50, y, str(index + 1))
-            p.drawString(70, y, detalle.item.codigo)
-            p.drawString(100, y, str(itemNombre))
-            p.drawRightString(370, y, str(int(detalle.cantidad)))
-            p.drawRightString(420, y, str(int(detalle.precio)))
-            p.drawRightString(450, y, str(int(detalle.descuento)))
-            p.drawRightString(530, y, str(int(detalle.total)))
+            p.drawCentredString(x + 7, y, str(index + 1))
+            p.drawString(x + 25, y, detalle.item.codigo)
+            p.drawString(100, y, str(itemNombre[:57]))
+            p.drawRightString(x + 345, y, str(int(detalle.cantidad)))
+            p.drawRightString(x + 395, y, locale.format_string("%d", detalle.precio, grouping=True))
+            p.drawRightString(x + 440, y, locale.format_string("%d", detalle.descuento, grouping=True))
+            p.drawRightString(x + 470, y, locale.format_string("%d", 0, grouping=True))
+            p.drawRightString(x + 530, y, locale.format_string("%d", detalle.total, grouping=True))
             #p.drawString(250, y, impuestos_str)
             #p.drawRightString(400, y, str(int(detalle.porcentaje_descuento)))
             #p.drawRightString(480, y, f"${locale.format_string('%d', int(detalle.subtotal), grouping=True)}")
@@ -497,7 +499,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     draw_header()
                     detalles_en_pagina = 0
 
-        p.drawString(50, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))
+        p.drawString(x + 5, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))
         def draw_footer(pageCount):
             x = 35
 
