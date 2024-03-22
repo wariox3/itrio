@@ -246,12 +246,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         stylesheet = {
         'Normal': ParagraphStyle(name='Normal', fontName='Helvetica', fontSize=9),
         # Otros estilos que puedas tener
-}
+        }
         normalStyle = stylesheet['Normal']
 
         p.setFont("Helvetica-Bold", 9)
-        informacionPago = Paragraph("INFORMACIÓN DE PAGO: ", normalStyle)
-        comentario = Paragraph("COMENTARIOS:  " + str(documento.comentario), normalStyle)
+        informacionPago = Paragraph("INFORMACIÓN DE PAGO:  ", normalStyle)
+        comentario = Paragraph("COMENTARIOS:   " + str(documento.comentario), normalStyle)
 
         def draw_header():
 
@@ -391,14 +391,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         def draw_totals(p, y):
             #dejo el llamado de y en caso de que se requiera que se construya de manera dinamica
             #Linea separadora
-            p.setStrokeColorRGB(200/255, 200/255, 200/255)
-            p.line(400, 215, 550, 215)
-            p.setStrokeColorRGB(0, 0, 0)
+            #p.setStrokeColorRGB(200/255, 200/255, 200/255)
+            #p.line(400, 215, 550, 215)
+            #p.setStrokeColorRGB(0, 0, 0)
 
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(400, 200, "SUTOTAL")
-            p.drawRightString(550, 200, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
+            p.drawString(400, 230, "SUTOTAL")
+            p.drawRightString(550, 230, f"${locale.format_string('%d', int(documento.subtotal), grouping=True)}")
             
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
             impuesto_totals = {}
@@ -418,7 +418,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     impuesto_totals[impuesto_id] = {'total': total, 'nombre': nombre_impuesto}
 
             # Definir la posición "y" inicial
-            y = 190
+            y = 220
 
             # Recorrer el diccionario de totales de impuestos
             for impuesto_id, data in impuesto_totals.items():
@@ -433,15 +433,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawRightString(550, y, f"${locale.format_string('%d', int(documento.total), grouping=True)}")
 
             #informacion pago
-            informacionPago.wrapOn(p, 280, 400)
-            informacionPago.drawOn(p, 50, 155)
-
-
-            #comentarios
-            comentario.wrapOn(p, 280, 400)
-            comentario.drawOn(p, 50, 200)
+            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 400)
             
 
+            #comentarios
+            ancho_texto, alto_texto = comentario.wrapOn(p, 320, 400)
+            
+            x = 50
+            y = 240 - alto_texto
+            y2 = 160
+            comentario.drawOn(p, x, y)
+            informacionPago.drawOn(p, x, y2)
+            
         y = 555
         page_number = 1
         detalles_en_pagina = 0
@@ -491,7 +494,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     y = 520
                     draw_header()
                     detalles_en_pagina = 0
-        def draw_footer():
+
+        p.drawString(50, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))
+        def draw_footer(pageCount):
 
             valorLetras = convertir_a_letras(int(documento.total))
 
@@ -530,8 +535,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.line(270, 45, 550, 45)  # Coordenadas para dibujar la segunda línea
             p.setStrokeColorRGB(0, 0, 0)  # Restaurar el color a negro
             p.drawCentredString(410, 30, "ACEPTADA, FIRMADA Y/O SELLO Y FECHA")
+    
+            # Dibuja el número de página centrado
+            p.drawCentredString(550, 20, "Página %d de %d" % (p.getPageNumber(), pageCount))
 
-        draw_footer()
+        total_pages = p.getPageNumber()
+
+        draw_footer(total_pages)
 
         p.save()
         return response
