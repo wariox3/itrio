@@ -12,17 +12,19 @@ from general.serializers.documento import DocumentoSerializador, DocumentoRetrie
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from openpyxl import Workbook
+import locale
+from decouple import config
+from utilidades.wolframio import consumirPost
+from utilidades.utilidades import convertir_a_letras
+from utilidades.utilidades import generar_qr
 from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
 from reportlab.lib.styles import ParagraphStyle
-import locale
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
-from decouple import config
-from utilidades.wolframio import consumirPost
-from utilidades.utilidades import convertir_a_letras
+from reportlab.graphics import renderPDF
 import json
 
 class DocumentoViewSet(viewsets.ModelViewSet):
@@ -260,6 +262,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         informacionPago = Paragraph("<b>" + informacion_pago_texto + "</b>", estilo_helvetica)
         comentario = Paragraph("<b>" + comentario_texto + "</b>" + comentario_contenido, estilo_helvetica)
 
+        qr_code_data = "https://example.com" 
+        qr_code_drawing = generar_qr(qr_code_data)
+
+        # Dibujar el código QR en el lienzo en la posición deseada
+        x_pos = 340
+        y_pos = 125
+        renderPDF.draw(qr_code_drawing, p, x_pos, y_pos)
+
         def draw_header():
 
             region = config('DO_REGION')
@@ -438,11 +448,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawRightString(x + 140, y, f"$ {locale.format_string('%d', int(documento.total), grouping=True)}")
 
             #informacion pago
-            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 400)
+            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 380)
             
-
             #comentarios
-            ancho_texto, alto_texto = comentario.wrapOn(p, 320, 400)
+            ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
             
             x = 38
             y = 235 - alto_texto

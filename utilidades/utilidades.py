@@ -1,4 +1,6 @@
 from num2words import num2words
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.barcode.qr import QrCodeWidget
 
 def convertir_a_letras(numero):
     if numero == 0:
@@ -17,4 +19,8 @@ def convertir_a_letras(numero):
     
     return palabras.upper()
 
-
+def generar_qr(data):
+    qr_code = QrCodeWidget(data)
+    d = Drawing(45, 45)
+    d.add(qr_code)
+    return d
