@@ -292,7 +292,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.setFont("Helvetica", 9)
             if documento.resolucion:
                 if documento.numero:
-                    texto_resolucion = documento.resolucion.prefijo + documento.numero
+                    texto_resolucion = documento.resolucion.prefijo + str(documento.numero)
                 else:
                     texto_resolucion = documento.resolucion.prefijo
             else:
@@ -502,9 +502,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             consecutivoDesde = ""
             consecutivoHasta = ""
+            numero = ""
+            fechaVigencia = ""
             if resolucion:
                 consecutivoDesde = documento.resolucion.consecutivo_desde
                 consecutivoHasta = documento.resolucion.consecutivo_hasta
+                numero = documento.resolucion.numero
+                fechaVigencia = documento.resolucion.fecha_hasta
 
             cue = ""
             if documento.cue:
@@ -515,9 +519,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawString(50, 120, str(valorLetras))
             p.drawString(50, 110, "CUFE/CUDE:  " + cue)
 
-            p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:   " + str(documento.resolucion.numero))
+            p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:   " + str(numero))
             p.drawString(250, 100, "RANGO AUTORIZADO DESDE:   " + str(consecutivoDesde) + " HASTA " + str(consecutivoHasta))
-            p.drawRightString(550, 100, "VIGENCIA: " + str(documento.resolucion.fecha_hasta))
+            p.drawRightString(550, 100, "VIGENCIA: " + str(fechaVigencia))
 
 
             p.drawString(50, 90, "GENERADO POR: Reddoc")
