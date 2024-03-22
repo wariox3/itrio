@@ -272,16 +272,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 logo = ImageReader(logo_url)
 
             tamano_cuadrado = 1 * inch
-            coord_x = 50
+            x = 35
             coord_y = 680
 
             #borde tabla detalles
-            p.drawImage(logo, coord_x, coord_y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
+            p.drawImage(logo, x, coord_y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
             p.setStrokeColorRGB(0.8, 0.8, 0.8)
             #recuadro1
-            p.rect(47, 570, 505, 15)
+            p.rect(x, 570, 542, 15)
             #recuadro2
-            p.rect(47, 175, 505, 395)
+            p.rect(x, 175, 542, 395)
 
 
             #Emisor
@@ -348,32 +348,32 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 650, "CLIENTE: ")
+            p.drawString(x, 650, "CLIENTE: ")
             p.setFont("Helvetica", 8)
             p.drawString(120, 650, str(clienteNombre))
             
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 640, "NIT: ")
+            p.drawString(x, 640, "NIT: ")
             p.setFont("Helvetica", 8)
             p.drawString(120, 640, str(clienteIdentificacion))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 630, "DIRECCIÓN: ")
+            p.drawString(x, 630, "DIRECCIÓN: ")
             p.setFont("Helvetica", 8)
             p.drawString(120, 630, str(clienteDireccion))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 620, "CIUDAD: ")
+            p.drawString(x, 620, "CIUDAD: ")
             p.setFont("Helvetica", 8)
             p.drawString(120, 620, str(clienteCiudad))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 610, "TELÉFONO: ")
+            p.drawString(x, 610, "TELÉFONO: ")
             p.setFont("Helvetica", 8)
             p.drawString(120, 610, str(clienteTelefono))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 600, "CORREO: ")
+            p.drawString(x, 600, "CORREO: ")
             p.setFont("Helvetica", 8)
             p.drawString(120, 600, str(clienteCorreo))
 
@@ -385,7 +385,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
             #Encabezado detalles
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 575, "#")
+            p.drawString(x, 575, "#")
             p.drawString(70, 575, "COD")
             p.drawString(200, 575, "ITEM")
             p.drawString(350, 575, "CANT")
@@ -499,6 +499,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         p.drawString(50, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))
         def draw_footer(pageCount):
+            x = 35
 
             valorLetras = convertir_a_letras(int(documento.total))
 
@@ -517,14 +518,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 cue = documento.cue
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 120, str(valorLetras))
+            p.drawString(x, 120, str(valorLetras))
 
-            p.drawString(50, 110, "CUFE/CUDE: ")
+            p.drawString(x, 110, "CUFE/CUDE: ")
             p.setFont("Helvetica", 8)
             p.drawString(105, 110, str(cue))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 100, "NUMERO DE AUTORIZACIÓN:")
+            p.drawString(x, 100, "NUMERO DE AUTORIZACIÓN:")
             p.setFont("Helvetica", 8)
             p.drawString(170, 100, str(numero))
 
@@ -543,7 +544,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawRightString(550, 100, str(fechaVigencia))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(50, 90, "GENERADO POR: REDDOC")
+            p.drawString(x, 90, "GENERADO POR: REDDOC")
             p.setFont("Helvetica", 8)
             p.drawString(160, 90, "REDDOC")
 
