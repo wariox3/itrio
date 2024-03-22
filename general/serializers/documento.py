@@ -21,7 +21,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -44,7 +44,8 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'metodo_pago': instance.metodo_pago_id,
             'contacto_id': instance.contacto_id,
             'contacto_nombre_corto': contacto_nombre_corto,
-            'estado_anulado' : instance.estado_anulado
+            'estado_anulado' : instance.estado_anulado,
+            'comentario' : instance.comentario
         }
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
