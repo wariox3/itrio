@@ -564,9 +564,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             p.drawString(110, 90, "REDDOC")
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(250, 90, "PROVEEDOR TECNOLOGICO: SOFTGIC")
+            p.drawString(250, 90, "PROVEEDOR TECNOLOGICO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(410, 90, "SOFTGIC S.A.S")
+            p.drawString(370, 90, "SOFTGIC S.A.S")
 
             p.setStrokeColorRGB(0.8, 0.8, 0.8)
             p.setLineWidth(0.5)
