@@ -95,7 +95,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 
                 if 'id' in respuesta:
                     rededoc_id = respuesta.get('id')
-                    empresa.reddoc_id = rededoc_id
+                    empresa.rededoc_id = rededoc_id
                     empresa.save()
                 else:
                     validacion = respuesta.get('validacion')
