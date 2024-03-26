@@ -6,7 +6,7 @@ import json
 
 
 def consumirPost(data, url):
-    url = "http://localhost/wolframio/public/index.php" + url
+    url = "http://159.203.37.24/wolframio/public/index.php" + url
 
     json_data = json.dumps(data)
 
