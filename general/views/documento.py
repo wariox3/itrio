@@ -698,8 +698,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             "valor" : str(documentoDetalle.precio),
                             "total_descuentos" : str(documentoDetalle.descuento),
                             "total_cargos" : str(0),
-                            "total_impuestos" : str(0),
-                            "base" : str(0),
+                            "total_impuestos" : str(documentoImpuestoDetalle.total),
+                            "base" : str(documentoImpuestoDetalle.base),
                             "subtotal" : str(documentoDetalle.subtotal),
                             "impuestos" : arr_impuestos
                         })
