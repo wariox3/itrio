@@ -596,7 +596,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         try:
             raw = request.data
             codigoDocumento = raw.get('documento_id')
-            url = "api/documento/nuevo"
+            url = "/api/documento/nuevo"
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
                 if documento.estado_aprobado == True:
