@@ -22,7 +22,8 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'tipo_persona',
             'regimen',
             'imagen',
-            'contenedor_id']  
+            'contenedor_id',
+            'rededoc_id']  
         
     def to_representation(self, instance):
         nombre_ciudad = instance.ciudad.nombre
@@ -44,6 +45,7 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'correo': instance.correo,
             'regimen': instance.regimen.id,
             'tipo_persona': instance.tipo_persona.id,
+            'rededoc_id' : instance.reddoc_id,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         }   
 
