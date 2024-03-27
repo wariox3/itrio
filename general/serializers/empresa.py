@@ -46,7 +46,7 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'regimen': instance.regimen.id,
             'tipo_persona': instance.tipo_persona.id,
             'rededoc_id' : instance.rededoc_id,
-            'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
+            'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/itrio/{instance.imagen}"
         }   
 
 class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
