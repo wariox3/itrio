@@ -98,8 +98,11 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 
                 if 'id' in respuesta:
                     rededoc_id = respuesta.get('id')
-                    empresa.rededoc_id = rededoc_id
-                    empresa.save()
+                    if empresa.rededoc_id is None or empresa.rededoc_id == '':
+                        empresa.rededoc_id = rededoc_id
+                        empresa.save()
+                    else:
+                        return Response({'mensaje': 'La empresa ya se encuentra activa', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     validacion = respuesta.get('validacion')
                     return Response({'mensaje': {validacion}, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
