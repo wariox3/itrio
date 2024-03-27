@@ -9,14 +9,21 @@ def consumirPost(data, url):
 
     headers = {'Content-Type': 'application/json'}
 
-    
-    response = requests.post(url, data=json_data, headers=headers)
+    try:
+        response = requests.post(url, data=json_data, headers=headers)
+        response.raise_for_status()  # Verificar el estado de la respuesta
 
-    # Verificar el estado de la respuesta
-    response.raise_for_status()
+        # Obtener la respuesta como JSON
+        resp = response.json()
 
-    # Obtener la respuesta como JSON
-    resp = response.json()
+    except requests.exceptions.HTTPError as e:
+        # Si hay un error HTTP (por ejemplo, código 400)
+        resp = {"mensaje": "Error HTTP {}: {}".format(e.response.status_code, e.response.text)}
+
+    except Exception as e:
+        # Manejar otros tipos de excepciones
+        print("Error:", e)
+        resp = {"error": str(e)}
 
     return resp
 
