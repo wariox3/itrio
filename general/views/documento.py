@@ -636,7 +636,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 "digito_verificacion" : documento.contacto.digito_verificacion,
                                 "razon_social" : documento.contacto.nombre_corto,
                                 "pais" : "CO",
-                                "ciudad" : documento.contacto.ciudad.codigo_postal,
+                                "ciudad" : documento.contacto.ciudad.nombre,
+                                "departamento" : documento.contacto.ciudad.estado.nombre,
                                 "direccion" : documento.contacto.direccion,
                                 "obligaciones" : "0-99",
                                 "nombres" : documento.contacto.nombre1,
@@ -730,7 +731,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documentos = Documento.objects.all()
         if filtros:
             for filtro in filtros:
-                documentos = documentos.filter(**{filtro['propiedad']: filtro['valor_1']})
+                documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})
         if ordenamientos:
             documentos = documentos.order_by(*ordenamientos)              
         documentos = documentos[desplazar:limite+desplazar]
