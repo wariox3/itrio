@@ -88,7 +88,10 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     "celular" : empresa.telefono,
                     "correo" : empresa.correo,
                     "ciudadId" : empresa.ciudad.id,
-                    "identificacionId" : empresa.identificacion.id
+                    "identificacionId" : empresa.identificacion.id,
+                    "webhookEmision" : raw.get('webhookEmision'),
+                    "webhookNotificacion" : raw.get('webhookNotificacion'),
+                    "setPruebas" : raw.get('setPruebas')
                 }
 
                 respuesta = consumirPost(datos, url)

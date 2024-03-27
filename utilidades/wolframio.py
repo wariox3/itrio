@@ -1,6 +1,3 @@
-from django.http import JsonResponse
-from general.models.respuesta_electronica import RespuestaElectronica
-from django.utils import timezone
 import requests
 import json
 
@@ -12,22 +9,14 @@ def consumirPost(data, url):
 
     headers = {'Content-Type': 'application/json'}
 
-    try:
-        response = requests.post(url, data=json_data, headers=headers)
+    
+    response = requests.post(url, data=json_data, headers=headers)
 
-        # Verificar el estado de la respuesta
-        response.raise_for_status()
+    # Verificar el estado de la respuesta
+    response.raise_for_status()
 
-        # Obtener la respuesta como JSON
-        resp = response.json()
-
-    except requests.exceptions.HTTPError as err:
-        # Manejar el error HTTP
-        print(f"Error HTTP: {err}")
-
-    except Exception as err:
-        # Manejar cualquier otra excepción
-        print(f"Error inesperado: {err}")
+    # Obtener la respuesta como JSON
+    resp = response.json()
 
     return resp
 
