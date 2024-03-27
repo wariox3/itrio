@@ -717,8 +717,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     datos_factura['doc_cantidad_item'] = cantidad_items
                     datos_factura['documento']['impuestos'] = arr_impuestos
 
-                    arr_documento = consumirPost(datos_factura, url)
+                    respuesta = consumirPost(datos_factura, url)
 
+                    if 'id' in respuesta:
+                        return Response({'emitir': True, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'mensaje': {respuesta.get('mensaje')}, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
             else:
