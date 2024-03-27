@@ -720,7 +720,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     respuesta = consumirPost(datos_factura, url)
 
                     if 'id' in respuesta: 
-                        return Response({'emitir': True, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'emitir': True, 'codigo': 15}, status=status.HTTP_200_OK)
                     else:
                         return Response({'mensaje': {respuesta.get('mensaje')}, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
                 else:
