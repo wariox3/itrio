@@ -18,7 +18,7 @@ def consumirPost(data, url):
 
     except requests.exceptions.HTTPError as e:
         # Si hay un error HTTP (por ejemplo, código 400)
-        resp = {"mensaje": "Error HTTP {}: {}".format(e.response.status_code, e.response.text)}
+        resp = {"mensaje": str(e.response.text)}
 
     except Exception as e:
         # Manejar otros tipos de excepciones
