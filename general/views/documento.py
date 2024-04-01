@@ -601,134 +601,137 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento = Documento.objects.get(pk=codigoDocumento)
                 if documento.estado_aprobado == True:
                     empresa = Empresa.objects.get(pk=1)
+                    if documento.resolucion: 
 
-                    #Se construye el obejto inicial
+                        #Se construye el obejto inicial
 
-                    datos_factura = {
-                        "cuentaId": empresa.rededoc_id,
-                        "documentoClaseId" : 1,
-                        "documento" : {
-                            "ambiente" : documento.resolucion.ambiente,
-                            "prefijo" : documento.resolucion.prefijo,
-                            "numero" : documento.numero,
-                            "fecha" : str(documento.fecha),
-                            "hora" : str("12:00:00-05:00"),
-                            "fecha_vence" : str(documento.fecha_vence),
-                            "tipo_operacion" : str(10),
-                            "moneda" : "COP",
-                            "resolucion" : documento.resolucion.numero,
-                            "forma_pago" : documento.metodo_pago.id,
-                            "cantidad_detalles" :1,
-                            "subtotal" : str(documento.subtotal),
-                            "subtotal_mas_impuestos" : str(documento.subtotal + documento.impuesto),
-                            "base" : str(documento.base_impuesto),
-                            "total_impuestos" : str(documento.impuesto),
-                            "total_descuentos" : str(documento.descuento),
-                            "total_cargos" : str(0),
-                            "total_anticipos" : str(0),
-                            "total_documento" : str(documento.total),
-                            "total_iva" : str(0),
-                            "total_consumo" : str(0),
-                            "total_ica" : str(0),
-                            "adquiriente" : {
-                                "identificacion" : documento.contacto.identificacion.codigo,
-                                "numero_identificacion" : documento.contacto.numero_identificacion,
-                                "digito_verificacion" : documento.contacto.digito_verificacion,
-                                "razon_social" : documento.contacto.nombre_corto,
-                                "pais" : "CO",
-                                "ciudad" : documento.contacto.ciudad.nombre,
-                                "departamento" : documento.contacto.ciudad.estado.nombre,
-                                "direccion" : documento.contacto.direccion,
-                                "obligaciones" : "0-99",
-                                "nombres" : documento.contacto.nombre1,
-                                "apellidos" : documento.contacto.apellido1,
-                                "correo" : documento.contacto.correo,
-                                "telefono" : documento.contacto.telefono,
-                                "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
-                                "regimen_tributario" : documento.contacto.regimen.id,
-                                "codigo_postal" : documento.contacto.ciudad.codigo_postal,
-                                "responsable" : 1,
-                                "nacional" : 1
-                            },
+                        datos_factura = {
+                            "cuentaId": empresa.rededoc_id,
+                            "documentoClaseId" : 1,
+                            "documento" : {
+                                "ambiente" : documento.resolucion.ambiente,
+                                "prefijo" : documento.resolucion.prefijo,
+                                "numero" : documento.numero,
+                                "fecha" : str(documento.fecha),
+                                "hora" : str("12:00:00-05:00"),
+                                "fecha_vence" : str(documento.fecha_vence),
+                                "tipo_operacion" : str(10),
+                                "moneda" : "COP",
+                                "resolucion" : documento.resolucion.numero,
+                                "forma_pago" : documento.metodo_pago.id,
+                                "cantidad_detalles" :1,
+                                "subtotal" : str(documento.subtotal),
+                                "subtotal_mas_impuestos" : str(documento.subtotal + documento.impuesto),
+                                "base" : str(documento.base_impuesto),
+                                "total_impuestos" : str(documento.impuesto),
+                                "total_descuentos" : str(documento.descuento),
+                                "total_cargos" : str(0),
+                                "total_anticipos" : str(0),
+                                "total_documento" : str(documento.total),
+                                "total_iva" : str(0),
+                                "total_consumo" : str(0),
+                                "total_ica" : str(0),
+                                "adquiriente" : {
+                                    "identificacion" : documento.contacto.identificacion.codigo,
+                                    "numero_identificacion" : documento.contacto.numero_identificacion,
+                                    "digito_verificacion" : documento.contacto.digito_verificacion,
+                                    "razon_social" : documento.contacto.nombre_corto,
+                                    "pais" : "CO",
+                                    "ciudad" : documento.contacto.ciudad.nombre,
+                                    "departamento" : documento.contacto.ciudad.estado.nombre,
+                                    "direccion" : documento.contacto.direccion,
+                                    "obligaciones" : "0-99",
+                                    "nombres" : documento.contacto.nombre1,
+                                    "apellidos" : documento.contacto.apellido1,
+                                    "correo" : documento.contacto.correo,
+                                    "telefono" : documento.contacto.telefono,
+                                    "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
+                                    "regimen_tributario" : documento.contacto.regimen.id,
+                                    "codigo_postal" : documento.contacto.ciudad.codigo_postal,
+                                    "responsable" : 1,
+                                    "nacional" : 1
+                                },
+                            }
                         }
-                    }
-                    arr_medio_pago = []
+                        arr_medio_pago = []
 
-                    arr_medio_pago.append({
-                        "medio_pago": 31,
-                        "descripcion": "",
-                    })
+                        arr_medio_pago.append({
+                            "medio_pago": 31,
+                            "descripcion": "",
+                        })
 
-                    datos_factura['documento']['medios_pago'] = arr_medio_pago
+                        datos_factura['documento']['medios_pago'] = arr_medio_pago
 
-                    arr_item = []
-                    cantidad_items = 0
-                    impuestos_agrupados = {}
+                        arr_item = []
+                        cantidad_items = 0
+                        impuestos_agrupados = {}
 
-                    documentoDetalles = DocumentoDetalle.objects.filter(documento=codigoDocumento)
-                    for documentoDetalle in documentoDetalles:
-                        arr_impuestos = []
-                        documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
-                        for documentoImpuestoDetalle in documentoImpuestoDetalles:
-                            impuesto_id = documentoImpuestoDetalle.impuesto_id
-                            total = documentoImpuestoDetalle.total
-                            arr_impuestos.append({
-                                "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
-                                "total" : str(documentoImpuestoDetalle.total),
-                                "porcentual" : str(documentoImpuestoDetalle.porcentaje)
+                        documentoDetalles = DocumentoDetalle.objects.filter(documento=codigoDocumento)
+                        for documentoDetalle in documentoDetalles:
+                            arr_impuestos = []
+                            documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
+                            for documentoImpuestoDetalle in documentoImpuestoDetalles:
+                                impuesto_id = documentoImpuestoDetalle.impuesto_id
+                                total = documentoImpuestoDetalle.total
+                                arr_impuestos.append({
+                                    "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
+                                    "total" : str(documentoImpuestoDetalle.total),
+                                    "porcentual" : str(documentoImpuestoDetalle.porcentaje)
+                                })
+
+                                if impuesto_id in impuestos_agrupados:
+                                    impuestos_agrupados[impuesto_id] += total
+                                else:
+                                    impuestos_agrupados[impuesto_id] = total
+
+                            cantidad_items += 1
+                            arr_item.append({
+                                "consecutivo": cantidad_items,
+                                "codigo": documentoDetalle.item.codigo,
+                                "descripcion" : documentoDetalle.item.nombre,
+                                "marca" : "",
+                                "modelo" : "",
+                                "observacion" : "",
+                                "cantidad" : str(documentoDetalle.cantidad),
+                                "cantidad_empque": str(documentoDetalle.cantidad),
+                                "obserquio" : str(0),
+                                "precio_unitario" : str(documentoDetalle.precio),
+                                "precio_referencia" : str(documentoDetalle.precio),
+                                "valor" : str(documentoDetalle.precio),
+                                "total_descuentos" : str(documentoDetalle.descuento),
+                                "total_cargos" : str(0),
+                                "total_impuestos" : str(documentoImpuestoDetalle.total),
+                                "base" : str(documentoImpuestoDetalle.base),
+                                "subtotal" : str(documentoDetalle.subtotal),
+                                "impuestos" : arr_impuestos
                             })
 
-                            if impuesto_id in impuestos_agrupados:
-                                impuestos_agrupados[impuesto_id] += total
-                            else:
-                                impuestos_agrupados[impuesto_id] = total
-
-                        cantidad_items += 1
-                        arr_item.append({
-                            "consecutivo": cantidad_items,
-                            "codigo": documentoDetalle.item.codigo,
-                            "descripcion" : documentoDetalle.item.nombre,
-                            "marca" : "",
-                            "modelo" : "",
-                            "observacion" : "",
-                            "cantidad" : str(documentoDetalle.cantidad),
-                            "cantidad_empque": str(documentoDetalle.cantidad),
-                            "obserquio" : str(0),
-                            "precio_unitario" : str(documentoDetalle.precio),
-                            "precio_referencia" : str(documentoDetalle.precio),
-                            "valor" : str(documentoDetalle.precio),
-                            "total_descuentos" : str(documentoDetalle.descuento),
-                            "total_cargos" : str(0),
-                            "total_impuestos" : str(documentoImpuestoDetalle.total),
-                            "base" : str(documentoImpuestoDetalle.base),
-                            "subtotal" : str(documentoDetalle.subtotal),
-                            "impuestos" : arr_impuestos
-                        })
-
-                    arr_impuestos = []
-                    for impuesto_id, total in impuestos_agrupados.items():
-                        arr_impuestos.append({
-                            "tipo_impuesto": impuesto_id,
-                            "total": str(total),
-                            "porcentual" : str(19.00)
-                        })
-                    
-                    datos_factura['documento']['detalles'] = arr_item
-                    datos_factura['doc_cantidad_item'] = cantidad_items
-                    datos_factura['documento']['impuestos'] = arr_impuestos
-
-                    respuesta = consumirPost(datos_factura, url)
-
-                    if 'id' in respuesta: 
-                        if documento.estado_electronico is False:
-                            documento.estado_electronico = True
-                            documento.save()
-                        else:
-                            return Response({'mensaje': 'El coumento ya esta enviado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                        arr_impuestos = []
+                        for impuesto_id, total in impuestos_agrupados.items():
+                            arr_impuestos.append({
+                                "tipo_impuesto": impuesto_id,
+                                "total": str(total),
+                                "porcentual" : str(19.00)
+                            })
                         
-                        return Response({'mensaje': 'Documento emitido correctamente', 'codigo': 15}, status=status.HTTP_200_OK)
+                        datos_factura['documento']['detalles'] = arr_item
+                        datos_factura['doc_cantidad_item'] = cantidad_items
+                        datos_factura['documento']['impuestos'] = arr_impuestos
+
+                        respuesta = consumirPost(datos_factura, url)
+
+                        if 'id' in respuesta: 
+                            if documento.estado_electronico is False:
+                                documento.estado_electronico = True
+                                documento.save()
+                            else:
+                                return Response({'mensaje': 'El coumento ya esta enviado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                            
+                            return Response({'mensaje': 'Documento emitido correctamente', 'codigo': 15}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({'mensaje': respuesta.get('mensaje'), 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
                     else:
-                        return Response({'mensaje': respuesta.get('mensaje'), 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
             else:
