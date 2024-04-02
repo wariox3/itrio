@@ -26,7 +26,7 @@ from general.serializers.impuesto import ImpuestoSerializador, ImpuestoListaAuto
 from general.serializers.identificacion import IdentificacionSerializador, IdentificacionListaAutocompletarSerializador
 from general.serializers.ciudad import CiudadSerializador, CiudadListaAutocompletarSerializador
 from general.serializers.regimen import RegimenSerializador, RegimenListaAutocompletarSerializador
-from general.serializers.resolucion import ResolucionSerializador
+from general.serializers.resolucion import ResolucionSerializador, ResolucionListaAutocompletarSerializador
 from general.serializers.asesor import AsesorSerializador, AsesorListaAutocompletarSerializador
 from general.serializers.precio import PrecioSerializador, PrecioListaAutocompletarSerializador
 from general.serializers.plazo_pago import PlazoPagoSerializador, PlazoPagoListaAutocompletarSerializador
