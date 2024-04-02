@@ -3,7 +3,7 @@ from general.models.documento_clase import DocumentoClase
 
 class DocumentoTipo(models.Model):    
     nombre = models.CharField(max_length=100)
-    consecutivo = models.IntegerField(null=True)
+    consecutivo = models.IntegerField(default=1, null=True)
     documento_clase = models.ForeignKey(DocumentoClase, null=True, on_delete=models.CASCADE, related_name='documentos_tipos')
     
     class Meta:
