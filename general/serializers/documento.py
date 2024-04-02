@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from general.models.documento import Documento
 from general.models.documento_tipo import DocumentoTipo
+from general.models.resolucion import Resolucion
 from general.models.contacto import Contacto
 from general.models.metodo_pago import MetodoPago
 from general.models.empresa import Empresa
@@ -19,6 +20,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
+    resolucion = serializers.PrimaryKeyRelatedField(queryset=Resolucion.objects.all())
     class Meta:
         model = Documento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado']

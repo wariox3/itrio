@@ -39,6 +39,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def create(self, request):
         raw = request.data
         documentoSerializador = DocumentoSerializador(data=raw)
+        documentoTipo = DocumentoTipo.objects.get(pk=1)
         if documentoSerializador.is_valid():
             documento = documentoSerializador.save()            
             detalles = raw.get('detalles')
