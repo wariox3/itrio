@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento_impuesto import DocumentoImpuesto
+from general.models.documento_tipo import DocumentoTipo
 from general.models.empresa import Empresa
 from general.models.resolucion import Resolucion
 from general.serializers.documento import DocumentoSerializador, DocumentoRetrieveSerializador
@@ -182,8 +183,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             codigoDocumento = raw.get('id')
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
+                documentoTipo = DocumentoTipo.objects.get(pk=1)
+                documento.numero = documentoTipo.consecutivo
                 documento.estado_aprobado = True
                 documento.save()
+                documentoTipo.consecutivo += 1
+                documentoTipo.save()
                 return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
