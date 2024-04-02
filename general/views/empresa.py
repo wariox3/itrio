@@ -115,7 +115,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 
                 return Response({'validar':True}, status=status.HTTP_200_OK)        
             else:
-                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
         except Empresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
