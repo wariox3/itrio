@@ -106,6 +106,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                         resolucion = Resolucion.objects.get(pk=resolucion_id)
                         documentoTipo.resolucion = resolucion
                         empresa.rededoc_id = rededoc_id
+                        documentoTipo.save()
                         empresa.save()
                     else:
                         return Response({'mensaje': 'La empresa ya se encuentra activa', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
