@@ -1,6 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from general.models.empresa import Empresa
+from general.models.documento_tipo import DocumentoTipo
+from general.models.resolucion import Resolucion
 from general.serializers.empresa import EmpresaSerializador, EmpresaActualizarSerializador
 from rest_framework.decorators import action
 from decouple import config
@@ -78,8 +80,10 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         try:
             raw = request.data
             empresa_id = raw.get('empresa_id')
-            if empresa_id:
+            resolucion_id = raw.get('resolucion_id')
+            if empresa_id and resolucion_id:
                 empresa = Empresa.objects.get(pk=empresa_id)
+                documentoTipo = DocumentoTipo.objects.get(pk=1)
                 datos = ""
                 url = "/api/cuenta/nuevo"
                 datos = {
@@ -99,6 +103,8 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 if 'id' in respuesta:
                     rededoc_id = respuesta.get('id')
                     if empresa.rededoc_id is None or empresa.rededoc_id == '':
+                        resolucion = Resolucion.objects.get(pk=resolucion_id)
+                        documentoTipo.resolucion = resolucion
                         empresa.rededoc_id = rededoc_id
                         empresa.save()
                     else:
