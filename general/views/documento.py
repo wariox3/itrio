@@ -40,7 +40,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         documentoSerializador = DocumentoSerializador(data=raw)
         if documentoSerializador.is_valid():
-            documento = documentoSerializador.save()            
+                        # Extraemos el tipo de documento
+            documento_tipo = documentoSerializador.validated_data['documento_tipo']
+
+            # Aquí debes buscar la resolución asociada al tipo de documento
+            # Supongamos que obtienes la resolución asociada al tipo de documento
+            resolucion = documento_tipo.resolucion
+
+            # Asignamos la resolución al documento antes de guardarlo
+            documento = documentoSerializador.save(resolucion=resolucion)            
             detalles = raw.get('detalles')
             if detalles is not None:
                 for detalle in detalles:                

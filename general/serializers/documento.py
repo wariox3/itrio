@@ -22,13 +22,19 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'resolucion']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
         contacto_nombre_corto = None
         if contacto:
             contacto_nombre_corto = contacto.nombre_corto
+
+        documento_tipo = instance.documento_tipo
+        resolucion = None
+
+        if documento_tipo and documento_tipo.resolucion:
+            resolucion = documento_tipo.resolucion.id
         return {
             'id': instance.id,            
             'numero' : instance.numero,
