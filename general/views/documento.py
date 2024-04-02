@@ -721,8 +721,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 respuesta = consumirPost(datos_factura, url)
 
                                 if 'id' in respuesta: 
-                                    if documento.estado_electronico is False:
-                                        documento.estado_electronico = True
+                                    if documento.estado_electronico_enviado is False:
+                                        documento.estado_electronico_enviado = True
                                         documento.save()
                                     else:
                                         return Response({'mensaje': 'El coumento ya esta enviado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)

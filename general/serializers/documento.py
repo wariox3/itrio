@@ -21,7 +21,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -47,6 +47,8 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_anulado' : instance.estado_anulado,
             'comentario' : instance.comentario,
             'estado_electronico' : instance.estado_electronico,
+            'estado_electronico_enviado' : instance.estado_electronico_enviado,
+            'estado_electronico_notificado' : instance.estado_electronico_notificado,
             'soporte' : instance.soporte
         }
     
@@ -56,7 +58,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado']
 
     def to_representation(self, instance):
         contacto = instance.contacto
@@ -86,5 +88,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'estado_anulado' :instance.estado_anulado,
             'comentario': instance.comentario,
             'estado_electronico' : instance.estado_electronico,
+            'estado_electronico_enviado' : instance.estado_electronico_enviado,
+            'estado_electronico_notificado' : instance.estado_electronico_notificado,
             'soporte' : instance.soporte
         }

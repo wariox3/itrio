@@ -22,6 +22,8 @@ class Documento(models.Model):
     estado_aprobado = models.BooleanField(default = False)
     estado_anulado = models.BooleanField(default = False)
     estado_electronico = models.BooleanField(default = False)    
+    estado_electronico_enviado = models.BooleanField(default = False)    
+    estado_electronico_notificado = models.BooleanField(default = False)    
     cue = models.CharField(max_length=150, null=True)
     soporte = models.CharField(max_length=100, null=True)
     comentario = models.CharField(max_length=500, null=True)
