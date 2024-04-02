@@ -20,7 +20,6 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
-    resolucion = serializers.PrimaryKeyRelatedField(queryset=Resolucion.objects.all())
     class Meta:
         model = Documento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'resolucion']
@@ -51,8 +50,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_electronico' : instance.estado_electronico,
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
-            'soporte' : instance.soporte,
-            'resolucion': instance.resolucion_id
+            'soporte' : instance.soporte
         }
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
