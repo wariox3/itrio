@@ -178,7 +178,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 for documento in documentos:
                     documentoEliminar = Documento.objects.get(pk=documento)  
                     if documentoEliminar:
-                        documentoEliminar.delete()   
+                        if documentoEliminar.estado_aprobado == False:
+                            documentoEliminar.delete()   
+                        else:
+                            return Response({'mensaje':'El documento con id' + documentoEliminar.id + 'no se puede eliminar por que se encuentra aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'mensaje':'Registros eliminados'}, status=status.HTTP_200_OK)
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Documento.DoesNotExist:
