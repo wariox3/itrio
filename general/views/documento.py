@@ -277,7 +277,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         # Crear los Paragraph con los estilos correspondientes
         informacionPago = Paragraph("<b>" + informacion_pago_texto + "</b>", estilo_helvetica)
-        comentario = Paragraph("<b>" + comentario_texto + "</b>" + comentario_contenido, estilo_helvetica)
+        comentario = Paragraph("<b>" + comentario_texto[:300] + "</b>" + comentario_contenido[:300], estilo_helvetica)
 
         qr = ""
         if documento.qr:
