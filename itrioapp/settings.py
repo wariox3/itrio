@@ -188,6 +188,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://reddoc.co",
     "http://reddoc.com.co",
     "http://reddocapi.co",
+    "https://reddocapi.co",
     'http://localhost:4200',
     "http://190.249.212.131",
     
