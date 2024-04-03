@@ -1,8 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from general.models.empresa import Empresa
-from general.models.documento_tipo import DocumentoTipo
-from general.models.resolucion import Resolucion
 from general.serializers.empresa import EmpresaSerializador, EmpresaActualizarSerializador
 from rest_framework.decorators import action
 from decouple import config
@@ -83,7 +81,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             set_pruebas = raw.get('set_pruebas')
             if empresa_id and resolucion_id and set_pruebas:                                            
                 wolframio = Wolframio()
-                respuesta = wolframio.activarCuenta(set_pruebas)
+                respuesta = wolframio.activarCuenta(set_pruebas, resolucion_id)
                 if respuesta['error'] == False:
                     return Response({'validar':True}, status=status.HTTP_200_OK)
                 else:

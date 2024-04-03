@@ -1,11 +1,12 @@
 from general.models.empresa import Empresa
 from general.models.documento_tipo import DocumentoTipo
+from general.models.resolucion import Resolucion
 import requests
 import json
 
 class Wolframio():
 
-    def activarCuenta(self, setPruebas):        
+    def activarCuenta(self, setPruebas, resolucion_id):        
         url = "/api/cuenta/nuevo"
         empresa = Empresa.objects.get(pk=1)
         datos = {
@@ -19,31 +20,29 @@ class Wolframio():
             "webhookNotificacion" : "webhookNotificacion",
             "setPruebas" : setPruebas
         }
-        self.consumirPost(datos, url)        
-        '''documentoTipo = DocumentoTipo.objects.get(pk=1)
-        if 'id' in respuesta:
-            rededoc_id = respuesta.get('id')
+        respuesta = self.consumirPost(datos, url)        
+        if respuesta['status'] == 200:
+            datosRespuesta = respuesta['datos']            
             if empresa.rededoc_id is None or empresa.rededoc_id == '':
+                documentoTipo = DocumentoTipo.objects.get(pk=1)
                 resolucion = Resolucion.objects.get(pk=resolucion_id)
                 documentoTipo.resolucion = resolucion
-                empresa.rededoc_id = rededoc_id
+                empresa.rededoc_id = datosRespuesta['id']
                 documentoTipo.save()
                 empresa.save()
-            else:
-                return Response({'mensaje': 'La empresa ya se encuentra activa', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                return {'error':False}
+            else:            
+                return {'error':True, 'mensaje':'La empresa ya se encuentra activa'}
         else:
-            validacion = respuesta.get('validacion')
-            return Response({'mensaje': {validacion}, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)'''
-        return {'error':True, 'mensaje':'Un error desde wolframio'}
-        
-        
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
 
+        
     def consumirPost(self, data, url):
         url = "http://159.203.18.130/wolframio/public/index.php" + url
         json_data = json.dumps(data)
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, data=json_data, headers=headers)
         resp = response.json()
-        return resp
+        return {'status': response.status_code, 'datos': resp}
 
 
