@@ -41,7 +41,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 verificacion_serializer.save()
                 dominio = config('DOMINIO_FRONTEND')
                 correo = Correo()             
-                contenido='Enlace para verificar http://' + dominio + '/auth/verificacion/' + token                    
+                contenido='Enlace para verificar https://' + dominio + '/auth/verificacion/' + token                    
                 correo.enviar(usuario.correo, 'Debe verificar su cuenta reddoc', contenido)   
                 return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)        
