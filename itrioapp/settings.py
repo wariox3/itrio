@@ -186,6 +186,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://reddocapi.online",
     "http://reddoc.online",
     "http://reddoc.co",
+    "http://reddoc.com.co",
     "http://reddocapi.co",
     'http://localhost:4200',
     "http://190.249.212.131",
@@ -197,6 +198,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     #r"^https?://(\w+\.)?muup\.online$",
     r"^https?://(\w+\.)?reddoc\.online$",
     r"^https?://(\w+\.)?reddoc\.co$",
+    r"^https?://(\w+\.)?reddoc\.com\.co$",
     r"http?://(\w+\.)?localhost:4200"
 ]
 
