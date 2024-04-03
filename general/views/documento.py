@@ -620,7 +620,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if empresa.rededoc_id:
                         if documento.resolucion: 
                             if documento.numero:
-                                #Se construye el obejto inicial
+                                
                                 datos_factura = {
                                     "cuentaId": empresa.rededoc_id,
                                     "documentoClaseId" : 1,
@@ -633,7 +633,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         "fecha_vence" : str(documento.fecha_vence),
                                         "tipo_operacion" : str(10),
                                         "moneda" : "COP",
-                                        "resolucion" : documento.resolucion.numero,
+                                        "resolucion" : str(documento.resolucion.numero),
                                         "forma_pago" : documento.metodo_pago.id,
                                         "cantidad_detalles" :1,
                                         "subtotal" : str(documento.subtotal),
@@ -662,7 +662,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             "correo" : documento.contacto.correo,
                                             "telefono" : documento.contacto.telefono,
                                             "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
-                                            "regimen_tributario" : documento.contacto.regimen.id,
+                                            "regimen_tributario" : documento.contacto.regimen.codigo_interface,
                                             "codigo_postal" : documento.contacto.ciudad.codigo_postal,
                                             "responsable" : 1,
                                             "nacional" : 1

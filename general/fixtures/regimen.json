@@ -2,11 +2,11 @@
   {
     "model": "general.regimen",
     "pk": 1,
-    "fields": {"nombre": "Ordinario común"}
+    "fields": {"nombre": "Ordinario común", "codigo_interface": "05"}
   },
   {
     "model": "general.regimen",
     "pk": 2,
-    "fields": {"nombre": "Simple"}
+    "fields": {"nombre": "Simple", "codigo_interface": "04"}
   }
 ]
