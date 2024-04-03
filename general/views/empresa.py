@@ -7,8 +7,7 @@ from general.serializers.empresa import EmpresaSerializador, EmpresaActualizarSe
 from rest_framework.decorators import action
 from decouple import config
 from utilidades.space_do import SpaceDo
-from utilidades.wolframio import consumirPost
-
+from utilidades.wolframio import Wolframio
 
 class EmpresaViewSet(viewsets.ModelViewSet):
     queryset = Empresa.objects.all()
@@ -81,42 +80,15 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             raw = request.data
             empresa_id = raw.get('empresa_id')
             resolucion_id = raw.get('resolucion_id')
-            if empresa_id and resolucion_id:
-                empresa = Empresa.objects.get(pk=empresa_id)
-                documentoTipo = DocumentoTipo.objects.get(pk=1)
-                datos = ""
-                url = "/api/cuenta/nuevo"
-                datos = {
-                    "numeroIdentificacion" : empresa.numero_identificacion,
-                    "nombre" : empresa.nombre_corto,
-                    "celular" : empresa.telefono,
-                    "correo" : empresa.correo,
-                    "ciudadId" : empresa.ciudad.id,
-                    "identificacionId" : empresa.identificacion.id,
-                    "webhookEmision" : raw.get('webhookEmision'),
-                    "webhookNotificacion" : raw.get('webhookNotificacion'),
-                    "setPruebas" : raw.get('setPruebas')
-                }
-
-                respuesta = consumirPost(datos, url)
-                
-                if 'id' in respuesta:
-                    rededoc_id = respuesta.get('id')
-                    if empresa.rededoc_id is None or empresa.rededoc_id == '':
-                        resolucion = Resolucion.objects.get(pk=resolucion_id)
-                        documentoTipo.resolucion = resolucion
-                        empresa.rededoc_id = rededoc_id
-                        documentoTipo.save()
-                        empresa.save()
-                    else:
-                        return Response({'mensaje': 'La empresa ya se encuentra activa', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+            set_pruebas = raw.get('set_pruebas')
+            if empresa_id and resolucion_id and set_pruebas:                                            
+                wolframio = Wolframio()
+                respuesta = wolframio.activarCuenta(set_pruebas)
+                if respuesta['error'] == False:
+                    return Response({'validar':True}, status=status.HTTP_200_OK)
                 else:
-                    validacion = respuesta.get('validacion')
-                    return Response({'mensaje': {validacion}, 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                
-                return Response({'validar':True}, status=status.HTTP_200_OK)        
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
         except Empresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)

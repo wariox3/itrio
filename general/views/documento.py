@@ -15,7 +15,6 @@ from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from openpyxl import Workbook
 import locale
 from decouple import config
-from utilidades.wolframio import consumirPost
 from utilidades.utilidades import convertir_a_letras
 from utilidades.utilidades import generar_qr
 from reportlab.pdfgen import canvas
@@ -734,9 +733,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     datos_factura['documento']['detalles'] = arr_item
                                     datos_factura['doc_cantidad_item'] = cantidad_items
                                     datos_factura['documento']['impuestos'] = arr_impuestos
-
-                                    respuesta = consumirPost(datos_factura, url)
-
+                                    #respuesta = consumirPost(datos_factura, url)
+                                    respuesta = None
                                     if 'id' in respuesta: 
                                         if documento.estado_electronico_enviado is False:
                                             documento.estado_electronico_enviado = True
