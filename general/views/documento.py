@@ -625,7 +625,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     "cuentaId": empresa.rededoc_id,
                                     "documentoClaseId" : 1,
                                     "documento" : {
-                                        "ambiente" : documento.resolucion.ambiente,
+                                        "ambiente" : 1,
                                         "prefijo" : documento.resolucion.prefijo,
                                         "numero" : documento.numero,
                                         "fecha" : str(documento.fecha),
