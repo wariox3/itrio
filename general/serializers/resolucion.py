@@ -5,7 +5,7 @@ class ResolucionSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Resolucion
-        fields = ['id', 'prefijo', 'numero', 'consecutivo_desde', 'consecutivo_hasta', 'fecha_desde', 'fecha_hasta', 'ambiente'] 
+        fields = ['id', 'prefijo', 'numero', 'consecutivo_desde', 'consecutivo_hasta', 'fecha_desde', 'fecha_hasta'] 
 
 class ResolucionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
