@@ -773,3 +773,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         serializador = DocumentoSerializador(documentos, many=True)           
         respuesta = {'registros': serializador.data, "cantidad_registros": itemsCantidad}
         return respuesta
+    
+    @action(detail=False, methods=["post"], url_path=r'electronico_respuesta',)
+    def electronico_respuesta(self, request):
+        raw = request.data
+        codigoDocumento = raw.get('documento_id')
+        qr = raw.get('qr')
+        cue = raw.get('cue')
+        if codigoDocumento and qr and cue:
+            try:
+                documento = Documento.objects.get(pk=codigoDocumento)
+                documento.qr = qr
+                documento.cue = cue
+                documento.estado_electronico = True
+                documento.save()
+                return Response({'mensaje': 'Documento emitido correctamente'}, status=status.HTTP_200_OK)
+            except Documento.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+    
