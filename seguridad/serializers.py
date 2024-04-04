@@ -19,7 +19,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         arrCadena = user.username.split("@")
         user.nombre_corto = arrCadena[0]
         user.is_active = False
-        user.dominio = "muupservicios.online"
+        user.dominio = f"{config('DOMINIO_BACKEND')}"
         user.imagen = f"usuario/imagen_defecto.jpg"
         user.set_password(validated_data['password'])    
         user.save()
