@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento_impuesto import DocumentoImpuesto
@@ -25,7 +25,9 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from reportlab.graphics import renderPDF
-import json
+from io import BytesIO
+from utilidades.wolframio import Wolframio
+
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -247,8 +249,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         try:
             documento = Documento.objects.get(pk=codigoDocumento)
             contacto = documento.contacto
-            documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
             empresa = Empresa.objects.get(pk=documento.empresa.id)
+            documentoDetalles = DocumentoDetalle.objects.filter(documento_id=codigoDocumento)
             documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle__in=documentoDetalles)
             resolucion = None
             if documento.resolucion_id is not None:
@@ -256,10 +258,44 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except Documento.DoesNotExist:
             pass
 
-        response = HttpResponse(content_type="application/pdf")
-        response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
-        p = canvas.Canvas(response, pagesize=letter)
+        base64 = request.data.get('base64', False)
 
+        if base64:
+            # Crear un búfer de memoria para almacenar el PDF
+            buffer = BytesIO()
+
+            # Inicializar el lienzo para el PDF
+            p = canvas.Canvas(buffer, pagesize=letter)
+
+            # Generar el contenido del PDF
+            self.generar_contenido_pdf(p, documento, contacto, empresa, documentoDetalles, documentoImpuestos, resolucion)
+
+            # Guardar el PDF en el búfer
+            p.save()
+
+            # Convertir el contenido del buffer a base64
+            pdf_base64 = base64.b64encode(buffer.getvalue()).decode()
+
+            # Devolver la respuesta JSON con el PDF en base64
+            return JsonResponse({"pdf_base64": pdf_base64})
+        else:
+            # Inicializar HttpResponse para devolver el PDF como archivo de descarga
+            response = HttpResponse(content_type="application/pdf")
+            response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
+
+            # Inicializar el lienzo para el PDF
+            p = canvas.Canvas(response, pagesize=letter)
+
+            # Generar el contenido del PDF
+            self.generar_contenido_pdf(p, documento, contacto, empresa, documentoDetalles, documentoImpuestos, resolucion)
+
+            # Guardar el PDF en la HttpResponse
+            p.save()
+
+            # Devolver la HttpResponse
+            return response
+   
+    def generar_contenido_pdf(self, p, documento, contacto, empresa, documentoDetalles, documentoImpuestos, resolucion):
 
         estilo_helvetica = ParagraphStyle(
         name='HelveticaStyle',
@@ -603,9 +639,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         draw_footer(total_pages)
 
-        p.save()
-        return response
-    
     @action(detail=False, methods=["post"], url_path=r'emitir',)
     def emitir(self, request):
         try:
@@ -738,6 +771,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     if 'id' in respuesta: 
                                         if documento.estado_electronico_enviado is False:
                                             documento.estado_electronico_enviado = True
+                                            documento.electronico_id = respuesta('id')
                                             documento.save()
                                         else:
                                             return Response({'mensaje': 'El coumento ya esta enviado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
@@ -787,7 +821,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento.cue = cue
                 documento.estado_electronico = True
                 documento.save()
-                return Response({'mensaje': 'Documento emitido correctamente'}, status=status.HTTP_200_OK)
+                base64 = self.imprimir(base64 = True)
+                wolframio = Wolframio()
+                respuesta = wolframio.notificar(documento.id, base64)
+                if respuesta['error'] == False:
+                    return Response({'notificar':True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
             except Documento.DoesNotExist:
                 return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
         else:

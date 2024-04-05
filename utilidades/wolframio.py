@@ -36,7 +36,18 @@ class Wolframio():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
 
-        
+    def notificar(self, documento_id, base64):
+        url = "/api/documento/notificar"
+        datos = {
+            "documento" : documento_id,
+            "base64" : base64
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            datosRespuesta = respuesta['datos']        
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
+
     def consumirPost(self, data, url):
         url = "http://159.203.18.130/wolframio/public/index.php" + url
         json_data = json.dumps(data)

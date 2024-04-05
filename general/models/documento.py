@@ -28,6 +28,7 @@ class Documento(models.Model):
     soporte = models.CharField(max_length=100, null=True)
     comentario = models.CharField(max_length=500, null=True)
     qr = models.CharField(max_length=500, null=True)
+    electronico_id = models.IntegerField(null=True)
     documento_tipo = models.ForeignKey(DocumentoTipo, on_delete=models.CASCADE, related_name='gen_documentos')
     contacto = models.ForeignKey(Contacto, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
     metodo_pago = models.ForeignKey(MetodoPago, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
