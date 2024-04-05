@@ -645,7 +645,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if config('ENV') == "prod":
                 raw = request.data
                 codigoDocumento = raw.get('documento_id')
-                url = "/api/documento/nuevo"
                 if codigoDocumento:
                     documento = Documento.objects.get(pk=codigoDocumento)
                     if documento.estado_aprobado == True:
@@ -766,19 +765,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     datos_factura['documento']['detalles'] = arr_item
                                     datos_factura['doc_cantidad_item'] = cantidad_items
                                     datos_factura['documento']['impuestos'] = arr_impuestos
-                                    #respuesta = consumirPost(datos_factura, url)
-                                    respuesta = None
-                                    if 'id' in respuesta: 
+                                    wolframio = Wolframio()
+                                    respuesta = wolframio.emitir(datos_factura)
+                                    if respuesta['error'] == False: 
                                         if documento.estado_electronico_enviado is False:
                                             documento.estado_electronico_enviado = True
-                                            documento.electronico_id = respuesta('id')
+                                            documento.electronico_id = respuesta['id']
                                             documento.save()
                                         else:
-                                            return Response({'mensaje': 'El coumento ya esta enviado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                                        
+                                            return Response({'mensaje': 'El documento ya fue enviado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
                                         return Response({'mensaje': 'Documento emitido correctamente', 'codigo': 15}, status=status.HTTP_200_OK)
                                     else:
-                                        return Response({'mensaje': respuesta.get('mensaje'), 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                                        return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
                                 else:
                                     return Response({'mensaje': 'La factura no cuenta con un número', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                             else:

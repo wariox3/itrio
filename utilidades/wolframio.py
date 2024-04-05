@@ -35,6 +35,15 @@ class Wolframio():
                 return {'error':True, 'mensaje':'La empresa ya se encuentra activa'}
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
+        
+    def emitir(self, datos):
+        url = "/api/documento/nuevo"
+        respuesta = self.consumirPost(datos, url)    
+        datos = respuesta['datos']
+        if respuesta['status'] == 200:
+            return {'error':False, 'id': datos['id']}
+        else:
+            return {'error':True, 'mensaje': datos['mensaje']}
 
     def notificar(self, documento_id, base64):
         url = "/api/documento/notificar"
