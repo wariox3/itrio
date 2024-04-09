@@ -10,6 +10,7 @@ class Documento(models.Model):
     fecha = models.DateField(null=True)
     fecha_contable = models.DateField(null=True)
     fecha_vence = models.DateField(null=True)
+    fecha_validacion = models.DateTimeField(null=True)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_bruto = models.DecimalField(max_digits=10, decimal_places=2, default=0)
