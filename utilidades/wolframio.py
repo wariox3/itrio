@@ -53,7 +53,7 @@ class Wolframio():
         }
         respuesta = self.consumirPost(datos, url)
         if respuesta['status'] == 200:
-            datosRespuesta = respuesta['datos']        
+            return {'error': False}
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
 
