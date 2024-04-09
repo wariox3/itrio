@@ -196,11 +196,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
                 documentoTipo = DocumentoTipo.objects.get(pk=1)
-                documento.numero = documentoTipo.consecutivo
+                if documento.numero is None:
+                    documento.numero = documentoTipo.consecutivo
+                    documentoTipo.consecutivo += 1
+                    documentoTipo.save()                
                 documento.estado_aprobado = True
                 documento.save()
-                documentoTipo.consecutivo += 1
-                documentoTipo.save()
+
                 return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
