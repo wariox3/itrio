@@ -9,6 +9,7 @@ from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializa
 from contenedor.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
+from decouple import config
 
 class UsuarioContenedorViewSet(viewsets.ModelViewSet):
     queryset = UsuarioContenedor.objects.all()
@@ -54,8 +55,8 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                 verificacionSerializador = VerificacionSerializador(data = raw)
                 if verificacionSerializador.is_valid():                                             
                     verificacionSerializador.save()
-                    correo = Correo()               
-                    contenido = 'Siga este enlace para aceptar la invitacion http://muup.online/auth/login/' + token                    
+                    correo = Correo()              
+                    contenido = 'Siga este enlace para aceptar la invitacion ' f"https://{config('DOMINIO_FRONTEND')}/auth/login/" + token                    
                     correo.enviar(invitado, 'Invitacion a redoffice', contenido)                                            
                     return Response({'verificacion': verificacionSerializador.data}, status=status.HTTP_201_CREATED)
                 return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacionSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
