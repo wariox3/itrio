@@ -42,6 +42,9 @@ class Wolframio():
         datos = respuesta['datos']
         if respuesta['status'] == 200:
             return {'error':False, 'id': datos['id']}
+        elif respuesta['status'] == 500:
+            detalle = datos.get('detail', "")
+            return {'error':True, 'mensaje': f"Ocurrio un error grave en el servicio de wolframio notifique su proveedor del software y ayude a mejorar nuestro producto {detalle}"}
         else:
             return {'error':True, 'mensaje': datos['mensaje']}
 
