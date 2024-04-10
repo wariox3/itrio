@@ -19,6 +19,7 @@ from decouple import config
 from datetime import datetime
 import base64
 from utilidades.wolframio import Wolframio
+import json
 
 
 class DocumentoViewSet(viewsets.ModelViewSet):
@@ -234,16 +235,35 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def imprimir(self, request):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
-        documento = Documento.objects.select_related('contacto', 'resolucion').values(
+        documento = Documento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona').filter(id=codigoDocumento).values(
             'id',
+            'fecha',
+            'fecha_validacion',
+            'fecha_vence',
             'numero',
-            'contacto__nombre_corto'
+            'soporte',
+            'metodo_pago__nombre',
+            'contacto__nombre_corto',
+            'contacto__correo',
+            'contacto__telefono',
+            'contacto__numero_identificacion',
+            'contacto__direccion',
+            'contacto__ciudad__nombre',
+            'empresa__tipo_persona__nombre',
+            'empresa__numero_identificacion',
+            'empresa__direccion',
+            'empresa__telefono',
+            'empresa__nombre_corto',
+            'documento_tipo__nombre',
+            'resolucion__prefijo'
         )
-        formatoCuentaCobro = FormatoCuentaCobro()
-        pdf = formatoCuentaCobro.generar_pdf(documento)       
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="factura.pdf"'    
-        return response
+        formatoFactura = FormatoFactura()
+        pdf = formatoFactura.generar_pdf(documento)
+        #formatoCuentaCobro = FormatoCuentaCobro()
+        #pdf = formatoCuentaCobro.generar_pdf(documento)       
+        #response = HttpResponse(pdf, content_type='application/pdf')
+        #response['Content-Disposition'] = 'attachment; filename="factura.pdf"'    
+        #return response
 
     @action(detail=False, methods=["post"], url_path=r'emitir',)
     def emitir(self, request):
@@ -447,7 +467,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         respuesta = {'registros': serializador.data, "cantidad_registros": itemsCantidad}
         return respuesta              
 
-    
     @staticmethod
     def notificar(documento_id):
             documento = Documento.objects.select_related('contacto', 'resolucion').values(
