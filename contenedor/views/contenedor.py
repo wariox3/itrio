@@ -43,7 +43,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
-                imagenReferencia = f"{config('ENV')}/empresa/logo_defecto.jpg"
+                imagenReferencia = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
                 call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1)
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/pais.json")
                 os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/estado.json")
@@ -143,7 +143,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 spaceDo.putB64(archivo, base64Crudo, contentType)
                 empresa.imagen = archivo
                 empresa.save()
-                return Response({'cargar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
+                return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Contenedor.DoesNotExist:
@@ -158,9 +158,9 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 empresa = Contenedor.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
-                empresa.imagen = f"{config('ENV')}/contenedor/logo_defecto.jpg"
+                empresa.imagen = f"itrio/{config('ENV')}/contenedor/logo_defecto.jpg"
                 empresa.save()
-                return Response({'limpiar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
+                return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Contenedor.DoesNotExist:

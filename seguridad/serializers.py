@@ -37,7 +37,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'telefono': instance.telefono,
             'idioma': instance.idioma,
             'vr_saldo': instance.vr_saldo,
-            'imagen': f"https://semantica.sfo3.digitaloceanspaces.com/{instance.imagen}",
+            'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen}",
             'fecha_limite_pago': instance.fecha_limite_pago
         }
 
