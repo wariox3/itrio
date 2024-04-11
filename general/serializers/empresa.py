@@ -23,7 +23,8 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'regimen',
             'imagen',
             'contenedor_id',
-            'rededoc_id']  
+            'rededoc_id',
+            'subdominio']  
         
     def to_representation(self, instance):
         nombre_ciudad = instance.ciudad.nombre
