@@ -437,7 +437,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documento.fecha_validacion = fecha_validacion_obj
                     documento.estado_electronico = True
                     documento.save()                
-                    self.notificar(documento_id)
+                    #self.notificar(documento_id)
                     return Response({'respuesta':True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'No se puede entregar una respuesta porque el documento no se ha enviado'}, status=status.HTTP_400_BAD_REQUEST)
@@ -446,12 +446,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=False, methods=["post"], url_path=r'electronico_notificar')
+    @action(detail=False, methods=["post"], url_path=r'notificar')
     def electronico_notificar(self, request):
         raw = request.data
         documento_id = raw.get('documento_id')
         if documento_id:
-            self.notificar(documento_id)
+            respuesta = self.notificar(documento_id)
+            if respuesta['error'] == False:
+                return Response({'mensaje': 'notificado'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje': respuesta['mensaje'], 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)      
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)  
 
@@ -471,12 +475,24 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def notificar(documento_id):
-            documento = Documento.objects.select_related('contacto', 'resolucion').values(
-                'id',
-                'numero',
-                'contacto__nombre_corto'
-            )
-            formatoCuentaCobro = FormatoCuentaCobro()
-            pdf = formatoCuentaCobro.generar_pdf(documento)   
-            pdf_base64 = base64.b64encode(pdf).decode('utf-8')
-            return JsonResponse({'pdf_base64': pdf_base64})         
+        try:
+            documento = Documento.objects.get(id=documento_id)
+            if documento.estado_electronico_notificado == False:
+                documentoQuery = Documento.objects.select_related('contacto', 'resolucion').filter(id=documento_id).values(
+                    'id',
+                    'numero',
+                    'contacto__nombre_corto'
+                ).first()
+                formatoCuentaCobro = FormatoCuentaCobro()
+                pdf = formatoCuentaCobro.generar_pdf(documentoQuery)   
+                pdf_base64 = "data:application/pdf;base64," + base64.b64encode(pdf).decode('utf-8')            
+                wolframio = Wolframio()
+                respuesta = wolframio.notificar(documento.electronico_id, pdf_base64)
+                if respuesta['error'] == False: 
+                    documento.estado_electronico_notificado = True                
+                    documento.save()                
+                return respuesta
+            else:  
+                return {'error':True, 'mensaje':'El documento ya fue notificado con anterioridad pruebe re-notificando'}
+        except Documento.DoesNotExist:
+            return {'error':True, 'mensaje':'El documento no existe'}

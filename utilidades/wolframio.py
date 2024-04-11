@@ -51,8 +51,8 @@ class Wolframio():
     def notificar(self, documento_id, base64):
         url = "/api/documento/notificar"
         datos = {
-            "documento" : documento_id,
-            "base64" : base64
+            "documentoId" : documento_id,
+            "facturaB64" : base64
         }
         respuesta = self.consumirPost(datos, url)
         if respuesta['status'] == 200:
