@@ -79,9 +79,10 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             empresa_id = raw.get('empresa_id')
             resolucion_id = raw.get('resolucion_id')
             set_pruebas = raw.get('set_pruebas')
+            correo_facturacion_electronica = raw.get('correo_facturacion_electronica')
             if empresa_id and resolucion_id and set_pruebas:                                            
                 wolframio = Wolframio()
-                respuesta = wolframio.activarCuenta(set_pruebas, resolucion_id)
+                respuesta = wolframio.activarCuenta(set_pruebas, resolucion_id, correo_facturacion_electronica)
                 if respuesta['error'] == False:
                     return Response({'validar':True}, status=status.HTTP_200_OK)
                 else:

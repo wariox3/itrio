@@ -6,7 +6,7 @@ import json
 
 class Wolframio():
 
-    def activarCuenta(self, setPruebas, resolucion_id):        
+    def activarCuenta(self, set_pruebas, resolucion_id, correo_facturacion_electronica):        
         url = "/api/cuenta/nuevo"
         empresa = Empresa.objects.get(pk=1)
         datos = {
@@ -18,7 +18,8 @@ class Wolframio():
             "identificacionId" : empresa.identificacion.id,
             "webhookEmision" : "webhookEmision",
             "webhookNotificacion" : "webhookNotificacion",
-            "setPruebas" : setPruebas
+            "setPruebas" : set_pruebas,
+            "correoFacturacionElectronica" : correo_facturacion_electronica
         }
         respuesta = self.consumirPost(datos, url)        
         if respuesta['status'] == 200:
