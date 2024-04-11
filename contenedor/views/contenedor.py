@@ -77,7 +77,8 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                             'imagen': imagenReferencia,
                             'tipo_persona': 1,                            
                             'regimen':1,
-                            'contenedor_id':contenedor.id}
+                            'contenedor_id':contenedor.id,
+                            'subdominio':subdominio}
                         empresaSerializador = EmpresaSerializador(data=data)                        
                         if empresaSerializador.is_valid():
                             empresaSerializador.save()
