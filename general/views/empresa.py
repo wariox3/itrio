@@ -44,12 +44,12 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 arrTipo = arrDatosB64[0].split(";")
                 arrData = arrTipo[0].split(":")
                 contentType = arrData[1]
-                archivo = f"{config('ENV')}/empresa/logo_{empresa.contenedor_id}_{empresa_id}.jpg"
+                archivo = f"itrio/{config('ENV')}/empresa/logo_{empresa.contenedor_id}_{empresa_id}.jpg"
                 spaceDo = SpaceDo()
                 spaceDo.putB64(archivo, base64Crudo, contentType)
                 empresa.imagen = archivo
                 empresa.save()
-                return Response({'cargar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
+                return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:
@@ -64,9 +64,9 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 empresa = Empresa.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
-                empresa.imagen = f"{config('ENV')}/empresa/logo_defecto.jpg"
+                empresa.imagen = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
                 empresa.save()
-                return Response({'limpiar':True, 'imagen':f"https://itrio.fra1.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
+                return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:
