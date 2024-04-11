@@ -19,7 +19,7 @@ class ContenedorSerializador(serializers.ModelSerializer):
             'plan_usuarios_base': instance.plan.usuarios_base,
             'plan_limite_usuarios': instance.plan.limite_usuarios,
             'plan_nombre':  instance.plan.nombre,
-            'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/itrio/{instance.imagen}"
+            'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         } 
     
 class ContenedorActualizarSerializador(serializers.HyperlinkedModelSerializer):
