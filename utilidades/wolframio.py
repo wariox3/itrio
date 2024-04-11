@@ -16,8 +16,8 @@ class Wolframio():
             "correo" : empresa.correo,
             "ciudadId" : empresa.ciudad_id,
             "identificacionId" : empresa.identificacion.id,
-            "webhookEmision" : f"https://{empresa.subdominio}.reddoc.co/general/documento/electronico_respuesta_emitir/",
-            "webhookNotificacion" : f"https://{empresa.subdominio}.reddoc.co/general/documento/electronico_respuesta_notificar/",
+            "webhookEmision" : f"https://{empresa.subdominio}.reddocapi.co/general/documento/electronico_respuesta_emitir/",
+            "webhookNotificacion" : f"https://{empresa.subdominio}.reddocapi.co/general/documento/electronico_respuesta_notificar/",
             "setPruebas" : set_pruebas,
             "correoFacturacionElectronica" : correo_facturacion_electronica
         }
