@@ -138,7 +138,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 arrTipo = arrDatosB64[0].split(";")
                 arrData = arrTipo[0].split(":")
                 contentType = arrData[1]
-                archivo = f"{config('ENV')}/contenedor/logo_{empresa_id}.jpg"
+                archivo = f"itrio/{config('ENV')}/contenedor/logo_{empresa_id}.jpg"
                 spaceDo = SpaceDo()
                 spaceDo.putB64(archivo, base64Crudo, contentType)
                 empresa.imagen = archivo
