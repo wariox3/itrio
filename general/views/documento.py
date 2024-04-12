@@ -13,7 +13,7 @@ from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from openpyxl import Workbook
 from decouple import config
 from datetime import datetime
@@ -237,37 +237,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def imprimir(self, request):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
-        generar_base_64 = raw.get('generar_base_64')
-        documento = Documento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona').filter(id=codigoDocumento).values(
-            'id',
-            'fecha',
-            'fecha_validacion',
-            'fecha_vence',
-            'numero',
-            'soporte',
-            'metodo_pago__nombre',
-            'contacto__nombre_corto',
-            'contacto__correo',
-            'contacto__telefono',
-            'contacto__numero_identificacion',
-            'contacto__direccion',
-            'contacto__ciudad__nombre',
-            'empresa__tipo_persona__nombre',
-            'empresa__numero_identificacion',
-            'empresa__direccion',
-            'empresa__telefono',
-            'empresa__nombre_corto',
-            'empresa__imagen',
-            'documento_tipo__nombre',
-            'resolucion__prefijo'
-        ).first()
+        documento = self.consulta_imprimir(codigoDocumento)
+
         formatoFactura = FormatoFactura()
-        pdf = formatoFactura.generar_pdf(documento, generar_base_64)
-        #formatoCuentaCobro = FormatoCuentaCobro()
-        #pdf = formatoCuentaCobro.generar_pdf(documento)       
-        #response = HttpResponse(pdf, content_type='application/pdf')
-        #response['Content-Disposition'] = 'attachment; filename="factura.pdf"'    
-        #return response
+        pdf = formatoFactura.generar_pdf(documento)    
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="factura.pdf"'    
+        return response
 
     @action(detail=False, methods=["post"], url_path=r'emitir',)
     def emitir(self, request):
@@ -480,13 +456,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         try:
             documento = Documento.objects.get(id=documento_id)
             if documento.estado_electronico_notificado == False:
-                documentoQuery = Documento.objects.select_related('contacto', 'resolucion').filter(id=documento_id).values(
-                    'id',
-                    'numero',
-                    'contacto__nombre_corto'
-                ).first()
-                formatoCuentaCobro = FormatoCuentaCobro()
-                pdf = formatoCuentaCobro.generar_pdf(documentoQuery)   
+                documentoGenerar = DocumentoViewSet.consulta_imprimir(documento_id)
+                formatoFactura = FormatoFactura()
+                pdf = formatoFactura.generar_pdf(documentoGenerar)   
                 pdf_base64 = "data:application/pdf;base64," + base64.b64encode(pdf).decode('utf-8')            
                 wolframio = Wolframio()
                 respuesta = wolframio.notificar(documento.electronico_id, pdf_base64)
@@ -498,3 +470,61 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return {'error':True, 'mensaje':'El documento ya fue notificado con anterioridad pruebe re-notificando'}
         except Documento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}
+        
+    @staticmethod
+    def consulta_imprimir(codigoDocumento):
+        documento = Documento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona').filter(id=codigoDocumento).values(
+            'id',
+            'fecha',
+            'fecha_validacion',
+            'fecha_vence',
+            'numero',
+            'soporte',
+            'qr',
+            'cue',
+            'resolucion_id',
+            'contacto_id',
+            'subtotal',
+            'total',
+            'metodo_pago__nombre',
+            'contacto__nombre_corto',
+            'contacto__correo',
+            'contacto__telefono',
+            'contacto__numero_identificacion',
+            'contacto__direccion',
+            'contacto__ciudad__nombre',
+            'empresa__tipo_persona__nombre',
+            'empresa__numero_identificacion',
+            'empresa__digito_verificacion',
+            'empresa__direccion',
+            'empresa__telefono',
+            'empresa__nombre_corto',
+            'empresa__imagen',
+            'empresa__ciudad__nombre',
+            'documento_tipo__nombre',
+            'resolucion__prefijo',
+            'resolucion__consecutivo_desde',
+            'resolucion__consecutivo_hasta',
+            'resolucion__numero',
+            'resolucion__fecha_hasta',
+        ).first()
+
+        # Obtener los detalles del documento
+        documentoDetalles = DocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'total','item__nombre', 'item_id')
+
+        # Obtener los IDs de los detalles del documento
+        ids_documentodetalles = list(documentoDetalles.values_list('id', flat=True))
+
+        # Filtrar los DocumentoImpuesto que están asociados a los detalles del documento
+        documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle__in=ids_documentodetalles).values(
+        'id',
+        'total',
+        'impuesto__nombre',
+        'impuesto__nombre_extendido'
+        )
+
+        # Agregar los detalles al diccionario documento
+        documento['documento_detalles'] = list(documentoDetalles)
+        documento['documento_impuestos'] = list(documentoImpuestos)
+
+        return documento
