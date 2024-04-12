@@ -13,7 +13,7 @@ from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from openpyxl import Workbook
 from decouple import config
 from datetime import datetime
@@ -237,6 +237,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def imprimir(self, request):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
+        generar_base_64 = raw.get('generar_base_64')
         documento = Documento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona').filter(id=codigoDocumento).values(
             'id',
             'fecha',
@@ -256,11 +257,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             'empresa__direccion',
             'empresa__telefono',
             'empresa__nombre_corto',
+            'empresa__imagen',
             'documento_tipo__nombre',
             'resolucion__prefijo'
-        )
+        ).first()
         formatoFactura = FormatoFactura()
-        pdf = formatoFactura.generar_pdf(documento)
+        pdf = formatoFactura.generar_pdf(documento, generar_base_64)
         #formatoCuentaCobro = FormatoCuentaCobro()
         #pdf = formatoCuentaCobro.generar_pdf(documento)       
         #response = HttpResponse(pdf, content_type='application/pdf')
