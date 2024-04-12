@@ -40,7 +40,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             if subdominio and usuario_id and nombre and plan_id and identificacion and numero_identificacion and digito_verificacion and direccion and telefono and correo and ciudad:
                 contenedorValidacion = Contenedor.objects.filter(**{'schema_name':subdominio})
                 if contenedorValidacion:
-                    return Response({'mensaje': "Ya existe una empresa con este nombre", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje': f"Ya existe una empresa con el subdominio {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
                 imagenReferencia = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
