@@ -5,26 +5,35 @@ from reportlab.lib.styles import ParagraphStyle
 from utilidades.utilidades import convertir_a_letras
 from utilidades.utilidades import generar_qr
 from reportlab.pdfgen import canvas
-from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from reportlab.graphics import renderPDF
+from django.http import HttpResponse, JsonResponse
+import base64
+from decouple import config
 
 class FormatoFactura():
 
-    def generar_pdf(self, data):  
-        buffer = BytesIO()                              
+    def generar_pdf(self, data, generar_base_64):  
+        if generar_base_64:
+            buffer = BytesIO()      
+            p = canvas.Canvas(buffer, pagesize=letter)
+        else:
+            response = HttpResponse(content_type="application/pdf")
+            response["Content-Disposition"] = 'attachment; filename="hello.pdf"'
+            p = canvas.Canvas(response, pagesize=letter)
+
         doc = SimpleDocTemplate(buffer, pagesize=letter)
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8)
         informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>", estilo_helvetica)
         comentario = Paragraph("<b>COMENTARIOS: </b>", estilo_helvetica)
 
-        '''
+        
         qr = ""
-        if documento.qr:
-            qr = documento.qr
+        if data['qr']:
+            qr = data['qr']
         qr_code_drawing = generar_qr(qr)
 
         # Dibujar el código QR en el lienzo en la posición deseada
@@ -42,7 +51,7 @@ class FormatoFactura():
 
             # Intenta cargar la imagen desde la URL
 
-            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{empresa.imagen}'
+            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/'
             try:
                 logo = ImageReader(logo_url)
             except Exception as e:
@@ -63,7 +72,7 @@ class FormatoFactura():
             p.rect(x, 240, 542, 330)
 
 
-            #Emisor
+            '''#Emisor
             p.setFont("Helvetica-Bold", 9)
             p.drawString(x + 75, 720, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
             p.setFont("Helvetica", 8)
@@ -167,7 +176,7 @@ class FormatoFactura():
             p.drawString(x + 410, 575, "DESC")
             p.drawString(x + 450, 575, "IVA")
             p.drawString(x + 490, 575, "TOTAL")
-            p.setFont("Helvetica", 8)
+            p.setFont("Helvetica", 8)'''
 
         def draw_totals(p, y):
 
@@ -229,7 +238,7 @@ class FormatoFactura():
         draw_header()
         x = 35
 
-        for index, detalle in enumerate(documentoDetalles):
+        '''for index, detalle in enumerate(documentoDetalles):
             impuestos_detalle = documentoImpuestos.filter(documento_detalle_id=detalle.id)
             impuestos_unicos = []
             # Iterar sobre los impuestos relacionados con el detalle actual
@@ -271,8 +280,8 @@ class FormatoFactura():
                     draw_header()
                     detalles_en_pagina = 0
 
-        p.drawString(x + 5, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))
-        def draw_footer(pageCount):
+        p.drawString(x + 5, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))'''
+        '''def draw_footer(pageCount):
             x = 35
 
             valorLetras = convertir_a_letras(int(documento.total))
@@ -345,12 +354,18 @@ class FormatoFactura():
 
         total_pages = p.getPageNumber()
 
-        draw_footer(total_pages)
-        '''
+        draw_footer(total_pages)'''
 
-        elements = []
-        elements.append(Paragraph("Hola mundo", estilo_helvetica))
-        doc.build(elements)
-        pdf_bytes = buffer.getvalue()
-        buffer.close()
-        return pdf_bytes
+        p.save()
+        
+
+        #elements = []
+        #elements.append(Paragraph("Hola mundo", estilo_helvetica))
+        #doc.build(elements)
+        #pdf_bytes = buffer.getvalue()
+        #buffer.close()
+        if generar_base_64:
+            pdf_base64 = base64.b64encode(buffer.getvalue()).decode()
+            return JsonResponse({"pdf_base64": pdf_base64})
+        else:
+            return response
