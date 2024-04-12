@@ -122,7 +122,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
         try:
             subdominio = request.data.get('subdominio')
             Contenedor.objects.get(schema_name=subdominio)
-            return Response({'validar':False}, status=status.HTTP_200_OK)    
+            return Response({'mensaje': f"Ya existe una empresa con el subdominio {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)    
         except Contenedor.DoesNotExist:
             return Response({'validar':True}, status=status.HTTP_200_OK)        
         
