@@ -3,5 +3,15 @@
     "model": "general.documentoClase",
     "pk": 1,
     "fields": {"nombre": "Factura venta", "codigo_dian": "01"}
-  }
+  },
+  {
+    "model": "general.documentoClase",
+    "pk": 2,
+    "fields": {"nombre": "Nota credito venta", "codigo_dian": "01"}
+  },
+  {
+    "model": "general.documentoClase",
+    "pk": 3,
+    "fields": {"nombre": "Nota debito venta", "codigo_dian": "01"}
+  }    
 ]

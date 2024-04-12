@@ -35,6 +35,7 @@ class Documento(models.Model):
     metodo_pago = models.ForeignKey(MetodoPago, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
     resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='gen_documentos')
+    documento_referencia = models.ForeignKey('self', null=True, on_delete=models.CASCADE, related_name='gen_documentos')
 
     class Meta:
         db_table = "gen_documento"
