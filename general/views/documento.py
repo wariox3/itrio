@@ -6,7 +6,7 @@ from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento_impuesto import DocumentoImpuesto
 from general.models.documento_tipo import DocumentoTipo
 from general.models.empresa import Empresa
-from general.models.resolucion import Resolucion
+from general.models.configuracion import Configuracion
 from general.serializers.documento import DocumentoSerializador, DocumentoRetrieveSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
@@ -238,10 +238,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
         documento = self.consulta_imprimir(codigoDocumento)
-        #formatoCuentaCobro = FormatoCuentaCobro()
-        #pdf = formatoCuentaCobro.generar_pdf(documento)
-        formatoFactura = FormatoFactura()
-        pdf = formatoFactura.generar_pdf(documento)    
+        configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values(
+        ).first()
+        if configuracion['formato_factura'] == 'F':
+            formatoFactura = FormatoFactura()
+            pdf = formatoFactura.generar_pdf(documento)  
+        else:     
+            formatoCuentaCobro = FormatoCuentaCobro()
+            pdf = formatoCuentaCobro.generar_pdf(documento)
+
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="factura.pdf"'    
         return response
