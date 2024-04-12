@@ -159,6 +159,7 @@ class FormatoCuentaCobro():
         def draw_totals(p, y, data):
 
             x = 430
+            totalFactura = data['total']
 
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
@@ -195,7 +196,7 @@ class FormatoCuentaCobro():
                 y -= 15
 
             p.drawString(x, y, "TOTAL GENERAL")
-            p.drawRightString(x + 140, y, f"$ {locale.format('%d', data['total'], grouping=True)}")
+            p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
 
             #informacion pago
             
