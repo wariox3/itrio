@@ -3,10 +3,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from contenedor.models import Contenedor
-from general.models.empresa import Empresa
 from contenedor.serializers.contenedor import ContenedorSerializador, ContenedorActualizarSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador
 from general.serializers.empresa import EmpresaSerializador
+from general.serializers.configuracion import ConfiguracionSerializador
 from seguridad.models import User
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
@@ -82,6 +82,13 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                         empresaSerializador = EmpresaSerializador(data=data)                        
                         if empresaSerializador.is_valid():
                             empresaSerializador.save()
+                            data = {
+                                'id':1,
+                                'empresa':1,
+                                'formato_factura':'F'}
+                            configuracionSerializador = ConfiguracionSerializador(data=data)                                                
+                            if configuracionSerializador.is_valid():
+                                configuracionSerializador.save()                            
                             return Response({'contenedor': usuarioContenedorSerializador.data}, status=status.HTTP_200_OK)            
                         return Response({'mensaje':'Errores en la creacion de la empresa', 'codigo':12, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)        
                 return Response({'mensaje':'Errores en la creacion del contenedor', 'codigo':12, 'validaciones': usuarioContenedorSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
