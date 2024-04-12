@@ -69,33 +69,30 @@ class FormatoCuentaCobro():
             #Datos factura
             p.setFont("Helvetica-Bold", 9)
             p.drawCentredString(x + 460, 720, "CUENTA DE COBRO")
-            p.setFont("Helvetica", 9)
-            p.setFont("Helvetica-Bold", 9)
-            p.drawCentredString(x + 460, 710, "No. " + str(data['numero']))
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 660, "FECHA EMISIÓN: ")
+            p.drawString(x + 350, 650, "FECHA EMISIÓN: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 660, str(data['fecha']))
+            p.drawRightString(x + 540, 650, str(data['fecha']))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 650, "FECHA VENCIMIENTO: ")
+            p.drawString(x + 350, 640, "FECHA VENCIMIENTO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 650, str(data['fecha_vence']))
+            p.drawRightString(x + 540, 640, str(data['fecha_vence']))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 640, "FORMA PAGO: ")
+            p.drawString(x + 350, 630, "FORMA PAGO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 640, str(data['metodo_pago__nombre'].upper()))
+            p.drawRightString(x + 540, 630, str(data['metodo_pago__nombre'].upper()))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 630, "PLAZO PAGO: ")
-            p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 630, "")
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 620, "DOC SOPORTE: ")
+            p.drawString(x + 350, 620, "PLAZO PAGO: ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 620, "")
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 350, 610, "DOC SOPORTE: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(x + 540, 610, data['soporte'] if data['soporte'] else "")
 
 
             #Cliente
