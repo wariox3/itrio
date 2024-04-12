@@ -1,6 +1,6 @@
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.platypus import Paragraph
 from reportlab.lib.styles import ParagraphStyle
 from utilidades.utilidades import convertir_a_letras
 from utilidades.utilidades import generar_qr
@@ -10,8 +10,6 @@ from reportlab.platypus import Paragraph
 from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from reportlab.graphics import renderPDF
-from django.http import HttpResponse, JsonResponse
-import base64
 from decouple import config
 import locale
 
@@ -23,7 +21,7 @@ class FormatoFactura():
 
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8)
         informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>", estilo_helvetica)
-        comentario = Paragraph("<b>COMENTARIOS: </b>", estilo_helvetica)
+        comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario']), estilo_helvetica)
 
         try:
             locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
@@ -261,7 +259,7 @@ class FormatoFactura():
             p.drawRightString(x + 345, y, str(int(detalle['cantidad'])))
             p.drawRightString(x + 395, y, locale.format_string("%d", detalle['precio'], grouping=True))
             p.drawRightString(x + 440, y, locale.format_string("%d", detalle['descuento'], grouping=True))
-            p.drawRightString(x + 470, y, locale.format_string("%d", 0, grouping=True))
+            p.drawRightString(x + 480, y, locale.format_string("%d", impuesto_detalle['total'], grouping=True))
             p.drawRightString(x + 530, y, locale.format_string("%d", detalle['total'], grouping=True))
             y -= 30
             detalles_en_pagina += 1

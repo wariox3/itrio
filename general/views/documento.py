@@ -238,7 +238,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
         documento = self.consulta_imprimir(codigoDocumento)
-
+        #formatoCuentaCobro = FormatoCuentaCobro()
+        #pdf = formatoCuentaCobro.generar_pdf(documento)
         formatoFactura = FormatoFactura()
         pdf = formatoFactura.generar_pdf(documento)    
         response = HttpResponse(pdf, content_type='application/pdf')
@@ -486,6 +487,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             'contacto_id',
             'subtotal',
             'total',
+            'comentario',
             'metodo_pago__nombre',
             'contacto__nombre_corto',
             'contacto__correo',
