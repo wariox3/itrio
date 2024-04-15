@@ -10,7 +10,7 @@ class Empresa(models.Model):
     digito_verificacion = models.CharField(max_length=1)
     nombre_corto = models.CharField(max_length=200)
     direccion = models.CharField(max_length=50)
-    telefono = models.CharField(max_length=50)
+    telefono = models.CharField(max_length=50, null=True)
     correo = models.EmailField(max_length = 255)
     imagen = models.TextField(null=True)
     contenedor_id = models.IntegerField()     
