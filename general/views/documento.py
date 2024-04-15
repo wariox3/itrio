@@ -267,7 +267,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     if documento.estado_electronico_enviado == False:                                   
                                         datos_factura = {
                                             "cuentaId": empresa.rededoc_id,
-                                            "documentoClaseId" : 1,
+                                            "documentoClaseId" : documento.documento_tipo_id,
                                             "documentoClienteId": documento.id,
                                             "documento" : {
                                                 "ambiente" : 1,
@@ -278,6 +278,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "fecha_vence" : str(documento.fecha_vence),
                                                 "tipo_operacion" : str(10),
                                                 "moneda" : "COP",
+                                                "orden_compra": documento.orden_compra,
                                                 "resolucion" : str(documento.resolucion.numero),
                                                 "forma_pago" : documento.metodo_pago.id,
                                                 "cantidad_detalles" :1,
