@@ -7,11 +7,11 @@
   {
     "model": "general.documentoTipo",
     "pk": 2,
-    "fields": {"nombre": "NOTA CRÉDITO VENTA", "documento_clase_id": 2}
+    "fields": {"nombre": "NOTA CRÉDITO DE VENTA", "documento_clase_id": 2}
   },
   {
     "model": "general.documentoTipo",
     "pk": 3,
-    "fields": {"nombre": "NOTA DÉBITO VENTA", "documento_clase_id": 3}
+    "fields": {"nombre": "NOTA DÉBITO DE VENTA", "documento_clase_id": 3}
   }
 ]
