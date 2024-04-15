@@ -152,15 +152,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'lista',)
     def lista(self, request):
         raw = request.data
-        codigoDocumentoTipo = raw.get('documento_tipo_id')
-        if codigoDocumentoTipo:
+        codigoDocumentoClase = raw.get('documento_clase_id')
+        if codigoDocumentoClase:
             desplazar = raw.get('desplazar', 0)
             limite = raw.get('limite', 50)    
             limiteTotal = raw.get('limite_total', 5000)                
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')        
-            documento_tipo = raw.get('documento_tipo_id')                             
-            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_tipo)     
+            documento_clase = raw.get('documento_clase_id')                             
+            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase)     
             return Response(respuesta, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -446,8 +446,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)  
 
     @staticmethod
-    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_tipo):
-        documentos = Documento.objects.filter(documento_tipo_id=documento_tipo)
+    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase):
+        documentos = Documento.objects.filter(documento_tipo__documento_clase_id=documento_clase)
         if filtros:
             for filtro in filtros:
                 documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})
