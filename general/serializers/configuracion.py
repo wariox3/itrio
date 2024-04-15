@@ -12,3 +12,9 @@ class ConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
             'id',
             'empresa',
             'formato_factura']      
+        
+class ConfiguracionActualizarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Configuracion
+        fields = [
+            'formato_factura']          
