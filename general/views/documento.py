@@ -205,8 +205,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except Documento.DoesNotExist:
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["post"], url_path=r'excel2',)
-    def excel2(self, request):
+    @action(detail=False, methods=["post"], url_path=r'excel',)
+    def excel(self, request):
         raw = request.data
         desplazar = raw.get('desplazar', 0)
         limite = raw.get('limite', 50)    
@@ -216,12 +216,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documento_clase = raw.get('documento_clase_id')
         respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase)
         
+        # Obtener las claves de los primeros registros si hay registros
+        if respuesta['registros']:
+            field_names = list(respuesta['registros'][0].keys())
+        else:
+            field_names = []
+
         # Crear un libro de Excel y una hoja
         wb = Workbook()
         ws = wb.active
 
         # Agregar encabezados de columna
-        field_names = [field for field in DocumentoSerializador().get_fields()]
         ws.append(field_names)
 
         # Agregar datos al archivo Excel
@@ -233,10 +238,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
         wb.save(response)
-        return response          
+        return response
     
-    @action(detail=False, methods=["post"], url_path=r'excel',)
-    def excel(self, request):
+    @action(detail=False, methods=["post"], url_path=r'excel2',)
+    def excel2(self, request):
         raw = request.data
         desplazar = raw.get('desplazar', 0)
         limite = raw.get('limite', 50)    
