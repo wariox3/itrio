@@ -213,7 +213,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         limiteTotal = raw.get('limite_total', 5000)                
         filtros = raw.get('filtros')
         ordenamientos = raw.get('ordenamientos')  
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
+        documento_clase = raw.get('documento_clase_id')
+        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase)
         
         # Crear un libro de Excel y una hoja
         wb = Workbook()
