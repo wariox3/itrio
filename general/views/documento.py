@@ -205,8 +205,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except Documento.DoesNotExist:
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["post"], url_path=r'excel',)
-    def excel(self, request):
+    @action(detail=False, methods=["post"], url_path=r'excel2',)
+    def excel2(self, request):
         raw = request.data
         desplazar = raw.get('desplazar', 0)
         limite = raw.get('limite', 50)    
@@ -234,6 +234,47 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
         wb.save(response)
         return response          
+    
+    @action(detail=False, methods=["post"], url_path=r'excel',)
+    def excel(self, request):
+        raw = request.data
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 50)    
+        limiteTotal = raw.get('limite_total', 5000)                
+        filtros = raw.get('filtros')
+        ordenamientos = raw.get('ordenamientos')  
+        documento_clase = raw.get('documento_clase_id')
+        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase)
+        
+        # Obtener los ids de los documentos de la respuesta
+        documento_ids = [registro['id'] for registro in respuesta['registros']]
+
+        # Obtener las instancias reales de Documento usando los ids
+        documentos = Documento.objects.filter(id__in=documento_ids)
+
+        # Crear un libro de Excel y una hoja
+        wb = Workbook()
+        ws = wb.active
+
+        # Iterar sobre las instancias de Documento
+        for documento_instance in documentos:
+            # Llamar a to_representation con la instancia de Documento
+            field_data = DocumentoSerializador().to_representation(documento_instance)
+
+            # Agregar encabezados de columna si aún no se han agregado
+            if not ws.iter_rows():
+                field_names = list(field_data.keys())
+                ws.append(field_names)
+
+            # Agregar datos al archivo Excel
+            row_data = list(field_data.values())
+            ws.append(row_data)
+
+        # Crear el archivo Excel en memoria
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
+        wb.save(response)
+        return response
     
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
