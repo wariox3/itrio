@@ -56,7 +56,8 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
             'soporte' : instance.soporte,
-            'orden_compra' : instance.orden_compra
+            'orden_compra' : instance.orden_compra,
+            'empresa': instance.empresa_id
         }
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
