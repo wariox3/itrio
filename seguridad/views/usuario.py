@@ -130,7 +130,22 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
         except User.DoesNotExist:
             return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+    @action(detail=False, methods=["post"], url_path=r'cambio-clave',)
+    def cambio_clave(self, request):
+        raw = request.data
+        try:
+            usuario_id = raw.get('usuario_id')
+            clave = raw.get('password')
+            if usuario_id and clave:                            
+                usuario = User.objects.get(pk=usuario_id)
+                usuario.set_password(clave)
+                usuario.save()
+                return Response({'cambio': True}, status=status.HTTP_200_OK)                
+            return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
+        except User.DoesNotExist:
+            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)       
+
     @action(detail=False, methods=["post"], url_path=r'cargar-imagen',)
     def cargar_imagen(self, request):
         try:
