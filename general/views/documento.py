@@ -544,7 +544,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return documento
     
     @action(detail=False, methods=["post"], url_path=r'referencia')
-    def documento_referencia(self, request):
+    def referencia(self, request):
         raw = request.data
         contacto_id = raw.get('contacto_id')
         documento_clase_id = raw.get('documento_clase_id')
