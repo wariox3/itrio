@@ -10,6 +10,7 @@ from general.models.configuracion import Configuracion
 from general.serializers.documento import DocumentoSerializador, DocumentoExcelSerializador, DocumentoRetrieveSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
+from general.serializers.documento import DocumentoReferenciaSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from django.shortcuts import get_object_or_404
@@ -541,3 +542,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documento['documento_impuestos'] = list(documentoImpuestos)
 
         return documento
+    
+    @action(detail=False, methods=["post"], url_path=r'documento_referencia')
+    def documento_referencia(self, request):
+        raw = request.data
+        contacto_id = raw.get('contacto_id')
+        documento_clase_id = raw.get('documento_clase_id')
+        if (contacto_id and documento_clase_id):
+            documentos = Documento.objects.filter(contacto_id=contacto_id, documento_tipo__documento_clase_id= documento_clase_id)
+            serializador = DocumentoReferenciaSerializador(documentos, many=True)
+            documentos = serializador.data
+            return Response(documentos, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)

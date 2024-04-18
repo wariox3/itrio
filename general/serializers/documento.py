@@ -146,3 +146,15 @@ class DocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):
             'empresa': instance.empresa_id,
             'resolucion': instance.resolucion_id
         }    
+    
+class DocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer):    
+    numero = serializers.IntegerField(allow_null=True, label='Numero')
+    class Meta:
+        model = Documento
+        fields = ['id', 'numero']
+
+    def to_representation(self, instance):        
+        return {
+            'id': instance.id,            
+            'numero' : instance.numero
+        }    
