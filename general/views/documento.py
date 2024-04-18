@@ -543,7 +543,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         return documento
     
-    @action(detail=False, methods=["post"], url_path=r'documento_referencia')
+    @action(detail=False, methods=["post"], url_path=r'referencia')
     def documento_referencia(self, request):
         raw = request.data
         contacto_id = raw.get('contacto_id')
