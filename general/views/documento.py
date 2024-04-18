@@ -7,7 +7,7 @@ from general.models.documento_impuesto import DocumentoImpuesto
 from general.models.documento_tipo import DocumentoTipo
 from general.models.empresa import Empresa
 from general.models.configuracion import Configuracion
-from general.serializers.documento import DocumentoSerializador, DocumentoRetrieveSerializador
+from general.serializers.documento import DocumentoSerializador, DocumentoExcelSerializador, DocumentoRetrieveSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from general.formatos.factura import FormatoFactura
@@ -152,16 +152,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'lista',)
     def lista(self, request):
         raw = request.data
-        codigoDocumentoClase = raw.get('documento_clase_id')
-        if codigoDocumentoClase:
+        documento_clase_id = raw.get('documento_clase_id')
+        if documento_clase_id:
             desplazar = raw.get('desplazar', 0)
             limite = raw.get('limite', 50)    
             limiteTotal = raw.get('limite_total', 5000)                
-            filtros = raw.get('filtros')
-            ordenamientos = raw.get('ordenamientos')        
-            documento_clase = raw.get('documento_clase_id')                             
-            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase)     
-            return Response(respuesta, status=status.HTTP_200_OK)
+            filtros = raw.get('filtros', [])
+            filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase_id})
+            ordenamientos = raw.get('ordenamientos')                                   
+            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
+            serializador = DocumentoSerializador(respuesta['documentos'], many=True)
+            documentos = serializador.data
+            return Response(documentos, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
@@ -211,75 +213,31 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         desplazar = raw.get('desplazar', 0)
         limite = raw.get('limite', 50)    
         limiteTotal = raw.get('limite_total', 5000)                
-        filtros = raw.get('filtros')
+        filtros = raw.get('filtros', [])
         ordenamientos = raw.get('ordenamientos')  
         documento_clase = raw.get('documento_clase_id')
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase)
-        
-        # Obtener las claves de los primeros registros si hay registros
-        if respuesta['registros']:
-            field_names = list(respuesta['registros'][0].keys())
-        else:
-            field_names = []
+        if documento_clase:
+            filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase})
+            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
+            serializador = DocumentoExcelSerializador(respuesta['documentos'], many=True)
+            documentos = serializador.data
+            if documentos:
+                field_names = list(documentos[0].keys())
+            else:
+                field_names = []
 
-        # Crear un libro de Excel y una hoja
-        wb = Workbook()
-        ws = wb.active
-
-        # Agregar encabezados de columna
-        ws.append(field_names)
-
-        # Agregar datos al archivo Excel
-        for row in respuesta['registros']:
-            row_data = [row[field] for field in field_names]
-            ws.append(row_data)
-
-        # Crear el archivo Excel en memoria
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
-        wb.save(response)
-        return response
-    
-    @action(detail=False, methods=["post"], url_path=r'excel2',)
-    def excel2(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        filtros = raw.get('filtros')
-        ordenamientos = raw.get('ordenamientos')  
-        documento_clase = raw.get('documento_clase_id')
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase)
-        
-        # Obtener los ids de los documentos de la respuesta
-        documento_ids = [registro['id'] for registro in respuesta['registros']]
-
-        # Obtener las instancias reales de Documento usando los ids
-        documentos = Documento.objects.filter(id__in=documento_ids)
-
-        # Crear un libro de Excel y una hoja
-        wb = Workbook()
-        ws = wb.active
-
-        # Iterar sobre las instancias de Documento
-        for documento_instance in documentos:
-            # Llamar a to_representation con la instancia de Documento
-            field_data = DocumentoSerializador().to_representation(documento_instance)
-
-            # Agregar encabezados de columna si aún no se han agregado
-            if not ws.iter_rows():
-                field_names = list(field_data.keys())
-                ws.append(field_names)
-
-            # Agregar datos al archivo Excel
-            row_data = list(field_data.values())
-            ws.append(row_data)
-
-        # Crear el archivo Excel en memoria
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
-        wb.save(response)
-        return response
+            wb = Workbook()
+            ws = wb.active
+            ws.append(field_names)
+            for row in documentos:
+                row_data = [row[field] for field in field_names]
+                ws.append(row_data)
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
+            wb.save(response)
+            return response
+        else: 
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
@@ -493,17 +451,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)  
 
     @staticmethod
-    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos, documento_clase):
-        documentos = Documento.objects.filter(documento_tipo__documento_clase_id=documento_clase)
+    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
+        documentos = Documento.objects.all()
         if filtros:
             for filtro in filtros:
                 documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})
         if ordenamientos:
             documentos = documentos.order_by(*ordenamientos)              
         documentos = documentos[desplazar:limite+desplazar]
-        itemsCantidad = Documento.objects.all()[:limiteTotal].count()
-        serializador = DocumentoSerializador(documentos, many=True)           
-        respuesta = {'registros': serializador.data, "cantidad_registros": itemsCantidad}
+        itemsCantidad = Documento.objects.all()[:limiteTotal].count()                   
+        respuesta = {'documentos': documentos, "cantidad_registros": itemsCantidad}
         return respuesta              
 
     @staticmethod

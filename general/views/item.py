@@ -13,11 +13,15 @@ class ItemViewSet(viewsets.ModelViewSet):
     serializer_class = ItemSerializador
     permission_classes = [permissions.IsAuthenticated]
 
-    def retrieve(self, request, pk=None):
+    def retrieve(self, request, pk=None, venta=False):
+        raw = request.data
+        venta = raw.get('venta')
         queryset = Item.objects.all()
         item = get_object_or_404(queryset, pk=pk)
         itemSerializador = ItemSerializador(item)
         itemImpuestos = ItemImpuesto.objects.filter(item=pk)
+        if venta:
+            itemImpuestos = itemImpuestos.filter(impuesto__venta=True)
         itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
         itemRespuesta = itemSerializador.data
         itemRespuesta['impuestos'] = itemImpuestosSerializador.data
