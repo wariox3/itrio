@@ -549,7 +549,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         contacto_id = raw.get('contacto_id')
         documento_clase_id = raw.get('documento_clase_id')
         if (contacto_id and documento_clase_id):
-            documentos = Documento.objects.filter(contacto_id=contacto_id, documento_tipo__documento_clase_id= documento_clase_id)
+            documentos = Documento.objects.filter(contacto_id=contacto_id, documento_tipo__documento_clase_id= documento_clase_id, estado_aprobado=True)
             serializador = DocumentoReferenciaSerializador(documentos, many=True)
             documentos = serializador.data
             return Response(documentos, status=status.HTTP_200_OK)
