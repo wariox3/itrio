@@ -4,6 +4,7 @@ from general.models.documento_tipo import DocumentoTipo
 from general.models.contacto import Contacto
 from general.models.metodo_pago import MetodoPago
 from general.models.empresa import Empresa
+from general.models.plazo_pago import PlazoPago
 
 class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
     numero = serializers.IntegerField(allow_null=True, label='Numero')
@@ -20,9 +21,10 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())    
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all())    
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -54,7 +56,8 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'orden_compra' : instance.orden_compra,
             'empresa': instance.empresa_id,
             'resolucion': instance.resolucion_id,
-            'documento_referencia' :  instance.documento_referencia_id
+            'documento_referencia' :  instance.documento_referencia_id,
+            'plazo_pago': instance.documento_plazo_pago_id
         }
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
