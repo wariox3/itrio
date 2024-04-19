@@ -193,7 +193,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
                 if documento.estado_aprobado == False:                
-                    documentoTipo = DocumentoTipo.objects.get(pk=1)
+                    documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
                     if documento.numero is None:
                         documento.numero = documentoTipo.consecutivo
                         documentoTipo.consecutivo += 1
