@@ -20,5 +20,6 @@ class PlazoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerial
     def to_representation(self, instance):
         return {
             'plazo_pago_id': instance.id,            
-            'plazo_pago_nombre': instance.nombre
+            'plazo_pago_nombre': instance.nombre,
+            'plazo_dias': instance.dias
         }     
