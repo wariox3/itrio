@@ -57,7 +57,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'empresa': instance.empresa_id,
             'resolucion': instance.resolucion_id,
             'documento_referencia' :  instance.documento_referencia_id,
-            'plazo_pago': instance.documento_plazo_pago_id
+            'plazo_pago': instance.plazo_pago_id
         }
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
