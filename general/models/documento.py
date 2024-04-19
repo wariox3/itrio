@@ -4,6 +4,7 @@ from general.models.contacto import Contacto
 from general.models.metodo_pago import MetodoPago
 from general.models.resolucion import Resolucion
 from general.models.empresa import Empresa
+from general.models.plazo_pago import PlazoPago
 
 class Documento(models.Model):    
     numero = models.IntegerField(null=True)
@@ -37,6 +38,7 @@ class Documento(models.Model):
     resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='gen_documentos')
     documento_referencia = models.ForeignKey('self', null=True, on_delete=models.CASCADE, related_name='gen_documentos')
+    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.CASCADE,related_name='gen_documentos')
 
     class Meta:
         db_table = "gen_documento"
