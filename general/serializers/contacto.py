@@ -93,22 +93,13 @@ class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
         model = Contacto 
         
     def to_representation(self, instance):
+        plazo_pago = instance.plazo_pago
+        plazo_pago_dias = 0
+        if plazo_pago:
+            plazo_pago_dias = plazo_pago.dias
         return {
             'contacto_id': instance.id,            
-            'contacto_nombre_corto': instance.nombre_corto
+            'contacto_nombre_corto': instance.nombre_corto,
+            'plazo_pago_id': instance.plazo_pago_id,
+            'plazo_pago_dias': plazo_pago_dias
         }       
-
-'''#Esto fue una prueba para retornar solo los campos de la peticion, se puede borrar
-class ContactoSerializadorV2(serializers.ModelSerializer):
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
-    class Meta:
-        model = Contacto
-        fields = '__all__'   
-
-    def __init__(self, *args, fields=None, **kwargs):
-        super(ContactoSerializadorV2, self).__init__(*args, **kwargs)
-        if fields:
-            allowed = set(fields)
-            existing = set(self.fields.keys())
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)                   '''
