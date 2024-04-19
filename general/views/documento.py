@@ -546,11 +546,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'referencia')
     def referencia(self, request):
         raw = request.data
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 50)    
+        limiteTotal = raw.get('limite_total', 5000)                
+        filtros = raw.get('filtros', [])
+        ordenamientos = raw.get('ordenamientos')  
+        documento_clase = raw.get('documento_clase_id')
         contacto_id = raw.get('contacto_id')
-        documento_clase_id = raw.get('documento_clase_id')
-        if (contacto_id and documento_clase_id):
-            documentos = Documento.objects.filter(contacto_id=contacto_id, documento_tipo__documento_clase_id= documento_clase_id, estado_aprobado=True)
-            serializador = DocumentoReferenciaSerializador(documentos, many=True)
+        if (contacto_id and documento_clase):
+            filtros.extend([
+                {'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase},
+                {'propiedad': 'contacto_id', 'valor1': contacto_id},
+                {'propiedad': 'estado_aprobado', 'valor1': True}
+            ])
+            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
+            serializador = DocumentoReferenciaSerializador(respuesta['documentos'], many=True)
             documentos = serializador.data
             return Response(documentos, status=status.HTTP_200_OK)
         else:
