@@ -20,7 +20,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
-    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())    
+    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), allow_null=True)    
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all())    
     class Meta:
         model = Documento
