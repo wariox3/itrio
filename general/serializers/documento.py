@@ -21,7 +21,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), allow_null=True)    
-    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all())    
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)    
     class Meta:
         model = Documento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago']
@@ -63,10 +63,11 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
     contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
-    metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
+    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), allow_null=True)    
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)    
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago']
 
     def to_representation(self, instance):
         contacto = instance.contacto
@@ -77,6 +78,14 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
         metodo_pago_nombre = ""
         if metodo_pago is not None:
             metodo_pago_nombre = metodo_pago.nombre            
+        plazo_pago = instance.plazo_pago
+        plazo_pago_nombre = ""
+        if plazo_pago is not None:
+            plazo_pago_nombre = plazo_pago.nombre       
+        documento_referencia = instance.documento_referencia
+        documento_referencia_numero = ""
+        if documento_referencia is not None:
+            documento_referencia_numero = documento_referencia.numero     
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -99,7 +108,9 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
             'soporte' : instance.soporte,
-            'orden_compra': instance.orden_compra
+            'orden_compra': instance.orden_compra,
+            'plazo_pago_nombre': plazo_pago_nombre,
+            'documento_referencia_numero': documento_referencia_numero
         }
 
 class DocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
