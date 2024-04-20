@@ -109,6 +109,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
             'soporte' : instance.soporte,
             'orden_compra': instance.orden_compra,
+            'plazo_pago_id': instance.plazo_pago_id,
             'plazo_pago_nombre': plazo_pago_nombre,
             'documento_referencia_numero': documento_referencia_numero
         }
