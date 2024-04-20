@@ -111,6 +111,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'orden_compra': instance.orden_compra,
             'plazo_pago_id': instance.plazo_pago_id,
             'plazo_pago_nombre': plazo_pago_nombre,
+            'documento_referencia_id': instance.documento_referencia_id,
             'documento_referencia_numero': documento_referencia_numero
         }
 
