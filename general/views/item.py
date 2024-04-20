@@ -92,3 +92,22 @@ class ItemViewSet(viewsets.ModelViewSet):
         #print(consulta_sql)
         ItemSerializador = ItemSerializador(items, many=True)
         return Response({"registros": ItemSerializador.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=["post"], url_path=r'detalle',)
+    def detalle(self, request):
+        raw = request.data
+        id = raw.get('id')
+        venta = raw.get('venta')
+        if(id and venta):
+            queryset = Item.objects.all()
+            item = get_object_or_404(queryset, pk=id)
+            itemSerializador = ItemSerializador(item)
+            itemImpuestos = ItemImpuesto.objects.filter(item=id)
+            if venta:
+                itemImpuestos = itemImpuestos.filter(impuesto__venta=True)
+            itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
+            itemRespuesta = itemSerializador.data
+            itemRespuesta['impuestos'] = itemImpuestosSerializador.data
+            return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
