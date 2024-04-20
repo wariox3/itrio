@@ -48,7 +48,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
         plazo_pago = instance.plazo_pago
         plazo_pago_nombre = None
         plazo_pago_dias = 0
-        if precio:
+        if plazo_pago:
             plazo_pago_nombre = plazo_pago.nombre
             plazo_pago_dias = plazo_pago.dias
         return {
