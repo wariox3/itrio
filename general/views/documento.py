@@ -500,6 +500,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             'subtotal',
             'total',
             'comentario',
+            'orden_compra',
             'metodo_pago__nombre',
             'contacto__nombre_corto',
             'contacto__correo',

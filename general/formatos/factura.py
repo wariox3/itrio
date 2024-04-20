@@ -117,6 +117,11 @@ class FormatoFactura():
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 610, data['soporte'] if data['soporte'] else "")
 
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 350, 600, "ORDEN COMPRA: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(x + 540, 600, data['orden_compra'] if data['orden_compra'] else "")
+
 
             #Cliente
             clienteNombre = ""
