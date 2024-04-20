@@ -248,14 +248,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values(
         ).first()
         if configuracion['formato_factura'] == 'F':
+            nombre_archivo = "Factura.pdf"
             formatoFactura = FormatoFactura()
             pdf = formatoFactura.generar_pdf(documento)  
         else:     
+            nombre_archivo = "CuentaCobro.pdf"
             formatoCuentaCobro = FormatoCuentaCobro()
             pdf = formatoCuentaCobro.generar_pdf(documento)
 
         response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="factura.pdf"'    
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(nombre_archivo)
         return response
 
     @action(detail=False, methods=["post"], url_path=r'emitir',)
