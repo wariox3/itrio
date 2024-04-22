@@ -81,17 +81,17 @@ class FormatoCuentaCobro():
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 640, str(data['fecha_vence']))
 
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 350, 630, "PLAZO PAGO: ")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(x + 540, 630, "")
+
             if 'metodo_pago__nombre' in data and data['metodo_pago__nombre']:
 
                 p.setFont("Helvetica-Bold", 8)
-                p.drawString(x + 350, 630, "FORMA PAGO: ")
+                p.drawString(x + 350, 620, "FORMA PAGO: ")
                 p.setFont("Helvetica", 8)
-                p.drawRightString(x + 540, 630, str(data['metodo_pago__nombre'].upper()))
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 620, "PLAZO PAGO: ")
-            p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 620, "")
+                p.drawRightString(x + 540, 620, str(data['metodo_pago__nombre'].upper()))
 
             #Cliente
             clienteNombre = ""
