@@ -49,7 +49,7 @@ class FormatoFactura():
             # Intenta cargar la imagen desde la URL
             imagen_empresa = data['empresa__imagen']
 
-            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{imagen_empresa}'
+            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{imagen_empresa}'
             try:
                 logo = ImageReader(logo_url)
             except Exception as e:
