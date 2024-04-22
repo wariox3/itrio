@@ -492,7 +492,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         
     @staticmethod
     def consulta_imprimir(codigoDocumento):
-        documento = Documento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona').filter(id=codigoDocumento).values(
+        documento = Documento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia').filter(id=codigoDocumento).values(
             'id',
             'fecha',
             'fecha_validacion',
@@ -528,6 +528,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             'resolucion__consecutivo_hasta',
             'resolucion__numero',
             'resolucion__fecha_hasta',
+            'documento_referencia__numero'
         ).first()
 
         # Obtener los detalles del documento
