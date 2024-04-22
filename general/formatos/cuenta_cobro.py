@@ -91,11 +91,6 @@ class FormatoCuentaCobro():
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 620, "")
 
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 610, "DOCUMENTO REFERENCIA: ")
-            p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 610, str(data['documento_referencia__numero']))
-
             #Cliente
             clienteNombre = ""
             clienteCiudad = ""

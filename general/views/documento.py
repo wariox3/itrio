@@ -528,7 +528,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             'resolucion__consecutivo_hasta',
             'resolucion__numero',
             'resolucion__fecha_hasta',
-            'documento_referencia__numero'
+            'documento_referencia__numero',
+            'documento_tipo__documento_clase_id'
         ).first()
 
         # Obtener los detalles del documento
