@@ -115,15 +115,15 @@ class FormatoFactura():
                     p.setFont("Helvetica", 8)
                     p.drawRightString(x + 540, 630, str(data['metodo_pago__nombre'].upper()))
 
-                    p.setFont("Helvetica-Bold", 8)
-                    p.drawString(x + 350, 620, "PLAZO PAGO: ")
-                    p.setFont("Helvetica", 8)
-                    p.drawRightString(x + 540, 620, "")
+                p.setFont("Helvetica-Bold", 8)
+                p.drawString(x + 350, 620, "PLAZO PAGO: ")
+                p.setFont("Helvetica", 8)
+                p.drawRightString(x + 540, 620, "")
 
-                    p.setFont("Helvetica-Bold", 8)
-                    p.drawString(x + 350, 610, "ORDEN COMPRA: ")
-                    p.setFont("Helvetica", 8)
-                    p.drawRightString(x + 540, 610, data['orden_compra'] if data['orden_compra'] else "")
+                p.setFont("Helvetica-Bold", 8)
+                p.drawString(x + 350, 610, "ORDEN COMPRA: ")
+                p.setFont("Helvetica", 8)
+                p.drawRightString(x + 540, 610, data['orden_compra'] if data['orden_compra'] else "")
 
 
             #Cliente
