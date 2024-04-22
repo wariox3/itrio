@@ -234,6 +234,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 row_data = [row[field] for field in field_names]
                 ws.append(row_data)
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
             wb.save(response)
             return response
