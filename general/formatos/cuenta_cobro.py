@@ -229,7 +229,7 @@ class FormatoCuentaCobro():
             y -= 30
             detalles_en_pagina += 1
 
-            if detalles_en_pagina == 5 or index == len(data['documento_detalles']) - 1:
+            if detalles_en_pagina == 4 or index == len(data['documento_detalles']) - 1:
                 draw_totals(p, y, data)
 
                 if index != len(data['documento_detalles']) - 1:
