@@ -104,9 +104,9 @@ class FormatoFactura():
 
             if data['documento_tipo__documento_clase_id'] == 2 or data['documento_tipo__documento_clase_id'] == 3:
                 p.setFont("Helvetica-Bold", 8)
-                p.drawString(x + 350, 600, "DOCUMENTO REFERENCIA: ")
+                p.drawString(x + 350, 630, "DOCUMENTO REFERENCIA: ")
                 p.setFont("Helvetica", 8)
-                p.drawRightString(x + 540, 600, str(data['documento_referencia__numero']))
+                p.drawRightString(x + 540, 630, str(data['documento_referencia__numero']))
             else:
                 if 'metodo_pago__nombre' in data and data['metodo_pago__nombre']:
 
