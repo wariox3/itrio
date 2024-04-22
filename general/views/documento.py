@@ -249,13 +249,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values(
         ).first()
         if configuracion['formato_factura'] == 'F':
-            nombre_archivo = "Factura.pdf"
             formatoFactura = FormatoFactura()
             pdf = formatoFactura.generar_pdf(documento)  
+            numero_documento = documento.get('numero', '')
+            nombre_archivo = f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf"
         else:     
-            nombre_archivo = "CuentaCobro.pdf"
             formatoCuentaCobro = FormatoCuentaCobro()
             pdf = formatoCuentaCobro.generar_pdf(documento)
+            numero_documento = documento.get('numero', '')
+            nombre_archivo = f"CuentaCobro_{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf"
 
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Access-Control-Expose-Headers'] = 'Content-Disposition'
