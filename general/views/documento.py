@@ -257,6 +257,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             pdf = formatoCuentaCobro.generar_pdf(documento)
 
         response = HttpResponse(pdf, content_type='application/pdf')
+        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
         response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
         return response
 
