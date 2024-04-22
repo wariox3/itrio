@@ -238,32 +238,34 @@ class FormatoFactura():
 
         for index, detalle in enumerate(data['documento_detalles']):
 
-            for impuesto_detalle in data['documento_impuestos']:
+            itemNombre = ""
+            if detalle['item__nombre'] is not None:
+                itemNombre = detalle['item__nombre'][:100]
 
-                itemNombre = ""
-                if detalle['item__nombre'] is not None:
-                    itemNombre = detalle['item__nombre'][:100]
+            impuestos_detalle = [impuesto for impuesto in data['documento_impuestos'] if impuesto['documento_detalle_id'] == detalle['id']]
 
-                p.drawCentredString(x + 7, y, str(index + 1))
-                p.drawString(x + 25, y, str(detalle['item_id']))
-                p.drawString(100, y, str(itemNombre[:57]))
-                p.drawRightString(x + 345, y, str(int(detalle['cantidad'])))
-                p.drawRightString(x + 395, y, locale.format_string("%d", detalle['precio'], grouping=True))
-                p.drawRightString(x + 440, y, locale.format_string("%d", detalle['descuento'], grouping=True))
-                p.drawRightString(x + 480, y, locale.format_string("%d", impuesto_detalle['total'], grouping=True))
-                p.drawRightString(x + 530, y, locale.format_string("%d", detalle['total'], grouping=True))
-                y -= 30
-                detalles_en_pagina += 1
+            total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
 
-                if detalles_en_pagina == 10 or index == len(data['documento_detalles']) - 1:
-                    draw_totals(p, y, data)
+            p.drawCentredString(x + 7, y, str(index + 1))
+            p.drawString(x + 25, y, str(detalle['item_id']))
+            p.drawString(100, y, str(itemNombre[:57]))
+            p.drawRightString(x + 345, y, str(int(detalle['cantidad'])))
+            p.drawRightString(x + 395, y, locale.format_string("%d", detalle['precio'], grouping=True))
+            p.drawRightString(x + 440, y, locale.format_string("%d", detalle['descuento'], grouping=True))
+            p.drawRightString(x + 480, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
+            p.drawRightString(x + 530, y, locale.format_string("%d", detalle['total'], grouping=True))
+            y -= 30
+            detalles_en_pagina += 1
 
-                    if index != len(data['documento_detalles']) - 1:
-                        p.showPage()
-                        page_number += 1
-                        y = 520
-                        draw_header()
-                        detalles_en_pagina = 0
+            if detalles_en_pagina == 10 or index == len(data['documento_detalles']) - 1:
+                draw_totals(p, y, data)
+
+                if index != len(data['documento_detalles']) - 1:
+                    p.showPage()
+                    page_number += 1
+                    y = 520
+                    draw_header()
+                    detalles_en_pagina = 0
 
         p.drawString(x + 5, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))
         def draw_footer(pageCount):

@@ -209,34 +209,27 @@ class FormatoCuentaCobro():
         x = 35
 
         for index, detalle in enumerate(data['documento_detalles']):
-            #impuestos_detalle = documentoImpuestos.filter(documento_detalle_id=detalle.id)
-            impuestos_unicos = []
-            # Iterar sobre los impuestos relacionados con el detalle actual
-            for impuesto_detalle in data['documento_impuestos']:
-                nombre_impuesto = impuesto_detalle['impuesto__nombre']
-                
-                # Si el nombre del impuesto no está en la lista de impuestos únicos, agrégalo
-                if nombre_impuesto not in impuestos_unicos:
-                    impuestos_unicos.append(nombre_impuesto)
 
-                # Ahora, puedes imprimir los nombres de impuestos únicos en una línea
-                impuestos_str = ', '.join(impuestos_unicos)
             itemNombre = ""
             if detalle['item__nombre'] is not None:
                 itemNombre = detalle['item__nombre'][:100]
+
+            impuestos_detalle = [impuesto for impuesto in data['documento_impuestos'] if impuesto['documento_detalle_id'] == detalle['id']]
+
+            total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
 
             p.drawCentredString(x + 7, y, str(index + 1))
             p.drawString(x + 25, y, str(detalle['item_id']))
             p.drawString(100, y, str(itemNombre[:57]))
             p.drawRightString(x + 345, y, str(int(detalle['cantidad'])))
             p.drawRightString(x + 395, y, locale.format_string("%d", detalle['precio'], grouping=True))
-            p.drawRightString(x + 430, y, locale.format_string("%d", detalle['descuento'], grouping=True))
-            p.drawRightString(x + 480, y, locale.format_string("%d", impuesto_detalle['total'], grouping=True))
+            p.drawRightString(x + 440, y, locale.format_string("%d", detalle['descuento'], grouping=True))
+            p.drawRightString(x + 480, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
             p.drawRightString(x + 530, y, locale.format_string("%d", detalle['total'], grouping=True))
             y -= 30
             detalles_en_pagina += 1
 
-            if detalles_en_pagina == 10 or index == len(data['documento_detalles']) - 1:
+            if detalles_en_pagina == 5 or index == len(data['documento_detalles']) - 1:
                 draw_totals(p, y, data)
 
                 if index != len(data['documento_detalles']) - 1:
