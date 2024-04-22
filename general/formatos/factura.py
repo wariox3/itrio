@@ -195,7 +195,7 @@ class FormatoFactura():
 
             # Recorrer los objetos DocumentoImpuesto
             for impuesto in data['documento_impuestos']:
-                impuesto_id = impuesto['id']  # ID del impuesto
+                impuesto_id = impuesto['impuesto_id']  # ID del impuesto
                 nombre_impuesto = impuesto['impuesto__nombre_extendido']  # Nombre del impuesto
                 total = impuesto['total']
 

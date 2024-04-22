@@ -541,7 +541,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         'id',
         'total',
         'impuesto__nombre',
-        'impuesto__nombre_extendido'
+        'impuesto__nombre_extendido',
+        'impuesto_id'
         )
 
         # Agregar los detalles al diccionario documento
