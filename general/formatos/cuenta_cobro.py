@@ -158,7 +158,7 @@ class FormatoCuentaCobro():
 
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 410, "SUTOTAL")
+            p.drawString(x, 410, "SUBTOTAL")
             p.drawRightString(x + 140, 410, f"$ {locale.format('%d', data['subtotal'], grouping=True)}")
             
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre

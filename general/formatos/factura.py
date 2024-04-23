@@ -190,7 +190,7 @@ class FormatoFactura():
             totalFactura = data['total']
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 230, "SUTOTAL")
+            p.drawString(x, 230, "SUBTOTAL")
             p.drawRightString(x + 140, 230, f"$ {locale.format('%d', data['subtotal'], grouping=True)}")
             
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
