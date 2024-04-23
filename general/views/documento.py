@@ -251,13 +251,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if configuracion['formato_factura'] == 'F':
             formatoFactura = FormatoFactura()
             pdf = formatoFactura.generar_pdf(documento)  
-            numero_documento = documento.get('numero', '')
-            nombre_archivo = f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf"
+            numero_documento = documento.get('numero')
+            tipo_documento = documento.get('documento_tipo__documento_clase_id')
+            nombres_archivo = {
+                1: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
+                2: f"NotaCredito{numero_documento}.pdf" if numero_documento else "Factura.pdf",
+                3: f"NotaDebito{numero_documento}.pdf" if numero_documento else "Factura.pdf"
+            }
+            nombre_archivo = nombres_archivo.get(tipo_documento, "Factura.pdf")
+            
         else:     
             formatoCuentaCobro = FormatoCuentaCobro()
             pdf = formatoCuentaCobro.generar_pdf(documento)
-            numero_documento = documento.get('numero', '')
-            nombre_archivo = f"CuentaCobro_{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf"
+            numero_documento = documento.get('numero')
+            tipo_documento = documento.get('documento_tipo__documento_clase_id')
+            nombres_archivo = {
+                1: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "Factura.pdf",
+                2: f"NotaCredito{numero_documento}.pdf" if numero_documento else "Factura.pdf",
+                3: f"NotaDebito{numero_documento}.pdf" if numero_documento else "Factura.pdf"
+            }
+            nombre_archivo = nombres_archivo.get(tipo_documento, "Factura.pdf")
 
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Access-Control-Expose-Headers'] = 'Content-Disposition'
