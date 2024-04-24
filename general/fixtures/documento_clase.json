@@ -1,17 +1,52 @@
 [
   {
     "model": "general.documentoClase",
-    "pk": 1,
+    "pk": 100,
     "fields": {"nombre": "Factura venta", "codigo_dian": "01"}
   },
   {
     "model": "general.documentoClase",
-    "pk": 2,
+    "pk": 101,
     "fields": {"nombre": "Nota credito venta", "codigo_dian": "01"}
   },
   {
     "model": "general.documentoClase",
-    "pk": 3,
+    "pk": 102,
     "fields": {"nombre": "Nota debito venta", "codigo_dian": "01"}
-  }    
+  },
+  {
+    "model": "general.documentoClase",
+    "pk": 200,
+    "fields": {"nombre": "Pago", "codigo_dian": "01"}
+  },      
+  {
+    "model": "general.documentoClase",
+    "pk": 300,
+    "fields": {"nombre": "Compra", "codigo_dian": "01"}
+  }, 
+  {
+    "model": "general.documentoClase",
+    "pk": 301,
+    "fields": {"nombre": "Nota credito compra", "codigo_dian": "01"}
+  },  
+  {
+    "model": "general.documentoClase",
+    "pk": 302,
+    "fields": {"nombre": "Nota credito venta", "codigo_dian": "01"}
+  },
+  {
+    "model": "general.documentoClase",
+    "pk": 400,
+    "fields": {"nombre": "Egreso", "codigo_dian": "01"}
+  },   
+  {
+    "model": "general.documentoClase",
+    "pk": 500,
+    "fields": {"nombre": "Entrada", "codigo_dian": "01"}
+  },  
+  {
+    "model": "general.documentoClase",
+    "pk": 501,
+    "fields": {"nombre": "Salida", "codigo_dian": "01"}
+  }
 ]
