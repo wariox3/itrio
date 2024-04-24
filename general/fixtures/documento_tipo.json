@@ -2,16 +2,16 @@
   {
     "model": "general.documentoTipo",
     "pk": 1,
-    "fields": {"nombre": "FACTURA ELECTRÓNICA DE VENTA", "documento_clase_id": 1}
+    "fields": {"nombre": "FACTURA ELECTRÓNICA DE VENTA", "documento_clase_id": 100}
   },
   {
     "model": "general.documentoTipo",
     "pk": 2,
-    "fields": {"nombre": "NOTA CRÉDITO DE VENTA", "documento_clase_id": 2}
+    "fields": {"nombre": "NOTA CRÉDITO DE VENTA", "documento_clase_id": 101}
   },
   {
     "model": "general.documentoTipo",
     "pk": 3,
-    "fields": {"nombre": "NOTA DÉBITO DE VENTA", "documento_clase_id": 3}
+    "fields": {"nombre": "NOTA DÉBITO DE VENTA", "documento_clase_id": 102}
   }
 ]
