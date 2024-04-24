@@ -97,9 +97,9 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'No existe el usuario para crear la empresa', 'codigo':17}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        empresa = self.get_object(pk)
-        empresaSerializador = self.serializer_class(empresa)
-        return Response(empresaSerializador.data)
+        contenedor = self.get_object(pk)
+        contenedorSerializador = self.serializer_class(contenedor)
+        return Response(contenedorSerializador.data)
 
     def update(self, request, pk=None):
         empresa = self.get_object(pk)

@@ -11,14 +11,22 @@ class ContenedorSerializador(serializers.ModelSerializer):
     def to_representation(self, instance):
         region = config('DO_REGION')
         bucket = config('DO_BUCKET')
+        plan = instance.plan
+        plan_usuarios_base = None
+        plan_limite_usuarios = None
+        plan_nombre = None
+        if plan:
+            plan_usuarios_base = plan.usuarios_base
+            plan_limite_usuarios = plan.limite_usuarios
+            plan_nombre = plan.nombre
         return {
             'id': instance.id,            
             'subdominio': instance.schema_name,
             'nombre': instance.nombre,
             'plan_id': instance.plan_id,
-            'plan_usuarios_base': instance.plan.usuarios_base,
-            'plan_limite_usuarios': instance.plan.limite_usuarios,
-            'plan_nombre':  instance.plan.nombre,
+            'plan_usuarios_base': plan_usuarios_base,
+            'plan_limite_usuarios': plan_limite_usuarios,
+            'plan_nombre':  plan_nombre,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         } 
     
