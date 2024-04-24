@@ -13,5 +13,40 @@
     "model": "general.documentoTipo",
     "pk": 3,
     "fields": {"nombre": "NOTA DÉBITO DE VENTA", "documento_clase_id": 102}
-  }
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 4,
+    "fields": {"nombre": "PAGO", "documento_clase_id": 200}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 5,
+    "fields": {"nombre": "COMPRA", "documento_clase_id": 300}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 6,
+    "fields": {"nombre": "NOTA CREDITO COMPRA", "documento_clase_id": 301}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 7,
+    "fields": {"nombre": "NOTA DEBITO COMPRA", "documento_clase_id": 302}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 8,
+    "fields": {"nombre": "EGRESO", "documento_clase_id": 400}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 9,
+    "fields": {"nombre": "ENTRADA", "documento_clase_id": 500}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 10,
+    "fields": {"nombre": "SALIDA", "documento_clase_id": 501}
+  }  
 ]
