@@ -143,7 +143,7 @@ class FormatoCuentaCobro():
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 5, 575, "#")
             p.drawString(x + 30, 575, "COD")
-            p.drawString(200, 575, "ITEM")
+            p.drawString(200, 575, "ÍTEM")
             p.drawString(x + 320, 575, "CANT")
             p.drawString(x + 360, 575, "PRECIO")
             p.drawString(x + 410, 575, "DESC")
@@ -241,7 +241,7 @@ class FormatoCuentaCobro():
                     draw_header()
                     detalles_en_pagina = 0
 
-        p.drawString(x + 5, y, "CANTIDAD DE ITEMS: " + str(detalles_en_pagina))
+        p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(detalles_en_pagina))
         def draw_footer(pageCount):
             x = 35
 
