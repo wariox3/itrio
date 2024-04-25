@@ -326,6 +326,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "total_iva" : str(0),
                                                 "total_consumo" : str(0),
                                                 "total_ica" : str(0),
+                                                "documento_referencia": str(documento.documento_referencia),
                                                 "adquiriente" : {
                                                     "identificacion" : documento.contacto.identificacion.codigo,
                                                     "numero_identificacion" : documento.contacto.numero_identificacion,
