@@ -256,9 +256,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             numero_documento = documento.get('numero')
             tipo_documento = documento.get('documento_tipo__documento_clase_id')
             nombres_archivo = {
-                1: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
-                2: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                3: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
+                100: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
+                101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
+                102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
             }
             nombre_archivo = nombres_archivo.get(tipo_documento)
             
@@ -268,9 +268,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             numero_documento = documento.get('numero')
             tipo_documento = documento.get('documento_tipo__documento_clase_id')
             nombres_archivo = {
-                1: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf",
-                2: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                3: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
+                100: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf",
+                101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
+                102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
             }
             nombre_archivo = nombres_archivo.get(tipo_documento)
 
