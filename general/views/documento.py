@@ -292,14 +292,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if empresa.rededoc_id:
                             if documento.resolucion: 
                                 if documento.numero: 
-                                    if documento.estado_electronico_enviado == False:                                   
+                                    if documento.estado_electronico_enviado == False: 
+                                        prefijo = documento.resolucion.prefijo
+                                        if documento.documento_tipo.documento_clase_id == 101:
+                                            prefijo = "NC"
+                                        if documento.documento_tipo.documento_clase_id == 102:
+                                            prefijo = "ND"                                  
                                         datos_factura = {
                                             "cuentaId": empresa.rededoc_id,
                                             "documentoClaseId" : documento.documento_tipo_id,
                                             "documentoClienteId": documento.id,
                                             "documento" : {
                                                 "ambiente" : 1,
-                                                "prefijo" : documento.resolucion.prefijo,
+                                                "prefijo" : prefijo,
                                                 "numero" : documento.numero,
                                                 "fecha" : str(documento.fecha),
                                                 "hora" : str("12:00:00-05:00"),
