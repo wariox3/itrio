@@ -7,7 +7,7 @@
   {
     "model": "general.estado",
     "pk": 2,
-    "fields": {"nombre": "Atlántico", "pais_id_id": "CO", "codigo":"08"}
+    "fields": {"nombre": "Atlántico", "pais_id": "CO", "codigo":"08"}
   }, 
   {
     "model": "general.estado",

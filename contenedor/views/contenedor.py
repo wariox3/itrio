@@ -44,20 +44,8 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
                 imagenReferencia = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
-                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1)
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/pais.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/estado.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/ciudad.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/identificacion.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/tipo_persona.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/regimen.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/documento_clase.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/documento_tipo.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/forma_pago.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/metodo_pago.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/plazo_pago.json")
-                os.system(f"python3 manage.py tenant_command loaddata --schema={subdominio} general/fixtures/impuesto.json")            
-
+                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1)                
+                os.system(f"python manage.py tenant_command loaddata general/fixtures/*.json --schema={subdominio}")                           
                 contenedor = Contenedor.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario.id, 'contenedor': contenedor.id, 'rol': 'propietario'}
                 usuarioContenedorSerializador = UsuarioContenedorSerializador(data=data)            
