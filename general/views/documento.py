@@ -294,6 +294,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if documento.numero: 
                                     if documento.estado_electronico_enviado == False: 
                                         prefijo = documento.resolucion.prefijo
+                                        documento_referencia_id = None
                                         if documento.documento_tipo.documento_clase_id == 101:
                                             prefijo = "NC"
                                         if documento.documento_tipo.documento_clase_id == 102:
@@ -326,7 +327,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "total_iva" : str(0),
                                                 "total_consumo" : str(0),
                                                 "total_ica" : str(0),
-                                                "documento_referencia": str(documento.documento_referencia.cue),
+                                                "documento_referencia": documento_referencia_id,
                                                 "adquiriente" : {
                                                     "identificacion" : documento.contacto.identificacion.codigo,
                                                     "numero_identificacion" : documento.contacto.numero_identificacion,

@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = 'Comando para actualizar los fixtures'
 
     def add_arguments(self, parser):
-        parser.add_argument('json_file', type=str, help='Ruta del archivo JSON')
+        parser.add_argument('json_file', type=str, help='Ruta del archivo/directorio JSON')
 
     def handle(self, *args, **options):        
         schema = connection.schema_name
@@ -26,10 +26,13 @@ class Command(BaseCommand):
 
     def process_json_file(self, schema, json_file):
         if schema != 'public':
-            self.stdout.write(self.style.SUCCESS(json_file))
+            #self.stdout.write(self.style.SUCCESS(json_file))
             try:
                 with open(json_file, 'r') as file:
-                    data = json.load(file)
+                    actualizados = 0
+                    creados = 0
+                    model_name = ""
+                    data = json.load(file)                    
                     for item in data:
                         model_name = item.get('model')                    
                         pk = item.get('pk')                
@@ -42,9 +45,11 @@ class Command(BaseCommand):
                         #instance, created = Model.objects.update(id=pk, **filtered_fields)
                         instance, created = Model.objects.update_or_create(pk=pk, defaults=filtered_fields)                    
                         if created:
-                            self.stdout.write(self.style.SUCCESS(f'Registro creado: {instance}'))
+                            creados = creados + 1
+                            #self.stdout.write(self.style.SUCCESS(f'Registro creado: {instance}'))
                         else:
-                            self.stdout.write(self.style.WARNING(f'Registro actualizado: {instance}'))
-                self.stdout.write(self.style.SUCCESS('¡El comando se ha ejecutado con éxito!'))
+                            actualizados = actualizados + 1
+                            #self.stdout.write(self.style.WARNING(f'Registro actualizado: {instance}'))
+                    self.stdout.write(self.style.SUCCESS(f'Registros creados {creados} actualizados {actualizados} modelo {model_name}'))
             except FileNotFoundError:
                 self.stdout.write(self.style.ERROR('El archivo JSON no existe'))
