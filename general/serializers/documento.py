@@ -7,9 +7,9 @@ from general.models.empresa import Empresa
 from general.models.plazo_pago import PlazoPago
 
 class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
-    numero = serializers.IntegerField(allow_null=True, label='Numero')
-    fecha = serializers.DateField(allow_null=True, label='Fecha')
-    fecha_vence = serializers.DateField(allow_null=True, label='Vence')
+    numero = serializers.IntegerField(allow_null=True, label='Numero', default=None)
+    fecha = serializers.DateField(allow_null=True, label='Fecha', default=None)
+    fecha_vence = serializers.DateField(allow_null=True, label='Vence', default=None)
     descuento = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Descuento')
     base_impuesto = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Base Impuesto')
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Subtotal')    
@@ -18,10 +18,10 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
     contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
-    metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
-    empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
-    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), allow_null=True)    
-    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)    
+    metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), default=None, allow_null=True)
+    empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all(), default=1)    
+    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)    
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), default=None, allow_null=True)    
     class Meta:
         model = Documento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago']

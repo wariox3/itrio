@@ -37,13 +37,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if documentoSerializador.is_valid():
             # Extraemos el tipo de documento
             documento_tipo = documentoSerializador.validated_data['documento_tipo']
-
-            # Aquí debes buscar la resolución asociada al tipo de documento
-            # Supongamos que obtienes la resolución asociada al tipo de documento
-            resolucion = documento_tipo.resolucion
-
-            # Asignamos la resolución al documento antes de guardarlo
+            resolucion = documento_tipo.resolucion        
             documento = documentoSerializador.save(resolucion=resolucion)            
+            documentoRespuesta = documentoSerializador.data 
             detalles = raw.get('detalles')
             if detalles is not None:
                 for detalle in detalles:                
@@ -75,10 +71,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
                     documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
                     detalle['impuestos'] = documentoImpuestosSerializador.data
-                documentoRespuesta = documentoSerializador.data
-                documentoRespuesta['detalles'] = detalles
-                return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+                documentoRespuesta['detalles'] = detalles                           
+            return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     def retrieve(self, request, pk=None):
