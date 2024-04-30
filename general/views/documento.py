@@ -213,7 +213,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         filtros = raw.get('filtros', [])        
         ordenamientos = raw.get('ordenamientos', [])            
         ordenamientos.insert(0, 'estado_aprobado')
-        ordenamientos.append('numero')        
+        ordenamientos.append('-numero')        
         documento_clase = raw.get('documento_clase_id')
         if documento_clase:
             filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase})
