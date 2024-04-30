@@ -208,7 +208,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def excel(self, request):
         raw = request.data
         desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
+        limite = raw.get('limite', 5000)    
         limiteTotal = raw.get('limite_total', 5000)                
         filtros = raw.get('filtros', [])
         ordenamientos = raw.get('ordenamientos')  
