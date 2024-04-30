@@ -210,8 +210,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         desplazar = raw.get('desplazar', 0)
         limite = raw.get('limite', 5000)    
         limiteTotal = raw.get('limite_total', 5000)                
-        filtros = raw.get('filtros', [])
-        ordenamientos = raw.get('ordenamientos')  
+        filtros = raw.get('filtros', [])        
+        ordenamientos = raw.get('ordenamientos', [])            
+        ordenamientos.insert(0, 'estado_aprobado')
+        ordenamientos.append('-numero')        
         documento_clase = raw.get('documento_clase_id')
         if documento_clase:
             filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase})
