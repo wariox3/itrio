@@ -6,7 +6,7 @@ from rest_framework import serializers
 class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), default=None, allow_null=True)
-    documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
+    documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
     class Meta:
         model = DocumentoDetalle
         fields = ['documento', 'documento_afectado', 'item', 'cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total']

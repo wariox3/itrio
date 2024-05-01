@@ -34,11 +34,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def create(self, request):
         raw = request.data
         documentoSerializador = DocumentoSerializador(data=raw)
-        if documentoSerializador.is_valid():
-            # Extraemos el tipo de documento
+        if documentoSerializador.is_valid():            
             documento_tipo = documentoSerializador.validated_data['documento_tipo']
+            documentoSerializador.validated_data['fecha_contable'] = documentoSerializador.validated_data['fecha']
             resolucion = documento_tipo.resolucion        
-            documento = documentoSerializador.save(resolucion=resolucion)            
+            documento = documentoSerializador.save(resolucion=resolucion)                        
             documentoRespuesta = documentoSerializador.data 
             detalles = raw.get('detalles')
             if detalles is not None:

@@ -10,6 +10,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     numero = serializers.IntegerField(allow_null=True, label='Numero', default=None)
     fecha = serializers.DateField(allow_null=True, label='Fecha', default=None)
     fecha_vence = serializers.DateField(allow_null=True, label='Vence', default=None)
+    fecha_contable = serializers.DateField(allow_null=True, label='Fecha contable', default=None)
     descuento = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Descuento')
     base_impuesto = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Base Impuesto')
     subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Subtotal')    
@@ -24,7 +25,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), default=None, allow_null=True)    
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago']
+        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -35,7 +36,8 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,            
             'numero' : instance.numero,
             'fecha' : instance.fecha,
-            'fecha_vence' : instance.fecha_vence,            
+            'fecha_vence' : instance.fecha_vence,
+            'fecha_contable' : instance.fecha_contable,
             'descuento': instance.descuento,
             'base_impuesto': instance.base_impuesto,           
             'subtotal': instance.subtotal,            
