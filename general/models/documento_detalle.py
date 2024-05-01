@@ -10,9 +10,9 @@ class DocumentoDetalle(models.Model):
     total_bruto = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     porcentaje_descuento = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    documento = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='detalles')
-    documento_afectado = models.ForeignKey(Documento, on_delete=models.CASCADE, related_name='detalles_afectado', null=True)
-    item = models.ForeignKey(Item, null=True, on_delete=models.CASCADE)
+    documento = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles')
+    documento_afectado = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles_afectado', null=True)
+    item = models.ForeignKey(Item, null=True, on_delete=models.PROTECT, related_name='itemes_rel')
 
     class Meta:
         db_table = "gen_documento_detalle"

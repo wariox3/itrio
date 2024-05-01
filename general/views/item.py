@@ -71,6 +71,15 @@ class ItemViewSet(viewsets.ModelViewSet):
             return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': itemSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        relaciones = instance.itemes_rel.first()
+        if relaciones:
+            modelo_asociado = relaciones.__class__.__name__           
+            return Response({'mensaje':f"El registro no se puede eliminar porque tiene registros asociados en {modelo_asociado}", 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["post"], url_path=r'lista',)
     def lista(self, request):
         raw = request.data

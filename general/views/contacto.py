@@ -3,19 +3,18 @@ from general.models.contacto import Contacto
 from general.models.documento import Documento
 from general.serializers.contacto import ContactoSerializador
 from rest_framework.response import Response
+from django.db.models import ProtectedError
 
 class ContactoViewSet(viewsets.ModelViewSet):
     queryset = Contacto.objects.all()
     serializer_class = ContactoSerializador    
     permission_classes = [permissions.IsAuthenticated]               
 
-    '''def destroy(self):
-        contacto = self.get_object()
-
-        # Verificar si el contacto está siendo utilizado en algún documento
-        if Documento.objects.filter(contacto=contacto).exists():
-            return Response({'mensaje':'La eliminación de este elemento no es posible, ya que está vinculado a un documento en uso.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Si no está siendo utilizado en documentos, se puede eliminar
-        contacto.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)'''
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        relaciones = instance.contactos_rel.first()
+        if relaciones:
+            modelo_asociado = relaciones.__class__.__name__           
+            return Response({'mensaje':f"El registro no se puede eliminar porque tiene registros asociados en {modelo_asociado}", 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

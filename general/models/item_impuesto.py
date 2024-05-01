@@ -3,8 +3,8 @@ from general.models.item import Item
 from general.models.impuesto import Impuesto
 
 class ItemImpuesto(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='itemImpuestos')
-    impuesto = models.ForeignKey(Impuesto, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.PROTECT, related_name='itemImpuestos')
+    impuesto = models.ForeignKey(Impuesto, on_delete=models.PROTECT)
 
     class Meta:
         unique_together = ('item', 'impuesto')

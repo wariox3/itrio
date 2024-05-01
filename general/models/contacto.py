@@ -23,13 +23,13 @@ class Contacto(models.Model):
     celular = models.CharField(max_length=50, null=True)
     correo = models.CharField(max_length = 255)
     #Relaciones    
-    identificacion = models.ForeignKey(Identificacion, on_delete=models.CASCADE)
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.CASCADE)   
-    regimen = models.ForeignKey(Regimen, on_delete=models.CASCADE)
-    asesor = models.ForeignKey(Asesor, null=True, on_delete=models.CASCADE)
-    precio = models.ForeignKey(Precio, null=True, on_delete=models.CASCADE)
-    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.CASCADE)
+    identificacion = models.ForeignKey(Identificacion, on_delete=models.PROTECT)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.PROTECT)
+    tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.PROTECT)   
+    regimen = models.ForeignKey(Regimen, on_delete=models.PROTECT)
+    asesor = models.ForeignKey(Asesor, null=True, on_delete=models.PROTECT)
+    precio = models.ForeignKey(Precio, null=True, on_delete=models.PROTECT)
+    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT)
     
     class Meta:
         db_table = "gen_contacto"

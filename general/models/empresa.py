@@ -16,9 +16,9 @@ class Empresa(models.Model):
     contenedor_id = models.IntegerField()     
     rededoc_id = models.IntegerField(null=True)    
     subdominio = models.CharField(max_length=100, default='demo') 
-    identificacion = models.ForeignKey(Identificacion, on_delete=models.CASCADE)
-    ciudad = models.ForeignKey(Ciudad, on_delete=models.CASCADE)
-    tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.CASCADE)   
-    regimen = models.ForeignKey(Regimen, on_delete=models.CASCADE)
+    identificacion = models.ForeignKey(Identificacion, on_delete=models.PROTECT)
+    ciudad = models.ForeignKey(Ciudad, on_delete=models.PROTECT)
+    tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.PROTECT)   
+    regimen = models.ForeignKey(Regimen, on_delete=models.PROTECT)
     class Meta:
         db_table = "gen_empresa"

@@ -32,13 +32,13 @@ class Documento(models.Model):
     comentario = models.CharField(max_length=500, null=True)
     qr = models.CharField(max_length=500, null=True)
     electronico_id = models.IntegerField(null=True)
-    documento_tipo = models.ForeignKey(DocumentoTipo, on_delete=models.CASCADE, related_name='gen_documentos')
-    contacto = models.ForeignKey(Contacto, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
-    metodo_pago = models.ForeignKey(MetodoPago, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
-    resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.CASCADE, related_name='gen_documentos')
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='gen_documentos')
-    documento_referencia = models.ForeignKey('self', null=True, on_delete=models.CASCADE, related_name='gen_documentos')
-    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.CASCADE,related_name='gen_documentos')
+    documento_tipo = models.ForeignKey(DocumentoTipo, on_delete=models.PROTECT, related_name='gen_documentos')
+    contacto = models.ForeignKey(Contacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')
+    metodo_pago = models.ForeignKey(MetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
+    resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
+    empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT, related_name='gen_documentos')
+    documento_referencia = models.ForeignKey('self', null=True, on_delete=models.PROTECT, related_name='gen_documentos')
+    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos')
 
     class Meta:
         db_table = "gen_documento"
