@@ -21,7 +21,7 @@ class FormatoFactura():
 
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8)
         informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>", estilo_helvetica)
-        comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario']), estilo_helvetica)
+        comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario'] if data['comentario'] else  ""), estilo_helvetica)
 
         try:
             locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
@@ -58,16 +58,16 @@ class FormatoFactura():
                 logo = ImageReader(logo_url)
 
             tamano_cuadrado = 1 * inch
-            x = 35
+            x = 24
             y = 680
 
             #borde tabla detalles
             p.drawImage(logo, x, y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
             p.setStrokeColorRGB(0.8, 0.8, 0.8)
             #recuadro1
-            p.rect(x, 570, 542, 15)
+            p.rect(x, 570, 564, 15)
             #recuadro2
-            p.rect(x, 240, 542, 330)
+            p.rect(x, 240, 564, 330)
 
 
             #Emisor
@@ -91,39 +91,39 @@ class FormatoFactura():
             else:
                 texto_resolucion = ""
             p.setFont("Helvetica-Bold", 9)
-            p.drawCentredString(x + 460, 710, texto_resolucion)
+            p.drawCentredString(x + 460, 710, texto_resolucion if texto_resolucion else  "")
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 350, 650, "FECHA EMISIÓN: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 650, str(data['fecha']))
+            p.drawRightString(x + 560, 650, str(data['fecha']))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 350, 640, "FECHA VENCIMIENTO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 640, str(data['fecha_vence']))
+            p.drawRightString(x + 560, 640, str(data['fecha_vence']))
 
             if data['documento_tipo__documento_clase_id'] == 2 or data['documento_tipo__documento_clase_id'] == 3:
                 p.setFont("Helvetica-Bold", 8)
                 p.drawString(x + 350, 630, "DOCUMENTO REFERENCIA: ")
                 p.setFont("Helvetica", 8)
-                p.drawRightString(x + 540, 630, str(data['documento_referencia__numero']))
+                p.drawRightString(x + 560, 630, str(data['documento_referencia__numero']))
             else:
                 if 'metodo_pago__nombre' in data and data['metodo_pago__nombre']:
 
                     p.setFont("Helvetica-Bold", 8)
-                    p.drawString(x + 350, 630, "FORMA PAGO: ")
+                    p.drawString(x + 350, 630, "METODO DE PAGO: ")
                     p.setFont("Helvetica", 8)
-                    p.drawRightString(x + 540, 630, str(data['metodo_pago__nombre'].upper()))
+                    p.drawRightString(x + 560, 630, str(data['metodo_pago__nombre'].upper()))
 
                 p.setFont("Helvetica-Bold", 8)
                 p.drawString(x + 350, 620, "PLAZO PAGO: ")
                 p.setFont("Helvetica", 8)
-                p.drawRightString(x + 540, 620, "")
+                p.drawRightString(x + 560, 620, str(data['plazo_pago__nombre'] if data['plazo_pago__nombre'] else ""))
 
                 p.setFont("Helvetica-Bold", 8)
                 p.drawString(x + 350, 610, "ORDEN COMPRA: ")
                 p.setFont("Helvetica", 8)
-                p.drawRightString(x + 540, 610, data['orden_compra'] if data['orden_compra'] else "")
+                p.drawRightString(x + 560, 610, data['orden_compra'] if data['orden_compra'] else "")
 
 
             #Cliente
@@ -177,16 +177,16 @@ class FormatoFactura():
             p.drawString(x + 5, 575, "#")
             p.drawString(x + 30, 575, "COD")
             p.drawString(200, 575, "ÍTEM")
-            p.drawString(x + 320, 575, "CANT")
-            p.drawString(x + 360, 575, "PRECIO")
-            p.drawString(x + 410, 575, "DESC")
-            p.drawString(x + 450, 575, "IVA")
-            p.drawString(x + 490, 575, "TOTAL")
+            p.drawString(x + 340, 575, "CANT")
+            p.drawString(x + 380, 575, "PRECIO")
+            p.drawString(x + 430, 575, "DESC")
+            p.drawString(x + 475, 575, "IVA")
+            p.drawString(x + 520, 575, "TOTAL")
             p.setFont("Helvetica", 8)
 
         def draw_totals(p, y, data):
 
-            x = 430
+            x = 440
             totalFactura = data['total']
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
@@ -231,7 +231,7 @@ class FormatoFactura():
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
             
-            x = 38
+            x = 24
             y = 235 - alto_texto
             y2 = 160
             comentario.drawOn(p, x, y)
@@ -242,7 +242,7 @@ class FormatoFactura():
         detalles_en_pagina = 0
 
         draw_header()
-        x = 35
+        x = 24
 
         for index, detalle in enumerate(data['documento_detalles']):
 
@@ -253,15 +253,15 @@ class FormatoFactura():
             impuestos_detalle = [impuesto for impuesto in data['documento_impuestos'] if impuesto['documento_detalle_id'] == detalle['id']]
 
             total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
-
+            p.setFont("Helvetica", 7)
             p.drawCentredString(x + 7, y, str(index + 1))
             p.drawString(x + 25, y, str(detalle['item_id']))
-            p.drawString(100, y, str(itemNombre[:57]))
-            p.drawRightString(x + 345, y, str(int(detalle['cantidad'])))
-            p.drawRightString(x + 395, y, locale.format_string("%d", detalle['precio'], grouping=True))
-            p.drawRightString(x + 440, y, locale.format_string("%d", detalle['descuento'], grouping=True))
-            p.drawRightString(x + 480, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
-            p.drawRightString(x + 530, y, locale.format_string("%d", detalle['total'], grouping=True))
+            p.drawString(x + 58, y, str(itemNombre[:70]))
+            p.drawRightString(x + 365, y, str(int(detalle['cantidad'])))
+            p.drawRightString(x + 417, y, locale.format_string("%d", detalle['precio'], grouping=True))
+            p.drawRightString(x + 458, y, locale.format_string("%d", detalle['descuento'], grouping=True))
+            p.drawRightString(x + 500, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
+            p.drawRightString(x + 555, y, locale.format_string("%d", detalle['total'], grouping=True))
             y -= 30
             detalles_en_pagina += 1
 
@@ -277,7 +277,7 @@ class FormatoFactura():
 
         p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(detalles_en_pagina))
         def draw_footer(pageCount):
-            x = 35
+            x = 24
 
             valorLetras = convertir_a_letras(int(data['total']))
 
