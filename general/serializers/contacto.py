@@ -103,3 +103,14 @@ class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
             'plazo_pago_id': instance.plazo_pago_id,
             'plazo_pago_dias': plazo_pago_dias
         }       
+
+class ContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Contacto 
+        
+    def to_representation(self, instance):
+        return {
+            'contacto_id': instance.id,            
+            'contacto_numero_identificacion': instance.numero_identificacion,
+            'contacto_nombre_corto': instance.nombre_corto            
+        } 

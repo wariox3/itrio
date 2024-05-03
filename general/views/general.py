@@ -17,10 +17,10 @@ from general.models.asesor import Asesor
 from general.models.precio import Precio
 from general.models.plazo_pago import PlazoPago
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador
-from general.serializers.contacto import ContactoSerializador, ContactoListaAutocompletarSerializador
-from general.serializers.forma_pago import FormaPagoSerializador, FormaPagoListaAutocompletarSerializador
-from general.serializers.metodo_pago import MetodoPagoSerializador, MetodoPagoListaAutocompletarSerializador
-from general.serializers.tipo_persona import TipoPersonaSerializador, TipoPersonaListaAutocompletarSerializador
+from general.serializers.contacto import ContactoListaAutocompletarSerializador, ContactoListaBuscarSerializador
+from general.serializers.forma_pago import FormaPagoListaAutocompletarSerializador
+from general.serializers.metodo_pago import MetodoPagoListaAutocompletarSerializador
+from general.serializers.tipo_persona import TipoPersonaListaAutocompletarSerializador
 from general.serializers.documento import DocumentoSerializador
 from general.serializers.impuesto import ImpuestoSerializador, ImpuestoListaAutocompletarSerializador
 from general.serializers.identificacion import IdentificacionSerializador, IdentificacionListaAutocompletarSerializador
@@ -72,8 +72,8 @@ class ListaAutocompletarView(APIView):
     def post(self, request):
         raw = request.data
         codigoModelo = raw.get('modelo')
-        limite = raw.get('limite')
-        if codigoModelo and (limite or limite == 0):      
+        limite = raw.get('limite', 10)
+        if codigoModelo:      
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')
             modelo = globals()[codigoModelo]
@@ -90,3 +90,28 @@ class ListaAutocompletarView(APIView):
             datos = serializador(items, many=True)    
             return Response({"registros": datos.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+    
+class ListaBuscarView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        raw = request.data
+        codigoModelo = raw.get('modelo')
+        limite = raw.get('limite', 10)
+        if codigoModelo:      
+            filtros = raw.get('filtros')
+            ordenamientos = raw.get('ordenamientos')
+            modelo = globals()[codigoModelo]
+            serializadorNombre = f"{codigoModelo}ListaBuscarSerializador"
+            serializador = globals()[serializadorNombre]            
+            items = modelo.objects.all()
+            if filtros:
+                for filtro in filtros:
+                    items = items.filter(**{filtro['propiedad']: filtro['valor1']})
+            if ordenamientos:
+                items = items.order_by(*ordenamientos)                          
+            if limite > 0:
+                items = items[0:limite]
+            datos = serializador(items, many=True)    
+            return Response({"registros": datos.data}, status=status.HTTP_200_OK)
+        return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
