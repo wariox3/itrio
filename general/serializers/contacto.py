@@ -110,7 +110,7 @@ class ContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
         
     def to_representation(self, instance):
         return {
-            'contacto_id': instance.id,            
-            'contacto_numero_identificacion': instance.numero_identificacion,
-            'contacto_nombre_corto': instance.nombre_corto            
+            'id': instance.id,            
+            'numero_identificacion': instance.numero_identificacion,
+            'nombre_corto': instance.nombre_corto            
         } 
