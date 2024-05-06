@@ -8,6 +8,8 @@ class DocumentoDetalle(models.Model):
     subtotal = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     descuento = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total_bruto = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    base_impuesto = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    impuesto = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     porcentaje_descuento = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     documento = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles')
