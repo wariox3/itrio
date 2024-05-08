@@ -69,7 +69,7 @@ class FormatoCuentaCobro():
 
             #Datos factura
             p.setFont("Helvetica-Bold", 9)
-            p.drawCentredString(x + 460, 710, str(data['numero']))
+            p.drawCentredString(x + 460, 710, str(data['numero'] if data['numero'] else ""))
             p.setFont("Helvetica-Bold", 9)
             p.drawCentredString(x + 460, 720, "CUENTA DE COBRO")
             p.setFont("Helvetica-Bold", 8)
