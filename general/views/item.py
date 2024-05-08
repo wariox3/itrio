@@ -4,9 +4,11 @@ from django.shortcuts import get_object_or_404
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.item import Item
 from general.models.item_impuesto import ItemImpuesto
-from general.serializers.item import ItemSerializador
+from general.serializers.item import ItemSerializador, ItemExcelSerializador
 from general.serializers.item_impuesto import ItemImpuestoSerializador, ItemImpuestoDetalleSerializador
 from rest_framework.decorators import action
+from openpyxl import Workbook
+from django.http import HttpResponse
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
@@ -120,3 +122,46 @@ class ItemViewSet(viewsets.ModelViewSet):
             return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'excel',)
+    def excel(self, request):
+        raw = request.data
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 5000)    
+        limiteTotal = raw.get('limite_total', 5000)                
+        filtros = raw.get('filtros', [])        
+        ordenamientos = raw.get('ordenamientos', [])    
+        ordenamientos.append('-id')                 
+        respuesta = ItemViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
+        serializador = ItemExcelSerializador(respuesta['items'], many=True)
+        items = serializador.data
+        if items:
+            field_names = list(items[0].keys())
+        else:
+            field_names = []
+
+        wb = Workbook()
+        ws = wb.active
+        ws.append(field_names)
+        for row in items:
+            row_data = [row[field] for field in field_names]
+            ws.append(row_data)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        response['Content-Disposition'] = 'attachment; filename=items.xlsx'
+        wb.save(response)
+        return response
+
+        
+    @staticmethod
+    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
+        items = Item.objects.all()
+        if filtros:
+            for filtro in filtros:
+                items = items.filter(**{filtro['propiedad']: filtro['valor1']})
+        if ordenamientos:
+            items = items.order_by(*ordenamientos)              
+        items = items[desplazar:limite+desplazar]
+        itemsCantidad = Item.objects.all()[:limiteTotal].count()                   
+        respuesta = {'items': items, "cantidad_registros": itemsCantidad}
+        return respuesta     

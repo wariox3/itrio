@@ -15,7 +15,7 @@ from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.prueba import FormatoPrueba
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from openpyxl import Workbook
 from decouple import config
 from datetime import datetime
