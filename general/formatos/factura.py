@@ -231,7 +231,7 @@ class FormatoFactura():
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
             
-            x = 24
+            x = 30
             y = 235 - alto_texto
             y2 = 160
             comentario.drawOn(p, x, y)
@@ -277,7 +277,7 @@ class FormatoFactura():
 
         p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(detalles_en_pagina))
         def draw_footer(pageCount):
-            x = 24
+            x = 30
 
             valorLetras = convertir_a_letras(int(data['total']))
 

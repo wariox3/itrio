@@ -18,7 +18,8 @@ class FormatoCuentaCobro():
         p = canvas.Canvas(buffer, pagesize=letter)
 
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8)
-        comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario']), estilo_helvetica)
+        informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>", estilo_helvetica)
+        comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario'] if data['comentario'] else  ""), estilo_helvetica)
 
         try:
             locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
@@ -45,16 +46,16 @@ class FormatoCuentaCobro():
                 logo = ImageReader(logo_url)
 
             tamano_cuadrado = 1 * inch
-            x = 35
+            x = 24
             y = 680
 
             #borde tabla detalles
             p.drawImage(logo, x, y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
             p.setStrokeColorRGB(0.8, 0.8, 0.8)
             #recuadro1
-            p.rect(x, 570, 542, 15)
+            p.rect(x, 570, 564, 15)
             #recuadro2
-            p.rect(x, 420, 542, 150)
+            p.rect(x, 240, 564, 330)
 
 
             #Emisor
@@ -144,16 +145,16 @@ class FormatoCuentaCobro():
             p.drawString(x + 5, 575, "#")
             p.drawString(x + 30, 575, "COD")
             p.drawString(200, 575, "ÍTEM")
-            p.drawString(x + 320, 575, "CANT")
-            p.drawString(x + 360, 575, "PRECIO")
-            p.drawString(x + 410, 575, "DESC")
-            p.drawString(x + 450, 575, "IVA")
-            p.drawString(x + 490, 575, "TOTAL")
+            p.drawString(x + 340, 575, "CANT")
+            p.drawString(x + 380, 575, "PRECIO")
+            p.drawString(x + 430, 575, "DESC")
+            p.drawString(x + 475, 575, "IVA")
+            p.drawString(x + 520, 575, "TOTAL")
             p.setFont("Helvetica", 8)
 
         def draw_totals(p, y, data):
 
-            x = 430
+            x = 440
             totalFactura = data['total']
 
             #Bloque totales
@@ -194,21 +195,23 @@ class FormatoCuentaCobro():
             p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
 
             #informacion pago
+            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 380)
             
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
             
-            x = 38
+            x = 30
             y = 390 - alto_texto
             y2 = 160
             comentario.drawOn(p, x, y)
+            informacionPago.drawOn(p, x, y2)
             
         y = 555
         page_number = 1
         detalles_en_pagina = 0
 
         draw_header()
-        x = 35
+        x = 24
 
         for index, detalle in enumerate(data['documento_detalles']):
 
@@ -220,14 +223,15 @@ class FormatoCuentaCobro():
 
             total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
 
+            p.setFont("Helvetica", 7)
             p.drawCentredString(x + 7, y, str(index + 1))
             p.drawString(x + 25, y, str(detalle['item_id']))
-            p.drawString(100, y, str(itemNombre[:57]))
-            p.drawRightString(x + 345, y, str(int(detalle['cantidad'])))
-            p.drawRightString(x + 395, y, locale.format_string("%d", detalle['precio'], grouping=True))
-            p.drawRightString(x + 440, y, locale.format_string("%d", detalle['descuento'], grouping=True))
-            p.drawRightString(x + 480, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
-            p.drawRightString(x + 530, y, locale.format_string("%d", detalle['total'], grouping=True))
+            p.drawString(x + 58, y, str(itemNombre[:70]))
+            p.drawRightString(x + 365, y, str(int(detalle['cantidad'])))
+            p.drawRightString(x + 417, y, locale.format_string("%d", detalle['precio'], grouping=True))
+            p.drawRightString(x + 458, y, locale.format_string("%d", detalle['descuento'], grouping=True))
+            p.drawRightString(x + 500, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
+            p.drawRightString(x + 555, y, locale.format_string("%d", detalle['total'], grouping=True))
             y -= 30
             detalles_en_pagina += 1
 
@@ -243,7 +247,7 @@ class FormatoCuentaCobro():
 
         p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(detalles_en_pagina))
         def draw_footer(pageCount):
-            x = 35
+            x = 30
 
             valorLetras = convertir_a_letras(int(data['total']))
 
