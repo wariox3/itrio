@@ -1,0 +1,43 @@
+from general.models.empresa import Empresa
+from general.models.documento_tipo import DocumentoTipo
+from general.models.resolucion import Resolucion
+import requests
+import json
+
+class Zinc():
+
+    def log_correo(self, operador, documento_id):
+        url = "/api/externo/correo/v2"
+        datos = {
+            "operador" : operador,
+            "codigoDocumento" : documento_id
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            return {'error': False, 'correos': datos['correos']}
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
+
+    def log_evento(self, operador, documento_id):
+        url = "/api/externo/evento/v3"
+        datos = {
+            "operador" : operador,
+            "codigoDocumento" : documento_id
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            return {'error': False, 'eventos': datos['eventos']}
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
+
+    def consumirPost(self, data, url):
+        url = "http://zinc.semantica.com.co/index.php" + url
+        json_data = json.dumps(data)
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, data=json_data, headers=headers)
+        resp = response.json()
+        return {'status': response.status_code, 'datos': resp}
+
+

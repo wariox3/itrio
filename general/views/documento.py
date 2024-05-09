@@ -21,6 +21,7 @@ from decouple import config
 from datetime import datetime
 import base64
 from utilidades.wolframio import Wolframio
+from utilidades.zinc import Zinc
 import json
 
 
@@ -497,7 +498,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)  
 
     @action(detail=False, methods=["post"], url_path=r'renotificar')
-    def electronico_notificar(self, request):
+    def electronico_renotificar(self, request):
         raw = request.data
         documento_id = raw.get('documento_id')
         if documento_id:
@@ -511,6 +512,40 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             return Response({'mensaje': 'Documento re-notificado con éxito'}, status=status.HTTP_200_OK)           
                         else:
                             return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                    
+                    else:
+                        return Response({'mensaje': 'El documento esta marcado como notificado pero no tiene electronico_id', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
+                else:                      
+                    return Response({'mensaje': 'El documento nunca ha sido notificado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            except Documento.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)     
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], url_path=r'electronico_log')
+    def electronico_log(self, request):
+        raw = request.data
+        documento_id = raw.get('documento_id')
+        if documento_id:
+            try:
+                documento = Documento.objects.get(id=documento_id)
+                if documento.estado_electronico_notificado == True:                    
+                    if documento.electronico_id:
+                        empresa = Empresa.objects.get(pk=1)
+                        if empresa.rededoc_id:                       
+                            correos = []
+                            eventos = []
+                            zinc = Zinc()                        
+                            respuesta = zinc.log_correo(empresa.rededoc_id, documento.electronico_id)
+                            if respuesta['error'] == False: 
+                                correos = respuesta['correos']
+                            respuesta = zinc.log_evento(empresa.rededoc_id, documento.electronico_id)
+                            if respuesta['error'] == False: 
+                                eventos = respuesta['eventos']
+                            else:
+                                return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({'correos': correos, 'eventos': eventos}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({'mensaje': 'La empresa no esta activa en facturacion electronica', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                     else:
                         return Response({'mensaje': 'El documento esta marcado como notificado pero no tiene electronico_id', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
                 else:                      
