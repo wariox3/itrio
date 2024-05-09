@@ -61,6 +61,18 @@ class Wolframio():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
 
+    def renotificar(self, documento_id):
+        url = "/api/documento/renotificar"
+        datos = {
+            "documentoId" : documento_id
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            return {'error': False}
+        else:
+            datos = respuesta['datos']
+            return {'error':True, 'mensaje':f"Ocurrio un error en el servicio wolframio: {datos['mensaje']}"}
+
     def consumirPost(self, data, url):
         url = "http://159.203.18.130/wolframio/public/index.php" + url
         json_data = json.dumps(data)

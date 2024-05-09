@@ -496,6 +496,53 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)  
 
+    @action(detail=False, methods=["post"], url_path=r'renotificar')
+    def electronico_notificar(self, request):
+        raw = request.data
+        documento_id = raw.get('documento_id')
+        if documento_id:
+            try:
+                documento = Documento.objects.get(id=documento_id)
+                if documento.estado_electronico_notificado == True:                    
+                    if documento.electronico_id:
+                        wolframio = Wolframio()
+                        respuesta = wolframio.renotificar(documento.electronico_id)
+                        if respuesta['error'] == False: 
+                            return Response({'mensaje': 'Documento re-notificado con éxito'}, status=status.HTTP_200_OK)           
+                        else:
+                            return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                    
+                    else:
+                        return Response({'mensaje': 'El documento esta marcado como notificado pero no tiene electronico_id', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
+                else:                      
+                    return Response({'mensaje': 'El documento nunca ha sido notificado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            except Documento.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)     
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], url_path=r'referencia')
+    def referencia(self, request):
+        raw = request.data
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 50)    
+        limiteTotal = raw.get('limite_total', 5000)                
+        filtros = raw.get('filtros', [])
+        ordenamientos = raw.get('ordenamientos')  
+        documento_clase = raw.get('documento_clase_id')
+        contacto_id = raw.get('contacto_id')
+        if (contacto_id and documento_clase):
+            filtros.extend([
+                {'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase},
+                {'propiedad': 'contacto_id', 'valor1': contacto_id},
+                {'propiedad': 'estado_aprobado', 'valor1': True}
+            ])
+            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
+            serializador = DocumentoReferenciaSerializador(respuesta['documentos'], many=True)
+            documentos = serializador.data
+            return Response(documentos, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
         documentos = Documento.objects.all()
@@ -594,25 +641,4 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
         return documento
     
-    @action(detail=False, methods=["post"], url_path=r'referencia')
-    def referencia(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        filtros = raw.get('filtros', [])
-        ordenamientos = raw.get('ordenamientos')  
-        documento_clase = raw.get('documento_clase_id')
-        contacto_id = raw.get('contacto_id')
-        if (contacto_id and documento_clase):
-            filtros.extend([
-                {'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase},
-                {'propiedad': 'contacto_id', 'valor1': contacto_id},
-                {'propiedad': 'estado_aprobado', 'valor1': True}
-            ])
-            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-            serializador = DocumentoReferenciaSerializador(respuesta['documentos'], many=True)
-            documentos = serializador.data
-            return Response(documentos, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
