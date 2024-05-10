@@ -158,12 +158,12 @@ class DocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):
             'metodo_pago': instance.metodo_pago_id,
             'contacto_id': instance.contacto_id,
             'contacto_nombre_corto': contacto_nombre_corto,
+            'identificacion': instance.contacto.numero_identificacion if instance.contacto else None,
             'estado_anulado' : instance.estado_anulado,
             'comentario' : instance.comentario,
             'estado_electronico' : instance.estado_electronico,
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
-            'soporte' : instance.soporte,
             'orden_compra' : instance.orden_compra,
             'empresa': instance.empresa_id,
             'resolucion': instance.resolucion_id
