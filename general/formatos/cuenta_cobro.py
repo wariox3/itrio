@@ -13,8 +13,8 @@ from decouple import config
 
 class FormatoCuentaCobro():
 
-    def generar_pdf(self, data):  
-        buffer = BytesIO()   
+    def generar_pdf(self, data):
+        buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=letter)
 
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8)
@@ -55,7 +55,7 @@ class FormatoCuentaCobro():
             #recuadro1
             p.rect(x, 570, 564, 15)
             #recuadro2
-            p.rect(x, 240, 564, 330)
+            p.rect(x, 420, 564, 150)
 
 
             #Emisor
@@ -109,12 +109,12 @@ class FormatoCuentaCobro():
                  clienteIdentificacion =  data['contacto__numero_identificacion']
                  clienteDireccion = data['contacto__direccion']
 
-            
+
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 650, "CLIENTE: ")
             p.setFont("Helvetica", 8)
             p.drawString(x + 60, 650, str(clienteNombre))
-            
+
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 640, "NIT: ")
             p.setFont("Helvetica", 8)
@@ -161,7 +161,7 @@ class FormatoCuentaCobro():
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 410, "SUBTOTAL")
             p.drawRightString(x + 140, 410, f"$ {locale.format('%d', data['subtotal'], grouping=True)}")
-            
+
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
             impuesto_totals = {}
 
@@ -186,7 +186,7 @@ class FormatoCuentaCobro():
             for impuesto_id, data in impuesto_totals.items():
                 nombre_impuesto = data['nombre']
                 total_acumulado = data['total']
-                
+
                 p.drawString(x, y, nombre_impuesto.upper())
                 p.drawRightString(x + 140, y, f"$ {locale.format('%d', total_acumulado, grouping=True)}")
                 y -= 15
@@ -195,17 +195,17 @@ class FormatoCuentaCobro():
             p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
 
             #informacion pago
-            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 380)
-            
+            # ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 380)
+
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
-            
+
             x = 30
             y = 390 - alto_texto
             y2 = 160
             comentario.drawOn(p, x, y)
-            informacionPago.drawOn(p, x, y2)
-            
+            # informacionPago.drawOn(p, x, y2)
+
         y = 555
         page_number = 1
         detalles_en_pagina = 0
@@ -261,7 +261,7 @@ class FormatoCuentaCobro():
         draw_footer(total_pages)
 
         p.save()
-        
+
         pdf_bytes = buffer.getvalue()
         buffer.close()
         return pdf_bytes
