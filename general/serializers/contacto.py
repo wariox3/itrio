@@ -164,7 +164,7 @@ class ContactoExcelSerializador(serializers.HyperlinkedModelSerializer):
             'regimen_id': instance.regimen_id,
             'regimen_nombre': instance.regimen.nombre if instance.regimen else None,
             'codigo_ciuu': instance.codigo_ciuu,
-            'asesor__nombre': instance.asesor.nombre if instance.asesor else None,
+            'asesor__nombre': instance.asesor.nombre_corto if instance.asesor else None,
             'precio': instance.precio.nombre if instance.precio else None,
             'plazo_pago': instance.plazo_pago.nombre if instance.plazo_pago else None
         } 
