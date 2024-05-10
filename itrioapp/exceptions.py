@@ -12,7 +12,7 @@ def custom_exception_handler(exc, context):
             }
         if response.status_code == 400:
             response.data = {
-                'mensaje': 'Mensajes de validacion',
+                'mensaje': 'Mensajes de validación',
                 'codigo': 14,
                 'validacion': response.data
             }            
