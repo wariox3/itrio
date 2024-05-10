@@ -190,17 +190,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             codigoDocumento = raw.get('id')
             if codigoDocumento:
                 documento = Documento.objects.get(pk=codigoDocumento)
-                if documento.estado_aprobado == False:                
-                    documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
-                    if documento.numero is None:
-                        documento.numero = documentoTipo.consecutivo
-                        documentoTipo.consecutivo += 1
-                        documentoTipo.save()                
-                    documento.estado_aprobado = True
-                    documento.save()
-                    return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                detalles_documento = DocumentoDetalle.objects.filter(documento=documento)
+                if detalles_documento:
+                    if documento.estado_aprobado == False:                
+                        documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
+                        if documento.numero is None:
+                            documento.numero = documentoTipo.consecutivo
+                            documentoTipo.consecutivo += 1
+                            documentoTipo.save()                
+                        documento.estado_aprobado = True
+                        documento.save()
+                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':'El documento ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
                 else:
-                    return Response({'mensaje':'El documento ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+                    return Response({'mensaje':'El documento no tiene detalles', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Documento.DoesNotExist:
