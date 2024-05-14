@@ -15,12 +15,12 @@ import locale
 
 class FormatoFactura():
 
-    def generar_pdf(self, data):  
+    def generar_pdf(self, data, configuracion):  
         buffer = BytesIO()   
         p = canvas.Canvas(buffer, pagesize=letter)
 
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8)
-        informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>", estilo_helvetica)
+        informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>" +  str(configuracion['informacion_factura'] if configuracion['informacion_factura'] else  ""), estilo_helvetica)
         comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario'] if data['comentario'] else  ""), estilo_helvetica)
 
         try:
@@ -226,7 +226,7 @@ class FormatoFactura():
             p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
 
             #informacion pago
-            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 380)
+            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 400)
             
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)

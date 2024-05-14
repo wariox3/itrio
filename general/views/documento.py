@@ -253,7 +253,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
         if configuracion['formato_factura'] == 'F':
             formatoFactura = FormatoFactura()
-            pdf = formatoFactura.generar_pdf(documento)  
+            pdf = formatoFactura.generar_pdf(documento, configuracion)  
             numero_documento = documento.get('numero')
             tipo_documento = documento.get('documento_tipo__documento_clase_id')
             nombres_archivo = {
@@ -264,7 +264,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             nombre_archivo = nombres_archivo.get(tipo_documento)            
         else:     
             formatoCuentaCobro = FormatoCuentaCobro()
-            pdf = formatoCuentaCobro.generar_pdf(documento)
+            pdf = formatoCuentaCobro.generar_pdf(documento, configuracion)
             numero_documento = documento.get('numero')
             tipo_documento = documento.get('documento_tipo__documento_clase_id')
             nombres_archivo = {

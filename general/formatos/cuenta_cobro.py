@@ -13,7 +13,7 @@ from decouple import config
 
 class FormatoCuentaCobro():
 
-    def generar_pdf(self, data):
+    def generar_pdf(self, data, configuracion):
         buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=letter)
 
