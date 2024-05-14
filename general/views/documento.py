@@ -22,6 +22,7 @@ from datetime import datetime
 import base64
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
+from utilidades.excel import WorkbookEstilos
 import json
 
 
@@ -226,17 +227,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
             serializador = DocumentoExcelSerializador(respuesta['documentos'], many=True)
             documentos = serializador.data
-            if documentos:
-                field_names = list(documentos[0].keys())
-            else:
-                field_names = []
-
+            field_names = list(documentos[0].keys()) if documentos else []
             wb = Workbook()
             ws = wb.active
             ws.append(field_names)
             for row in documentos:
                 row_data = [row[field] for field in field_names]
                 ws.append(row_data)
+
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos()
+
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
