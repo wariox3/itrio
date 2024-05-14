@@ -235,8 +235,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 row_data = [row[field] for field in field_names]
                 ws.append(row_data)
 
-            #estilos_excel = WorkbookEstilos(wb)
-            #estilos_excel.aplicar_estilos()
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos()
 
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
