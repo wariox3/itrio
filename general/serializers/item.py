@@ -51,4 +51,14 @@ class ItemExcelSerializador(serializers.HyperlinkedModelSerializer):
             'inventario': instance.inventario,
             'existencia': instance.existencia,
             'disponible': instance.disponible,
-        } 
+        }
+     
+class ItemListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Item 
+        
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,            
+            'nombre': instance.nombre            
+        }    

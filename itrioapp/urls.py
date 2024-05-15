@@ -26,6 +26,7 @@ urlpatterns = [
     path('general/', include("general.urls")),
     path('contabilidad/', include("contabilidad.urls")),
     path('seguridad/', include("seguridad.urls")),
+    path('transporte/', include("transporte.urls")),
     path('contenedor/', include("contenedor.urls")),
     path('cartera/', include("cartera.urls")),
     path('seguridad/login/', Login.as_view(), name='login'),

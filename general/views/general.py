@@ -16,7 +16,7 @@ from general.models.resolucion import Resolucion
 from general.models.asesor import Asesor
 from general.models.precio import Precio
 from general.models.plazo_pago import PlazoPago
-from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador
+from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador, ItemListaBuscarSerializador
 from general.serializers.contacto import ContactoSerializador, ContactoListaAutocompletarSerializador, ContactoListaBuscarSerializador
 from general.serializers.forma_pago import FormaPagoSerializador, FormaPagoListaAutocompletarSerializador
 from general.serializers.metodo_pago import MetodoPagoSerializador, MetodoPagoListaAutocompletarSerializador
