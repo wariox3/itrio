@@ -16,6 +16,8 @@ from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.prueba import FormatoPrueba
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Sum, OuterRef, Subquery, Value, DecimalField, F
+from django.db.models.functions import Coalesce
 from openpyxl import Workbook
 from decouple import config
 from datetime import datetime
@@ -200,10 +202,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             documentoTipo.consecutivo += 1
                             documentoTipo.save()                
                         documento.estado_aprobado = True
+                        if documento.documento_tipo.documento_clase_id in (100,101,102):
+                            documento.cobrar = documento.total
+                            documento.cobrar_pendiente = documento.total
                         documento.save()
-                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)                    
                     else:
-                        return Response({'mensaje':'El documento ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+                        return Response({'mensaje':'El documento ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                  
                 else:
                     return Response({'mensaje':'El documento no tiene detalles', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
             else:
@@ -582,6 +587,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response(documentos, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'proceso_corregir_cobrar')
+    def referencia(self, request):
+        #update gen_documento as d set cobrar = d.total from gen_documento_tipo as dt where d.documento_tipo_id = dt.id and dt.documento_clase_id in (100, 101, 102);
+        detalles_subquery = DocumentoDetalle.objects.filter(documento_afectado_id=OuterRef('id')).values('documento_id')
+        detalles_subquery = detalles_subquery.annotate(total_sum=Sum('total')).values('total_sum')
+        documentos = Documento.objects.filter(documento_tipo__documento_clase_id__in=[100, 101, 102]).annotate(
+            total_detalles=Coalesce(Subquery(detalles_subquery, output_field=DecimalField()), Value(0, output_field=DecimalField()))
+        )
+        for documento in documentos:          
+            afectado = documento.total_detalles if documento.total_detalles is not None else 0
+            documento.cobrar_afectado = afectado
+            documento.cobrar_pendiente = F('cobrar') - afectado
+            documento.save(update_fields=['cobrar_afectado', 'cobrar_pendiente'])
+        '''for documento in documentos:
+            #print(f"ID: {documento.id}, Total Detalles: {documento.total_detalles}")'''
+        return Response({'mensaje':'Proceso finalizado con existo'}, status=status.HTTP_200_OK)
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):

@@ -5,6 +5,7 @@ from general.models.item import Item
 class DocumentoDetalle(models.Model):    
     cantidad = models.FloatField(default=0)
     precio = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    pago = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     subtotal = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     descuento = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total_bruto = models.DecimalField(max_digits=15, decimal_places=2, default=0)
