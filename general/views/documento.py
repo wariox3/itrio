@@ -7,7 +7,7 @@ from general.models.documento_impuesto import DocumentoImpuesto
 from general.models.documento_tipo import DocumentoTipo
 from general.models.empresa import Empresa
 from general.models.configuracion import Configuracion
-from general.serializers.documento import DocumentoSerializador, DocumentoExcelSerializador, DocumentoRetrieveSerializador
+from general.serializers.documento import DocumentoSerializador, DocumentoExcelSerializador, DocumentoRetrieveSerializador, DocumentoInformeSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from general.serializers.documento import DocumentoReferenciaSerializador
@@ -167,6 +167,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documentos = serializador.data
             return Response(documentos, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'informe',)
+    def lista(self, request):
+        raw = request.data
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 50)    
+        limiteTotal = raw.get('limite_total', 5000)                
+        ordenamientos = raw.get('ordenamientos', [])            
+        ordenamientos.insert(0, 'estado_aprobado')
+        ordenamientos.append('-numero')
+        filtros = raw.get('filtros', [])                    
+        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
+        serializador = DocumentoInformeSerializador(respuesta['documentos'], many=True)
+        documentos = serializador.data
+        return Response(documentos, status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
     def eliminar(self, request):
