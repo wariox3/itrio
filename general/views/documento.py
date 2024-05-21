@@ -183,7 +183,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documentos = serializador.data
         return Response(documentos, status=status.HTTP_200_OK)
 
-
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
     def eliminar(self, request):
         try:
