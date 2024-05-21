@@ -169,7 +169,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'informe',)
-    def lista(self, request):
+    def informe(self, request):
         raw = request.data
         desplazar = raw.get('desplazar', 0)
         limite = raw.get('limite', 50)    
