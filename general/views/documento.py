@@ -242,30 +242,30 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         ordenamientos = raw.get('ordenamientos', [])            
         ordenamientos.insert(0, 'estado_aprobado')
         ordenamientos.append('-numero')        
-        documento_clase = raw.get('documento_clase_id')
-        if documento_clase:
-            filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase})
-            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-            serializador = DocumentoExcelSerializador(respuesta['documentos'], many=True)
-            documentos = serializador.data
-            field_names = list(documentos[0].keys()) if documentos else []
-            wb = Workbook()
-            ws = wb.active
-            ws.append(field_names)
-            for row in documentos:
-                row_data = [row[field] for field in field_names]
-                ws.append(row_data)
+        #documento_clase = raw.get('documento_clase_id')
+        #if documento_clase:
+        #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase})
+        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
+        serializador = DocumentoExcelSerializador(respuesta['documentos'], many=True)
+        documentos = serializador.data
+        field_names = list(documentos[0].keys()) if documentos else []
+        wb = Workbook()
+        ws = wb.active
+        ws.append(field_names)
+        for row in documentos:
+            row_data = [row[field] for field in field_names]
+            ws.append(row_data)
 
-            estilos_excel = WorkbookEstilos(wb)
-            estilos_excel.aplicar_estilos()
+        estilos_excel = WorkbookEstilos(wb)
+        estilos_excel.aplicar_estilos()
 
-            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
-            wb.save(response)
-            return response
-        else: 
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
+        wb.save(response)
+        return response
+        #else: 
+        #    return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
