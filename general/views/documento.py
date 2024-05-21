@@ -152,21 +152,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'lista',)
     def lista(self, request):
         raw = request.data
-        documento_clase_id = raw.get('documento_clase_id')
-        if documento_clase_id:
-            desplazar = raw.get('desplazar', 0)
-            limite = raw.get('limite', 50)    
-            limiteTotal = raw.get('limite_total', 5000)                
-            ordenamientos = raw.get('ordenamientos', [])            
-            ordenamientos.insert(0, 'estado_aprobado')
-            ordenamientos.append('-numero')
-            filtros = raw.get('filtros', [])            
-            filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase_id})        
-            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-            serializador = DocumentoSerializador(respuesta['documentos'], many=True)
-            documentos = serializador.data
-            return Response(documentos, status=status.HTTP_200_OK)
-        return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        #documento_clase_id = raw.get('documento_clase_id')
+        #if documento_clase_id:
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 50)    
+        limiteTotal = raw.get('limite_total', 5000)                
+        ordenamientos = raw.get('ordenamientos', [])            
+        ordenamientos.insert(0, 'estado_aprobado')
+        ordenamientos.append('-numero')
+        filtros = raw.get('filtros', [])            
+        #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase_id})        
+        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
+        serializador = DocumentoSerializador(respuesta['documentos'], many=True)
+        documentos = serializador.data
+        return Response(documentos, status=status.HTTP_200_OK)
+        #return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'informe',)
     def informe(self, request):
