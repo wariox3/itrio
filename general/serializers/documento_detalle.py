@@ -40,12 +40,8 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         }  
 
 class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
-    documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
-    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), default=None, allow_null=True)
-    documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
     class Meta:
-        model = DocumentoDetalle
-        fields = ['documento', 'documento_afectado', 'item', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto']
+        model = DocumentoDetalle        
 
     def to_representation(self, instance):
         item = instance.item
@@ -54,16 +50,21 @@ class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer
             item_nombre = item.nombre
         documento = instance.documento
         documento_tipo_nombre = ""
+        documento_contacto_nombre = ""
         if documento is not None:
             documento_tipo = documento.documento_tipo
             if documento_tipo is not None:
                 documento_tipo_nombre = documento_tipo.nombre
+            contacto = documento.contacto
+            if contacto is not None:
+                documento_contacto_nombre = contacto.nombre_corto
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,
             'documento_tipo_nombre': documento_tipo_nombre,        
             'documento_fecha': documento.fecha,
             'documento_numero': documento.numero,    
+            'documento_contacto_nombre': documento_contacto_nombre,
             'item_id': instance.item_id,
             'item_nombre': item_nombre,
             'cantidad': instance.cantidad,
@@ -80,12 +81,8 @@ class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer
         }           
     
 class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
-    documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
-    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), default=None, allow_null=True)
-    documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
     class Meta:
-        model = DocumentoDetalle
-        fields = ['documento', 'documento_afectado', 'item', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto']
+        model = DocumentoDetalle        
 
     def to_representation(self, instance):
         item = instance.item
@@ -94,10 +91,14 @@ class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
             item_nombre = item.nombre
         documento = instance.documento
         documento_tipo_nombre = ""
+        documento_contacto_nombre = ""
         if documento is not None:
             documento_tipo = documento.documento_tipo
             if documento_tipo is not None:
                 documento_tipo_nombre = documento_tipo.nombre
+            contacto = documento.contacto
+            if contacto is not None:
+                documento_contacto_nombre = contacto.nombre_corto                
         documento_afectado_numero = ""
         documento_afectado = instance.documento_afectado
         if documento_afectado is not None:
@@ -107,7 +108,8 @@ class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
             'documento_id': instance.documento_id,
             'documento_tipo_nombre': documento_tipo_nombre,        
             'documento_fecha': documento.fecha,
-            'documento_numero': documento.numero,    
+            'documento_numero': documento.numero, 
+            'documento_contacto_nombre': documento_contacto_nombre,  
             'item_id': instance.item_id,
             'item_nombre': item_nombre,
             'cantidad': instance.cantidad,
