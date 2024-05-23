@@ -17,9 +17,14 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         if item is not None:
             item_nombre = item.nombre
         documento_afectado_numero = ""
-        documento_afectado = instance.documento_afectado
+        documento_afectado_contacto_nombre_corto = ""
+        documento_afectado = instance.documento_afectado    
         if documento_afectado is not None:
-            documento_afectado_numero = documento_afectado.numero            
+            documento_afectado_numero = documento_afectado.numero    
+            contacto = documento_afectado.contacto
+            if contacto is not None:
+                documento_afectado_contacto_nombre_corto = contacto.nombre_corto
+        
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,        
@@ -36,7 +41,8 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'impuesto' : instance.impuesto,
             'total' : instance.total,
             'documento_afectado_id': instance.documento_afectado_id,
-            'documento_afectado_numero': documento_afectado_numero
+            'documento_afectado_numero': documento_afectado_numero,
+            'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto
         }  
 
 class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
