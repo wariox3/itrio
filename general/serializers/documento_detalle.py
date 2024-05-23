@@ -9,7 +9,7 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
     class Meta:
         model = DocumentoDetalle
-        fields = ['documento', 'documento_afectado', 'item', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto', 'documento_afectado_id']
+        fields = ['documento', 'documento_afectado', 'item', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto']
 
     def to_representation(self, instance):
         item = instance.item
