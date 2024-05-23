@@ -16,10 +16,13 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         item_nombre = ""
         if item is not None:
             item_nombre = item.nombre
+        documento_afectado_numero = ""
+        documento_afectado = instance.documento_afectado
+        if documento_afectado is not None:
+            documento_afectado_numero = documento_afectado.numero            
         return {
             'id': instance.id,            
-            'documento_id': instance.documento_id,
-            'documento_afectado_id': instance.documento_afectado_id,
+            'documento_id': instance.documento_id,        
             'item': instance.item_id,
             'item_nombre': item_nombre,
             'cantidad': instance.cantidad,
@@ -31,7 +34,9 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'total_bruto' : instance.total_bruto,
             'base_impuesto' : instance.base_impuesto,
             'impuesto' : instance.impuesto,
-            'total' : instance.total
+            'total' : instance.total,
+            'documento_afectado_id': instance.documento_afectado_id,
+            'documento_afectado_numero': documento_afectado_numero
         }  
 
 class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
@@ -93,6 +98,10 @@ class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
             documento_tipo = documento.documento_tipo
             if documento_tipo is not None:
                 documento_tipo_nombre = documento_tipo.nombre
+        documento_afectado_numero = ""
+        documento_afectado = instance.documento_afectado
+        if documento_afectado is not None:
+            documento_afectado_numero = documento_afectado.numero
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,
@@ -111,5 +120,6 @@ class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
             'base_impuesto' : instance.base_impuesto,
             'impuesto' : instance.impuesto,
             'total' : instance.total,
-            'documento_afectado_id': instance.documento_afectado_id
+            'documento_afectado_id': instance.documento_afectado_id,
+            'documento_afectado_numero': documento_afectado_numero
         }      

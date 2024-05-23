@@ -25,7 +25,9 @@ import base64
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
+from decimal import Decimal
 import json
+
 
 
 class DocumentoViewSet(viewsets.ModelViewSet):
@@ -205,27 +207,30 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def aprobar(self, request):
         try:
             raw = request.data
-            codigoDocumento = raw.get('id')
-            if codigoDocumento:
-                documento = Documento.objects.get(pk=codigoDocumento)
-                detalles_documento = DocumentoDetalle.objects.filter(documento=documento)
-                if detalles_documento:
-                    if documento.estado_aprobado == False:                
-                        documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
-                        if documento.numero is None:
-                            documento.numero = documentoTipo.consecutivo
-                            documentoTipo.consecutivo += 1
-                            documentoTipo.save()                
-                        documento.estado_aprobado = True
-                        if documento.documento_tipo.documento_clase_id in (100,101,102):
-                            documento.cobrar = documento.total
-                            documento.cobrar_pendiente = documento.total
-                        documento.save()
-                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)                    
-                    else:
-                        return Response({'mensaje':'El documento ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                  
+            id = raw.get('id')
+            if id:
+                documento = Documento.objects.get(pk=id)
+                respuesta = self.validacion_aprobar(id)
+                if respuesta['error'] == False:    
+                    documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)        
+                    documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
+                    if documento.numero is None:
+                        documento.numero = documentoTipo.consecutivo
+                        documentoTipo.consecutivo += 1
+                        documentoTipo.save()                
+                    documento.estado_aprobado = True
+                    if documento.documento_tipo.documento_clase_id in (100,101,102):
+                        documento.pendiente = documento.total    
+                    if documento.documento_tipo.documento_clase_id == 200:
+                        for documento_detalle in documento_detalles:
+                            documento_afectado = documento_detalle.documento_afectado                        
+                            documento_afectado.afectado += documento_detalle.pago
+                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                            documento_afectado.save(update_fields=['afectado', 'pendiente'])
+                    documento.save()
+                    return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'mensaje':'El documento no tiene detalles', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Documento.DoesNotExist:
@@ -603,21 +608,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["post"], url_path=r'proceso_corregir_cobrar')
-    def referencia(self, request):
+    @action(detail=False, methods=["post"], url_path=r'proceso_corregir_pendiente')
+    def proceso_corregir_pendiente(self, request):
         #update gen_documento as d set cobrar = d.total from gen_documento_tipo as dt where d.documento_tipo_id = dt.id and dt.documento_clase_id in (100, 101, 102);
-        detalles_subquery = DocumentoDetalle.objects.filter(documento_afectado_id=OuterRef('id')).values('documento_id')
-        detalles_subquery = detalles_subquery.annotate(total_sum=Sum('total')).values('total_sum')
-        documentos = Documento.objects.filter(documento_tipo__documento_clase_id__in=[100, 101, 102]).annotate(
-            total_detalles=Coalesce(Subquery(detalles_subquery, output_field=DecimalField()), Value(0, output_field=DecimalField()))
-        )
-        for documento in documentos:          
-            afectado = documento.total_detalles if documento.total_detalles is not None else 0
-            documento.cobrar_afectado = afectado
-            documento.cobrar_pendiente = F('cobrar') - afectado
-            documento.save(update_fields=['cobrar_afectado', 'cobrar_pendiente'])
-        '''for documento in documentos:
-            #print(f"ID: {documento.id}, Total Detalles: {documento.total_detalles}")'''
+        resultados = Documento.objects.annotate(total_pago=Sum('detalles__pago'))
+        for documento in resultados:
+            total_pago = documento.total_pago if documento.total_pago is not None else Decimal('0.00')
+            documento.afectado = total_pago 
+            documento.pendiente = documento.total - documento.afectado           
+            documento.save()
+            #print(f"Documento: {documento.id}, Total Pago: {documento.total_pago}")
         return Response({'mensaje':'Proceso finalizado con existo'}, status=status.HTTP_200_OK)
 
     @staticmethod
@@ -717,5 +717,33 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documento['documento_impuestos'] = list(documentoImpuestos)
 
         return documento
+    
+    @staticmethod
+    def validacion_aprobar(documento_id):
+        try:
+            documento = Documento.objects.get(id=documento_id)
+            documento_detalle = DocumentoDetalle.objects.filter(documento=documento)
+            if documento_detalle:
+                if documento.estado_aprobado == False:      
+                    if documento.documento_tipo.documento_clase_id == 200:
+                        resultado = (
+                            DocumentoDetalle.objects
+                            .filter(documento_id=documento_id)
+                            .values('documento_afectado_id')
+                            .annotate(
+                                total_pago=Sum('pago'),
+                                pendiente=F('documento_afectado__pendiente')))                        
+                        for entrada in resultado:
+                            if entrada['pendiente'] < entrada['total_pago']:
+                                return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
+                        #result_list = list(resultado)
+                        #print(result_list)
+                    return {'error':False}                    
+                else:
+                    return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}
+            else:
+                return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1}            
+        except Documento.DoesNotExist:
+            return {'error':True, 'mensaje':'El documento no existe'}
     
 
