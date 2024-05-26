@@ -489,7 +489,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=["post"], url_path=r'electronico_respuesta_emitir', permission_classes=[permissions.AllowAny])
-    def electronico_respuesta(self, request):
+    def electronico_respuesta_emitir(self, request):
         raw = request.data
         documento_id = raw.get('documento_id')
         qr = raw.get('qr')
@@ -505,7 +505,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documento.fecha_validacion = fecha_validacion_obj
                     documento.estado_electronico = True
                     documento.save()                
-                    #self.notificar(documento_id)
+                    self.notificar(documento_id)
                     return Response({'respuesta':True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'No se puede entregar una respuesta porque el documento no se ha enviado'}, status=status.HTTP_400_BAD_REQUEST)
