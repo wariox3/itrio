@@ -98,13 +98,15 @@ class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
         documento = instance.documento
         documento_tipo_nombre = ""
         documento_contacto_nombre = ""
+        documento_contacto_numero_identificacion = ""
         if documento is not None:
             documento_tipo = documento.documento_tipo
             if documento_tipo is not None:
                 documento_tipo_nombre = documento_tipo.nombre
             contacto = documento.contacto
             if contacto is not None:
-                documento_contacto_nombre = contacto.nombre_corto                
+                documento_contacto_nombre = contacto.nombre_corto 
+                documento_contacto_numero_identificacion = contacto.numero_identificacion 
         documento_afectado_numero = ""
         documento_afectado = instance.documento_afectado
         if documento_afectado is not None:
@@ -115,6 +117,7 @@ class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
             'documento_tipo_nombre': documento_tipo_nombre,        
             'documento_fecha': documento.fecha,
             'documento_numero': documento.numero, 
+            'documento_contacto_numero_identificacion': documento_contacto_numero_identificacion,  
             'documento_contacto_nombre': documento_contacto_nombre,  
             'item_id': instance.item_id,
             'item_nombre': item_nombre,
