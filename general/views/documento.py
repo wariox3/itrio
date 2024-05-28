@@ -346,7 +346,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         if documento.documento_tipo.documento_clase_id == 101:
                                             prefijo = "NC"
                                         if documento.documento_tipo.documento_clase_id == 102:
-                                            prefijo = "ND"                                  
+                                            prefijo = "ND"                                                                              
                                         datos_factura = {
                                             "cuentaId": empresa.rededoc_id,
                                             "documentoClaseId" : documento.documento_tipo_id,
@@ -410,7 +410,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         arr_item = []
                                         cantidad_items = 0
                                         impuestos_agrupados = {}
-
                                         documentoDetalles = DocumentoDetalle.objects.filter(documento=codigoDocumento)
                                         for documentoDetalle in documentoDetalles:
                                             arr_impuestos = []
@@ -450,7 +449,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "subtotal" : str(documentoDetalle.subtotal),
                                                 "impuestos" : arr_impuestos
                                             })
-
+                                        datos_factura['documento']['cantidad_detalles'] = cantidad_items
                                         arr_impuestos = []
                                         for impuesto_id, total in impuestos_agrupados.items():
                                             arr_impuestos.append({
