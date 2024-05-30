@@ -1,0 +1,52 @@
+[
+  {
+    "model": "general.documentoTipo",
+    "pk": 1,
+    "fields": {"nombre": "FACTURA ELECTRÓNICA DE VENTA", "documento_clase": 100}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 2,
+    "fields": {"nombre": "NOTA CRÉDITO DE VENTA", "documento_clase": 101}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 3,
+    "fields": {"nombre": "NOTA DÉBITO DE VENTA", "documento_clase": 102}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 4,
+    "fields": {"nombre": "PAGO", "documento_clase": 200}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 5,
+    "fields": {"nombre": "COMPRA", "documento_clase": 300}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 6,
+    "fields": {"nombre": "NOTA CREDITO COMPRA", "documento_clase": 301}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 7,
+    "fields": {"nombre": "NOTA DEBITO COMPRA", "documento_clase": 302}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 8,
+    "fields": {"nombre": "EGRESO", "documento_clase": 400}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 9,
+    "fields": {"nombre": "ENTRADA", "documento_clase": 500}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 10,
+    "fields": {"nombre": "SALIDA", "documento_clase": 501}
+  }  
+]

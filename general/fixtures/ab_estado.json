@@ -2,166 +2,166 @@
   {
     "model": "general.estado",
     "pk": 1,
-    "fields": {"nombre": "Antioquia", "pais_id": "CO", "codigo":"05"}
+    "fields": {"nombre": "Antioquia", "pais": "CO", "codigo":"05"}
   },  
   {
     "model": "general.estado",
     "pk": 2,
-    "fields": {"nombre": "Atlántico", "pais_id": "CO", "codigo":"08"}
+    "fields": {"nombre": "Atlántico", "pais": "CO", "codigo":"08"}
   }, 
   {
     "model": "general.estado",
     "pk": 3,
-    "fields": {"nombre": "Bogotá", "pais_id": "CO", "codigo":"11"}
+    "fields": {"nombre": "Bogotá", "pais": "CO", "codigo":"11"}
   }, 
   {
     "model": "general.estado",
     "pk": 4,
-    "fields": {"nombre": "Bolívar", "pais_id": "CO", "codigo":"13"}
+    "fields": {"nombre": "Bolívar", "pais": "CO", "codigo":"13"}
   }, 
   {
     "model": "general.estado",
     "pk": 5,
-    "fields": {"nombre": "Boyacá", "pais_id": "CO", "codigo":"15"}
+    "fields": {"nombre": "Boyacá", "pais": "CO", "codigo":"15"}
   }, 
   {
     "model": "general.estado",
     "pk": 6,
-    "fields": {"nombre": "Caldas", "pais_id": "CO", "codigo":"17"}
+    "fields": {"nombre": "Caldas", "pais": "CO", "codigo":"17"}
   }, 
   {
     "model": "general.estado",
     "pk": 7,
-    "fields": {"nombre": "Caquetá", "pais_id": "CO", "codigo":"18"}
+    "fields": {"nombre": "Caquetá", "pais": "CO", "codigo":"18"}
   }, 
   {
     "model": "general.estado",
     "pk": 8,
-    "fields": {"nombre": "Cauca", "pais_id": "CO", "codigo":"19"}
+    "fields": {"nombre": "Cauca", "pais": "CO", "codigo":"19"}
   }, 
   {
     "model": "general.estado",
     "pk": 9,
-    "fields": {"nombre": "Cesar", "pais_id": "CO", "codigo":"20"}
+    "fields": {"nombre": "Cesar", "pais": "CO", "codigo":"20"}
   }, 
   {
     "model": "general.estado",
     "pk": 10,
-    "fields": {"nombre": "Córdoba", "pais_id": "CO", "codigo":"23"}
+    "fields": {"nombre": "Córdoba", "pais": "CO", "codigo":"23"}
   }, 
   {
     "model": "general.estado",
     "pk": 11,
-    "fields": {"nombre": "Cundinamarca", "pais_id": "CO", "codigo":"25"}
+    "fields": {"nombre": "Cundinamarca", "pais": "CO", "codigo":"25"}
   }, 
   {
     "model": "general.estado",
     "pk": 12,
-    "fields": {"nombre": "Chocó", "pais_id": "CO", "codigo":"27"}
+    "fields": {"nombre": "Chocó", "pais": "CO", "codigo":"27"}
   }, 
   {
     "model": "general.estado",
     "pk": 13,
-    "fields": {"nombre": "Huila", "pais_id": "CO", "codigo":"41"}
+    "fields": {"nombre": "Huila", "pais": "CO", "codigo":"41"}
   }, 
   {
     "model": "general.estado",
     "pk": 14,
-    "fields": {"nombre": "La Guajira", "pais_id": "CO", "codigo":"44"}
+    "fields": {"nombre": "La Guajira", "pais": "CO", "codigo":"44"}
   }, 
   {
     "model": "general.estado",
     "pk": 15,
-    "fields": {"nombre": "Magdalena", "pais_id": "CO", "codigo":"47"}
+    "fields": {"nombre": "Magdalena", "pais": "CO", "codigo":"47"}
   }, 
   {
     "model": "general.estado",
     "pk": 16,
-    "fields": {"nombre": "Meta", "pais_id": "CO", "codigo":"50"}
+    "fields": {"nombre": "Meta", "pais": "CO", "codigo":"50"}
   }, 
   {
     "model": "general.estado",
     "pk": 17,
-    "fields": {"nombre": "Nariño", "pais_id": "CO", "codigo":"52"}
+    "fields": {"nombre": "Nariño", "pais": "CO", "codigo":"52"}
   }, 
   {
     "model": "general.estado",
     "pk": 18,
-    "fields": {"nombre": "Norte de Santander", "pais_id": "CO", "codigo":"54"}
+    "fields": {"nombre": "Norte de Santander", "pais": "CO", "codigo":"54"}
   }, 
   {
     "model": "general.estado",
     "pk": 19,
-    "fields": {"nombre": "Quindío", "pais_id": "CO", "codigo":"63"}
+    "fields": {"nombre": "Quindío", "pais": "CO", "codigo":"63"}
   }, 
   {
     "model": "general.estado",
     "pk": 20,
-    "fields": {"nombre": "Risaralda", "pais_id": "CO", "codigo":"66"}
+    "fields": {"nombre": "Risaralda", "pais": "CO", "codigo":"66"}
   }, 
   {
     "model": "general.estado",
     "pk": 21,
-    "fields": {"nombre": "Santander", "pais_id": "CO", "codigo":"68"}
+    "fields": {"nombre": "Santander", "pais": "CO", "codigo":"68"}
   }, 
   {
     "model": "general.estado",
     "pk": 22,
-    "fields": {"nombre": "Sucre", "pais_id": "CO", "codigo":"70"}
+    "fields": {"nombre": "Sucre", "pais": "CO", "codigo":"70"}
   }, 
   {
     "model": "general.estado",
     "pk": 23,
-    "fields": {"nombre": "Tolima", "pais_id": "CO", "codigo":"73"}
+    "fields": {"nombre": "Tolima", "pais": "CO", "codigo":"73"}
   }, 
   {
     "model": "general.estado",
     "pk": 24,
-    "fields": {"nombre": "Valle del Cauca", "pais_id": "CO", "codigo":"76"}
+    "fields": {"nombre": "Valle del Cauca", "pais": "CO", "codigo":"76"}
   }, 
   {
     "model": "general.estado",
     "pk": 25,
-    "fields": {"nombre": "Arauca", "pais_id": "CO", "codigo":"81"}
+    "fields": {"nombre": "Arauca", "pais": "CO", "codigo":"81"}
   }, 
   {
     "model": "general.estado",
     "pk": 26,
-    "fields": {"nombre": "Casanare", "pais_id": "CO", "codigo":"85"}
+    "fields": {"nombre": "Casanare", "pais": "CO", "codigo":"85"}
   }, 
   {
     "model": "general.estado",
     "pk": 27,
-    "fields": {"nombre": "Putumayo", "pais_id": "CO", "codigo":"86"}
+    "fields": {"nombre": "Putumayo", "pais": "CO", "codigo":"86"}
   }, 
   {
     "model": "general.estado",
     "pk": 28,
-    "fields": {"nombre": "San Andrés y Providencia", "pais_id": "CO", "codigo":"88"}
+    "fields": {"nombre": "San Andrés y Providencia", "pais": "CO", "codigo":"88"}
   }, 
   {
     "model": "general.estado",
     "pk": 29,
-    "fields": {"nombre": "Amazonas", "pais_id": "CO", "codigo":"91"}
+    "fields": {"nombre": "Amazonas", "pais": "CO", "codigo":"91"}
   }, 
   {
     "model": "general.estado",
     "pk": 30,
-    "fields": {"nombre": "Guainía", "pais_id": "CO", "codigo":"94"}
+    "fields": {"nombre": "Guainía", "pais": "CO", "codigo":"94"}
   }, 
   {
     "model": "general.estado",
     "pk": 31,
-    "fields": {"nombre": "Guaviare", "pais_id": "CO", "codigo":"95"}
+    "fields": {"nombre": "Guaviare", "pais": "CO", "codigo":"95"}
   }, 
   {
     "model": "general.estado",
     "pk": 32,
-    "fields": {"nombre": "Vaupés", "pais_id": "CO", "codigo":"97"}
+    "fields": {"nombre": "Vaupés", "pais": "CO", "codigo":"97"}
   }, 
   {
     "model": "general.estado",
     "pk": 33,
-    "fields": {"nombre": "Vichada", "pais_id": "CO", "codigo":"99"}
+    "fields": {"nombre": "Vichada", "pais": "CO", "codigo":"99"}
   }
 ]

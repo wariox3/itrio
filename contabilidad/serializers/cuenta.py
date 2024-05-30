@@ -5,5 +5,5 @@ class CuentaSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Cuenta
-        fields = ['id']
+        fields = ['id', 'cuenta_clase_id']
         

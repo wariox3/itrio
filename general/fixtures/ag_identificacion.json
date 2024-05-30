@@ -1,0 +1,47 @@
+[
+  {
+    "model": "general.identificacion",
+    "pk": 1,
+    "fields": {"nombre": "Registro civil de nacimiento", "pais": "CO", "codigo":"11", "orden":3, "abreviatura":"RC"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 2,
+    "fields": {"nombre": "Tarjeta de identidad", "pais": "CO", "codigo":"12", "orden":4, "abreviatura":"TI"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 3,
+    "fields": {"nombre": "Cédula de ciudadanía", "pais": "CO", "codigo":"13", "orden":2, "abreviatura":"CC"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 4,
+    "fields": {"nombre": "Tarjeta de extranjería", "pais": "CO", "codigo":"21", "orden":5, "abreviatura":"TE"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 5,
+    "fields": {"nombre": "Cédula de extranjería", "pais": "CO", "codigo":"22", "orden":6, "abreviatura":"CE"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 6,
+    "fields": {"nombre": "Número de identificación tributaria ", "codigo":"31", "pais": "CO", "orden":1, "abreviatura":"NIT"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 7,
+    "fields": {"nombre": "Pasaporte", "pais": "CO", "codigo":"41", "orden":7, "abreviatura":"PA"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 8,
+    "fields": {"nombre": "Tipo de documento extranjero", "pais": "CO", "codigo":"42", "orden":8, "abreviatura":"TDE"}
+  },
+  {
+    "model": "general.identificacion",
+    "pk": 9,
+    "fields": {"nombre": "Sin identificación del exterior", "pais": "CO", "codigo":"43", "orden":9, "abreviatura":"SI"}
+  }
+]

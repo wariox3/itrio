@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.apps import apps
 from django.db import connection
+from django.db import models
 import json
 import os
 
@@ -26,12 +27,11 @@ class Command(BaseCommand):
 
     def process_json_file(self, schema, json_file):
         if schema != 'public':
-            #self.stdout.write(self.style.SUCCESS(json_file))
             try:
                 with open(json_file, 'r') as file:
                     actualizados = 0
                     creados = 0
-                    model_name = ""
+                    nombre_archivo = os.path.basename(json_file)
                     data = json.load(file)                    
                     for item in data:
                         model_name = item.get('model')                    
@@ -39,17 +39,26 @@ class Command(BaseCommand):
                         fields = item.get('fields', {})                    
                         app_label, model_name = model_name.split('.')
                         Model = apps.get_model(app_label, model_name)
-                        
                         model_fields = [field.name for field in Model._meta.get_fields()]
-                        filtered_fields = {key: value for key, value in fields.items() if key in model_fields}
-                        #instance, created = Model.objects.update(id=pk, **filtered_fields)
+                        filtered_fields = {}
+                        for key, value in fields.items():
+                            if key in model_fields:
+                                field = Model._meta.get_field(key)
+                                if isinstance(field, models.ForeignKey):
+                                    related_model = field.related_model
+                                    try:
+                                        related_instance = related_model.objects.get(pk=value)
+                                        filtered_fields[key] = related_instance
+                                    except related_model.DoesNotExist:
+                                        self.stdout.write(self.style.ERROR(f'El objeto relacionado {related_model} con pk={value} no existe.'))
+                                        continue
+                                else:
+                                    filtered_fields[key] = value
                         instance, created = Model.objects.update_or_create(pk=pk, defaults=filtered_fields)                    
                         if created:
-                            creados = creados + 1
-                            #self.stdout.write(self.style.SUCCESS(f'Registro creado: {instance}'))
+                            creados += 1
                         else:
-                            actualizados = actualizados + 1
-                            #self.stdout.write(self.style.WARNING(f'Registro actualizado: {instance}'))
-                    self.stdout.write(self.style.SUCCESS(f'Registros creados {creados} actualizados {actualizados} modelo {model_name}'))
+                            actualizados += 1
+                    self.stdout.write(self.style.SUCCESS(f'Registros creados {creados} actualizados {actualizados} modelo {nombre_archivo}'))
             except FileNotFoundError:
                 self.stdout.write(self.style.ERROR('El archivo JSON no existe'))
