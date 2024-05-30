@@ -1,15 +1,17 @@
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento import Documento
 from general.models.item import Item
+from contabilidad.models.cuenta import Cuenta
 from rest_framework import serializers
 
 class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), default=None, allow_null=True)
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
+    cuenta = serializers.PrimaryKeyRelatedField(queryset=Cuenta.objects.all(), default=None, allow_null=True)
     class Meta:
         model = DocumentoDetalle
-        fields = ['documento', 'documento_afectado', 'item', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto']
+        fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto', 'naturaleza']
 
     def to_representation(self, instance):
         item = instance.item
@@ -24,12 +26,12 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             contacto = documento_afectado.contacto
             if contacto is not None:
                 documento_afectado_contacto_nombre_corto = contacto.nombre_corto
-        
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,        
             'item': instance.item_id,
             'item_nombre': item_nombre,
+            'cuenta': instance.cuenta_id,            
             'cantidad': instance.cantidad,
             'precio': instance.precio,
             'pago': instance.pago,
@@ -42,7 +44,8 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'total' : instance.total,
             'documento_afectado_id': instance.documento_afectado_id,
             'documento_afectado_numero': documento_afectado_numero,
-            'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto
+            'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto,
+            'naturaleza':instance.naturaleza
         }  
 
 class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
@@ -73,6 +76,7 @@ class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer
             'documento_contacto_nombre': documento_contacto_nombre,
             'item_id': instance.item_id,
             'item_nombre': item_nombre,
+            'cuenta_id': instance.cuenta_id,
             'cantidad': instance.cantidad,
             'precio': instance.precio,
             'pago': instance.pago,
@@ -121,6 +125,7 @@ class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
             'documento_contacto_nombre': documento_contacto_nombre,  
             'item_id': instance.item_id,
             'item_nombre': item_nombre,
+            'cuenta_id': instance.cuenta_id,
             'cantidad': instance.cantidad,
             'precio': instance.precio,
             'pago': instance.pago,

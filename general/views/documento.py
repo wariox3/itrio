@@ -16,8 +16,7 @@ from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.prueba import FormatoPrueba
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from django.db.models import Sum, OuterRef, Subquery, Value, DecimalField, F
-from django.db.models.functions import Coalesce
+from django.db.models import Sum, F
 from openpyxl import Workbook
 from decouple import config
 from datetime import datetime
@@ -27,8 +26,6 @@ from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
 from decimal import Decimal
 import json
-
-
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
