@@ -195,7 +195,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documentoEliminar = Documento.objects.get(pk=documento)  
                     if documentoEliminar:
                         if documentoEliminar.estado_aprobado == False:
-                            documentoEliminar.delete()   
+                            if not documentoEliminar.detalles.exists():
+                                if not documentoEliminar.detalles_afectado.exists():
+                                    documentoEliminar.delete()   
+                                else:
+                                    return Response({'mensaje':'El documento con id ' + str(documentoEliminar.id) + ' esta afectado con algunos detalles', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                        
+                            else:                            
+                                return Response({'mensaje':'El documento con id ' + str(documentoEliminar.id) + ' no se puede eliminar por que tiene detalles', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                    
                         else:
                             return Response({'mensaje':'El documento con id ' + str(documentoEliminar.id) + ' no se puede eliminar por que se encuentra aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'mensaje':'Registros eliminados'}, status=status.HTTP_200_OK)
