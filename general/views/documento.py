@@ -542,7 +542,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento.estado_electronico_notificado == True:                    
                     if documento.electronico_id:
                         wolframio = Wolframio()
-                        respuesta = wolframio.renotificar(documento.electronico_id)
+                        respuesta = wolframio.renotificar(documento.electronico_id, documento.contacto.correo)
                         if respuesta['error'] == False: 
                             return Response({'mensaje': 'Documento re-notificado con éxito'}, status=status.HTTP_200_OK)           
                         else:
