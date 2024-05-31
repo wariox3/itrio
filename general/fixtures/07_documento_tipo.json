@@ -2,7 +2,7 @@
   {
     "model": "general.documentoTipo",
     "pk": 1,
-    "fields": {"nombre": "FACTURA ELECTRÓNICA DE VENTA", "documento_clase": 100}
+    "fields": {"nombre": "FACTURA ELECTRÓNICA DE VENTA", "documento_clase": 100, "cuenta_cobrar":"20"}
   },
   {
     "model": "general.documentoTipo",

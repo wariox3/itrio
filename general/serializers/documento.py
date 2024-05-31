@@ -119,7 +119,8 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'plazo_pago_nombre': plazo_pago_nombre,
             'documento_referencia_id': instance.documento_referencia_id,
             'documento_referencia_numero': documento_referencia_numero,
-            'cue' : instance.cue
+            'cue' : instance.cue,
+            'electronico_id': instance.electronico_id
         }
 
 class DocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
@@ -223,4 +224,50 @@ class DocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):
             'documento_referencia' :  instance.documento_referencia_id,
             'plazo_pago': instance.plazo_pago_id
         }
+    
+class DocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):    
+    class Meta:
+        model = Documento        
+
+    def to_representation(self, instance):        
+        contacto = instance.contacto
+        contacto_nombre_corto = None
+        if contacto:
+            contacto_nombre_corto = contacto.nombre_corto
+        documento_tipo_cuenta_cobrar_id = ""
+        documento_tipo = instance.documento_tipo
+        if documento_tipo:
+            documento_tipo_cuenta_cobrar_id = documento_tipo.cuenta_cobrar_id
+        return {
+            'id': instance.id,            
+            'numero' : instance.numero,
+            'fecha' : instance.fecha,
+            'fecha_vence' : instance.fecha_vence,
+            'fecha_contable' : instance.fecha_contable,
+            'descuento': instance.descuento,
+            'base_impuesto': instance.base_impuesto,           
+            'subtotal': instance.subtotal,            
+            'impuesto': instance.impuesto,
+            'total' :  instance.total, 
+            'pendiente':instance.pendiente,       
+            'estado_aprobado' : instance.estado_aprobado,
+            'contacto' : instance.contacto_id,            
+            'documento_tipo': instance.documento_tipo_id,
+            'documento_tipo_cuenta_cobrar_id': documento_tipo_cuenta_cobrar_id,
+            'metodo_pago': instance.metodo_pago_id,
+            'contacto_id': instance.contacto_id,
+            'contacto_nombre_corto': contacto_nombre_corto,
+            'estado_anulado' : instance.estado_anulado,
+            'comentario' : instance.comentario,
+            'estado_electronico' : instance.estado_electronico,
+            'estado_electronico_enviado' : instance.estado_electronico_enviado,
+            'estado_electronico_notificado' : instance.estado_electronico_notificado,
+            'soporte' : instance.soporte,
+            'orden_compra' : instance.orden_compra,
+            'cue' : instance.cue,
+            'empresa': instance.empresa_id,
+            'resolucion': instance.resolucion_id,
+            'documento_referencia' :  instance.documento_referencia_id,
+            'plazo_pago': instance.plazo_pago_id
+        }    
          
