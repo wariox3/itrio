@@ -32,6 +32,19 @@ class Zinc():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
 
+    def log_envio(self, operador, documento_id):
+        url = "/api/externo/log_envio"
+        datos = {
+            "operador" : operador,
+            "codigoDocumento" : documento_id
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            return {'error': False, 'log': datos['log']}
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
+
     def consumirPost(self, data, url):
         url = "http://zinc.semantica.com.co/index.php" + url
         json_data = json.dumps(data)

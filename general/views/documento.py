@@ -564,18 +564,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documento.electronico_id:
                         empresa = Empresa.objects.get(pk=1)
                         if empresa.rededoc_id:                       
-                            correos = []
-                            eventos = []
                             zinc = Zinc()                        
-                            respuesta = zinc.log_correo(empresa.rededoc_id, documento.electronico_id)
+                            respuesta = zinc.log_envio(empresa.rededoc_id, documento.electronico_id)
                             if respuesta['error'] == False: 
-                                correos = respuesta['correos']
-                            respuesta = zinc.log_evento(empresa.rededoc_id, documento.electronico_id)
-                            if respuesta['error'] == False: 
-                                eventos = respuesta['eventos']
+                                return Response({'log': respuesta['log']}, status=status.HTTP_200_OK)
                             else:
-                                return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                            return Response({'correos': correos, 'eventos': eventos}, status=status.HTTP_200_OK)
+                                return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                    
                         else:
                             return Response({'mensaje': 'La empresa no esta activa en facturacion electronica', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                     else:
