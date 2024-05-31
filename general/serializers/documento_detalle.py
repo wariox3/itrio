@@ -26,12 +26,17 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             contacto = documento_afectado.contacto
             if contacto is not None:
                 documento_afectado_contacto_nombre_corto = contacto.nombre_corto
+        cuenta_codigo = ""
+        cuenta = instance.cuenta
+        if cuenta:
+            cuenta_codigo = cuenta.codigo
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,        
             'item': instance.item_id,
             'item_nombre': item_nombre,
-            'cuenta': instance.cuenta_id,            
+            'cuenta': instance.cuenta_id,
+            'cuenta_codigo': cuenta_codigo,           
             'cantidad': instance.cantidad,
             'precio': instance.precio,
             'pago': instance.pago,
