@@ -235,9 +235,13 @@ class DocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
         if contacto:
             contacto_nombre_corto = contacto.nombre_corto
         documento_tipo_cuenta_cobrar_id = ""
+        documento_tipo_cuenta_cobrar_cuenta_codigo = ""
         documento_tipo = instance.documento_tipo
         if documento_tipo:
             documento_tipo_cuenta_cobrar_id = documento_tipo.cuenta_cobrar_id
+            cuenta_cobrar = documento_tipo.cuenta_cobrar
+            if cuenta_cobrar:
+                documento_tipo_cuenta_cobrar_cuenta_codigo = cuenta_cobrar.codigo
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -254,6 +258,7 @@ class DocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
             'contacto' : instance.contacto_id,            
             'documento_tipo': instance.documento_tipo_id,
             'documento_tipo_cuenta_cobrar_id': documento_tipo_cuenta_cobrar_id,
+            'documento_tipo_cuenta_cobrar_cuenta_codigo':documento_tipo_cuenta_cobrar_cuenta_codigo,
             'metodo_pago': instance.metodo_pago_id,
             'contacto_id': instance.contacto_id,
             'contacto_nombre_corto': contacto_nombre_corto,
