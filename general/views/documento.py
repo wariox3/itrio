@@ -254,6 +254,40 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except Documento.DoesNotExist:
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=["post"], url_path=r'anular',)
+    def anular(self, request):
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                documento = Documento.objects.get(pk=id)
+                return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
+                '''respuesta = self.validacion_aprobar(id)
+                if respuesta['error'] == False:    
+                    documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)        
+                    documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
+                    if documento.numero is None:
+                        documento.numero = documentoTipo.consecutivo
+                        documentoTipo.consecutivo += 1
+                        documentoTipo.save()                
+                    documento.estado_aprobado = True
+                    if documento.documento_tipo.documento_clase_id in (100,101,102):
+                        documento.pendiente = documento.total    
+                    if documento.documento_tipo.documento_clase_id == 200:
+                        for documento_detalle in documento_detalles:
+                            documento_afectado = documento_detalle.documento_afectado                        
+                            documento_afectado.afectado += documento_detalle.pago
+                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                            documento_afectado.save(update_fields=['afectado', 'pendiente'])
+                    documento.save()
+                    return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)''' 
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except Documento.DoesNotExist:
+            return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'excel',)
     def excel(self, request):
         raw = request.data

@@ -36,6 +36,11 @@
   },
   {
     "model": "general.documentoClase",
+    "pk": 303,
+    "fields": {"nombre": "Documento soporte", "codigo_dian": "01", "grupo":3}
+  },  
+  {
+    "model": "general.documentoClase",
     "pk": 400,
     "fields": {"nombre": "Egreso", "codigo_dian": "01", "grupo":4}
   },   
