@@ -230,7 +230,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento = Documento.objects.get(pk=id)
                 respuesta = self.validacion_aprobar(id)
                 if respuesta['error'] == False:    
-                    documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)        
+                            
                     documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
                     if documento.numero is None:
                         documento.numero = documentoTipo.consecutivo
@@ -240,6 +240,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documento.documento_tipo.documento_clase_id in (100,101,102):
                         documento.pendiente = documento.total    
                     if documento.documento_tipo.documento_clase_id == 200:
+                        documento_detalles = DocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
                         for documento_detalle in documento_detalles:
                             documento_afectado = documento_detalle.documento_afectado                        
                             documento_afectado.afectado += documento_detalle.pago
@@ -779,6 +780,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         resultado = (
                             DocumentoDetalle.objects
                             .filter(documento_id=documento_id)
+                            .exclude(documento_afectado_id__isnull=True)
                             .values('documento_afectado_id')
                             .annotate(
                                 total_pago=Sum('pago'),
