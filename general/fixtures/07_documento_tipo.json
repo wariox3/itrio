@@ -48,5 +48,10 @@
     "model": "general.documentoTipo",
     "pk": 10,
     "fields": {"nombre": "SALIDA", "documento_clase": 501}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 11,
+    "fields": {"nombre": "DOCUMENTO SOPORTE", "documento_clase": 303}
   }  
 ]

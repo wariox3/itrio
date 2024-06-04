@@ -22,6 +22,8 @@ class Contacto(models.Model):
     telefono = models.CharField(max_length=50)
     celular = models.CharField(max_length=50, null=True)
     correo = models.CharField(max_length = 255)
+    cliente = models.BooleanField(default = False) 
+    proveedor = models.BooleanField(default = False) 
     #Relaciones    
     identificacion = models.ForeignKey(Identificacion, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.PROTECT)
@@ -29,7 +31,8 @@ class Contacto(models.Model):
     regimen = models.ForeignKey(Regimen, on_delete=models.PROTECT)
     asesor = models.ForeignKey(Asesor, null=True, on_delete=models.PROTECT)
     precio = models.ForeignKey(Precio, null=True, on_delete=models.PROTECT)
-    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT)
+    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago')
+    plazo_pago_proveedor = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago_proveedor')
     
     class Meta:
         db_table = "gen_contacto"
