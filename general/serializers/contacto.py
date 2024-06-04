@@ -9,32 +9,13 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
     asesor = serializers.PrimaryKeyRelatedField(queryset=Asesor.objects.all(), allow_null=True)
     precio = serializers.PrimaryKeyRelatedField(queryset=Precio.objects.all(), allow_null=True)
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)
+    plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)
     class Meta:
         model = Contacto
         fields = [
-            'id',
-            'identificacion', 
-            'numero_identificacion',
-            'digito_verificacion',
-            'nombre_corto',
-            'nombre1',
-            'nombre2',
-            'apellido1',
-            'apellido2',
-            'direccion',
-            'ciudad',
-            'barrio',
-            'codigo_postal',
-            'telefono',
-            'celular',
-            'correo',
-            'tipo_persona',
-            'regimen',            
-            'codigo_ciuu',
-            'asesor',
-            'precio',
-            'plazo_pago'
-            ]  
+            'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
+            'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'tipo_persona', 'regimen', 'codigo_ciuu',
+            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor']  
         
     def to_representation(self, instance):
         asesor = instance.asesor

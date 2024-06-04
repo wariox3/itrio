@@ -260,11 +260,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             raw = request.data
             id = raw.get('id')
             if id:
-                documento = Documento.objects.get(pk=id)
-                return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
-                '''respuesta = self.validacion_aprobar(id)
+                documento = Documento.objects.get(pk=id)                
+                respuesta = self.validacion_anular(id)
                 if respuesta['error'] == False:    
-                    documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)        
+                    '''documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)        
                     documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
                     if documento.numero is None:
                         documento.numero = documentoTipo.consecutivo
@@ -279,10 +278,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             documento_afectado.afectado += documento_detalle.pago
                             documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
                             documento_afectado.save(update_fields=['afectado', 'pendiente'])
-                    documento.save()
-                    return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                    documento.save()'''
+                    return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)''' 
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Documento.DoesNotExist:
@@ -791,5 +790,33 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1}            
         except Documento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}
+        
+    @staticmethod
+    def validacion_anular(documento_id):
+        try:
+            documento = Documento.objects.get(id=documento_id)
+            if documento.documento_tipo_id == 1:
+                documento_detalle = DocumentoDetalle.objects.filter(documento=documento)
+                if documento.estado_anulado == False:      
+                    if documento.documento_tipo.documento_clase_id == 200:
+                        '''resultado = (
+                            DocumentoDetalle.objects
+                            .filter(documento_id=documento_id)
+                            .values('documento_afectado_id')
+                            .annotate(
+                                total_pago=Sum('pago'),
+                                pendiente=F('documento_afectado__pendiente')))                        
+                        for entrada in resultado:
+                            if entrada['pendiente'] < entrada['total_pago']:
+                                return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
+                        '''
+                    return {'error':False}                    
+                else:
+                    return {'error':True, 'mensaje':'El documento ya esta anulado', 'codigo':1}
+          
+            else:
+                return {'error':True, 'mensaje':'El tido de documento no se puede anular'}            
+        except Documento.DoesNotExist:
+            return {'error':True, 'mensaje':'El documento no existe'}        
     
 
