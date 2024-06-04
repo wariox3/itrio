@@ -276,6 +276,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento_detalle.total = 0
                         documento_detalle.total_bruto = 0
                         documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'impuesto', 'base_impuesto', 'total', 'total_bruto'])
+                        documento_impuestos = DocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
+                        for documento_impuesto in documento_impuestos:
+                            documento_impuesto.base = 0
+                            documento_impuesto.total = 0 
+                            documento_impuesto.save(update_fields=['base','total'])
                     documento.estado_anulado = True  
                     documento.subtotal = 0
                     documento.total = 0
