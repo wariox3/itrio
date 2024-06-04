@@ -818,7 +818,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 else:
                     return {'error':True, 'mensaje':'El documento ya esta anulado', 'codigo':1}        
             else:
-                return {'error':True, 'mensaje':'El tido de documento no se puede anular'}            
+                return {'error':True, 'mensaje':'El tipo de documento no se puede anular'}            
         except Documento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}        
     
