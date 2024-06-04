@@ -15,7 +15,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
         fields = [
             'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
             'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'tipo_persona', 'regimen', 'codigo_ciuu',
-            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor']  
+            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor']  
         
     def to_representation(self, instance):
         asesor = instance.asesor
@@ -32,7 +32,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
         if plazo_pago:
             plazo_pago_nombre = plazo_pago.nombre
             plazo_pago_dias = plazo_pago.dias
-        plazo_pago_proveedor = instance.plazo_pago
+        plazo_pago_proveedor = instance.plazo_pago_proveedor
         plazo_pago_proveedor_nombre = None
         plazo_pago_proveedor_dias = 0
         if plazo_pago_proveedor:
@@ -71,7 +71,9 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'plazo_pago_dias': plazo_pago_dias,
             'plazo_pago_proveedor_id': instance.plazo_pago_proveedor_id,
             'plazo_pago_proveedor_nombre': plazo_pago_proveedor_nombre,
-            'plazo_pago_proveedor_dias': plazo_pago_proveedor_dias
+            'plazo_pago_proveedor_dias': plazo_pago_proveedor_dias,
+            'cliente': instance.cliente,
+            'proveedor': instance.proveedor
         }     
 
 class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
@@ -154,5 +156,7 @@ class ContactoExcelSerializador(serializers.HyperlinkedModelSerializer):
             'codigo_ciuu': instance.codigo_ciuu,
             'asesor__nombre': instance.asesor.nombre_corto if instance.asesor else None,
             'precio': instance.precio.nombre if instance.precio else None,
-            'plazo_pago': instance.plazo_pago.nombre if instance.plazo_pago else None
+            'plazo_pago': instance.plazo_pago.nombre if instance.plazo_pago else None,
+            'cliente': instance.cliente,
+            'proveedor': instance.proveedor
         } 
