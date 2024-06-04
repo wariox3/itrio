@@ -263,22 +263,27 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento = Documento.objects.get(pk=id)                
                 respuesta = self.validacion_anular(id)
                 if respuesta['error'] == False:    
-                    '''documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)        
-                    documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
-                    if documento.numero is None:
-                        documento.numero = documentoTipo.consecutivo
-                        documentoTipo.consecutivo += 1
-                        documentoTipo.save()                
-                    documento.estado_aprobado = True
-                    if documento.documento_tipo.documento_clase_id in (100,101,102):
-                        documento.pendiente = documento.total    
-                    if documento.documento_tipo.documento_clase_id == 200:
-                        for documento_detalle in documento_detalles:
-                            documento_afectado = documento_detalle.documento_afectado                        
-                            documento_afectado.afectado += documento_detalle.pago
-                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
-                            documento_afectado.save(update_fields=['afectado', 'pendiente'])
-                    documento.save()'''
+                    documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)                                          
+                    for documento_detalle in documento_detalles:                                               
+                        documento_detalle.cantidad = 0
+                        documento_detalle.precio = 0
+                        documento_detalle.porcentaje_descuento = 0
+                        documento_detalle.descuento = 0
+                        documento_detalle.subtotal = 0
+                        documento_detalle.impuesto = 0
+                        documento_detalle.base_impuesto = 0
+                        documento_detalle.total = 0
+                        documento_detalle.total_bruto = 0
+                        documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'impuesto', 'base_impuesto', 'total', 'total_bruto'])
+                    documento.estado_anulado = True  
+                    documento.subtotal = 0
+                    documento.total = 0
+                    documento.total_bruto = 0
+                    documento.base_impuesto = 0
+                    documento.descuento = 0
+                    documento.impuesto = 0
+                    documento.pendiente = 0
+                    documento.save(update_fields=['estado_anulado', 'subtotal', 'total', 'total_bruto', 'pendiente', 'base_impuesto', 'descuento', 'impuesto'])
                     return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
@@ -795,25 +800,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def validacion_anular(documento_id):
         try:
             documento = Documento.objects.get(id=documento_id)
-            if documento.documento_tipo_id == 1:
-                documento_detalle = DocumentoDetalle.objects.filter(documento=documento)
-                if documento.estado_anulado == False:      
-                    if documento.documento_tipo.documento_clase_id == 200:
-                        '''resultado = (
-                            DocumentoDetalle.objects
-                            .filter(documento_id=documento_id)
-                            .values('documento_afectado_id')
-                            .annotate(
-                                total_pago=Sum('pago'),
-                                pendiente=F('documento_afectado__pendiente')))                        
-                        for entrada in resultado:
-                            if entrada['pendiente'] < entrada['total_pago']:
-                                return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
-                        '''
-                    return {'error':False}                    
+            if documento.documento_tipo_id == 1:                
+                if documento.estado_anulado == False:    
+                    if documento.estado_aprobado == True:
+                        if documento.estado_electronico_enviado == False:
+                            if documento.afectado <= 0:
+                                #documento_detalle = DocumentoDetalle.objects.filter(documento=documento)
+                                return {'error':False}                    
+                            else:
+                                return {'error':True, 'mensaje':'El documento esta afectado, no se puede anular', 'codigo':1}
+                        else:
+                            return {'error':True, 'mensaje':'Los documentos electronicos enviados a la DIAN no se pueden anular', 'codigo':1}
+                    else:
+                        return {'error':True, 'mensaje':'El documento debe estar aprobado', 'codigo':1}
                 else:
-                    return {'error':True, 'mensaje':'El documento ya esta anulado', 'codigo':1}
-          
+                    return {'error':True, 'mensaje':'El documento ya esta anulado', 'codigo':1}        
             else:
                 return {'error':True, 'mensaje':'El tido de documento no se puede anular'}            
         except Documento.DoesNotExist:
