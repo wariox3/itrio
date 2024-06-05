@@ -22,7 +22,7 @@
   {
     "model": "general.documentoTipo",
     "pk": 5,
-    "fields": {"nombre": "COMPRA", "documento_clase": 300}
+    "fields": {"nombre": "COMPRA", "documento_clase": 300, "cuenta_cobrar":"127"}
   },
   {
     "model": "general.documentoTipo",

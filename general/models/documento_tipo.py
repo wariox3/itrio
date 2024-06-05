@@ -6,9 +6,10 @@ from contabilidad.models.cuenta import Cuenta
 class DocumentoTipo(models.Model):    
     nombre = models.CharField(max_length=100)
     consecutivo = models.IntegerField(default=1)
-    documento_clase = models.ForeignKey(DocumentoClase, null=True, on_delete=models.PROTECT, related_name='documentos_tipos')
-    resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.PROTECT, related_name='documentos_tipos')
-    cuenta_cobrar = models.ForeignKey(Cuenta, null=True, on_delete=models.PROTECT, related_name='documentos_tipos')
+    documento_clase = models.ForeignKey(DocumentoClase, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_documento_clase')
+    resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_resolucion')
+    cuenta_cobrar = models.ForeignKey(Cuenta, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_cuenta_cobrar')
+    cuenta_pagar = models.ForeignKey(Cuenta, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_cuenta_pagar')
     
     class Meta:
         db_table = "gen_documento_tipo"
