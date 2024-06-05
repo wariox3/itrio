@@ -236,12 +236,18 @@ class DocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
             contacto_nombre_corto = contacto.nombre_corto
         documento_tipo_cuenta_cobrar_id = ""
         documento_tipo_cuenta_cobrar_cuenta_codigo = ""
+        documento_tipo_cuenta_pagar_id = ""
+        documento_tipo_cuenta_pagar_cuenta_codigo = ""        
         documento_tipo = instance.documento_tipo
         if documento_tipo:
             documento_tipo_cuenta_cobrar_id = documento_tipo.cuenta_cobrar_id
             cuenta_cobrar = documento_tipo.cuenta_cobrar
             if cuenta_cobrar:
                 documento_tipo_cuenta_cobrar_cuenta_codigo = cuenta_cobrar.codigo
+            documento_tipo_cuenta_pagar_id = documento_tipo.cuenta_pagar_id
+            cuenta_pagar = documento_tipo.cuenta_pagar
+            if cuenta_pagar:
+                documento_tipo_cuenta_pagar_cuenta_codigo = cuenta_pagar.codigo                
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -256,9 +262,11 @@ class DocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
             'pendiente':instance.pendiente,       
             'estado_aprobado' : instance.estado_aprobado,
             'contacto' : instance.contacto_id,            
-            'documento_tipo': instance.documento_tipo_id,
+            'documento_tipo': instance.documento_tipo_id,        
             'documento_tipo_cuenta_cobrar_id': documento_tipo_cuenta_cobrar_id,
             'documento_tipo_cuenta_cobrar_cuenta_codigo':documento_tipo_cuenta_cobrar_cuenta_codigo,
+            'documento_tipo_cuenta_pagar_id': documento_tipo_cuenta_pagar_id,
+            'documento_tipo_cuenta_pagar_cuenta_codigo':documento_tipo_cuenta_pagar_cuenta_codigo,
             'metodo_pago': instance.metodo_pago_id,
             'contacto_id': instance.contacto_id,
             'contacto_nombre_corto': contacto_nombre_corto,
