@@ -89,11 +89,17 @@ class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
         plazo_pago_dias = 0
         if plazo_pago:
             plazo_pago_dias = plazo_pago.dias
+        plazo_pago_proveedor = instance.plazo_pago_proveedor
+        plazo_pago_proveedor_dias = 0
+        if plazo_pago_proveedor:
+            plazo_pago_proveedor_dias = plazo_pago_proveedor.dias
         return {
             'contacto_id': instance.id,            
             'contacto_nombre_corto': instance.nombre_corto,
             'plazo_pago_id': instance.plazo_pago_id,
-            'plazo_pago_dias': plazo_pago_dias
+            'plazo_pago_dias': plazo_pago_dias,
+            'plazo_pago_proveedor_id': instance.plazo_pago_proveedor_id,
+            'plazo_pago_proveedor_dias': plazo_pago_proveedor_dias
         }       
 
 class ContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
