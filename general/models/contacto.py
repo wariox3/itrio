@@ -23,7 +23,8 @@ class Contacto(models.Model):
     celular = models.CharField(max_length=50, null=True)
     correo = models.CharField(max_length = 255)
     cliente = models.BooleanField(default = False) 
-    proveedor = models.BooleanField(default = False) 
+    proveedor = models.BooleanField(default = False)
+    empleado = models.BooleanField(default = False)
     #Relaciones    
     identificacion = models.ForeignKey(Identificacion, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(Ciudad, on_delete=models.PROTECT)

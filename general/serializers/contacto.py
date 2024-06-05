@@ -15,7 +15,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
         fields = [
             'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
             'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'tipo_persona', 'regimen', 'codigo_ciuu',
-            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor']  
+            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado']  
         
     def to_representation(self, instance):
         asesor = instance.asesor
@@ -73,7 +73,8 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'plazo_pago_proveedor_nombre': plazo_pago_proveedor_nombre,
             'plazo_pago_proveedor_dias': plazo_pago_proveedor_dias,
             'cliente': instance.cliente,
-            'proveedor': instance.proveedor
+            'proveedor': instance.proveedor,
+            'empleado': instance.empleado
         }     
 
 class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
