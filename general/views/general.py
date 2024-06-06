@@ -33,7 +33,7 @@ from general.serializers.asesor import AsesorSerializador, AsesorListaAutocomple
 from general.serializers.precio import PrecioSerializador, PrecioListaAutocompletarSerializador
 from general.serializers.plazo_pago import PlazoPagoSerializador, PlazoPagoListaAutocompletarSerializador
 from contabilidad.serializers.cuenta import CuentaListaAutocompletarSerializador
-from humano.serializers.hum_contrato import HumContratoSerializer
+from humano.serializers.hum_contrato import HumContratoSerializador
 
 from rest_framework.permissions import IsAuthenticated
 

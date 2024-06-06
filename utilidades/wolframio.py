@@ -6,7 +6,7 @@ import json
 
 class Wolframio():
 
-    def cuentaCrear(self, set_pruebas, resolucion_id, correo_facturacion_electronica):        
+    def cuentaCrear(self, set_pruebas, resolucion_id, correo_facturacion_electronica, copia_correo_facturacion_electronica):
         url = "/api/cuenta/nuevo"
         empresa = Empresa.objects.get(pk=1)
         datos = {
@@ -19,7 +19,8 @@ class Wolframio():
             "webhookEmision" : f"https://{empresa.subdominio}.reddocapi.co/general/documento/electronico_respuesta_emitir/",
             "webhookNotificacion" : f"https://{empresa.subdominio}.reddocapi.co/general/documento/electronico_respuesta_notificar/",
             "setPruebas" : set_pruebas,
-            "correoFacturacionElectronica" : correo_facturacion_electronica
+            "correoFacturacionElectronica" : correo_facturacion_electronica,
+            "copiaCorreoFacturacionElectronica": copia_correo_facturacion_electronica
         }
         respuesta = self.consumirPost(datos, url)        
         if respuesta['status'] == 200:
@@ -37,7 +38,7 @@ class Wolframio():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
         
-    def cuentaDetalle(self, id):        
+    def cuentaDetalle(self, id):
         url = "/api/cuenta/detalle"
         datos = {
             "cuentaId" : id
@@ -46,6 +47,21 @@ class Wolframio():
         if respuesta['status'] == 200:
             datos = respuesta['datos']
             return {'error':False, 'cuenta': datos['cuenta']}
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio rededoc'}
+
+    def cuentaActualizar(self, correo_facturacion_electronica, copia_correo_facturacion_electronica):
+        url = "/api/cuenta/actualizar"
+        empresa = Empresa.objects.get(pk=1)
+        datos = {      
+            "cuentaId" : empresa.rededoc_id,      
+            "correo" : empresa.correo,
+            "correoFacturacionElectronica" : correo_facturacion_electronica,
+            "copiaCorreoFacturacionElectronica": copia_correo_facturacion_electronica
+        }
+        respuesta = self.consumirPost(datos, url)        
+        if respuesta['status'] == 200:                    
+            return {'error':False}
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio rededoc'}
 

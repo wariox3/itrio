@@ -80,9 +80,10 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             resolucion_id = raw.get('resolucion_id')
             set_pruebas = raw.get('set_pruebas')
             correo_facturacion_electronica = raw.get('correo_facturacion_electronica')
+            copia_correo_facturacion_electronica = raw.get('copia_correo_facturacion_electronica')
             if empresa_id and resolucion_id and set_pruebas:                                            
                 wolframio = Wolframio()
-                respuesta = wolframio.cuentaCrear(set_pruebas, resolucion_id, correo_facturacion_electronica)
+                respuesta = wolframio.cuentaCrear(set_pruebas, resolucion_id, correo_facturacion_electronica, copia_correo_facturacion_electronica)
                 if respuesta['error'] == False:
                     return Response({'validar':True}, status=status.HTTP_200_OK)
                 else:
@@ -111,4 +112,23 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:
-            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)        
+            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)     
+
+    @action(detail=False, methods=["post"], url_path=r'rededoc_actualizar',)
+    def rededoc_actualizar(self, request):
+        try:
+            raw = request.data
+            empresa_id = raw.get('empresa_id')
+            correo_facturacion_electronica = raw.get('correo_facturacion_electronica')
+            copia_correo_facturacion_electronica = raw.get('copia_correo_facturacion_electronica')
+            if empresa_id:                                            
+                wolframio = Wolframio()
+                respuesta = wolframio.cuentaActualizar(correo_facturacion_electronica, copia_correo_facturacion_electronica)
+                if respuesta['error'] == False:
+                    return Response({'Actualizar':True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except Empresa.DoesNotExist:
+            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)           
