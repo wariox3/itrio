@@ -17,6 +17,7 @@ from general.models.asesor import Asesor
 from general.models.precio import Precio
 from general.models.plazo_pago import PlazoPago
 from contabilidad.models.cuenta import Cuenta
+from humano.models.hum_contrato import HumContrato
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador, ItemListaBuscarSerializador
 from general.serializers.contacto import ContactoSerializador, ContactoListaAutocompletarSerializador, ContactoListaBuscarSerializador
 from general.serializers.forma_pago import FormaPagoSerializador, FormaPagoListaAutocompletarSerializador
@@ -32,6 +33,7 @@ from general.serializers.asesor import AsesorSerializador, AsesorListaAutocomple
 from general.serializers.precio import PrecioSerializador, PrecioListaAutocompletarSerializador
 from general.serializers.plazo_pago import PlazoPagoSerializador, PlazoPagoListaAutocompletarSerializador
 from contabilidad.serializers.cuenta import CuentaListaAutocompletarSerializador
+from humano.serializers.hum_contrato import HumContratoSerializer
 
 from rest_framework.permissions import IsAuthenticated
 
