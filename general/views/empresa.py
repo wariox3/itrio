@@ -72,8 +72,8 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         except Empresa.DoesNotExist:
             return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=["post"], url_path=r'activar',)
-    def activar_cuenta_wolframio(self, request):
+    @action(detail=False, methods=["post"], url_path=r'rededoc_activar',)
+    def rededoc_activar(self, request):
         try:
             raw = request.data
             empresa_id = raw.get('empresa_id')
@@ -82,7 +82,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             correo_facturacion_electronica = raw.get('correo_facturacion_electronica')
             if empresa_id and resolucion_id and set_pruebas:                                            
                 wolframio = Wolframio()
-                respuesta = wolframio.activarCuenta(set_pruebas, resolucion_id, correo_facturacion_electronica)
+                respuesta = wolframio.cuentaCrear(set_pruebas, resolucion_id, correo_facturacion_electronica)
                 if respuesta['error'] == False:
                     return Response({'validar':True}, status=status.HTTP_200_OK)
                 else:
@@ -91,3 +91,24 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'rededoc_detalle',)
+    def rededoc_detalle(self, request):
+        try:
+            raw = request.data
+            empresa_id = raw.get('empresa_id')
+            if empresa_id:
+                empresa = Empresa.objects.get(pk=1)
+                if empresa.rededoc_id is not None:
+                    wolframio = Wolframio()
+                    respuesta = wolframio.cuentaDetalle(empresa.rededoc_id)
+                    if respuesta['error'] == False:
+                        return Response({'cuenta': respuesta['cuenta']}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje':'La empresa no esta activa en rededoc', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except Empresa.DoesNotExist:
+            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)        

@@ -6,7 +6,7 @@ import json
 
 class Wolframio():
 
-    def activarCuenta(self, set_pruebas, resolucion_id, correo_facturacion_electronica):        
+    def cuentaCrear(self, set_pruebas, resolucion_id, correo_facturacion_electronica):        
         url = "/api/cuenta/nuevo"
         empresa = Empresa.objects.get(pk=1)
         datos = {
@@ -37,6 +37,18 @@ class Wolframio():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
         
+    def cuentaDetalle(self, id):        
+        url = "/api/cuenta/detalle"
+        datos = {
+            "cuentaId" : id
+        }
+        respuesta = self.consumirPost(datos, url)        
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            return {'error':False, 'cuenta': datos['cuenta']}
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio rededoc'}
+
     def emitir(self, datos):
         url = "/api/documento/nuevo"
         respuesta = self.consumirPost(datos, url)    
