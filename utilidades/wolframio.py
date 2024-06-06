@@ -36,7 +36,7 @@ class Wolframio():
             else:            
                 return {'error':True, 'mensaje':'La empresa ya se encuentra activa'}
         else:
-            return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
+            return {'error':True, 'mensaje':respuesta['mensaje']}
         
     def cuentaDetalle(self, id):
         url = "/api/cuenta/detalle"
