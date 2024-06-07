@@ -3,7 +3,7 @@
     "model": "contenedor.plan",
     "pk": 1,
     "fields": {
-      "nombre": "Inicio (facturacion)", 
+      "nombre": "Plan impulso", 
       "limite_usuarios":1, 
       "usuarios_base":1, 
       "limite_ingresos":10000000,
@@ -16,7 +16,7 @@
     "model": "contenedor.plan",
     "pk": 2,
     "fields": {
-      "nombre": "Inicio (completo)",
+      "nombre": "Plan impulso ERP",
       "limite_usuarios":1, 
       "usuarios_base":1, 
       "limite_ingresos":10000000,
@@ -29,7 +29,7 @@
     "model": "contenedor.plan",
     "pk": 3,
     "fields": {
-      "nombre": "Pequeño (facturacion)",
+      "nombre": "Plan crecimiento",
       "limite_usuarios":0, 
       "usuarios_base":2, 
       "limite_ingresos":50000000,
@@ -42,7 +42,7 @@
     "model": "contenedor.plan",
     "pk": 4,
     "fields": {
-      "nombre": "Pequeño (completo)",
+      "nombre": "Plan crecimiento ERP",
       "limite_usuarios":0, 
       "usuarios_base":2, 
       "limite_ingresos":50000000,
@@ -55,7 +55,7 @@
     "model": "contenedor.plan",
     "pk": 5,
     "fields": {
-      "nombre": "Mediano (facturacion)",
+      "nombre": "Plan expansión",
       "limite_usuarios":0, 
       "usuarios_base":3, 
       "limite_ingresos":200000000,
@@ -68,7 +68,7 @@
     "model": "contenedor.plan",
     "pk": 6,
     "fields": {
-      "nombre": "Mediano (completo)",
+      "nombre": "Plan expansión ERP",
       "limite_usuarios":0, 
       "usuarios_base":3, 
       "limite_ingresos":200000000,
@@ -81,7 +81,7 @@
     "model": "contenedor.plan",
     "pk": 7,
     "fields": {
-      "nombre": "Grande (facturacion)",
+      "nombre": "Plan éxito",
       "limite_usuarios":0, 
       "usuarios_base":8, 
       "limite_ingresos":500000000,
@@ -94,7 +94,7 @@
     "model": "contenedor.plan",
     "pk": 8,
     "fields": {
-      "nombre": "Grande (completo)",
+      "nombre": "Plan éxito ERP",
       "limite_usuarios":0, 
       "usuarios_base":8, 
       "limite_ingresos":500000000,
