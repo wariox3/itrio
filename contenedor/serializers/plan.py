@@ -10,7 +10,7 @@ class PlanSerializador(serializers.ModelSerializer):
         return {
             'id': instance.id,            
             'nombre': instance.nombre,
-            'limite_usuario': instance.limite_usuario,
+            'limite_usuarios': instance.limite_usuarios,
             'limite_ingresos': instance.limite_ingresos,
             'precio': instance.precio,
             'limite_electronicos': instance.limite_electronicos
