@@ -1,12 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from contenedor.models import ContenedorMovimiento, Consumo
+from contenedor.models import ContenedorMovimiento
 from contenedor.serializers.movimiento import ContenedorMovimientoSerializador
-from seguridad.models import User
-from django.db.models import Sum, Max, Q
-from datetime import datetime, timedelta
-from django.utils import timezone
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ContenedorMovimiento.objects.all()
