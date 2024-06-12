@@ -11,6 +11,7 @@ class ContenedorMovimientoSerializador(serializers.ModelSerializer):
             'id': instance.id,   
             'tipo': instance.tipo,         
             'fecha': instance.fecha,
+            'fecha_vence': instance.fecha_vence,
             'vr_total': instance.vr_total,
             'vr_afectado': instance.vr_afectado,
             'vr_saldo': instance.vr_saldo
