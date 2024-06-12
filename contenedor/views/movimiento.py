@@ -22,4 +22,15 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
-            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)      
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'pendiente',)
+    def consulta_usuario(self, request):
+        raw = request.data
+        usuario_id = raw.get('usuario_id')
+        if usuario_id:
+            movimientos = ContenedorMovimiento.objects.filter(usuario_id=usuario_id, vr_saldo__gt=0)
+            movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
+            return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
