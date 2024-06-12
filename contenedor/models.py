@@ -92,6 +92,11 @@ class Dominio(DomainMixin):
     class Meta:
         db_table = "cnt_dominio"
 
+class ConsumoPeriodo(models.Model):
+    fecha = models.DateField()
+    class Meta:
+        db_table = "cnt_consumo_periodo"
+
 class Consumo(models.Model):
     fecha = models.DateField(null=True)
     contenedor_id = models.IntegerField(null=True)
