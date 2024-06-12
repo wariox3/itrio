@@ -135,7 +135,8 @@ class UsuarioContenedor(models.Model):
 
 class ContenedorMovimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)
-    fecha = models.DateField(null=True)    
+    fecha = models.DateField(null=True)
+    fecha_vence = models.DateField(null=True)    
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_afectado = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_saldo = models.DecimalField(max_digits=16, decimal_places=2, default=0)

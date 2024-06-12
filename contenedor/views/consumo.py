@@ -1,10 +1,11 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from contenedor.models import ConsumoPeriodo, Consumo, UsuarioContenedor
+from contenedor.models import ConsumoPeriodo, Consumo, UsuarioContenedor, ContenedorMovimiento
 from contenedor.serializers.consumo import ConsumoSerializador
+from seguridad.models import User
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db.models import Sum, Q, F
 
 class ConsumoViewSet(viewsets.ModelViewSet):
@@ -45,6 +46,34 @@ class ConsumoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-factura',)
+    def generar_factura(self, request):
+        raw = request.data
+        fechaDesde = raw.get('fechaDesde')
+        fechaHasta = raw.get('fechaHasta')
+        if fechaDesde and fechaHasta:
+            consumosUsuarios = Consumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta)).annotate(
+                vr_total=Sum('vr_total'))
+            facturas = []
+            for consumoUsuario in consumosUsuarios:
+                movimiento = ContenedorMovimiento(
+                    tipo = "FACTURA",
+                    fecha = timezone.now().date(),
+                    fecha_vence = datetime.now().date() + timedelta(days=3),
+                    vr_total = consumoUsuario['vr_total'],
+                    vr_saldo = consumoUsuario['vr_total'],
+                    usuario_id = consumoUsuario['usuario_id']
+                )
+                facturas.append(movimiento)
+                usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
+                usuario.vr_saldo += consumoUsuario['vr_total']
+                usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
+                usuario.save()
+            ContenedorMovimiento.objects.bulk_create(facturas)
+            return Response({'proceso':True}, status=status.HTTP_200_OK)  
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'consulta-empresa-fecha',)
     def consulta_empresa_fecha(self, request):
         raw = request.data
