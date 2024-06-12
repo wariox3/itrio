@@ -56,17 +56,18 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                 vr_total=Sum('vr_total'))
             facturas = []
             for consumoUsuario in consumosUsuarios:
+                total = round(consumoUsuario['vr_total'])
                 movimiento = ContenedorMovimiento(
                     tipo = "FACTURA",
                     fecha = timezone.now().date(),
                     fecha_vence = datetime.now().date() + timedelta(days=3),
-                    vr_total = consumoUsuario['vr_total'],
-                    vr_saldo = consumoUsuario['vr_total'],
+                    vr_total = total,
+                    vr_saldo = total,
                     usuario_id = consumoUsuario['usuario_id']
                 )
                 facturas.append(movimiento)
                 usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
-                usuario.vr_saldo += consumoUsuario['vr_total']
+                usuario.vr_saldo += total
                 usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
                 usuario.save()
             ContenedorMovimiento.objects.bulk_create(facturas)
