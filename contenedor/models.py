@@ -100,7 +100,8 @@ class ConsumoPeriodo(models.Model):
 class Consumo(models.Model):
     fecha = models.DateField(null=True)
     contenedor_id = models.IntegerField(null=True)
-    contenedor = models.CharField(max_length=200, null=True)    
+    contenedor = models.CharField(max_length=200, null=True) 
+    subdominio = models.CharField(max_length=100, null=True)   
     usuarios = models.IntegerField(default=0) 
     vr_plan = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_usuario_adicional = models.DecimalField(max_digits=16, decimal_places=2, default=0)
