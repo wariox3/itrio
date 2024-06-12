@@ -19,7 +19,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
         fechaParametro = raw.get('fecha')
         if fechaParametro:
             if not ConsumoPeriodo.objects.filter().exists():
-                usuariosContenedors = UsuarioContenedor.objects.all()
+                usuariosContenedors = UsuarioContenedor.objects.all().filter(rol='propietario')
                 consumos = []
                 for usuarioContenedor in usuariosContenedors:            
                     vrPlan = usuarioContenedor.contenedor.plan.precio
