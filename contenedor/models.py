@@ -140,8 +140,8 @@ class ContenedorMovimiento(models.Model):
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_afectado = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_saldo = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    contenedor_movimiento_id = models.IntegerField(null=True) 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-
     class Meta:
         db_table = "cnt_movimiento"   
 
