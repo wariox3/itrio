@@ -45,7 +45,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             now = timezone.localtime(timezone.now())
             now = now + timedelta(minutes=10)
             fecha_vencimiento = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
-            cadena = referencia+monto+"COP"+str(fecha_vencimiento)+secreto_integridad
+            cadena = referencia+monto+"COP"+secreto_integridad
             cadena_bytes = cadena.encode('utf-8')
             hash_obj = hashlib.sha256(cadena_bytes)
             hash_str = hash_obj.hexdigest()
