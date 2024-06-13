@@ -143,4 +143,17 @@ class ContenedorMovimiento(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     class Meta:
-        db_table = "cnt_movimiento"        
+        db_table = "cnt_movimiento"   
+
+class EventoPago(models.Model):
+    fecha = models.DateField()    
+    evento = models.CharField(max_length=50, null=True)
+    entorno = models.CharField(max_length=10, null=True)
+    transaccion = models.CharField(max_length=50, null=True)    
+    metodo_pago = models.CharField(max_length=50, null=True)
+    referencia = models.CharField(max_length=50, null=True)    
+    correo = models.CharField(max_length=250, null=True)
+    estado = models.CharField(max_length=50, null=True)
+    fecha_transaccion = models.DateTimeField(null=True)
+    class Meta:
+        db_table = "cnt_evento_pago"              
