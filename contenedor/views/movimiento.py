@@ -25,7 +25,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
 
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'pendiente',)
-    def consulta_usuario(self, request):
+    def pendiente(self, request):
         raw = request.data
         usuario_id = raw.get('usuario_id')
         if usuario_id:
@@ -36,7 +36,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
         
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-integridad',)
-    def consulta_usuario(self, request):
+    def generara_integridad(self, request):
         raw = request.data
         referencia = raw.get('referencia')
         monto = raw.get('monto')
