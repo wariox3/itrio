@@ -185,6 +185,13 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
-            return Response({'mensaje':'El usuario no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)        
+            return Response({'mensaje':'El usuario no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)  
+
+    @action(detail=False, methods=["get"], url_path=r'saldo/(?P<id>\d+)')
+    def saldo(self, request, id=None):        
+        usuario = User.objects.get(id=id)
+        if usuario:
+            return Response({'saldo': usuario.vr_saldo}, status=status.HTTP_200_OK)
+        return Response({'mensaje':'El usuario no existe', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)
 
         
