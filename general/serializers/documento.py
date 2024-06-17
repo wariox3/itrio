@@ -37,9 +37,9 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
         if contacto:
             contacto_nombre_corto = contacto.nombre_corto
         asesor = instance.asesor
-        asesor_nombre = None
+        asesor_nombre_corto = None
         if asesor:
-            asesor_nombre = asesor.nombre
+            asesor_nombre_corto = asesor.nombre_corto
         sede = instance.sede
         sede_nombre = None
         if sede:
@@ -76,7 +76,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'documento_referencia' :  instance.documento_referencia_id,
             'plazo_pago': instance.plazo_pago_id,
             'asesor': instance.asesor_id,
-            'asesor_nombre': instance.asesor_nombre,
+            'asesor_nombre_corto': instance.asesor_nombre_corto,
             'sede': instance.sede_id,
             'sede_nombre': sede_nombre
         }

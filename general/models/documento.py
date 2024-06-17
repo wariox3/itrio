@@ -7,6 +7,7 @@ from general.models.empresa import Empresa
 from general.models.plazo_pago import PlazoPago
 from general.models.asesor import Asesor
 from general.models.sede import Sede
+from seguridad.models import User
 
 class Documento(models.Model):    
     numero = models.IntegerField(null=True)
@@ -42,6 +43,7 @@ class Documento(models.Model):
     plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos')
     asesor = models.ForeignKey(Asesor, null=True, on_delete=models.PROTECT,related_name='documentos_asesor_rel')
     sede = models.ForeignKey(Sede, null=True, on_delete=models.PROTECT,related_name='documentos_sede_rel')
+    usuario = models.ForeignKey(User, null=True, on_delete=models.PROTECT,related_name='documentos_usuario_rel')
 
     class Meta:
         db_table = "gen_documento"

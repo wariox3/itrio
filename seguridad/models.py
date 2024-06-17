@@ -7,7 +7,7 @@ class UserManager(BaseUserManager):
             username = username,
             correo = correo,
             nombre = nombre,
-            apelliido = apellido,
+            apellido = apellido,
             is_staff = is_staff,
             is_superuser = is_superuser,
             **extra_fields

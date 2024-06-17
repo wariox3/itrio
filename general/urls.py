@@ -21,6 +21,7 @@ from .views.sede import SedeViewSet
 from .views.plazo_pago import PlazoPagoViewSet
 from .views.empresa import EmpresaViewSet
 from .views.configuracion import ConfiguracionViewSet
+from .views.configuracion_usuario import ConfiguracionUsuarioViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -44,6 +45,7 @@ router.register(r'sede', SedeViewSet)
 router.register(r'plazopago', PlazoPagoViewSet)
 router.register(r'empresa', EmpresaViewSet)
 router.register(r'configuracion', ConfiguracionViewSet)
+router.register(r'configuracion_usuario', ConfiguracionUsuarioViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
