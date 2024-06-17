@@ -13,9 +13,16 @@ class ConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
             'empresa',
             'formato_factura',
             'informacion_factura',
-            'venta_asesor']      
+            'venta_asesor',
+            'venta_sede'
+        ]      
         
 class ConfiguracionActualizarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Configuracion
-        fields = ['formato_factura', 'informacion_factura', 'venta_asesor']
+        fields = [
+            'formato_factura', 
+            'informacion_factura', 
+            'venta_asesor',
+            'venta_sede'
+        ]

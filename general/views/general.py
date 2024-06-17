@@ -16,6 +16,7 @@ from general.models.resolucion import Resolucion
 from general.models.asesor import Asesor
 from general.models.precio import Precio
 from general.models.plazo_pago import PlazoPago
+from general.models.sede import Sede
 from contabilidad.models.cuenta import Cuenta
 from humano.models.hum_contrato import HumContrato
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador, ItemListaBuscarSerializador
@@ -32,6 +33,7 @@ from general.serializers.resolucion import ResolucionSerializador, ResolucionLis
 from general.serializers.asesor import AsesorSerializador, AsesorListaAutocompletarSerializador
 from general.serializers.precio import PrecioSerializador, PrecioListaAutocompletarSerializador
 from general.serializers.plazo_pago import PlazoPagoSerializador, PlazoPagoListaAutocompletarSerializador
+from general.serializers.sede import SedeSerializador, SedeListaAutocompletarSerializador
 from contabilidad.serializers.cuenta import CuentaListaAutocompletarSerializador
 from humano.serializers.hum_contrato import HumContratoSerializador
 

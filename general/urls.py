@@ -17,6 +17,7 @@ from .views.precio import PrecioViewSet
 from .views.precio_detalle import PrecioDetalleViewSet
 from .views.cuenta_banco import CuentaBancoViewSet
 from .views.asesor import AsesorViewSet
+from .views.sede import SedeViewSet
 from .views.plazo_pago import PlazoPagoViewSet
 from .views.empresa import EmpresaViewSet
 from .views.configuracion import ConfiguracionViewSet
@@ -39,6 +40,7 @@ router.register(r'precio', PrecioViewSet)
 router.register(r'preciodetalle', PrecioDetalleViewSet)
 router.register(r'cuentabanco', CuentaBancoViewSet)
 router.register(r'asesor', AsesorViewSet)
+router.register(r'sede', SedeViewSet)
 router.register(r'plazopago', PlazoPagoViewSet)
 router.register(r'empresa', EmpresaViewSet)
 router.register(r'configuracion', ConfiguracionViewSet)
