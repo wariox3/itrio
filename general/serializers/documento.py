@@ -109,6 +109,14 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
         documento_referencia_numero = ""
         if documento_referencia is not None:
             documento_referencia_numero = documento_referencia.numero     
+        asesor = instance.asesor
+        asesor_nombre_corto = None
+        if asesor:
+            asesor_nombre_corto = asesor.nombre_corto
+        sede = instance.sede
+        sede_nombre = None
+        if sede:
+            sede_nombre = sede.nombre 
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -138,7 +146,11 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'documento_referencia_id': instance.documento_referencia_id,
             'documento_referencia_numero': documento_referencia_numero,
             'cue' : instance.cue,
-            'electronico_id': instance.electronico_id
+            'electronico_id': instance.electronico_id,
+            'asesor': instance.asesor_id,
+            'asesor_nombre_corto': asesor_nombre_corto,
+            'sede': instance.sede_id,
+            'sede_nombre': sede_nombre
         }
 
 class DocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
