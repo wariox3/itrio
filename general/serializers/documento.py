@@ -7,6 +7,7 @@ from general.models.empresa import Empresa
 from general.models.plazo_pago import PlazoPago
 from general.models.asesor import Asesor
 from general.models.sede import Sede
+from seguridad.models import User
 
 class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
     numero = serializers.IntegerField(allow_null=True, label='Numero', default=None)
@@ -27,9 +28,10 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), default=None, allow_null=True)
     asesor = serializers.PrimaryKeyRelatedField(queryset=Asesor.objects.all(), default=None, allow_null=True)
     sede = serializers.PrimaryKeyRelatedField(queryset=Sede.objects.all(), default=None, allow_null=True)
+    usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
     class Meta:
         model = Documento
-        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede']
+        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -76,7 +78,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'documento_referencia' :  instance.documento_referencia_id,
             'plazo_pago': instance.plazo_pago_id,
             'asesor': instance.asesor_id,
-            'asesor_nombre_corto': instance.asesor_nombre_corto,
+            'asesor_nombre_corto': asesor_nombre_corto,
             'sede': instance.sede_id,
             'sede_nombre': sede_nombre
         }
