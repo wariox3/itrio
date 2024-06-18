@@ -18,7 +18,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.correo = user.username
         arrCadena = user.username.split("@")
         user.nombre_corto = arrCadena[0]
-        user.is_active = False
+        user.is_active = True
         user.dominio = f"{config('DOMINIO_BACKEND')}"
         user.imagen = f"itrio/{config('ENV')}/usuario/imagen_defecto.jpg"
         user.set_password(validated_data['password'])    

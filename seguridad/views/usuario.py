@@ -29,7 +29,6 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     
     def create(self, request):
         raw = request.data
-        raw['is_active'] = True,
         user_serializer = self.serializer_class(data=raw)
         if user_serializer.is_valid():
             usuario = user_serializer.save()
