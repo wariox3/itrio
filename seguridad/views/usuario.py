@@ -29,6 +29,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     
     def create(self, request):
         raw = request.data
+        raw['is_active'] = True,
         user_serializer = self.serializer_class(data=raw)
         if user_serializer.is_valid():
             usuario = user_serializer.save()
@@ -36,15 +37,15 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             raw["usuario_id"] = usuario.id
             raw["token"] = token
             raw["vence"] = datetime.now().date() + timedelta(days=1) 
-            verificacion_serializer = VerificacionSerializador(data = raw)
+            return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
+            '''verificacion_serializer = VerificacionSerializador(data = raw)
             if verificacion_serializer.is_valid():                                             
                 verificacion_serializer.save()
                 dominio = config('DOMINIO_FRONTEND')
                 correo = Correo()             
                 contenido='Enlace para verificar https://' + dominio + '/auth/verificacion/' + token                    
-                correo.enviar(usuario.correo, 'Debe verificar su cuenta reddoc', contenido)   
-                return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
-            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)        
+                correo.enviar(usuario.correo, 'Debe verificar su cuenta reddoc', contenido)            
+            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)'''
         return Response({'mensaje':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     def retrieve(self, request, pk=None):
