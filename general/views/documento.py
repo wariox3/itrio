@@ -159,6 +159,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         ordenamientos = raw.get('ordenamientos', [])            
         ordenamientos.insert(0, 'estado_aprobado')
         ordenamientos.append('-numero')
+        ordenamientos.append('-fecha')
         filtros = raw.get('filtros', [])            
         #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase_id})        
         respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
