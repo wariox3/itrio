@@ -3,10 +3,10 @@ from rest_framework import serializers
 from decouple import config
 
 class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
-    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
-    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all(), allow_null=True)
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all(), allow_null=True)    
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all(), allow_null=True)
+    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all(), allow_null=True)
     class Meta:
         model = Empresa
         fields = [
@@ -51,10 +51,10 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
         }   
 
 class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
-    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
-    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all(), allow_null=True)
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all(), allow_null=True)
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all(), allow_null=True)
+    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all(), allow_null=True)
     class Meta:
         model = Empresa
         fields = ['nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion',  'tipo_persona', 'regimen']
