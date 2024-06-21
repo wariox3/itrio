@@ -407,6 +407,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     if documento.estado_electronico_enviado == False: 
                                         prefijo = documento.resolucion.prefijo
                                         documento_referencia_id = None
+                                        forma_pago = 2
+                                        if documento.plazo_pago_id == 1:
+                                            forma_pago = 1                                            
                                         if documento.documento_tipo.documento_clase_id == 101:
                                             prefijo = "NC"
                                         if documento.documento_tipo.documento_clase_id == 102:
@@ -426,7 +429,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "moneda" : "COP",
                                                 "orden_compra": documento.orden_compra,
                                                 "resolucion" : str(documento.resolucion.numero),
-                                                "forma_pago" : documento.metodo_pago.id,
+                                                "forma_pago" : forma_pago,
                                                 "cantidad_detalles" :1,
                                                 "subtotal" : str(documento.subtotal),
                                                 "subtotal_mas_impuestos" : str(documento.subtotal + documento.impuesto),

@@ -21,7 +21,7 @@
   },    
   {
     "model": "general.impuesto",
-    "pk": 1,
+    "pk": 5,
     "fields": {"nombre": "19% AIU", "nombre_extendido": "IVA AIU Ventas 19%", "porcentaje":"19", "porcentaje_base":"10", "venta": "True", "compra":"False"}
   }
 ]
