@@ -28,4 +28,5 @@ class ImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
             'impuesto_porcentaje': instance.porcentaje,
             'impuesto_compra': instance.compra,
             'impuesto_venta': instance.venta,
+            'impuesto_porcentaje_base': instance.porcentaje_base,
         }             
