@@ -8,7 +8,7 @@ class DocumentoImpuestoSerializador(serializers.HyperlinkedModelSerializer):
     impuesto = serializers.PrimaryKeyRelatedField(queryset=Impuesto.objects.all())
     class Meta:
         model = DocumentoImpuesto
-        fields = ['documento_detalle', 'impuesto', 'base', 'porcentaje', 'total']
+        fields = ['documento_detalle', 'impuesto', 'base', 'porcentaje', 'total', 'porcentaje_base']
     def to_representation(self, instance):
         return {
             'id': instance.id,            
