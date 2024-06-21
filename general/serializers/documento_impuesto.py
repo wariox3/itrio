@@ -16,6 +16,7 @@ class DocumentoImpuestoSerializador(serializers.HyperlinkedModelSerializer):
             'impuesto_nombre': instance.impuesto.nombre,
             'impuesto_nombre_extendido': instance.impuesto.nombre_extendido,
             'impuesto_porcentaje': instance.impuesto.porcentaje,
+            'impuesto_porcentaje_base': instance.impuesto.porcentaje_base,
             'base': instance.base,
             'porcentaje': instance.porcentaje,
             'total': instance.total,
