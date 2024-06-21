@@ -48,8 +48,3 @@ class Documento(models.Model):
 
     class Meta:
         db_table = "gen_documento"
-
-    def save(self, *args, **kwargs):
-        self.total = self.total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        self.impuesto = self.impuesto.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        super(Documento, self).save(*args, **kwargs)

@@ -23,8 +23,3 @@ class DocumentoDetalle(models.Model):
     class Meta:
         db_table = "gen_documento_detalle"
         ordering = ['id', 'documento', 'item', 'cantidad']
-    
-    def save(self, *args, **kwargs):
-        self.total = self.total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        self.impuesto = self.impuesto.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        super(DocumentoDetalle, self).save(*args, **kwargs)

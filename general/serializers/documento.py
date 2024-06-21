@@ -8,7 +8,6 @@ from general.models.plazo_pago import PlazoPago
 from general.models.asesor import Asesor
 from general.models.sede import Sede
 from seguridad.models import User
-from decimal import Decimal, ROUND_HALF_UP
 
 class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
     numero = serializers.IntegerField(allow_null=True, label='Numero', default=None)
@@ -83,11 +82,6 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'sede': instance.sede_id,
             'sede_nombre': sede_nombre
         }
-    
-    def validate(self, data):
-        data['total'] = data['total'].quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        data['impuesto'] = data['impuesto'].quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        return data
     
 class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
     contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
