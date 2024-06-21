@@ -59,7 +59,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     "impuesto":impuesto['impuesto'],
                                     "base":impuesto['base'],
                                     "porcentaje":impuesto['porcentaje'],
-                                    "total":impuesto['total']
+                                    "total":impuesto['total'],
+                                    "porcentaje_base":impuesto['porcentaje_base']
                                 }
                                 documentoImpuestoSerializador = DocumentoImpuestoSerializador(data=datosDocumentoImpuesto)
                                 if documentoImpuestoSerializador.is_valid():
