@@ -2,21 +2,26 @@
   {
     "model": "general.impuesto",
     "pk": 1,
-    "fields": {"nombre": "19%", "nombre_extendido": "IVA Ventas 19%", "porcentaje":"19", "venta": "True", "compra":"False"}
+    "fields": {"nombre": "19%", "nombre_extendido": "IVA Ventas 19%", "porcentaje":"19", "porcentaje_base":"100", "venta": "True", "compra":"False"}
   },
   {
     "model": "general.impuesto",
     "pk": 2,
-    "fields": {"nombre": "5%", "nombre_extendido": "IVA Ventas 5%", "porcentaje":"5", "venta": "True", "compra":"False"}
+    "fields": {"nombre": "5%", "nombre_extendido": "IVA Ventas 5%", "porcentaje":"5", "porcentaje_base":"100", "venta": "True", "compra":"False"}
   },
   {
     "model": "general.impuesto",
     "pk": 3,
-    "fields": {"nombre": "19%", "nombre_extendido": "IVA Compras 19%", "porcentaje":"19", "venta": "False", "compra":"True"}
+    "fields": {"nombre": "19%", "nombre_extendido": "IVA Compras 19%", "porcentaje":"19", "porcentaje_base":"100", "venta": "False", "compra":"True"}
   },
   {
     "model": "general.impuesto",
     "pk": 4,
-    "fields": {"nombre": "5%", "nombre_extendido": "IVA Compras 5%", "porcentaje":"5", "venta": "False", "compra":"True"}
-  }    
+    "fields": {"nombre": "5%", "nombre_extendido": "IVA Compras 5%", "porcentaje":"5", "porcentaje_base":"100", "venta": "False", "compra":"True"}
+  },    
+  {
+    "model": "general.impuesto",
+    "pk": 1,
+    "fields": {"nombre": "19% AIU", "nombre_extendido": "IVA AIU Ventas 19%", "porcentaje":"19", "porcentaje_base":"10", "venta": "True", "compra":"False"}
+  }
 ]
