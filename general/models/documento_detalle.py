@@ -2,6 +2,7 @@ from django.db import models
 from general.models.documento import Documento
 from general.models.item import Item
 from contabilidad.models.cuenta import Cuenta
+from decimal import Decimal, ROUND_HALF_UP
 
 class DocumentoDetalle(models.Model):    
     cantidad = models.FloatField(default=0)
@@ -19,7 +20,12 @@ class DocumentoDetalle(models.Model):
     documento_afectado = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles_afectado', null=True)
     item = models.ForeignKey(Item, null=True, on_delete=models.PROTECT, related_name='itemes')
     cuenta = models.ForeignKey(Cuenta, null=True, on_delete=models.PROTECT, related_name='cuentas')
-
     class Meta:
         db_table = "gen_documento_detalle"
         ordering = ['id', 'documento', 'item', 'cantidad']
+    
+    def save(self, *args, **kwargs):
+        # Redondear precio y descuento a 2 decimales
+        self.total = self.total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        self.descuento = self.descuento.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        super(DocumentoDetalle, self).save(*args, **kwargs)
