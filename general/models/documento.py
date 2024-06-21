@@ -8,6 +8,7 @@ from general.models.plazo_pago import PlazoPago
 from general.models.asesor import Asesor
 from general.models.sede import Sede
 from seguridad.models import User
+from decimal import Decimal, ROUND_HALF_UP
 
 class Documento(models.Model):    
     numero = models.IntegerField(null=True)
@@ -47,3 +48,8 @@ class Documento(models.Model):
 
     class Meta:
         db_table = "gen_documento"
+
+    def save(self, *args, **kwargs):
+        self.total = self.total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        self.impuesto = self.impuesto.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        super(Documento, self).save(*args, **kwargs)        

@@ -25,7 +25,6 @@ class DocumentoDetalle(models.Model):
         ordering = ['id', 'documento', 'item', 'cantidad']
     
     def save(self, *args, **kwargs):
-        # Redondear precio y descuento a 2 decimales
         self.total = self.total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        self.descuento = self.descuento.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        self.impuesto = self.impuesto.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
         super(DocumentoDetalle, self).save(*args, **kwargs)
