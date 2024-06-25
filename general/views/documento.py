@@ -702,17 +702,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         try:
             documento = Documento.objects.get(id=documento_id)
             if documento.estado_electronico_notificado == False:
-                configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
-                documentoGenerar = DocumentoViewSet.consulta_imprimir(documento_id)
-                formatoFactura = FormatoFactura()
-                pdf = formatoFactura.generar_pdf(documentoGenerar, configuracion)   
-                pdf_base64 = "data:application/pdf;base64," + base64.b64encode(pdf).decode('utf-8')            
-                wolframio = Wolframio()
-                respuesta = wolframio.notificar(documento.electronico_id, pdf_base64)
-                if respuesta['error'] == False: 
+                if documento.documento_tipo.documento_clase_id in [100, 101, 102]:
+                    configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
+                    documentoGenerar = DocumentoViewSet.consulta_imprimir(documento_id)
+                    formatoFactura = FormatoFactura()
+                    pdf = formatoFactura.generar_pdf(documentoGenerar, configuracion)   
+                    pdf_base64 = "data:application/pdf;base64," + base64.b64encode(pdf).decode('utf-8')            
+                    wolframio = Wolframio()
+                    respuesta = wolframio.notificar(documento.electronico_id, pdf_base64)
+                    if respuesta['error'] == False: 
+                        documento.estado_electronico_notificado = True                
+                        documento.save()     
+                    return respuesta                        
+                else:
                     documento.estado_electronico_notificado = True                
-                    documento.save()                
-                return respuesta
+                    documento.save()
+                    return {'error':False}
             else:  
                 return {'error':True, 'mensaje':'El documento ya fue notificado con anterioridad pruebe re-notificando'}
         except Documento.DoesNotExist:
