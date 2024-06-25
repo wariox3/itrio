@@ -405,6 +405,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             if documento.resolucion: 
                                 if documento.numero: 
                                     if documento.estado_electronico_enviado == False: 
+                                        #Las facturas y documento soporte toman prefijo de la resolucion
                                         prefijo = documento.resolucion.prefijo
                                         documento_referencia_id = None
                                         forma_pago = 2
@@ -414,8 +415,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             prefijo = "NC"
                                         if documento.documento_tipo.documento_clase_id == 102:
                                             prefijo = "ND" 
-                                        if documento.documento_tipo.documento_clase_id == 303:
-                                            prefijo = "DS"
                                         if documento.documento_tipo.documento_clase_id == 304:
                                             prefijo = "DSAJ"
                                         datos_factura = {
