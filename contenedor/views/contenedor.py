@@ -29,15 +29,11 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             subdominio = request.data.get('subdominio')
             usuario_id = request.data.get('usuario_id')
             plan_id = request.data.get('plan_id')
-            nombre = request.data.get('nombre')  
-            identificacion = request.data.get('identificacion_id')
-            numero_identificacion = request.data.get('numero_identificacion')
-            digito_verificacion = request.data.get('digito_verificacion')
-            direccion = request.data.get('direccion')
+            nombre = request.data.get('nombre')          
             telefono = request.data.get('telefono')
             correo = request.data.get('correo')
             ciudad = request.data.get('ciudad_id')
-            if subdominio and usuario_id and nombre and plan_id and identificacion and numero_identificacion and digito_verificacion and direccion and telefono and correo and ciudad:
+            if subdominio and usuario_id and nombre and plan_id and telefono and correo and ciudad:
                 contenedorValidacion = Contenedor.objects.filter(**{'schema_name':subdominio})
                 if contenedorValidacion:
                     return Response({'mensaje': f"Ya existe una empresa con el subdominio {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
@@ -54,17 +50,10 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                     with schema_context(subdominio):
                         data = {
                             'id':1,
-                            'identificacion': identificacion,                            
-                            'numero_identificacion': numero_identificacion,
-                            'digito_verificacion': digito_verificacion,
                             'nombre_corto': nombre,
-                            'direccion': direccion,
                             'telefono': telefono,
                             'correo': correo,
-                            'ciudad': ciudad,
                             'imagen': imagenReferencia,
-                            'tipo_persona': 1,                            
-                            'regimen':1,
                             'contenedor_id':contenedor.id,
                             'subdominio':subdominio}
                         empresaSerializador = EmpresaSerializador(data=data)                        

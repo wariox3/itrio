@@ -3,10 +3,6 @@ from rest_framework import serializers
 from decouple import config
 
 class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all(), allow_null=True)
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all(), allow_null=True)    
-    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all(), allow_null=True)
-    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all(), allow_null=True)
     class Meta:
         model = Empresa
         fields = [
