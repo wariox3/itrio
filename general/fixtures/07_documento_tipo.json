@@ -53,5 +53,10 @@
     "model": "general.documentoTipo",
     "pk": 11,
     "fields": {"nombre": "DOCUMENTO SOPORTE", "documento_clase": 303}
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 12,
+    "fields": {"nombre": "NOTA AJUSTE", "documento_clase": 304}
   }  
 ]
