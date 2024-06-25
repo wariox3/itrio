@@ -415,7 +415,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         if documento.documento_tipo.documento_clase_id == 102:
                                             prefijo = "ND" 
                                         if documento.documento_tipo.documento_clase_id == 303:
-                                            prefijo = "DS"
+                                            prefijo = "DSOP"
                                         if documento.documento_tipo.documento_clase_id == 304:
                                             prefijo = "DSAJ"
                                         datos_factura = {
