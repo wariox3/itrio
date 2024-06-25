@@ -32,8 +32,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             nombre = request.data.get('nombre')          
             telefono = request.data.get('telefono')
             correo = request.data.get('correo')
-            ciudad = request.data.get('ciudad_id')
-            if subdominio and usuario_id and nombre and plan_id and telefono and correo and ciudad:
+            if subdominio and usuario_id and nombre and plan_id and telefono and correo:
                 contenedorValidacion = Contenedor.objects.filter(**{'schema_name':subdominio})
                 if contenedorValidacion:
                     return Response({'mensaje': f"Ya existe una empresa con el subdominio {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
