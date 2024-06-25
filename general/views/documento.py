@@ -413,7 +413,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         if documento.documento_tipo.documento_clase_id == 101:
                                             prefijo = "NC"
                                         if documento.documento_tipo.documento_clase_id == 102:
-                                            prefijo = "ND"                                                                              
+                                            prefijo = "ND" 
+                                        if documento.documento_tipo.documento_clase_id == 303:
+                                            prefijo = "DS"
+                                        if documento.documento_tipo.documento_clase_id == 304:
+                                            prefijo = "DSAJ"
                                         datos_factura = {
                                             "cuentaId": empresa.rededoc_id,
                                             "documentoClaseId" : documento.documento_tipo_id,
