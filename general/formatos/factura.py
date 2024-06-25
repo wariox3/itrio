@@ -18,7 +18,7 @@ class FormatoFactura():
     def generar_pdf(self, data, configuracion):  
         buffer = BytesIO()   
         p = canvas.Canvas(buffer, pagesize=letter)
-        estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8, leading=5)
+        estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8, leading=8)
         informacion_factura = configuracion['informacion_factura'] if configuracion['informacion_factura'] else ""
         informacion_factura_con_saltos = informacion_factura.replace('\n', '<br/>')
         informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>" + informacion_factura_con_saltos, estilo_helvetica)
@@ -227,7 +227,7 @@ class FormatoFactura():
             p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
 
             #informacion pago
-            ancho_texto, alto_texto = informacionPago.wrapOn(p, 280, 400)
+            ancho_texto, alto_texto = informacionPago.wrapOn(p, 300, 400)
             
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
