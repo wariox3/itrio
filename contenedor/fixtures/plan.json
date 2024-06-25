@@ -9,7 +9,7 @@
       "limite_ingresos":10000000,
       "precio":16900,
       "precio_usuario_adicional":0,
-      "limite_electronicos":10
+      "limite_electronicos":5
     }
   },
   {
@@ -22,7 +22,7 @@
       "limite_ingresos":10000000,
       "precio":22900,
       "precio_usuario_adicional":0,
-      "limite_electronicos":10
+      "limite_electronicos":5
     }
   },
   {
