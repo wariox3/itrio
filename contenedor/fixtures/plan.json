@@ -3,7 +3,7 @@
     "model": "contenedor.plan",
     "pk": 1,
     "fields": {
-      "nombre": "Plan impulso", 
+      "nombre": "Plan impulso (facturacion)", 
       "limite_usuarios":1, 
       "usuarios_base":1, 
       "limite_ingresos":10000000,
@@ -29,7 +29,7 @@
     "model": "contenedor.plan",
     "pk": 3,
     "fields": {
-      "nombre": "Plan crecimiento",
+      "nombre": "Plan crecimiento (facturacion)",
       "limite_usuarios":0, 
       "usuarios_base":2, 
       "limite_ingresos":50000000,
@@ -55,7 +55,7 @@
     "model": "contenedor.plan",
     "pk": 5,
     "fields": {
-      "nombre": "Plan expansión",
+      "nombre": "Plan expansión (facturacion)",
       "limite_usuarios":0, 
       "usuarios_base":3, 
       "limite_ingresos":200000000,
@@ -81,7 +81,7 @@
     "model": "contenedor.plan",
     "pk": 7,
     "fields": {
-      "nombre": "Plan éxito",
+      "nombre": "Plan éxito (facturacion)",
       "limite_usuarios":0, 
       "usuarios_base":8, 
       "limite_ingresos":500000000,
