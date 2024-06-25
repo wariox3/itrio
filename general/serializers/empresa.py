@@ -23,8 +23,13 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'subdominio']  
         
     def to_representation(self, instance):
-        nombre_ciudad = instance.ciudad.nombre
-        nombre_estado = instance.ciudad.estado.nombre
+
+        nombre_ciudad = ""
+        nombre_estado = ""
+        if instance.ciudad:
+            nombre_ciudad = instance.ciudad.nombre        
+            if instance.ciudad.estado:
+                nombre_estado = instance.ciudad.estado.nombre
 
         nombre_completo = f"{nombre_ciudad} - {nombre_estado}"
         region = config('DO_REGION')
@@ -32,16 +37,16 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,            
             'numero_identificacion': instance.numero_identificacion,
-            'identificacion_id': instance.identificacion.id,
-            'ciudad_id': instance.ciudad.id,
+            'identificacion_id': instance.identificacion_id,
+            'ciudad_id': instance.ciudad_id,
             'ciudad_nombre': nombre_completo,
             'digito_verificacion': instance.digito_verificacion,
             'nombre_corto': instance.nombre_corto,
             'direccion': instance.direccion,
             'telefono': instance.telefono,
             'correo': instance.correo,
-            'regimen': instance.regimen.id,
-            'tipo_persona': instance.tipo_persona.id,
+            'regimen': instance.regimen_id,
+            'tipo_persona': instance.tipo_persona_id,
             'rededoc_id' : instance.rededoc_id,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
         }   
