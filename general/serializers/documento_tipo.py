@@ -13,6 +13,8 @@ class DocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,            
             'nombre': instance.nombre,
             'consecutivo' : instance.consecutivo,
-            'resolucion_id' : instance.resolucion_id            
+            'resolucion_id' : instance.resolucion_id,
+            'venta' : instance.venta,
+            'compra' : instance.compra            
         }        
         
