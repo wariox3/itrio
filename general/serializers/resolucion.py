@@ -16,5 +16,6 @@ class ResolucionListaAutocompletarSerializador(serializers.HyperlinkedModelSeria
         return {
             'resolucion_id': instance.id,            
             'resolucion_numero': instance.numero,
+            'resolucion_prefijo': instance.prefijo
         }       
         

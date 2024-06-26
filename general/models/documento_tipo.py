@@ -8,6 +8,7 @@ class DocumentoTipo(models.Model):
     consecutivo = models.IntegerField(default=1)
     venta = models.BooleanField(default = False)
     compra = models.BooleanField(default = False)
+    electronico = models.BooleanField(default = False)
     documento_clase = models.ForeignKey(DocumentoClase, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_documento_clase')
     resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_resolucion')
     cuenta_cobrar = models.ForeignKey(Cuenta, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_cuenta_cobrar')
