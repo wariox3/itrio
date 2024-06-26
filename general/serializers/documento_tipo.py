@@ -8,12 +8,19 @@ class DocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
         model = DocumentoTipo
         fields = ['consecutivo', 'resolucion']
 
-    def to_representation(self, instance):        
+    def to_representation(self, instance):  
+        resolucion_numero = ""
+        resolucion_prefijo = ""
+        if instance.resolucion:
+            resolucion_numero = instance.resolucion.numero
+            resolucion_prefijo = instance.resolucion.prefijo
         return {
             'id': instance.id,            
             'nombre': instance.nombre,
             'consecutivo' : instance.consecutivo,
             'resolucion_id' : instance.resolucion_id,
+            'resolucion_numero' : resolucion_numero,
+            'resolucion_prefijo' : resolucion_prefijo,
             'venta' : instance.venta,
             'compra' : instance.compra            
         }        
