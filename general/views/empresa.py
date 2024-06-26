@@ -77,17 +77,20 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         try:
             raw = request.data
             empresa_id = raw.get('empresa_id')
-            resolucion_id = raw.get('resolucion_id')
             set_pruebas = raw.get('set_pruebas')
             correo_facturacion_electronica = raw.get('correo_facturacion_electronica')
             copia_correo_facturacion_electronica = raw.get('copia_correo_facturacion_electronica')
-            if empresa_id and resolucion_id and set_pruebas:                                            
-                wolframio = Wolframio()
-                respuesta = wolframio.cuentaCrear(set_pruebas, resolucion_id, correo_facturacion_electronica, copia_correo_facturacion_electronica)
-                if respuesta['error'] == False:
-                    return Response({'validar':True}, status=status.HTTP_200_OK)
+            if empresa_id and set_pruebas:                                            
+                empresa = Empresa.objects.get(pk=1)
+                if empresa.numero_identificacion and empresa.nombre_corto and empresa.telefono and empresa.correo and empresa.ciudad and empresa.identificacion:
+                    wolframio = Wolframio()                
+                    respuesta = wolframio.cuentaCrear(empresa, set_pruebas, correo_facturacion_electronica, copia_correo_facturacion_electronica)
+                    if respuesta['error'] == False:
+                        return Response({'validar':True}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje':'La empresa debe terner configurado tipo identificacion, numero identificacion, nombre, telefono, correo, ciudad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:

@@ -1,14 +1,14 @@
 from general.models.empresa import Empresa
 from general.models.documento_tipo import DocumentoTipo
 from general.models.resolucion import Resolucion
+from decouple import config
 import requests
 import json
 
 class Wolframio():
 
-    def cuentaCrear(self, set_pruebas, resolucion_id, correo_facturacion_electronica, copia_correo_facturacion_electronica):
-        url = "/api/cuenta/nuevo"
-        empresa = Empresa.objects.get(pk=1)
+    def cuentaCrear(self, empresa, set_pruebas, correo_facturacion_electronica, copia_correo_facturacion_electronica):
+        url = "/api/cuenta/nuevo"        
         datos = {
             "numeroIdentificacion" : empresa.numero_identificacion,
             "nombre" : empresa.nombre_corto,
@@ -22,21 +22,18 @@ class Wolframio():
             "correoFacturacionElectronica" : correo_facturacion_electronica,
             "copiaCorreoFacturacionElectronica": copia_correo_facturacion_electronica
         }
-        respuesta = self.consumirPost(datos, url)        
+        respuesta = self.consumirPost(datos, url)  
+        datosRespuesta = respuesta['datos']      
         if respuesta['status'] == 200:
             datosRespuesta = respuesta['datos']            
             if empresa.rededoc_id is None or empresa.rededoc_id == '':
-                documentoTipo = DocumentoTipo.objects.get(pk=1)
-                resolucion = Resolucion.objects.get(pk=resolucion_id)
-                documentoTipo.resolucion = resolucion
-                empresa.rededoc_id = datosRespuesta['id']
-                documentoTipo.save()
+                empresa.rededoc_id = datosRespuesta['id']                
                 empresa.save()
                 return {'error':False}
             else:            
                 return {'error':True, 'mensaje':'La empresa ya se encuentra activa'}
         else:
-            return {'error':True, 'mensaje':respuesta['mensaje']}
+            return {'error':True, 'mensaje':datosRespuesta['mensaje']}
         
     def cuentaDetalle(self, id):
         url = "/api/cuenta/detalle"
@@ -103,7 +100,10 @@ class Wolframio():
             return {'error':True, 'mensaje':f"Ocurrio un error en el servicio wolframio: {datos['mensaje']}"}
 
     def consumirPost(self, data, url):
-        url = "http://159.203.18.130/wolframio/public/index.php" + url
+        if config('ENV') == "prod":
+            url = "http://159.203.18.130/wolframio/public/index.php" + url
+        else:
+            url = "http://prueba.rededoc.co" + url    
         json_data = json.dumps(data)
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, data=json_data, headers=headers)
