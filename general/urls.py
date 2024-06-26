@@ -6,6 +6,7 @@ from .views.resolucion import ResolucionViewSet
 from .views.impuesto import ImpuestoViewSet
 from .views.item_impuesto import ItemImpuestoViewSet
 from .views.contacto import ContactoViewSet
+from .views.documento_tipo import DocumentoTipoViewSet
 from .views.documento import DocumentoViewSet
 from .views.documento_detalle import DocumentoDetalleViewSet
 from .views.identificacion import IdentificacionViewSet
@@ -34,6 +35,7 @@ router.register(r'item', ItemViewSet)
 router.register(r'resolucion', ResolucionViewSet)
 router.register(r'impuesto', ImpuestoViewSet)
 router.register(r'itemimpuesto', ItemImpuestoViewSet)
+router.register(r'documento_tipo', DocumentoTipoViewSet)
 router.register(r'documento', DocumentoViewSet)
 router.register(r'documento_detalle', DocumentoDetalleViewSet)
 router.register(r'metodopago', MetodoPagoViewSet)
