@@ -16,6 +16,7 @@ class Empresa(models.Model):
     contenedor_id = models.IntegerField()     
     rededoc_id = models.IntegerField(null=True)    
     subdominio = models.CharField(max_length=100, default='demo') 
+    asistente_electronico = models.BooleanField(default = False)
     identificacion = models.ForeignKey(Identificacion, null=True, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(Ciudad, null=True, on_delete=models.PROTECT)
     tipo_persona = models.ForeignKey(TipoPersona, null=True, on_delete=models.PROTECT)   
