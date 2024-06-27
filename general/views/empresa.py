@@ -12,7 +12,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
     serializer_class = EmpresaSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request):        
+    def create(self, request):
         if Empresa.objects.filter(pk=1).exists():
             return Response({'mensaje':'Ya se creó la empresa', 'codigo':14}, status=status.HTTP_400_BAD_REQUEST)
         else:

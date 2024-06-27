@@ -23,7 +23,6 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'subdominio']  
         
     def to_representation(self, instance):
-
         nombre_ciudad = ""
         nombre_estado = ""
         if instance.ciudad:
