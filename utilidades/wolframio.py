@@ -101,7 +101,7 @@ class Wolframio():
 
     def consumirPost(self, data, url):
         if config('ENV') == "prod":
-            url = "http://159.203.18.130/wolframio/public/index.php" + url
+            url = "http://rededoc.co" + url
         else:
             url = "http://prueba.rededoc.co" + url    
         json_data = json.dumps(data)
