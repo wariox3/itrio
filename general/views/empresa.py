@@ -139,4 +139,18 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Empresa.DoesNotExist:
-            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)           
+            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)   
+
+    @action(detail=False, methods=["post"], url_path=r'terminar-asistente',)
+    def terminar_asistente(self, request):
+        try:
+            raw = request.data 
+            empresa = Empresa.objects.get(pk=1)
+            if empresa.asistente_electronico == False:                                                      
+                empresa.asistente_electronico = True
+                empresa.save()
+                return Response({'asistente_terminado':True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje': 'El asistente ya esta terminado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+        except Empresa.DoesNotExist:
+            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                
