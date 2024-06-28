@@ -83,12 +83,17 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             if empresa_id and set_pruebas:                                            
                 empresa = Empresa.objects.get(pk=1)
                 if empresa.numero_identificacion and empresa.nombre_corto and empresa.telefono and empresa.correo and empresa.ciudad and empresa.identificacion:
-                    wolframio = Wolframio()                
-                    respuesta = wolframio.cuentaCrear(empresa, set_pruebas, correo_facturacion_electronica, copia_correo_facturacion_electronica)
-                    if respuesta['error'] == False:
-                        return Response({'validar':True}, status=status.HTTP_200_OK)
+                    if empresa.rededoc_id is None or empresa.rededoc_id == '':
+                        wolframio = Wolframio()                
+                        respuesta = wolframio.cuentaCrear(empresa, set_pruebas, correo_facturacion_electronica, copia_correo_facturacion_electronica)
+                        if respuesta['error'] == False:
+                            empresa.rededoc_id = respuesta['rededoc_id']
+                            empresa.save()
+                            return Response({'activar':True}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
                     else:
-                        return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje':'La empresa ya esta activa con id ' + str(empresa.rededoc_id), 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje':'La empresa debe terner configurado tipo identificacion, numero identificacion, nombre, telefono, correo, ciudad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:

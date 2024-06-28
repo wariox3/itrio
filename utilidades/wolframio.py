@@ -25,13 +25,7 @@ class Wolframio():
         respuesta = self.consumirPost(datos, url)  
         datosRespuesta = respuesta['datos']      
         if respuesta['status'] == 200:
-            datosRespuesta = respuesta['datos']            
-            if empresa.rededoc_id is None or empresa.rededoc_id == '':
-                empresa.rededoc_id = datosRespuesta['id']                
-                empresa.save()
-                return {'error':False}
-            else:            
-                return {'error':True, 'mensaje':'La empresa ya se encuentra activa'}
+            return {'error':False, 'rededoc_id':datosRespuesta['id']}
         else:
             return {'error':True, 'mensaje':datosRespuesta['mensaje']}
         
