@@ -109,13 +109,16 @@ class ItemViewSet(viewsets.ModelViewSet):
         raw = request.data
         id = raw.get('id')
         venta = raw.get('venta')
-        if(id and venta):
+        compra = raw.get('compra')
+        if(id):
             queryset = Item.objects.all()
             item = get_object_or_404(queryset, pk=id)
             itemSerializador = ItemSerializador(item)
             itemImpuestos = ItemImpuesto.objects.filter(item=id)
             if venta:
                 itemImpuestos = itemImpuestos.filter(impuesto__venta=True)
+            if compra:
+                itemImpuestos = itemImpuestos.filter(impuesto__compra=True)
             itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
             itemRespuesta = itemSerializador.data
             itemRespuesta['impuestos'] = itemImpuestosSerializador.data
