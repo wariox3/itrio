@@ -55,6 +55,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'direccion': instance.direccion,  
             'ciudad_id': instance.ciudad_id,
             'ciudad_nombre': instance.ciudad.nombre,
+            'departamento_nombre': instance.ciudad.departamento.nombre,
             'barrio': instance.barrio,
             'codigo_postal': instance.codigo_postal,
             'tipo_persona_id': instance.tipo_persona_id,
