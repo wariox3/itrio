@@ -121,7 +121,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
         raw = request.data
         contenedor_id = raw.get('contenedor_id')
         if contenedor_id:  
-            usuarioContenedor = UsuarioContenedor.objects.filter(contenedor_id=contenedor_id).order_by('-rol')                         
+            usuarioContenedor = UsuarioContenedor.objects.filter(contenedor_id=contenedor_id).order_by('-rol', 'contenedor__nombre')                         
             usuarioContenedorSerializer = UsuarioContenedorConsultaContenedorSerializador(usuarioContenedor, many=True)
             return Response({'usuarios': usuarioContenedorSerializer.data}, status=status.HTTP_200_OK)                
         else:
@@ -132,7 +132,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
         raw = request.data
         usuario_id = raw.get('usuario_id')
         if usuario_id:  
-            usuarioEmpresa = UsuarioContenedor.objects.filter(usuario_id=usuario_id).order_by('-rol')                         
+            usuarioEmpresa = UsuarioContenedor.objects.filter(usuario_id=usuario_id).order_by('-rol', 'contenedor__nombre')                         
             usuarioEmpresaSerializer = UsuarioContenedorSerializador(usuarioEmpresa, many=True)
             return Response({'contenedores': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
