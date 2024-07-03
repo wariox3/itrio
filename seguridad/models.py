@@ -35,6 +35,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     fecha_limite_pago = models.DateField(null=True)
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
+    verificado = models.BooleanField(default = False)
+    fecha_creacion = models.DateTimeField(null=True, auto_now_add=True)
     dominio = models.CharField(max_length = 50, null = True)
     objects = UserManager()
 
