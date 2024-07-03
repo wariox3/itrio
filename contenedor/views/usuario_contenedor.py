@@ -8,7 +8,6 @@ from contenedor.serializers.contenedor import ContenedorSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorConsultaContenedorSerializador
 from contenedor.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
-from utilidades.correo import Correo
 from decouple import config
 from utilidades.zinc import Zinc
 
