@@ -8,9 +8,6 @@ import random
 
 @api_view(['GET'])
 def enviar_coreo(request):
-    correo = Correo() 
-    contenido='Hola mundo!'
-    correo.enviar('maestradaz3@gmail.com', 'Correo de prueba', contenido) 
     return Response({"message": "Hello, world!"})
 
 class PruebaView(APIView):

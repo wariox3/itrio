@@ -10,7 +10,7 @@ from contenedor.models import Verificacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
 from contenedor.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
-from utilidades.correo import Correo
+from utilidades.zinc import Zinc
 from decouple import config
 from utilidades.space_do import SpaceDo
 
@@ -39,10 +39,16 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             verificacion_serializer = VerificacionSerializador(data = raw)
             if verificacion_serializer.is_valid():                                             
                 verificacion_serializer.save()
-                dominio = config('DOMINIO_FRONTEND')
-                correo = Correo()             
-                contenido='Enlace para verificar https://' + dominio + '/auth/verificacion/' + token                    
-                correo.enviar(usuario.correo, 'Debe verificar su cuenta reddoc', contenido)     
+                dominio = config('DOMINIO_FRONTEND')                
+                url = 'https://' + dominio + '/auth/verificacion/' + token
+                html_content = """
+                                <h1>¡Hola {usuario}!</h1>
+                                <p>Estamos comprometidos con la seguridad de tu cuenta, por esta razón necesitamos que nos valides 
+                                que eres tú, por favor verifica tu cuenta haciendo clic en el siguiente enlace.</p>
+                                <a href='{url}' class='button'>Verificar cuenta</a>
+                                """.format(url=url, usuario=usuario.nombre_corto)
+                correo = Zinc()  
+                correo.correo_reddoc(usuario.correo, 'Verificar cuenta de RedDoc', html_content)  
                 return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -72,7 +78,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                         verificacion.estado_usado = True
                         verificacion.save()
                         usuario = User.objects.get(id = verificacion.usuario_id)
-                        usuario.is_active = True
+                        usuario.verificado = True
                         usuario.save()
                         verificacionSerializer = VerificacionSerializador(verificacion)                
                         return Response({'verificado': True, 'verificacion': verificacionSerializer.data}, status=status.HTTP_200_OK)
@@ -96,10 +102,16 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 verificacion_serializer = VerificacionSerializador(data = raw)
                 if verificacion_serializer.is_valid():                                             
                     verificacion_serializer.save()
-                    dominio = config('DOMINIO_FRONTEND')
-                    correo = Correo() 
-                    contenido='Enlace para cambiar la clave https://' + dominio + '/auth/clave/cambiar/' + token
-                    correo.enviar(usuario.correo, 'Solicitud cambio clave', contenido) 
+                    dominio = config('DOMINIO_FRONTEND')                
+                    url = 'https://' + dominio + '/auth/clave/cambiar/' + token
+                    html_content = """
+                                    <h1>¡Hola {usuario}!</h1>
+                                    <p>Recibimos una solicitud para cambiar tu clave, puedes cambiarla haciendo clic en 
+                                    el siguiente enlace.</p>
+                                    <a href='{url}' class='button'>Cabmiar clave</a>
+                                    """.format(url=url, usuario=usuario.nombre_corto)
+                    correo = Zinc()  
+                    correo.correo_reddoc(usuario.correo, 'Solicitud cambio clave RedDoc', html_content)
                     return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
                 return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            

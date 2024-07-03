@@ -10,6 +10,7 @@ from contenedor.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
 from utilidades.correo import Correo
 from decouple import config
+from utilidades.zinc import Zinc
 
 class UsuarioContenedorViewSet(viewsets.ModelViewSet):
     queryset = UsuarioContenedor.objects.all()
@@ -54,10 +55,16 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                             return Response({'mensaje':'La empresa supera el numero de usuarios segun el plan, si quiere invitar nuevos usuarios debe incrementar el plan', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
                 verificacionSerializador = VerificacionSerializador(data = raw)
                 if verificacionSerializador.is_valid():                                             
-                    verificacionSerializador.save()
-                    correo = Correo()              
-                    contenido = 'Siga este enlace para aceptar la invitacion ' f"https://{config('DOMINIO_FRONTEND')}/auth/login/" + token                    
-                    correo.enviar(invitado, 'Invitacion a redoffice', contenido)                                            
+                    verificacionSerializador.save()                    
+                    url = f"https://{config('DOMINIO_FRONTEND')}/auth/login/" + token
+                    html_content = """
+                                <h1>¡Hola {usuario}!</h1>
+                                <p>Te han invitado para que seas parte de un equipo de trabajo en RedDoc. Clic en el siguiente enlace 
+                                para aceptar la invitacion</p>
+                                <a href='{url}' class='button'>Aceptar invitacion</a>
+                                """.format(url=url, usuario=invitado)
+                    correo = Zinc()  
+                    correo.correo_reddoc(invitado, 'Invitacion a RedDoc', html_content)
                     return Response({'verificacion': verificacionSerializador.data}, status=status.HTTP_201_CREATED)
                 return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacionSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
             else:
@@ -65,7 +72,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
         except Contenedor.DoesNotExist:
-            return Response({'mensaje':'La empresa no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({'mensaje':'El contenedor no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST) 
 
     @action(detail=False, methods=["post"], url_path=r'confirmar',)
     def confirmar(self, request):
