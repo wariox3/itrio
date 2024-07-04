@@ -205,5 +205,17 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
         if usuario:
             return Response({'saldo': usuario.vr_saldo}, status=status.HTTP_200_OK)
         return Response({'mensaje':'El usuario no existe', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=False, methods=["post"], url_path=r'estado-verificado',)
+    def estado_verificado(self, request):
+        raw = request.data
+        try:
+            usuario_id = raw.get('usuario_id')
+            if usuario_id:                            
+                usuario = User.objects.get(pk=usuario_id)
+                return Response({'verificado': usuario.verificado}, status=status.HTTP_200_OK)                
+            return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
+        except User.DoesNotExist:
+            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)      
 
         
