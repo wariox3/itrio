@@ -5,12 +5,14 @@ from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento_impuesto import DocumentoImpuesto
 from general.models.documento_tipo import DocumentoTipo
+from general.models.documento_pago import DocumentoPago
 from general.models.empresa import Empresa
 from general.models.configuracion import Configuracion
 from general.serializers.documento import DocumentoSerializador, DocumentoExcelSerializador, DocumentoRetrieveSerializador, DocumentoInformeSerializador, DocumentoAdicionarSerializador
 from general.serializers.documento_detalle import DocumentoDetalleSerializador
 from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
 from general.serializers.documento import DocumentoReferenciaSerializador
+from general.serializers.documento_pago import DocumentoPagoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.prueba import FormatoPrueba
@@ -45,6 +47,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documento = documentoSerializador.save(resolucion=resolucion)                        
             documentoRespuesta = documentoSerializador.data 
             detalles = raw.get('detalles')
+            pagos = raw.get('pagos')
             if detalles is not None:
                 for detalle in detalles:                
                     detalle['documento'] = documento.id
@@ -76,7 +79,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
                     documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
                     detalle['impuestos'] = documentoImpuestosSerializador.data
-                documentoRespuesta['detalles'] = detalles                           
+                documentoRespuesta['detalles'] = detalles   
+            if pagos is not None:
+                for pago in pagos:                
+                    pago['documento'] = documento.id
+                    pagoSerializador = DocumentoPagoSerializador(data=pago)
+                    if pagoSerializador.is_valid():
+                        documentoPago = pagoSerializador.save() 
+                    else:
+                        return Response({'mensaje':'Errores de validacion pago', 'codigo':14, 'validaciones': pagoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
+                documentoRespuesta['pagos'] = pagos                                         
             return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -93,6 +105,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             detalle['impuestos'] = documentoImpuestosSerializador.data
         documentoRespuesta = documentoSerializador.data
         documentoRespuesta['detalles'] = detalles
+        
+        documentoPagos = DocumentoPago.objects.filter(documento=pk)
+        documentoPagosSerializador = DocumentoPagoSerializador(documentoPagos, many=True)
+        pagos = documentoPagosSerializador.data
+        documentoRespuesta['pagos'] = pagos        
+        
         return Response({'documento':documentoRespuesta}, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):

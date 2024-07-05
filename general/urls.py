@@ -9,6 +9,7 @@ from .views.contacto import ContactoViewSet
 from .views.documento_tipo import DocumentoTipoViewSet
 from .views.documento import DocumentoViewSet
 from .views.documento_detalle import DocumentoDetalleViewSet
+from .views.documento_pago import DocumentoPagoViewSet
 from .views.identificacion import IdentificacionViewSet
 from .views.ciudad import CiudadViewSet
 from .views.tipo_persona import TipoPersonaViewSet
@@ -38,10 +39,11 @@ router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'documento_tipo', DocumentoTipoViewSet)
 router.register(r'documento', DocumentoViewSet)
 router.register(r'documento_detalle', DocumentoDetalleViewSet)
+router.register(r'documento_pago', DocumentoPagoViewSet)
 router.register(r'metodopago', MetodoPagoViewSet)
 router.register(r'precio', PrecioViewSet)
 router.register(r'preciodetalle', PrecioDetalleViewSet)
-router.register(r'cuentabanco', CuentaBancoViewSet)
+router.register(r'cuenta_banco', CuentaBancoViewSet)
 router.register(r'asesor', AsesorViewSet)
 router.register(r'sede', SedeViewSet)
 router.register(r'plazopago', PlazoPagoViewSet)
