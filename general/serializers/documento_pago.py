@@ -18,6 +18,6 @@ class DocumentoPagoSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id, 
             'documento_id': instance.documento_id,           
             'pago': instance.pago,
-            'cuenta_bando_id': instance.cuenta_banco_id,
+            'cuenta_banco_id': instance.cuenta_banco_id,
             'cuenta_banco_nombre': cuenta_banco_nombre
         }  
