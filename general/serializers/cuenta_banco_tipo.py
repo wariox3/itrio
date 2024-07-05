@@ -11,4 +11,15 @@ class CuentaBancoTipoSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,            
             'nombre': instance.nombre,
-        }    
+        }  
+
+class CuentaBancoTipoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    
+    class Meta:
+        model = CuentaBancoTipo
+
+    def to_representation(self, instance):
+        return {
+            'cuenta_banco_tipo_id': instance.id,            
+            'cuenta_banco_tipo_nombre': instance.nombre,
+        }       

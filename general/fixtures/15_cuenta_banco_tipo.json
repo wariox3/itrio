@@ -1,0 +1,17 @@
+[
+  {
+    "model": "general.CuentaBancoTipo",
+    "pk": 1,
+    "fields": {"nombre": "Banco nacional"}
+  },
+  {
+    "model": "general.CuentaBancoTipo",
+    "pk": 2,
+    "fields": {"nombre": "Tarjeta de credito"}
+  },
+  {
+    "model": "general.CuentaBancoTipo",
+    "pk": 3,
+    "fields": {"nombre": "Efectivo"}
+  }
+]
