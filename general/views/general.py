@@ -17,6 +17,7 @@ from general.models.asesor import Asesor
 from general.models.precio import Precio
 from general.models.plazo_pago import PlazoPago
 from general.models.sede import Sede
+from general.models.cuenta_banco import CuentaBanco
 from general.models.cuenta_banco_tipo import CuentaBancoTipo
 from contabilidad.models.cuenta import Cuenta
 from humano.models.hum_contrato import HumContrato
@@ -35,6 +36,7 @@ from general.serializers.asesor import AsesorSerializador, AsesorListaAutocomple
 from general.serializers.precio import PrecioSerializador, PrecioListaAutocompletarSerializador
 from general.serializers.plazo_pago import PlazoPagoSerializador, PlazoPagoListaAutocompletarSerializador
 from general.serializers.sede import SedeSerializador, SedeListaAutocompletarSerializador
+from general.serializers.cuenta_banco import CuentaBancoSerializador, CuentaBancoListaAutocompletarSerializador
 from general.serializers.cuenta_banco_tipo import CuentaBancoTipoSerializador, CuentaBancoTipoListaAutocompletarSerializador
 from contabilidad.serializers.cuenta import CuentaListaAutocompletarSerializador
 from humano.serializers.hum_contrato import HumContratoSerializador
