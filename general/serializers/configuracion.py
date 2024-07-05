@@ -13,6 +13,7 @@ class ConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
             'empresa',
             'formato_factura',
             'informacion_factura',
+            'informacion_factura_superior',
             'venta_asesor',
             'venta_sede'
         ]      
@@ -23,6 +24,7 @@ class ConfiguracionActualizarSerializador(serializers.HyperlinkedModelSerializer
         fields = [
             'formato_factura', 
             'informacion_factura', 
+            'informacion_factura_superior',
             'venta_asesor',
             'venta_sede'
         ]
