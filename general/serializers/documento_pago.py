@@ -11,8 +11,13 @@ class DocumentoPagoSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['documento', 'cuenta_banco', 'pago']
 
     def to_representation(self, instance):
+        cuenta_banco_nombre = ""
+        if instance.cuenta_banco:
+            cuenta_banco_nombre = instance.cuenta_banco.nombre
         return {
             'id': instance.id, 
             'documento_id': instance.documento_id,           
             'pago': instance.pago,
+            'cuenta_bando_id': instance.cuenta_banco_id,
+            'cuenta_banco_nombre': cuenta_banco_nombre
         }  
