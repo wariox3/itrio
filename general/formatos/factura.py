@@ -21,6 +21,9 @@ class FormatoFactura():
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8, leading=8)
         informacion_factura = configuracion['informacion_factura'] if configuracion['informacion_factura'] else ""
         informacion_factura_con_saltos = informacion_factura.replace('\n', '<br/>')
+        informacion_factura_superior = configuracion['informacion_factura_superior'] if configuracion['informacion_factura_superior'] else ""
+        informacion_factura_superior_con_saltos = informacion_factura_superior.replace('\n', '<br/>')
+        informacion_superior = Paragraph(informacion_factura_superior_con_saltos, estilo_helvetica)
         informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>" + informacion_factura_con_saltos, estilo_helvetica)
         comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario'] if data['comentario'] else  ""), estilo_helvetica)
 
@@ -58,9 +61,16 @@ class FormatoFactura():
                 logo_url = imagen_defecto_url
                 logo = ImageReader(logo_url)
 
-            tamano_cuadrado = 1 * inch
             x = 24
+            ancho_texto, alto_texto = informacion_superior.wrapOn(p, 480, 500)
+                        
+            y2 = 690 - alto_texto
+            informacion_superior.drawOn(p, x+76, y2)
+
+            tamano_cuadrado = 1 * inch
+
             y = 680
+            
 
             #borde tabla detalles
             p.drawImage(logo, x, y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto')
@@ -75,10 +85,10 @@ class FormatoFactura():
             p.setFont("Helvetica-Bold", 9)
             p.drawString(x + 75, 720, data['empresa__nombre_corto'].upper() if data['empresa__nombre_corto'] else "")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 75, 710, "PERSONA " + data['empresa__tipo_persona__nombre'].upper() if data['empresa__tipo_persona__nombre'] else "")
-            p.drawString(x + 75, 700, "NIT: " + data['empresa__numero_identificacion'] + "-" +  data['empresa__digito_verificacion'])
-            p.drawString(x + 75, 690, "DIRECCIÓN: " + data['empresa__direccion'].upper() + " - " +data['empresa__ciudad__nombre'].upper())
-            p.drawString(x + 75, 680, "TEL: " + data['empresa__telefono'] if data['empresa__telefono'] else "")
+            p.drawString(x + 75, 710, "NIT: " + data['empresa__numero_identificacion'] + "-" + data['empresa__digito_verificacion'] + (" - PERSONA " + data['empresa__tipo_persona__nombre'].upper() if data['empresa__tipo_persona__nombre'] else ""))
+            p.drawString(x + 75, 700, "DIRECCIÓN: " + data['empresa__direccion'].upper() + " - " +data['empresa__ciudad__nombre'].upper())
+            p.drawString(x + 75, 690, "TEL: " + data['empresa__telefono'] if data['empresa__telefono'] else "")
+
 
             #Datos factura
             p.setFont("Helvetica-Bold", 9)
