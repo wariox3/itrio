@@ -279,10 +279,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento.numero = documentoTipo.consecutivo
                         documentoTipo.consecutivo += 1
                         documentoTipo.save()                
-                    documento.pendiente = documento.total - documento.afectado
                     documento.estado_aprobado = True
                     if documento.documento_tipo.documento_clase_id in (100,101,102, 300, 301, 302, 303):
-                        documento.pendiente = documento.total    
+                        documento.pendiente = documento.total - documento.afectado    
                     if documento.documento_tipo.documento_clase_id == 200:
                         documento_detalles = DocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
                         for documento_detalle in documento_detalles:
