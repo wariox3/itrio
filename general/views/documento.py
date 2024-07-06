@@ -273,13 +273,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if id:
                 documento = Documento.objects.get(pk=id)
                 respuesta = self.validacion_aprobar(id)
-                if respuesta['error'] == False:    
-                            
+                if respuesta['error'] == False:                                
                     documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
                     if documento.numero is None:
                         documento.numero = documentoTipo.consecutivo
                         documentoTipo.consecutivo += 1
                         documentoTipo.save()                
+                    documento.pendiente = documento.total - documento.afectado
                     documento.estado_aprobado = True
                     if documento.documento_tipo.documento_clase_id in (100,101,102, 300, 301, 302, 303):
                         documento.pendiente = documento.total    
