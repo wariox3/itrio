@@ -163,7 +163,31 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
                 detalle['impuestos'] = documentoImpuestosSerializador.data
             documentoRespuesta = documentoSerializador.data
-            documentoRespuesta['detalles'] = detalles                   
+            documentoRespuesta['detalles'] = detalles
+
+            pagos = raw.get('pagos')
+            if pagos is not None:
+                for pago in pagos:                
+                    if pago.get('id'):
+                        documentoPago = DocumentoPago.objects.get(pk=pago['id'])
+                        documentoPagoSerializador = DocumentoPagoSerializador(documentoPago, data=pago, partial=True)    
+                    else:
+                        pago['documento'] = documento.id
+                        documentoPagoSerializador = DocumentoPagoSerializador(data=pago)
+
+                    if documentoPagoSerializador.is_valid():
+                        documentoPago = documentoPagoSerializador.save()                         
+                    else:
+                        return Response({'mensaje':'Errores de validacion pago', 'codigo':14, 'validaciones': documentoPagoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
+            pagosEliminados = raw.get('pagos_eliminados')
+            if pagosEliminados is not None:
+                for pago in pagosEliminados:                                
+                    documentoPago = DocumentoPago.objects.get(pk=pago)
+                    documentoPago.delete()
+            documentoPagos = DocumentoPago.objects.filter(documento=pk)
+            documentoPagosSerializador = DocumentoPagoSerializador(documentoPagos, many=True)
+            pagos = documentoPagosSerializador.data
+            documentoRespuesta['pagos'] = pagos   
             return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)                    
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
