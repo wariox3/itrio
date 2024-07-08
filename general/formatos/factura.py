@@ -83,11 +83,11 @@ class FormatoFactura():
 
             #Emisor
             p.setFont("Helvetica-Bold", 9)
-            p.drawString(x + 75, 720, data['empresa__nombre_corto'].upper() if data['empresa__nombre_corto'] else "")
+            p.drawString(x + 75, 735, data['empresa__nombre_corto'].upper() if data['empresa__nombre_corto'] else "")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 75, 710, "NIT: " + data['empresa__numero_identificacion'] + "-" + data['empresa__digito_verificacion'] + (" - PERSONA " + data['empresa__tipo_persona__nombre'].upper() if data['empresa__tipo_persona__nombre'] else ""))
-            p.drawString(x + 75, 700, "DIRECCIÓN: " + data['empresa__direccion'].upper() + " - " +data['empresa__ciudad__nombre'].upper())
-            p.drawString(x + 75, 690, "TEL: " + data['empresa__telefono'] if data['empresa__telefono'] else "")
+            p.drawString(x + 75, 725, "NIT: " + data['empresa__numero_identificacion'] + "-" + data['empresa__digito_verificacion'] + (" - PERSONA " + data['empresa__tipo_persona__nombre'].upper() if data['empresa__tipo_persona__nombre'] else ""))
+            p.drawString(x + 75, 715, "DIRECCIÓN: " + data['empresa__direccion'].upper() + " - " +data['empresa__ciudad__nombre'].upper())
+            p.drawString(x + 75, 705, "TEL: " + data['empresa__telefono'] if data['empresa__telefono'] else "")
 
 
             #Datos factura
