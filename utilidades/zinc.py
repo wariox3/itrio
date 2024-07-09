@@ -45,6 +45,21 @@ class Zinc():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
 
+    def decodificar_direccion(self, direcciones):
+        url = "/api/mapa/decodificar"
+        datos = {
+            "cuenta": "1",
+            "modelo": "guia",
+            "canal": 3,
+            "direcciones": direcciones
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            return {'error': False, 'direcciones': datos['direcciones']}
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
+
     def correo_reddoc(self, correo, asunto, contenido):
         url = "/api/correo/reddoc"
         datos = {

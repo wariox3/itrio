@@ -7,6 +7,9 @@ import base64
 from io import BytesIO
 import openpyxl
 from datetime import datetime
+from decouple import config
+import json
+from utilidades.zinc import Zinc
 
 class RutGuiaViewSet(viewsets.ModelViewSet):
     queryset = RutGuia.objects.all()
@@ -25,13 +28,15 @@ class RutGuiaViewSet(viewsets.ModelViewSet):
             for row in sheet.iter_rows(min_row=2, values_only=True):
                 fecha_texto = str(row[1])
                 fecha = datetime.strptime(fecha_texto, '%Y%m%d').date()
+                documento = str(row[2])
+                telefono_destinatario = str(row[5])
                 data = {
                     'guia': row[0],
                     'fecha':fecha,
-                    'documento': row[2],
+                    'documento': documento[:30],
                     'destinatario': row[3],
                     'destinatario_direccion': row[4],
-                    'destinatario_telefono': row[5],
+                    'destinatario_telefono': telefono_destinatario[:50],
                     'destinatario_correo': row[6],
                     'peso': row[7],
                     'volumen': row[8],
@@ -44,3 +49,34 @@ class RutGuiaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)        
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'decodificar',)
+    def decodificar(self, request):
+        guias = RutGuia.objects.filter(decodificado = False)
+        if guias.exists():
+            direcciones = []
+            for guia in guias:
+                direcciones.append({
+                    'codigo': guia.id,
+                    'referencia': guia.guia,
+                    'direccion': guia.destinatario_direccion
+                })
+            zinc = Zinc()                        
+            respuesta = zinc.decodificar_direccion(direcciones)
+            if respuesta['error'] == False: 
+                direcciones_respuesta = respuesta['direcciones']
+                for direccion in direcciones_respuesta:
+                    guia = RutGuia.objects.filter(pk=direccion['codigo']).first()
+                    if guia:
+                        guia.decodificado = True
+                        if direccion['decodificado']:
+                            guia.latitud = direccion['latitud']
+                            guia.longitud = direccion['longitud']
+                        else:
+                            guia.decodificado_error = True
+                        guia.save()
+                return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
+        else:
+            return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 

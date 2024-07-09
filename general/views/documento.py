@@ -20,7 +20,6 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F
 from openpyxl import Workbook
-from decouple import config
 from datetime import datetime
 import base64
 from utilidades.wolframio import Wolframio
