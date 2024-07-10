@@ -20,6 +20,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'peso': instance.peso,
             'volumen': instance.volumen,
             'decodificado': instance.decodificado,
+            'decodificado_error': instance.decodificado_error,
             'latitud': instance.latitud,
             'longitud': instance.longitud
         }
