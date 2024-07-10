@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from ruteo.models.rut_guia import RutGuia
-from ruteo.serializers.rut_guia import RutGuiaSerializador
+from ruteo.models.rut_visita import RutVisita
+from ruteo.serializers.rut_visita import RutVisitaSerializador
 import base64
 from io import BytesIO
 import openpyxl
@@ -11,9 +11,9 @@ from decouple import config
 import json
 from utilidades.zinc import Zinc
 
-class RutGuiaViewSet(viewsets.ModelViewSet):
-    queryset = RutGuia.objects.all()
-    serializer_class = RutGuiaSerializador
+class RutVisitaViewSet(viewsets.ModelViewSet):
+    queryset = RutVisita.objects.all()
+    serializer_class = RutVisitaSerializador
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["post"], url_path=r'importar',)
@@ -41,7 +41,7 @@ class RutGuiaViewSet(viewsets.ModelViewSet):
                     'peso': row[7],
                     'volumen': row[8],
                 }
-                guiaSerializador = RutGuiaSerializador(data=data)
+                guiaSerializador = RutVisitaSerializador(data=data)
                 if guiaSerializador.is_valid():
                     guiaSerializador.save()
                 else:
@@ -52,7 +52,7 @@ class RutGuiaViewSet(viewsets.ModelViewSet):
         
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
     def decodificar(self, request):
-        guias = RutGuia.objects.filter(decodificado = False)
+        guias = RutVisita.objects.filter(decodificado = False)
         if guias.exists():
             direcciones = []
             for guia in guias:
@@ -66,7 +66,7 @@ class RutGuiaViewSet(viewsets.ModelViewSet):
             if respuesta['error'] == False: 
                 direcciones_respuesta = respuesta['direcciones']
                 for direccion in direcciones_respuesta:
-                    guia = RutGuia.objects.filter(pk=direccion['codigo']).first()
+                    guia = RutVisita.objects.filter(pk=direccion['codigo']).first()
                     if guia:
                         guia.decodificado = True
                         if direccion['decodificado']:

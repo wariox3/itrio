@@ -1,6 +1,6 @@
 from django.db import models
 
-class RutGuia(models.Model):
+class RutVisita(models.Model):
     guia = models.IntegerField(null=True)
     fecha = models.DateField(null=True)    
     documento = models.CharField(max_length=30, null=True)
@@ -16,4 +16,4 @@ class RutGuia(models.Model):
     decodificado_error = models.BooleanField(default = False)
 
     class Meta:
-        db_table = "rut_guia"
+        db_table = "rut_visita"
