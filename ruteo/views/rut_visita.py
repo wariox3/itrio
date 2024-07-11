@@ -13,7 +13,6 @@ from utilidades.zinc import Zinc
 from math import radians, cos, sin, asin, sqrt
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
-    # Convierte las coordenadas de grados a radianes
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 
     # Fórmula de Haversine
@@ -28,11 +27,16 @@ def ordenar_ruta(visitas, lat_inicial, lon_inicial):
     visitas_con_distancias = []
     for visita in visitas:
         distancia = calcular_distancia(lat_inicial, lon_inicial, visita.latitud, visita.longitud)
+        visita.distancia_proxima = distancia
         visitas_con_distancias.append((visita, distancia))
 
     visitas_con_distancias.sort(key=lambda x: x[1])
-    direcciones_ordenadas = [visita for visita, distancia in visitas_con_distancias]
-    return direcciones_ordenadas
+    for index, (visita, _) in enumerate(visitas_con_distancias):
+        visita.orden = index + 1
+        visita.save()
+    return [visita for visita, _ in visitas_con_distancias]        
+    #direcciones_ordenadas = [visita for visita, distancia in visitas_con_distancias]    
+    #return direcciones_ordenadas
 
 class RutVisitaViewSet(viewsets.ModelViewSet):
     queryset = RutVisita.objects.all()
@@ -113,8 +117,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if visitas.exists():
             lat_inicial = 6.197023
             lon_inicial = -75.585760
-
-            visitas = RutVisita.objects.all()
             visitas_ordenadas = ordenar_ruta(visitas, lat_inicial, lon_inicial)            
             serializer = self.get_serializer(visitas_ordenadas, many=True)            
             return Response({'visitas_ordenadas': serializer.data}, status=status.HTTP_200_OK)

@@ -18,7 +18,7 @@ class RutVisita(models.Model):
     decodificado = models.BooleanField(default = False)
     decodificado_error = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)
-    distancia_proxima = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    distancia_proxima = models.DecimalField(max_digits=9, decimal_places=6, null=True, default=0)
     
     class Meta:
         db_table = "rut_visita"
