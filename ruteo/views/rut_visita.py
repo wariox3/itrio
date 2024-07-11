@@ -10,6 +10,29 @@ from datetime import datetime
 from decouple import config
 import json
 from utilidades.zinc import Zinc
+from math import radians, cos, sin, asin, sqrt
+
+def calcular_distancia(lat1, lon1, lat2, lon2):
+    # Convierte las coordenadas de grados a radianes
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # Fórmula de Haversine
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a))
+    r = 6371
+    return c * r
+
+def ordenar_ruta(visitas, lat_inicial, lon_inicial):
+    visitas_con_distancias = []
+    for visita in visitas:
+        distancia = calcular_distancia(lat_inicial, lon_inicial, visita.latitud, visita.longitud)
+        visitas_con_distancias.append((visita, distancia))
+
+    visitas_con_distancias.sort(key=lambda x: x[1])
+    direcciones_ordenadas = [visita for visita, distancia in visitas_con_distancias]
+    return direcciones_ordenadas
 
 class RutVisitaViewSet(viewsets.ModelViewSet):
     queryset = RutVisita.objects.all()
@@ -29,23 +52,26 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 fecha_texto = str(row[1])
                 fecha = datetime.strptime(fecha_texto, '%Y%m%d').date()
                 documento = str(row[2])
-                telefono_destinatario = str(row[5])
+                telefono_destinatario = str(row[8])
                 data = {
                     'guia': row[0],
                     'fecha':fecha,
                     'documento': documento[:30],
                     'destinatario': row[3],
                     'destinatario_direccion': row[4],
+                    'ciudad': row[5],
+                    'estado': row[6],
+                    'pais': row[7],
                     'destinatario_telefono': telefono_destinatario[:50],
-                    'destinatario_correo': row[6],
-                    'peso': row[7],
-                    'volumen': row[8],
+                    'destinatario_correo': row[9],
+                    'peso': row[10],
+                    'volumen': row[11],
                 }
-                guiaSerializador = RutVisitaSerializador(data=data)
-                if guiaSerializador.is_valid():
-                    guiaSerializador.save()
+                visitaSerializador = RutVisitaSerializador(data=data)
+                if visitaSerializador.is_valid():
+                    visitaSerializador.save()
                 else:
-                    return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': guiaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)        
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
@@ -59,7 +85,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 direcciones.append({
                     'codigo': guia.id,
                     'referencia': guia.guia,
-                    'direccion': guia.destinatario_direccion
+                    'direccion': guia.destinatario_direccion + ', ' + guia.ciudad + ', ' + guia.estado + ', ' + guia.pais
                 })
             zinc = Zinc()                        
             respuesta = zinc.decodificar_direccion(direcciones)
@@ -80,3 +106,19 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
         else:
             return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 
+        
+    @action(detail=False, methods=["post"], url_path=r'ordenar',)
+    def ordenar(self, request):
+        visitas = RutVisita.objects.all()
+        if visitas.exists():
+            lat_inicial = 6.197023
+            lon_inicial = -75.585760
+
+            visitas = RutVisita.objects.all()
+            visitas_ordenadas = ordenar_ruta(visitas, lat_inicial, lon_inicial)            
+            serializer = self.get_serializer(visitas_ordenadas, many=True)            
+            return Response({'visitas_ordenadas': serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'No hay guias pendientes por ordenar'}, status=status.HTTP_200_OK) 
+
+               
