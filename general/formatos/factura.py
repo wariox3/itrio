@@ -32,21 +32,21 @@ class FormatoFactura():
         except locale.Error:
             pass
 
-        
-        qr = ""
-        if data['qr']:
-            qr = data['qr']
-        qr_code_drawing = generar_qr(qr)
-
-        x_pos = 340
-        y_pos = 125
-        renderPDF.draw(qr_code_drawing, p, x_pos, y_pos)
 
         def draw_header():
 
             region = config('DO_REGION')
             bucket = config('DO_BUCKET')
             entorno = config('ENV')
+
+            qr = ""
+            if data['qr']:
+                qr = data['qr']
+            qr_code_drawing = generar_qr(qr)
+
+            x_pos = 340
+            y_pos = 125
+            renderPDF.draw(qr_code_drawing, p, x_pos, y_pos)
 
             imagen_defecto_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
 
@@ -195,99 +195,6 @@ class FormatoFactura():
             p.drawString(x + 520, 575, "TOTAL")
             p.setFont("Helvetica", 8)
 
-        def draw_totals(p, y, data):
-
-            x = 440
-            totalFactura = data['total']
-            #Bloque totales
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 230, "SUBTOTAL")
-            p.drawRightString(x + 140, 230, f"$ {locale.format('%d', data['subtotal'], grouping=True)}")
-            
-            # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
-            impuesto_totals = {}
-
-            # Recorrer los objetos DocumentoImpuesto
-            for impuesto in data['documento_impuestos']:
-                impuesto_id = impuesto['impuesto_id']  # ID del impuesto
-                nombre_impuesto = impuesto['impuesto__nombre_extendido']  # Nombre del impuesto
-                total = impuesto['total']
-
-                # Verificar si el impuesto_id ya existe en el diccionario
-                if impuesto_id in impuesto_totals:
-                    # Si existe, sumar el total al valor existente
-                    impuesto_totals[impuesto_id]['total'] += total
-                else:
-                    # Si no existe, crear una nueva entrada en el diccionario con el total y el nombre del impuesto
-                    impuesto_totals[impuesto_id] = {'total': total, 'nombre': nombre_impuesto}
-
-            # Definir la posición "y" inicial
-            y = 220
-
-            # Recorrer el diccionario de totales de impuestos
-            for impuesto_id, data in impuesto_totals.items():
-                nombre_impuesto = data['nombre']
-                total_acumulado = data['total']
-                
-                p.drawString(x, y, nombre_impuesto.upper())
-                p.drawRightString(x + 140, y, f"$ {locale.format('%d', total_acumulado, grouping=True)}")
-                y -= 10
-
-            p.drawString(x, y, "TOTAL GENERAL")
-            p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
-
-            #informacion pago
-            ancho_texto, alto_texto = informacionPago.wrapOn(p, 300, 400)
-            
-            #comentarios
-            ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
-            
-            x = 30
-            y = 235 - alto_texto
-            y2 = 160
-            comentario.drawOn(p, x, y)
-            informacionPago.drawOn(p, x, y2)
-            
-        y = 555
-        page_number = 1
-        detalles_en_pagina = 0
-
-        draw_header()
-        x = 24
-
-        for index, detalle in enumerate(data['documento_detalles']):
-
-            itemNombre = ""
-            if detalle['item__nombre'] is not None:
-                itemNombre = detalle['item__nombre'][:100]
-
-            impuestos_detalle = [impuesto for impuesto in data['documento_impuestos'] if impuesto['documento_detalle_id'] == detalle['id']]
-
-            total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
-            p.setFont("Helvetica", 7)
-            p.drawCentredString(x + 7, y, str(index + 1))
-            p.drawString(x + 25, y, str(detalle['item_id']))
-            p.drawString(x + 58, y, str(itemNombre[:70]))
-            p.drawRightString(x + 365, y, str(int(detalle['cantidad'])))
-            p.drawRightString(x + 417, y, locale.format_string("%d", detalle['precio'], grouping=True))
-            p.drawRightString(x + 458, y, locale.format_string("%d", detalle['descuento'], grouping=True))
-            p.drawRightString(x + 500, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
-            p.drawRightString(x + 555, y, locale.format_string("%d", detalle['total'], grouping=True))
-            y -= 30
-            detalles_en_pagina += 1
-
-            if detalles_en_pagina == 10 or index == len(data['documento_detalles']) - 1:
-                draw_totals(p, y, data)
-
-                if index != len(data['documento_detalles']) - 1:
-                    p.showPage()
-                    page_number += 1
-                    y = 520
-                    draw_header()
-                    detalles_en_pagina = 0
-
-        p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(detalles_en_pagina))
-        def draw_footer(pageCount):
             x = 30
 
             valorLetras = convertir_a_letras(int(data['total']))
@@ -360,12 +267,118 @@ class FormatoFactura():
             p.setStrokeColorRGB(0, 0, 0)  # Restaurar el color a negro
             p.drawCentredString(410, 30, "ACEPTADA, FIRMADA Y/O SELLO Y FECHA")
     
-            # Dibuja el número de página centrado
-            p.drawCentredString(550, 20, "Página %d de %d" % (p.getPageNumber(), pageCount))
+            p.drawCentredString(550, 20, "Página %d de %d" % (p.getPageNumber(), p.getPageNumber()))
 
-        total_pages = p.getPageNumber()
+            #informacion pago
+            ancho_texto, alto_texto = informacionPago.wrapOn(p, 300, 400)
+            
+            #comentarios
+            ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
+            
+            x = 30
+            y = 235 - alto_texto
+            y2 = 160
+            comentario.drawOn(p, x, y)
+            informacionPago.drawOn(p, x, y2)
 
-        draw_footer(total_pages)
+
+        def draw_totals(p, y, data):
+
+            x = 440
+            totalFactura = data['total']
+            #Bloque totales
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x, 230, "SUBTOTAL")
+            p.drawRightString(x + 140, 230, f"$ {locale.format('%d', data['subtotal'], grouping=True)}")
+            
+            # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
+            impuesto_totals = {}
+
+            # Recorrer los objetos DocumentoImpuesto
+            for impuesto in data['documento_impuestos']:
+                impuesto_id = impuesto['impuesto_id']  # ID del impuesto
+                nombre_impuesto = impuesto['impuesto__nombre_extendido']  # Nombre del impuesto
+                total = impuesto['total']
+
+                # Verificar si el impuesto_id ya existe en el diccionario
+                if impuesto_id in impuesto_totals:
+                    # Si existe, sumar el total al valor existente
+                    impuesto_totals[impuesto_id]['total'] += total
+                else:
+                    # Si no existe, crear una nueva entrada en el diccionario con el total y el nombre del impuesto
+                    impuesto_totals[impuesto_id] = {'total': total, 'nombre': nombre_impuesto}
+
+            # Definir la posición "y" inicial
+            y = 220
+
+            # Recorrer el diccionario de totales de impuestos
+            for impuesto_id, data in impuesto_totals.items():
+                nombre_impuesto = data['nombre']
+                total_acumulado = data['total']
+                
+                p.drawString(x, y, nombre_impuesto.upper())
+                p.drawRightString(x + 140, y, f"$ {locale.format('%d', total_acumulado, grouping=True)}")
+                y -= 10
+
+            p.drawString(x, y, "TOTAL GENERAL")
+            p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
+            
+        y = 555
+
+        # Inicialización
+        draw_header()
+        x = 24
+        max_altura_disponible = 330  # Altura máxima disponible en la página para los ítems
+        altura_acumulada = 0  # Altura acumulada por los ítems en la página
+        y = 550  # Posición vertical inicial
+        detalles_en_pagina = 0
+        cantidad_total_items = 0
+
+        for index, detalle in enumerate(data['documento_detalles']):
+
+            itemNombre = ""
+            if detalle['item__nombre'] is not None:
+                itemNombre = detalle['item__nombre']
+
+            impuestos_detalle = [impuesto for impuesto in data['documento_impuestos'] if impuesto['documento_detalle_id'] == detalle['id']]
+            total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
+            
+
+            item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7))
+            ancho, alto = item_nombre_paragraph.wrap(280, 100)
+            
+            altura_requerida = alto + 10  # Altura requerida incluyendo un margen adicional
+            
+            # Verificar si hay suficiente espacio para el siguiente ítem
+            if altura_acumulada + altura_requerida > max_altura_disponible:
+                p.showPage()
+                y = 550  # Restablecer altura disponible para nueva página
+                draw_header()
+                altura_acumulada = 0
+                detalles_en_pagina = 0
+
+            item_nombre_paragraph.drawOn(p, x + 58, y - alto + 5)
+            y -= altura_requerida
+            altura_acumulada += altura_requerida
+
+            p.setFont("Helvetica", 7)
+            p.drawCentredString(x + 7, y + alto + 8, str(index + 1))
+            p.drawString(x + 25, y + alto + 8, str(detalle['item_id']))
+            p.drawRightString(x + 365, y + alto + 8, str(int(detalle['cantidad'])))
+            p.drawRightString(x + 417, y + alto + 8, locale.format_string("%d", detalle['precio'], grouping=True))
+            p.drawRightString(x + 458, y + alto + 8, locale.format_string("%d", detalle['descuento'], grouping=True))
+            p.drawRightString(x + 500, y + alto + 8, locale.format_string("%d", total_impuestos_detalle, grouping=True))
+            p.drawRightString(x + 555, y + alto + 8, locale.format_string("%d", detalle['total'], grouping=True))
+
+            y -= 10  # Ajuste de posición vertical para el siguiente ítem
+            altura_acumulada += 10
+            detalles_en_pagina += 1
+            cantidad_total_items += 1
+
+            if index == len(data['documento_detalles']) - 1:
+                draw_totals(p, y, data)
+
+        p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(cantidad_total_items))
 
         p.save()
         
