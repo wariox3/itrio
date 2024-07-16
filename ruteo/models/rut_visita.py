@@ -1,4 +1,5 @@
 from django.db import models
+from ruteo.models.rut_despacho import RutDespacho
 
 class RutVisita(models.Model):
     guia = models.IntegerField(null=True)
@@ -17,8 +18,10 @@ class RutVisita(models.Model):
     longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     decodificado = models.BooleanField(default = False)
     decodificado_error = models.BooleanField(default = False)
+    estado_despacho = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)
     distancia_proxima = models.DecimalField(max_digits=9, decimal_places=6, null=True, default=0)
-    
+    despacho = models.ForeignKey(RutDespacho, null=True, on_delete=models.PROTECT, related_name='visitas_despacho_rel')
+
     class Meta:
         db_table = "rut_visita"

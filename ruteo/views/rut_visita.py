@@ -2,11 +2,14 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ruteo.models.rut_visita import RutVisita
+from ruteo.models.rut_despacho import RutDespacho
+from ruteo.models.rut_vehiculo import RutVehiculo
 from ruteo.serializers.rut_visita import RutVisitaSerializador
 import base64
 from io import BytesIO
 import openpyxl
 from datetime import datetime
+from django.utils import timezone
 from decouple import config
 import json
 from utilidades.zinc import Zinc
@@ -121,6 +124,37 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(visitas_ordenadas, many=True)            
             return Response({'visitas_ordenadas': serializer.data}, status=status.HTTP_200_OK)
         else:
-            return Response({'mensaje': 'No hay guias pendientes por ordenar'}, status=status.HTTP_200_OK) 
+            return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
+        
+    @action(detail=False, methods=["post"], url_path=r'rutear',)
+    def rutear(self, request):
+        visitas = RutVisita.objects.filter(estado_despacho = False).order_by('orden')
+        if visitas.exists():
+            vehiculos = RutVehiculo.objects.all()
+            if vehiculos.exists():
+                for vehiculo in vehiculos:
+                    peso_total = 0
+                    volumen_total = 0
+                    cantidad_visitas = 0
+                    despacho = RutDespacho()
+                    despacho.fecha = timezone.now()
+                    despacho.vehiculo = vehiculo
+                    despacho.save()
+                    for visita in visitas:
+                        peso_total += visita.peso
+                        volumen_total += visita.volumen
+                        cantidad_visitas += 1
+                        visita.estado_despacho = True
+                        visita.despacho = despacho
+                        visita.save()
+                    despacho.peso = peso_total
+                    despacho.volumen = volumen_total
+                    despacho.visitas = cantidad_visitas
+                    despacho.save()
+                return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
+            else:
+                return Response({'mensaje': 'No hay vehculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)                     
+        else:
+            return Response({'mensaje': 'No hay visitas pendientes por rutear'}, status=status.HTTP_400_BAD_REQUEST)
 
                
