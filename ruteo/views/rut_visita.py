@@ -157,7 +157,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     def rutear(self, request):
         visitas = RutVisita.objects.filter(estado_despacho = False).order_by('orden')
         if visitas.exists():
-            vehiculos = RutVehiculo.objects.all()
+            vehiculos = RutVehiculo.objects.all().first()
             if vehiculos.exists():
                 for vehiculo in vehiculos:
                     peso_total = 0
