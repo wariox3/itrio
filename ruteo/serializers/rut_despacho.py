@@ -7,11 +7,15 @@ class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):
         model = RutDespacho
         fields = ['id', 'peso', 'volumen', 'vehiculo']
 
-    def to_representation(self, instance):        
+    def to_representation(self, instance):      
+        vehiculo_placa = ""
+        if instance.vehiculo:
+            vehiculo_placa = instance.vehiculo.placa
         return {
             'id': instance.id,  
             'peso': instance.peso,
             'volumen': instance.volumen,
-            'vehiculo_id': instance.vehiculo_id
+            'vehiculo_id': instance.vehiculo_id,
+            'vehiculo_placa': vehiculo_placa
         }
     
