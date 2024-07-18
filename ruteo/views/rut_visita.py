@@ -87,6 +87,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 fecha = datetime.strptime(fecha_texto, '%Y%m%d').date()
                 documento = str(row[2])
                 telefono_destinatario = str(row[8])
+                decodificado = False
+                if row[14] == 1:
+                    decodificado = True
                 data = {
                     'guia': row[0],
                     'fecha':fecha,
@@ -100,6 +103,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     'destinatario_correo': row[9],
                     'peso': row[10],
                     'volumen': row[11],
+                    'latitud': row[12],
+                    'longitud': row[13],
+                    'decodificado': decodificado
                 }
                 visitaSerializador = RutVisitaSerializador(data=data)
                 if visitaSerializador.is_valid():
@@ -155,33 +161,49 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         
     @action(detail=False, methods=["post"], url_path=r'rutear',)
     def rutear(self, request):
+        vehiculos = RutVehiculo.objects.filter(estado_asignado = False, estado_activo = True).order_by('id')
         visitas = RutVisita.objects.filter(estado_despacho = False).order_by('orden')
-        if visitas.exists():
-            vehiculos = RutVehiculo.objects.all()
-            if vehiculos.exists():
-                for vehiculo in vehiculos:
+        if visitas.exists() and vehiculos.exists():
+            cantidad_vehiculos = len(vehiculos)
+            posicion_vehiculo = 0
+            vehiculo = vehiculos[posicion_vehiculo]
+            peso_total = 0  
+            flota_insuficiente = False
+            crear_despacho = True
+            for visita in visitas:
+                if peso_total + visita.peso > vehiculo.capacidad:
+                    asignado = False
                     peso_total = 0
-                    volumen_total = 0
-                    cantidad_visitas = 0
+                    while posicion_vehiculo + 2 <= cantidad_vehiculos and asignado == False:                         
+                        posicion_vehiculo += 1
+                        vehiculo = vehiculos[posicion_vehiculo]
+                        if peso_total + visita.peso <= vehiculo.capacidad:                             
+                            crear_despacho = True
+                            asignado = True
+                    if posicion_vehiculo + 2 > cantidad_vehiculos:
+                        flota_insuficiente = True
+                        break
+                
+                if crear_despacho:
                     despacho = RutDespacho()
                     despacho.fecha = timezone.now()
                     despacho.vehiculo = vehiculo
+                    despacho.peso = despacho.peso + visita.peso
+                    despacho.visitas = despacho.visitas + 1
                     despacho.save()
-                    for visita in visitas:
-                        peso_total += visita.peso
-                        volumen_total += visita.volumen
-                        cantidad_visitas += 1
-                        visita.estado_despacho = True
-                        visita.despacho = despacho
-                        visita.save()
-                    despacho.peso = peso_total
-                    despacho.volumen = volumen_total
-                    despacho.visitas = cantidad_visitas
-                    despacho.save()
-                return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
-            else:
-                return Response({'mensaje': 'No hay vehculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)                     
+                    vehiculo.estado_asignado = True
+                    vehiculo.save()
+                    crear_despacho = False
+                else:
+                    despacho.peso = despacho.peso + visita.peso
+                    despacho.visitas = despacho.visitas + 1
+                    despacho.save()        
+                peso_total += visita.peso
+                visita.estado_despacho = True
+                visita.despacho = despacho
+                visita.save()
+            return Response({'mensaje': 'Se crean las rutas exitosamente', 'flota_insuficiente': flota_insuficiente}, status=status.HTTP_200_OK)                
         else:
-            return Response({'mensaje': 'No hay visitas pendientes por rutear'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)
 
                
