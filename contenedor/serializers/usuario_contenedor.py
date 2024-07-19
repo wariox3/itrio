@@ -28,7 +28,8 @@ class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
             'usuarios_base': usuariosBase,
             'plan_id': instance.contenedor.plan_id,
             'plan_nombre': planNombre,
-            'reddoc': instance.contenedor.reddoc            
+            'reddoc': instance.contenedor.reddoc,
+            'ruteo': instance.contenedor.ruteo
         }
     
 class UsuarioContenedorConsultaContenedorSerializador(serializers.ModelSerializer):
