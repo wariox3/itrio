@@ -9,6 +9,8 @@ from datetime import timedelta, datetime
 from django.utils import timezone
 import hashlib
 from decimal import Decimal
+from utilidades.space_do import SpaceDo
+from django.http import HttpResponse
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ContenedorMovimiento.objects.all()
@@ -103,3 +105,29 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         usuario.vr_saldo -= valor
                         usuario.save()
         return Response(status=status.HTTP_200_OK)     
+    
+    @action(detail=False, methods=["post"], url_path=r'descargar',)
+    def descargar(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                movimiento = ContenedorMovimiento.objects.get(pk=id)  
+                if movimiento.documento_fisico:
+                    archivo = f"itrio/prod/movimiento/factura_{id}.pdf" 
+                    spaceDo = SpaceDo()
+                    respuesta = spaceDo.descargar(archivo)         
+                    if respuesta['error'] == False:
+                        response = HttpResponse(respuesta['data'], content_type='application/pdf')
+                        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                        response['Content-Disposition'] = f'attachment; filename="factura_{id}.pdf"'
+                        return response
+                        #return Response({'mensaje': 'Hola'}, status=status.HTTP_200_OK)
+                    else:                    
+                        return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje':'El archivo aun no se encuentra disponible', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            except ContenedorMovimiento.DoesNotExist:
+                return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 

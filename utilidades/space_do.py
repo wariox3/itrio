@@ -3,6 +3,7 @@ import base64
 #import magic
 from decouple import config 
 from botocore.config import Config
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 from io import BytesIO
 
 class SpaceDo():
@@ -52,3 +53,15 @@ class SpaceDo():
 
     def eliminar(self, pathDestino):
         self.client.delete_object(Bucket=config('DO_BUCKET'), Key=pathDestino)
+
+    def descargar(self, path):
+        try:
+            file_obj = self.client.get_object(Bucket=config('DO_BUCKET'), Key=path)        
+            pdf_data = file_obj['Body'].read()
+            return {'error':False, 'data':pdf_data}
+
+        except ClientError as e:
+            if e.response['Error']['Code'] == 'AccessDenied':
+                return {'error':True, 'mensaje':'No se encuentra el archivo'}
+            else:
+                return {'error':True, 'mensaje':f"Error no especificado {str(e)}"} 
