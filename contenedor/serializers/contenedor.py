@@ -27,7 +27,8 @@ class ContenedorSerializador(serializers.ModelSerializer):
             'plan_usuarios_base': plan_usuarios_base,
             'plan_limite_usuarios': plan_limite_usuarios,
             'plan_nombre':  plan_nombre,
-            'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}"
+            'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}",
+            'reddoc': instance.reddoc
         } 
     
 class ContenedorActualizarSerializador(serializers.HyperlinkedModelSerializer):

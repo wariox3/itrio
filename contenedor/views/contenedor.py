@@ -32,6 +32,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             nombre = request.data.get('nombre')          
             telefono = request.data.get('telefono')
             correo = request.data.get('correo')
+            reddoc = request.data.get('reddoc')
             if subdominio and usuario_id and nombre and plan_id and telefono and correo:
                 contenedorValidacion = Contenedor.objects.filter(**{'schema_name':subdominio})
                 if contenedorValidacion:
@@ -39,7 +40,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
                 imagenReferencia = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
-                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1)                
+                call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1, reddoc=reddoc)                
                 os.system(f"python manage.py tenant_command loaddata general/fixtures/*.json --schema={subdominio}")                           
                 contenedor = Contenedor.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario.id, 'contenedor': contenedor.id, 'rol': 'propietario'}
