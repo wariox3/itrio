@@ -52,7 +52,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
         fechaDesde = raw.get('fechaDesde')
         fechaHasta = raw.get('fechaHasta')
         if fechaDesde and fechaHasta:
-            consumosUsuarios = Consumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta)).annotate(
+            consumosUsuarios = Consumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)).annotate(
                 vr_total=Sum('vr_total'))
             facturas = []
             for consumoUsuario in consumosUsuarios:
@@ -109,7 +109,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
             consumos = Consumo.objects.filter(
                 fecha__range=(fechaDesde,fechaHasta), usuario_id=usuario_id
                 ).values(
-                    'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre'
+                    'usuario_id', 'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre'
                 ).annotate(
                     vr_total=Sum('vr_total')
                 )

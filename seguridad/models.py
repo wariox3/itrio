@@ -36,6 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
     verificado = models.BooleanField(default = False)
+    cortesia = models.BooleanField(default = False)
     fecha_creacion = models.DateTimeField(null=True, auto_now_add=True)
     dominio = models.CharField(max_length = 50, null = True)
     objects = UserManager()
