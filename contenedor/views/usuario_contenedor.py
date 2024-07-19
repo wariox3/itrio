@@ -137,8 +137,14 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
     def consulta_usuario(self, request):
         raw = request.data
         usuario_id = raw.get('usuario_id')
-        if usuario_id:  
+        reddoc = raw.get('reddoc')
+        ruteo = raw.get('ruteo')
+        if usuario_id and (reddoc or ruteo):  
             usuarioEmpresa = UsuarioContenedor.objects.filter(usuario_id=usuario_id).order_by('-rol', 'contenedor__nombre')                         
+            if reddoc:
+                usuarioEmpresa = usuarioEmpresa.filter(contenedor__reddoc=reddoc)
+            if ruteo:
+                usuarioEmpresa = usuarioEmpresa.filter(contenedor__ruteo=ruteo)
             usuarioEmpresaSerializer = UsuarioContenedorSerializador(usuarioEmpresa, many=True)
             return Response({'contenedores': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
