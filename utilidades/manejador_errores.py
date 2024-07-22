@@ -10,7 +10,7 @@ class WebServiceHandler(logging.Handler):
         self.url = url
 
     def emit(self, record):     
-        if config('ENV') == 'prod':
+        if config('ENV') == 'prod' or config('ENV') == 'test':
             traza = self.format(record)   
             fuente = record.name     
             if fuente == 'django.request':
@@ -30,7 +30,8 @@ class WebServiceHandler(logging.Handler):
                     'archivo': record.pathname,
                     'ruta': ruta,
                     'usuario': usuario,
-                    'traza': traza
+                    'traza': traza,
+                    'entorno': config('ENV')
                 }      
                 json_data = json.dumps(datos)
                 headers = {'Content-Type': 'application/json'}
