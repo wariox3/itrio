@@ -13,6 +13,7 @@ def enviar_coreo(request):
     return Response({"message": "Hello, world!"})
 
 class PruebaView(APIView):
-    def get(self, request):  
-        return Response("Esta es la respuesta")
+    def get(self, request):
+        numero = 123  
+        return Response("Esta es la respuesta" + numero)
 
