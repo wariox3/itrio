@@ -10,7 +10,7 @@ class WebServiceHandler(logging.Handler):
         self.url = url
 
     def emit(self, record):     
-        if config('ENV') == 'prod' or config('ENV') == 'dev':
+        if config('ENV') == 'prod' or config('ENV') == 'test':
             traza = self.format(record)   
             fuente = record.name     
             if fuente == 'django.request':
