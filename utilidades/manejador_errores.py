@@ -10,16 +10,18 @@ class WebServiceHandler(logging.Handler):
         self.url = url
 
     def emit(self, record):     
-        if config('ENV') == 'prod' or config('ENV') == 'test':
+        if config('ENV') == 'prod' or config('ENV') == 'dev':
             traza = self.format(record)   
             fuente = record.name     
             if fuente == 'django.request':
                 ruta = ''
                 usuario = ''
+                contenedor = ''
                 request_info = getattr(record, 'request', None)
                 if isinstance(request_info, HttpRequest):
                     ruta = request_info.path
                     usuario = str(request_info.user) if request_info.user.is_authenticated else 'anonymous'
+                    contenedor = getattr(request_info, 'tenant', '')
 
                 mensaje = ''
                 if record.exc_info and hasattr(request_info, 'path'):
@@ -31,7 +33,8 @@ class WebServiceHandler(logging.Handler):
                     'ruta': ruta,
                     'usuario': usuario,
                     'traza': traza,
-                    'entorno': config('ENV')
+                    'entorno': config('ENV'),
+                    'contenedor':str(contenedor)
                 }      
                 json_data = json.dumps(datos)
                 headers = {'Content-Type': 'application/json'}
