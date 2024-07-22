@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config
 import os
+from utilidades.manejador_errores import WebServiceHandler
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -245,3 +246,23 @@ CORS_ALLOW_HEADERS = [
         },
     },
 }'''
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'web_service': {
+            'level': 'ERROR',
+            'class': 'utilidades.manejador_errores.WebServiceHandler',
+            'url': 'http://niquel.semantica.com.co/api/error/nuevo',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['web_service'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
