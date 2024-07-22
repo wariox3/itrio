@@ -160,3 +160,16 @@ class EventoPago(models.Model):
     fecha_transaccion = models.DateTimeField(null=True)
     class Meta:
         db_table = "cnt_evento_pago"              
+
+class InformacionFacturacion(models.Model):
+    numero_identificacion = models.CharField(max_length=20, null=True)
+    digito_verificacion = models.CharField(max_length=1, null=True)
+    nombre_corto = models.CharField(max_length=200)
+    direccion = models.CharField(max_length=50, null=True)
+    telefono = models.CharField(max_length=50, null=True)
+    correo = models.EmailField(max_length = 255)
+    identificacion = models.ForeignKey(ContenedorIdentificacion, on_delete=models.PROTECT)
+    ciudad = models.ForeignKey(ContenedorCiudad, on_delete=models.PROTECT)
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT)
+    class Meta:
+        db_table = "cnt_informacion_facturacion"
