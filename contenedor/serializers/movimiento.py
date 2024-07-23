@@ -16,5 +16,6 @@ class ContenedorMovimientoSerializador(serializers.ModelSerializer):
             'vr_total': instance.vr_total,
             'vr_afectado': instance.vr_afectado,
             'vr_saldo': instance.vr_saldo,
-            'vr_saldo_enmascarado': total_enmascarado
+            'vr_saldo_enmascarado': total_enmascarado,
+            'documento_fisico': instance.documento_fisico
         }         
