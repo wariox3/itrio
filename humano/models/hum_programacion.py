@@ -11,7 +11,7 @@ class HumProgramacion(models.Model):
     contratos = models.IntegerField(default=0)
     neto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     estado_aprobado = models.BooleanField(default = False)
-    grupo = models.ForeignKey(HumPagoTipo, on_delete=models.PROTECT, related_name='pogramaciones_grupo_rel')
+    grupo = models.ForeignKey(HumGrupo, on_delete=models.PROTECT, related_name='pogramaciones_grupo_rel')
     pago_tipo = models.ForeignKey(HumPagoTipo, on_delete=models.PROTECT, related_name='pogramaciones_pago_tipo_rel')
 
     class Meta:

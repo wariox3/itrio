@@ -5,5 +5,5 @@ class HumGrupoSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = HumGrupo
-        fields = ['id']
+        fields = ['id', 'nombre']
         
