@@ -1,0 +1,22 @@
+[
+  {
+    "model": "humano.HumPagoTipo",
+    "pk": 1,
+    "fields": {"nombre": "Nomina", "aplica_programacion": true}
+  },
+  {
+    "model": "humano.HumPagoTipo",
+    "pk": 2,
+    "fields": {"nombre": "Prima", "aplica_programacion": true}
+  },
+  {
+    "model": "humano.HumPagoTipo",
+    "pk": 3,
+    "fields": {"nombre": "Cesantia", "aplica_programacion": true}
+  },
+  {
+    "model": "humano.HumPagoTipo",
+    "pk": 4,
+    "fields": {"nombre": "Interes cesantia", "aplica_programacion": true}
+  }
+]
