@@ -33,7 +33,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         raw = request.data
         usuario_id = raw.get('usuario_id')
         if usuario_id:
-            movimientos = ContenedorMovimiento.objects.filter(usuario_id=usuario_id, tipo='FACTURA', vr_saldo__gt=0)
+            movimientos = ContenedorMovimiento.objects.filter(usuario_id=usuario_id, tipo='PEDIDO', vr_saldo__gt=0)
             movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:

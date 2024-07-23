@@ -46,8 +46,8 @@ class ConsumoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
-    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-factura',)
-    def generar_factura(self, request):
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-pedido',)
+    def generar_pedido(self, request):
         raw = request.data
         fechaDesde = raw.get('fechaDesde')
         fechaHasta = raw.get('fechaHasta')
@@ -58,7 +58,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
             for consumoUsuario in consumosUsuarios:
                 total = round(consumoUsuario['vr_total'])
                 movimiento = ContenedorMovimiento(
-                    tipo = "FACTURA",
+                    tipo = "PEDIDO",
                     fecha = timezone.now().date(),
                     fecha_vence = datetime.now().date() + timedelta(days=3),
                     vr_total = total,
