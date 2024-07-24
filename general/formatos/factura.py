@@ -113,7 +113,7 @@ class FormatoFactura():
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 560, 640, str(data['fecha_vence']))
 
-            if data['documento_tipo__documento_clase_id'] == 2 or data['documento_tipo__documento_clase_id'] == 3:
+            if data['documento_tipo__documento_clase_id'] == 101 or data['documento_tipo__documento_clase_id'] == 102:
                 p.setFont("Helvetica-Bold", 8)
                 p.drawString(x + 350, 630, "DOCUMENTO REFERENCIA: ")
                 p.setFont("Helvetica", 8)
