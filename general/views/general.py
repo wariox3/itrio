@@ -21,6 +21,7 @@ from general.models.cuenta_banco import CuentaBanco
 from general.models.cuenta_banco_tipo import CuentaBancoTipo
 from contabilidad.models.cuenta import Cuenta
 from humano.models.hum_contrato import HumContrato
+from humano.models.hum_programacion import HumProgramacion
 from ruteo.models.rut_vehiculo import RutVehiculo
 from ruteo.models.rut_franja import RutFranja
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador, ItemListaBuscarSerializador
@@ -42,6 +43,7 @@ from general.serializers.cuenta_banco import CuentaBancoSerializador, CuentaBanc
 from general.serializers.cuenta_banco_tipo import CuentaBancoTipoSerializador, CuentaBancoTipoListaAutocompletarSerializador
 from contabilidad.serializers.cuenta import CuentaListaAutocompletarSerializador
 from humano.serializers.hum_contrato import HumContratoSerializador
+from humano.serializers.hum_programacion import HumProgramacionSerializador
 from ruteo.serializers.rut_vehiculo import RutVehiculoSerializador
 from ruteo.serializers.rut_franja import RutFranjaSerializador
 
