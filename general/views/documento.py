@@ -753,6 +753,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         resumen_vencido = Documento.objects.filter(
             documento_tipo_id=5, fecha_vence__gt=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
         resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
         resumen_vencido['saldo_pendiente'] = resumen_vencido['saldo_pendiente'] or 0
         return Response({'resumen': resumen, 'resumen_vigente': resumen_vigente, 'resumen_vencido': resumen_vencido}, status=status.HTTP_200_OK)
