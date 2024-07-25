@@ -722,7 +722,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documento.pendiente = documento.total - documento.afectado           
             documento.save()
             #print(f"Documento: {documento.id}, Total Pago: {documento.total_pago}")
-        return Response({'mensaje':'Proceso finalizado con existo'}, status=status.HTTP_200_OK)
+        return Response({'mensaje':'Proceso finalizado con exito'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
     def resumen_cobrar(self, request):      
@@ -736,6 +736,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         resumen_vencido = Documento.objects.filter(
             documento_tipo_id=1, fecha_vence__gt=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
         resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
         resumen_vencido['saldo_pendiente'] = resumen_vencido['saldo_pendiente'] or 0
         return Response({'resumen': resumen, 'resumen_vigente': resumen_vigente, 'resumen_vencido': resumen_vencido}, status=status.HTTP_200_OK)
