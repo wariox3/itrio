@@ -728,13 +728,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def resumen_cobrar(self, request):      
         fecha_actual = timezone.now().date()
         resumen = Documento.objects.filter(
-            documento_tipo_id=1
+            documento_tipo_id=1, estado_aprobado=True
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen_vigente = Documento.objects.filter(
-            documento_tipo_id=1, fecha_vence__gte=fecha_actual
+            documento_tipo_id=1, estado_aprobado=True, fecha_vence__gte=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen_vencido = Documento.objects.filter(
-            documento_tipo_id=1, fecha_vence__gt=fecha_actual
+            documento_tipo_id=1, estado_aprobado=True, fecha_vence__lt=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
         resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
@@ -745,13 +745,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def resumen_pagar(self, request):      
         fecha_actual = timezone.now().date()
         resumen = Documento.objects.filter(
-            documento_tipo_id=5
+            documento_tipo_id=5, estado_aprobado=True
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen_vigente = Documento.objects.filter(
-            documento_tipo_id=5, fecha_vence__gte=fecha_actual
+            documento_tipo_id=5, estado_aprobado=True, fecha_vence__gte=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen_vencido = Documento.objects.filter(
-            documento_tipo_id=5, fecha_vence__gt=fecha_actual
+            documento_tipo_id=5, estado_aprobado=True, fecha_vence__lt=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
         resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
