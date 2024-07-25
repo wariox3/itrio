@@ -19,15 +19,16 @@ from general.formatos.prueba import FormatoPrueba
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
+from django.db.models.functions import TruncDay
 from django.utils import timezone
-from openpyxl import Workbook
-from datetime import datetime
-import base64
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
 from decimal import Decimal
-import json
+from openpyxl import Workbook
+import datetime
+import base64
+
 
 
 class DocumentoViewSet(viewsets.ModelViewSet):
@@ -754,6 +755,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
         resumen_vencido['saldo_pendiente'] = resumen_vencido['saldo_pendiente'] or 0
         return Response({'resumen': resumen, 'resumen_vigente': resumen_vigente, 'resumen_vencido': resumen_vencido}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path=r'resumen-venta-dia',)
+    def resumen_venta_dia(self, request):      
+        fecha_actual = timezone.now().date()
+        # Obtener el primer y último día del mes actual
+        primer_dia_mes = fecha_actual.replace(day=1)
+        ultimo_dia_mes = (primer_dia_mes + datetime.timedelta(days=32)).replace(day=1) - datetime.timedelta(days=1)
+        dias_del_mes = [primer_dia_mes + datetime.timedelta(days=i) for i in range((ultimo_dia_mes - primer_dia_mes).days + 1)]
+        ventas_por_dia = Documento.objects.filter(fecha__year=fecha_actual.year, fecha__month=fecha_actual.month
+                                                  ).annotate(dia=TruncDay('fecha')
+                                                             ).values('dia'
+                                                                      ).annotate(total=Sum('total')).order_by('dia')
+        ventas_dict = {venta['dia']: venta['total'] for venta in ventas_por_dia}
+        venta_dia = [{'dia': dia, 'total': ventas_dict.get(dia, 0)} for dia in dias_del_mes]        
+        return Response({'resumen': venta_dia}, status=status.HTTP_200_OK)
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
