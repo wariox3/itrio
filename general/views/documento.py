@@ -18,7 +18,8 @@ from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.prueba import FormatoPrueba
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Count
+from django.utils import timezone
 from openpyxl import Workbook
 from datetime import datetime
 import base64
@@ -27,6 +28,7 @@ from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
 from decimal import Decimal
 import json
+
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
@@ -720,6 +722,38 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documento.save()
             #print(f"Documento: {documento.id}, Total Pago: {documento.total_pago}")
         return Response({'mensaje':'Proceso finalizado con existo'}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
+    def resumen_cobrar(self, request):      
+        fecha_actual = timezone.now().date()
+        resumen = Documento.objects.filter(
+            documento_tipo_id=1
+            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen_vigente = Documento.objects.filter(
+            documento_tipo_id=1, fecha_vence__gte=fecha_actual
+            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen_vencido = Documento.objects.filter(
+            documento_tipo_id=1, fecha_vence__gt=fecha_actual
+            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
+        resumen_vencido['saldo_pendiente'] = resumen_vencido['saldo_pendiente'] or 0
+        return Response({'resumen': resumen, 'resumen_vigente': resumen_vigente, 'resumen_vencido': resumen_vencido}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path=r'resumen-pagar',)
+    def resumen_pagar(self, request):      
+        fecha_actual = timezone.now().date()
+        resumen = Documento.objects.filter(
+            documento_tipo_id=5
+            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen_vigente = Documento.objects.filter(
+            documento_tipo_id=5, fecha_vence__gte=fecha_actual
+            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen_vencido = Documento.objects.filter(
+            documento_tipo_id=5, fecha_vence__gt=fecha_actual
+            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
+        resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
+        resumen_vencido['saldo_pendiente'] = resumen_vencido['saldo_pendiente'] or 0
+        return Response({'resumen': resumen, 'resumen_vigente': resumen_vigente, 'resumen_vencido': resumen_vencido}, status=status.HTTP_200_OK)
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
