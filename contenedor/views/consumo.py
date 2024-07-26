@@ -45,35 +45,6 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                 return Response({'Mensaje': 'El periodo ya fue procesado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-    
-    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-pedido',)
-    def generar_pedido(self, request):
-        raw = request.data
-        fechaDesde = raw.get('fechaDesde')
-        fechaHasta = raw.get('fechaHasta')
-        if fechaDesde and fechaHasta:
-            consumosUsuarios = Consumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)).annotate(
-                vr_total=Sum('vr_total'))
-            facturas = []
-            for consumoUsuario in consumosUsuarios:
-                total = round(consumoUsuario['vr_total'])
-                movimiento = ContenedorMovimiento(
-                    tipo = "PEDIDO",
-                    fecha = timezone.now().date(),
-                    fecha_vence = datetime.now().date() + timedelta(days=3),
-                    vr_total = total,
-                    vr_saldo = total,
-                    usuario_id = consumoUsuario['usuario_id']
-                )
-                facturas.append(movimiento)
-                usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
-                usuario.vr_saldo += total
-                usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
-                usuario.save()
-            ContenedorMovimiento.objects.bulk_create(facturas)
-            return Response({'proceso':True}, status=status.HTTP_200_OK)  
-        else:
-            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
 
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'consulta-empresa-fecha',)
     def consulta_empresa_fecha(self, request):

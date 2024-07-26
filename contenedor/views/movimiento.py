@@ -1,22 +1,52 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from contenedor.models import ContenedorMovimiento, EventoPago
+from contenedor.models import ContenedorMovimiento, EventoPago, Consumo
 from seguridad.models import User
 from contenedor.serializers.movimiento import ContenedorMovimientoSerializador
 from decouple import config
 from datetime import timedelta, datetime
 from django.utils import timezone
-import hashlib
+from django.db.models import Sum, Q, F
+from django.http import HttpResponse
 from decimal import Decimal
 from utilidades.space_do import SpaceDo
-from django.http import HttpResponse
+import hashlib
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ContenedorMovimiento.objects.all()
     serializer_class = ContenedorMovimientoSerializador    
     permission_classes = [permissions.IsAuthenticated]     
         
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-pedido',)
+    def generar_pedido(self, request):
+        raw = request.data
+        fechaDesde = raw.get('fechaDesde')
+        fechaHasta = raw.get('fechaHasta')
+        if fechaDesde and fechaHasta:
+            consumosUsuarios = Consumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)).annotate(
+                vr_total=Sum('vr_total'))
+            facturas = []
+            for consumoUsuario in consumosUsuarios:
+                total = round(consumoUsuario['vr_total'])
+                movimiento = ContenedorMovimiento(
+                    tipo = "PEDIDO",
+                    fecha = timezone.now(),
+                    fecha_vence = datetime.now().date() + timedelta(days=3),
+                    vr_total = total,
+                    vr_saldo = total,
+                    usuario_id = consumoUsuario['usuario_id']
+                )
+                facturas.append(movimiento)
+                usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
+                usuario.vr_saldo += total
+                usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
+                usuario.save()
+            ContenedorMovimiento.objects.bulk_create(facturas)
+            return Response({'proceso':True}, status=status.HTTP_200_OK)  
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
     @action(detail=False, methods=["post"], url_path=r'consulta-usuario',)
     def consulta_usuario(self, request):
         raw = request.data
@@ -69,42 +99,51 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_transaccion = datetime.strptime(fecha_transaccion_parametro, '%Y-%m-%d %H:%M')
         transaccion=data.get('transaction')
         estado=transaccion.get('status')
-        valor=transaccion.get('amount_in_cents')
-        valor=valor/100
+        valor_original=transaccion.get('amount_in_cents')
+        valor=valor_original/100
         referencia=transaccion.get('reference')
         evento_pago = EventoPago(
-            fecha=timezone.now().date(),
-            evento=evento,
-            entorno=entorno,
-            transaccion=transaccion.get('id'),
-            metodo_pago=transaccion.get('payment_method_type'),
-            referencia=referencia,
-            estado=estado,
-            correo=transaccion.get('customer_email'),
-            fecha_transaccion=fecha_transaccion
+            fecha = timezone.now(),
+            evento = evento,
+            entorno = entorno,
+            transaccion = transaccion.get('id'),
+            metodo_pago = transaccion.get('payment_method_type'),
+            referencia = referencia,
+            estado = estado,
+            correo = transaccion.get('customer_email'),
+            fecha_transaccion = fecha_transaccion,
+            vr_original = valor_original,
+            vr_aplicar = valor
         )
         evento_pago.save()
-        if estado == 'APPROVED':
-                recibo = ContenedorMovimiento(
-                    tipo = "RECIBO",
-                    fecha = timezone.now().date(),
-                    fecha_vence = timezone.now().date(),
-                    contenedor_movimiento_id=referencia,
-                    vr_total = valor,
-                    vr_saldo = 0,                    
-                )
-                recibo.save()
-                valor = Decimal(valor)                
-                factura = ContenedorMovimiento.objects.get(id=referencia)
-                if factura:
-                    factura.vr_afectado = factura.vr_afectado + valor
-                    factura.vr_saldo =  factura.vr_saldo - valor
-                    factura.save()
-                    usuario = User.objects.get(pk=factura.usuario_id)
-                    if usuario:
-                        usuario.vr_saldo -= valor
-                        usuario.save()
-        return Response(status=status.HTTP_200_OK)     
+        if estado == 'APPROVED':       
+            if referencia:
+                try:
+                    factura = ContenedorMovimiento.objects.get(id=referencia)          
+                    if valor <= factura.vr_saldo:
+                        recibo = ContenedorMovimiento(
+                            tipo = "RECIBO",
+                            fecha = timezone.now(),
+                            fecha_vence = timezone.now().date(),
+                            contenedor_movimiento_id=referencia,
+                            vr_total = valor,
+                            vr_saldo = 0                                         
+                        )
+                        recibo.save()
+                        valor = Decimal(valor)                
+
+                        factura.vr_afectado = factura.vr_afectado + valor
+                        factura.vr_saldo =  factura.vr_saldo - valor
+                        factura.save()
+                        evento_pago.estado_aplicado = True
+                        evento_pago.save()
+                        usuario = User.objects.get(pk=factura.usuario_id)
+                        if usuario:
+                            usuario.vr_saldo -= valor
+                            usuario.save()
+                except Exception as e:
+                    pass
+        return Response(status=status.HTTP_200_OK)
     
     @action(detail=False, methods=["post"], url_path=r'descargar',)
     def descargar(self, request):

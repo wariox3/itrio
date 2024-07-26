@@ -143,7 +143,7 @@ class UsuarioContenedor(models.Model):
 
 class ContenedorMovimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)
-    fecha = models.DateField(null=True)
+    fecha = models.DateTimeField(null=True)
     fecha_vence = models.DateField(null=True)    
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_afectado = models.DecimalField(max_digits=16, decimal_places=2, default=0)
@@ -155,7 +155,7 @@ class ContenedorMovimiento(models.Model):
         db_table = "cnt_movimiento"   
 
 class EventoPago(models.Model):
-    fecha = models.DateField()    
+    fecha = models.DateTimeField()    
     evento = models.CharField(max_length=50, null=True)
     entorno = models.CharField(max_length=10, null=True)
     transaccion = models.CharField(max_length=50, null=True)    
@@ -164,6 +164,9 @@ class EventoPago(models.Model):
     correo = models.CharField(max_length=250, null=True)
     estado = models.CharField(max_length=50, null=True)
     fecha_transaccion = models.DateTimeField(null=True)
+    estado_aplicado = models.BooleanField(default = False)
+    vr_original = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    vr_aplicar = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     class Meta:
         db_table = "cnt_evento_pago"              
 
