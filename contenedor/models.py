@@ -55,6 +55,12 @@ class ContenedorIdentificacion(models.Model):
     class Meta:
         db_table = "cnt_identificacion"
 
+class CtnSocio(models.Model):
+    nombre = models.CharField(max_length=100)    
+    
+    class Meta:
+        db_table = "cnt_socio"
+
 class Plan(models.Model):
     id = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=50, null=True)

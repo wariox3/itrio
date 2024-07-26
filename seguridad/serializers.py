@@ -40,7 +40,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen}",
             'fecha_limite_pago': instance.fecha_limite_pago,
             'fecha_creacion': instance.fecha_creacion,
-            'verificado': instance.verificado
+            'verificado': instance.verificado,
+            'es_socio': instance.es_socio
         }
 
 class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
