@@ -2,7 +2,7 @@ from django.db import models
 from django_tenants.models import TenantMixin, DomainMixin
 from seguridad.models import User
 
-class ContenedorPais(models.Model):
+class CtnPais(models.Model):
     id = models.CharField(primary_key=True, max_length=2)
     nombre = models.CharField(max_length=50, null=True)
     codigo = models.CharField(max_length=10, null=True)
@@ -14,7 +14,7 @@ class CtnEstado(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50)
     codigo = models.CharField(max_length=10, null=True)
-    pais = models.ForeignKey(ContenedorPais, on_delete=models.CASCADE)
+    pais = models.ForeignKey(CtnPais, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "cnt_estado"
@@ -50,7 +50,7 @@ class CtnIdentificacion(models.Model):
     nombre = models.CharField(max_length=50)    
     orden = models.BigIntegerField(default=0)
     codigo = models.CharField(max_length=10, null=True)
-    pais = models.ForeignKey(ContenedorPais, on_delete=models.CASCADE, null=True)
+    pais = models.ForeignKey(CtnPais, on_delete=models.CASCADE, null=True)
     
     class Meta:
         db_table = "cnt_identificacion"
