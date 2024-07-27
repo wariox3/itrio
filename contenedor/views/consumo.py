@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from contenedor.models import ConsumoPeriodo, CtnConsumo, UsuarioContenedor, CtnMovimiento
+from contenedor.models import CtnConsumoPeriodo, CtnConsumo, UsuarioContenedor, CtnMovimiento
 from contenedor.serializers.consumo import ConsumoSerializador
 from seguridad.models import User
 from django.utils import timezone
@@ -18,7 +18,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
         raw = request.data
         fechaParametro = raw.get('fecha')
         if fechaParametro:
-            if not ConsumoPeriodo.objects.filter(fecha=fechaParametro).exists():
+            if not CtnConsumoPeriodo.objects.filter(fecha=fechaParametro).exists():
                 usuariosContenedors = UsuarioContenedor.objects.all().filter(rol='propietario', contenedor__reddoc = True)
                 consumos = []
                 for usuarioContenedor in usuariosContenedors:            
@@ -38,7 +38,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                         vr_total=vrPlanDia)
                     consumos.append(consumo)
                 CtnConsumo.objects.bulk_create(consumos)
-                consumo_periodo = ConsumoPeriodo(fecha=fechaParametro)
+                consumo_periodo = CtnConsumoPeriodo(fecha=fechaParametro)
                 consumo_periodo.save()
                 return Response({'proceso':True}, status=status.HTTP_200_OK)
             else: 
