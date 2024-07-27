@@ -46,8 +46,8 @@ from general.serializers.cuenta_banco_tipo import CuentaBancoTipoSerializador, C
 from contabilidad.serializers.cuenta import CuentaListaAutocompletarSerializador
 from humano.serializers.hum_contrato import HumContratoSerializador
 from humano.serializers.hum_programacion import HumProgramacionSerializador
-from humano.serializers.hum_grupo import HumGrupoSerializador
-from humano.serializers.hum_pago_tipo import HumPagoTipoSerializador
+from humano.serializers.hum_grupo import HumGrupoSerializador, HumGrupoListaAutocompletarSerializador
+from humano.serializers.hum_pago_tipo import HumPagoTipoSerializador, HumPagoTipoListaAutocompletarSerializador
 from ruteo.serializers.rut_vehiculo import RutVehiculoSerializador
 from ruteo.serializers.rut_franja import RutFranjaSerializador
 
