@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from contenedor.models import ContenedorMovimiento, EventoPago, Consumo
+from contenedor.models import ContenedorMovimiento, CtnEventoPago, Consumo
 from seguridad.models import User
 from contenedor.serializers.movimiento import ContenedorMovimientoSerializador
 from decouple import config
@@ -102,7 +102,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         valor_original=transaccion.get('amount_in_cents')
         valor=valor_original/100
         referencia=transaccion.get('reference')
-        evento_pago = EventoPago(
+        evento_pago = CtnEventoPago(
             fecha = timezone.now(),
             evento = evento,
             entorno = entorno,

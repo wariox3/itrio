@@ -154,7 +154,7 @@ class ContenedorMovimiento(models.Model):
     class Meta:
         db_table = "cnt_movimiento"   
 
-class EventoPago(models.Model):
+class CtnEventoPago(models.Model):
     fecha = models.DateTimeField()    
     evento = models.CharField(max_length=50, null=True)
     entorno = models.CharField(max_length=10, null=True)
