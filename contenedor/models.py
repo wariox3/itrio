@@ -10,7 +10,7 @@ class ContenedorPais(models.Model):
     class Meta:
         db_table = "cnt_pais"
 
-class ContenedorEstado(models.Model):
+class CtnEstado(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50)
     codigo = models.CharField(max_length=10, null=True)
@@ -26,7 +26,7 @@ class CtnCiudad(models.Model):
     longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     codigo_postal = models.CharField(max_length=10, null=True)
     porcentaje_impuesto = models.DecimalField(max_digits=5, decimal_places=2, default=0)  
-    estado = models.ForeignKey(ContenedorEstado, on_delete=models.CASCADE)
+    estado = models.ForeignKey(CtnEstado, on_delete=models.CASCADE)
     
     class Meta:
         db_table = "cnt_ciudad"      
