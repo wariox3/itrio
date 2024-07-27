@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from contenedor.models import Verificacion
+from contenedor.models import CtnVerificacion
 
 class VerificacionSerializador(serializers.ModelSerializer):
     class Meta:
-        model = Verificacion
+        model = CtnVerificacion
         fields = ['id', 'token', 'estado_usado', 'vence', 'accion', 'usuario_id', 'contenedor_id', 'usuario_invitado_username']      

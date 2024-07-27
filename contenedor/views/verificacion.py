@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from contenedor.serializers.verificacion import VerificacionSerializador
-from contenedor.models import Verificacion
+from contenedor.models import CtnVerificacion
 from seguridad.models import User
 from rest_framework.decorators import action
 import secrets
@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from utilidades.zinc import Zinc
 
 class VerificacionViewSet(viewsets.ModelViewSet):
-    queryset = Verificacion.objects.all()
+    queryset = CtnVerificacion.objects.all()
     serializer_class = VerificacionSerializador
 
     @action(detail=False, methods=["post"], url_path=r'reenviar-verificacion',)

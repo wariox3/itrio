@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from seguridad.models import User
-from contenedor.models import Contenedor, UsuarioContenedor, Verificacion
+from contenedor.models import Contenedor, UsuarioContenedor, CtnVerificacion
 from contenedor.serializers.contenedor import ContenedorSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorConsultaContenedorSerializador
 from contenedor.serializers.verificacion import VerificacionSerializador
@@ -79,7 +79,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
         try:
             raw = request.data
             token = raw.get('token')
-            verificacion = Verificacion.objects.get(token=token)
+            verificacion = CtnVerificacion.objects.get(token=token)
             if verificacion.estado_usado == False:
                 if User.objects.filter(username=verificacion.usuario_invitado_username).exists():
                     usuario = User.objects.get(username=verificacion.usuario_invitado_username)                
@@ -104,7 +104,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje':"El usuario invitado no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
             else:
                 return Response({'mensaje':"El token ya fue usado", 'codigo': 6}, status=status.HTTP_400_BAD_REQUEST)
-        except Verificacion.DoesNotExist:
+        except CtnVerificacion.DoesNotExist:
             return Response({'mensaje':"La verificacion no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=["post"], url_path=r'validar',)

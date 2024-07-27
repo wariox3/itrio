@@ -6,7 +6,7 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from seguridad.models import User
-from contenedor.models import Verificacion
+from contenedor.models import CtnVerificacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
 from contenedor.serializers.verificacion import VerificacionSerializador
 from datetime import datetime, timedelta
@@ -70,7 +70,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     def verificar(self, request):
         tokenUrl = request.data.get('token')
         if tokenUrl:
-            verificacion = Verificacion.objects.filter(token=tokenUrl).first()
+            verificacion = CtnVerificacion.objects.filter(token=tokenUrl).first()
             if verificacion:
                 if verificacion.estado_usado == False:
                     fechaActual = datetime.now().date()                
@@ -125,7 +125,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             token = raw.get('token')
             clave = raw.get('password')
             if token and clave:
-                verificacion = Verificacion.objects.filter(token=token).first()
+                verificacion = CtnVerificacion.objects.filter(token=token).first()
                 if verificacion:
                     if verificacion.estado_usado == False:
                         fechaActual = datetime.now().date()                

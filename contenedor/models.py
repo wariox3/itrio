@@ -120,7 +120,7 @@ class Consumo(models.Model):
     class Meta:
         db_table = "cnt_consumo"
 
-class Verificacion(models.Model):
+class CtnVerificacion(models.Model):
     usuario_id = models.IntegerField(null=True)
     contenedor_id = models.IntegerField(null=True)
     token = models.CharField(max_length=50)
