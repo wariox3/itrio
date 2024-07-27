@@ -1,9 +1,9 @@
-from contenedor.models import ContenedorCiudad
+from contenedor.models import CtnCiudad
 from rest_framework import serializers
 
 class ContenedorCiudadSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = ContenedorCiudad
+        model = CtnCiudad
         fields = [
             'id', 
             'nombre'
@@ -23,7 +23,7 @@ class ContenedorCiudadSerializador(serializers.HyperlinkedModelSerializer):
 class ContenedorCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = ContenedorCiudad
+        model = CtnCiudad
 
     def to_representation(self, instance):
         nombre_ciudad = instance.nombre

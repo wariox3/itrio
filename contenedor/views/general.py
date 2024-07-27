@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from contenedor.models import CtnIdentificacion
-from contenedor.models import ContenedorCiudad
+from contenedor.models import CtnCiudad
 from contenedor.models import CtnRegimen
 from contenedor.models import CtnTipoPersona
 from contenedor.serializers.identificacion import ContenedorIdentificacionSerializador, ContenedorIdentificacionListaAutocompletarSerializador

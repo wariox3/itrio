@@ -19,7 +19,7 @@ class ContenedorEstado(models.Model):
     class Meta:
         db_table = "cnt_estado"
 
-class ContenedorCiudad(models.Model):
+class CtnCiudad(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50) 
     latitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
@@ -178,7 +178,7 @@ class CtnInformacionFacturacion(models.Model):
     telefono = models.CharField(max_length=50, null=True)
     correo = models.EmailField(max_length = 255)
     identificacion = models.ForeignKey(CtnIdentificacion, on_delete=models.PROTECT)
-    ciudad = models.ForeignKey(ContenedorCiudad, on_delete=models.PROTECT)
+    ciudad = models.ForeignKey(CtnCiudad, on_delete=models.PROTECT)
     usuario = models.ForeignKey(User, on_delete=models.PROTECT)
     class Meta:
         db_table = "cnt_informacion_facturacion"
