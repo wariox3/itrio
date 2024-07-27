@@ -31,7 +31,7 @@ class ContenedorCiudad(models.Model):
     class Meta:
         db_table = "cnt_ciudad"      
         
-class ContenedorRegimen(models.Model):
+class CtnRegimen(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50) 
     
