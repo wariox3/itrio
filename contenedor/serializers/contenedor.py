@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from contenedor.models import Contenedor, Plan
+from contenedor.models import Contenedor, CtnPlan
 from decouple import config
 
 class ContenedorSerializador(serializers.ModelSerializer):
-    plan = serializers.PrimaryKeyRelatedField(queryset=Plan.objects.all())
+    plan = serializers.PrimaryKeyRelatedField(queryset=CtnPlan.objects.all())
     class Meta:
         model = Contenedor
         fields = ['id', 'schema_name']
@@ -33,7 +33,7 @@ class ContenedorSerializador(serializers.ModelSerializer):
         } 
     
 class ContenedorActualizarSerializador(serializers.HyperlinkedModelSerializer):
-    plan = serializers.PrimaryKeyRelatedField(queryset=Plan.objects.all())
+    plan = serializers.PrimaryKeyRelatedField(queryset=CtnPlan.objects.all())
     class Meta:
         model = Contenedor
         fields = ['nombre', 'plan']         

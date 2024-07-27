@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from contenedor.models import Plan       
+from contenedor.models import CtnPlan       
 
 class PlanSerializador(serializers.ModelSerializer):
     class Meta:
-        model = Plan
+        model = CtnPlan
         fields = ['nombre']
     
     def to_representation(self, instance):
