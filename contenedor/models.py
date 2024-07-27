@@ -38,7 +38,7 @@ class ContenedorRegimen(models.Model):
     class Meta:
         db_table = "cnt_regimen"  
 
-class ContenedorTipoPersona(models.Model):
+class CtnTipoPersona(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50) 
     

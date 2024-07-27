@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from contenedor.models import CtnIdentificacion
 from contenedor.models import ContenedorCiudad
 from contenedor.models import ContenedorRegimen
-from contenedor.models import ContenedorTipoPersona
+from contenedor.models import CtnTipoPersona
 from contenedor.serializers.identificacion import ContenedorIdentificacionSerializador, ContenedorIdentificacionListaAutocompletarSerializador
 from contenedor.serializers.ciudad import ContenedorCiudadSerializador, ContenedorCiudadListaAutocompletarSerializador
 from contenedor.serializers.regimen import ContenedorRegimenSerializador, ContenedorRegimenListaAutocompletarSerializador

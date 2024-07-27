@@ -1,9 +1,9 @@
-from contenedor.models import ContenedorTipoPersona
+from contenedor.models import CtnTipoPersona
 from rest_framework import serializers
 
 class ContenedorTipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = ContenedorTipoPersona
+        model = CtnTipoPersona
         fields = [
             'id', 
             'nombre'
@@ -18,7 +18,7 @@ class ContenedorTipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
 class ContenedorTipoPersonaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = ContenedorTipoPersona
+        model = CtnTipoPersona
 
     def to_representation(self, instance):
         return {
