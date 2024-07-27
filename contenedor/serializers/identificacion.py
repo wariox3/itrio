@@ -1,9 +1,9 @@
-from contenedor.models import ContenedorIdentificacion
+from contenedor.models import CtnIdentificacion
 from rest_framework import serializers
 
 class ContenedorIdentificacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = ContenedorIdentificacion
+        model = CtnIdentificacion
         fields = [
             'id', 
             'nombre'
@@ -18,7 +18,7 @@ class ContenedorIdentificacionSerializador(serializers.HyperlinkedModelSerialize
 class ContenedorIdentificacionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = ContenedorIdentificacion
+        model = CtnIdentificacion
 
     def to_representation(self, instance):
         return {

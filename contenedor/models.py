@@ -45,7 +45,7 @@ class ContenedorTipoPersona(models.Model):
     class Meta:
         db_table = "cnt_tipo_persona"  
 
-class ContenedorIdentificacion(models.Model):
+class CtnIdentificacion(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50)    
     orden = models.BigIntegerField(default=0)
@@ -177,7 +177,7 @@ class CtnInformacionFacturacion(models.Model):
     direccion = models.CharField(max_length=50, null=True)
     telefono = models.CharField(max_length=50, null=True)
     correo = models.EmailField(max_length = 255)
-    identificacion = models.ForeignKey(ContenedorIdentificacion, on_delete=models.PROTECT)
+    identificacion = models.ForeignKey(CtnIdentificacion, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(ContenedorCiudad, on_delete=models.PROTECT)
     usuario = models.ForeignKey(User, on_delete=models.PROTECT)
     class Meta:

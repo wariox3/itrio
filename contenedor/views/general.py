@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from contenedor.models import ContenedorIdentificacion
+from contenedor.models import CtnIdentificacion
 from contenedor.models import ContenedorCiudad
 from contenedor.models import ContenedorRegimen
 from contenedor.models import ContenedorTipoPersona
