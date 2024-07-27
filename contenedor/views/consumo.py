@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from contenedor.models import ConsumoPeriodo, Consumo, UsuarioContenedor, CtnMovimiento
+from contenedor.models import ConsumoPeriodo, CtnConsumo, UsuarioContenedor, CtnMovimiento
 from contenedor.serializers.consumo import ConsumoSerializador
 from seguridad.models import User
 from django.utils import timezone
@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from django.db.models import Sum, Q, F
 
 class ConsumoViewSet(viewsets.ModelViewSet):
-    queryset = Consumo.objects.all()
+    queryset = CtnConsumo.objects.all()
     serializer_class = ConsumoSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
@@ -24,7 +24,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                 for usuarioContenedor in usuariosContenedors:            
                     vrPlan = usuarioContenedor.contenedor.plan.precio
                     vrPlanDia = vrPlan / 30
-                    consumo = Consumo(
+                    consumo = CtnConsumo(
                         #fecha = timezone.now().date(), 
                         fecha=fechaParametro,
                         contenedor_id=usuarioContenedor.contenedor_id,
@@ -37,7 +37,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                         vr_usuario_adicional=0,
                         vr_total=vrPlanDia)
                     consumos.append(consumo)
-                Consumo.objects.bulk_create(consumos)
+                CtnConsumo.objects.bulk_create(consumos)
                 consumo_periodo = ConsumoPeriodo(fecha=fechaParametro)
                 consumo_periodo.save()
                 return Response({'proceso':True}, status=status.HTTP_200_OK)
@@ -55,11 +55,11 @@ class ConsumoViewSet(viewsets.ModelViewSet):
         if fechaDesde and fechaHasta and empresa_id:
             fechaDesde = datetime.strptime(fechaDesde, "%Y-%m-%d")
             fechaHasta = datetime.strptime(fechaHasta, "%Y-%m-%d")
-            consumos = Consumo.objects.filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(empresa_id=empresa_id)).aggregate(
+            consumos = CtnConsumo.objects.filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(empresa_id=empresa_id)).aggregate(
                 vr_plan=Sum('vr_plan'),
                 vr_total=Sum('vr_total')
                 )
-            consumosPlan = Consumo.objects.values('plan_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(empresa_id=empresa_id)).annotate(
+            consumosPlan = CtnConsumo.objects.values('plan_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(empresa_id=empresa_id)).annotate(
                 plan_nombre=F('plan__nombre'),
                 vr_plan=Sum('vr_plan'),
                 vr_total=Sum('vr_total')
@@ -77,7 +77,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
         if fechaDesde and fechaHasta and usuario_id:
             fechaDesde = datetime.strptime(fechaDesde, "%Y-%m-%d")
             fechaHasta = datetime.strptime(fechaHasta, "%Y-%m-%d")
-            consumos = Consumo.objects.filter(
+            consumos = CtnConsumo.objects.filter(
                 fecha__range=(fechaDesde,fechaHasta), usuario_id=usuario_id
                 ).values(
                     'usuario_id', 'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre'

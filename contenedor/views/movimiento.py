@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from contenedor.models import CtnMovimiento, CtnEventoPago, Consumo
+from contenedor.models import CtnMovimiento, CtnEventoPago, CtnConsumo
 from seguridad.models import User
 from contenedor.serializers.movimiento import ContenedorMovimientoSerializador
 from decouple import config
@@ -24,7 +24,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fechaDesde = raw.get('fechaDesde')
         fechaHasta = raw.get('fechaHasta')
         if fechaDesde and fechaHasta:
-            consumosUsuarios = Consumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)).annotate(
+            consumosUsuarios = CtnConsumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)).annotate(
                 vr_total=Sum('vr_total'))
             facturas = []
             for consumoUsuario in consumosUsuarios:

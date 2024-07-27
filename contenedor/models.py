@@ -105,7 +105,7 @@ class ConsumoPeriodo(models.Model):
     class Meta:
         db_table = "cnt_consumo_periodo"
 
-class Consumo(models.Model):
+class CtnConsumo(models.Model):
     fecha = models.DateField(null=True)
     contenedor_id = models.IntegerField(null=True)
     contenedor = models.CharField(max_length=200, null=True) 

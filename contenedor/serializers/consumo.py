@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from contenedor.models import Consumo
+from contenedor.models import CtnConsumo
     
 class ConsumoSerializador(serializers.ModelSerializer):
     class Meta:
-        model = Consumo
+        model = CtnConsumo
         fields = ['contenedor']
     
     def to_representation(self, instance):
