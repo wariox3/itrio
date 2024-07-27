@@ -151,6 +151,7 @@ class CtnMovimiento(models.Model):
     contenedor_movimiento_id = models.IntegerField(null=True) 
     documento_fisico = models.BooleanField(default = False) 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    socio = models.ForeignKey(CtnSocio, on_delete=models.CASCADE, null=True)
     class Meta:
         db_table = "cnt_movimiento"   
 

@@ -41,7 +41,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'fecha_limite_pago': instance.fecha_limite_pago,
             'fecha_creacion': instance.fecha_creacion,
             'verificado': instance.verificado,
-            'es_socio': instance.es_socio
+            'es_socio': instance.es_socio,
+            'socio_id': instance.socio_id
         }
 
 class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):

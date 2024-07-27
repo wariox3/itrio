@@ -24,18 +24,20 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fechaDesde = raw.get('fechaDesde')
         fechaHasta = raw.get('fechaHasta')
         if fechaDesde and fechaHasta:
-            consumosUsuarios = CtnConsumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)).annotate(
-                vr_total=Sum('vr_total'))
+            consumosUsuarios = CtnConsumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)
+                                                                              ).annotate(vr_total=Sum('vr_total'))
             facturas = []
             for consumoUsuario in consumosUsuarios:
                 total = round(consumoUsuario['vr_total'])
+                usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
                 movimiento = CtnMovimiento(
                     tipo = "PEDIDO",
                     fecha = timezone.now(),
                     fecha_vence = datetime.now().date() + timedelta(days=3),
                     vr_total = total,
                     vr_saldo = total,
-                    usuario_id = consumoUsuario['usuario_id']
+                    usuario_id = consumoUsuario['usuario_id'],
+                    socio_id=usuario.socio_id
                 )
                 facturas.append(movimiento)
                 usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
@@ -57,6 +59,17 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+
+    @action(detail=False, methods=["post"], url_path=r'consulta-socio',)
+    def consulta_socio(self, request):
+        raw = request.data
+        socio_id = raw.get('socio_id')
+        if socio_id:
+            movimientos = CtnMovimiento.objects.filter(socio_id=socio_id)
+            movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
+            return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
 
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'pendiente',)
     def pendiente(self, request):

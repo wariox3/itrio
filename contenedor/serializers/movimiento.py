@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from contenedor.models import CtnMovimiento
+from contenedor.models import CtnMovimiento, CtnSocio
 
 class ContenedorMovimientoSerializador(serializers.ModelSerializer):
     class Meta:
