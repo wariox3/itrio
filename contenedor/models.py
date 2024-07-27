@@ -170,7 +170,7 @@ class EventoPago(models.Model):
     class Meta:
         db_table = "cnt_evento_pago"              
 
-class InformacionFacturacion(models.Model):
+class CtnInformacionFacturacion(models.Model):
     numero_identificacion = models.CharField(max_length=20, null=True)
     digito_verificacion = models.CharField(max_length=1, null=True)
     nombre_corto = models.CharField(max_length=200)

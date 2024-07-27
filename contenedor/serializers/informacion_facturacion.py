@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from contenedor.models import InformacionFacturacion
+from contenedor.models import CtnInformacionFacturacion
     
 class InformacionFacturacionSerializador(serializers.ModelSerializer):
     class Meta:
-        model = InformacionFacturacion
+        model = CtnInformacionFacturacion
         fields = ['numero_identificacion', 'digito_verificacion', 'nombre_corto', 'direccion', 'telefono', 'correo', 'identificacion', 'ciudad', 'usuario']
     
     def to_representation(self, instance):
