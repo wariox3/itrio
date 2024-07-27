@@ -141,7 +141,7 @@ class UsuarioContenedor(models.Model):
         unique_together = ('usuario', 'contenedor')
         db_table = "cnt_usuario_contenedor"        
 
-class ContenedorMovimiento(models.Model):
+class CtnMovimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)
     fecha = models.DateTimeField(null=True)
     fecha_vence = models.DateField(null=True)    

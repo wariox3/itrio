@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from contenedor.models import ConsumoPeriodo, Consumo, UsuarioContenedor, ContenedorMovimiento
+from contenedor.models import ConsumoPeriodo, Consumo, UsuarioContenedor, CtnMovimiento
 from contenedor.serializers.consumo import ConsumoSerializador
 from seguridad.models import User
 from django.utils import timezone

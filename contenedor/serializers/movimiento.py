@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from contenedor.models import ContenedorMovimiento
+from contenedor.models import CtnMovimiento
 
 class ContenedorMovimientoSerializador(serializers.ModelSerializer):
     class Meta:
-        model = ContenedorMovimiento
+        model = CtnMovimiento
         fields = ['fecha']
     
     def to_representation(self, instance):

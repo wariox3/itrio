@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from contenedor.models import ContenedorMovimiento, CtnEventoPago, Consumo
+from contenedor.models import CtnMovimiento, CtnEventoPago, Consumo
 from seguridad.models import User
 from contenedor.serializers.movimiento import ContenedorMovimientoSerializador
 from decouple import config
@@ -14,7 +14,7 @@ from utilidades.space_do import SpaceDo
 import hashlib
 
 class MovimientoViewSet(viewsets.ModelViewSet):
-    queryset = ContenedorMovimiento.objects.all()
+    queryset = CtnMovimiento.objects.all()
     serializer_class = ContenedorMovimientoSerializador    
     permission_classes = [permissions.IsAuthenticated]     
         
@@ -29,7 +29,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             facturas = []
             for consumoUsuario in consumosUsuarios:
                 total = round(consumoUsuario['vr_total'])
-                movimiento = ContenedorMovimiento(
+                movimiento = CtnMovimiento(
                     tipo = "PEDIDO",
                     fecha = timezone.now(),
                     fecha_vence = datetime.now().date() + timedelta(days=3),
@@ -42,7 +42,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 usuario.vr_saldo += total
                 usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
                 usuario.save()
-            ContenedorMovimiento.objects.bulk_create(facturas)
+            CtnMovimiento.objects.bulk_create(facturas)
             return Response({'proceso':True}, status=status.HTTP_200_OK)  
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
@@ -52,7 +52,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         raw = request.data
         usuario_id = raw.get('usuario_id')
         if usuario_id:
-            movimientos = ContenedorMovimiento.objects.filter(usuario_id=usuario_id)
+            movimientos = CtnMovimiento.objects.filter(usuario_id=usuario_id)
             movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
@@ -63,7 +63,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         raw = request.data
         usuario_id = raw.get('usuario_id')
         if usuario_id:
-            movimientos = ContenedorMovimiento.objects.filter(usuario_id=usuario_id, tipo='PEDIDO', vr_saldo__gt=0)
+            movimientos = CtnMovimiento.objects.filter(usuario_id=usuario_id, tipo='PEDIDO', vr_saldo__gt=0)
             movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
@@ -119,9 +119,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         if estado == 'APPROVED':       
             if referencia:
                 try:
-                    factura = ContenedorMovimiento.objects.get(id=referencia)          
+                    factura = CtnMovimiento.objects.get(id=referencia)          
                     if valor <= factura.vr_saldo:
-                        recibo = ContenedorMovimiento(
+                        recibo = CtnMovimiento(
                             tipo = "RECIBO",
                             fecha = timezone.now(),
                             fecha_vence = timezone.now().date(),
@@ -151,7 +151,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         id = raw.get('id')
         if id:
             try:
-                movimiento = ContenedorMovimiento.objects.get(pk=id)  
+                movimiento = CtnMovimiento.objects.get(pk=id)  
                 if movimiento.documento_fisico:
                     archivo = f"itrio/prod/movimiento/factura_{id}.pdf" 
                     spaceDo = SpaceDo()
@@ -166,7 +166,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje':'El archivo aun no se encuentra disponible', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
-            except ContenedorMovimiento.DoesNotExist:
+            except CtnMovimiento.DoesNotExist:
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
