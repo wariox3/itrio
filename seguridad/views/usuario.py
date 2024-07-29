@@ -216,6 +216,16 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 return Response({'verificado': usuario.verificado}, status=status.HTTP_200_OK)                
             return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
         except User.DoesNotExist:
-            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)      
+            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)   
+
+    @action(detail=False, methods=["post"], url_path=r'lista-socio')
+    def lista_socio(self, request):        
+        raw = request.data
+        socio_id = raw.get('socio_id')  
+        if socio_id:
+            usuarios = User.objects.filter(socio_id=socio_id)
+            usuariosSerializer = UserSerializer(usuarios, many=True)                
+            return Response({'usuarios': usuariosSerializer.data}, status=status.HTTP_200_OK)
+        return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
 
         
