@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from contabilidad.models.movimiento import Movimiento
+from contabilidad.models.con_movimiento import ConMovimiento
 
 class MovimientoSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Movimiento
+        model = ConMovimiento
         fields = ['id']
         

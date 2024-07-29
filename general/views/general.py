@@ -19,7 +19,7 @@ from general.models.plazo_pago import PlazoPago
 from general.models.sede import Sede
 from general.models.cuenta_banco import CuentaBanco
 from general.models.cuenta_banco_tipo import CuentaBancoTipo
-from contabilidad.models.cuenta import Cuenta
+from contabilidad.models.con_cuenta import ConCuenta
 from humano.models.hum_contrato import HumContrato
 from humano.models.hum_programacion import HumProgramacion
 from humano.models.hum_grupo import HumGrupo

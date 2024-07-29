@@ -1,7 +1,7 @@
 from django.db import models
 from general.models.documento import Documento
 from general.models.item import Item
-from contabilidad.models.cuenta import Cuenta
+from contabilidad.models.con_cuenta import ConCuenta
 from decimal import Decimal, ROUND_HALF_UP
 
 class DocumentoDetalle(models.Model):    
@@ -19,7 +19,7 @@ class DocumentoDetalle(models.Model):
     documento = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles')
     documento_afectado = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles_afectado', null=True)
     item = models.ForeignKey(Item, null=True, on_delete=models.PROTECT, related_name='itemes')
-    cuenta = models.ForeignKey(Cuenta, null=True, on_delete=models.PROTECT, related_name='cuentas')
+    cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='cuentas')
     class Meta:
         db_table = "gen_documento_detalle"
         ordering = ['id', 'documento', 'item', 'cantidad']

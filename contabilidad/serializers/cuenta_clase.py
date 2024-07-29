@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from contabilidad.models.cuenta_clase import CuentaClase
+from contabilidad.models.con_cuenta_clase import ConCuentaClase
 
 class CuentaClaseSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = CuentaClase
+        model = ConCuentaClase
         fields = ['id']
         

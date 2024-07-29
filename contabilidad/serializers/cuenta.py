@@ -1,16 +1,16 @@
 from rest_framework import serializers
-from contabilidad.models.cuenta import Cuenta
+from contabilidad.models.con_cuenta import ConCuenta
 
 class CuentaSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Cuenta
+        model = ConCuenta
         fields = ['id', 'cuenta_clase_id']
 
 class CuentaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Cuenta
+        model = ConCuenta
 
     def to_representation(self, instance):
 

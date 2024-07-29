@@ -58,5 +58,10 @@
     "model": "general.documentoClase",
     "pk": 501,
     "fields": {"nombre": "Salida", "codigo_dian": "01", "grupo":5}
-  }
+  },
+  {
+    "model": "general.documentoClase",
+    "pk": 601,
+    "fields": {"nombre": "Asiento", "codigo_dian": "01", "grupo":6}
+  }  
 ]

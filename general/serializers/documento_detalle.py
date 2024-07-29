@@ -1,14 +1,14 @@
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento import Documento
 from general.models.item import Item
-from contabilidad.models.cuenta import Cuenta
+from contabilidad.models.con_cuenta import ConCuenta
 from rest_framework import serializers
 
 class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), default=None, allow_null=True)
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
-    cuenta = serializers.PrimaryKeyRelatedField(queryset=Cuenta.objects.all(), default=None, allow_null=True)
+    cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     class Meta:
         model = DocumentoDetalle
         fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto', 'naturaleza']
