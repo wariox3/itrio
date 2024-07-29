@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from seguridad.models import User
 from contenedor.models import CtnVerificacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
-from contenedor.serializers.verificacion import VerificacionSerializador
+from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from datetime import datetime, timedelta
 from utilidades.zinc import Zinc
 from decouple import config
@@ -36,7 +36,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             raw["usuario_id"] = usuario.id
             raw["token"] = token
             raw["vence"] = datetime.now().date() + timedelta(days=1)             
-            verificacion_serializer = VerificacionSerializador(data = raw)
+            verificacion_serializer = CtnVerificacionSerializador(data = raw)
             if verificacion_serializer.is_valid():                                             
                 verificacion_serializer.save()
                 dominio = config('DOMINIO_FRONTEND')                
@@ -80,7 +80,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                         usuario = User.objects.get(id = verificacion.usuario_id)
                         usuario.verificado = True
                         usuario.save()
-                        verificacionSerializer = VerificacionSerializador(verificacion)                
+                        verificacionSerializer = CtnVerificacionSerializador(verificacion)                
                         return Response({'verificado': True, 'verificacion': verificacionSerializer.data}, status=status.HTTP_200_OK)
                     return Response({'mensaje':'El token de la verificacion esta vencido', 'codigo': 6, 'codigoUsuario': verificacion.usuario_id}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'mensaje':'La verificacion ya fue usada', 'codigo': 5, 'codigoUsuario': verificacion.usuario_id}, status=status.HTTP_400_BAD_REQUEST)
@@ -99,7 +99,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 raw["vence"] = datetime.now().date() + timedelta(days=1)                                    
                 raw["usuario_id"] = usuario.id
                 raw["accion"] = "clave"
-                verificacion_serializer = VerificacionSerializador(data = raw)
+                verificacion_serializer = CtnVerificacionSerializador(data = raw)
                 if verificacion_serializer.is_valid():                                             
                     verificacion_serializer.save()
                     dominio = config('DOMINIO_FRONTEND')                

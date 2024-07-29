@@ -1,7 +1,7 @@
 from contenedor.models import CtnCiudad
 from rest_framework import serializers
 
-class ContenedorCiudadSerializador(serializers.HyperlinkedModelSerializer):
+class CtnCiudadSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CtnCiudad
         fields = [
@@ -20,7 +20,7 @@ class ContenedorCiudadSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': nombre_completo,
         }
      
-class ContenedorCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class CtnCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = CtnCiudad

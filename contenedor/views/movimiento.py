@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from contenedor.models import CtnMovimiento, CtnEventoPago, CtnConsumo
 from seguridad.models import User
-from contenedor.serializers.movimiento import ContenedorMovimientoSerializador
+from contenedor.serializers.movimiento import CtnMovimientoSerializador
 from decouple import config
 from datetime import timedelta, datetime
 from django.utils import timezone
@@ -15,7 +15,7 @@ import hashlib
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = CtnMovimiento.objects.all()
-    serializer_class = ContenedorMovimientoSerializador    
+    serializer_class = CtnMovimientoSerializador    
     permission_classes = [permissions.IsAuthenticated]     
         
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-pedido',)
@@ -55,7 +55,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         usuario_id = raw.get('usuario_id')
         if usuario_id:
             movimientos = CtnMovimiento.objects.filter(usuario_id=usuario_id)
-            movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
+            movimientosSerializador = CtnMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
@@ -66,7 +66,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         socio_id = raw.get('socio_id')
         if socio_id:
             movimientos = CtnMovimiento.objects.filter(socio_id=socio_id)
-            movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
+            movimientosSerializador = CtnMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
@@ -77,7 +77,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         usuario_id = raw.get('usuario_id')
         if usuario_id:
             movimientos = CtnMovimiento.objects.filter(usuario_id=usuario_id, tipo='PEDIDO', vr_saldo__gt=0)
-            movimientosSerializador = ContenedorMovimientoSerializador(movimientos, many=True)
+            movimientosSerializador = CtnMovimientoSerializador(movimientos, many=True)
             return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            

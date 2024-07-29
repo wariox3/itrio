@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from contenedor.models import CtnConsumoPeriodo, CtnConsumo, UsuarioContenedor, CtnMovimiento
-from contenedor.serializers.consumo import ConsumoSerializador
+from contenedor.serializers.consumo import CtnSerializador
 from seguridad.models import User
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -10,7 +10,7 @@ from django.db.models import Sum, Q, F
 
 class ConsumoViewSet(viewsets.ModelViewSet):
     queryset = CtnConsumo.objects.all()
-    serializer_class = ConsumoSerializador    
+    serializer_class = CtnSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar',)

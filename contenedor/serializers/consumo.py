@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from contenedor.models import CtnConsumo
     
-class ConsumoSerializador(serializers.ModelSerializer):
+class CtnSerializador(serializers.ModelSerializer):
     class Meta:
         model = CtnConsumo
         fields = ['contenedor']

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from contenedor.serializers.verificacion import VerificacionSerializador
+from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from contenedor.models import CtnVerificacion
 from seguridad.models import User
 from rest_framework.decorators import action
@@ -12,7 +12,7 @@ from utilidades.zinc import Zinc
 
 class VerificacionViewSet(viewsets.ModelViewSet):
     queryset = CtnVerificacion.objects.all()
-    serializer_class = VerificacionSerializador
+    serializer_class = CtnVerificacionSerializador
 
     @action(detail=False, methods=["post"], url_path=r'reenviar-verificacion',)
     def reenviar_verificacion(self, request):
@@ -25,7 +25,7 @@ class VerificacionViewSet(viewsets.ModelViewSet):
             'vence': datetime.now().date() + timedelta(days=1)
         }
         
-        verificacion_serializer = VerificacionSerializador(data = datos)                                           
+        verificacion_serializer = CtnVerificacionSerializador(data = datos)                                           
         if verificacion_serializer.is_valid():
             verificacion_serializer.save()
             dominio = config('DOMINIO_FRONTEND')                

@@ -1,7 +1,7 @@
 from contenedor.models import CtnIdentificacion
 from rest_framework import serializers
 
-class ContenedorIdentificacionSerializador(serializers.HyperlinkedModelSerializer):
+class CtnIdentificacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CtnIdentificacion
         fields = [
@@ -15,7 +15,7 @@ class ContenedorIdentificacionSerializador(serializers.HyperlinkedModelSerialize
             'nombre': instance.nombre,
         }        
 
-class ContenedorIdentificacionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class CtnIdentificacionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = CtnIdentificacion

@@ -6,7 +6,7 @@ from seguridad.models import User
 from contenedor.models import Contenedor, UsuarioContenedor, CtnVerificacion
 from contenedor.serializers.contenedor import ContenedorSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorConsultaContenedorSerializador
-from contenedor.serializers.verificacion import VerificacionSerializador
+from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from datetime import datetime, timedelta
 from decouple import config
 from utilidades.zinc import Zinc
@@ -52,7 +52,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                     if contenedor.plan.limite_usuarios > 0:
                         if contenedor.plan.limite_usuarios >= contenedor.usuarios:
                             return Response({'mensaje':'La empresa supera el numero de usuarios segun el plan, si quiere invitar nuevos usuarios debe incrementar el plan', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
-                verificacionSerializador = VerificacionSerializador(data = raw)
+                verificacionSerializador = CtnVerificacionSerializador(data = raw)
                 if verificacionSerializador.is_valid():                                             
                     verificacionSerializador.save()                    
                     url = f"https://{config('DOMINIO_FRONTEND')}/auth/login/" + token

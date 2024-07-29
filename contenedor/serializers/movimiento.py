@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from contenedor.models import CtnMovimiento, CtnSocio
 
-class ContenedorMovimientoSerializador(serializers.ModelSerializer):
+class CtnMovimientoSerializador(serializers.ModelSerializer):
     class Meta:
         model = CtnMovimiento
         fields = ['fecha']
