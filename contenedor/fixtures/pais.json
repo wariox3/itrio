@@ -1,6 +1,6 @@
 [
   {
-    "model": "contenedor.contenedorPais",
+    "model": "contenedor.CtnPais",
     "pk": "CO",
     "fields": {"nombre": "Colombia", "codigo":"169"}
   }

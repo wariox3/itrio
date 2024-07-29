@@ -1,6 +1,6 @@
 [
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 1,
     "fields": {
       "nombre": "Impulso (facturación)", 
@@ -13,7 +13,7 @@
     }
   },
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 2,
     "fields": {
       "nombre": "Impulso ERP",
@@ -26,7 +26,7 @@
     }
   },
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 3,
     "fields": {
       "nombre": "Crecimiento (facturación)",
@@ -39,7 +39,7 @@
     }
   },
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 4,
     "fields": {
       "nombre": "Crecimiento ERP",
@@ -52,7 +52,7 @@
     }
   },
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 5,
     "fields": {
       "nombre": "Expansión (facturación)",
@@ -65,7 +65,7 @@
     }
   },
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 6,
     "fields": {
       "nombre": "Expansión ERP",
@@ -78,7 +78,7 @@
     }
   },
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 7,
     "fields": {
       "nombre": "Éxito (facturación)",
@@ -91,7 +91,7 @@
     }
   },
   {
-    "model": "contenedor.plan",
+    "model": "contenedor.CtnPlan",
     "pk": 8,
     "fields": {
       "nombre": "Éxito ERP",

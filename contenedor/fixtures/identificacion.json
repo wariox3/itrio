@@ -1,46 +1,46 @@
 [
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 1,
     "fields": {"nombre": "Registro civil de nacimiento", "pais": "CO", "codigo":"11", "orden":3}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 2,
     "fields": {"nombre": "Tarjeta de identidad", "pais": "CO", "codigo":"12", "orden":4}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 3,
     "fields": {"nombre": "Cédula de ciudadanía", "pais": "CO", "codigo":"13", "orden":2}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 4,
     "fields": {"nombre": "Tarjeta de extranjería", "pais": "CO", "codigo":"21", "orden":5}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 5,
     "fields": {"nombre": "Cédula de extranjería", "pais": "CO", "codigo":"22", "orden":6}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 6,
     "fields": {"nombre": "Número de identificación tributaria ", "codigo":"31", "pais": "CO", "orden":1}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 7,
     "fields": {"nombre": "Pasaporte", "pais": "CO", "codigo":"41", "orden":7}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 8,
     "fields": {"nombre": "Tipo de documento extranjero", "pais": "CO", "codigo":"42", "orden":8}
   },
   {
-    "model": "contenedor.contenedorIdentificacion",
+    "model": "contenedor.CtnIdentificacion",
     "pk": 9,
     "fields": {"nombre": "Sin identificación del exterior", "pais": "CO", "codigo":"43", "orden":9}
   }

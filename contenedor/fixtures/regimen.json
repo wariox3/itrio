@@ -1,11 +1,11 @@
 [
   {
-    "model": "contenedor.contenedorRegimen",
+    "model": "contenedor.CtnRegimen",
     "pk": 1,
     "fields": {"nombre": "Ordinario común"}
   },
   {
-    "model": "contenedor.contenedorRegimen",
+    "model": "contenedor.CtnRegimen",
     "pk": 2,
     "fields": {"nombre": "Simple"}
   }

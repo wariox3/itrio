@@ -1,11 +1,11 @@
 [
   {
-    "model": "contenedor.contenedorTipoPersona",
+    "model": "contenedor.CtnTipoPersona",
     "pk": 1,
     "fields": {"nombre": "Jurídica"}
   },
   {
-    "model": "contenedor.contenedorTipoPersona",
+    "model": "contenedor.CtnTipoPersona",
     "pk": 2,
     "fields": {"nombre": "Natural"}
   }
