@@ -7,6 +7,9 @@ class CtnMovimientoSerializador(serializers.ModelSerializer):
         fields = ['fecha']
     
     def to_representation(self, instance):
+        usuario_username = ''
+        if instance.usuario:
+            usuario_username = instance.usuario.username
         total_enmascarado = "{:.2f}".format(instance.vr_saldo).replace('.', '').replace(',', '')
         return {
             'id': instance.id,   
@@ -17,5 +20,7 @@ class CtnMovimientoSerializador(serializers.ModelSerializer):
             'vr_afectado': instance.vr_afectado,
             'vr_saldo': instance.vr_saldo,
             'vr_saldo_enmascarado': total_enmascarado,
-            'documento_fisico': instance.documento_fisico
+            'documento_fisico': instance.documento_fisico,
+            'usuario_id': instance.usuario_id,
+            'usuario_username': usuario_username
         }         
