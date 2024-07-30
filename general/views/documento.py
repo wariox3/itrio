@@ -26,7 +26,7 @@ from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
 from decimal import Decimal
 from openpyxl import Workbook
-import datetime
+from datetime import datetime
 import base64
 
 
@@ -35,9 +35,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
     serializer_class = DocumentoSerializador
     permission_classes = [permissions.IsAuthenticated]
-
-    def list(self, request):
-        pass
 
     def create(self, request):
         raw = request.data
