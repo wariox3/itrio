@@ -15,6 +15,6 @@ class HumConceptoListaAutocompletarSerializador(serializers.HyperlinkedModelSeri
     def to_representation(self, instance):
         return {
             'concepto_id': instance.id,
-            'nombre_nombre': instance.nombre,
+            'concepto_nombre': instance.nombre,
         }         
         
