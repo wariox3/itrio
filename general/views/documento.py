@@ -26,7 +26,7 @@ from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
 from decimal import Decimal
 from openpyxl import Workbook
-from datetime import datetime
+from datetime import datetime, timedelta
 import base64
 
 
@@ -760,8 +760,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         fecha_actual = timezone.now().date()
         # Obtener el primer y último día del mes actual
         primer_dia_mes = fecha_actual.replace(day=1)
-        ultimo_dia_mes = (primer_dia_mes + datetime.timedelta(days=32)).replace(day=1) - datetime.timedelta(days=1)
-        dias_del_mes = [primer_dia_mes + datetime.timedelta(days=i) for i in range((ultimo_dia_mes - primer_dia_mes).days + 1)]
+        ultimo_dia_mes = (primer_dia_mes + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        dias_del_mes = [primer_dia_mes + timedelta(days=i) for i in range((ultimo_dia_mes - primer_dia_mes).days + 1)]
         ventas_por_dia = Documento.objects.filter(fecha__year=fecha_actual.year, fecha__month=fecha_actual.month
                                                   ).annotate(dia=TruncDay('fecha')
                                                              ).values('dia'
