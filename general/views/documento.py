@@ -26,7 +26,7 @@ from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
 from decimal import Decimal
 from openpyxl import Workbook
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import base64
 
 
@@ -265,21 +265,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'aprobar',)
-    def aprobar(self, request):
-        try:
-            raw = request.data
-            id = raw.get('id')
-            if id:
+    def aprobar(self, request):        
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
                 documento = Documento.objects.get(pk=id)
-                respuesta = self.validacion_aprobar(id)
-                if respuesta['error'] == False:                                
-                    documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
+                consecutivo = 0
+                documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
+                if documento.numero is None:
+                    consecutivo = documentoTipo.consecutivo
+                else: 
+                    consecutivo = documento.numero
+                respuesta = self.validacion_aprobar(id, consecutivo)
+                if respuesta['error'] == False:                         
                     if documento.numero is None:
                         documento.numero = documentoTipo.consecutivo
                         documentoTipo.consecutivo += 1
                         documentoTipo.save()                
                     documento.estado_aprobado = True
-                    if documento.documento_tipo.documento_clase_id in (100,101,102, 300, 301, 302, 303):
+                    if documento.documento_tipo.documento_clase_id in (100,101,102,300,301,302,303):
                         documento.pendiente = documento.total - documento.afectado    
                     if documento.documento_tipo.documento_clase_id == 200:
                         documento_detalles = DocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
@@ -292,10 +297,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
-            else:
-                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Documento.DoesNotExist:
-            return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            except Documento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'anular',)
     def anular(self, request):
@@ -875,9 +880,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return documento
     
     @staticmethod
-    def validacion_aprobar(documento_id):
+    def validacion_aprobar(documento_id, consecutivo):
         try:
             documento = Documento.objects.get(id=documento_id)
+            fecha = date.today()
+            if documento.documento_tipo.documento_clase_id in (100,303):
+                if documento.resolucion:
+                    if isinstance(documento.resolucion.fecha_hasta, date):
+                        if documento.resolucion.fecha_hasta <= fecha:
+                            return {'error':True, 'mensaje':'La fecha de la resolucion esta vencida', 'codigo':1}
+                    if consecutivo < documento.resolucion.consecutivo_desde or consecutivo > documento.resolucion.consecutivo_hasta:
+                        return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
             documento_detalle = DocumentoDetalle.objects.filter(documento=documento)
             if documento_detalle:
                 if documento.estado_aprobado == False:      
