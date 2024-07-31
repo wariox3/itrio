@@ -9,20 +9,21 @@ class WebServiceHandler(logging.Handler):
         super().__init__()
         self.url = url
 
-    def emit(self, record):     
-        if config('ENV') == 'prod' or config('ENV') == 'test':
+    def emit(self, record):         
+        if config('ENV') in ['prod', 'test']:
             traza = self.format(record)   
             fuente = record.name     
             if fuente == 'django.request':
                 ruta = ''
                 usuario = ''
                 contenedor = ''
+                request_body = ''
                 request_info = getattr(record, 'request', None)
                 if isinstance(request_info, HttpRequest):
                     ruta = request_info.path
                     usuario = str(request_info.user) if request_info.user.is_authenticated else 'anonymous'
                     contenedor = getattr(request_info, 'tenant', '')
-
+                    request_body = getattr(request_info, 'body_data', '')
                 mensaje = ''
                 if record.exc_info and hasattr(request_info, 'path'):
                     exc_type, exc_value, exc_traceback = record.exc_info
