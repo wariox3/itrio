@@ -7,6 +7,8 @@ class HumConceptoSerializador(serializers.HyperlinkedModelSerializer):
         model = HumConcepto
         fields = ['id', 'nombre', 'porcentaje', 'ingreso_base_prestacion', 'ingreso_base_cotizacion', 'orden']
 
+    
+
 class HumConceptoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
