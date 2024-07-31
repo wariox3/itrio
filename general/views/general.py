@@ -27,6 +27,7 @@ from humano.models.hum_grupo import HumGrupo
 from humano.models.hum_pago_tipo import HumPagoTipo
 from humano.models.hum_concepto import HumConcepto
 from humano.models.hum_adicional import HumAdicional
+from humano.models.hum_credito import HumCredito
 from ruteo.models.rut_vehiculo import RutVehiculo
 from ruteo.models.rut_franja import RutFranja
 from general.serializers.item import ItemSerializador, ItemListaAutocompletarSerializador, ItemListaBuscarSerializador
@@ -54,6 +55,7 @@ from humano.serializers.hum_grupo import HumGrupoSerializador, HumGrupoListaAuto
 from humano.serializers.hum_pago_tipo import HumPagoTipoSerializador, HumPagoTipoListaAutocompletarSerializador
 from humano.serializers.hum_concepto import HumConceptoSerializador, HumConceptoListaAutocompletarSerializador
 from humano.serializers.hum_adicional import HumAdicionalSerializador
+from humano.serializers.hum_credito import HumCreditoSerializador
 from ruteo.serializers.rut_vehiculo import RutVehiculoSerializador
 from ruteo.serializers.rut_franja import RutFranjaSerializador
 
