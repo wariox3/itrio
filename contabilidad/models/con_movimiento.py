@@ -9,9 +9,9 @@ class ConMovimiento(models.Model):
     debito = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     credito = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     base = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.CASCADE, related_name='con_movimientos')
-    contacto = models.ForeignKey(Contacto, null=True, on_delete=models.CASCADE, related_name='con_movimientos')
-    documento = models.ForeignKey(Documento, null=True, on_delete=models.CASCADE, related_name='con_movimientos')
+    cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='movimientos_cuenta_re')
+    contacto = models.ForeignKey(Contacto, null=True, on_delete=models.PROTECT, related_name='movimientos_contacto_rel')
+    documento = models.ForeignKey(Documento, null=True, on_delete=models.PROTECT, related_name='movimientos_documento_rel')
 
     class Meta:
         db_table = "con_movimiento"

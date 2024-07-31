@@ -58,5 +58,10 @@
     "model": "general.documentoTipo",
     "pk": 12,
     "fields": {"nombre": "NOTA AJUSTE", "documento_clase": 304, "compra":true}
-  }  
+  },
+  {
+    "model": "general.documentoTipo",
+    "pk": 13,
+    "fields": {"nombre": "ASIENTO", "documento_clase": 304, "compra":true}
+  }   
 ]
