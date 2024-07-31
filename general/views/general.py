@@ -21,6 +21,7 @@ from general.models.cuenta_banco import CuentaBanco
 from general.models.cuenta_banco_tipo import CuentaBancoTipo
 from contabilidad.models.con_cuenta import ConCuenta
 from humano.models.hum_contrato import HumContrato
+from humano.models.hum_contrato_tipo import HumContratoTipo
 from humano.models.hum_programacion import HumProgramacion
 from humano.models.hum_grupo import HumGrupo
 from humano.models.hum_pago_tipo import HumPagoTipo
@@ -47,6 +48,7 @@ from general.serializers.cuenta_banco import CuentaBancoSerializador, CuentaBanc
 from general.serializers.cuenta_banco_tipo import CuentaBancoTipoSerializador, CuentaBancoTipoListaAutocompletarSerializador
 from contabilidad.serializers.cuenta import CuentaListaAutocompletarSerializador
 from humano.serializers.hum_contrato import HumContratoSerializador, HumContratoListaAutocompletarSerializador
+from humano.serializers.hum_contrato_tipo import HumContratoTipoSerializador, HumContratoTipoListaAutocompletarSerializador
 from humano.serializers.hum_programacion import HumProgramacionSerializador
 from humano.serializers.hum_grupo import HumGrupoSerializador, HumGrupoListaAutocompletarSerializador
 from humano.serializers.hum_pago_tipo import HumPagoTipoSerializador, HumPagoTipoListaAutocompletarSerializador
