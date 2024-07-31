@@ -1,3062 +1,3062 @@
 [
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 1,
         "fields": {
             "codigo": 110500,
             "nombre": "Caja",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 2,
         "fields": {
             "codigo": 111000,
             "nombre": "Bancos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 3,
         "fields": {
             "codigo": 111500,
             "nombre": "Remesas en tránsito",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 4,
         "fields": {
             "codigo": 112000,
-            "nombre": "Cuentas de ahorro",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas de ahorro",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 5,
         "fields": {
             "codigo": 112500,
             "nombre": "Fondos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 6,
         "fields": {
             "codigo": 120500,
             "nombre": "Acciones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 7,
         "fields": {
             "codigo": 121000,
             "nombre": "Cuotas o partes de interés social",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 8,
         "fields": {
             "codigo": 121500,
             "nombre": "Bonos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 9,
         "fields": {
             "codigo": 122000,
             "nombre": "Cédulas",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 10,
         "fields": {
             "codigo": 122500,
             "nombre": "Certificados",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 11,
         "fields": {
             "codigo": 123000,
             "nombre": "Papeles comerciales",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 12,
         "fields": {
             "codigo": 123500,
             "nombre": "Títulos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 13,
         "fields": {
             "codigo": 124000,
             "nombre": "Aceptaciones bancarias o financieras",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 14,
         "fields": {
             "codigo": 124500,
             "nombre": "Derechos fiduciarios",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 15,
         "fields": {
             "codigo": 125000,
             "nombre": "Derechos de recompra de inversiones negociadas (repos)",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 16,
         "fields": {
             "codigo": 125500,
             "nombre": "Obligatorias",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 17,
         "fields": {
             "codigo": 126000,
-            "nombre": "Cuentas en participación",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas en participación",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 18,
         "fields": {
             "codigo": 129500,
             "nombre": "Otras inversiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 19,
         "fields": {
             "codigo": 129900,
             "nombre": "Provisiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 20,
         "fields": {
             "codigo": 130500,
             "nombre": "Clientes",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 21,
         "fields": {
             "codigo": 131000,
-            "nombre": "Cuentas corrientes comerciales",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas corrientes comerciales",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 22,
         "fields": {
             "codigo": 131500,
-            "nombre": "Cuentas por cobrar a casa matriz",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas por cobrar a casa matriz",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 23,
         "fields": {
             "codigo": 132000,
-            "nombre": "Cuentas por cobrar a vinculados económicos",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas por cobrar a vinculados económicos",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 24,
         "fields": {
             "codigo": 132300,
-            "nombre": "Cuentas por cobrar a directores",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas por cobrar a directores",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 25,
         "fields": {
             "codigo": 132500,
-            "nombre": "Cuentas por cobrar a socios y accionistas",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas por cobrar a socios y accionistas",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 26,
         "fields": {
             "codigo": 132800,
             "nombre": "Aportes por cobrar",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 27,
         "fields": {
             "codigo": 133000,
             "nombre": "Anticipos y avances",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 28,
         "fields": {
             "codigo": 133200,
-            "nombre": "Cuentas de operación conjunta",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas de operación conjunta",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 29,
         "fields": {
             "codigo": 133500,
             "nombre": "Depósitos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 30,
         "fields": {
             "codigo": 134000,
             "nombre": "Promesas de compra venta",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 31,
         "fields": {
             "codigo": 134500,
             "nombre": "Ingresos por cobrar",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 32,
         "fields": {
             "codigo": 135000,
             "nombre": "Retención sobre contratos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 33,
         "fields": {
             "codigo": 135500,
             "nombre": "Anticipo de impuestos y contribuciones o saldos a favor",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 34,
         "fields": {
             "codigo": 136000,
             "nombre": "Reclamaciones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 35,
         "fields": {
             "codigo": 136500,
-            "nombre": "Cuentas por cobrar a trabajadores",
-            "cuenta_clase": 1
+            "nombre": "ConCuentas por cobrar a trabajadores",
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 36,
         "fields": {
             "codigo": 137000,
             "nombre": "Préstamos a particulares",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 37,
         "fields": {
             "codigo": 138000,
             "nombre": "Deudores varios",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 38,
         "fields": {
             "codigo": 138500,
             "nombre": "Derechos de recompra de cartera negociada",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 39,
         "fields": {
             "codigo": 139000,
             "nombre": "Deudas de difícil cobro",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 40,
         "fields": {
             "codigo": 139900,
             "nombre": "Provisiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 41,
         "fields": {
             "codigo": 140500,
             "nombre": "Materias primas",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 42,
         "fields": {
             "codigo": 141000,
             "nombre": "Productos en proceso",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 43,
         "fields": {
             "codigo": 141500,
             "nombre": "Obras de construcción en curso",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 44,
         "fields": {
             "codigo": 141700,
             "nombre": "Obras de urbanismo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 45,
         "fields": {
             "codigo": 142000,
             "nombre": "Contratos en ejecución",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 46,
         "fields": {
             "codigo": 142500,
             "nombre": "Cultivos en desarrollo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 47,
         "fields": {
             "codigo": 142800,
             "nombre": "Plantaciones agrícolas",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 48,
         "fields": {
             "codigo": 143000,
             "nombre": "Productos terminados",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 49,
         "fields": {
             "codigo": 143500,
             "nombre": "Mercancías no fabricadas por la empresa",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 50,
         "fields": {
             "codigo": 144000,
             "nombre": "Bienes raíces para la venta",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 51,
         "fields": {
             "codigo": 144500,
             "nombre": "Semovientes",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 52,
         "fields": {
             "codigo": 145000,
             "nombre": "Terrenos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 53,
         "fields": {
             "codigo": 145500,
             "nombre": "Materiales, repuestos y accesorios",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 54,
         "fields": {
             "codigo": 146000,
             "nombre": "Envases y empaques",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 55,
         "fields": {
             "codigo": 146500,
             "nombre": "Inventarios en tránsito",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 56,
         "fields": {
             "codigo": 149900,
             "nombre": "Provisiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 57,
         "fields": {
             "codigo": 150400,
             "nombre": "Terrenos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 58,
         "fields": {
             "codigo": 150600,
             "nombre": "Materiales proyectos petroleros",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 59,
         "fields": {
             "codigo": 150800,
             "nombre": "Construcciones en curso",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 60,
         "fields": {
             "codigo": 151200,
             "nombre": "Maquinaria y equipos en montaje",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 61,
         "fields": {
             "codigo": 151600,
             "nombre": "Construcciones y edificaciones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 62,
         "fields": {
             "codigo": 152000,
             "nombre": "Maquinaria y equipo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 63,
         "fields": {
             "codigo": 152400,
             "nombre": "Equipo de oficina",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 64,
         "fields": {
             "codigo": 152800,
             "nombre": "Equipo de computación y comunicación",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 65,
         "fields": {
             "codigo": 153200,
             "nombre": "Equipo médico-científico",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 66,
         "fields": {
             "codigo": 153600,
             "nombre": "Equipo de hoteles y restaurantes",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 67,
         "fields": {
             "codigo": 154000,
             "nombre": "Flota y equipo de transporte",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 68,
         "fields": {
             "codigo": 154400,
             "nombre": "Flota y equipo fluvial y/o marítimo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 69,
         "fields": {
             "codigo": 154800,
             "nombre": "Flota y equipo aéreo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 70,
         "fields": {
             "codigo": 155200,
             "nombre": "Flota y equipo férreo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 71,
         "fields": {
             "codigo": 155600,
             "nombre": "Acueductos, plantas y redes",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 72,
         "fields": {
             "codigo": 156000,
             "nombre": "Armamento de vigilancia",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 73,
         "fields": {
             "codigo": 156200,
             "nombre": "Envases y empaques",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 74,
         "fields": {
             "codigo": 156400,
             "nombre": "Plantaciones agrícolas y forestales",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 75,
         "fields": {
             "codigo": 156800,
             "nombre": "Vías de comunicación",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 76,
         "fields": {
             "codigo": 157200,
             "nombre": "Minas y canteras",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 77,
         "fields": {
             "codigo": 157600,
             "nombre": "Pozos artesianos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 78,
         "fields": {
             "codigo": 158000,
             "nombre": "Yacimientos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 79,
         "fields": {
             "codigo": 158400,
             "nombre": "Semovientes",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 80,
         "fields": {
             "codigo": 158800,
             "nombre": "Propiedades, planta y equipo en tránsito",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 81,
         "fields": {
             "codigo": 159200,
             "nombre": "Depreciación acumulada",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 82,
         "fields": {
             "codigo": 159600,
             "nombre": "Depreciación diferida",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 83,
         "fields": {
             "codigo": 159700,
             "nombre": "Amortización acumulada",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 84,
         "fields": {
             "codigo": 159800,
             "nombre": "Agotamiento acumulado",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 85,
         "fields": {
             "codigo": 159900,
             "nombre": "Provisiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 86,
         "fields": {
             "codigo": 160500,
             "nombre": "Crédito mercantil",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 87,
         "fields": {
             "codigo": 161000,
             "nombre": "Marcas",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 88,
         "fields": {
             "codigo": 161500,
             "nombre": "Patentes",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 89,
         "fields": {
             "codigo": 162000,
             "nombre": "Concesiones y franquicias",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 90,
         "fields": {
             "codigo": 162500,
             "nombre": "Derechos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 91,
         "fields": {
             "codigo": 163000,
             "nombre": "Know how",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 92,
         "fields": {
             "codigo": 163500,
             "nombre": "Licencias",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 93,
         "fields": {
             "codigo": 169800,
             "nombre": "Depreciación y/o amortización acumulada",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 94,
         "fields": {
             "codigo": 169900,
             "nombre": "Provisiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 95,
         "fields": {
             "codigo": 170500,
             "nombre": "Gastos pagados por anticipado",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 96,
         "fields": {
             "codigo": 171000,
             "nombre": "Cargos diferidos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 97,
         "fields": {
             "codigo": 171500,
             "nombre": "Costos de exploración por amortizar",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 98,
         "fields": {
             "codigo": 172000,
             "nombre": "Costos de explotación y desarrollo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 99,
         "fields": {
             "codigo": 173000,
             "nombre": "Cargos por corrección monetaria diferida",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 100,
         "fields": {
             "codigo": 179800,
             "nombre": "Amortización acumulada",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 101,
         "fields": {
             "codigo": 180500,
             "nombre": "Bienes de arte y cultura",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 102,
         "fields": {
             "codigo": 189500,
             "nombre": "Diversos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 103,
         "fields": {
             "codigo": 189900,
             "nombre": "Provisiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 104,
         "fields": {
             "codigo": 190500,
             "nombre": "De inversiones",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 105,
         "fields": {
             "codigo": 191000,
             "nombre": "De propiedades, planta y equipo",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 106,
         "fields": {
             "codigo": 199500,
             "nombre": "De otros activos",
-            "cuenta_clase": 1
+            "ConCuenta_clase": 1
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 107,
         "fields": {
             "codigo": 210500,
             "nombre": "Bancos nacionales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 108,
         "fields": {
             "codigo": 211000,
             "nombre": "Bancos del exterior",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 109,
         "fields": {
             "codigo": 211500,
             "nombre": "Corporaciones financieras",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 110,
         "fields": {
             "codigo": 212000,
             "nombre": "Compañías de financiamiento comercial",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 111,
         "fields": {
             "codigo": 212500,
             "nombre": "Corporaciones de ahorro y vivienda",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 112,
         "fields": {
             "codigo": 213000,
             "nombre": "Entidades financieras del exterior",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 113,
         "fields": {
             "codigo": 213500,
             "nombre": "Compromisos de recompra de inversiones negociadas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 114,
         "fields": {
             "codigo": 214000,
             "nombre": "Compromisos de recompra de cartera negociada",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 115,
         "fields": {
             "codigo": 214500,
             "nombre": "Obligaciones gubernamentales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 116,
         "fields": {
             "codigo": 219500,
             "nombre": "Otras obligaciones",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 117,
         "fields": {
             "codigo": 220500,
             "nombre": "Nacionales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 118,
         "fields": {
             "codigo": 221000,
             "nombre": "Del exterior",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 119,
         "fields": {
             "codigo": 221500,
-            "nombre": "Cuentas corrientes comerciales",
-            "cuenta_clase": 2
+            "nombre": "ConCuentas corrientes comerciales",
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 120,
         "fields": {
             "codigo": 222000,
             "nombre": "Casa matriz",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 121,
         "fields": {
             "codigo": 222500,
             "nombre": "Compañías vinculadas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 122,
         "fields": {
             "codigo": 230500,
-            "nombre": "Cuentas corrientes comerciales",
-            "cuenta_clase": 2
+            "nombre": "ConCuentas corrientes comerciales",
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 123,
         "fields": {
             "codigo": 231000,
             "nombre": "A casa matriz",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 124,
         "fields": {
             "codigo": 231500,
             "nombre": "A compañías vinculadas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 125,
         "fields": {
             "codigo": 232000,
             "nombre": "A contratistas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 126,
         "fields": {
             "codigo": 233000,
             "nombre": "Órdenes de compra por utilizar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 127,
         "fields": {
             "codigo": 233500,
             "nombre": "Costos y gastos por pagar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 128,
         "fields": {
             "codigo": 234000,
             "nombre": "Instalamentos por pagar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 129,
         "fields": {
             "codigo": 234500,
             "nombre": "Acreedores oficiales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 130,
         "fields": {
             "codigo": 235000,
             "nombre": "Regalías por pagar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 131,
         "fields": {
             "codigo": 235500,
             "nombre": "Deudas con accionistas o socios",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 132,
         "fields": {
             "codigo": 235700,
             "nombre": "Deudas con directores",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 133,
         "fields": {
             "codigo": 236000,
             "nombre": "Dividendos o participaciones por pagar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 134,
         "fields": {
             "codigo": 236500,
             "nombre": "Retención en la fuente",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 135,
         "fields": {
             "codigo": 236700,
             "nombre": "Impuesto a las ventas retenido",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 136,
         "fields": {
             "codigo": 236800,
             "nombre": "Impuesto de industria y comercio retenido",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 137,
         "fields": {
             "codigo": 237000,
             "nombre": "Retenciones y aportes de nómina",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 138,
         "fields": {
             "codigo": 237500,
             "nombre": "Cuotas por devolver",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 139,
         "fields": {
             "codigo": 238000,
             "nombre": "Acreedores varios",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 140,
         "fields": {
             "codigo": 240400,
             "nombre": "De renta y complementarios",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 141,
         "fields": {
             "codigo": 240800,
             "nombre": "Impuesto sobre las ventas por pagar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 142,
         "fields": {
             "codigo": 241200,
             "nombre": "De industria y comercio",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 143,
         "fields": {
             "codigo": 241600,
             "nombre": "A la propiedad raíz",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 144,
         "fields": {
             "codigo": 242000,
             "nombre": "Derechos sobre instrumentos públicos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 145,
         "fields": {
             "codigo": 242400,
             "nombre": "De valorización",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 146,
         "fields": {
             "codigo": 242800,
             "nombre": "De turismo",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 147,
         "fields": {
             "codigo": 243200,
             "nombre": "Tasa por utilización de puertos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 148,
         "fields": {
             "codigo": 243600,
             "nombre": "De vehículos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 149,
         "fields": {
             "codigo": 244000,
             "nombre": "De espectáculos públicos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 150,
         "fields": {
             "codigo": 244400,
             "nombre": "De hidrocarburos y minas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 151,
         "fields": {
             "codigo": 244800,
             "nombre": "Regalías e impuestos a la pequeña y mediana minería",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 152,
         "fields": {
             "codigo": 245200,
             "nombre": "A las exportaciones cafeteras",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 153,
         "fields": {
             "codigo": 245600,
             "nombre": "A las importaciones",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 154,
         "fields": {
             "codigo": 246000,
             "nombre": "Cuotas de fomento",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 155,
         "fields": {
             "codigo": 246400,
             "nombre": "De licores, cervezas y cigarrillos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 156,
         "fields": {
             "codigo": 246800,
             "nombre": "Al sacrificio de ganado",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 157,
         "fields": {
             "codigo": 247200,
             "nombre": "Al azar y juegos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 158,
         "fields": {
             "codigo": 247600,
             "nombre": "Gravámenes y regalías por utilización del suelo",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 159,
         "fields": {
             "codigo": 249500,
             "nombre": "Otros",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 160,
         "fields": {
             "codigo": 250500,
             "nombre": "Salarios por pagar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 161,
         "fields": {
             "codigo": 251000,
             "nombre": "Cesantías consolidadas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 162,
         "fields": {
             "codigo": 251500,
             "nombre": "Intereses sobre cesantías",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 163,
         "fields": {
             "codigo": 252000,
             "nombre": "Prima de servicios",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 164,
         "fields": {
             "codigo": 252500,
             "nombre": "Vacaciones consolidadas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 165,
         "fields": {
             "codigo": 253000,
             "nombre": "Prestaciones extralegales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 166,
         "fields": {
             "codigo": 253200,
             "nombre": "Pensiones por pagar",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 167,
         "fields": {
             "codigo": 253500,
             "nombre": "Cuotas partes pensiones de jubilación",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 168,
         "fields": {
             "codigo": 254000,
             "nombre": "Indemnizaciones laborales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 169,
         "fields": {
             "codigo": 260500,
             "nombre": "Para costos y gastos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 170,
         "fields": {
             "codigo": 261000,
             "nombre": "Para obligaciones laborales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 171,
         "fields": {
             "codigo": 261500,
             "nombre": "Para obligaciones fiscales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 172,
         "fields": {
             "codigo": 262000,
             "nombre": "Pensiones de jubilación",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 173,
         "fields": {
             "codigo": 262500,
             "nombre": "Para obras de urbanismo",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 174,
         "fields": {
             "codigo": 263000,
             "nombre": "Para mantenimiento y reparaciones",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 175,
         "fields": {
             "codigo": 263500,
             "nombre": "Para contingencias",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 176,
         "fields": {
             "codigo": 264000,
             "nombre": "Para obligaciones de garantías",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 177,
         "fields": {
             "codigo": 269500,
             "nombre": "Provisiones diversas",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 178,
         "fields": {
             "codigo": 270500,
             "nombre": "Ingresos recibidos por anticipado",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 179,
         "fields": {
             "codigo": 271000,
             "nombre": "Abonos diferidos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 180,
         "fields": {
             "codigo": 271500,
             "nombre": "Utilidad diferida en ventas a plazos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 181,
         "fields": {
             "codigo": 272000,
             "nombre": "Crédito por corrección monetaria diferida",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 182,
         "fields": {
             "codigo": 272500,
             "nombre": "Impuestos diferidos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 183,
         "fields": {
             "codigo": 280500,
             "nombre": "Anticipos y avances recibidos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 184,
         "fields": {
             "codigo": 281000,
             "nombre": "Depósitos recibidos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 185,
         "fields": {
             "codigo": 281500,
             "nombre": "Ingresos recibidos para terceros",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 186,
         "fields": {
             "codigo": 282000,
-            "nombre": "Cuentas de operación conjunta",
-            "cuenta_clase": 2
+            "nombre": "ConCuentas de operación conjunta",
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 187,
         "fields": {
             "codigo": 282500,
             "nombre": "Retenciones a terceros sobre contratos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 188,
         "fields": {
             "codigo": 283000,
             "nombre": "Embargos judiciales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 189,
         "fields": {
             "codigo": 283500,
             "nombre": "Acreedores del sistema",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 190,
         "fields": {
             "codigo": 284000,
-            "nombre": "Cuentas en participación",
-            "cuenta_clase": 2
+            "nombre": "ConCuentas en participación",
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 191,
         "fields": {
             "codigo": 289500,
             "nombre": "Diversos",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 192,
         "fields": {
             "codigo": 290500,
             "nombre": "Bonos en circulación",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 193,
         "fields": {
             "codigo": 291000,
             "nombre": "Bonos obligatoriamente convertibles en acciones",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 194,
         "fields": {
             "codigo": 291500,
             "nombre": "Papeles comerciales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 195,
         "fields": {
             "codigo": 292000,
             "nombre": "Bonos pensionales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 196,
         "fields": {
             "codigo": 292500,
             "nombre": "Títulos pensionales",
-            "cuenta_clase": 2
+            "ConCuenta_clase": 2
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 197,
         "fields": {
             "codigo": 310500,
             "nombre": "Capital suscrito y pagado",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 198,
         "fields": {
             "codigo": 311500,
             "nombre": "Aportes sociales",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 199,
         "fields": {
             "codigo": 312000,
             "nombre": "Capital asignado",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 200,
         "fields": {
             "codigo": 312500,
             "nombre": "Inversión suplementaria al capital asignado",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 201,
         "fields": {
             "codigo": 313000,
             "nombre": "Capital de personas naturales",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 202,
         "fields": {
             "codigo": 313500,
             "nombre": "Aportes del Estado",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 203,
         "fields": {
             "codigo": 314000,
             "nombre": "Fondo social",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 204,
         "fields": {
             "codigo": 320500,
             "nombre": "Prima en colocación de acciones, cuotas o partes de interés social",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 205,
         "fields": {
             "codigo": 321000,
             "nombre": "Donaciones",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 206,
         "fields": {
             "codigo": 321500,
             "nombre": "Crédito mercantil",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 207,
         "fields": {
             "codigo": 322000,
             "nombre": "Know how",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 208,
         "fields": {
             "codigo": 322500,
             "nombre": "Superávit método de participación",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 209,
         "fields": {
             "codigo": 330500,
             "nombre": "Reservas obligatorias",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 210,
         "fields": {
             "codigo": 331000,
             "nombre": "Reservas estatutarias",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 211,
         "fields": {
             "codigo": 331500,
             "nombre": "Reservas ocasionales",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 212,
         "fields": {
             "codigo": 340500,
             "nombre": "Ajustes por inflación",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 213,
         "fields": {
             "codigo": 341000,
             "nombre": "Saneamiento fiscal",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 214,
         "fields": {
             "codigo": 341500,
             "nombre": "Ajustes por inflación Decreto 3019 de 1989",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 215,
         "fields": {
             "codigo": 350500,
             "nombre": "Dividendos decretados en acciones",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 216,
         "fields": {
             "codigo": 351000,
             "nombre": "Participaciones decretadas en cuotas o partes de interés social",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 217,
         "fields": {
             "codigo": 360500,
             "nombre": "Utilidad del ejercicio",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 218,
         "fields": {
             "codigo": 361000,
             "nombre": "Pérdida del ejercicio",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 219,
         "fields": {
             "codigo": 370500,
             "nombre": "Utilidades acumuladas",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 220,
         "fields": {
             "codigo": 371000,
             "nombre": "Pérdidas acumuladas",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 221,
         "fields": {
             "codigo": 380500,
             "nombre": "De inversiones",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 222,
         "fields": {
             "codigo": 381000,
             "nombre": "De propiedades, planta y equipo",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 223,
         "fields": {
             "codigo": 389500,
             "nombre": "De otros activos",
-            "cuenta_clase": 3
+            "ConCuenta_clase": 3
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 224,
         "fields": {
             "codigo": 410500,
             "nombre": "Agricultura, ganadería, caza y silvicultura",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 225,
         "fields": {
             "codigo": 411000,
             "nombre": "Pesca",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 226,
         "fields": {
             "codigo": 411500,
             "nombre": "Explotación de minas y canteras",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 227,
         "fields": {
             "codigo": 412000,
             "nombre": "Industrias manufactureras",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 228,
         "fields": {
             "codigo": 412500,
             "nombre": "Suministro de electricidad, gas y agua",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 229,
         "fields": {
             "codigo": 413000,
             "nombre": "Construcción",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 230,
         "fields": {
             "codigo": 413500,
             "nombre": "Comercio al por mayor y al por menor",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 231,
         "fields": {
             "codigo": 414000,
             "nombre": "Hoteles y restaurantes",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 232,
         "fields": {
             "codigo": 414500,
             "nombre": "Transporte, almacenamiento y comunicaciones",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 233,
         "fields": {
             "codigo": 415000,
             "nombre": "Actividad financiera",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 234,
         "fields": {
             "codigo": 415500,
             "nombre": "Actividades inmobiliarias, empresariales y de alquiler",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 235,
         "fields": {
             "codigo": 416000,
             "nombre": "Enseñanza",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 236,
         "fields": {
             "codigo": 416500,
             "nombre": "Servicios sociales y de salud",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 237,
         "fields": {
             "codigo": 417000,
             "nombre": "Otras actividades de servicios comunitarios, sociales y personales",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 238,
         "fields": {
             "codigo": 417500,
             "nombre": "Devoluciones en ventas (DB)",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 239,
         "fields": {
             "codigo": 420500,
             "nombre": "Otras ventas",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 240,
         "fields": {
             "codigo": 421000,
             "nombre": "Financieros",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 241,
         "fields": {
             "codigo": 421500,
             "nombre": "Dividendos y participaciones",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 242,
         "fields": {
             "codigo": 421800,
             "nombre": "Ingresos método de participación",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 243,
         "fields": {
             "codigo": 422000,
             "nombre": "Arrendamientos",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 244,
         "fields": {
             "codigo": 422500,
             "nombre": "Comisiones",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 245,
         "fields": {
             "codigo": 423000,
             "nombre": "Honorarios",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 246,
         "fields": {
             "codigo": 423500,
             "nombre": "Servicios",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 247,
         "fields": {
             "codigo": 424000,
             "nombre": "Utilidad en venta de inversiones",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 248,
         "fields": {
             "codigo": 424500,
             "nombre": "Utilidad en venta de propiedades, planta y equipo",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 249,
         "fields": {
             "codigo": 424800,
             "nombre": "Utilidad en venta de otros bienes",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 250,
         "fields": {
             "codigo": 425000,
             "nombre": "Recuperaciones",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 251,
         "fields": {
             "codigo": 425500,
             "nombre": "Indemnizaciones",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 252,
         "fields": {
             "codigo": 426000,
             "nombre": "Participaciones en concesiones",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 253,
         "fields": {
             "codigo": 426500,
             "nombre": "Ingresos de ejercicios anteriores",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 254,
         "fields": {
             "codigo": 427500,
             "nombre": "Devoluciones en otras ventas (DB)",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 255,
         "fields": {
             "codigo": 429500,
             "nombre": "Diversos",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 256,
         "fields": {
             "codigo": 470500,
             "nombre": "Corrección monetaria",
-            "cuenta_clase": 4
+            "ConCuenta_clase": 4
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 257,
         "fields": {
             "codigo": 510500,
             "nombre": "Gastos de personal",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 258,
         "fields": {
             "codigo": 511000,
             "nombre": "Honorarios",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 259,
         "fields": {
             "codigo": 511500,
             "nombre": "Impuestos",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 260,
         "fields": {
             "codigo": 512000,
             "nombre": "Arrendamientos",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 261,
         "fields": {
             "codigo": 512500,
             "nombre": "Contribuciones y afiliaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 262,
         "fields": {
             "codigo": 513000,
             "nombre": "Seguros",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 263,
         "fields": {
             "codigo": 513500,
             "nombre": "Servicios",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 264,
         "fields": {
             "codigo": 514000,
             "nombre": "Gastos legales",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 265,
         "fields": {
             "codigo": 514500,
             "nombre": "Mantenimiento y reparaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 266,
         "fields": {
             "codigo": 515000,
             "nombre": "Adecuación e instalación",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 267,
         "fields": {
             "codigo": 515500,
             "nombre": "Gastos de viaje",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 268,
         "fields": {
             "codigo": 516000,
             "nombre": "Depreciaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 269,
         "fields": {
             "codigo": 516500,
             "nombre": "Amortizaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 270,
         "fields": {
             "codigo": 519500,
             "nombre": "Diversos",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 271,
         "fields": {
             "codigo": 519900,
             "nombre": "Provisiones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 272,
         "fields": {
             "codigo": 520500,
             "nombre": "Gastos de personal",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 273,
         "fields": {
             "codigo": 521000,
             "nombre": "Honorarios",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 274,
         "fields": {
             "codigo": 521500,
             "nombre": "Impuestos",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 275,
         "fields": {
             "codigo": 522000,
             "nombre": "Arrendamientos",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 276,
         "fields": {
             "codigo": 522500,
             "nombre": "Contribuciones y afiliaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 277,
         "fields": {
             "codigo": 523000,
             "nombre": "Seguros",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 278,
         "fields": {
             "codigo": 523500,
             "nombre": "Servicios",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 279,
         "fields": {
             "codigo": 524000,
             "nombre": "Gastos legales",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 280,
         "fields": {
             "codigo": 524500,
             "nombre": "Mantenimiento y reparaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 281,
         "fields": {
             "codigo": 525000,
             "nombre": "Adecuación e instalación",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 282,
         "fields": {
             "codigo": 525500,
             "nombre": "Gastos de viaje",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 283,
         "fields": {
             "codigo": 526000,
             "nombre": "Depreciaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 284,
         "fields": {
             "codigo": 526500,
             "nombre": "Amortizaciones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 285,
         "fields": {
             "codigo": 527000,
             "nombre": "Financieros-reajuste del sistema",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 286,
         "fields": {
             "codigo": 527500,
             "nombre": "Pérdidas método de participación",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 287,
         "fields": {
             "codigo": 529500,
             "nombre": "Diversos",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 288,
         "fields": {
             "codigo": 529900,
             "nombre": "Provisiones",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 289,
         "fields": {
             "codigo": 530500,
             "nombre": "Financieros",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 290,
         "fields": {
             "codigo": 531000,
             "nombre": "Pérdida en venta y retiro de bienes",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 291,
         "fields": {
             "codigo": 531300,
             "nombre": "Pérdidas método de participación",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 292,
         "fields": {
             "codigo": 531500,
             "nombre": "Gastos extraordinarios",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 293,
         "fields": {
             "codigo": 539500,
             "nombre": "Gastos diversos",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 294,
         "fields": {
             "codigo": 540500,
             "nombre": "Impuesto de renta y complementarios",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 295,
         "fields": {
             "codigo": 590500,
             "nombre": "Ganancias y pérdidas",
-            "cuenta_clase": 5
+            "ConCuenta_clase": 5
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 296,
         "fields": {
             "codigo": 610500,
             "nombre": "Agricultura, ganadería, caza y silvicultura",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 297,
         "fields": {
             "codigo": 611000,
             "nombre": "Pesca",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 298,
         "fields": {
             "codigo": 611500,
             "nombre": "Explotación de minas y canteras",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 299,
         "fields": {
             "codigo": 612000,
             "nombre": "Industrias manufactureras",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 300,
         "fields": {
             "codigo": 612500,
             "nombre": "Suministro de electricidad, gas y agua",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 301,
         "fields": {
             "codigo": 613000,
             "nombre": "Construcción",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 302,
         "fields": {
             "codigo": 613500,
             "nombre": "Comercio al por mayor y al por menor",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 303,
         "fields": {
             "codigo": 614000,
             "nombre": "Hoteles y restaurantes",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 304,
         "fields": {
             "codigo": 614500,
             "nombre": "Transporte, almacenamiento y comunicaciones",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 305,
         "fields": {
             "codigo": 615000,
             "nombre": "Actividad financiera",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 306,
         "fields": {
             "codigo": 615500,
             "nombre": "Actividades inmobiliarias, empresariales y de alquiler",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 307,
         "fields": {
             "codigo": 616000,
             "nombre": "Enseñanza",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 308,
         "fields": {
             "codigo": 616500,
             "nombre": "Servicios sociales y de salud",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 309,
         "fields": {
             "codigo": 617000,
             "nombre": "Otras actividades de servicios comunitarios, sociales y personales",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 310,
         "fields": {
             "codigo": 620500,
             "nombre": "De mercancías",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 311,
         "fields": {
             "codigo": 621000,
             "nombre": "De materias primas",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 312,
         "fields": {
             "codigo": 621500,
             "nombre": "De materiales indirectos",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 313,
         "fields": {
             "codigo": 622000,
             "nombre": "Compra de energía",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 314,
         "fields": {
             "codigo": 622500,
             "nombre": "Devoluciones en compras (CR)",
-            "cuenta_clase": 6
+            "ConCuenta_clase": 6
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 315,
         "fields": {
             "codigo": 810500,
             "nombre": "Bienes y valores entregados en custodia",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 316,
         "fields": {
             "codigo": 811000,
             "nombre": "Bienes y valores entregados en garantía",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 317,
         "fields": {
             "codigo": 811500,
             "nombre": "Bienes y valores en poder de terceros",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 318,
         "fields": {
             "codigo": 812000,
             "nombre": "Litigios y/o demandas",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 319,
         "fields": {
             "codigo": 812500,
             "nombre": "Promesas de compraventa",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 320,
         "fields": {
             "codigo": 819500,
             "nombre": "Diversas",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 321,
         "fields": {
             "codigo": 830500,
             "nombre": "Bienes recibidos en arrendamiento financiero",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 322,
         "fields": {
             "codigo": 831000,
             "nombre": "Títulos de inversión no colocados",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 323,
         "fields": {
             "codigo": 831500,
             "nombre": "Propiedades, planta y equipo totalmente depreciados, agotados y/o amortizados",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 324,
         "fields": {
             "codigo": 832000,
             "nombre": "Créditos a favor no utilizados",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 325,
         "fields": {
             "codigo": 832500,
             "nombre": "Activos castigados",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 326,
         "fields": {
             "codigo": 833000,
             "nombre": "Títulos de inversión amortizados",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 327,
         "fields": {
             "codigo": 833500,
             "nombre": "Capitalización por revalorización de patrimonio",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 328,
         "fields": {
             "codigo": 839500,
-            "nombre": "Otras cuentas deudoras de control",
-            "cuenta_clase": 8
+            "nombre": "Otras ConCuentas deudoras de control",
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 329,
         "fields": {
             "codigo": 839900,
             "nombre": "Ajustes por inflación activos",
-            "cuenta_clase": 8
+            "ConCuenta_clase": 8
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 330,
         "fields": {
             "codigo": 910500,
             "nombre": "Bienes y valores recibidos en custodia",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 331,
         "fields": {
             "codigo": 911000,
             "nombre": "Bienes y valores recibidos en garantía",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 332,
         "fields": {
             "codigo": 911500,
             "nombre": "Bienes y valores recibidos de terceros",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 333,
         "fields": {
             "codigo": 912000,
             "nombre": "Litigios y/o demandas",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 334,
         "fields": {
             "codigo": 912500,
             "nombre": "Promesas de compraventa",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 335,
         "fields": {
             "codigo": 913000,
             "nombre": "Contratos de administración delegada",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 336,
         "fields": {
             "codigo": 913500,
-            "nombre": "Cuentas en participación",
-            "cuenta_clase": 9
+            "nombre": "ConCuentas en participación",
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 337,
         "fields": {
             "codigo": 919500,
             "nombre": "Otras responsabilidades contingentes",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 338,
         "fields": {
             "codigo": 930500,
             "nombre": "Contratos de arrendamiento financiero",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 339,
         "fields": {
             "codigo": 939500,
-            "nombre": "Otras cuentas de orden acreedoras de control",
-            "cuenta_clase": 9
+            "nombre": "Otras ConCuentas de orden acreedoras de control",
+            "ConCuenta_clase": 9
         }
     },
     {
-        "model": "contabilidad.Cuenta",
+        "model": "contabilidad.ConCuenta",
         "pk": 340,
         "fields": {
             "codigo": 939900,
             "nombre": "Ajustes por inflación patrimonio",
-            "cuenta_clase": 9
+            "ConCuenta_clase": 9
         }
     }
 ]

@@ -1,46 +1,46 @@
 [
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 1,
     "fields": {"nombre": "Activo"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 2,
     "fields": {"nombre": "Pasivo"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 3,
     "fields": {"nombre": "Patrimonio"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 4,
     "fields": {"nombre": "Ingresos"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 5,
     "fields": {"nombre": "Gastos"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 6,
     "fields": {"nombre": "Costos de venta"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 7,
     "fields": {"nombre": "Costos de produccion o de operacion"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 8,
     "fields": {"nombre": "Cuentas de orden deudoras"}
   },
   {
-    "model": "contabilidad.CuentaClase",
+    "model": "contabilidad.ConCuentaClase",
     "pk": 9,
     "fields": {"nombre": "Cuentas de orden acreedoras"}
   }
