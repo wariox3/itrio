@@ -1,7 +1,7 @@
 from general.models.forma_pago import FormaPago
 from rest_framework import serializers
 
-class FormaPagoSerializador(serializers.HyperlinkedModelSerializer):
+class GenFormaPagoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormaPago
         fields = ['id', 'nombre'
@@ -13,7 +13,7 @@ class FormaPagoSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre
         }        
     
-class FormaPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenFormaPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = FormaPago 
         

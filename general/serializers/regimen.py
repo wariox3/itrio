@@ -1,7 +1,7 @@
 from general.models.regimen import Regimen
 from rest_framework import serializers
 
-class RegimenSerializador(serializers.HyperlinkedModelSerializer):
+class GenRegimenSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Regimen
         fields = [
@@ -15,7 +15,7 @@ class RegimenSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre,
         }        
 
-class RegimenListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenRegimenListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Regimen

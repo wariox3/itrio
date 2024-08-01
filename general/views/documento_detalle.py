@@ -5,20 +5,20 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from general.models.documento import Documento
 from general.models.documento_detalle import DocumentoDetalle
-from general.serializers.documento import DocumentoSerializador
-from general.serializers.documento_detalle import DocumentoDetalleSerializador, DocumentoDetalleInformeSerializador, DocumentoDetalleExcelSerializador
-from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
+from general.serializers.documento import GenDocumentoSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeSerializador, GenDocumentoDetalleExcelSerializador
+from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from utilidades.excel import WorkbookEstilos
 
 from openpyxl import Workbook
 class DocumentoDetalleViewSet(viewsets.ModelViewSet):
     queryset = DocumentoDetalle.objects.all()
-    serializer_class = DocumentoDetalleSerializador
+    serializer_class = GenDocumentoDetalleSerializador
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request):
         raw = request.data
-        documentoDetalleSerializador = DocumentoDetalleSerializador(data=raw)
+        documentoDetalleSerializador = GenDocumentoDetalleSerializador(data=raw)
         if documentoDetalleSerializador.is_valid():
             documentoDetalleSerializador.save()            
             return Response({'documento': documentoDetalleSerializador.data}, status=status.HTTP_200_OK)
@@ -38,7 +38,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         filtros = raw.get('filtros', [])            
         #filtros.append({'propiedad': 'documento__documento_tipo__documento_clase_id', 'valor1': documento_clase_id})        
         respuesta = DocumentoDetalleViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = DocumentoDetalleInformeSerializador(respuesta['documentos_detalles'], many=True)
+        serializador = GenDocumentoDetalleInformeSerializador(respuesta['documentos_detalles'], many=True)
         documentos = serializador.data
         return Response(documentos, status=status.HTTP_200_OK)
         #return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
@@ -57,7 +57,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         #if documento_clase:
         #filtros.append({'propiedad': 'documento__documento_tipo__documento_clase_id', 'valor1': documento_clase})
         respuesta = DocumentoDetalleViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-        serializador = DocumentoDetalleExcelSerializador(respuesta['documentos_detalles'], many=True)
+        serializador = GenDocumentoDetalleExcelSerializador(respuesta['documentos_detalles'], many=True)
         documentos = serializador.data
         field_names = list(documentos[0].keys()) if documentos else []
         wb = Workbook()

@@ -1,7 +1,7 @@
 from general.models.precio import Precio
 from rest_framework import serializers
 
-class PrecioSerializador(serializers.HyperlinkedModelSerializer):
+class GenPrecioSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Precio
@@ -15,7 +15,7 @@ class PrecioSerializador(serializers.HyperlinkedModelSerializer):
             'fecha_vence': instance.fecha_vence,
         }    
     
-class PrecioListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenPrecioListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Precio 
         

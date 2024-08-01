@@ -1,7 +1,7 @@
 from general.models.plazo_pago import PlazoPago
 from rest_framework import serializers
 
-class PlazoPagoSerializador(serializers.HyperlinkedModelSerializer):
+class GenPlazoPagoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PlazoPago
         fields = ['id', 'nombre', 'dias']
@@ -13,7 +13,7 @@ class PlazoPagoSerializador(serializers.HyperlinkedModelSerializer):
             'dias': instance.dias
         }        
     
-class PlazoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenPlazoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PlazoPago 
         

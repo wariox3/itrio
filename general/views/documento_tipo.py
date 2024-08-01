@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from general.models.documento_tipo import DocumentoTipo
 from general.models.resolucion import Resolucion
-from general.serializers.documento_tipo import DocumentoTipoSerializador
+from general.serializers.documento_tipo import GenDocumentoTipoSerializador
 
 class DocumentoTipoViewSet(viewsets.ModelViewSet):
     queryset = DocumentoTipo.objects.all().order_by('id')
-    serializer_class = DocumentoTipoSerializador
+    serializer_class = GenDocumentoTipoSerializador
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):

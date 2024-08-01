@@ -1,7 +1,7 @@
 from general.models.item import Item
 from rest_framework import serializers
 
-class ItemSerializador(serializers.HyperlinkedModelSerializer):
+class GenItemSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Item
@@ -22,7 +22,7 @@ class ItemSerializador(serializers.HyperlinkedModelSerializer):
             'disponible': instance.disponible,
         } 
     
-class ItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Item
@@ -33,7 +33,7 @@ class ItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer)
             'item_nombre': instance.nombre,
         }     
     
-class ItemExcelSerializador(serializers.HyperlinkedModelSerializer):
+class GenItemExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Item
         fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'existencia', 'disponible']
@@ -53,7 +53,7 @@ class ItemExcelSerializador(serializers.HyperlinkedModelSerializer):
             'disponible': instance.disponible,
         }
      
-class ItemListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
+class GenItemListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Item 
         

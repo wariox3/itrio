@@ -1,7 +1,7 @@
 from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona, GenAsesor, Precio, PlazoPago
 from rest_framework import serializers
 
-class ContactoSerializador(serializers.HyperlinkedModelSerializer):
+class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
     ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
@@ -78,7 +78,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
             'empleado': instance.empleado
         }     
 
-class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
     ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
@@ -104,7 +104,7 @@ class ContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
             'plazo_pago_proveedor_dias': plazo_pago_proveedor_dias
         }       
 
-class ContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
+class GenContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Contacto 
         
@@ -115,7 +115,7 @@ class ContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
             'nombre_corto': instance.nombre_corto            
         }
     
-class ContactoExcelSerializador(serializers.HyperlinkedModelSerializer):
+class GenContactoExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Contacto
         fields = [

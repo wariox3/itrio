@@ -1,7 +1,7 @@
 from general.models.sede import Sede
 from rest_framework import serializers
 
-class SedeSerializador(serializers.HyperlinkedModelSerializer):
+class GenSedeSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Sede
         fields = [
@@ -15,7 +15,7 @@ class SedeSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre    
         }     
 
-class SedeListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenSedeListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Sede
         

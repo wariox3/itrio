@@ -1,7 +1,7 @@
 from general.models.metodo_pago import MetodoPago
 from rest_framework import serializers
 
-class MetodoPagoSerializador(serializers.HyperlinkedModelSerializer):
+class GenMetodoPagoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = MetodoPago
         fields = ['id', 'nombre']  
@@ -12,7 +12,7 @@ class MetodoPagoSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre
         }    
 
-class MetodoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenMetodoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = MetodoPago 
         

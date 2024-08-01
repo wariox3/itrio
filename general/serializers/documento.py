@@ -9,7 +9,7 @@ from general.models.gen_asesor import GenAsesor
 from general.models.sede import Sede
 from seguridad.models import User
 
-class DocumentoSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):    
     numero = serializers.IntegerField(allow_null=True, label='Numero', default=None)
     fecha = serializers.DateField(allow_null=True, label='Fecha', default=None)
     fecha_vence = serializers.DateField(allow_null=True, label='Vence', default=None)
@@ -78,7 +78,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'sede_nombre': sede_nombre
         }
     
-class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
     contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), allow_null=True)    
@@ -149,7 +149,7 @@ class DocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'sede_nombre': sede_nombre
         }
 
-class DocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
     numero = serializers.IntegerField(allow_null=True, label='Numero')
     fecha = serializers.DateField(allow_null=True, label='Fecha')
     fecha_vence = serializers.DateField(allow_null=True, label='Vence')
@@ -200,7 +200,7 @@ class DocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):
             'comentario' : instance.comentario,
         }    
     
-class DocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer):    
     numero = serializers.IntegerField(allow_null=True, label='Numero')
     class Meta:
         model = Documento
@@ -212,7 +212,7 @@ class DocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer):
             'numero' : instance.numero
         }   
 
-class DocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = Documento        
 
@@ -254,7 +254,7 @@ class DocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):
             'plazo_pago': instance.plazo_pago_id
         }
     
-class DocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = Documento        
 

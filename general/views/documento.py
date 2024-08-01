@@ -8,11 +8,11 @@ from general.models.documento_tipo import DocumentoTipo
 from general.models.documento_pago import DocumentoPago
 from general.models.empresa import Empresa
 from general.models.configuracion import Configuracion
-from general.serializers.documento import DocumentoSerializador, DocumentoExcelSerializador, DocumentoRetrieveSerializador, DocumentoInformeSerializador, DocumentoAdicionarSerializador
-from general.serializers.documento_detalle import DocumentoDetalleSerializador
-from general.serializers.documento_impuesto import DocumentoImpuestoSerializador
-from general.serializers.documento import DocumentoReferenciaSerializador
-from general.serializers.documento_pago import DocumentoPagoSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
+from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
+from general.serializers.documento import GenDocumentoReferenciaSerializador
+from general.serializers.documento_pago import GenDocumentoPagoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.prueba import FormatoPrueba
@@ -33,12 +33,12 @@ import base64
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = Documento.objects.all()
-    serializer_class = DocumentoSerializador
+    serializer_class = GenDocumentoSerializador
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request):
         raw = request.data
-        documentoSerializador = DocumentoSerializador(data=raw)
+        documentoSerializador = GenDocumentoSerializador(data=raw)
         if documentoSerializador.is_valid():            
             documento_tipo = documentoSerializador.validated_data['documento_tipo']
             documentoSerializador.validated_data['fecha_contable'] = documentoSerializador.validated_data['fecha']
@@ -50,7 +50,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if detalles is not None:
                 for detalle in detalles:                
                     detalle['documento'] = documento.id
-                    detalleSerializador = DocumentoDetalleSerializador(data=detalle)
+                    detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
                     if detalleSerializador.is_valid():
                         documentoDetalle = detalleSerializador.save() 
                         impuestos = detalle.get('impuestos')
@@ -64,7 +64,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     "total":impuesto['total'],
                                     "porcentaje_base":impuesto['porcentaje_base']
                                 }
-                                documentoImpuestoSerializador = DocumentoImpuestoSerializador(data=datosDocumentoImpuesto)
+                                documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(data=datosDocumentoImpuesto)
                                 if documentoImpuestoSerializador.is_valid():
                                     documentoImpuestoSerializador.save()
                                 else:
@@ -72,17 +72,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     else:
                         return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
                 documentoDetalles = DocumentoDetalle.objects.filter(documento=documento.id)
-                documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+                documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
                 detalles = documentoDetallesSerializador.data
                 for detalle in detalles:
                     documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
-                    documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
+                    documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
                     detalle['impuestos'] = documentoImpuestosSerializador.data
                 documentoRespuesta['detalles'] = detalles   
             if pagos is not None:
                 for pago in pagos:                
                     pago['documento'] = documento.id
-                    pagoSerializador = DocumentoPagoSerializador(data=pago)
+                    pagoSerializador = GenDocumentoPagoSerializador(data=pago)
                     if pagoSerializador.is_valid():
                         documentoPago = pagoSerializador.save() 
                     else:
@@ -94,19 +94,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None):
         queryset = Documento.objects.all()
         documento = get_object_or_404(queryset, pk=pk)
-        documentoSerializador = DocumentoRetrieveSerializador(documento)
+        documentoSerializador = GenDocumentoRetrieveSerializador(documento)
         documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
-        documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+        documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
         detalles = documentoDetallesSerializador.data
         for detalle in detalles:
             documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
-            documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
+            documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
             detalle['impuestos'] = documentoImpuestosSerializador.data
         documentoRespuesta = documentoSerializador.data
         documentoRespuesta['detalles'] = detalles
         
         documentoPagos = DocumentoPago.objects.filter(documento=pk)
-        documentoPagosSerializador = DocumentoPagoSerializador(documentoPagos, many=True)
+        documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
         pagos = documentoPagosSerializador.data
         documentoRespuesta['pagos'] = pagos        
         
@@ -115,7 +115,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         raw = request.data
         documento = Documento.objects.get(pk=pk)
-        documentoSerializador = DocumentoSerializador(documento, data=raw, partial=True)
+        documentoSerializador = GenDocumentoSerializador(documento, data=raw, partial=True)
         if documentoSerializador.is_valid():
             documentoSerializador.save()
             detalles = raw.get('detalles')
@@ -123,10 +123,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 for detalle in detalles:                
                     if detalle.get('id'):
                         documentoDetalle = DocumentoDetalle.objects.get(pk=detalle['id'])
-                        detalleSerializador = DocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
+                        detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
                     else:
                         detalle['documento'] = documento.id
-                        detalleSerializador = DocumentoDetalleSerializador(data=detalle)
+                        detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
                     if detalleSerializador.is_valid():
                         documentoDetalle = detalleSerializador.save() 
                         impuestos = detalle.get('impuestos')
@@ -134,10 +134,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             for impuesto in impuestos:
                                 if impuesto.get('id'):
                                     documentoImpuesto = DocumentoImpuesto.objects.get(pk=impuesto['id'])
-                                    documentoImpuestoSerializador = DocumentoImpuestoSerializador(documentoImpuesto, data=impuesto, partial=True)    
+                                    documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(documentoImpuesto, data=impuesto, partial=True)    
                                 else:        
                                     impuesto['documento_detalle'] = documentoDetalle.id                                     
-                                    documentoImpuestoSerializador = DocumentoImpuestoSerializador(data=impuesto)                            
+                                    documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(data=impuesto)                            
                                 if documentoImpuestoSerializador.is_valid():
                                     documentoImpuestoSerializador.save()
                                 else:
@@ -155,11 +155,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documentoDetalle = DocumentoDetalle.objects.get(pk=detalle)
                     documentoDetalle.delete()
             documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
-            documentoDetallesSerializador = DocumentoDetalleSerializador(documentoDetalles, many=True)
+            documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
             detalles = documentoDetallesSerializador.data
             for detalle in detalles:
                 documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
-                documentoImpuestosSerializador = DocumentoImpuestoSerializador(documentoImpuestos, many=True)
+                documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
                 detalle['impuestos'] = documentoImpuestosSerializador.data
             documentoRespuesta = documentoSerializador.data
             documentoRespuesta['detalles'] = detalles
@@ -169,10 +169,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 for pago in pagos:                
                     if pago.get('id'):
                         documentoPago = DocumentoPago.objects.get(pk=pago['id'])
-                        documentoPagoSerializador = DocumentoPagoSerializador(documentoPago, data=pago, partial=True)    
+                        documentoPagoSerializador = GenDocumentoPagoSerializador(documentoPago, data=pago, partial=True)    
                     else:
                         pago['documento'] = documento.id
-                        documentoPagoSerializador = DocumentoPagoSerializador(data=pago)
+                        documentoPagoSerializador = GenDocumentoPagoSerializador(data=pago)
 
                     if documentoPagoSerializador.is_valid():
                         documentoPago = documentoPagoSerializador.save()                         
@@ -184,7 +184,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documentoPago = DocumentoPago.objects.get(pk=pago)
                     documentoPago.delete()
             documentoPagos = DocumentoPago.objects.filter(documento=pk)
-            documentoPagosSerializador = DocumentoPagoSerializador(documentoPagos, many=True)
+            documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
             pagos = documentoPagosSerializador.data
             documentoRespuesta['pagos'] = pagos   
             return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)                    
@@ -205,7 +205,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         filtros = raw.get('filtros', [])            
         #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase_id})        
         respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = DocumentoSerializador(respuesta['documentos'], many=True)
+        serializador = GenDocumentoSerializador(respuesta['documentos'], many=True)
         documentos = serializador.data
         return Response(documentos, status=status.HTTP_200_OK)
         #return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
@@ -221,7 +221,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         ordenamientos.append('-numero')
         filtros = raw.get('filtros', [])                    
         respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = DocumentoInformeSerializador(respuesta['documentos'], many=True)
+        serializador = GenDocumentoInformeSerializador(respuesta['documentos'], many=True)
         documentos = serializador.data
         return Response(documentos, status=status.HTTP_200_OK)
 
@@ -236,7 +236,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         ordenamientos.append('-numero')
         filtros = raw.get('filtros', [])                    
         respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = DocumentoAdicionarSerializador(respuesta['documentos'], many=True)
+        serializador = GenDocumentoAdicionarSerializador(respuesta['documentos'], many=True)
         documentos = serializador.data
         return Response(documentos, status=status.HTTP_200_OK)
 
@@ -359,7 +359,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         #if documento_clase:
         #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase})
         respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-        serializador = DocumentoExcelSerializador(respuesta['documentos'], many=True)
+        serializador = GenDocumentoExcelSerializador(respuesta['documentos'], many=True)
         documentos = serializador.data
         field_names = list(documentos[0].keys()) if documentos else []
         wb = Workbook()
@@ -708,7 +708,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 {'propiedad': 'estado_aprobado', 'valor1': True}
             ])
             respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-            serializador = DocumentoReferenciaSerializador(respuesta['documentos'], many=True)
+            serializador = GenDocumentoReferenciaSerializador(respuesta['documentos'], many=True)
             documentos = serializador.data
             return Response(documentos, status=status.HTTP_200_OK)
         else:

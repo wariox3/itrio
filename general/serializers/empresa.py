@@ -2,7 +2,7 @@ from general.models.empresa import Empresa, Ciudad, Identificacion, Regimen, Tip
 from rest_framework import serializers
 from decouple import config
 
-class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
+class GenEmpresaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Empresa
         fields = ['id','identificacion', 'numero_identificacion','digito_verificacion','nombre_corto','direccion','ciudad','telefono','correo','tipo_persona','regimen','imagen','contenedor_id','rededoc_id','subdominio']
@@ -49,7 +49,7 @@ class EmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'asistente_electronico': instance.asistente_electronico
         }   
 
-class EmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
+class GenEmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all(), allow_null=True)
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all(), allow_null=True)
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all(), allow_null=True)

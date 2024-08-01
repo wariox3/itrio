@@ -1,7 +1,7 @@
 from general.models.respuesta_electronica import RespuestaElectronica
 from rest_framework import serializers
 
-class RespuestaElectronicaSerializador(serializers.HyperlinkedModelSerializer):
+class GenRespuestaElectronicaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RespuestaElectronica
         fields = [

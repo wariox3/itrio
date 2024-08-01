@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from general.models.impuesto import Impuesto
 
-class ImpuestoSerializador(serializers.HyperlinkedModelSerializer):
+class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Impuesto
@@ -15,7 +15,7 @@ class ImpuestoSerializador(serializers.HyperlinkedModelSerializer):
             'porcentaje': instance.porcentaje
         }         
 
-class ImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Impuesto

@@ -1,7 +1,7 @@
 from general.models.ciudad import Ciudad
 from rest_framework import serializers
 
-class CiudadSerializador(serializers.HyperlinkedModelSerializer):
+class GenCiudadSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ciudad
         fields = [
@@ -20,7 +20,7 @@ class CiudadSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': nombre_completo,
         }
      
-class CiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Ciudad

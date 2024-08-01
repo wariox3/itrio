@@ -1,7 +1,7 @@
 from general.models.tipo_persona import TipoPersona
 from rest_framework import serializers
 
-class TipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
+class GenTipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = TipoPersona
         fields = [
@@ -15,7 +15,7 @@ class TipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre,
         }   
          
-class TipoPersonaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenTipoPersonaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = TipoPersona

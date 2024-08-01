@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from general.models.contacto import Contacto
-from general.serializers.contacto import ContactoSerializador, ContactoExcelSerializador
+from general.serializers.contacto import GenContactoSerializador, GenContactoExcelSerializador
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from openpyxl import Workbook
@@ -8,7 +8,7 @@ from django.http import HttpResponse
 
 class ContactoViewSet(viewsets.ModelViewSet):
     queryset = Contacto.objects.all()
-    serializer_class = ContactoSerializador    
+    serializer_class = GenContactoSerializador    
     permission_classes = [permissions.IsAuthenticated]               
 
     def destroy(self, request, *args, **kwargs):
@@ -30,7 +30,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
         ordenamientos = raw.get('ordenamientos', [])    
         ordenamientos.append('-id')                 
         respuesta = ContactoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-        serializador = ContactoExcelSerializador(respuesta['contactos'], many=True)
+        serializador = GenContactoExcelSerializador(respuesta['contactos'], many=True)
         contactos = serializador.data
         if contactos:
             field_names = list(contactos[0].keys())

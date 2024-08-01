@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from general.models.empresa import Empresa
-from general.serializers.empresa import EmpresaSerializador, EmpresaActualizarSerializador
+from general.serializers.empresa import GenEmpresaSerializador, GenEmpresaActualizarSerializador
 from rest_framework.decorators import action
 from decouple import config
 from utilidades.space_do import SpaceDo
@@ -9,7 +9,7 @@ from utilidades.wolframio import Wolframio
 
 class EmpresaViewSet(viewsets.ModelViewSet):
     queryset = Empresa.objects.all()
-    serializer_class = EmpresaSerializador    
+    serializer_class = GenEmpresaSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request):
@@ -17,7 +17,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Ya se creó la empresa', 'codigo':14}, status=status.HTTP_400_BAD_REQUEST)
         else:
             data = request.data
-            empresaSerializador = EmpresaSerializador(data=request.data)
+            empresaSerializador = GenEmpresaSerializador(data=request.data)
             if empresaSerializador.is_valid():
                 empresaSerializador.save()                         
                 return Response({'empresa': empresaSerializador.data}, status=status.HTTP_200_OK)
@@ -25,7 +25,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         
     def update(self, request, pk=None):
         empresa = self.get_object()
-        empresaSerializador = EmpresaActualizarSerializador(empresa, data=request.data)
+        empresaSerializador = GenEmpresaActualizarSerializador(empresa, data=request.data)
         if empresaSerializador.is_valid():
             empresaSerializador.save()
             return Response({'actualizacion': True, 'empresa': empresaSerializador.data}, status=status.HTTP_201_CREATED)            

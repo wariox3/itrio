@@ -4,7 +4,7 @@ from general.models.empresa import Empresa
 from rest_framework import serializers
 from decouple import config
 
-class ConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
+class GenConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())
     class Meta:
         model = Configuracion
@@ -18,7 +18,7 @@ class ConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
             'venta_sede'
         ]      
         
-class ConfiguracionActualizarSerializador(serializers.HyperlinkedModelSerializer):
+class GenConfiguracionActualizarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Configuracion
         fields = [

@@ -3,7 +3,7 @@ from general.models.documento import Documento
 from general.models.cuenta_banco import CuentaBanco
 from rest_framework import serializers
 
-class DocumentoPagoSerializador(serializers.HyperlinkedModelSerializer):
+class GenDocumentoPagoSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
     cuenta_banco = serializers.PrimaryKeyRelatedField(queryset=CuentaBanco.objects.all())
     class Meta:

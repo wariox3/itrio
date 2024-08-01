@@ -2,7 +2,7 @@ from rest_framework import serializers
 from general.models.documento_tipo import DocumentoTipo
 from general.models.resolucion import Resolucion
 
-class DocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
+class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
     resolucion = serializers.PrimaryKeyRelatedField(queryset=Resolucion.objects.all(), allow_null=True)
     class Meta:
         model = DocumentoTipo

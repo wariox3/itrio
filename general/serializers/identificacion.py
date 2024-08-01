@@ -1,7 +1,7 @@
 from general.models.identificacion import Identificacion
 from rest_framework import serializers
 
-class IdentificacionSerializador(serializers.HyperlinkedModelSerializer):
+class GenIdentificacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Identificacion
         fields = [
@@ -15,7 +15,7 @@ class IdentificacionSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre,
         }        
 
-class IdentificacionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenIdentificacionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Identificacion

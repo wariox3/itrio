@@ -1,11 +1,11 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from general.models.configuracion import Configuracion
-from general.serializers.configuracion import ConfiguracionSerializador, ConfiguracionActualizarSerializador
+from general.serializers.configuracion import GenConfiguracionSerializador, GenConfiguracionActualizarSerializador
 
 class ConfiguracionViewSet(viewsets.ModelViewSet):
     queryset = Configuracion.objects.all()
-    serializer_class = ConfiguracionSerializador    
+    serializer_class = GenConfiguracionSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request):
@@ -13,7 +13,7 @@ class ConfiguracionViewSet(viewsets.ModelViewSet):
         
     def update(self, request, pk=None):
         configuracion = self.get_object()
-        configuracionSerializador = ConfiguracionActualizarSerializador(configuracion, data=request.data)
+        configuracionSerializador = GenConfiguracionActualizarSerializador(configuracion, data=request.data)
         if configuracionSerializador.is_valid():
             configuracionSerializador.save()
             return Response({'actualizacion': True, 'configuracion': configuracionSerializador.data}, status=status.HTTP_201_CREATED)            

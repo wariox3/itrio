@@ -5,8 +5,8 @@ from rest_framework import status
 from contenedor.models import Contenedor
 from contenedor.serializers.contenedor import ContenedorSerializador, ContenedorActualizarSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador
-from general.serializers.empresa import EmpresaSerializador
-from general.serializers.configuracion import ConfiguracionSerializador
+from general.serializers.empresa import GenEmpresaSerializador
+from general.serializers.configuracion import GenConfiguracionSerializador
 from seguridad.models import User
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
@@ -57,14 +57,14 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                             'imagen': imagenReferencia,
                             'contenedor_id':contenedor.id,
                             'subdominio':subdominio}
-                        empresaSerializador = EmpresaSerializador(data=data)                        
+                        empresaSerializador = GenEmpresaSerializador(data=data)                        
                         if empresaSerializador.is_valid():
                             empresaSerializador.save()
                             data = {
                                 'id':1,
                                 'empresa':1,
                                 'formato_factura':'F'}
-                            configuracionSerializador = ConfiguracionSerializador(data=data)                                                
+                            configuracionSerializador = GenConfiguracionSerializador(data=data)                                                
                             if configuracionSerializador.is_valid():
                                 configuracionSerializador.save()                            
                             return Response({'contenedor': usuarioContenedorSerializador.data}, status=status.HTTP_200_OK)            

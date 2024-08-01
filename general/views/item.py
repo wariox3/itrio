@@ -4,15 +4,15 @@ from django.shortcuts import get_object_or_404
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.item import Item
 from general.models.item_impuesto import ItemImpuesto
-from general.serializers.item import ItemSerializador, ItemExcelSerializador
-from general.serializers.item_impuesto import ItemImpuestoSerializador, ItemImpuestoDetalleSerializador
+from general.serializers.item import GenItemSerializador, GenItemExcelSerializador
+from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenItemImpuestoDetalleSerializador
 from rest_framework.decorators import action
 from openpyxl import Workbook
 from django.http import HttpResponse
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
-    serializer_class = ItemSerializador
+    serializer_class = GenItemSerializador
     permission_classes = [permissions.IsAuthenticated]
 
     def retrieve(self, request, pk=None, venta=False):
@@ -20,29 +20,29 @@ class ItemViewSet(viewsets.ModelViewSet):
         venta = raw.get('venta')
         queryset = Item.objects.all()
         item = get_object_or_404(queryset, pk=pk)
-        itemSerializador = ItemSerializador(item)
+        itemSerializador = GenItemSerializador(item)
         itemImpuestos = ItemImpuesto.objects.filter(item=pk)
         if venta:
             itemImpuestos = itemImpuestos.filter(impuesto__venta=True)
-        itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
+        itemImpuestosSerializador = GenItemImpuestoDetalleSerializador(itemImpuestos, many=True)
         itemRespuesta = itemSerializador.data
         itemRespuesta['impuestos'] = itemImpuestosSerializador.data
         return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
 
     def create(self, request):
         data = request.data
-        itemSerializador = ItemSerializador(data=request.data)
+        itemSerializador = GenItemSerializador(data=request.data)
         if itemSerializador.is_valid():
             item = itemSerializador.save()            
             impuestos = data.get('impuestos')
             if impuestos is not None:
                 for impuesto in impuestos:                
                     datosImpuestoItem = {"item":item.id,"impuesto":impuesto['impuesto']}
-                    itemImpuestoSerializador = ItemImpuestoSerializador(data=datosImpuestoItem)
+                    itemImpuestoSerializador = GenItemImpuestoSerializador(data=datosImpuestoItem)
                     if itemImpuestoSerializador.is_valid():
                         itemImpuestoSerializador.save()                
             itemImpuestos = ItemImpuesto.objects.filter(item=item.id)
-            itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
+            itemImpuestosSerializador = GenItemImpuestoDetalleSerializador(itemImpuestos, many=True)
             itemRespuesta = itemSerializador.data
             itemRespuesta['impuestos'] = itemImpuestosSerializador.data
             return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
@@ -58,7 +58,7 @@ class ItemViewSet(viewsets.ModelViewSet):
             if impuestosNuevos is not None:
                 for impuesto in impuestosNuevos:                
                     impuesto['item'] = item.id
-                    itemImpuestoSerializador = ItemImpuestoSerializador(data=impuesto)
+                    itemImpuestoSerializador = GenItemImpuestoSerializador(data=impuesto)
                     if itemImpuestoSerializador.is_valid():
                         itemImpuestoSerializador.save() 
             impuestosEliminados = raw.get('impuestos_eliminados')
@@ -67,7 +67,7 @@ class ItemViewSet(viewsets.ModelViewSet):
                     itemImpuesto = ItemImpuesto.objects.get(pk=itemImpuestoEliminado)
                     itemImpuesto.delete()
             itemImpuestos = ItemImpuesto.objects.filter(item=item.id)
-            itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
+            itemImpuestosSerializador = GenItemImpuestoDetalleSerializador(itemImpuestos, many=True)
             itemRespuesta = itemSerializador.data
             itemRespuesta['impuestos'] = itemImpuestosSerializador.data                    
             return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
@@ -113,13 +113,13 @@ class ItemViewSet(viewsets.ModelViewSet):
         if(id):
             queryset = Item.objects.all()
             item = get_object_or_404(queryset, pk=id)
-            itemSerializador = ItemSerializador(item)
+            itemSerializador = GenItemSerializador(item)
             itemImpuestos = ItemImpuesto.objects.filter(item=id)
             if venta:
                 itemImpuestos = itemImpuestos.filter(impuesto__venta=True)
             if compra:
                 itemImpuestos = itemImpuestos.filter(impuesto__compra=True)
-            itemImpuestosSerializador = ItemImpuestoDetalleSerializador(itemImpuestos, many=True)
+            itemImpuestosSerializador = GenItemImpuestoDetalleSerializador(itemImpuestos, many=True)
             itemRespuesta = itemSerializador.data
             itemRespuesta['impuestos'] = itemImpuestosSerializador.data
             return Response({'item':itemRespuesta}, status=status.HTTP_200_OK)
@@ -136,7 +136,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         ordenamientos = raw.get('ordenamientos', [])    
         ordenamientos.append('-id')                 
         respuesta = ItemViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-        serializador = ItemExcelSerializador(respuesta['items'], many=True)
+        serializador = GenItemExcelSerializador(respuesta['items'], many=True)
         items = serializador.data
         if items:
             field_names = list(items[0].keys())

@@ -4,7 +4,7 @@ from general.models.item import Item
 from contabilidad.models.cuenta import ConCuenta
 from rest_framework import serializers
 
-class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
+class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
     item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), default=None, allow_null=True)
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
@@ -53,7 +53,7 @@ class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'naturaleza':instance.naturaleza
         }  
 
-class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
+class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = DocumentoDetalle        
 
@@ -95,7 +95,7 @@ class DocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer
             'documento_afectado_id': instance.documento_afectado_id
         }           
     
-class DocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
+class GenDocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = DocumentoDetalle        
 
