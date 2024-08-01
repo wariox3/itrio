@@ -1,9 +1,9 @@
-from general.models.asesor import Asesor
+from general.models.gen_asesor import GenAsesor
 from rest_framework import serializers
 
-class AsesorSerializador(serializers.HyperlinkedModelSerializer):
+class GenAsesorSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Asesor
+        model = GenAsesor
         fields = [
             'id',
             'nombre_corto', 
@@ -19,9 +19,9 @@ class AsesorSerializador(serializers.HyperlinkedModelSerializer):
             'correo': instance.correo,    
         }     
 
-class AsesorListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+class GenAsesorListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Asesor 
+        model = GenAsesor 
         
     def to_representation(self, instance):
         return {

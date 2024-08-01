@@ -5,7 +5,7 @@ from general.models.metodo_pago import MetodoPago
 from general.models.resolucion import Resolucion
 from general.models.empresa import Empresa
 from general.models.plazo_pago import PlazoPago
-from general.models.asesor import Asesor
+from general.models.gen_asesor import GenAsesor
 from general.models.sede import Sede
 from seguridad.models import User
 from decimal import Decimal, ROUND_HALF_UP
@@ -42,7 +42,7 @@ class Documento(models.Model):
     empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT, related_name='gen_documentos')
     documento_referencia = models.ForeignKey('self', null=True, on_delete=models.PROTECT, related_name='gen_documentos')
     plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos')
-    asesor = models.ForeignKey(Asesor, null=True, on_delete=models.PROTECT,related_name='documentos_asesor_rel')
+    asesor = models.ForeignKey(GenAsesor, null=True, on_delete=models.PROTECT,related_name='documentos_asesor_rel')
     sede = models.ForeignKey(Sede, null=True, on_delete=models.PROTECT,related_name='documentos_sede_rel')
     usuario = models.ForeignKey(User, null=True, on_delete=models.PROTECT,related_name='documentos_usuario_rel')
 

@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions
-from general.models.asesor import Asesor
-from general.serializers.asesor import AsesorSerializador
+from general.models.gen_asesor import GenAsesor
+from general.serializers.gen_asesor import GenAsesorSerializador
 
 class AsesorViewSet(viewsets.ModelViewSet):
-    queryset = Asesor.objects.all()
-    serializer_class = AsesorSerializador    
+    queryset = GenAsesor.objects.all()
+    serializer_class = GenAsesorSerializador    
     permission_classes = [permissions.IsAuthenticated]               

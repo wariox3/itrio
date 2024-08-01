@@ -5,7 +5,7 @@ from general.models.contacto import Contacto
 from general.models.metodo_pago import MetodoPago
 from general.models.empresa import Empresa
 from general.models.plazo_pago import PlazoPago
-from general.models.asesor import Asesor
+from general.models.gen_asesor import GenAsesor
 from general.models.sede import Sede
 from seguridad.models import User
 
@@ -21,7 +21,7 @@ class DocumentoSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all(), default=1)    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)    
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), default=None, allow_null=True)
-    asesor = serializers.PrimaryKeyRelatedField(queryset=Asesor.objects.all(), default=None, allow_null=True)
+    asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), default=None, allow_null=True)
     sede = serializers.PrimaryKeyRelatedField(queryset=Sede.objects.all(), default=None, allow_null=True)
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
     class Meta:

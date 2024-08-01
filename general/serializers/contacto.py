@@ -1,4 +1,4 @@
-from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona, Asesor, Precio, PlazoPago
+from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona, GenAsesor, Precio, PlazoPago
 from rest_framework import serializers
 
 class ContactoSerializador(serializers.HyperlinkedModelSerializer):
@@ -6,7 +6,7 @@ class ContactoSerializador(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
     regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
-    asesor = serializers.PrimaryKeyRelatedField(queryset=Asesor.objects.all(), allow_null=True, required=False)
+    asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), allow_null=True, required=False)
     precio = serializers.PrimaryKeyRelatedField(queryset=Precio.objects.all(), allow_null=True, required=False)
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True, required=False)
     plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True, required=False)

@@ -3,7 +3,7 @@ from general.models.identificacion import Identificacion
 from general.models.ciudad import Ciudad
 from general.models.tipo_persona import TipoPersona
 from general.models.regimen import Regimen
-from general.models.asesor import Asesor
+from general.models.gen_asesor import GenAsesor
 from general.models.precio import Precio
 from general.models.plazo_pago import PlazoPago
 
@@ -30,7 +30,7 @@ class Contacto(models.Model):
     ciudad = models.ForeignKey(Ciudad, on_delete=models.PROTECT)
     tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.PROTECT)   
     regimen = models.ForeignKey(Regimen, on_delete=models.PROTECT)
-    asesor = models.ForeignKey(Asesor, null=True, on_delete=models.PROTECT)
+    asesor = models.ForeignKey(GenAsesor, null=True, on_delete=models.PROTECT)
     precio = models.ForeignKey(Precio, null=True, on_delete=models.PROTECT)
     plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago')
     plazo_pago_proveedor = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago_proveedor')
