@@ -1,7 +1,7 @@
 from django.db import models
 from general.models.estado import Estado
 
-class Ciudad(models.Model):
+class GenCiudad(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50) 
     latitud = models.CharField(max_length=20, null=True)

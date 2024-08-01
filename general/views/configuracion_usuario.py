@@ -1,10 +1,10 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from general.models.configuracion_usuario import ConfiguracionUsuario
+from general.models.configuracion_usuario import GenConfiguracionUsuario
 from general.serializers.configuracion_usuario import GenConfiguracionUsuarioSerializador, GenConfiguracionUsuarioActualizarSerializador
 
 class ConfiguracionUsuarioViewSet(viewsets.ModelViewSet):
-    queryset = ConfiguracionUsuario.objects.all()
+    queryset = GenConfiguracionUsuario.objects.all()
     serializer_class = GenConfiguracionUsuarioActualizarSerializador    
     permission_classes = [permissions.IsAuthenticated]
 

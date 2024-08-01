@@ -1,4 +1,4 @@
-from general.models.empresa import Empresa, Ciudad, Identificacion, Regimen, TipoPersona
+from general.models.empresa import Empresa, GenCiudad, Identificacion, Regimen, TipoPersona
 from rest_framework import serializers
 from decouple import config
 
@@ -50,7 +50,7 @@ class GenEmpresaSerializador(serializers.HyperlinkedModelSerializer):
         }   
 
 class GenEmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all(), allow_null=True)
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all(), allow_null=True)
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all(), allow_null=True)
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all(), allow_null=True)
     regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all(), allow_null=True)

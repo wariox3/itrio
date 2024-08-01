@@ -1,9 +1,9 @@
-from general.models.ciudad import Ciudad
+from general.models.ciudad import GenCiudad
 from rest_framework import serializers
 
 class GenCiudadSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Ciudad
+        model = GenCiudad
         fields = [
             'id', 
             'nombre'
@@ -23,7 +23,7 @@ class GenCiudadSerializador(serializers.HyperlinkedModelSerializer):
 class GenCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Ciudad
+        model = GenCiudad
 
     def to_representation(self, instance):
         nombre_ciudad = instance.nombre

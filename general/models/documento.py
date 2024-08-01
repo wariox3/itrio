@@ -1,6 +1,6 @@
 from django.db import models
 from general.models.documento_tipo import DocumentoTipo
-from general.models.contacto import Contacto
+from general.models.contacto import GenContacto
 from general.models.metodo_pago import MetodoPago
 from general.models.resolucion import Resolucion
 from general.models.empresa import Empresa
@@ -36,7 +36,7 @@ class Documento(models.Model):
     qr = models.CharField(max_length=500, null=True)
     electronico_id = models.IntegerField(null=True)
     documento_tipo = models.ForeignKey(DocumentoTipo, on_delete=models.PROTECT, related_name='gen_documentos')
-    contacto = models.ForeignKey(Contacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')
+    contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')
     metodo_pago = models.ForeignKey(MetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
     resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
     empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT, related_name='gen_documentos')

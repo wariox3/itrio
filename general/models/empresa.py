@@ -1,6 +1,6 @@
 from django.db import models
 from general.models.identificacion import Identificacion
-from general.models.ciudad import Ciudad
+from general.models.ciudad import GenCiudad
 from general.models.tipo_persona import TipoPersona
 from general.models.regimen import Regimen
 
@@ -18,7 +18,7 @@ class Empresa(models.Model):
     subdominio = models.CharField(max_length=100, default='demo') 
     asistente_electronico = models.BooleanField(default = False)
     identificacion = models.ForeignKey(Identificacion, null=True, on_delete=models.PROTECT)
-    ciudad = models.ForeignKey(Ciudad, null=True, on_delete=models.PROTECT)
+    ciudad = models.ForeignKey(GenCiudad, null=True, on_delete=models.PROTECT)
     tipo_persona = models.ForeignKey(TipoPersona, null=True, on_delete=models.PROTECT)   
     regimen = models.ForeignKey(Regimen, null=True, on_delete=models.PROTECT)
     class Meta:

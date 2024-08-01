@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from general.models.contacto import Contacto
+from general.models.contacto import GenContacto
 from humano.models.contrato import HumContrato
 from humano.models.contrato_tipo import HumContratoTipo
 from humano.models.grupo import HumGrupo
@@ -7,7 +7,7 @@ from humano.models.grupo import HumGrupo
 class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     contrato_tipo = serializers.PrimaryKeyRelatedField(queryset=HumContratoTipo.objects.all())
     grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all())
-    contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all())
+    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all())
 
     class Meta:
         model = HumContrato

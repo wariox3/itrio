@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from general.models.documento import Documento
 from general.models.documento_tipo import DocumentoTipo
-from general.models.contacto import Contacto
+from general.models.contacto import GenContacto
 from general.models.metodo_pago import MetodoPago
 from general.models.empresa import Empresa
 from general.models.plazo_pago import PlazoPago
@@ -15,7 +15,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     fecha_vence = serializers.DateField(allow_null=True, label='Vence', default=None)
     fecha_contable = serializers.DateField(allow_null=True, label='Fecha contable', default=None)
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
-    contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
+    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), default=None, allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all(), default=1)    
@@ -79,7 +79,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         }
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
-    contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
+    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), allow_null=True)    
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)    
@@ -159,7 +159,7 @@ class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):
     impuesto = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Impuesto')
     total = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Total')
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
-    contacto = serializers.PrimaryKeyRelatedField(queryset=Contacto.objects.all(), allow_null=True)
+    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    

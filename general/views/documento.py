@@ -7,7 +7,7 @@ from general.models.documento_impuesto import DocumentoImpuesto
 from general.models.documento_tipo import DocumentoTipo
 from general.models.documento_pago import DocumentoPago
 from general.models.empresa import Empresa
-from general.models.configuracion import Configuracion
+from general.models.configuracion import GenConfiguracion
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
@@ -385,7 +385,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         codigoDocumento = raw.get('documento_id')
         documento = self.consulta_imprimir(codigoDocumento)
-        configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
+        configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
         if configuracion['formato_factura'] == 'F':
             formatoFactura = FormatoFactura()
             pdf = formatoFactura.generar_pdf(documento, configuracion)  
@@ -794,7 +794,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documento = Documento.objects.get(id=documento_id)
             if documento.estado_electronico_notificado == False:
                 if documento.documento_tipo.documento_clase_id in [100, 101, 102]:
-                    configuracion = Configuracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
+                    configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
                     documentoGenerar = DocumentoViewSet.consulta_imprimir(documento_id)
                     formatoFactura = FormatoFactura()
                     pdf = formatoFactura.generar_pdf(documentoGenerar, configuracion)   

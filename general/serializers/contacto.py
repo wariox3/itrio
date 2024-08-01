@@ -1,9 +1,9 @@
-from general.models.contacto import Contacto, Ciudad, Identificacion, Regimen, TipoPersona, GenAsesor, Precio, PlazoPago
+from general.models.contacto import GenContacto, GenCiudad, Identificacion, Regimen, TipoPersona, GenAsesor, Precio, PlazoPago
 from rest_framework import serializers
 
 class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())    
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
     regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
     asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), allow_null=True, required=False)
@@ -11,7 +11,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True, required=False)
     plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True, required=False)
     class Meta:
-        model = Contacto
+        model = GenContacto
         fields = [
             'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
             'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'tipo_persona', 'regimen', 'codigo_ciuu',
@@ -80,11 +80,11 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
 
 class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=Ciudad.objects.all())    
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())    
     tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
     regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
     class Meta:
-        model = Contacto 
+        model = GenContacto 
         
     def to_representation(self, instance):
         plazo_pago = instance.plazo_pago
@@ -106,7 +106,7 @@ class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeri
 
 class GenContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Contacto 
+        model = GenContacto 
         
     def to_representation(self, instance):
         return {
@@ -117,7 +117,7 @@ class GenContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer)
     
 class GenContactoExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Contacto
+        model = GenContacto
         fields = [
             'id',
             'identificacion', 

@@ -1,4 +1,4 @@
-from general.models.configuracion_usuario import ConfiguracionUsuario
+from general.models.configuracion_usuario import GenConfiguracionUsuario
 from general.models.empresa import Empresa
 from general.models.sede import Sede
 
@@ -8,7 +8,7 @@ from decouple import config
 class GenConfiguracionUsuarioSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())
     class Meta:
-        model = ConfiguracionUsuario
+        model = GenConfiguracionUsuario
         fields = [
             'id',
             'empresa',
@@ -18,7 +18,7 @@ class GenConfiguracionUsuarioSerializador(serializers.HyperlinkedModelSerializer
 class GenConfiguracionUsuarioActualizarSerializador(serializers.HyperlinkedModelSerializer):
     sede = serializers.PrimaryKeyRelatedField(queryset=Sede.objects.all(), default=None, allow_null=True)
     class Meta:
-        model = ConfiguracionUsuario
+        model = GenConfiguracionUsuario
         fields = [
             'sede'
         ]             

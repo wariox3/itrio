@@ -1,5 +1,5 @@
 from rest_framework import viewsets, permissions, status
-from general.models.contacto import Contacto
+from general.models.contacto import GenContacto
 from general.serializers.contacto import GenContactoSerializador, GenContactoExcelSerializador
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -7,7 +7,7 @@ from openpyxl import Workbook
 from django.http import HttpResponse
 
 class ContactoViewSet(viewsets.ModelViewSet):
-    queryset = Contacto.objects.all()
+    queryset = GenContacto.objects.all()
     serializer_class = GenContactoSerializador    
     permission_classes = [permissions.IsAuthenticated]               
 
@@ -52,13 +52,13 @@ class ContactoViewSet(viewsets.ModelViewSet):
         
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-        contactos = Contacto.objects.all()
+        contactos = GenContacto.objects.all()
         if filtros:
             for filtro in filtros:
                 contactos = contactos.filter(**{filtro['propiedad']: filtro['valor1']})
         if ordenamientos:
             contactos = contactos.order_by(*ordenamientos)              
         contactos = contactos[desplazar:limite+desplazar]
-        itemsCantidad = Contacto.objects.all()[:limiteTotal].count()                   
+        itemsCantidad = GenContacto.objects.all()[:limiteTotal].count()                   
         respuesta = {'contactos': contactos, "cantidad_registros": itemsCantidad}
         return respuesta     
