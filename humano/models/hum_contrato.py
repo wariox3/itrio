@@ -12,4 +12,4 @@ class HumContrato(models.Model):
     grupo = models.ForeignKey(HumGrupo, on_delete=models.PROTECT, related_name='contratos_grupo_rel')
 
     class Meta:
-        db_table = "hum_contrato"
+        db_table = "hum_contrato"   
