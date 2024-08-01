@@ -1,10 +1,10 @@
 from django.db import models
-from general.models.documento import Documento
-from general.models.item import Item
+from general.models.documento import GenDocumento
+from general.models.item import GenItem
 from contabilidad.models.cuenta import ConCuenta
 from decimal import Decimal, ROUND_HALF_UP
 
-class DocumentoDetalle(models.Model):    
+class GenDocumentoDetalle(models.Model):    
     cantidad = models.FloatField(default=0)
     precio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pago = models.DecimalField(max_digits=20, decimal_places=6, default=0)
@@ -16,9 +16,9 @@ class DocumentoDetalle(models.Model):
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     porcentaje_descuento = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     naturaleza = models.CharField(max_length=1, null=True)
-    documento = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles')
-    documento_afectado = models.ForeignKey(Documento, on_delete=models.PROTECT, related_name='detalles_afectado', null=True)
-    item = models.ForeignKey(Item, null=True, on_delete=models.PROTECT, related_name='itemes')
+    documento = models.ForeignKey(GenDocumento, on_delete=models.PROTECT, related_name='detalles')
+    documento_afectado = models.ForeignKey(GenDocumento, on_delete=models.PROTECT, related_name='detalles_afectado', null=True)
+    item = models.ForeignKey(GenItem, null=True, on_delete=models.PROTECT, related_name='itemes')
     cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='cuentas')
     class Meta:
         db_table = "gen_documento_detalle"

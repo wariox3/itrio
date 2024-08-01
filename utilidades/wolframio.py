@@ -1,6 +1,6 @@
-from general.models.empresa import Empresa
-from general.models.documento_tipo import DocumentoTipo
-from general.models.resolucion import Resolucion
+from general.models.empresa import GenEmpresa
+from general.models.documento_tipo import GenDocumentoTipo
+from general.models.resolucion import GenResolucion
 from decouple import config
 import requests
 import json
@@ -43,7 +43,7 @@ class Wolframio():
 
     def cuentaActualizar(self, correo_facturacion_electronica, copia_correo_facturacion_electronica):
         url = "/api/cuenta/actualizar"
-        empresa = Empresa.objects.get(pk=1)
+        empresa = GenEmpresa.objects.get(pk=1)
         datos = {      
             "cuentaId" : empresa.rededoc_id,      
             "correo" : empresa.correo,

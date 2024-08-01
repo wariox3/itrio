@@ -1,9 +1,9 @@
-from general.models.respuesta_electronica import RespuestaElectronica
+from general.models.respuesta_electronica import GenRespuestaElectronica
 from rest_framework import serializers
 
 class GenRespuestaElectronicaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = RespuestaElectronica
+        model = GenRespuestaElectronica
         fields = [
             'codigo_estatus',
             'proceso_dian',

@@ -1,6 +1,6 @@
 from django.db import models
 
-class Resolucion(models.Model):        
+class GenResolucion(models.Model):        
     prefijo = models.CharField(max_length=50, null=True)
     numero = models.CharField(max_length=50, null=True)
     clave_tecnica = models.CharField(max_length=500, null=True)

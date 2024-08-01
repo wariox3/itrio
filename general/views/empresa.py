@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from general.models.empresa import Empresa
+from general.models.empresa import GenEmpresa
 from general.serializers.empresa import GenEmpresaSerializador, GenEmpresaActualizarSerializador
 from rest_framework.decorators import action
 from decouple import config
@@ -8,12 +8,12 @@ from utilidades.space_do import SpaceDo
 from utilidades.wolframio import Wolframio
 
 class EmpresaViewSet(viewsets.ModelViewSet):
-    queryset = Empresa.objects.all()
+    queryset = GenEmpresa.objects.all()
     serializer_class = GenEmpresaSerializador    
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request):
-        if Empresa.objects.filter(pk=1).exists():
+        if GenEmpresa.objects.filter(pk=1).exists():
             return Response({'mensaje':'Ya se creó la empresa', 'codigo':14}, status=status.HTTP_400_BAD_REQUEST)
         else:
             data = request.data
@@ -38,7 +38,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             empresa_id = raw.get('empresa_id')
             imagenB64 = raw.get('imagenB64')
             if empresa_id:
-                empresa = Empresa.objects.get(pk=empresa_id)
+                empresa = GenEmpresa.objects.get(pk=empresa_id)
                 arrDatosB64 = imagenB64.split(",")
                 base64Crudo = arrDatosB64[1]
                 arrTipo = arrDatosB64[0].split(";")
@@ -52,7 +52,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except GenEmpresa.DoesNotExist:
             return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)  
 
     @action(detail=False, methods=["post"], url_path=r'limpiar-logo',)
@@ -61,7 +61,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             raw = request.data
             empresa_id = raw.get('empresa_id')    
             if empresa_id:
-                empresa = Empresa.objects.get(pk=empresa_id)                
+                empresa = GenEmpresa.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
                 empresa.imagen = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
@@ -69,7 +69,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except GenEmpresa.DoesNotExist:
             return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=["post"], url_path=r'rededoc_activar',)
@@ -81,7 +81,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             correo_facturacion_electronica = raw.get('correo_facturacion_electronica')
             copia_correo_facturacion_electronica = raw.get('copia_correo_facturacion_electronica')
             if empresa_id and set_pruebas:                                            
-                empresa = Empresa.objects.get(pk=1)
+                empresa = GenEmpresa.objects.get(pk=1)
                 if empresa.numero_identificacion and empresa.nombre_corto and empresa.telefono and empresa.correo and empresa.ciudad and empresa.identificacion:
                     if empresa.rededoc_id is None or empresa.rededoc_id == '':
                         wolframio = Wolframio()                
@@ -98,7 +98,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje':'La empresa debe terner configurado tipo identificacion, numero identificacion, nombre, telefono, correo, ciudad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except GenEmpresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
         
     @action(detail=False, methods=["post"], url_path=r'rededoc_detalle',)
@@ -107,7 +107,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             raw = request.data
             empresa_id = raw.get('empresa_id')
             if empresa_id:
-                empresa = Empresa.objects.get(pk=1)
+                empresa = GenEmpresa.objects.get(pk=1)
                 if empresa.rededoc_id is not None:
                     wolframio = Wolframio()
                     respuesta = wolframio.cuentaDetalle(empresa.rededoc_id)
@@ -119,7 +119,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje':'La empresa no esta activa en rededoc', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except GenEmpresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)     
 
     @action(detail=False, methods=["post"], url_path=r'rededoc_actualizar',)
@@ -138,19 +138,19 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except GenEmpresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)   
 
     @action(detail=False, methods=["post"], url_path=r'terminar-asistente',)
     def terminar_asistente(self, request):
         try:
             raw = request.data 
-            empresa = Empresa.objects.get(pk=1)
+            empresa = GenEmpresa.objects.get(pk=1)
             if empresa.asistente_electronico == False:                                                      
                 empresa.asistente_electronico = True
                 empresa.save()
                 return Response({'asistente_terminado':True}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje': 'El asistente ya esta terminado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-        except Empresa.DoesNotExist:
+        except GenEmpresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                

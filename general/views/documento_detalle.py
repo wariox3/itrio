@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from general.models.documento import Documento
-from general.models.documento_detalle import DocumentoDetalle
+from general.models.documento import GenDocumento
+from general.models.documento_detalle import GenDocumentoDetalle
 from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeSerializador, GenDocumentoDetalleExcelSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
@@ -12,7 +12,7 @@ from utilidades.excel import WorkbookEstilos
 
 from openpyxl import Workbook
 class DocumentoDetalleViewSet(viewsets.ModelViewSet):
-    queryset = DocumentoDetalle.objects.all()
+    queryset = GenDocumentoDetalle.objects.all()
     serializer_class = GenDocumentoDetalleSerializador
     permission_classes = [permissions.IsAuthenticated]
 
@@ -80,13 +80,13 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-        documentoDetalles = DocumentoDetalle.objects.all()
+        documentoDetalles = GenDocumentoDetalle.objects.all()
         if filtros:
             for filtro in filtros:
                 documentoDetalles = documentoDetalles.filter(**{filtro['propiedad']: filtro['valor1']})
         if ordenamientos:
             documentoDetalles = documentoDetalles.order_by(*ordenamientos)              
         documentoDetalles = documentoDetalles[desplazar:limite+desplazar]
-        itemsCantidad = Documento.objects.all()[:limiteTotal].count()                   
+        itemsCantidad = GenDocumento.objects.all()[:limiteTotal].count()                   
         respuesta = {'documentos_detalles': documentoDetalles, "cantidad_registros": itemsCantidad}
         return respuesta 

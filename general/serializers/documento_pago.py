@@ -1,13 +1,13 @@
-from general.models.documento_pago import DocumentoPago
-from general.models.documento import Documento
-from general.models.cuenta_banco import CuentaBanco
+from general.models.documento_pago import GenDocumentoPago
+from general.models.documento import GenDocumento
+from general.models.cuenta_banco import GenCuentaBanco
 from rest_framework import serializers
 
 class GenDocumentoPagoSerializador(serializers.HyperlinkedModelSerializer):
-    documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
-    cuenta_banco = serializers.PrimaryKeyRelatedField(queryset=CuentaBanco.objects.all())
+    documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
+    cuenta_banco = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBanco.objects.all())
     class Meta:
-        model = DocumentoPago
+        model = GenDocumentoPago
         fields = ['documento', 'cuenta_banco', 'pago']
 
     def to_representation(self, instance):

@@ -1,9 +1,9 @@
-from general.models.regimen import Regimen
+from general.models.regimen import GenRegimen
 from rest_framework import serializers
 
 class GenRegimenSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Regimen
+        model = GenRegimen
         fields = [
             'id', 
             'nombre'
@@ -18,7 +18,7 @@ class GenRegimenSerializador(serializers.HyperlinkedModelSerializer):
 class GenRegimenListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Regimen
+        model = GenRegimen
 
     def to_representation(self, instance):
         return {

@@ -1,11 +1,11 @@
 from django.db import models
-from general.models.identificacion import Identificacion
+from general.models.identificacion import GenIdentificacion
 from general.models.ciudad import GenCiudad
-from general.models.tipo_persona import TipoPersona
-from general.models.regimen import Regimen
+from general.models.tipo_persona import GenTipoPersona
+from general.models.regimen import GenRegimen
 from general.models.gen_asesor import GenAsesor
-from general.models.precio import Precio
-from general.models.plazo_pago import PlazoPago
+from general.models.precio import GenPrecio
+from general.models.plazo_pago import GenPlazoPago
 
 class GenContacto(models.Model):        
     numero_identificacion = models.CharField(max_length=20)
@@ -25,14 +25,14 @@ class GenContacto(models.Model):
     cliente = models.BooleanField(default = False) 
     proveedor = models.BooleanField(default = False)
     empleado = models.BooleanField(default = False)
-    identificacion = models.ForeignKey(Identificacion, on_delete=models.PROTECT)
+    identificacion = models.ForeignKey(GenIdentificacion, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(GenCiudad, on_delete=models.PROTECT)
-    tipo_persona = models.ForeignKey(TipoPersona, on_delete=models.PROTECT)   
-    regimen = models.ForeignKey(Regimen, on_delete=models.PROTECT)
+    tipo_persona = models.ForeignKey(GenTipoPersona, on_delete=models.PROTECT)   
+    regimen = models.ForeignKey(GenRegimen, on_delete=models.PROTECT)
     asesor = models.ForeignKey(GenAsesor, null=True, on_delete=models.PROTECT)
-    precio = models.ForeignKey(Precio, null=True, on_delete=models.PROTECT)
-    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago')
-    plazo_pago_proveedor = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago_proveedor')
+    precio = models.ForeignKey(GenPrecio, null=True, on_delete=models.PROTECT)
+    plazo_pago = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago')
+    plazo_pago_proveedor = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago_proveedor')
     
     class Meta:
         db_table = "gen_contacto"

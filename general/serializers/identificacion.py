@@ -1,9 +1,9 @@
-from general.models.identificacion import Identificacion
+from general.models.identificacion import GenIdentificacion
 from rest_framework import serializers
 
 class GenIdentificacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Identificacion
+        model = GenIdentificacion
         fields = [
             'id', 
             'nombre'
@@ -18,7 +18,7 @@ class GenIdentificacionSerializador(serializers.HyperlinkedModelSerializer):
 class GenIdentificacionListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Identificacion
+        model = GenIdentificacion
 
     def to_representation(self, instance):
         return {

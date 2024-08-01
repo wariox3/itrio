@@ -1,6 +1,6 @@
-from general.models.empresa import Empresa
-from general.models.documento_tipo import DocumentoTipo
-from general.models.resolucion import Resolucion
+from general.models.empresa import GenEmpresa
+from general.models.documento_tipo import GenDocumentoTipo
+from general.models.resolucion import GenResolucion
 import requests
 import json
 

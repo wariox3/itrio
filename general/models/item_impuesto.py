@@ -1,10 +1,10 @@
 from django.db import models
-from general.models.item import Item
-from general.models.impuesto import Impuesto
+from general.models.item import GenItem
+from general.models.impuesto import GenImpuesto
 
-class ItemImpuesto(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.PROTECT, related_name='itemImpuestos')
-    impuesto = models.ForeignKey(Impuesto, on_delete=models.PROTECT)
+class GenItemImpuesto(models.Model):
+    item = models.ForeignKey(GenItem, on_delete=models.PROTECT, related_name='itemImpuestos')
+    impuesto = models.ForeignKey(GenImpuesto, on_delete=models.PROTECT)
 
     class Meta:
         unique_together = ('item', 'impuesto')

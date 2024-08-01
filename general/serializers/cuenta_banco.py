@@ -1,11 +1,11 @@
-from general.models.cuenta_banco import CuentaBanco
-from general.models.cuenta_banco_tipo import CuentaBancoTipo
+from general.models.cuenta_banco import GenCuentaBanco
+from general.models.cuenta_banco_tipo import GenCuentaBancoTipo
 from rest_framework import serializers
 
 class GenCuentaBancoSerializador(serializers.HyperlinkedModelSerializer):
-    cuenta_banco_tipo = serializers.PrimaryKeyRelatedField(queryset=CuentaBancoTipo.objects.all())
+    cuenta_banco_tipo = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBancoTipo.objects.all())
     class Meta:
-        model = CuentaBanco
+        model = GenCuentaBanco
         fields = ['id', 'cuenta_banco_tipo', 'nombre', 'numero_cuenta']
 
     def to_representation(self, instance):
@@ -23,7 +23,7 @@ class GenCuentaBancoSerializador(serializers.HyperlinkedModelSerializer):
 class GenCuentaBancoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = CuentaBancoTipo
+        model = GenCuentaBancoTipo
 
     def to_representation(self, instance):
         return {

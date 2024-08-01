@@ -1,16 +1,16 @@
-from general.models.documento_detalle import DocumentoDetalle
-from general.models.documento import Documento
-from general.models.item import Item
+from general.models.documento_detalle import GenDocumentoDetalle
+from general.models.documento import GenDocumento
+from general.models.item import GenItem
 from contabilidad.models.cuenta import ConCuenta
 from rest_framework import serializers
 
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
-    documento = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all())
-    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all(), default=None, allow_null=True)
-    documento_afectado = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)
+    documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
+    item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), default=None, allow_null=True)
+    documento_afectado = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     class Meta:
-        model = DocumentoDetalle
+        model = GenDocumentoDetalle
         fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto', 'naturaleza']
 
     def to_representation(self, instance):
@@ -55,7 +55,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
 
 class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = DocumentoDetalle        
+        model = GenDocumentoDetalle        
 
     def to_representation(self, instance):
         item = instance.item
@@ -97,7 +97,7 @@ class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSeriali
     
 class GenDocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = DocumentoDetalle        
+        model = GenDocumentoDetalle        
 
     def to_representation(self, instance):
         item = instance.item

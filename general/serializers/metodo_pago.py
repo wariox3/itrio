@@ -1,9 +1,9 @@
-from general.models.metodo_pago import MetodoPago
+from general.models.metodo_pago import GenMetodoPago
 from rest_framework import serializers
 
 class GenMetodoPagoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = MetodoPago
+        model = GenMetodoPago
         fields = ['id', 'nombre']  
         
     def to_representation(self, instance):
@@ -14,7 +14,7 @@ class GenMetodoPagoSerializador(serializers.HyperlinkedModelSerializer):
 
 class GenMetodoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = MetodoPago 
+        model = GenMetodoPago 
         
     def to_representation(self, instance):
         return {

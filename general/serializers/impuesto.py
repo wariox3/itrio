@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from general.models.impuesto import Impuesto
+from general.models.impuesto import GenImpuesto
 
 class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = Impuesto
+        model = GenImpuesto
         fields = ['nombre']
 
     def to_representation(self, instance):
@@ -18,7 +18,7 @@ class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
 class GenImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Impuesto
+        model = GenImpuesto
 
     def to_representation(self, instance):
         return {

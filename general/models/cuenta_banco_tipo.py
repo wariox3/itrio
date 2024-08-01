@@ -1,6 +1,6 @@
 from django.db import models
 
-class CuentaBancoTipo(models.Model):
+class GenCuentaBancoTipo(models.Model):
     nombre = models.CharField(max_length=100)
     
     class Meta:

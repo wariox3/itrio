@@ -1,6 +1,6 @@
 from django.db import models
 
-class FormaPago(models.Model):
+class GenFormaPago(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50) 
     

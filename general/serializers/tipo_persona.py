@@ -1,9 +1,9 @@
-from general.models.tipo_persona import TipoPersona
+from general.models.tipo_persona import GenTipoPersona
 from rest_framework import serializers
 
 class GenTipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = TipoPersona
+        model = GenTipoPersona
         fields = [
             'id', 
             'nombre'
@@ -18,7 +18,7 @@ class GenTipoPersonaSerializador(serializers.HyperlinkedModelSerializer):
 class GenTipoPersonaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = TipoPersona
+        model = GenTipoPersona
 
     def to_representation(self, instance):
         return {

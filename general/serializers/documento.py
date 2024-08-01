@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from general.models.documento import Documento
-from general.models.documento_tipo import DocumentoTipo
+from general.models.documento import GenDocumento
+from general.models.documento_tipo import GenDocumentoTipo
 from general.models.contacto import GenContacto
-from general.models.metodo_pago import MetodoPago
-from general.models.empresa import Empresa
-from general.models.plazo_pago import PlazoPago
+from general.models.metodo_pago import GenMetodoPago
+from general.models.empresa import GenEmpresa
+from general.models.plazo_pago import GenPlazoPago
 from general.models.gen_asesor import GenAsesor
-from general.models.sede import Sede
+from general.models.sede import GenSede
 from seguridad.models import User
 
 class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):    
@@ -16,16 +16,16 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     fecha_contable = serializers.DateField(allow_null=True, label='Fecha contable', default=None)
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
-    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
-    metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), default=None, allow_null=True)
-    empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all(), default=1)    
-    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), default=None, allow_null=True)    
-    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), default=None, allow_null=True)
+    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
+    metodo_pago = serializers.PrimaryKeyRelatedField(queryset=GenMetodoPago.objects.all(), default=None, allow_null=True)
+    empresa = serializers.PrimaryKeyRelatedField(queryset=GenEmpresa.objects.all(), default=1)    
+    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)    
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), default=None, allow_null=True)
     asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), default=None, allow_null=True)
-    sede = serializers.PrimaryKeyRelatedField(queryset=Sede.objects.all(), default=None, allow_null=True)
+    sede = serializers.PrimaryKeyRelatedField(queryset=GenSede.objects.all(), default=None, allow_null=True)
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
     class Meta:
-        model = Documento
+        model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario']
 
     def to_representation(self, instance):        
@@ -80,11 +80,11 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
-    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
-    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=Documento.objects.all(), allow_null=True)    
-    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True)    
+    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
+    documento_referencia = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)    
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True)    
     class Meta:
-        model = Documento
+        model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago', 'cue']
 
     def to_representation(self, instance):
@@ -160,11 +160,11 @@ class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):
     total = serializers.DecimalField(max_digits=10, decimal_places=2, default=0, label='Total')
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
-    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=DocumentoTipo.objects.all())    
-    metodo_pago = serializers.PrimaryKeyRelatedField(queryset=MetodoPago.objects.all(), allow_null=True)
-    empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())    
+    documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
+    metodo_pago = serializers.PrimaryKeyRelatedField(queryset=GenMetodoPago.objects.all(), allow_null=True)
+    empresa = serializers.PrimaryKeyRelatedField(queryset=GenEmpresa.objects.all())    
     class Meta:
-        model = Documento
+        model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra']
 
     def to_representation(self, instance):        
@@ -203,7 +203,7 @@ class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):
 class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer):    
     numero = serializers.IntegerField(allow_null=True, label='Numero')
     class Meta:
-        model = Documento
+        model = GenDocumento
         fields = ['id', 'numero']
 
     def to_representation(self, instance):        
@@ -214,7 +214,7 @@ class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer)
 
 class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
-        model = Documento        
+        model = GenDocumento        
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -256,7 +256,7 @@ class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):
     
 class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
-        model = Documento        
+        model = GenDocumento        
 
     def to_representation(self, instance):        
         contacto = instance.contacto

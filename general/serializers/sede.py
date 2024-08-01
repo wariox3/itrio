@@ -1,9 +1,9 @@
-from general.models.sede import Sede
+from general.models.sede import GenSede
 from rest_framework import serializers
 
 class GenSedeSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Sede
+        model = GenSede
         fields = [
             'id',
             'nombre', 
@@ -17,7 +17,7 @@ class GenSedeSerializador(serializers.HyperlinkedModelSerializer):
 
 class GenSedeListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Sede
+        model = GenSede
         
     def to_representation(self, instance):
         return {

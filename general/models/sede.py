@@ -1,6 +1,6 @@
 from django.db import models
 
-class Sede(models.Model):        
+class GenSede(models.Model):        
     nombre = models.CharField(max_length=100)
 
     class Meta:

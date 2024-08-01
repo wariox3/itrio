@@ -1,11 +1,11 @@
 from general.models.configuracion import GenConfiguracion
-from general.models.empresa import Empresa
+from general.models.empresa import GenEmpresa
 
 from rest_framework import serializers
 from decouple import config
 
 class GenConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
-    empresa = serializers.PrimaryKeyRelatedField(queryset=Empresa.objects.all())
+    empresa = serializers.PrimaryKeyRelatedField(queryset=GenEmpresa.objects.all())
     class Meta:
         model = GenConfiguracion
         fields = [

@@ -1,9 +1,9 @@
-from general.models.plazo_pago import PlazoPago
+from general.models.plazo_pago import GenPlazoPago
 from rest_framework import serializers
 
 class GenPlazoPagoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PlazoPago
+        model = GenPlazoPago
         fields = ['id', 'nombre', 'dias']
         
     def to_representation(self, instance):
@@ -15,7 +15,7 @@ class GenPlazoPagoSerializador(serializers.HyperlinkedModelSerializer):
     
 class GenPlazoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = PlazoPago 
+        model = GenPlazoPago 
         
     def to_representation(self, instance):
         return {

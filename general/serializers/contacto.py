@@ -1,15 +1,15 @@
-from general.models.contacto import GenContacto, GenCiudad, Identificacion, Regimen, TipoPersona, GenAsesor, Precio, PlazoPago
+from general.models.contacto import GenContacto, GenCiudad, GenIdentificacion, GenRegimen, GenTipoPersona, GenAsesor, GenPrecio, GenPlazoPago
 from rest_framework import serializers
 
 class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=GenIdentificacion.objects.all())
     ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())    
-    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
-    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=GenTipoPersona.objects.all())
+    regimen = serializers.PrimaryKeyRelatedField(queryset=GenRegimen.objects.all())
     asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), allow_null=True, required=False)
-    precio = serializers.PrimaryKeyRelatedField(queryset=Precio.objects.all(), allow_null=True, required=False)
-    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True, required=False)
-    plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=PlazoPago.objects.all(), allow_null=True, required=False)
+    precio = serializers.PrimaryKeyRelatedField(queryset=GenPrecio.objects.all(), allow_null=True, required=False)
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True, required=False)
+    plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True, required=False)
     class Meta:
         model = GenContacto
         fields = [
@@ -79,10 +79,10 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
         }     
 
 class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all())
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=GenIdentificacion.objects.all())
     ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())    
-    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all())
-    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all())
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=GenTipoPersona.objects.all())
+    regimen = serializers.PrimaryKeyRelatedField(queryset=GenRegimen.objects.all())
     class Meta:
         model = GenContacto 
         

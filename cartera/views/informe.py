@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from general.models.documento import Documento
+from general.models.documento import GenDocumento
 from rest_framework.permissions import IsAuthenticated
 from general.views.documento import DocumentoViewSet
 class PendienteView(APIView):

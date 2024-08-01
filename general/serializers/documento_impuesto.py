@@ -1,13 +1,13 @@
-from general.models.documento_impuesto import DocumentoImpuesto
-from general.models.documento_detalle import DocumentoDetalle
-from general.models.impuesto import Impuesto
+from general.models.documento_impuesto import GenDocumentoImpuesto
+from general.models.documento_detalle import GenDocumentoDetalle
+from general.models.impuesto import GenImpuesto
 from rest_framework import serializers
 
 class GenDocumentoImpuestoSerializador(serializers.HyperlinkedModelSerializer):
-    documento_detalle = serializers.PrimaryKeyRelatedField(queryset=DocumentoDetalle.objects.all())
-    impuesto = serializers.PrimaryKeyRelatedField(queryset=Impuesto.objects.all())
+    documento_detalle = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoDetalle.objects.all())
+    impuesto = serializers.PrimaryKeyRelatedField(queryset=GenImpuesto.objects.all())
     class Meta:
-        model = DocumentoImpuesto
+        model = GenDocumentoImpuesto
         fields = ['documento_detalle', 'impuesto', 'base', 'porcentaje', 'total', 'porcentaje_base']
     def to_representation(self, instance):
         return {

@@ -1,10 +1,10 @@
-from general.models.empresa import Empresa, GenCiudad, Identificacion, Regimen, TipoPersona
+from general.models.empresa import GenEmpresa, GenCiudad, GenIdentificacion, GenRegimen, GenTipoPersona
 from rest_framework import serializers
 from decouple import config
 
 class GenEmpresaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Empresa
+        model = GenEmpresa
         fields = ['id','identificacion', 'numero_identificacion','digito_verificacion','nombre_corto','direccion','ciudad','telefono','correo','tipo_persona','regimen','imagen','contenedor_id','rededoc_id','subdominio']
         
     def to_representation(self, instance):
@@ -51,9 +51,9 @@ class GenEmpresaSerializador(serializers.HyperlinkedModelSerializer):
 
 class GenEmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all(), allow_null=True)
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=Identificacion.objects.all(), allow_null=True)
-    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=TipoPersona.objects.all(), allow_null=True)
-    regimen = serializers.PrimaryKeyRelatedField(queryset=Regimen.objects.all(), allow_null=True)
+    identificacion = serializers.PrimaryKeyRelatedField(queryset=GenIdentificacion.objects.all(), allow_null=True)
+    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=GenTipoPersona.objects.all(), allow_null=True)
+    regimen = serializers.PrimaryKeyRelatedField(queryset=GenRegimen.objects.all(), allow_null=True)
     class Meta:
-        model = Empresa
+        model = GenEmpresa
         fields = ['nombre_corto', 'direccion', 'correo', 'numero_identificacion', 'digito_verificacion', 'telefono','ciudad', 'identificacion',  'tipo_persona', 'regimen']

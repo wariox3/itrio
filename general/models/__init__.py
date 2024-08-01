@@ -1,1 +1,1 @@
-from .cuenta_banco import CuentaBanco
+from .cuenta_banco import GenCuentaBanco

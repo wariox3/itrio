@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from general.models.documento_tipo import DocumentoTipo
-from general.models.resolucion import Resolucion
+from general.models.documento_tipo import GenDocumentoTipo
+from general.models.resolucion import GenResolucion
 
 class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
-    resolucion = serializers.PrimaryKeyRelatedField(queryset=Resolucion.objects.all(), allow_null=True)
+    resolucion = serializers.PrimaryKeyRelatedField(queryset=GenResolucion.objects.all(), allow_null=True)
     class Meta:
-        model = DocumentoTipo
+        model = GenDocumentoTipo
         fields = ['consecutivo', 'resolucion']
 
     def to_representation(self, instance):  

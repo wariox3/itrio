@@ -1,10 +1,10 @@
-from general.models.precio import Precio
+from general.models.precio import GenPrecio
 from rest_framework import serializers
 
 class GenPrecioSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Precio
+        model = GenPrecio
         fields = ['id', 'nombre', 'tipo', 'fecha_vence']
 
     def to_representation(self, instance):
@@ -17,7 +17,7 @@ class GenPrecioSerializador(serializers.HyperlinkedModelSerializer):
     
 class GenPrecioListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Precio 
+        model = GenPrecio 
         
     def to_representation(self, instance):
         return {

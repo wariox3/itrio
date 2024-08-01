@@ -1,19 +1,19 @@
-from general.models.item_impuesto import ItemImpuesto
-from general.models.item import Item
-from general.models.impuesto import Impuesto
+from general.models.item_impuesto import GenItemImpuesto
+from general.models.item import GenItem
+from general.models.impuesto import GenImpuesto
 from rest_framework import serializers
 
 class GenItemImpuestoSerializador(serializers.HyperlinkedModelSerializer):
-    item = serializers.PrimaryKeyRelatedField(queryset=Item.objects.all())
-    impuesto = serializers.PrimaryKeyRelatedField(queryset=Impuesto.objects.all())
+    item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all())
+    impuesto = serializers.PrimaryKeyRelatedField(queryset=GenImpuesto.objects.all())
     class Meta:
-        model = ItemImpuesto
+        model = GenItemImpuesto
         fields = ['item', 'impuesto']
 
 class GenItemImpuestoDetalleSerializador(serializers.HyperlinkedModelSerializer):
-    impuesto = serializers.PrimaryKeyRelatedField(queryset=Impuesto.objects.all())
+    impuesto = serializers.PrimaryKeyRelatedField(queryset=GenImpuesto.objects.all())
     class Meta:
-        model = ItemImpuesto
+        model = GenItemImpuesto
         fields = ['item', 'impuesto']  
 
     def to_representation(self, instance):

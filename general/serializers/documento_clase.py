@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from general.models.documento_clase import DocumentoClase
+from general.models.documento_clase import GenDocumentoClase
 
 class GenDocumentoClaseSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
-        model = DocumentoClase
+        model = GenDocumentoClase
         fields = ['id', 'nombre'] 
         

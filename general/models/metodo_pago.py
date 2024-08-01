@@ -1,7 +1,7 @@
 from django.db import models
-from general.models.estado import Estado
+from general.models.estado import GenEstado
 
-class MetodoPago(models.Model):
+class GenMetodoPago(models.Model):
     id = models.BigIntegerField(primary_key=True)
     nombre = models.CharField(max_length=50) 
     

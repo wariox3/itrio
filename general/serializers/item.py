@@ -1,10 +1,10 @@
-from general.models.item import Item
+from general.models.item import GenItem
 from rest_framework import serializers
 
 class GenItemSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Item
+        model = GenItem
         fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'existencia', 'disponible']
 
     def to_representation(self, instance):
@@ -25,7 +25,7 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
 class GenItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
-        model = Item
+        model = GenItem
 
     def to_representation(self, instance):
         return {
@@ -35,7 +35,7 @@ class GenItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializ
     
 class GenItemExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Item
+        model = GenItem
         fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'existencia', 'disponible']
 
     def to_representation(self, instance):
@@ -55,7 +55,7 @@ class GenItemExcelSerializador(serializers.HyperlinkedModelSerializer):
      
 class GenItemListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Item 
+        model = GenItem 
         
     def to_representation(self, instance):
         return {

@@ -1,6 +1,6 @@
 from django.db import models
 
-class Item(models.Model):
+class GenItem(models.Model):
     nombre = models.CharField(max_length=200)
     codigo = models.CharField(max_length=100, null=True)
     referencia = models.CharField(max_length=50, null=True)

@@ -1,16 +1,16 @@
 from django.db import models
-from general.models.documento_tipo import DocumentoTipo
+from general.models.documento_tipo import GenDocumentoTipo
 from general.models.contacto import GenContacto
-from general.models.metodo_pago import MetodoPago
-from general.models.resolucion import Resolucion
-from general.models.empresa import Empresa
-from general.models.plazo_pago import PlazoPago
+from general.models.metodo_pago import GenMetodoPago
+from general.models.resolucion import GenResolucion
+from general.models.empresa import GenEmpresa
+from general.models.plazo_pago import GenPlazoPago
 from general.models.gen_asesor import GenAsesor
-from general.models.sede import Sede
+from general.models.sede import GenSede
 from seguridad.models import User
 from decimal import Decimal, ROUND_HALF_UP
 
-class Documento(models.Model):    
+class GenDocumento(models.Model):    
     numero = models.IntegerField(null=True)
     fecha = models.DateField(null=True)
     fecha_contable = models.DateField(null=True)
@@ -35,15 +35,15 @@ class Documento(models.Model):
     comentario = models.CharField(max_length=500, null=True)
     qr = models.CharField(max_length=500, null=True)
     electronico_id = models.IntegerField(null=True)
-    documento_tipo = models.ForeignKey(DocumentoTipo, on_delete=models.PROTECT, related_name='gen_documentos')
+    documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, related_name='gen_documentos')
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')
-    metodo_pago = models.ForeignKey(MetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
-    resolucion = models.ForeignKey(Resolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
-    empresa = models.ForeignKey(Empresa, on_delete=models.PROTECT, related_name='gen_documentos')
+    metodo_pago = models.ForeignKey(GenMetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
+    resolucion = models.ForeignKey(GenResolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
+    empresa = models.ForeignKey(GenEmpresa, on_delete=models.PROTECT, related_name='gen_documentos')
     documento_referencia = models.ForeignKey('self', null=True, on_delete=models.PROTECT, related_name='gen_documentos')
-    plazo_pago = models.ForeignKey(PlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos')
+    plazo_pago = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos')
     asesor = models.ForeignKey(GenAsesor, null=True, on_delete=models.PROTECT,related_name='documentos_asesor_rel')
-    sede = models.ForeignKey(Sede, null=True, on_delete=models.PROTECT,related_name='documentos_sede_rel')
+    sede = models.ForeignKey(GenSede, null=True, on_delete=models.PROTECT,related_name='documentos_sede_rel')
     usuario = models.ForeignKey(User, null=True, on_delete=models.PROTECT,related_name='documentos_usuario_rel')
 
     class Meta:

@@ -1,12 +1,12 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from general.models.documento import Documento
-from general.models.documento_detalle import DocumentoDetalle
-from general.models.documento_impuesto import DocumentoImpuesto
-from general.models.documento_tipo import DocumentoTipo
-from general.models.documento_pago import DocumentoPago
-from general.models.empresa import Empresa
+from general.models.documento import GenDocumento
+from general.models.documento_detalle import GenDocumentoDetalle
+from general.models.documento_impuesto import GenDocumentoImpuesto
+from general.models.documento_tipo import GenDocumentoTipo
+from general.models.documento_pago import GenDocumentoPago
+from general.models.empresa import GenEmpresa
 from general.models.configuracion import GenConfiguracion
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
@@ -32,7 +32,7 @@ import base64
 
 
 class DocumentoViewSet(viewsets.ModelViewSet):
-    queryset = Documento.objects.all()
+    queryset = GenDocumento.objects.all()
     serializer_class = GenDocumentoSerializador
     permission_classes = [permissions.IsAuthenticated]
 
@@ -71,11 +71,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     return Response({'mensaje':'Errores de validacion detalle impuesto', 'codigo':14, 'validaciones': documentoImpuestoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
                     else:
                         return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
-                documentoDetalles = DocumentoDetalle.objects.filter(documento=documento.id)
+                documentoDetalles = GenDocumentoDetalle.objects.filter(documento=documento.id)
                 documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
                 detalles = documentoDetallesSerializador.data
                 for detalle in detalles:
-                    documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+                    documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
                     documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
                     detalle['impuestos'] = documentoImpuestosSerializador.data
                 documentoRespuesta['detalles'] = detalles   
@@ -92,20 +92,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     def retrieve(self, request, pk=None):
-        queryset = Documento.objects.all()
+        queryset = GenDocumento.objects.all()
         documento = get_object_or_404(queryset, pk=pk)
         documentoSerializador = GenDocumentoRetrieveSerializador(documento)
-        documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
+        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk)
         documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
         detalles = documentoDetallesSerializador.data
         for detalle in detalles:
-            documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+            documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
             documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
             detalle['impuestos'] = documentoImpuestosSerializador.data
         documentoRespuesta = documentoSerializador.data
         documentoRespuesta['detalles'] = detalles
         
-        documentoPagos = DocumentoPago.objects.filter(documento=pk)
+        documentoPagos = GenDocumentoPago.objects.filter(documento=pk)
         documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
         pagos = documentoPagosSerializador.data
         documentoRespuesta['pagos'] = pagos        
@@ -114,7 +114,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
     def update(self, request, pk=None):
         raw = request.data
-        documento = Documento.objects.get(pk=pk)
+        documento = GenDocumento.objects.get(pk=pk)
         documentoSerializador = GenDocumentoSerializador(documento, data=raw, partial=True)
         if documentoSerializador.is_valid():
             documentoSerializador.save()
@@ -122,7 +122,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if detalles is not None:
                 for detalle in detalles:                
                     if detalle.get('id'):
-                        documentoDetalle = DocumentoDetalle.objects.get(pk=detalle['id'])
+                        documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle['id'])
                         detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
                     else:
                         detalle['documento'] = documento.id
@@ -133,7 +133,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if impuestos is not None:
                             for impuesto in impuestos:
                                 if impuesto.get('id'):
-                                    documentoImpuesto = DocumentoImpuesto.objects.get(pk=impuesto['id'])
+                                    documentoImpuesto = GenDocumentoImpuesto.objects.get(pk=impuesto['id'])
                                     documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(documentoImpuesto, data=impuesto, partial=True)    
                                 else:        
                                     impuesto['documento_detalle'] = documentoDetalle.id                                     
@@ -145,20 +145,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         impuestosEliminados = detalle.get('impuestos_eliminados')
                         if impuestosEliminados is not None:
                             for documentoImpuesto in impuestosEliminados:                                
-                                documentoImpuesto = DocumentoImpuesto.objects.get(pk=documentoImpuesto)
+                                documentoImpuesto = GenDocumentoImpuesto.objects.get(pk=documentoImpuesto)
                                 documentoImpuesto.delete()                         
                     else:
                         return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
             detallesEliminados = raw.get('detalles_eliminados')
             if detallesEliminados is not None:
                 for detalle in detallesEliminados:                                
-                    documentoDetalle = DocumentoDetalle.objects.get(pk=detalle)
+                    documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle)
                     documentoDetalle.delete()
-            documentoDetalles = DocumentoDetalle.objects.filter(documento=pk)
+            documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk)
             documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
             detalles = documentoDetallesSerializador.data
             for detalle in detalles:
-                documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+                documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
                 documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
                 detalle['impuestos'] = documentoImpuestosSerializador.data
             documentoRespuesta = documentoSerializador.data
@@ -168,7 +168,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if pagos is not None:
                 for pago in pagos:                
                     if pago.get('id'):
-                        documentoPago = DocumentoPago.objects.get(pk=pago['id'])
+                        documentoPago = GenDocumentoPago.objects.get(pk=pago['id'])
                         documentoPagoSerializador = GenDocumentoPagoSerializador(documentoPago, data=pago, partial=True)    
                     else:
                         pago['documento'] = documento.id
@@ -181,9 +181,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             pagosEliminados = raw.get('pagos_eliminados')
             if pagosEliminados is not None:
                 for pago in pagosEliminados:                                
-                    documentoPago = DocumentoPago.objects.get(pk=pago)
+                    documentoPago = GenDocumentoPago.objects.get(pk=pago)
                     documentoPago.delete()
-            documentoPagos = DocumentoPago.objects.filter(documento=pk)
+            documentoPagos = GenDocumentoPago.objects.filter(documento=pk)
             documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
             pagos = documentoPagosSerializador.data
             documentoRespuesta['pagos'] = pagos   
@@ -247,7 +247,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documentos = raw.get('documentos')
             if documentos:  
                 for documento in documentos:
-                    documentoEliminar = Documento.objects.get(pk=documento)  
+                    documentoEliminar = GenDocumento.objects.get(pk=documento)  
                     if documentoEliminar:
                         if documentoEliminar.estado_aprobado == False:
                             if not documentoEliminar.detalles.exists():
@@ -261,7 +261,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             return Response({'mensaje':'El documento con id ' + str(documentoEliminar.id) + ' no se puede eliminar por que se encuentra aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'mensaje':'Registros eliminados'}, status=status.HTTP_200_OK)
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Documento.DoesNotExist:
+        except GenDocumento.DoesNotExist:
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'aprobar',)
@@ -270,9 +270,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         id = raw.get('id')
         if id:
             try:
-                documento = Documento.objects.get(pk=id)
+                documento = GenDocumento.objects.get(pk=id)
                 consecutivo = 0
-                documentoTipo = DocumentoTipo.objects.get(id=documento.documento_tipo_id)
+                documentoTipo = GenDocumentoTipo.objects.get(id=documento.documento_tipo_id)
                 if documento.numero is None:
                     consecutivo = documentoTipo.consecutivo
                 else: 
@@ -287,7 +287,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documento.documento_tipo.documento_clase_id in (100,101,102,300,301,302,303):
                         documento.pendiente = documento.total - documento.afectado    
                     if documento.documento_tipo.documento_clase_id == 200:
-                        documento_detalles = DocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
+                        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
                         for documento_detalle in documento_detalles:
                             documento_afectado = documento_detalle.documento_afectado                        
                             documento_afectado.afectado += documento_detalle.pago
@@ -297,7 +297,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
-            except Documento.DoesNotExist:
+            except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
@@ -308,10 +308,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             raw = request.data
             id = raw.get('id')
             if id:
-                documento = Documento.objects.get(pk=id)                
+                documento = GenDocumento.objects.get(pk=id)                
                 respuesta = self.validacion_anular(id)
                 if respuesta['error'] == False:    
-                    documento_detalles = DocumentoDetalle.objects.filter(documento_id=id)                                          
+                    documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)                                          
                     for documento_detalle in documento_detalles:                                               
                         documento_detalle.cantidad = 0
                         documento_detalle.precio = 0
@@ -323,7 +323,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento_detalle.total = 0
                         documento_detalle.total_bruto = 0
                         documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'impuesto', 'base_impuesto', 'total', 'total_bruto'])
-                        documento_impuestos = DocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
+                        documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
                         for documento_impuesto in documento_impuestos:
                             documento_impuesto.base = 0
                             documento_impuesto.total = 0 
@@ -342,7 +342,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        except Documento.DoesNotExist:
+        except GenDocumento.DoesNotExist:
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'excel',)
@@ -442,9 +442,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             raw = request.data
             codigoDocumento = raw.get('documento_id')
             if codigoDocumento:
-                documento = Documento.objects.get(pk=codigoDocumento)
+                documento = GenDocumento.objects.get(pk=codigoDocumento)
                 if documento.estado_aprobado == True:
-                    empresa = Empresa.objects.get(pk=1)
+                    empresa = GenEmpresa.objects.get(pk=1)
                     if empresa.rededoc_id:
                         if documento.resolucion: 
                             if documento.numero: 
@@ -524,10 +524,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     arr_item = []
                                     cantidad_items = 0
                                     impuestos_agrupados = {}
-                                    documentoDetalles = DocumentoDetalle.objects.filter(documento=codigoDocumento)
+                                    documentoDetalles = GenDocumentoDetalle.objects.filter(documento=codigoDocumento)
                                     for documentoDetalle in documentoDetalles:
                                         arr_impuestos = []
-                                        documentoImpuestoDetalles = DocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
+                                        documentoImpuestoDetalles = GenDocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
                                         for documentoImpuestoDetalle in documentoImpuestoDetalles:
                                             impuesto_id = documentoImpuestoDetalle.impuesto_id
                                             total = documentoImpuestoDetalle.total
@@ -597,7 +597,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                 
-        except Documento.DoesNotExist:
+        except GenDocumento.DoesNotExist:
             return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=["post"], url_path=r'electronico_respuesta_emitir', permission_classes=[permissions.AllowAny])
@@ -609,7 +609,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         fecha_validacion = raw.get('fecha_validacion')
         if documento_id and qr and cue and fecha_validacion:
             try:
-                documento = Documento.objects.get(pk=documento_id)
+                documento = GenDocumento.objects.get(pk=documento_id)
                 if documento.estado_electronico_enviado:
                     fecha_validacion_obj = datetime.strptime(fecha_validacion, '%Y-%m-%d %H:%M:%S')
                     documento.qr = qr
@@ -621,7 +621,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return Response({'respuesta':True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'No se puede entregar una respuesta porque el documento no se ha enviado'}, status=status.HTTP_400_BAD_REQUEST)
-            except Documento.DoesNotExist:
+            except GenDocumento.DoesNotExist:
                 return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
@@ -645,7 +645,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documento_id = raw.get('documento_id')
         if documento_id:
             try:
-                documento = Documento.objects.get(id=documento_id)
+                documento = GenDocumento.objects.get(id=documento_id)
                 if documento.estado_electronico_notificado == True:                    
                     if documento.electronico_id:
                         wolframio = Wolframio()
@@ -658,7 +658,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         return Response({'mensaje': 'El documento esta marcado como notificado pero no tiene electronico_id', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
                 else:                      
                     return Response({'mensaje': 'El documento nunca ha sido notificado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-            except Documento.DoesNotExist:
+            except GenDocumento.DoesNotExist:
                 return Response({'mensaje': 'El documento no existe', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)     
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
@@ -669,10 +669,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         documento_id = raw.get('documento_id')
         if documento_id:
             try:
-                documento = Documento.objects.get(id=documento_id)
+                documento = GenDocumento.objects.get(id=documento_id)
                 if documento.estado_electronico_notificado == True:                    
                     if documento.electronico_id:
-                        empresa = Empresa.objects.get(pk=1)
+                        empresa = GenEmpresa.objects.get(pk=1)
                         if empresa.rededoc_id:                       
                             zinc = Zinc()                        
                             respuesta = zinc.log_envio(empresa.rededoc_id, documento.electronico_id)
@@ -686,7 +686,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         return Response({'mensaje': 'El documento esta marcado como notificado pero no tiene electronico_id', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
                 else:                      
                     return Response({'mensaje': 'El documento nunca ha sido notificado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-            except Documento.DoesNotExist:
+            except GenDocumento.DoesNotExist:
                 return Response({'mensaje': 'El documento no existe', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)     
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
@@ -717,7 +717,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'proceso_corregir_pendiente')
     def proceso_corregir_pendiente(self, request):
         #update gen_documento as d set cobrar = d.total from gen_documento_tipo as dt where d.documento_tipo_id = dt.id and dt.documento_clase_id in (100, 101, 102);
-        resultados = Documento.objects.annotate(total_pago=Sum('detalles__pago'))
+        resultados = GenDocumento.objects.annotate(total_pago=Sum('detalles__pago'))
         for documento in resultados:
             total_pago = documento.total_pago if documento.total_pago is not None else Decimal('0.00')
             documento.afectado = total_pago 
@@ -729,13 +729,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
     def resumen_cobrar(self, request):      
         fecha_actual = timezone.now().date()
-        resumen = Documento.objects.filter(
+        resumen = GenDocumento.objects.filter(
             documento_tipo_id=1, estado_aprobado=True
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vigente = Documento.objects.filter(
+        resumen_vigente = GenDocumento.objects.filter(
             documento_tipo_id=1, estado_aprobado=True, fecha_vence__gte=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vencido = Documento.objects.filter(
+        resumen_vencido = GenDocumento.objects.filter(
             documento_tipo_id=1, estado_aprobado=True, fecha_vence__lt=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
@@ -746,13 +746,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'resumen-pagar',)
     def resumen_pagar(self, request):      
         fecha_actual = timezone.now().date()
-        resumen = Documento.objects.filter(
+        resumen = GenDocumento.objects.filter(
             documento_tipo_id=5, estado_aprobado=True
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vigente = Documento.objects.filter(
+        resumen_vigente = GenDocumento.objects.filter(
             documento_tipo_id=5, estado_aprobado=True, fecha_vence__gte=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vencido = Documento.objects.filter(
+        resumen_vencido = GenDocumento.objects.filter(
             documento_tipo_id=5, estado_aprobado=True, fecha_vence__lt=fecha_actual
             ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
         resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
@@ -767,7 +767,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         primer_dia_mes = fecha_actual.replace(day=1)
         ultimo_dia_mes = (primer_dia_mes + timedelta(days=32)).replace(day=1) - timedelta(days=1)
         dias_del_mes = [primer_dia_mes + timedelta(days=i) for i in range((ultimo_dia_mes - primer_dia_mes).days + 1)]
-        ventas_por_dia = Documento.objects.filter(fecha__year=fecha_actual.year, fecha__month=fecha_actual.month
+        ventas_por_dia = GenDocumento.objects.filter(fecha__year=fecha_actual.year, fecha__month=fecha_actual.month
                                                   ).annotate(dia=TruncDay('fecha')
                                                              ).values('dia'
                                                                       ).annotate(total=Sum('total')).order_by('dia')
@@ -777,21 +777,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-        documentos = Documento.objects.all()
+        documentos = GenDocumento.objects.all()
         if filtros:
             for filtro in filtros:
                 documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})
         if ordenamientos:
             documentos = documentos.order_by(*ordenamientos)              
         documentos = documentos[desplazar:limite+desplazar]
-        itemsCantidad = Documento.objects.all()[:limiteTotal].count()                   
+        itemsCantidad = GenDocumento.objects.all()[:limiteTotal].count()                   
         respuesta = {'documentos': documentos, "cantidad_registros": itemsCantidad}
         return respuesta              
 
     @staticmethod
     def notificar(documento_id):
         try:
-            documento = Documento.objects.get(id=documento_id)
+            documento = GenDocumento.objects.get(id=documento_id)
             if documento.estado_electronico_notificado == False:
                 if documento.documento_tipo.documento_clase_id in [100, 101, 102]:
                     configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
@@ -811,12 +811,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return {'error':False}
             else:  
                 return {'error':True, 'mensaje':'El documento ya fue notificado con anterioridad pruebe re-notificando'}
-        except Documento.DoesNotExist:
+        except GenDocumento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}
         
     @staticmethod
     def consulta_imprimir(codigoDocumento):
-        documento = Documento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=codigoDocumento).values(
+        documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=codigoDocumento).values(
             'id',
             'fecha',
             'fecha_validacion',
@@ -858,13 +858,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         ).first()
 
         # Obtener los detalles del documento
-        documentoDetalles = DocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'total','item__nombre', 'item_id')
+        documentoDetalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'total','item__nombre', 'item_id')
 
         # Obtener los IDs de los detalles del documento
         ids_documentodetalles = list(documentoDetalles.values_list('id', flat=True))
 
         # Filtrar los DocumentoImpuesto que están asociados a los detalles del documento
-        documentoImpuestos = DocumentoImpuesto.objects.filter(documento_detalle__in=ids_documentodetalles).values(
+        documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle__in=ids_documentodetalles).values(
         'id',
         'total',
         'impuesto__nombre',
@@ -882,7 +882,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @staticmethod
     def validacion_aprobar(documento_id, consecutivo):
         try:
-            documento = Documento.objects.get(id=documento_id)
+            documento = GenDocumento.objects.get(id=documento_id)
             fecha = date.today()
             if documento.documento_tipo.documento_clase_id in (100,303):
                 if documento.resolucion:
@@ -891,12 +891,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             return {'error':True, 'mensaje':'La fecha de la resolucion esta vencida', 'codigo':1}
                     if consecutivo < documento.resolucion.consecutivo_desde or consecutivo > documento.resolucion.consecutivo_hasta:
                         return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
-            documento_detalle = DocumentoDetalle.objects.filter(documento=documento)
+            documento_detalle = GenDocumentoDetalle.objects.filter(documento=documento)
             if documento_detalle:
                 if documento.estado_aprobado == False:      
                     if documento.documento_tipo.documento_clase_id == 200:
                         resultado = (
-                            DocumentoDetalle.objects
+                            GenDocumentoDetalle.objects
                             .filter(documento_id=documento_id)
                             .exclude(documento_afectado_id__isnull=True)
                             .values('documento_afectado_id')
@@ -913,13 +913,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}
             else:
                 return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1}            
-        except Documento.DoesNotExist:
+        except GenDocumento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}
         
     @staticmethod
     def validacion_anular(documento_id):
         try:
-            documento = Documento.objects.get(id=documento_id)
+            documento = GenDocumento.objects.get(id=documento_id)
             if documento.documento_tipo_id == 1:                
                 if documento.estado_anulado == False:    
                     if documento.estado_aprobado == True:
@@ -937,7 +937,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return {'error':True, 'mensaje':'El documento ya esta anulado', 'codigo':1}        
             else:
                 return {'error':True, 'mensaje':'El tipo de documento no se puede anular'}            
-        except Documento.DoesNotExist:
+        except GenDocumento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}        
     
 
