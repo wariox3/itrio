@@ -62,6 +62,6 @@
   {
     "model": "general.documentoTipo",
     "pk": 13,
-    "fields": {"nombre": "ASIENTO", "documento_clase": 304, "compra":true}
+    "fields": {"nombre": "ASIENTO", "documento_clase": 601, "compra":true}
   }   
 ]
