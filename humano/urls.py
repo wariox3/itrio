@@ -1,11 +1,11 @@
 from django.urls import path, include
-from .views.hum_contrato import HumMovimientoViewSet
-from .views.hum_grupo import HumGrupoViewSet
-from .views.hum_programacion import HumProgramacionViewSet
-from .views.hum_concepto import HumConceptoViewSet
-from .views.hum_adicional import HumAdicionalViewSet
-from .views.hum_novedad import HumNovedadViewSet
-from .views.hum_credito import HumCreditoViewSet
+from .views.contrato import HumMovimientoViewSet
+from .views.grupo import HumGrupoViewSet
+from .views.programacion import HumProgramacionViewSet
+from .views.concepto import HumConceptoViewSet
+from .views.adicional import HumAdicionalViewSet
+from .views.novedad import HumNovedadViewSet
+from .views.credito import HumCreditoViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()

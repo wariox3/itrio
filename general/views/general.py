@@ -17,19 +17,14 @@ class ListaAdministradorView(APIView):
             aplicacion_prefijo = modelo_nombre[:3].lower()
             modelo_serializado_nombre = modelo_nombre[3:]        
             aplicaciones = {
+                'gen': 'general',
                 'hum': 'humano',
                 'con': 'contabilidad',
                 'ven': 'venta'
             }
-            aplicacion = aplicaciones.get(aplicacion_prefijo, 'general')
-            if aplicacion_prefijo not in aplicaciones:
-                aplicacion_prefijo = 'gen'
-            s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)            
-            # Quitar este if cuando se organicen las entidades de general
-            if aplicacion == 'general':
-                serializador_nombre = modelo_nombre.lower()
-            else:
-                serializador_nombre = aplicacion_prefijo + '_' + re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()            
+            aplicacion = aplicaciones.get(aplicacion_prefijo)
+            s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)                        
+            serializador_nombre = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()            
             modulo = import_module(f'{aplicacion}.serializers.{serializador_nombre}')            
             modelo = apps.get_model(aplicacion, modelo_nombre)
             serializador = getattr(modulo, f'{modelo_nombre}Serializador')

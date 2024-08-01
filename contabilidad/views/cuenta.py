@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
-from contabilidad.models.con_cuenta import ConCuenta
-from contabilidad.serializers.con_cuenta import ConCuentaSerializador
+from contabilidad.models.cuenta import ConCuenta
+from contabilidad.serializers.cuenta import ConCuentaSerializador
 
 class CuentaViewSet(viewsets.ModelViewSet):
     queryset = ConCuenta.objects.all()

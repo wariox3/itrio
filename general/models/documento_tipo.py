@@ -1,7 +1,7 @@
 from django.db import models
 from general.models.documento_clase import DocumentoClase
 from general.models.resolucion import Resolucion
-from contabilidad.models.con_cuenta import ConCuenta
+from contabilidad.models.cuenta import ConCuenta
 
 class DocumentoTipo(models.Model):    
     nombre = models.CharField(max_length=100)

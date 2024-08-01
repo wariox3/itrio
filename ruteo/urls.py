@@ -1,8 +1,8 @@
 from django.urls import path, include
-from .views.rut_visita import RutVisitaViewSet
-from .views.rut_vehiculo import RutVehiculoViewSet
-from .views.rut_franja import RutFranjaViewSet
-from .views.rut_despacho import RutDespachoViewSet
+from .views.visita import RutVisitaViewSet
+from .views.vehiculo import RutVehiculoViewSet
+from .views.franja import RutFranjaViewSet
+from .views.despacho import RutDespachoViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()

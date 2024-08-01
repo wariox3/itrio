@@ -1,7 +1,7 @@
 from django.db import models
 from general.models.documento import Documento
 from general.models.item import Item
-from contabilidad.models.con_cuenta import ConCuenta
+from contabilidad.models.cuenta import ConCuenta
 from decimal import Decimal, ROUND_HALF_UP
 
 class DocumentoDetalle(models.Model):    

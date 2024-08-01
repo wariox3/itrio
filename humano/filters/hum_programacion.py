@@ -1,5 +1,5 @@
 import django_filters
-from humano.models.hum_programacion import HumProgramacion
+from humano.models.programacion import HumProgramacion
 
 class HumProgramacionFilter(django_filters.FilterSet):
     class Meta:

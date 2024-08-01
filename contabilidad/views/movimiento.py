@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
-from contabilidad.models.con_movimiento import ConMovimiento
-from contabilidad.serializers.con_movimiento import MovimientoSerializer
+from contabilidad.models.movimiento import ConMovimiento
+from contabilidad.serializers.movimiento import MovimientoSerializer
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ConMovimiento.objects.all()

@@ -1,7 +1,7 @@
 from general.models.documento_detalle import DocumentoDetalle
 from general.models.documento import Documento
 from general.models.item import Item
-from contabilidad.models.con_cuenta import ConCuenta
+from contabilidad.models.cuenta import ConCuenta
 from rest_framework import serializers
 
 class DocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
