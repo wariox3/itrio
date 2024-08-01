@@ -1,5 +1,4 @@
 from rest_framework import status
-from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +6,7 @@ from django.apps import apps
 from importlib import import_module
 import re
 
-class ListaAdministradorView(APIView):
+class ListaView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -46,7 +45,7 @@ class ListaAdministradorView(APIView):
             return Response({"registros": serializadorDatos.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
-class ListaAutocompletarView(APIView):
+class AutocompletarView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -57,19 +56,14 @@ class ListaAutocompletarView(APIView):
             aplicacion_prefijo = modelo_nombre[:3].lower()
             modelo_serializado_nombre = modelo_nombre[3:]        
             aplicaciones = {
+                'gen': 'general',
                 'hum': 'humano',
                 'con': 'contabilidad',
                 'ven': 'venta'
             }
-            aplicacion = aplicaciones.get(aplicacion_prefijo, 'general')
-            if aplicacion_prefijo not in aplicaciones:
-                aplicacion_prefijo = 'gen'
-            s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)            
-            # Quitar este if cuando se organicen las entidades de general
-            if aplicacion == 'general':
-                serializador_nombre = modelo_nombre.lower()
-            else:
-                serializador_nombre = aplicacion_prefijo + '_' + re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()            
+            aplicacion = aplicaciones.get(aplicacion_prefijo)
+            s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)                        
+            serializador_nombre = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()            
             modulo = import_module(f'{aplicacion}.serializers.{serializador_nombre}')            
             modelo = apps.get_model(aplicacion, modelo_nombre)
             serializador = getattr(modulo, f'{modelo_nombre}Serializador')
@@ -88,19 +82,31 @@ class ListaAutocompletarView(APIView):
             return Response({"registros": datos.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
-class ListaBuscarView(APIView):
+class BuscarView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         raw = request.data
-        codigoModelo = raw.get('modelo')
+        modelo_nombre = raw.get('modelo')
         limite = raw.get('limite', 10)
-        if codigoModelo:      
+        if modelo_nombre:  
+            aplicacion_prefijo = modelo_nombre[:3].lower()
+            modelo_serializado_nombre = modelo_nombre[3:]        
+            aplicaciones = {
+                'gen': 'general',
+                'hum': 'humano',
+                'con': 'contabilidad',
+                'ven': 'venta'
+            }
+            aplicacion = aplicaciones.get(aplicacion_prefijo)
+            s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)                        
+            serializador_nombre = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()            
+            modulo = import_module(f'{aplicacion}.serializers.{serializador_nombre}')            
+            modelo = apps.get_model(aplicacion, modelo_nombre)
+            serializador = getattr(modulo, f'{modelo_nombre}Serializador')
+
             filtros = raw.get('filtros')
-            ordenamientos = raw.get('ordenamientos')
-            modelo = globals()[codigoModelo]
-            serializadorNombre = f"{codigoModelo}ListaBuscarSerializador"
-            serializador = globals()[serializadorNombre]            
+            ordenamientos = raw.get('ordenamientos')                   
             items = modelo.objects.all()
             if filtros:
                 for filtro in filtros:

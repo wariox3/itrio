@@ -29,8 +29,6 @@ from openpyxl import Workbook
 from datetime import datetime, timedelta, date
 import base64
 
-
-
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = GenDocumento.objects.all()
     serializer_class = GenDocumentoSerializador
