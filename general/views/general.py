@@ -20,6 +20,7 @@ from general.models.sede import Sede
 from general.models.cuenta_banco import CuentaBanco
 from general.models.cuenta_banco_tipo import CuentaBancoTipo
 from contabilidad.models.con_cuenta import ConCuenta
+from contabilidad.models.con_comprobante import ConComprobante
 from humano.models.hum_contrato import HumContrato
 from humano.models.hum_contrato_tipo import HumContratoTipo
 from humano.models.hum_programacion import HumProgramacion
@@ -49,6 +50,7 @@ from general.serializers.sede import SedeSerializador, SedeListaAutocompletarSer
 from general.serializers.cuenta_banco import CuentaBancoSerializador, CuentaBancoListaAutocompletarSerializador
 from general.serializers.cuenta_banco_tipo import CuentaBancoTipoSerializador, CuentaBancoTipoListaAutocompletarSerializador
 from contabilidad.serializers.cuenta import ConCuentaSerializador, ConCuentaListaAutocompletarSerializador
+from contabilidad.serializers.comprobante import ConComprobanteSerializador, ConComprobanteListaAutocompletarSerializador
 from humano.serializers.hum_contrato import HumContratoSerializador, HumContratoListaAutocompletarSerializador
 from humano.serializers.hum_contrato_tipo import HumContratoTipoSerializador, HumContratoTipoListaAutocompletarSerializador
 from humano.serializers.hum_programacion import HumProgramacionSerializador

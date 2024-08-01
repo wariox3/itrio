@@ -11,8 +11,7 @@ class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,
             'nombre': instance.nombre,
-            'codigo': instance.codigo,            
-            'nombre': instance.nombre
+            'codigo': instance.codigo
         } 
 
 
@@ -25,7 +24,6 @@ class ConCuentaListaAutocompletarSerializador(serializers.HyperlinkedModelSerial
         return {
             'cuenta_id': instance.id,
             'cuenta_nombre': instance.nombre,
-            'cuenta_codigo': instance.codigo,            
-            'cuenta_nombre': instance.nombre
+            'cuenta_codigo': instance.codigo
         }         
         
