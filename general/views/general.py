@@ -66,7 +66,7 @@ class AutocompletarView(APIView):
             serializador_nombre = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()            
             modulo = import_module(f'{aplicacion}.serializers.{serializador_nombre}')            
             modelo = apps.get_model(aplicacion, modelo_nombre)
-            serializador = getattr(modulo, f'{modelo_nombre}Serializador')
+            serializador = getattr(modulo, f'{modelo_nombre}ListaAutocompletarSerializador')
             
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')                     
@@ -103,7 +103,7 @@ class BuscarView(APIView):
             serializador_nombre = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()            
             modulo = import_module(f'{aplicacion}.serializers.{serializador_nombre}')            
             modelo = apps.get_model(aplicacion, modelo_nombre)
-            serializador = getattr(modulo, f'{modelo_nombre}Serializador')
+            serializador = getattr(modulo, f'{modelo_nombre}ListaBuscarSerializador')
 
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')                   
