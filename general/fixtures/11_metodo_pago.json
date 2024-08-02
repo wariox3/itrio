@@ -1,21 +1,21 @@
 [
   {
-    "model": "general.metodoPago",
+    "model": "general.GenMetodoPago",
     "pk": 1,
     "fields": {"nombre": "Instrumento no definido"}
   },
   {
-    "model": "general.metodoPago",
+    "model": "general.GenMetodoPago",
     "pk": 2,
     "fields": {"nombre": "Crédito ACH"}
   },
   {
-    "model": "general.metodoPago",
+    "model": "general.GenMetodoPago",
     "pk": 3,
     "fields": {"nombre": "Débito ACH"}
   },
   {
-    "model": "general.metodoPago",
+    "model": "general.GenMetodoPago",
     "pk": 10,
     "fields": {"nombre": "Efectivo"}
   }

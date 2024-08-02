@@ -1,6 +1,6 @@
 [
   {
-    "model": "general.pais",
+    "model": "general.GenPais",
     "pk": "CO",
     "fields": {"nombre": "Colombia", "codigo":"169"}
   }

@@ -1,26 +1,26 @@
 [
   {
-    "model": "general.plazoPago",
+    "model": "general.GenPlazoPago",
     "pk": 1,
     "fields": {"nombre": "Contado", "dias":0}
   },
   {
-    "model": "general.plazoPago",
+    "model": "general.GenPlazoPago",
     "pk": 2,
     "fields": {"nombre": "8 dias", "dias":8}
   },
   {
-    "model": "general.plazoPago",
+    "model": "general.GenPlazoPago",
     "pk": 3,
     "fields": {"nombre": "15 dias", "dias":15}
   },
   {
-    "model": "general.plazoPago",
+    "model": "general.GenPlazoPago",
     "pk": 4,
     "fields": {"nombre": "30 dias", "dias":30}
   },
   {
-    "model": "general.plazoPago",
+    "model": "general.GenPlazoPago",
     "pk": 5,
     "fields": {"nombre": "60 dias", "dias":60}
   }

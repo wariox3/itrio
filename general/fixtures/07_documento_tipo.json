@@ -1,66 +1,66 @@
 [
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 1,
     "fields": {"nombre": "FACTURA ELECTRÓNICA DE VENTA", "documento_clase": 100, "cuenta_cobrar":"20", "venta":true}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 2,
     "fields": {"nombre": "NOTA CRÉDITO DE VENTA", "documento_clase": 101, "venta":true}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 3,
     "fields": {"nombre": "NOTA DÉBITO DE VENTA", "documento_clase": 102, "venta":true}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 4,
     "fields": {"nombre": "PAGO", "documento_clase": 200}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 5,
     "fields": {"nombre": "COMPRA", "documento_clase": 300, "cuenta_pagar":"127"}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 6,
     "fields": {"nombre": "NOTA CREDITO COMPRA", "documento_clase": 301}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 7,
     "fields": {"nombre": "NOTA DEBITO COMPRA", "documento_clase": 302}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 8,
     "fields": {"nombre": "EGRESO", "documento_clase": 400}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 9,
     "fields": {"nombre": "ENTRADA", "documento_clase": 500}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 10,
     "fields": {"nombre": "SALIDA", "documento_clase": 501}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 11,
     "fields": {"nombre": "DOCUMENTO SOPORTE", "documento_clase": 303, "compra":true}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 12,
     "fields": {"nombre": "NOTA AJUSTE", "documento_clase": 304, "compra":true}
   },
   {
-    "model": "general.documentoTipo",
+    "model": "general.GenDocumentoTipo",
     "pk": 13,
     "fields": {"nombre": "ASIENTO", "documento_clase": 601, "compra":true}
   }   
