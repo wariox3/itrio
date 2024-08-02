@@ -1,6 +1,7 @@
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.documento import GenDocumento
 from general.models.item import GenItem
+from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
 from rest_framework import serializers
 
@@ -9,9 +10,10 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), default=None, allow_null=True)
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
+    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenDocumentoDetalle
-        fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'impuesto', 'naturaleza']
+        fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'contacto', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'naturaleza', 'impuesto', 'detalle', 'numero']
 
     def to_representation(self, instance):
         item = instance.item
@@ -30,6 +32,9 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         cuenta = instance.cuenta
         if cuenta:
             cuenta_codigo = cuenta.codigo
+        contacto_nombre_corto = ''
+        if instance.contacto:
+            contacto_nombre_corto = instance.contacto.nombre_corto
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,        
@@ -50,7 +55,11 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'documento_afectado_id': instance.documento_afectado_id,
             'documento_afectado_numero': documento_afectado_numero,
             'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto,
-            'naturaleza':instance.naturaleza
+            'contacto_id': instance.contacto_id,
+            'contacto_nombre_corto': contacto_nombre_corto,
+            'naturaleza':instance.naturaleza,
+            'detalle': instance.detalle,
+            'numero': instance.numero
         }  
 
 class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
