@@ -13,6 +13,7 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         try:
             self.perform_destroy(instance)
+            return Response({'mensaje':'Contrato eliminado'}, status=status.HTTP_200_OK)
         except ProtectedError as e:
             return Response({'mensaje':'El contrato tiene relaciones', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)   
 
