@@ -49,6 +49,22 @@ class ContactoViewSet(viewsets.ModelViewSet):
         wb.save(response)
         return response
 
+    @action(detail=False, methods=["post"], url_path=r'validar',)
+    def validar(self, request):        
+        raw = request.data
+        identificacion_id = raw.get('identificacion_id')
+        numero_identificacion = raw.get('numero_identificacion')
+        if identificacion_id and numero_identificacion:
+            try:
+                contacto = GenContacto.objects.filter(identificacion_id=identificacion_id, numero_identificacion=numero_identificacion).first()
+                if contacto:
+                    return Response({'validacion': True, 'id': contacto.id}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'validacion':False, 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+            except GenContacto.DoesNotExist:
+                return Response({'validacion':False, 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
