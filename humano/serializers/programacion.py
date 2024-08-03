@@ -26,4 +26,35 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
                   'descuento_adicional_permanente', 'descuento_adicional_programacion', 'descuento_credito', 'descuento_embargo']
-        
+
+    def to_representation(self, instance):      
+        pago_tipo_nombre = ''
+        if instance.pago_tipo:
+            pago_tipo_nombre = instance.pago_tipo.nombre
+        grupo_nombre = ''            
+        if instance.grupo:
+            grupo_nombre = instance.grupo.nombre
+        return {
+            'id': instance.id,
+            'fecha_desde': instance.fecha_desde,
+            'fecha_hasta': instance.fecha_hasta,
+            'fecha_hasta_periodo': instance.fecha_hasta_periodo,
+            'nombre': instance.nombre,
+            'pago_horas': instance.pago_horas,
+            'pago_auxilio_transporte': instance.pago_auxilio_transporte,
+            'pago_incapacidad': instance.pago_incapacidad,
+            'pago_licencia': instance.pago_licencia,
+            'pago_vacacion': instance.pago_vacacion,
+            'descuento_salud': instance.descuento_salud,
+            'descuento_pension': instance.descuento_pension,
+            'descuento_fondo_solidaridad': instance.descuento_fondo_solidaridad,
+            'descuento_retencion_fuente': instance.descuento_retencion_fuente,
+            'descuento_adicional_permanente': instance.descuento_adicional_permanente,
+            'descuento_adicional_programacion': instance.descuento_adicional_programacion,
+            'descuento_credito': instance.descuento_credito,
+            'descuento_embargo': instance.descuento_embargo,
+            'pago_tipo_id': instance.pago_tipo_id,
+            'pago_tipo_nombre': pago_tipo_nombre,
+            'grupo_id': instance.grupo_id,
+            'grupo_nombre': grupo_nombre
+        }        
