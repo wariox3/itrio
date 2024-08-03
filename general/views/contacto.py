@@ -60,9 +60,9 @@ class ContactoViewSet(viewsets.ModelViewSet):
                 if contacto:
                     return Response({'validacion': True, 'id': contacto.id}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'validacion':False, 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+                    return Response({'validacion':False, 'codigo':15}, status=status.HTTP_200_OK)    
             except GenContacto.DoesNotExist:
-                return Response({'validacion':False, 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'validacion':False, 'codigo':15}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         
