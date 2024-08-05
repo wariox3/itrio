@@ -39,6 +39,7 @@ TENANT_APPS = (
     'cartera',
     'transporte',
     'humano',
+    'inventario',
     'ruteo'
 )
 
@@ -61,8 +62,9 @@ INSTALLED_APPS = [
     'contabilidad',
     'cartera',
     'transporte',
-    'ruteo',
-    'humano'
+    'inventario',
+    'humano',
+    'ruteo'
 ]
 
 MIDDLEWARE = [
