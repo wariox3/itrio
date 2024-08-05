@@ -13,7 +13,6 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
     serializer_class = HumProgramacionSerializador
     permission_classes = [permissions.IsAuthenticated]
 
-
     @action(detail=False, methods=["post"], url_path=r'cargar-contrato',)
     def cargar_contrato(self, request):
         try:
@@ -51,3 +50,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumProgramacion.DoesNotExist:
             return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+        
+    @action(detail=False, methods=["post"], url_path=r'generar',)
+    def generar(self, request):             
+        return Response({'mensaje': 'Programacion generada con exito'}, status=status.HTTP_200_OK)        

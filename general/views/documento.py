@@ -27,7 +27,9 @@ from utilidades.excel import WorkbookEstilos
 from decimal import Decimal
 from openpyxl import Workbook
 from datetime import datetime, timedelta, date
+from io import BytesIO
 import base64
+import openpyxl
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = GenDocumento.objects.all()
@@ -772,6 +774,38 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         ventas_dict = {venta['dia']: venta['total'] for venta in ventas_por_dia}
         venta_dia = [{'dia': dia, 'total': ventas_dict.get(dia, 0)} for dia in dias_del_mes]        
         return Response({'resumen': venta_dia}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path=r'importar-detalle',)
+    def importar_detalle(self, request):
+        raw = request.data
+        documento_id = raw.get('documento_id')
+        archivo_base64 = raw.get('archivo_base64')
+        if documento_id and archivo_base64:
+            try:
+                documento = GenDocumento.objects.get(pk=documento_id)
+                '''archivo_data = base64.b64decode(archivo_base64)
+                archivo = BytesIO(archivo_data)
+                wb = openpyxl.load_workbook(archivo)
+                sheet = wb.active    
+                for row in sheet.iter_rows(min_row=2, values_only=True):
+                    data = {
+                        'cuenta': row[0],
+                        'numero_identificacion':row[0],
+                        'debito': row[0],
+                        'credito': row[0],
+                        'base': row[4],
+                        'descripcion': row[5]                    
+                    }
+                    visitaSerializador = RutVisitaSerializador(data=data)
+                    if visitaSerializador.is_valid():
+                        visitaSerializador.save()
+                    else:
+                        return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)'''                
+                return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):

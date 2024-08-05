@@ -9,9 +9,9 @@ from general.models.gen_asesor import GenAsesor
 from general.models.sede import GenSede
 from seguridad.models import User
 
-class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):        
     numero = serializers.IntegerField(allow_null=True, label='Numero', default=None)
-    fecha = serializers.DateField(allow_null=True, label='Fecha', default=None)
+    fecha = serializers.DateField()
     fecha_vence = serializers.DateField(allow_null=True, label='Vence', default=None)
     fecha_contable = serializers.DateField(allow_null=True, label='Fecha contable', default=None)
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
@@ -78,7 +78,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'sede_nombre': sede_nombre
         }
     
-class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):    
+class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)    
