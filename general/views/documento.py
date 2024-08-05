@@ -848,8 +848,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             errores_datos.append(error_dato)
                             errores = True
                         else:
-                            data['contacto_id'] = contacto.id
-                            data_documento_detalle.append(data)                                  
+                            data['contacto_id'] = contacto.id                                 
                     
                     if data['debito'] == 0 and data['credito'] == 0:
                             error_dato = {
@@ -874,7 +873,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 naturaleza = 'C'
                             data['naturaleza'] = naturaleza
                             data['total'] = total
-                            data_documento_detalle.append(data) 
+                    data_documento_detalle.append(data) 
 
             if errores == False:
                 for detalle in data_documento_detalle:

@@ -4,6 +4,9 @@ from contabilidad.models.cuenta_clase import ConCuentaClase
 class ConCuenta(models.Model):        
     codigo = models.IntegerField(null=True)
     nombre = models.CharField(max_length=100, null=True)
+    exige_base = models.BooleanField(default = False)
+    exige_tercero = models.BooleanField(default = False)
+    permite_movimiento = models.BooleanField(default = False)
     cuenta_clase = models.ForeignKey(ConCuentaClase, on_delete=models.PROTECT, null=True)
     
     class Meta:

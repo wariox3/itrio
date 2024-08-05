@@ -12,8 +12,8 @@ class CuentaViewSet(viewsets.ModelViewSet):
     serializer_class = ConCuentaSerializador
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=False, methods=["post"], url_path=r'importar-detalle',)
-    def importar_detalle(self, request):
+    @action(detail=False, methods=["post"], url_path=r'importar',)
+    def importar(self, request):
         raw = request.data        
         archivo_base64 = raw.get('archivo_base64')
         if archivo_base64:
@@ -21,36 +21,111 @@ class CuentaViewSet(viewsets.ModelViewSet):
                 archivo_data = base64.b64decode(archivo_base64)
                 archivo = BytesIO(archivo_data)
                 wb = openpyxl.load_workbook(archivo)
-                sheet = wb.active         
+                sheet = wb.active    
             except Exception as e:     
-                return Response({'mensaje':'Error procesando el archivo', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+                return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
             
-            data_documento_detalle = []
+            data_cuenta = []
             errores = False
             errores_datos = []
             registros_importados = 0
-
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 data = {
-                    'cuenta': row[0],
-                    'numero_identificacion':row[1],
-                    'debito': row[2] if row[2] is not None else 0,
-                    'credito': row[3] if row[3] is not None else 0,
-                    'base': row[4] if row[4] is not None else 0,
-                    'descripcion': row[5]                    
-                }                                    
+                    'codigo': row[0],
+                    'nombre':row[1],
+                    'clase_id': row[2],
+                    'exige_tercero': row[3],
+                    'exige_base': row[4],
+                    'permite_movimiento': row[5]                    
+                }  
+                if not data['codigo']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar un codigo'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
 
+                if not data['nombre']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar nombre'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True                                 
+
+                if not data['clase_id']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar un codigo'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+
+                if not data['exige_tercero']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar si la cuenta exige tercero'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+                else:
+                    if data['exige_tercero'] in ['SI', 'NO']:
+                        data['exige_tercero'] = data['exige_tercero'] == 'SI'
+                    else:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': 'Los valores validos son SI o NO'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True                                        
+
+                if not data['exige_base']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar si la cuenta exige base'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+                else:
+                    if data['exige_base'] in ['SI', 'NO']:
+                        data['exige_base'] = data['exige_base'] == 'SI'
+                    else:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': 'Los valores validos son SI o NO'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True                    
+
+                if not data['permite_movimiento']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar si la cuenta permite movimiento'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+                else:
+                    if data['permite_movimiento'] in ['SI', 'NO']:
+                        data['permite_movimiento'] = data['permite_movimiento'] == 'SI'
+                    else:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': 'Los valores validos son SI o NO'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True                        
+                data_cuenta.append(data)
             if errores == False:
-                for detalle in data_documento_detalle:
-                    '''GenDocumentoDetalle.objects.create(
-                        documento=documento,
-                        cuenta_id=detalle['cuenta_id'],
-                        contacto_id=detalle['contacto_id'],
-                        total=detalle['total'],
-                        base_impuesto=detalle['base'],
-                        naturaleza=detalle['naturaleza'],
-                        detalle=detalle['descripcion']
-                    )'''
+                for detalle in data_cuenta:
+                    ConCuenta.objects.create(
+                        codigo=detalle['codigo'],
+                        nombre=detalle['nombre'],
+                        cuenta_clase_id=detalle['clase_id'],
+                        exige_tercero=detalle['exige_tercero'],
+                        exige_base=detalle['exige_base'],
+                        permite_movimiento=detalle['permite_movimiento']
+                    )
                     registros_importados += 1
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
