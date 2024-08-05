@@ -22,8 +22,34 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
 
     class Meta:
         model = HumProgramacionDetalle
-        fields = ['id', 'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
+        fields = ['id', 'diurna', 'nocturna', 'festiva_diurna', 'festiva_nocturna', 'extra_diurna', 'extra_nocturna', 
+                  'extra_festiva_diurna', 'extra_festiva_nocturna', 'recargo_nocturno', 'recargo_festivo_diurno', 'recargo_festivo_nocturno',
+                  'programacion', 'contrato',
+                  'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
-                  'descuento_adicional_permanente', 'descuento_adicional_programacion', 'descuento_credito', 'descuento_embargo', 'programacion',
-                  'contrato']
+                  'descuento_adicional_permanente', 'descuento_adicional_programacion', 'descuento_credito', 'descuento_embargo']
+
+    def to_representation(self, instance):      
+        if instance.contrato:
+            if instance.contrato.contacto:
+                contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
+                contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
+        return {
+            'id': instance.id,
+            'diurna': instance.diurna ,
+            'nocturna': instance.nocturna ,
+            'festiva_diurna': instance.festiva_diurna ,
+            'festiva_nocturna': instance.festiva_nocturna ,
+            'extra_diurna': instance.extra_diurna ,
+            'extra_nocturna': instance.extra_nocturna ,
+            'extra_festiva_diurna': instance.extra_festiva_diurna ,
+            'extra_festiva_nocturna': instance.extra_festiva_nocturna ,
+            'recargo_nocturno': instance.recargo_nocturno ,
+            'recargo_festivo_diurno': instance.recargo_festivo_diurno ,
+            'recargo_festivo_nocturno': instance.recargo_festivo_nocturno ,
+            'contrato_id': instance.contrato_id,
+            'contrato_contacto_id': instance.contrato.contacto_id,
+            'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
+            'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto
+        }         
         
