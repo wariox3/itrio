@@ -7,7 +7,9 @@ from general.models.documento_impuesto import GenDocumentoImpuesto
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento_pago import GenDocumentoPago
 from general.models.empresa import GenEmpresa
+from general.models.contacto import GenContacto
 from general.models.configuracion import GenConfiguracion
+from contabilidad.models.cuenta import ConCuenta
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
@@ -783,27 +785,109 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if documento_id and archivo_base64:
             try:
                 documento = GenDocumento.objects.get(pk=documento_id)
-                '''archivo_data = base64.b64decode(archivo_base64)
-                archivo = BytesIO(archivo_data)
-                wb = openpyxl.load_workbook(archivo)
-                sheet = wb.active    
-                for row in sheet.iter_rows(min_row=2, values_only=True):
-                    data = {
-                        'cuenta': row[0],
-                        'numero_identificacion':row[0],
-                        'debito': row[0],
-                        'credito': row[0],
-                        'base': row[4],
-                        'descripcion': row[5]                    
-                    }
-                    visitaSerializador = RutVisitaSerializador(data=data)
-                    if visitaSerializador.is_valid():
-                        visitaSerializador.save()
-                    else:
-                        return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)'''                
-                return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                archivo_data = base64.b64decode(archivo_base64)
+                archivo = BytesIO(archivo_data)
+                wb = openpyxl.load_workbook(archivo)
+                sheet = wb.active         
+            except Exception as e:     
+                return Response({'mensaje':'Error procesando el archivo', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+            
+            data_documento_detalle = []
+            errores = False
+            errores_datos = []
+            registros_importados = 0
+            if documento.documento_tipo_id == 13:
+                for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                    data = {
+                        'cuenta': row[0],
+                        'numero_identificacion':row[1],
+                        'debito': row[2] if row[2] is not None else 0,
+                        'credito': row[3] if row[3] is not None else 0,
+                        'base': row[4] if row[4] is not None else 0,
+                        'descripcion': row[5]                    
+                    }                    
+                    if not data['cuenta']:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': 'Debe digitar la cuenta'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True
+                    else:
+                        cuenta = ConCuenta.objects.filter(codigo=data['cuenta']).first()
+                        if cuenta is None:
+                            error_dato = {
+                                'fila': i,
+                                'Mensaje': f'La cuenta {data["cuenta"]} no existe'
+                            }
+                            errores_datos.append(error_dato)
+                            errores = True
+                        else:
+                            data['cuenta_id'] = cuenta.id
+
+                    if not data['numero_identificacion']:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': 'Debe digitar el numero de identificacion'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True  
+                    else:
+                        contacto = GenContacto.objects.filter(numero_identificacion=data['numero_identificacion']).first()
+                        if contacto is None:
+                            error_dato = {
+                                'fila': i,
+                                'Mensaje': f'El contacto con numero identificacion {data["numero_identificacion"]} no existe'
+                            }
+                            errores_datos.append(error_dato)
+                            errores = True
+                        else:
+                            data['contacto_id'] = contacto.id
+                            data_documento_detalle.append(data)                                  
+                    
+                    if data['debito'] == 0 and data['credito'] == 0:
+                            error_dato = {
+                                'fila': i,
+                                'Mensaje': f'Los debitos y creditos estan en cero'
+                            }
+                            errores_datos.append(error_dato)
+                            errores = True
+                    else:
+                        if data['debito'] != 0 and data['credito'] != 0:
+                            error_dato = {
+                                'fila': i,
+                                'Mensaje': f'Los debitos y creditos tienen valores'
+                            }
+                            errores_datos.append(error_dato)
+                            errores = True
+                        else:
+                            total = data['debito']
+                            naturaleza = 'D'
+                            if data['credito'] > 0:
+                                total = data['credito']
+                                naturaleza = 'C'
+                            data['naturaleza'] = naturaleza
+                            data['total'] = total
+                            data_documento_detalle.append(data) 
+
+            if errores == False:
+                for detalle in data_documento_detalle:
+                    GenDocumentoDetalle.objects.create(
+                        documento=documento,
+                        cuenta_id=detalle['cuenta_id'],
+                        contacto_id=detalle['contacto_id'],
+                        total=detalle['total'],
+                        base_impuesto=detalle['base'],
+                        naturaleza=detalle['naturaleza'],
+                        detalle=detalle['descripcion']
+                    )
+                    registros_importados += 1
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+            else:
+                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
