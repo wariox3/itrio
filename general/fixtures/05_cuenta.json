@@ -5,7 +5,7 @@
         "fields": {
             "codigo": 110500,
             "nombre": "Caja",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -14,7 +14,7 @@
         "fields": {
             "codigo": 111000,
             "nombre": "Bancos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -23,7 +23,7 @@
         "fields": {
             "codigo": 111500,
             "nombre": "Remesas en tránsito",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -32,7 +32,7 @@
         "fields": {
             "codigo": 112000,
             "nombre": "ConCuentas de ahorro",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -41,7 +41,7 @@
         "fields": {
             "codigo": 112500,
             "nombre": "Fondos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -50,7 +50,7 @@
         "fields": {
             "codigo": 120500,
             "nombre": "Acciones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -59,7 +59,7 @@
         "fields": {
             "codigo": 121000,
             "nombre": "Cuotas o partes de interés social",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -68,7 +68,7 @@
         "fields": {
             "codigo": 121500,
             "nombre": "Bonos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -77,7 +77,7 @@
         "fields": {
             "codigo": 122000,
             "nombre": "Cédulas",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -86,7 +86,7 @@
         "fields": {
             "codigo": 122500,
             "nombre": "Certificados",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -95,7 +95,7 @@
         "fields": {
             "codigo": 123000,
             "nombre": "Papeles comerciales",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -104,7 +104,7 @@
         "fields": {
             "codigo": 123500,
             "nombre": "Títulos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -113,7 +113,7 @@
         "fields": {
             "codigo": 124000,
             "nombre": "Aceptaciones bancarias o financieras",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -122,7 +122,7 @@
         "fields": {
             "codigo": 124500,
             "nombre": "Derechos fiduciarios",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -131,7 +131,7 @@
         "fields": {
             "codigo": 125000,
             "nombre": "Derechos de recompra de inversiones negociadas (repos)",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -140,7 +140,7 @@
         "fields": {
             "codigo": 125500,
             "nombre": "Obligatorias",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -149,7 +149,7 @@
         "fields": {
             "codigo": 126000,
             "nombre": "ConCuentas en participación",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -158,7 +158,7 @@
         "fields": {
             "codigo": 129500,
             "nombre": "Otras inversiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -167,7 +167,7 @@
         "fields": {
             "codigo": 129900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -176,7 +176,7 @@
         "fields": {
             "codigo": 130500,
             "nombre": "Clientes",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -185,7 +185,7 @@
         "fields": {
             "codigo": 131000,
             "nombre": "ConCuentas corrientes comerciales",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -194,7 +194,7 @@
         "fields": {
             "codigo": 131500,
             "nombre": "ConCuentas por cobrar a casa matriz",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -203,7 +203,7 @@
         "fields": {
             "codigo": 132000,
             "nombre": "ConCuentas por cobrar a vinculados económicos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -212,7 +212,7 @@
         "fields": {
             "codigo": 132300,
             "nombre": "ConCuentas por cobrar a directores",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -221,7 +221,7 @@
         "fields": {
             "codigo": 132500,
             "nombre": "ConCuentas por cobrar a socios y accionistas",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -230,7 +230,7 @@
         "fields": {
             "codigo": 132800,
             "nombre": "Aportes por cobrar",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -239,7 +239,7 @@
         "fields": {
             "codigo": 133000,
             "nombre": "Anticipos y avances",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -248,7 +248,7 @@
         "fields": {
             "codigo": 133200,
             "nombre": "ConCuentas de operación conjunta",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -257,7 +257,7 @@
         "fields": {
             "codigo": 133500,
             "nombre": "Depósitos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -266,7 +266,7 @@
         "fields": {
             "codigo": 134000,
             "nombre": "Promesas de compra venta",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -275,7 +275,7 @@
         "fields": {
             "codigo": 134500,
             "nombre": "Ingresos por cobrar",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -284,7 +284,7 @@
         "fields": {
             "codigo": 135000,
             "nombre": "Retención sobre contratos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -293,7 +293,7 @@
         "fields": {
             "codigo": 135500,
             "nombre": "Anticipo de impuestos y contribuciones o saldos a favor",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -302,7 +302,7 @@
         "fields": {
             "codigo": 136000,
             "nombre": "Reclamaciones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -311,7 +311,7 @@
         "fields": {
             "codigo": 136500,
             "nombre": "ConCuentas por cobrar a trabajadores",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -320,7 +320,7 @@
         "fields": {
             "codigo": 137000,
             "nombre": "Préstamos a particulares",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -329,7 +329,7 @@
         "fields": {
             "codigo": 138000,
             "nombre": "Deudores varios",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -338,7 +338,7 @@
         "fields": {
             "codigo": 138500,
             "nombre": "Derechos de recompra de cartera negociada",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -347,7 +347,7 @@
         "fields": {
             "codigo": 139000,
             "nombre": "Deudas de difícil cobro",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -356,7 +356,7 @@
         "fields": {
             "codigo": 139900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -365,7 +365,7 @@
         "fields": {
             "codigo": 140500,
             "nombre": "Materias primas",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -374,7 +374,7 @@
         "fields": {
             "codigo": 141000,
             "nombre": "Productos en proceso",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -383,7 +383,7 @@
         "fields": {
             "codigo": 141500,
             "nombre": "Obras de construcción en curso",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -392,7 +392,7 @@
         "fields": {
             "codigo": 141700,
             "nombre": "Obras de urbanismo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -401,7 +401,7 @@
         "fields": {
             "codigo": 142000,
             "nombre": "Contratos en ejecución",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -410,7 +410,7 @@
         "fields": {
             "codigo": 142500,
             "nombre": "Cultivos en desarrollo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -419,7 +419,7 @@
         "fields": {
             "codigo": 142800,
             "nombre": "Plantaciones agrícolas",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -428,7 +428,7 @@
         "fields": {
             "codigo": 143000,
             "nombre": "Productos terminados",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -437,7 +437,7 @@
         "fields": {
             "codigo": 143500,
             "nombre": "Mercancías no fabricadas por la empresa",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -446,7 +446,7 @@
         "fields": {
             "codigo": 144000,
             "nombre": "Bienes raíces para la venta",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -455,7 +455,7 @@
         "fields": {
             "codigo": 144500,
             "nombre": "Semovientes",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -464,7 +464,7 @@
         "fields": {
             "codigo": 145000,
             "nombre": "Terrenos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -473,7 +473,7 @@
         "fields": {
             "codigo": 145500,
             "nombre": "Materiales, repuestos y accesorios",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -482,7 +482,7 @@
         "fields": {
             "codigo": 146000,
             "nombre": "Envases y empaques",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -491,7 +491,7 @@
         "fields": {
             "codigo": 146500,
             "nombre": "Inventarios en tránsito",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -500,7 +500,7 @@
         "fields": {
             "codigo": 149900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -509,7 +509,7 @@
         "fields": {
             "codigo": 150400,
             "nombre": "Terrenos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -518,7 +518,7 @@
         "fields": {
             "codigo": 150600,
             "nombre": "Materiales proyectos petroleros",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -527,7 +527,7 @@
         "fields": {
             "codigo": 150800,
             "nombre": "Construcciones en curso",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -536,7 +536,7 @@
         "fields": {
             "codigo": 151200,
             "nombre": "Maquinaria y equipos en montaje",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -545,7 +545,7 @@
         "fields": {
             "codigo": 151600,
             "nombre": "Construcciones y edificaciones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -554,7 +554,7 @@
         "fields": {
             "codigo": 152000,
             "nombre": "Maquinaria y equipo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -563,7 +563,7 @@
         "fields": {
             "codigo": 152400,
             "nombre": "Equipo de oficina",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -572,7 +572,7 @@
         "fields": {
             "codigo": 152800,
             "nombre": "Equipo de computación y comunicación",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -581,7 +581,7 @@
         "fields": {
             "codigo": 153200,
             "nombre": "Equipo médico-científico",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -590,7 +590,7 @@
         "fields": {
             "codigo": 153600,
             "nombre": "Equipo de hoteles y restaurantes",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -599,7 +599,7 @@
         "fields": {
             "codigo": 154000,
             "nombre": "Flota y equipo de transporte",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -608,7 +608,7 @@
         "fields": {
             "codigo": 154400,
             "nombre": "Flota y equipo fluvial y/o marítimo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -617,7 +617,7 @@
         "fields": {
             "codigo": 154800,
             "nombre": "Flota y equipo aéreo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -626,7 +626,7 @@
         "fields": {
             "codigo": 155200,
             "nombre": "Flota y equipo férreo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -635,7 +635,7 @@
         "fields": {
             "codigo": 155600,
             "nombre": "Acueductos, plantas y redes",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -644,7 +644,7 @@
         "fields": {
             "codigo": 156000,
             "nombre": "Armamento de vigilancia",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -653,7 +653,7 @@
         "fields": {
             "codigo": 156200,
             "nombre": "Envases y empaques",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -662,7 +662,7 @@
         "fields": {
             "codigo": 156400,
             "nombre": "Plantaciones agrícolas y forestales",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -671,7 +671,7 @@
         "fields": {
             "codigo": 156800,
             "nombre": "Vías de comunicación",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -680,7 +680,7 @@
         "fields": {
             "codigo": 157200,
             "nombre": "Minas y canteras",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -689,7 +689,7 @@
         "fields": {
             "codigo": 157600,
             "nombre": "Pozos artesianos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -698,7 +698,7 @@
         "fields": {
             "codigo": 158000,
             "nombre": "Yacimientos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -707,7 +707,7 @@
         "fields": {
             "codigo": 158400,
             "nombre": "Semovientes",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -716,7 +716,7 @@
         "fields": {
             "codigo": 158800,
             "nombre": "Propiedades, planta y equipo en tránsito",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -725,7 +725,7 @@
         "fields": {
             "codigo": 159200,
             "nombre": "Depreciación acumulada",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -734,7 +734,7 @@
         "fields": {
             "codigo": 159600,
             "nombre": "Depreciación diferida",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -743,7 +743,7 @@
         "fields": {
             "codigo": 159700,
             "nombre": "Amortización acumulada",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -752,7 +752,7 @@
         "fields": {
             "codigo": 159800,
             "nombre": "Agotamiento acumulado",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -761,7 +761,7 @@
         "fields": {
             "codigo": 159900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -770,7 +770,7 @@
         "fields": {
             "codigo": 160500,
             "nombre": "Crédito mercantil",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -779,7 +779,7 @@
         "fields": {
             "codigo": 161000,
             "nombre": "Marcas",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -788,7 +788,7 @@
         "fields": {
             "codigo": 161500,
             "nombre": "Patentes",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -797,7 +797,7 @@
         "fields": {
             "codigo": 162000,
             "nombre": "Concesiones y franquicias",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -806,7 +806,7 @@
         "fields": {
             "codigo": 162500,
             "nombre": "Derechos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -815,7 +815,7 @@
         "fields": {
             "codigo": 163000,
             "nombre": "Know how",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -824,7 +824,7 @@
         "fields": {
             "codigo": 163500,
             "nombre": "Licencias",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -833,7 +833,7 @@
         "fields": {
             "codigo": 169800,
             "nombre": "Depreciación y/o amortización acumulada",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -842,7 +842,7 @@
         "fields": {
             "codigo": 169900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -851,7 +851,7 @@
         "fields": {
             "codigo": 170500,
             "nombre": "Gastos pagados por anticipado",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -860,7 +860,7 @@
         "fields": {
             "codigo": 171000,
             "nombre": "Cargos diferidos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -869,7 +869,7 @@
         "fields": {
             "codigo": 171500,
             "nombre": "Costos de exploración por amortizar",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -878,7 +878,7 @@
         "fields": {
             "codigo": 172000,
             "nombre": "Costos de explotación y desarrollo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -887,7 +887,7 @@
         "fields": {
             "codigo": 173000,
             "nombre": "Cargos por corrección monetaria diferida",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -896,7 +896,7 @@
         "fields": {
             "codigo": 179800,
             "nombre": "Amortización acumulada",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -905,7 +905,7 @@
         "fields": {
             "codigo": 180500,
             "nombre": "Bienes de arte y cultura",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -914,7 +914,7 @@
         "fields": {
             "codigo": 189500,
             "nombre": "Diversos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -923,7 +923,7 @@
         "fields": {
             "codigo": 189900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -932,7 +932,7 @@
         "fields": {
             "codigo": 190500,
             "nombre": "De inversiones",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -941,7 +941,7 @@
         "fields": {
             "codigo": 191000,
             "nombre": "De propiedades, planta y equipo",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -950,7 +950,7 @@
         "fields": {
             "codigo": 199500,
             "nombre": "De otros activos",
-            "ConCuenta_clase": 1
+            "cuenta_clase": 1
         }
     },
     {
@@ -959,7 +959,7 @@
         "fields": {
             "codigo": 210500,
             "nombre": "Bancos nacionales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -968,7 +968,7 @@
         "fields": {
             "codigo": 211000,
             "nombre": "Bancos del exterior",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -977,7 +977,7 @@
         "fields": {
             "codigo": 211500,
             "nombre": "Corporaciones financieras",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -986,7 +986,7 @@
         "fields": {
             "codigo": 212000,
             "nombre": "Compañías de financiamiento comercial",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -995,7 +995,7 @@
         "fields": {
             "codigo": 212500,
             "nombre": "Corporaciones de ahorro y vivienda",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1004,7 +1004,7 @@
         "fields": {
             "codigo": 213000,
             "nombre": "Entidades financieras del exterior",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1013,7 +1013,7 @@
         "fields": {
             "codigo": 213500,
             "nombre": "Compromisos de recompra de inversiones negociadas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1022,7 +1022,7 @@
         "fields": {
             "codigo": 214000,
             "nombre": "Compromisos de recompra de cartera negociada",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1031,7 +1031,7 @@
         "fields": {
             "codigo": 214500,
             "nombre": "Obligaciones gubernamentales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1040,7 +1040,7 @@
         "fields": {
             "codigo": 219500,
             "nombre": "Otras obligaciones",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1049,7 +1049,7 @@
         "fields": {
             "codigo": 220500,
             "nombre": "Nacionales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1058,7 +1058,7 @@
         "fields": {
             "codigo": 221000,
             "nombre": "Del exterior",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1067,7 +1067,7 @@
         "fields": {
             "codigo": 221500,
             "nombre": "ConCuentas corrientes comerciales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1076,7 +1076,7 @@
         "fields": {
             "codigo": 222000,
             "nombre": "Casa matriz",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1085,7 +1085,7 @@
         "fields": {
             "codigo": 222500,
             "nombre": "Compañías vinculadas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1094,7 +1094,7 @@
         "fields": {
             "codigo": 230500,
             "nombre": "ConCuentas corrientes comerciales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1103,7 +1103,7 @@
         "fields": {
             "codigo": 231000,
             "nombre": "A casa matriz",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1112,7 +1112,7 @@
         "fields": {
             "codigo": 231500,
             "nombre": "A compañías vinculadas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1121,7 +1121,7 @@
         "fields": {
             "codigo": 232000,
             "nombre": "A contratistas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1130,7 +1130,7 @@
         "fields": {
             "codigo": 233000,
             "nombre": "Órdenes de compra por utilizar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1139,7 +1139,7 @@
         "fields": {
             "codigo": 233500,
             "nombre": "Costos y gastos por pagar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1148,7 +1148,7 @@
         "fields": {
             "codigo": 234000,
             "nombre": "Instalamentos por pagar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1157,7 +1157,7 @@
         "fields": {
             "codigo": 234500,
             "nombre": "Acreedores oficiales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1166,7 +1166,7 @@
         "fields": {
             "codigo": 235000,
             "nombre": "Regalías por pagar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1175,7 +1175,7 @@
         "fields": {
             "codigo": 235500,
             "nombre": "Deudas con accionistas o socios",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1184,7 +1184,7 @@
         "fields": {
             "codigo": 235700,
             "nombre": "Deudas con directores",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1193,7 +1193,7 @@
         "fields": {
             "codigo": 236000,
             "nombre": "Dividendos o participaciones por pagar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1202,7 +1202,7 @@
         "fields": {
             "codigo": 236500,
             "nombre": "Retención en la fuente",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1211,7 +1211,7 @@
         "fields": {
             "codigo": 236700,
             "nombre": "Impuesto a las ventas retenido",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1220,7 +1220,7 @@
         "fields": {
             "codigo": 236800,
             "nombre": "Impuesto de industria y comercio retenido",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1229,7 +1229,7 @@
         "fields": {
             "codigo": 237000,
             "nombre": "Retenciones y aportes de nómina",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1238,7 +1238,7 @@
         "fields": {
             "codigo": 237500,
             "nombre": "Cuotas por devolver",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1247,7 +1247,7 @@
         "fields": {
             "codigo": 238000,
             "nombre": "Acreedores varios",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1256,7 +1256,7 @@
         "fields": {
             "codigo": 240400,
             "nombre": "De renta y complementarios",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1265,7 +1265,7 @@
         "fields": {
             "codigo": 240800,
             "nombre": "Impuesto sobre las ventas por pagar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1274,7 +1274,7 @@
         "fields": {
             "codigo": 241200,
             "nombre": "De industria y comercio",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1283,7 +1283,7 @@
         "fields": {
             "codigo": 241600,
             "nombre": "A la propiedad raíz",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1292,7 +1292,7 @@
         "fields": {
             "codigo": 242000,
             "nombre": "Derechos sobre instrumentos públicos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1301,7 +1301,7 @@
         "fields": {
             "codigo": 242400,
             "nombre": "De valorización",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1310,7 +1310,7 @@
         "fields": {
             "codigo": 242800,
             "nombre": "De turismo",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1319,7 +1319,7 @@
         "fields": {
             "codigo": 243200,
             "nombre": "Tasa por utilización de puertos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1328,7 +1328,7 @@
         "fields": {
             "codigo": 243600,
             "nombre": "De vehículos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1337,7 +1337,7 @@
         "fields": {
             "codigo": 244000,
             "nombre": "De espectáculos públicos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1346,7 +1346,7 @@
         "fields": {
             "codigo": 244400,
             "nombre": "De hidrocarburos y minas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1355,7 +1355,7 @@
         "fields": {
             "codigo": 244800,
             "nombre": "Regalías e impuestos a la pequeña y mediana minería",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1364,7 +1364,7 @@
         "fields": {
             "codigo": 245200,
             "nombre": "A las exportaciones cafeteras",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1373,7 +1373,7 @@
         "fields": {
             "codigo": 245600,
             "nombre": "A las importaciones",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1382,7 +1382,7 @@
         "fields": {
             "codigo": 246000,
             "nombre": "Cuotas de fomento",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1391,7 +1391,7 @@
         "fields": {
             "codigo": 246400,
             "nombre": "De licores, cervezas y cigarrillos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1400,7 +1400,7 @@
         "fields": {
             "codigo": 246800,
             "nombre": "Al sacrificio de ganado",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1409,7 +1409,7 @@
         "fields": {
             "codigo": 247200,
             "nombre": "Al azar y juegos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1418,7 +1418,7 @@
         "fields": {
             "codigo": 247600,
             "nombre": "Gravámenes y regalías por utilización del suelo",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1427,7 +1427,7 @@
         "fields": {
             "codigo": 249500,
             "nombre": "Otros",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1436,7 +1436,7 @@
         "fields": {
             "codigo": 250500,
             "nombre": "Salarios por pagar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1445,7 +1445,7 @@
         "fields": {
             "codigo": 251000,
             "nombre": "Cesantías consolidadas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1454,7 +1454,7 @@
         "fields": {
             "codigo": 251500,
             "nombre": "Intereses sobre cesantías",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1463,7 +1463,7 @@
         "fields": {
             "codigo": 252000,
             "nombre": "Prima de servicios",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1472,7 +1472,7 @@
         "fields": {
             "codigo": 252500,
             "nombre": "Vacaciones consolidadas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1481,7 +1481,7 @@
         "fields": {
             "codigo": 253000,
             "nombre": "Prestaciones extralegales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1490,7 +1490,7 @@
         "fields": {
             "codigo": 253200,
             "nombre": "Pensiones por pagar",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1499,7 +1499,7 @@
         "fields": {
             "codigo": 253500,
             "nombre": "Cuotas partes pensiones de jubilación",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1508,7 +1508,7 @@
         "fields": {
             "codigo": 254000,
             "nombre": "Indemnizaciones laborales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1517,7 +1517,7 @@
         "fields": {
             "codigo": 260500,
             "nombre": "Para costos y gastos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1526,7 +1526,7 @@
         "fields": {
             "codigo": 261000,
             "nombre": "Para obligaciones laborales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1535,7 +1535,7 @@
         "fields": {
             "codigo": 261500,
             "nombre": "Para obligaciones fiscales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1544,7 +1544,7 @@
         "fields": {
             "codigo": 262000,
             "nombre": "Pensiones de jubilación",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1553,7 +1553,7 @@
         "fields": {
             "codigo": 262500,
             "nombre": "Para obras de urbanismo",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1562,7 +1562,7 @@
         "fields": {
             "codigo": 263000,
             "nombre": "Para mantenimiento y reparaciones",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1571,7 +1571,7 @@
         "fields": {
             "codigo": 263500,
             "nombre": "Para contingencias",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1580,7 +1580,7 @@
         "fields": {
             "codigo": 264000,
             "nombre": "Para obligaciones de garantías",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1589,7 +1589,7 @@
         "fields": {
             "codigo": 269500,
             "nombre": "Provisiones diversas",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1598,7 +1598,7 @@
         "fields": {
             "codigo": 270500,
             "nombre": "Ingresos recibidos por anticipado",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1607,7 +1607,7 @@
         "fields": {
             "codigo": 271000,
             "nombre": "Abonos diferidos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1616,7 +1616,7 @@
         "fields": {
             "codigo": 271500,
             "nombre": "Utilidad diferida en ventas a plazos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1625,7 +1625,7 @@
         "fields": {
             "codigo": 272000,
             "nombre": "Crédito por corrección monetaria diferida",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1634,7 +1634,7 @@
         "fields": {
             "codigo": 272500,
             "nombre": "Impuestos diferidos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1643,7 +1643,7 @@
         "fields": {
             "codigo": 280500,
             "nombre": "Anticipos y avances recibidos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1652,7 +1652,7 @@
         "fields": {
             "codigo": 281000,
             "nombre": "Depósitos recibidos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1661,7 +1661,7 @@
         "fields": {
             "codigo": 281500,
             "nombre": "Ingresos recibidos para terceros",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1670,7 +1670,7 @@
         "fields": {
             "codigo": 282000,
             "nombre": "ConCuentas de operación conjunta",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1679,7 +1679,7 @@
         "fields": {
             "codigo": 282500,
             "nombre": "Retenciones a terceros sobre contratos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1688,7 +1688,7 @@
         "fields": {
             "codigo": 283000,
             "nombre": "Embargos judiciales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1697,7 +1697,7 @@
         "fields": {
             "codigo": 283500,
             "nombre": "Acreedores del sistema",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1706,7 +1706,7 @@
         "fields": {
             "codigo": 284000,
             "nombre": "ConCuentas en participación",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1715,7 +1715,7 @@
         "fields": {
             "codigo": 289500,
             "nombre": "Diversos",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1724,7 +1724,7 @@
         "fields": {
             "codigo": 290500,
             "nombre": "Bonos en circulación",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1733,7 +1733,7 @@
         "fields": {
             "codigo": 291000,
             "nombre": "Bonos obligatoriamente convertibles en acciones",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1742,7 +1742,7 @@
         "fields": {
             "codigo": 291500,
             "nombre": "Papeles comerciales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1751,7 +1751,7 @@
         "fields": {
             "codigo": 292000,
             "nombre": "Bonos pensionales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1760,7 +1760,7 @@
         "fields": {
             "codigo": 292500,
             "nombre": "Títulos pensionales",
-            "ConCuenta_clase": 2
+            "cuenta_clase": 2
         }
     },
     {
@@ -1769,7 +1769,7 @@
         "fields": {
             "codigo": 310500,
             "nombre": "Capital suscrito y pagado",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1778,7 +1778,7 @@
         "fields": {
             "codigo": 311500,
             "nombre": "Aportes sociales",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1787,7 +1787,7 @@
         "fields": {
             "codigo": 312000,
             "nombre": "Capital asignado",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1796,7 +1796,7 @@
         "fields": {
             "codigo": 312500,
             "nombre": "Inversión suplementaria al capital asignado",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1805,7 +1805,7 @@
         "fields": {
             "codigo": 313000,
             "nombre": "Capital de personas naturales",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1814,7 +1814,7 @@
         "fields": {
             "codigo": 313500,
             "nombre": "Aportes del Estado",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1823,7 +1823,7 @@
         "fields": {
             "codigo": 314000,
             "nombre": "Fondo social",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1832,7 +1832,7 @@
         "fields": {
             "codigo": 320500,
             "nombre": "Prima en colocación de acciones, cuotas o partes de interés social",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1841,7 +1841,7 @@
         "fields": {
             "codigo": 321000,
             "nombre": "Donaciones",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1850,7 +1850,7 @@
         "fields": {
             "codigo": 321500,
             "nombre": "Crédito mercantil",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1859,7 +1859,7 @@
         "fields": {
             "codigo": 322000,
             "nombre": "Know how",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1868,7 +1868,7 @@
         "fields": {
             "codigo": 322500,
             "nombre": "Superávit método de participación",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1877,7 +1877,7 @@
         "fields": {
             "codigo": 330500,
             "nombre": "Reservas obligatorias",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1886,7 +1886,7 @@
         "fields": {
             "codigo": 331000,
             "nombre": "Reservas estatutarias",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1895,7 +1895,7 @@
         "fields": {
             "codigo": 331500,
             "nombre": "Reservas ocasionales",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1904,7 +1904,7 @@
         "fields": {
             "codigo": 340500,
             "nombre": "Ajustes por inflación",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1913,7 +1913,7 @@
         "fields": {
             "codigo": 341000,
             "nombre": "Saneamiento fiscal",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1922,7 +1922,7 @@
         "fields": {
             "codigo": 341500,
             "nombre": "Ajustes por inflación Decreto 3019 de 1989",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1931,7 +1931,7 @@
         "fields": {
             "codigo": 350500,
             "nombre": "Dividendos decretados en acciones",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1940,7 +1940,7 @@
         "fields": {
             "codigo": 351000,
             "nombre": "Participaciones decretadas en cuotas o partes de interés social",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1949,7 +1949,7 @@
         "fields": {
             "codigo": 360500,
             "nombre": "Utilidad del ejercicio",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1958,7 +1958,7 @@
         "fields": {
             "codigo": 361000,
             "nombre": "Pérdida del ejercicio",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1967,7 +1967,7 @@
         "fields": {
             "codigo": 370500,
             "nombre": "Utilidades acumuladas",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1976,7 +1976,7 @@
         "fields": {
             "codigo": 371000,
             "nombre": "Pérdidas acumuladas",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1985,7 +1985,7 @@
         "fields": {
             "codigo": 380500,
             "nombre": "De inversiones",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -1994,7 +1994,7 @@
         "fields": {
             "codigo": 381000,
             "nombre": "De propiedades, planta y equipo",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -2003,7 +2003,7 @@
         "fields": {
             "codigo": 389500,
             "nombre": "De otros activos",
-            "ConCuenta_clase": 3
+            "cuenta_clase": 3
         }
     },
     {
@@ -2012,7 +2012,7 @@
         "fields": {
             "codigo": 410500,
             "nombre": "Agricultura, ganadería, caza y silvicultura",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2021,7 +2021,7 @@
         "fields": {
             "codigo": 411000,
             "nombre": "Pesca",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2030,7 +2030,7 @@
         "fields": {
             "codigo": 411500,
             "nombre": "Explotación de minas y canteras",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2039,7 +2039,7 @@
         "fields": {
             "codigo": 412000,
             "nombre": "Industrias manufactureras",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2048,7 +2048,7 @@
         "fields": {
             "codigo": 412500,
             "nombre": "Suministro de electricidad, gas y agua",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2057,7 +2057,7 @@
         "fields": {
             "codigo": 413000,
             "nombre": "Construcción",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2066,7 +2066,7 @@
         "fields": {
             "codigo": 413500,
             "nombre": "Comercio al por mayor y al por menor",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2075,7 +2075,7 @@
         "fields": {
             "codigo": 414000,
             "nombre": "Hoteles y restaurantes",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2084,7 +2084,7 @@
         "fields": {
             "codigo": 414500,
             "nombre": "Transporte, almacenamiento y comunicaciones",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2093,7 +2093,7 @@
         "fields": {
             "codigo": 415000,
             "nombre": "Actividad financiera",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2102,7 +2102,7 @@
         "fields": {
             "codigo": 415500,
             "nombre": "Actividades inmobiliarias, empresariales y de alquiler",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2111,7 +2111,7 @@
         "fields": {
             "codigo": 416000,
             "nombre": "Enseñanza",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2120,7 +2120,7 @@
         "fields": {
             "codigo": 416500,
             "nombre": "Servicios sociales y de salud",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2129,7 +2129,7 @@
         "fields": {
             "codigo": 417000,
             "nombre": "Otras actividades de servicios comunitarios, sociales y personales",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2138,7 +2138,7 @@
         "fields": {
             "codigo": 417500,
             "nombre": "Devoluciones en ventas (DB)",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2147,7 +2147,7 @@
         "fields": {
             "codigo": 420500,
             "nombre": "Otras ventas",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2156,7 +2156,7 @@
         "fields": {
             "codigo": 421000,
             "nombre": "Financieros",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2165,7 +2165,7 @@
         "fields": {
             "codigo": 421500,
             "nombre": "Dividendos y participaciones",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2174,7 +2174,7 @@
         "fields": {
             "codigo": 421800,
             "nombre": "Ingresos método de participación",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2183,7 +2183,7 @@
         "fields": {
             "codigo": 422000,
             "nombre": "Arrendamientos",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2192,7 +2192,7 @@
         "fields": {
             "codigo": 422500,
             "nombre": "Comisiones",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2201,7 +2201,7 @@
         "fields": {
             "codigo": 423000,
             "nombre": "Honorarios",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2210,7 +2210,7 @@
         "fields": {
             "codigo": 423500,
             "nombre": "Servicios",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2219,7 +2219,7 @@
         "fields": {
             "codigo": 424000,
             "nombre": "Utilidad en venta de inversiones",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2228,7 +2228,7 @@
         "fields": {
             "codigo": 424500,
             "nombre": "Utilidad en venta de propiedades, planta y equipo",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2237,7 +2237,7 @@
         "fields": {
             "codigo": 424800,
             "nombre": "Utilidad en venta de otros bienes",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2246,7 +2246,7 @@
         "fields": {
             "codigo": 425000,
             "nombre": "Recuperaciones",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2255,7 +2255,7 @@
         "fields": {
             "codigo": 425500,
             "nombre": "Indemnizaciones",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2264,7 +2264,7 @@
         "fields": {
             "codigo": 426000,
             "nombre": "Participaciones en concesiones",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2273,7 +2273,7 @@
         "fields": {
             "codigo": 426500,
             "nombre": "Ingresos de ejercicios anteriores",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2282,7 +2282,7 @@
         "fields": {
             "codigo": 427500,
             "nombre": "Devoluciones en otras ventas (DB)",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2291,7 +2291,7 @@
         "fields": {
             "codigo": 429500,
             "nombre": "Diversos",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2300,7 +2300,7 @@
         "fields": {
             "codigo": 470500,
             "nombre": "Corrección monetaria",
-            "ConCuenta_clase": 4
+            "cuenta_clase": 4
         }
     },
     {
@@ -2309,7 +2309,7 @@
         "fields": {
             "codigo": 510500,
             "nombre": "Gastos de personal",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2318,7 +2318,7 @@
         "fields": {
             "codigo": 511000,
             "nombre": "Honorarios",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2327,7 +2327,7 @@
         "fields": {
             "codigo": 511500,
             "nombre": "Impuestos",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2336,7 +2336,7 @@
         "fields": {
             "codigo": 512000,
             "nombre": "Arrendamientos",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2345,7 +2345,7 @@
         "fields": {
             "codigo": 512500,
             "nombre": "Contribuciones y afiliaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2354,7 +2354,7 @@
         "fields": {
             "codigo": 513000,
             "nombre": "Seguros",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2363,7 +2363,7 @@
         "fields": {
             "codigo": 513500,
             "nombre": "Servicios",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2372,7 +2372,7 @@
         "fields": {
             "codigo": 514000,
             "nombre": "Gastos legales",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2381,7 +2381,7 @@
         "fields": {
             "codigo": 514500,
             "nombre": "Mantenimiento y reparaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2390,7 +2390,7 @@
         "fields": {
             "codigo": 515000,
             "nombre": "Adecuación e instalación",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2399,7 +2399,7 @@
         "fields": {
             "codigo": 515500,
             "nombre": "Gastos de viaje",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2408,7 +2408,7 @@
         "fields": {
             "codigo": 516000,
             "nombre": "Depreciaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2417,7 +2417,7 @@
         "fields": {
             "codigo": 516500,
             "nombre": "Amortizaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2426,7 +2426,7 @@
         "fields": {
             "codigo": 519500,
             "nombre": "Diversos",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2435,7 +2435,7 @@
         "fields": {
             "codigo": 519900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2444,7 +2444,7 @@
         "fields": {
             "codigo": 520500,
             "nombre": "Gastos de personal",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2453,7 +2453,7 @@
         "fields": {
             "codigo": 521000,
             "nombre": "Honorarios",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2462,7 +2462,7 @@
         "fields": {
             "codigo": 521500,
             "nombre": "Impuestos",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2471,7 +2471,7 @@
         "fields": {
             "codigo": 522000,
             "nombre": "Arrendamientos",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2480,7 +2480,7 @@
         "fields": {
             "codigo": 522500,
             "nombre": "Contribuciones y afiliaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2489,7 +2489,7 @@
         "fields": {
             "codigo": 523000,
             "nombre": "Seguros",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2498,7 +2498,7 @@
         "fields": {
             "codigo": 523500,
             "nombre": "Servicios",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2507,7 +2507,7 @@
         "fields": {
             "codigo": 524000,
             "nombre": "Gastos legales",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2516,7 +2516,7 @@
         "fields": {
             "codigo": 524500,
             "nombre": "Mantenimiento y reparaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2525,7 +2525,7 @@
         "fields": {
             "codigo": 525000,
             "nombre": "Adecuación e instalación",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2534,7 +2534,7 @@
         "fields": {
             "codigo": 525500,
             "nombre": "Gastos de viaje",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2543,7 +2543,7 @@
         "fields": {
             "codigo": 526000,
             "nombre": "Depreciaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2552,7 +2552,7 @@
         "fields": {
             "codigo": 526500,
             "nombre": "Amortizaciones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2561,7 +2561,7 @@
         "fields": {
             "codigo": 527000,
             "nombre": "Financieros-reajuste del sistema",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2570,7 +2570,7 @@
         "fields": {
             "codigo": 527500,
             "nombre": "Pérdidas método de participación",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2579,7 +2579,7 @@
         "fields": {
             "codigo": 529500,
             "nombre": "Diversos",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2588,7 +2588,7 @@
         "fields": {
             "codigo": 529900,
             "nombre": "Provisiones",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2597,7 +2597,7 @@
         "fields": {
             "codigo": 530500,
             "nombre": "Financieros",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2606,7 +2606,7 @@
         "fields": {
             "codigo": 531000,
             "nombre": "Pérdida en venta y retiro de bienes",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2615,7 +2615,7 @@
         "fields": {
             "codigo": 531300,
             "nombre": "Pérdidas método de participación",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2624,7 +2624,7 @@
         "fields": {
             "codigo": 531500,
             "nombre": "Gastos extraordinarios",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2633,7 +2633,7 @@
         "fields": {
             "codigo": 539500,
             "nombre": "Gastos diversos",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2642,7 +2642,7 @@
         "fields": {
             "codigo": 540500,
             "nombre": "Impuesto de renta y complementarios",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2651,7 +2651,7 @@
         "fields": {
             "codigo": 590500,
             "nombre": "Ganancias y pérdidas",
-            "ConCuenta_clase": 5
+            "cuenta_clase": 5
         }
     },
     {
@@ -2660,7 +2660,7 @@
         "fields": {
             "codigo": 610500,
             "nombre": "Agricultura, ganadería, caza y silvicultura",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2669,7 +2669,7 @@
         "fields": {
             "codigo": 611000,
             "nombre": "Pesca",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2678,7 +2678,7 @@
         "fields": {
             "codigo": 611500,
             "nombre": "Explotación de minas y canteras",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2687,7 +2687,7 @@
         "fields": {
             "codigo": 612000,
             "nombre": "Industrias manufactureras",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2696,7 +2696,7 @@
         "fields": {
             "codigo": 612500,
             "nombre": "Suministro de electricidad, gas y agua",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2705,7 +2705,7 @@
         "fields": {
             "codigo": 613000,
             "nombre": "Construcción",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2714,7 +2714,7 @@
         "fields": {
             "codigo": 613500,
             "nombre": "Comercio al por mayor y al por menor",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2723,7 +2723,7 @@
         "fields": {
             "codigo": 614000,
             "nombre": "Hoteles y restaurantes",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2732,7 +2732,7 @@
         "fields": {
             "codigo": 614500,
             "nombre": "Transporte, almacenamiento y comunicaciones",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2741,7 +2741,7 @@
         "fields": {
             "codigo": 615000,
             "nombre": "Actividad financiera",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2750,7 +2750,7 @@
         "fields": {
             "codigo": 615500,
             "nombre": "Actividades inmobiliarias, empresariales y de alquiler",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2759,7 +2759,7 @@
         "fields": {
             "codigo": 616000,
             "nombre": "Enseñanza",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2768,7 +2768,7 @@
         "fields": {
             "codigo": 616500,
             "nombre": "Servicios sociales y de salud",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2777,7 +2777,7 @@
         "fields": {
             "codigo": 617000,
             "nombre": "Otras actividades de servicios comunitarios, sociales y personales",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2786,7 +2786,7 @@
         "fields": {
             "codigo": 620500,
             "nombre": "De mercancías",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2795,7 +2795,7 @@
         "fields": {
             "codigo": 621000,
             "nombre": "De materias primas",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2804,7 +2804,7 @@
         "fields": {
             "codigo": 621500,
             "nombre": "De materiales indirectos",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2813,7 +2813,7 @@
         "fields": {
             "codigo": 622000,
             "nombre": "Compra de energía",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2822,7 +2822,7 @@
         "fields": {
             "codigo": 622500,
             "nombre": "Devoluciones en compras (CR)",
-            "ConCuenta_clase": 6
+            "cuenta_clase": 6
         }
     },
     {
@@ -2831,7 +2831,7 @@
         "fields": {
             "codigo": 810500,
             "nombre": "Bienes y valores entregados en custodia",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2840,7 +2840,7 @@
         "fields": {
             "codigo": 811000,
             "nombre": "Bienes y valores entregados en garantía",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2849,7 +2849,7 @@
         "fields": {
             "codigo": 811500,
             "nombre": "Bienes y valores en poder de terceros",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2858,7 +2858,7 @@
         "fields": {
             "codigo": 812000,
             "nombre": "Litigios y/o demandas",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2867,7 +2867,7 @@
         "fields": {
             "codigo": 812500,
             "nombre": "Promesas de compraventa",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2876,7 +2876,7 @@
         "fields": {
             "codigo": 819500,
             "nombre": "Diversas",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2885,7 +2885,7 @@
         "fields": {
             "codigo": 830500,
             "nombre": "Bienes recibidos en arrendamiento financiero",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2894,7 +2894,7 @@
         "fields": {
             "codigo": 831000,
             "nombre": "Títulos de inversión no colocados",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2903,7 +2903,7 @@
         "fields": {
             "codigo": 831500,
             "nombre": "Propiedades, planta y equipo totalmente depreciados, agotados y/o amortizados",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2912,7 +2912,7 @@
         "fields": {
             "codigo": 832000,
             "nombre": "Créditos a favor no utilizados",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2921,7 +2921,7 @@
         "fields": {
             "codigo": 832500,
             "nombre": "Activos castigados",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2930,7 +2930,7 @@
         "fields": {
             "codigo": 833000,
             "nombre": "Títulos de inversión amortizados",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2939,7 +2939,7 @@
         "fields": {
             "codigo": 833500,
             "nombre": "Capitalización por revalorización de patrimonio",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2948,7 +2948,7 @@
         "fields": {
             "codigo": 839500,
             "nombre": "Otras ConCuentas deudoras de control",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2957,7 +2957,7 @@
         "fields": {
             "codigo": 839900,
             "nombre": "Ajustes por inflación activos",
-            "ConCuenta_clase": 8
+            "cuenta_clase": 8
         }
     },
     {
@@ -2966,7 +2966,7 @@
         "fields": {
             "codigo": 910500,
             "nombre": "Bienes y valores recibidos en custodia",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -2975,7 +2975,7 @@
         "fields": {
             "codigo": 911000,
             "nombre": "Bienes y valores recibidos en garantía",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -2984,7 +2984,7 @@
         "fields": {
             "codigo": 911500,
             "nombre": "Bienes y valores recibidos de terceros",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -2993,7 +2993,7 @@
         "fields": {
             "codigo": 912000,
             "nombre": "Litigios y/o demandas",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -3002,7 +3002,7 @@
         "fields": {
             "codigo": 912500,
             "nombre": "Promesas de compraventa",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -3011,7 +3011,7 @@
         "fields": {
             "codigo": 913000,
             "nombre": "Contratos de administración delegada",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -3020,7 +3020,7 @@
         "fields": {
             "codigo": 913500,
             "nombre": "ConCuentas en participación",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -3029,7 +3029,7 @@
         "fields": {
             "codigo": 919500,
             "nombre": "Otras responsabilidades contingentes",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -3038,7 +3038,7 @@
         "fields": {
             "codigo": 930500,
             "nombre": "Contratos de arrendamiento financiero",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -3047,7 +3047,7 @@
         "fields": {
             "codigo": 939500,
             "nombre": "Otras ConCuentas de orden acreedoras de control",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     },
     {
@@ -3056,7 +3056,7 @@
         "fields": {
             "codigo": 939900,
             "nombre": "Ajustes por inflación patrimonio",
-            "ConCuenta_clase": 9
+            "cuenta_clase": 9
         }
     }
 ]
