@@ -117,80 +117,83 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         raw = request.data
         documento = GenDocumento.objects.get(pk=pk)
-        documentoSerializador = GenDocumentoSerializador(documento, data=raw, partial=True)
-        if documentoSerializador.is_valid():
-            documentoSerializador.save()
-            detalles = raw.get('detalles')
-            if detalles is not None:
-                for detalle in detalles:                
-                    if detalle.get('id'):
-                        documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle['id'])
-                        detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
-                    else:
-                        detalle['documento'] = documento.id
-                        detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
-                    if detalleSerializador.is_valid():
-                        documentoDetalle = detalleSerializador.save() 
-                        impuestos = detalle.get('impuestos')
-                        if impuestos is not None:
-                            for impuesto in impuestos:
-                                if impuesto.get('id'):
-                                    documentoImpuesto = GenDocumentoImpuesto.objects.get(pk=impuesto['id'])
-                                    documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(documentoImpuesto, data=impuesto, partial=True)    
-                                else:        
-                                    impuesto['documento_detalle'] = documentoDetalle.id                                     
-                                    documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(data=impuesto)                            
-                                if documentoImpuestoSerializador.is_valid():
-                                    documentoImpuestoSerializador.save()
-                                else:
-                                    return Response({'mensaje':'Errores de validacion detalle impuesto', 'codigo':14, 'validaciones': documentoImpuestoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                        
-                        impuestosEliminados = detalle.get('impuestos_eliminados')
-                        if impuestosEliminados is not None:
-                            for documentoImpuesto in impuestosEliminados:                                
-                                documentoImpuesto = GenDocumentoImpuesto.objects.get(pk=documentoImpuesto)
-                                documentoImpuesto.delete()                         
-                    else:
-                        return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
-            detallesEliminados = raw.get('detalles_eliminados')
-            if detallesEliminados is not None:
-                for detalle in detallesEliminados:                                
-                    documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle)
-                    documentoDetalle.delete()
-            documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk)
-            documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
-            detalles = documentoDetallesSerializador.data
-            for detalle in detalles:
-                documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
-                documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
-                detalle['impuestos'] = documentoImpuestosSerializador.data
-            documentoRespuesta = documentoSerializador.data
-            documentoRespuesta['detalles'] = detalles
+        if documento.estado_aprobado == False:
+            documentoSerializador = GenDocumentoSerializador(documento, data=raw, partial=True)
+            if documentoSerializador.is_valid():
+                documentoSerializador.save()
+                detalles = raw.get('detalles')
+                if detalles is not None:
+                    for detalle in detalles:                
+                        if detalle.get('id'):
+                            documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle['id'])
+                            detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
+                        else:
+                            detalle['documento'] = documento.id
+                            detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
+                        if detalleSerializador.is_valid():
+                            documentoDetalle = detalleSerializador.save() 
+                            impuestos = detalle.get('impuestos')
+                            if impuestos is not None:
+                                for impuesto in impuestos:
+                                    if impuesto.get('id'):
+                                        documentoImpuesto = GenDocumentoImpuesto.objects.get(pk=impuesto['id'])
+                                        documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(documentoImpuesto, data=impuesto, partial=True)    
+                                    else:        
+                                        impuesto['documento_detalle'] = documentoDetalle.id                                     
+                                        documentoImpuestoSerializador = GenDocumentoImpuestoSerializador(data=impuesto)                            
+                                    if documentoImpuestoSerializador.is_valid():
+                                        documentoImpuestoSerializador.save()
+                                    else:
+                                        return Response({'mensaje':'Errores de validacion detalle impuesto', 'codigo':14, 'validaciones': documentoImpuestoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                        
+                            impuestosEliminados = detalle.get('impuestos_eliminados')
+                            if impuestosEliminados is not None:
+                                for documentoImpuesto in impuestosEliminados:                                
+                                    documentoImpuesto = GenDocumentoImpuesto.objects.get(pk=documentoImpuesto)
+                                    documentoImpuesto.delete()                         
+                        else:
+                            return Response({'mensaje':'Errores de validacion detalle', 'codigo':14, 'validaciones': detalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
+                detallesEliminados = raw.get('detalles_eliminados')
+                if detallesEliminados is not None:
+                    for detalle in detallesEliminados:                                
+                        documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle)
+                        documentoDetalle.delete()
+                documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk)
+                documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
+                detalles = documentoDetallesSerializador.data
+                for detalle in detalles:
+                    documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+                    documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
+                    detalle['impuestos'] = documentoImpuestosSerializador.data
+                documentoRespuesta = documentoSerializador.data
+                documentoRespuesta['detalles'] = detalles
 
-            pagos = raw.get('pagos')
-            if pagos is not None:
-                for pago in pagos:                
-                    if pago.get('id'):
-                        documentoPago = GenDocumentoPago.objects.get(pk=pago['id'])
-                        documentoPagoSerializador = GenDocumentoPagoSerializador(documentoPago, data=pago, partial=True)    
-                    else:
-                        pago['documento'] = documento.id
-                        documentoPagoSerializador = GenDocumentoPagoSerializador(data=pago)
+                pagos = raw.get('pagos')
+                if pagos is not None:
+                    for pago in pagos:                
+                        if pago.get('id'):
+                            documentoPago = GenDocumentoPago.objects.get(pk=pago['id'])
+                            documentoPagoSerializador = GenDocumentoPagoSerializador(documentoPago, data=pago, partial=True)    
+                        else:
+                            pago['documento'] = documento.id
+                            documentoPagoSerializador = GenDocumentoPagoSerializador(data=pago)
 
-                    if documentoPagoSerializador.is_valid():
-                        documentoPago = documentoPagoSerializador.save()                         
-                    else:
-                        return Response({'mensaje':'Errores de validacion pago', 'codigo':14, 'validaciones': documentoPagoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
-            pagosEliminados = raw.get('pagos_eliminados')
-            if pagosEliminados is not None:
-                for pago in pagosEliminados:                                
-                    documentoPago = GenDocumentoPago.objects.get(pk=pago)
-                    documentoPago.delete()
-            documentoPagos = GenDocumentoPago.objects.filter(documento=pk)
-            documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
-            pagos = documentoPagosSerializador.data
-            documentoRespuesta['pagos'] = pagos   
-            return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)                    
-        return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        if documentoPagoSerializador.is_valid():
+                            documentoPago = documentoPagoSerializador.save()                         
+                        else:
+                            return Response({'mensaje':'Errores de validacion pago', 'codigo':14, 'validaciones': documentoPagoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)            
+                pagosEliminados = raw.get('pagos_eliminados')
+                if pagosEliminados is not None:
+                    for pago in pagosEliminados:                                
+                        documentoPago = GenDocumentoPago.objects.get(pk=pago)
+                        documentoPago.delete()
+                documentoPagos = GenDocumentoPago.objects.filter(documento=pk)
+                documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
+                pagos = documentoPagosSerializador.data
+                documentoRespuesta['pagos'] = pagos   
+                return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)                    
+            return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Los documentos aprobados no se pueden modificar', 'codigo':14}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'lista',)
     def lista(self, request):
