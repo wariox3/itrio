@@ -8,12 +8,14 @@ class CtnInformacionFacturacionSerializador(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         ciudad_nombre = ""
-        ciudad_nombre_mascara = ""
+        ciudad_estado_nombre = ""
+        ciudad_estado_pais_nombre = ""
         if instance.ciudad:
             ciudad_nombre = instance.ciudad.nombre
             if instance.ciudad.estado:
+                ciudad_estado_nombre = instance.ciudad.estado.nombre
                 if instance.ciudad.estado.pais:
-                    ciudad_nombre_mascara = instance.ciudad.nombre + ", " + instance.ciudad.estado.nombre + ", " + instance.ciudad.estado.pais.nombre
+                    ciudad_estado_pais_nombre = instance.ciudad.estado.pais.nombre
         return {
             'id': instance.id,            
             'numero_identificacion':instance.numero_identificacion,
@@ -25,6 +27,7 @@ class CtnInformacionFacturacionSerializador(serializers.ModelSerializer):
             'identificacion_id':instance.identificacion_id,
             'ciudad_id':instance.ciudad_id,
             'ciudad_nombre': ciudad_nombre,
-            'ciudad_nombre_mascara': ciudad_nombre_mascara,
+            'ciudad_estado_nombre': ciudad_estado_nombre,
+            'ciudad_estado_pais_nombre': ciudad_estado_pais_nombre,
             'usuario_id':instance.usuario_id
         }   
