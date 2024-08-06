@@ -4,20 +4,16 @@ from rest_framework import serializers
 class CtnCiudadSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CtnCiudad
-        fields = [
-            'id', 
-            'nombre'
-            ]  
+        fields = ['id', 'nombre']  
         
     def to_representation(self, instance):
-        nombre_ciudad = instance.nombre
-        nombre_estado = instance.estado.nombre
-
-        nombre_completo = f"{nombre_ciudad} - {nombre_estado}"
-
+        estado_nombre = ''        
+        if instance.estado:
+            estado_nombre = instance.estado.nombre
         return {
             'id': instance.id,            
-            'nombre': nombre_completo,
+            'nombre': instance.nombre,
+            'estado_nombre': estado_nombre
         }
      
 class CtnCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
@@ -26,12 +22,11 @@ class CtnCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerial
         model = CtnCiudad
 
     def to_representation(self, instance):
-        nombre_ciudad = instance.nombre
-        nombre_estado = instance.estado.nombre
-
-        nombre_completo = f"{nombre_ciudad} - {nombre_estado}"
-
+        estado_nombre = ''        
+        if instance.estado:
+            estado_nombre = instance.estado.nombre
         return {
-            'ciudad_id': instance.id,            
-            'ciudad_nombre': nombre_completo,
-        } 
+            'id': instance.id,            
+            'nombre': instance.nombre,
+            'estado_nombre': estado_nombre
+        }
