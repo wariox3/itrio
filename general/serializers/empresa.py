@@ -8,14 +8,12 @@ class GenEmpresaSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id','identificacion', 'numero_identificacion','digito_verificacion','nombre_corto','direccion','ciudad','telefono','correo','tipo_persona','regimen','imagen','contenedor_id','rededoc_id','subdominio']
         
     def to_representation(self, instance):
-        nombre_ciudad = ""
-        nombre_estado = ""
+        ciudad_nombre = ""
+        ciudad_estado_nombre = ""
         if instance.ciudad:
-            nombre_ciudad = instance.ciudad.nombre        
+            ciudad_nombre = instance.ciudad.nombre        
             if instance.ciudad.estado:
-                nombre_estado = instance.ciudad.estado.nombre
-
-        nombre_completo = f"{nombre_ciudad} - {nombre_estado}"
+                ciudad_estado_nombre = instance.ciudad.estado.nombre
         tipo_persona_nombre = ""
         if instance.tipo_persona:
             tipo_persona_nombre = instance.tipo_persona.nombre
@@ -34,7 +32,8 @@ class GenEmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'identificacion_id': instance.identificacion_id,
             'identificacion_nombre': identificacion_nombre,
             'ciudad_id': instance.ciudad_id,
-            'ciudad_nombre': nombre_completo,
+            'ciudad_nombre': ciudad_nombre,
+            'ciudad_estado_nombre': ciudad_estado_nombre,
             'digito_verificacion': instance.digito_verificacion,
             'nombre_corto': instance.nombre_corto,
             'direccion': instance.direccion,
