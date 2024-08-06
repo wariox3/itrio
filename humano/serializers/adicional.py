@@ -2,14 +2,16 @@ from rest_framework import serializers
 from humano.models.adicional import HumAdicional
 from humano.models.contrato import HumContrato
 from humano.models.concepto import HumConcepto
+from humano.models.programacion import HumProgramacion
 
 class HumAdicionalSerializador(serializers.HyperlinkedModelSerializer):
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all())
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
+    programacion = serializers.PrimaryKeyRelatedField(queryset=HumProgramacion.objects.all())
 
     class Meta:
         model = HumAdicional
-        fields = ['id', 'valor', 'horas', 'aplica_dia_laborado', 'detalle', 'concepto', 'contrato']
+        fields = ['id', 'valor', 'horas', 'aplica_dia_laborado', 'detalle', 'concepto', 'contrato', 'programacion']
 
     def to_representation(self, instance):      
         concepto_nombre = ''
