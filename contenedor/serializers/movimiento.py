@@ -21,6 +21,7 @@ class CtnMovimientoSerializador(serializers.ModelSerializer):
             'vr_saldo': instance.vr_saldo,
             'vr_saldo_enmascarado': total_enmascarado,
             'documento_fisico': instance.documento_fisico,
+            'contenedor_movimiento_id': instance.contenedor_movimiento_id,
             'usuario_id': instance.usuario_id,
             'usuario_username': usuario_username
         }         
