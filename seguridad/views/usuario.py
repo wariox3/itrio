@@ -230,9 +230,8 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             return Response({'usuarios': usuariosSerializer.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)      
 
-
     @action(detail=False, methods=["get"], permission_classes=[permissions.AllowAny], url_path=r'detalle/(?P<id>\d+)')
-    def saldo(self, request, id=None):        
+    def detalle(self, request, id=None):        
         usuario = User.objects.get(id=id)
         if usuario:
             usuarioSerializador = UserSerializer(usuario)
