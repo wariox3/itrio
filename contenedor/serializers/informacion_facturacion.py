@@ -16,6 +16,9 @@ class CtnInformacionFacturacionSerializador(serializers.ModelSerializer):
                 ciudad_estado_nombre = instance.ciudad.estado.nombre
                 if instance.ciudad.estado.pais:
                     ciudad_estado_pais_nombre = instance.ciudad.estado.pais.nombre
+        identificacion_nombre = ''
+        if instance.identificacion:
+            identificacion_nombre = instance.identificacion.nombre
         return {
             'id': instance.id,            
             'numero_identificacion':instance.numero_identificacion,
@@ -25,6 +28,7 @@ class CtnInformacionFacturacionSerializador(serializers.ModelSerializer):
             'telefono':instance.telefono,
             'correo':instance.correo,
             'identificacion_id':instance.identificacion_id,
+            'identificacion_nombre': identificacion_nombre,
             'ciudad_id':instance.ciudad_id,
             'ciudad_nombre': ciudad_nombre,
             'ciudad_estado_nombre': ciudad_estado_nombre,

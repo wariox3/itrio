@@ -4,10 +4,7 @@ from rest_framework import serializers
 class CtnIdentificacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CtnIdentificacion
-        fields = [
-            'id', 
-            'nombre'
-            ]  
+        fields = ['id', 'nombre']  
         
     def to_representation(self, instance):
         return {

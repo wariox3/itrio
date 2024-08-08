@@ -1,5 +1,5 @@
 import secrets
-from rest_framework import status
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import UpdateModelMixin
@@ -7,8 +7,10 @@ from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
 from seguridad.models import User
 from contenedor.models import CtnVerificacion
+from contenedor.models import CtnInformacionFacturacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
 from contenedor.serializers.verificacion import CtnVerificacionSerializador
+from contenedor.serializers.informacion_facturacion import CtnInformacionFacturacionSerializador
 from datetime import datetime, timedelta
 from utilidades.zinc import Zinc
 from decouple import config
@@ -226,6 +228,19 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             usuarios = User.objects.filter(socio_id=socio_id)
             usuariosSerializer = UserSerializer(usuarios, many=True)                
             return Response({'usuarios': usuariosSerializer.data}, status=status.HTTP_200_OK)
-        return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
+        return Response({'mensaje':'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)      
+
+
+    @action(detail=False, methods=["get"], permission_classes=[permissions.AllowAny], url_path=r'detalle/(?P<id>\d+)')
+    def saldo(self, request, id=None):        
+        usuario = User.objects.get(id=id)
+        if usuario:
+            usuarioSerializador = UserSerializer(usuario)
+            informacionesFacturaciones = CtnInformacionFacturacion.objects.filter(usuario_id=id)
+            informacionesFacturacionesSerializador = CtnInformacionFacturacionSerializador(informacionesFacturaciones, many=True)
+            return Response({
+                'usuario': usuarioSerializador.data, 
+                'informaciones_facturaciones': informacionesFacturacionesSerializador.data}, status=status.HTTP_200_OK)
+        return Response({'mensaje':'El usuario no existe', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)          
 
         
