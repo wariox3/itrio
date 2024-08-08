@@ -212,3 +212,18 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+        
+    @action(detail=False, methods=["post"], url_path=r'marcar-adjunto',)
+    def marcar_adjunto(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                movimiento = CtnMovimiento.objects.get(pk=id)  
+                movimiento.documento_fisico = True
+                movimiento.save()   
+                return Response({'mensaje': 'Se marco correctamente'}, status=status.HTTP_200_OK)
+            except CtnMovimiento.DoesNotExist:
+                return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)         
