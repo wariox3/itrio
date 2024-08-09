@@ -804,77 +804,84 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             registros_importados = 0
             if documento.documento_tipo_id == 13:
                 for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-                    data = {
-                        'cuenta': row[0],
-                        'numero_identificacion':row[1],
-                        'debito': row[2] if row[2] is not None else 0,
-                        'credito': row[3] if row[3] is not None else 0,
-                        'base': row[4] if row[4] is not None else 0,
-                        'descripcion': row[5]                    
-                    }                    
-                    if not data['cuenta']:
+                    if len(row) == 5:
+                        data = {
+                            'cuenta': row[0],
+                            'numero_identificacion':row[1],
+                            'debito': row[2] if row[2] is not None else 0,
+                            'credito': row[3] if row[3] is not None else 0,
+                            'base': row[4] if row[4] is not None else 0,
+                            'descripcion': row[5]                    
+                        }                    
+                        if not data['cuenta']:
+                            error_dato = {
+                                'fila': i,
+                                'Mensaje': 'Debe digitar la cuenta'
+                            }
+                            errores_datos.append(error_dato)
+                            errores = True
+                        else:
+                            cuenta = ConCuenta.objects.filter(codigo=data['cuenta']).first()
+                            if cuenta is None:
+                                error_dato = {
+                                    'fila': i,
+                                    'Mensaje': f'La cuenta {data["cuenta"]} no existe'
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True
+                            else:
+                                data['cuenta_id'] = cuenta.id
+
+                        if not data['numero_identificacion']:
+                            error_dato = {
+                                'fila': i,
+                                'Mensaje': 'Debe digitar el numero de identificacion'
+                            }
+                            errores_datos.append(error_dato)
+                            errores = True  
+                        else:
+                            contacto = GenContacto.objects.filter(numero_identificacion=data['numero_identificacion']).first()
+                            if contacto is None:
+                                error_dato = {
+                                    'fila': i,
+                                    'Mensaje': f'El contacto con numero identificacion {data["numero_identificacion"]} no existe'
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True
+                            else:
+                                data['contacto_id'] = contacto.id                                 
+                        
+                        if data['debito'] == 0 and data['credito'] == 0:
+                                error_dato = {
+                                    'fila': i,
+                                    'Mensaje': f'Los debitos y creditos estan en cero'
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True
+                        else:
+                            if data['debito'] != 0 and data['credito'] != 0:
+                                error_dato = {
+                                    'fila': i,
+                                    'Mensaje': f'Los debitos y creditos tienen valores'
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True
+                            else:
+                                total = data['debito']
+                                naturaleza = 'D'
+                                if data['credito'] > 0:
+                                    total = data['credito']
+                                    naturaleza = 'C'
+                                data['naturaleza'] = naturaleza
+                                data['total'] = total
+                        data_documento_detalle.append(data) 
+                    else:
                         error_dato = {
                             'fila': i,
-                            'Mensaje': 'Debe digitar la cuenta'
+                            'Mensaje': f'La linea no tiene 5 columnas'
                         }
                         errores_datos.append(error_dato)
                         errores = True
-                    else:
-                        cuenta = ConCuenta.objects.filter(codigo=data['cuenta']).first()
-                        if cuenta is None:
-                            error_dato = {
-                                'fila': i,
-                                'Mensaje': f'La cuenta {data["cuenta"]} no existe'
-                            }
-                            errores_datos.append(error_dato)
-                            errores = True
-                        else:
-                            data['cuenta_id'] = cuenta.id
-
-                    if not data['numero_identificacion']:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': 'Debe digitar el numero de identificacion'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True  
-                    else:
-                        contacto = GenContacto.objects.filter(numero_identificacion=data['numero_identificacion']).first()
-                        if contacto is None:
-                            error_dato = {
-                                'fila': i,
-                                'Mensaje': f'El contacto con numero identificacion {data["numero_identificacion"]} no existe'
-                            }
-                            errores_datos.append(error_dato)
-                            errores = True
-                        else:
-                            data['contacto_id'] = contacto.id                                 
-                    
-                    if data['debito'] == 0 and data['credito'] == 0:
-                            error_dato = {
-                                'fila': i,
-                                'Mensaje': f'Los debitos y creditos estan en cero'
-                            }
-                            errores_datos.append(error_dato)
-                            errores = True
-                    else:
-                        if data['debito'] != 0 and data['credito'] != 0:
-                            error_dato = {
-                                'fila': i,
-                                'Mensaje': f'Los debitos y creditos tienen valores'
-                            }
-                            errores_datos.append(error_dato)
-                            errores = True
-                        else:
-                            total = data['debito']
-                            naturaleza = 'D'
-                            if data['credito'] > 0:
-                                total = data['credito']
-                                naturaleza = 'C'
-                            data['naturaleza'] = naturaleza
-                            data['total'] = total
-                    data_documento_detalle.append(data) 
-
             if errores == False:
                 for detalle in data_documento_detalle:
                     GenDocumentoDetalle.objects.create(
