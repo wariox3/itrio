@@ -3,7 +3,7 @@ from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.cuenta_clase import ConCuentaClase
 
 class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
-    cuenta_clase = serializers.PrimaryKeyRelatedField(queryset=ConCuentaClase.objects.all())
+    cuenta_clase = serializers.PrimaryKeyRelatedField(queryset=ConCuentaClase.objects.all(), allow_null=True)
     class Meta:
         model = ConCuenta
         fields = ['id', 'codigo', 'nombre', 'exige_base', 'exige_tercero', 'exige_grupo', 'permite_movimiento', 'cuenta_clase']
