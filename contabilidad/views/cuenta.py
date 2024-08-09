@@ -25,7 +25,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
             except Exception as e:     
                 return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
             
-            data_cuenta = []
+            data_modelo = []
             errores = False
             errores_datos = []
             registros_importados = 0
@@ -36,7 +36,8 @@ class CuentaViewSet(viewsets.ModelViewSet):
                     'clase_id': row[2],
                     'exige_tercero': row[3],
                     'exige_base': row[4],
-                    'permite_movimiento': row[5]                    
+                    'exige_grupo': row[5],
+                    'permite_movimiento': row[6]
                 }  
                 if not data['codigo']:
                     error_dato = {
@@ -98,6 +99,24 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         errores_datos.append(error_dato)
                         errores = True                    
 
+                if not data['exige_grupo']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar si la cuenta exige grupo'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+                else:
+                    if data['exige_grupo'] in ['SI', 'NO']:
+                        data['exige_grupo'] = data['exige_grupo'] == 'SI'
+                    else:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': 'Los valores validos son SI o NO'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True
+
                 if not data['permite_movimiento']:
                     error_dato = {
                         'fila': i,
@@ -115,15 +134,16 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         }
                         errores_datos.append(error_dato)
                         errores = True                        
-                data_cuenta.append(data)
+                data_modelo.append(data)
             if errores == False:
-                for detalle in data_cuenta:
+                for detalle in data_modelo:
                     ConCuenta.objects.create(
                         codigo=detalle['codigo'],
                         nombre=detalle['nombre'],
                         cuenta_clase_id=detalle['clase_id'],
                         exige_tercero=detalle['exige_tercero'],
                         exige_base=detalle['exige_base'],
+                        exige_grupo=detalle['exige_grupo'],
                         permite_movimiento=detalle['permite_movimiento']
                     )
                     registros_importados += 1

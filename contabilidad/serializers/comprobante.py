@@ -5,12 +5,14 @@ class ConComprobanteSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = ConComprobante
-        fields = ['id', 'nombre']
+        fields = ['id', 'nombre', 'codigo', 'permite_asiento']
 
     def to_representation(self, instance):
         return {
             'id': instance.id,
-            'nombre': instance.nombre
+            'nombre': instance.nombre,
+            'codigo': instance.codigo,
+            'permite_asiento' : instance.permite_asiento
         } 
 
 
@@ -22,6 +24,7 @@ class ConComprobanteListaAutocompletarSerializador(serializers.HyperlinkedModelS
     def to_representation(self, instance):
         return {
             'comprobante_id': instance.id,
-            'comprobante_nombre': instance.nombre
+            'comprobante_nombre': instance.nombre,
+            'comprobante_codigo': instance.codigo
         }         
         

@@ -1,15 +1,15 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from contabilidad.models.comprobante import ConComprobante
-from contabilidad.serializers.comprobante import ConComprobanteSerializador
+from contabilidad.models.grupo import ConGrupo
+from contabilidad.serializers.grupo import ConGrupoSerializador
 from io import BytesIO
 import base64
 import openpyxl
 
-class ComprobanteViewSet(viewsets.ModelViewSet):
-    queryset = ConComprobante.objects.all()
-    serializer_class = ConComprobanteSerializador
+class GrupoViewSet(viewsets.ModelViewSet):
+    queryset = ConGrupo.objects.all()
+    serializer_class = ConGrupoSerializador
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["post"], url_path=r'importar',)
@@ -33,7 +33,6 @@ class ComprobanteViewSet(viewsets.ModelViewSet):
                 data = {
                     'codigo': row[0],
                     'nombre':row[1],
-                    'permite_asiento': row[2]
                 }  
                 if not data['codigo']:
                     error_dato = {
@@ -49,36 +48,18 @@ class ComprobanteViewSet(viewsets.ModelViewSet):
                         'Mensaje': 'Debe digitar nombre'
                     }
                     errores_datos.append(error_dato)
-                    errores = True    
+                    errores = True 
 
-                if not data['permite_asiento']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar si la cuenta permite movimiento'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    if data['permite_asiento'] in ['SI', 'NO']:
-                        data['permite_asiento'] = data['permite_asiento'] == 'SI'
-                    else:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': 'Los valores validos son SI o NO'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
                 data_modelo.append(data)
             if errores == False:
                 for detalle in data_modelo:
-                    ConComprobante.objects.create(
+                    ConGrupo.objects.create(
                         codigo=detalle['codigo'],
-                        nombre=detalle['nombre'],
-                        permite_asiento=detalle['permite_asiento']
+                        nombre=detalle['nombre']                    
                     )
                     registros_importados += 1
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
