@@ -148,10 +148,10 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         permite_movimiento=detalle['permite_movimiento']
                     )
                     registros_importados += 1                                
-                gc.collect()
-                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
-            else:                
                 #gc.collect()
+                wb.close()
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+            else:                                
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
