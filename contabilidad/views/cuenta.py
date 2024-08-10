@@ -150,7 +150,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
                     registros_importados += 1
                 
                 del archivo_data, archivo, wb, sheet, data_modelo
-                #gc.collect()
+                gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
                 #del archivo_data, archivo, wb, sheet, data_modelo
