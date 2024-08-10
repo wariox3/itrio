@@ -147,13 +147,10 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         exige_grupo=detalle['exige_grupo'],
                         permite_movimiento=detalle['permite_movimiento']
                     )
-                    registros_importados += 1
-                
-                del archivo_data, archivo, wb, sheet, data_modelo
+                    registros_importados += 1                                
                 gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
-            else:
-                #del archivo_data, archivo, wb, sheet, data_modelo
+            else:                
                 #gc.collect()
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
