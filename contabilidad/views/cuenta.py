@@ -6,6 +6,7 @@ from contabilidad.serializers.cuenta import ConCuentaSerializador
 from io import BytesIO
 import base64
 import openpyxl
+import gc
 
 class CuentaViewSet(viewsets.ModelViewSet):
     queryset = ConCuenta.objects.all()
@@ -147,8 +148,13 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         permite_movimiento=detalle['permite_movimiento']
                     )
                     registros_importados += 1
+                
+                del archivo_data, archivo, wb, sheet, data_modelo
+                #gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
+                #del archivo_data, archivo, wb, sheet, data_modelo
+                #gc.collect()
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
