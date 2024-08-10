@@ -149,7 +149,6 @@ class CuentaViewSet(viewsets.ModelViewSet):
                     )
                     registros_importados += 1                                
                 #gc.collect()
-                wb.close()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:                                
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
