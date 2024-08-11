@@ -5,6 +5,7 @@ from contabilidad.models.movimiento import ConMovimiento
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.grupo import ConGrupo
+from contabilidad.models.periodo import ConPeriodo
 from general.models.contacto import GenContacto
 from contabilidad.serializers.movimiento import ConMovimientoSerializador
 from datetime import datetime
@@ -55,7 +56,20 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         'Mensaje': 'Debe digitar fecha'
                     }
                     errores_datos.append(error_dato)
-                    errores = True   
+                    errores = True
+                else:
+                    periodo_id = data['fecha'][:6]   
+                    periodo = ConPeriodo.objects.filter(id=periodo_id).first()
+                    if not periodo:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': f'El periodo {periodo_id} no existe'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True
+                    else:
+                        data['periodo_id'] = periodo_id
+
 
                 if not data['naturaleza']:
                     error_dato = {
@@ -136,6 +150,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         errores = True
                     else:
                         data['contacto_id'] = contacto.id
+                else:
+                    data['contacto_id'] = None
 
                 if data['detalle']:
                     if len(data['detalle']) > 150:
@@ -160,7 +176,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         comprobante_id=detalle['comprobante_id'],
                         cuenta_id=detalle['cuenta_id'],
                         grupo_id=detalle['grupo_id'],
-                        contacto_id=detalle['contacto_id']
+                        contacto_id=detalle['contacto_id'],
+                        periodo_id=detalle['periodo_id']
                     )
                     registros_importados += 1
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)

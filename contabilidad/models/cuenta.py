@@ -2,8 +2,8 @@ from django.db import models
 from contabilidad.models.cuenta_clase import ConCuentaClase
 
 class ConCuenta(models.Model):        
-    codigo = models.IntegerField(null=True)
-    nombre = models.CharField(max_length=100, null=True)
+    codigo = models.CharField(max_length=20)
+    nombre = models.CharField(max_length=100)
     exige_base = models.BooleanField(default = False)
     exige_tercero = models.BooleanField(default = False)
     exige_grupo = models.BooleanField(default = False)

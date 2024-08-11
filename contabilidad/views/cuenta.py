@@ -47,6 +47,16 @@ class CuentaViewSet(viewsets.ModelViewSet):
                     }
                     errores_datos.append(error_dato)
                     errores = True
+                else:
+                    cuenta = ConCuenta.objects.filter(codigo=data['codigo']).first()
+                    if cuenta:
+                        error_dato = {
+                            'fila': i,
+                            'Mensaje': f'La cuenta {data["codigo"]} ya existe'
+                        }
+                        errores_datos.append(error_dato)
+                        errores = True
+                    
 
                 if not data['nombre']:
                     error_dato = {
@@ -148,10 +158,10 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         permite_movimiento=detalle['permite_movimiento']
                     )
                     registros_importados += 1
-                #gc.collect()
+                gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:            
-                #gc.collect()                    
+                gc.collect()                    
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
