@@ -16,7 +16,6 @@ class ConGrupoSerializador(serializers.HyperlinkedModelSerializer):
 
 
 class ConGrupoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
-    
     class Meta:
         model = ConGrupo
 
@@ -25,5 +24,17 @@ class ConGrupoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
             'grupo_id': instance.id,
             'grupo_nombre': instance.nombre,
             'grupo_codigo': instance.codigo,
-        }         
+        }    
+
+class ConGrupoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ConGrupo
+        fields = ['id', 'nombre', 'codigo']
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'nombre': instance.nombre,
+            'codigo': instance.codigo
+        }    
         
