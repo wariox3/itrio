@@ -1,12 +1,12 @@
 from django.db import models
 
-class Guia(models.Model):
+class TteGuia(models.Model):
     fecha = models.DateField()
-    fechaRecogida = models.DateField(null=True)
-    fechaIngreso = models.DateField(null=True)
-    fechaDespacho = models.DateField(null=True)
-    fechaEntrega = models.DateField(null=True)
-    fechaSoporte = models.DateField(null=True)
+    fechaRecogida = models.DateTimeField(null=True)
+    fechaIngreso = models.DateTimeField(null=True)
+    fechaDespacho = models.DateTimeField(null=True)
+    fechaEntrega = models.DateTimeField(null=True)
+    fechaSoporte = models.DateTimeField(null=True)
     documento = models.CharField(max_length=30, null=True)
     destinatario = models.CharField(max_length=150, null=True)
     destinatarioDireccion = models.CharField(max_length=150, null=True)

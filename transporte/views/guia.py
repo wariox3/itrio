@@ -1,12 +1,12 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from transporte.models.guia import Guia
+from transporte.models.guia import TteGuia
 from transporte.serializers.guia import GuiaSerializador
 
 
 class GuiaViewSet(viewsets.ModelViewSet):
-    queryset = Guia.objects.all()
+    queryset = TteGuia.objects.all()
     serializer_class = GuiaSerializador
     permission_classes = [permissions.IsAuthenticated]
 

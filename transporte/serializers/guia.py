@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from transporte.models.guia import Guia
+from transporte.models.guia import TteGuia
 
 
 class GuiaSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
-        model = Guia
+        model = TteGuia
         fields = ['id']
 
     def to_representation(self, instance):        
