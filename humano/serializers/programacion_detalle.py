@@ -55,7 +55,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'pago_auxilio_transporte' : instance.pago_auxilio_transporte,
             'pago_incapacidad' : instance.pago_incapacidad,
             'pago_licencia' : instance.pago_licencia,
-            'pago_vacacion' : instance.pago_vacaciones,
+            'pago_vacacion' : instance.pago_vacacion,
             'descuento_salud' : instance.descuento_salud,
             'descuento_pension' : instance.descuento_pension,
             'descuento_fondo_solidaridad': instance.descuento_fondo_solidaridad,
