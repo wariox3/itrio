@@ -50,6 +50,19 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'contrato_id': instance.contrato_id,
             'contrato_contacto_id': instance.contrato.contacto_id,
             'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
-            'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto
+            'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
+            'pagos_horas': instance.pago_horas,
+            'pago_auxilio_transporte' : instance.pago_auxilio_transporte,
+            'pago_incapacidad' : instance.pago_incapacidad,
+            'pago_licencia' : instance.pago_licencia,
+            'pago_vacacion' : instance.pago_vacaciones,
+            'descuento_salud' : instance.descuento_salud,
+            'descuento_pension' : instance.descuento_pension,
+            'descuento_fondo_solidaridad': instance.descuento_fondo_solidaridad,
+            'descuento_retencion_fuente' : instance.descuento_retencion_fuente,
+            'descuento_adicional_permanente' : instance.descuento_adicional_permanente,
+            'descuento_adicional_programacion': instance.descuento_adicional_programacion,
+            'descuento_credito': instance.descuento_credito,
+            'descuento_embargo' : instance.descuento_embargo
         }         
         
