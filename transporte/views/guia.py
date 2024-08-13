@@ -2,12 +2,12 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from transporte.models.guia import TteGuia
-from transporte.serializers.guia import GuiaSerializador
+from transporte.serializers.guia import TteGuiaSerializador
 
 
 class GuiaViewSet(viewsets.ModelViewSet):
     queryset = TteGuia.objects.all()
-    serializer_class = GuiaSerializador
+    serializer_class = TteGuiaSerializador
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=["post"], url_path=r'importar_ruteo',)

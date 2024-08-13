@@ -21,6 +21,7 @@ class ListaView(APIView):
                 'con': 'contabilidad',
                 'ven': 'venta',
                 'inv': 'inventario',
+                'tte': 'transporte'
             }
             aplicacion = aplicaciones.get(aplicacion_prefijo)
             s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)                        
@@ -62,6 +63,7 @@ class AutocompletarView(APIView):
                 'con': 'contabilidad',
                 'ven': 'venta',
                 'inv': 'inventario',
+                'tte': 'transporte'
             }
             aplicacion = aplicaciones.get(aplicacion_prefijo)
             s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)                        
@@ -100,6 +102,7 @@ class BuscarView(APIView):
                 'con': 'contabilidad',
                 'ven': 'venta',
                 'inv': 'inventario',
+                'tte': 'transporte'
             }
             aplicacion = aplicaciones.get(aplicacion_prefijo)
             s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', modelo_serializado_nombre)                        

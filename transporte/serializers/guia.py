@@ -2,7 +2,7 @@ from rest_framework import serializers
 from transporte.models.guia import TteGuia
 
 
-class GuiaSerializador(serializers.HyperlinkedModelSerializer):    
+class TteGuiaSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = TteGuia
         fields = ['id']
