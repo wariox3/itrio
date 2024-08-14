@@ -14,7 +14,7 @@ class Wolframio():
             "digitoVerificacion": empresa.digito_verificacion, 
             "nombre" : empresa.nombre_corto,
             "direccion": empresa.direccion,
-            "celular" : empresa.telefono,
+            "telefono" : empresa.telefono,
             "correo" : empresa.correo,
             "ciudadId" : empresa.ciudad_id,
             "regimenId" : empresa.regimen_id,
