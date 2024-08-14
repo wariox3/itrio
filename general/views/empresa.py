@@ -82,7 +82,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             copia_correo_facturacion_electronica = raw.get('copia_correo_facturacion_electronica')
             if empresa_id and set_pruebas:                                            
                 empresa = GenEmpresa.objects.get(pk=1)
-                if empresa.numero_identificacion and empresa.nombre_corto and empresa.telefono and empresa.correo and empresa.ciudad and empresa.identificacion:
+                if empresa.numero_identificacion and empresa.nombre_corto and empresa.telefono and empresa.correo and empresa.ciudad and empresa.identificacion and empresa.digito_verificacion and empresa.direccion and empresa.regimen and empresa.tipo_persona:
                     if empresa.rededoc_id is None or empresa.rededoc_id == '':
                         wolframio = Wolframio()                
                         respuesta = wolframio.cuentaCrear(empresa, set_pruebas, correo_facturacion_electronica, copia_correo_facturacion_electronica)
@@ -95,7 +95,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                     else:
                         return Response({'mensaje':'La empresa ya esta activa con id ' + str(empresa.rededoc_id), 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'mensaje':'La empresa debe terner configurado tipo identificacion, numero identificacion, nombre, telefono, correo, ciudad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje':'La empresa debe terner configurado tipo identificacion, numero identificacion, digito verificacion, direccion, nombre, telefono, correo, ciudad, regimen, tipo, persona', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros, no tiene una resolución seleccionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except GenEmpresa.DoesNotExist:

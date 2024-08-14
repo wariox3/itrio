@@ -11,10 +11,14 @@ class Wolframio():
         url = "/api/cuenta/nuevo"        
         datos = {
             "numeroIdentificacion" : empresa.numero_identificacion,
+            "digitoVerificacion": empresa.digito_verificacion, 
             "nombre" : empresa.nombre_corto,
+            "direccion": empresa.direccion,
             "celular" : empresa.telefono,
             "correo" : empresa.correo,
             "ciudadId" : empresa.ciudad_id,
+            "regimenId" : empresa.regimen_id,
+            "tipoPersonaId" : empresa.tipo_persona_id,
             "identificacionId" : empresa.identificacion.id,
             "webhookEmision" : f"https://{empresa.subdominio}.reddocapi.co/general/documento/electronico_respuesta_emitir/",
             "webhookNotificacion" : f"https://{empresa.subdominio}.reddocapi.co/general/documento/electronico_respuesta_notificar/",
