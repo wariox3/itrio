@@ -23,7 +23,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumProgramacion
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_hasta_periodo', 'nombre', 'grupo', 'pago_tipo', 
-                  'neto', 'contratos', 'dias',
+                  'neto', 'contratos', 'dias', 'comentario',
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
                   'descuento_adicional_permanente', 'descuento_adicional_programacion', 'descuento_credito', 'descuento_embargo']
@@ -44,6 +44,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
             'neto': instance.neto,
             'contratos': instance.contratos,
             'dias': instance.dias,
+            'comentario': instance.comentario,
             'pago_horas': instance.pago_horas,
             'pago_auxilio_transporte': instance.pago_auxilio_transporte,
             'pago_incapacidad': instance.pago_incapacidad,
