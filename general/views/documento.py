@@ -256,7 +256,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documentoEliminar:
                         if documentoEliminar.estado_aprobado == False:
                             if not documentoEliminar.detalles.exists():
-                                if not documentoEliminar.detalles_afectado.exists():
+                                if not documentoEliminar.documentos_detalles_documento_afectado_rel.exists():
                                     documentoEliminar.delete()   
                                 else:
                                     return Response({'mensaje':'El documento con id ' + str(documentoEliminar.id) + ' esta afectado con algunos detalles', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                        
