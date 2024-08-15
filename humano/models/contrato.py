@@ -20,10 +20,10 @@ class HumContrato(models.Model):
     contacto = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='contratos_contacto_rel')
     grupo = models.ForeignKey(HumGrupo, on_delete=models.PROTECT, related_name='contratos_grupo_rel')
     sucursal = models.ForeignKey(HumSucursal, on_delete=models.PROTECT, null=True, related_name='contratos_sucursal_rel')
-    riesgo = models.ForeignKey(HumRiesgo, on_delete=models.PROTECT, related_name='contratos_riesgo_rel')
-    tipo_cotizante = models.ForeignKey(HumTipoCotizante, on_delete=models.PROTECT, related_name='contratos_tipo_cotizante_rel')
-    subtipo_cotizante = models.ForeignKey(HumSubtipoCotizante, on_delete=models.PROTECT, related_name='contratos_subtipo_cotizante_rel')
-    cargo = models.ForeignKey(HumCargo, on_delete=models.PROTECT, related_name='contratos_cargo_rel')
+    riesgo = models.ForeignKey(HumRiesgo, on_delete=models.PROTECT, null=True, related_name='contratos_riesgo_rel')
+    tipo_cotizante = models.ForeignKey(HumTipoCotizante, null=True, on_delete=models.PROTECT, related_name='contratos_tipo_cotizante_rel')
+    subtipo_cotizante = models.ForeignKey(HumSubtipoCotizante, null=True, on_delete=models.PROTECT, related_name='contratos_subtipo_cotizante_rel')
+    cargo = models.ForeignKey(HumCargo, on_delete=models.PROTECT, null=True, related_name='contratos_cargo_rel')
 
     class Meta:
         db_table = "hum_contrato"   
