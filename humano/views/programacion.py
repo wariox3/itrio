@@ -6,7 +6,7 @@ from humano.models.contrato import HumContrato
 from humano.serializers.programacion import HumProgramacionSerializador
 from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador
 from django.db.models import Q
-from datetime import date
+from datetime import datetime
 
 class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
@@ -24,12 +24,13 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                 contratos = HumContrato.objects.filter(
                         grupo_id=programacion.grupo_id                        
                         ).filter(
-                            Q(fecha_ultimo_pago__lt=programacion.fecha_hasta) | Q(fecha_desde=programacion.fecha_hasta_periodo) | Q(fecha_desde=programacion.fecha_hasta)
+                            Q(fecha_ultimo_pago__isnull=True) | Q(fecha_ultimo_pago__lt=programacion.fecha_hasta) | Q(fecha_desde=programacion.fecha_hasta_periodo) | Q(fecha_desde=programacion.fecha_hasta)
                         ).filter(
                             fecha_desde__lte=programacion.fecha_hasta_periodo
                         ).filter(
-                            Q(fecha_hasta__gte=programacion.fecha_desde) | Q(contrato_tipo_id=1))                
-                #contratos = HumContrato.objects.all()
+                            Q(fecha_hasta__gte=programacion.fecha_desde) | Q(contrato_tipo_id=1))   
+                #sql_query = str(contratos.query)
+                #print(sql_query)                                             
                 for contrato in contratos:
                     ingreso = False
                     if contrato.fecha_desde >= programacion.fecha_hasta and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
@@ -38,8 +39,6 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                     data = {
                         'programacion': programacion.id,
                         'contrato': contrato.id,
-                        'fecha_desde': programacion.fecha_desde,
-                        'fecha_hasta': programacion.fecha_hasta,
                         'salario': contrato.salario,
                         'pago_horas': programacion.pago_horas,
                         'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
@@ -55,17 +54,32 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         'descuento_credito': programacion.descuento_credito,
                         'descuento_embargo': programacion.descuento_embargo,
                         'ingreso': ingreso
-
                     }
                     if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
                         data['descuento_pension'] = False
                         data['descuento_salud'] = False
                         data['pago_auxilio_transporte'] = False
             
-                    '''if ($arContrato->getCodigoPensionFk() == 'PEN') {
-                        $arProgramacionDetalle->setDescuentoPension(0);
-                    }'''
+                    if contrato.pension_id == 4:
+                        data['descuento_pension'] = False
+                    
+                    fecha_desde = contrato.fecha_desde
+                    if fecha_desde < programacion.fecha_desde:
+                        fecha_desde = programacion.fecha_desde
+                    data['fecha_desde'] = fecha_desde
                         
+                    fecha_hasta = contrato.fecha_hasta
+                    if contrato.contrato_tipo_id == 1:
+                        fecha_hasta = programacion.fecha_hasta_periodo
+                    if fecha_hasta > programacion.fecha_hasta_periodo:
+                        fecha_hasta = programacion.fecha_hasta_periodo
+                    data['fecha_hasta'] = fecha_hasta
+                    
+                    diferencia = fecha_hasta - fecha_desde
+                    dias = diferencia.days + 1
+                    data['dias'] = dias
+                    data['dias_transporte'] = dias
+
                     programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
                     if programacion_detalle_serializador.is_valid():
                         programacion_detalle_serializador.save()
