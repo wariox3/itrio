@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from contenedor.models import Contenedor, UsuarioContenedor
 from seguridad.models import User
+from datetime import datetime
 
 class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
@@ -16,6 +17,11 @@ class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
         if plan:
             planNombre = plan.nombre
             usuariosBase = plan.usuarios_base
+        acceso_restringido = False
+        if instance.usuario:
+            usuario = instance.usuario
+            if usuario.vr_saldo > 0 and datetime.now().date() > usuario.fecha_limite_pago:
+                acceso_restringido = True            
         return {
             'id': instance.id,
             'usuario_id': instance.usuario_id,
@@ -29,7 +35,8 @@ class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
             'plan_id': instance.contenedor.plan_id,
             'plan_nombre': planNombre,
             'reddoc': instance.contenedor.reddoc,
-            'ruteo': instance.contenedor.ruteo
+            'ruteo': instance.contenedor.ruteo,
+            'acceso_restringido': acceso_restringido
         }
     
 class UsuarioContenedorConsultaContenedorSerializador(serializers.ModelSerializer):
