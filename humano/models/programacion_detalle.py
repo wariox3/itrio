@@ -2,7 +2,12 @@ from django.db import models
 from humano.models.programacion import HumProgramacion
 from humano.models.contrato import HumContrato
 
-class HumProgramacionDetalle(models.Model):            
+class HumProgramacionDetalle(models.Model):        
+    fecha_desde = models.DateField(null=True)
+    fecha_hasta = models.DateField(null=True)    
+    dias = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    dias_transporte = models.DecimalField(max_digits=10, decimal_places=3, default=0)    
+    salario = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     diurna = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     nocturna = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     festiva_diurna = models.DecimalField(max_digits=10, decimal_places=3, default=0)
@@ -27,6 +32,7 @@ class HumProgramacionDetalle(models.Model):
     descuento_adicional_programacion = models.BooleanField(default = True)
     descuento_credito = models.BooleanField(default = True)
     descuento_embargo = models.BooleanField(default = True)
+    neto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     programacion = models.ForeignKey(HumProgramacion, on_delete=models.PROTECT, related_name='pogramaciones_detalles_programacion_rel')
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='pogramaciones_detalles_contrato_rel')
 

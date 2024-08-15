@@ -25,6 +25,9 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                     data = {
                         'programacion': programacion.id,
                         'contrato': contrato.id,
+                        'fecha_desde': programacion.fecha_desde,
+                        'fecha_hasta': programacion.fecha_hasta,
+                        'salario': contrato.salario,
                         'pago_horas': programacion.pago_horas,
                         'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
                         'pago_incapacidad': programacion.pago_incapacidad,
