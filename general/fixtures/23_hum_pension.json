@@ -19,5 +19,12 @@
     "fields": {
         "nombre": "ALTO RIESGO", "porcentaje_empleado":4, "porcentaje_empleador":22
     }
+  },
+  {
+    "model": "humano.HumPension",
+    "pk": 4,
+    "fields": {
+        "nombre": "PENSIONADO", "porcentaje_empleado":0, "porcentaje_empleador":0
+    }
   }
 ]
