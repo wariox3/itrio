@@ -7,15 +7,19 @@ from general.models.empresa import GenEmpresa
 from general.models.plazo_pago import GenPlazoPago
 from general.models.gen_asesor import GenAsesor
 from general.models.sede import GenSede
+from humano.models.programacion_detalle import HumProgramacionDetalle
+from humano.models.contrato import HumContrato
+from humano.models.grupo import HumGrupo
 from seguridad.models import User
 
 class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):        
-    numero = serializers.IntegerField(allow_null=True, label='Numero', default=None)
+    numero = serializers.IntegerField(allow_null=True, default=None)
     fecha = serializers.DateField()
-    fecha_vence = serializers.DateField(allow_null=True, label='Vence', default=None)
-    fecha_contable = serializers.DateField(allow_null=True, label='Fecha contable', default=None)
+    fecha_vence = serializers.DateField(allow_null=True, default=None)
+    fecha_contable = serializers.DateField(allow_null=True, default=None)
+    fecha_hasta = serializers.DateField(allow_null=True, default=None)
     estado_aprobado = serializers.BooleanField(default = False, label='APR')    
-    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
+    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), default=None, allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
     metodo_pago = serializers.PrimaryKeyRelatedField(queryset=GenMetodoPago.objects.all(), default=None, allow_null=True)
     empresa = serializers.PrimaryKeyRelatedField(queryset=GenEmpresa.objects.all(), default=1)    
@@ -24,9 +28,17 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), default=None, allow_null=True)
     sede = serializers.PrimaryKeyRelatedField(queryset=GenSede.objects.all(), default=None, allow_null=True)
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
+    programacion_detalle = serializers.PrimaryKeyRelatedField(queryset=HumProgramacionDetalle.objects.all(), default=None, allow_null=True)
+    contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all(), default=None, allow_null=True)
+    grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all(), default=None, allow_null=True)
+    
     class Meta:
         model = GenDocumento
-        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario']
+        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'fecha_hasta', 'descuento', 'subtotal', 'impuesto', 'total', 
+                  'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
+                  'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
+                  'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
+                  'grupo', 'contrato', 'salario']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -75,7 +87,8 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'asesor': instance.asesor_id,
             'asesor_nombre_corto': asesor_nombre_corto,
             'sede': instance.sede_id,
-            'sede_nombre': sede_nombre
+            'sede_nombre': sede_nombre,
+            'programacion_detalle_id': instance.programacion_detalle_id
         }
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        

@@ -7,6 +7,9 @@ from general.models.empresa import GenEmpresa
 from general.models.plazo_pago import GenPlazoPago
 from general.models.gen_asesor import GenAsesor
 from general.models.sede import GenSede
+from humano.models.programacion_detalle import HumProgramacionDetalle
+from humano.models.contrato import HumContrato
+from humano.models.grupo import HumGrupo
 from seguridad.models import User
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -16,6 +19,7 @@ class GenDocumento(models.Model):
     fecha_contable = models.DateField(null=True)
     fecha_vence = models.DateField(null=True)
     fecha_validacion = models.DateTimeField(null=True)
+    fecha_hasta = models.DateField(null=True)
     subtotal = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total_bruto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
@@ -24,6 +28,9 @@ class GenDocumento(models.Model):
     impuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)    
     afectado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pendiente = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    salario = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    devengado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    deduccion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     estado_aprobado = models.BooleanField(default = False)
     estado_anulado = models.BooleanField(default = False)
     estado_electronico = models.BooleanField(default = False)    
@@ -45,6 +52,9 @@ class GenDocumento(models.Model):
     asesor = models.ForeignKey(GenAsesor, null=True, on_delete=models.PROTECT,related_name='documentos_asesor_rel')
     sede = models.ForeignKey(GenSede, null=True, on_delete=models.PROTECT,related_name='documentos_sede_rel')
     usuario = models.ForeignKey(User, null=True, on_delete=models.PROTECT,related_name='documentos_usuario_rel')
-
+    programacion_detalle = models.ForeignKey(HumProgramacionDetalle, null=True, on_delete=models.PROTECT,related_name='documentos_programacion_detalle_rel')
+    contrato = models.ForeignKey(HumContrato, null=True, on_delete=models.PROTECT,related_name='documentos_contrato_rel')
+    grupo = models.ForeignKey(HumGrupo, null=True, on_delete=models.PROTECT,related_name='documentos_grupo_rel')
+    
     class Meta:
         db_table = "gen_documento"

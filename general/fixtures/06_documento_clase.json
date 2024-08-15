@@ -63,5 +63,10 @@
     "model": "general.GenDocumentoClase",
     "pk": 601,
     "fields": {"nombre": "Asiento", "codigo_dian": "01", "grupo":6}
-  }  
+  },  
+  {
+    "model": "general.GenDocumentoClase",
+    "pk": 701,
+    "fields": {"nombre": "Nomina", "codigo_dian": "01", "grupo":7}
+  }
 ]

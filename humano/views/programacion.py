@@ -2,11 +2,14 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from humano.models.programacion import HumProgramacion
+from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
+from general.models.documento import GenDocumento
 from humano.serializers.programacion import HumProgramacionSerializador
 from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador
+from general.serializers.documento import GenDocumentoSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from django.db.models import Q
-from datetime import datetime
 
 class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
@@ -93,4 +96,40 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
         
     @action(detail=False, methods=["post"], url_path=r'generar',)
     def generar(self, request):             
-        return Response({'mensaje': 'Programacion generada con exito'}, status=status.HTTP_200_OK)        
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                programacion = HumProgramacion.objects.get(pk=id)
+                programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                                           
+                for programacion_detalle in programacion_detalles:                                  
+                    data = {
+                        'programacion_detalle': programacion_detalle.id,
+                        'documento_tipo': 14,
+                        'empresa': 1,
+                        'fecha': programacion_detalle.fecha_desde,
+                        'fecha_contable': programacion_detalle.fecha_desde,
+                        'fecha_hasta': programacion_detalle.fecha_hasta,
+                        'contrato': programacion_detalle.contrato_id,
+                        'contacto': programacion_detalle.contrato.contacto_id,
+                        'grupo': programacion_detalle.contrato.grupo_id,
+                        'salario': programacion_detalle.salario                      
+                    }
+                    documento_serializador = GenDocumentoSerializador(data=data)
+                    if documento_serializador.is_valid():
+                        documento = documento_serializador.save()
+                        data = {
+                            'documento': documento.id                     
+                        }
+                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                        if documento_detalle_serializador.is_valid():
+                            documento_detalle_serializador.save()
+                        else:
+                            return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
+                    else:
+                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
+                return Response({'contratos_cargados': True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumProgramacion.DoesNotExist:
+            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)             
