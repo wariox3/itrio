@@ -24,6 +24,7 @@ class HumProgramacion(models.Model):
     descuento_adicional_programacion = models.BooleanField(default = True)
     descuento_credito = models.BooleanField(default = True)
     descuento_embargo = models.BooleanField(default = True)
+    comentario = models.CharField(max_length=300, null=True)
     grupo = models.ForeignKey(HumGrupo, on_delete=models.PROTECT, related_name='pogramaciones_grupo_rel')
     pago_tipo = models.ForeignKey(HumPagoTipo, on_delete=models.PROTECT, related_name='pogramaciones_pago_tipo_rel')
 

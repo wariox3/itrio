@@ -1,0 +1,27 @@
+[
+  {
+    "model": "humano.HumRiesgo",
+    "pk": 1,
+    "fields": {"nombre": "I - 0.522", "codigo":"I", "porcentaje":0.522}
+  },
+  {
+    "model": "humano.HumRiesgo",
+    "pk": 2,
+    "fields": {"nombre": "II - 1.044", "codigo":"II", "porcentaje":1.044}
+  },
+  {
+    "model": "humano.HumRiesgo",
+    "pk": 3,
+    "fields": {"nombre": "III - 2.436", "codigo":"III", "porcentaje":2.436}
+  },
+  {
+    "model": "humano.HumRiesgo",
+    "pk": 4,
+    "fields": {"nombre": "IV - 4.350", "codigo":"IV", "porcentaje":4.35}
+  },
+  {
+    "model": "humano.HumRiesgo",
+    "pk": 5,
+    "fields": {"nombre": "V - 6.960", "codigo":"V", "porcentaje":6.96}
+  }
+]
