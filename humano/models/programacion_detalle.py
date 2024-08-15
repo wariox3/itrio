@@ -32,6 +32,7 @@ class HumProgramacionDetalle(models.Model):
     descuento_adicional_programacion = models.BooleanField(default = True)
     descuento_credito = models.BooleanField(default = True)
     descuento_embargo = models.BooleanField(default = True)
+    ingreso = models.BooleanField(default = False)
     neto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     programacion = models.ForeignKey(HumProgramacion, on_delete=models.PROTECT, related_name='pogramaciones_detalles_programacion_rel')
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='pogramaciones_detalles_contrato_rel')

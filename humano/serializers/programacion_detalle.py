@@ -24,7 +24,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
         model = HumProgramacionDetalle
         fields = ['id', 'dias', 'dias_transporte', 'salario', 'fecha_desde', 'fecha_hasta', 'diurna', 'nocturna', 'festiva_diurna', 'festiva_nocturna', 'extra_diurna', 'extra_nocturna', 
                   'extra_festiva_diurna', 'extra_festiva_nocturna', 'recargo_nocturno', 'recargo_festivo_diurno', 'recargo_festivo_nocturno',
-                  'programacion', 'contrato',
+                  'programacion', 'contrato', 'ingreso'
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
                   'descuento_adicional_permanente', 'descuento_adicional_programacion', 'descuento_credito', 'descuento_embargo']
@@ -57,6 +57,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'contrato_contacto_id': instance.contrato.contacto_id,
             'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
             'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
+            'ingreso': instance.ingreso,
             'pago_horas': instance.pago_horas,
             'pago_auxilio_transporte' : instance.pago_auxilio_transporte,
             'pago_incapacidad' : instance.pago_incapacidad,

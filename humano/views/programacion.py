@@ -1,12 +1,12 @@
-from rest_framework import viewsets, permissions, filters, status
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 from humano.models.programacion import HumProgramacion
-from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.serializers.programacion import HumProgramacionSerializador
 from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador
+from django.db.models import Q
+from datetime import date
 
 class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
@@ -20,8 +20,21 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             id = raw.get('id')
             if id:
                 programacion = HumProgramacion.objects.get(pk=id)
-                contratos = HumContrato.objects.all()
+                
+                contratos = HumContrato.objects.filter(
+                        grupo_id=programacion.grupo_id                        
+                        ).filter(
+                            Q(fecha_ultimo_pago__lt=programacion.fecha_hasta) | Q(fecha_desde=programacion.fecha_hasta_periodo) | Q(fecha_desde=programacion.fecha_hasta)
+                        ).filter(
+                            fecha_desde__lte=programacion.fecha_hasta_periodo
+                        ).filter(
+                            Q(fecha_hasta__gte=programacion.fecha_desde) | Q(contrato_tipo_id=1))                
+                #contratos = HumContrato.objects.all()
                 for contrato in contratos:
+                    ingreso = False
+                    if contrato.fecha_desde >= programacion.fecha_hasta and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
+                        ingreso = True                
+
                     data = {
                         'programacion': programacion.id,
                         'contrato': contrato.id,
@@ -40,9 +53,19 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         'descuento_adicional_permanente': programacion.descuento_adicional_permanente,
                         'descuento_adicional_programacion': programacion.descuento_adicional_programacion,
                         'descuento_credito': programacion.descuento_credito,
-                        'descuento_embargo': programacion.descuento_embargo
+                        'descuento_embargo': programacion.descuento_embargo,
+                        'ingreso': ingreso
 
                     }
+                    if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
+                        data['descuento_pension'] = False
+                        data['descuento_salud'] = False
+                        data['pago_auxilio_transporte'] = False
+            
+                    '''if ($arContrato->getCodigoPensionFk() == 'PEN') {
+                        $arProgramacionDetalle->setDescuentoPension(0);
+                    }'''
+                        
                     programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
                     if programacion_detalle_serializador.is_valid():
                         programacion_detalle_serializador.save()

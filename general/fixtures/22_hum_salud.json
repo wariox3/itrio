@@ -1,0 +1,16 @@
+[
+  {
+      "model": "humano.HumSalud",
+      "pk": 1,
+      "fields": {
+          "nombre": "EMPLEADO"
+      }
+  },
+  {
+    "model": "humano.HumSalud",
+    "pk": 2,
+    "fields": {
+        "nombre": "EMPLEADOR"
+    }
+  }    
+]

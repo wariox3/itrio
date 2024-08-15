@@ -12,6 +12,8 @@ from .views.riesgo import HumRiesgoViewSet
 from .views.cargo import HumCargoViewSet
 from .views.tipo_cotizante import HumTipoCotizanteViewSet
 from .views.subtipo_cotizante import HumSubtipoCotizanteViewSet
+from .views.salud import HumSaludViewSet
+from .views.pension import HumPensionViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -28,6 +30,8 @@ router.register(r'riesgo', HumRiesgoViewSet)
 router.register(r'cargo', HumCargoViewSet)
 router.register(r'tipo_cotizante', HumTipoCotizanteViewSet)
 router.register(r'subtipo_cotizante', HumSubtipoCotizanteViewSet)
+router.register(r'salud', HumSaludViewSet)
+router.register(r'pension', HumPensionViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),

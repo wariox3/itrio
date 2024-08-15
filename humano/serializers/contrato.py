@@ -8,6 +8,8 @@ from humano.models.riesgo import HumRiesgo
 from humano.models.tipo_cotizante import HumTipoCotizante
 from humano.models.subtipo_cotizante import HumSubtipoCotizante
 from humano.models.cargo import HumCargo
+from humano.models.salud import HumSalud
+from humano.models.pension import HumPension
 
 class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     contrato_tipo = serializers.PrimaryKeyRelatedField(queryset=HumContratoTipo.objects.all())
@@ -16,13 +18,16 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     sucursal = serializers.PrimaryKeyRelatedField(queryset=HumSucursal.objects.all(), default=None, allow_null=True)
     riesgo = serializers.PrimaryKeyRelatedField(queryset=HumRiesgo.objects.all())
     cargo = serializers.PrimaryKeyRelatedField(queryset=HumCargo.objects.all())
+    salud = serializers.PrimaryKeyRelatedField(queryset=HumSalud.objects.all())
+    pension = serializers.PrimaryKeyRelatedField(queryset=HumPension.objects.all())
     tipo_cotizante = serializers.PrimaryKeyRelatedField(queryset=HumTipoCotizante.objects.all())
     subtipo_cotizante = serializers.PrimaryKeyRelatedField(queryset=HumSubtipoCotizante.objects.all())
 
     class Meta:
         model = HumContrato
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'salario', 'auxilio_transporte', 'salario_integral', 'estado_terminado', 
-                  'comentario', 'contrato_tipo', 'grupo', 'contacto', 'sucursal', 'riesgo', 'cargo', 'tipo_cotizante', 'subtipo_cotizante']
+                  'comentario', 'contrato_tipo', 'grupo', 'contacto', 'sucursal', 'riesgo', 'cargo', 'tipo_cotizante', 'subtipo_cotizante',
+                  'salud', 'pension']
 
     def to_representation(self, instance):
         contrato_tipo_nombre = ''
@@ -51,6 +56,12 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         subtipo_cotizante_nombre = ''
         if instance.subtipo_cotizante:
             subtipo_cotizante_nombre = instance.subtipo_cotizante.nombre
+        salud_nombre = ''
+        if instance.salud:
+            salud_nombre = instance.salud.nombre
+        pension_nombre = ''
+        if instance.pension:
+            pension_nombre = instance.pension.nombre
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
@@ -76,7 +87,11 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'tipo_cotizante_id': instance.tipo_cotizante_id,
             'tipo_cotizante_nombre': tipo_cotizante_nombre,
             'subtipo_cotizante_id': instance.subtipo_cotizante_id,
-            'subtipo_cotizante_nombre': subtipo_cotizante_nombre
+            'subtipo_cotizante_nombre': subtipo_cotizante_nombre,
+            'salud_id': instance.salud_id,
+            'salud_nombre': salud_nombre,
+            'pension_id': instance.pension_id,
+            'pension_nombre': pension_nombre
         } 
 
 
