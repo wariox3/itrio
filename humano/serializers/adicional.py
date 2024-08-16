@@ -7,7 +7,7 @@ from humano.models.programacion import HumProgramacion
 class HumAdicionalSerializador(serializers.HyperlinkedModelSerializer):
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all())
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
-    programacion = serializers.PrimaryKeyRelatedField(queryset=HumProgramacion.objects.all())
+    programacion = serializers.PrimaryKeyRelatedField(queryset=HumProgramacion.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = HumAdicional
