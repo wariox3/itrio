@@ -38,7 +38,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
                   'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
-                  'grupo', 'contrato', 'salario']
+                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion']
 
     def to_representation(self, instance):        
         contacto = instance.contacto
@@ -66,6 +66,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'total' :  instance.total,
             'afectado' :  instance.afectado,
             'pendiente': instance.pendiente,
+            'devengado': instance.devengado,
+            'deduccion': instance.deduccion,
+            'salario': instance.salario,
             'estado_aprobado' : instance.estado_aprobado,
             'contacto' : instance.contacto_id,            
             'documento_tipo': instance.documento_tipo_id,

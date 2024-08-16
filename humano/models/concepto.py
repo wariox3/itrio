@@ -5,8 +5,8 @@ class HumConcepto(models.Model):
     porcentaje = models.DecimalField(max_digits=6, decimal_places=3, default=0)
     ingreso_base_prestacion = models.BooleanField(default = False)
     ingreso_base_cotizacion = models.BooleanField(default = False)
+    operacion = models.BigIntegerField(default=0)
     orden = models.IntegerField(default = 0)
-
 
     class Meta:
         db_table = "hum_concepto"

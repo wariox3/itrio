@@ -11,6 +11,7 @@ class HumProgramacion(models.Model):
     contratos = models.IntegerField(default=0)
     neto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     estado_aprobado = models.BooleanField(default = False)
+    estado_generado = models.BooleanField(default = False)
     pago_horas = models.BooleanField(default = True)
     pago_auxilio_transporte = models.BooleanField(default = True)
     pago_incapacidad = models.BooleanField(default = True)

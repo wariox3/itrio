@@ -6,7 +6,8 @@
             "nombre": "Salario ordinario", 
             "porcentaje": 100,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -16,7 +17,8 @@
             "nombre": "Hora nocturna", 
             "porcentaje": 135,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -26,7 +28,8 @@
             "nombre": "Festiva diurna", 
             "porcentaje": 175,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -36,7 +39,8 @@
             "nombre": "Festiva nocturna", 
             "porcentaje": 210,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -46,7 +50,8 @@
             "nombre": "Extra diurna", 
             "porcentaje": 125,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -56,7 +61,8 @@
             "nombre": "Extra nocturna", 
             "porcentaje": 175,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -66,7 +72,8 @@
             "nombre": "Extra festiva diurna", 
             "porcentaje": 200,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -76,7 +83,8 @@
             "nombre": "Extra festiva nocturna", 
             "porcentaje": 250,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -86,7 +94,8 @@
             "nombre": "Recargo nocturno", 
             "porcentaje": 35,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -96,7 +105,8 @@
             "nombre": "Recargo festivo diurno", 
             "porcentaje": 75,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -106,7 +116,8 @@
             "nombre": "Recargo festivo nocturno", 
             "porcentaje": 110,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -116,7 +127,8 @@
             "nombre": "Bonificacion", 
             "porcentaje": 0,
             "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true
+            "ingreso_base_cotizacion":true,
+            "operacion":1
         }
     },
     {
@@ -126,7 +138,8 @@
             "nombre": "Bonificacion no prestacional", 
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
-            "ingreso_base_cotizacion":false
+            "ingreso_base_cotizacion":false,
+            "operacion":1
         }
     }    
 ]

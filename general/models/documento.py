@@ -31,6 +31,8 @@ class GenDocumento(models.Model):
     salario = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     devengado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     deduccion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    base_cotizacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    base_prestacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     estado_aprobado = models.BooleanField(default = False)
     estado_anulado = models.BooleanField(default = False)
     estado_electronico = models.BooleanField(default = False)    
