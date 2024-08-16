@@ -1,0 +1,79 @@
+[
+  {
+      "model": "humano.HumConceptoNomina",
+      "pk": 1,
+      "fields": {
+          "nombre": "Diurna y/o salario"
+      }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 2,
+    "fields": {
+        "nombre": "Nocturna"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 3,
+    "fields": {
+        "nombre": "Festiva diurna"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 4,
+    "fields": {
+        "nombre": "Festiva nocturna"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 5,
+    "fields": {
+        "nombre": "Extra diurna"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 6,
+    "fields": {
+        "nombre": "Extra nocturna"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 7,
+    "fields": {
+        "nombre": "Extra festiva diurna"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 8,
+    "fields": {
+        "nombre": "Extra festiva nocturna"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 9,
+    "fields": {
+        "nombre": "Recargo nocturno"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 10,
+    "fields": {
+        "nombre": "Recargo festivo diurno"
+    }
+  },
+  {
+    "model": "humano.HumConceptoNomina",
+    "pk": 11,
+    "fields": {
+        "nombre": "Recargo festivo nocturno"
+    }
+  }   
+]

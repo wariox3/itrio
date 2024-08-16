@@ -3,6 +3,7 @@ from general.models.documento import GenDocumento
 from general.models.item import GenItem
 from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
+from humano.models.concepto import HumConcepto
 from decimal import Decimal, ROUND_HALF_UP
 
 class GenDocumentoDetalle(models.Model):    
@@ -15,6 +16,8 @@ class GenDocumentoDetalle(models.Model):
     base_impuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     impuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    hora = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    porcentaje = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     porcentaje_descuento = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     naturaleza = models.CharField(max_length=1, null=True)
     detalle = models.CharField(max_length=150, null=True)
@@ -24,6 +27,7 @@ class GenDocumentoDetalle(models.Model):
     item = models.ForeignKey(GenItem, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_item_rel')
     cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_cuenta_rel')
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_contacto_rel')
+    concepto = models.ForeignKey(HumConcepto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_concepto_rel')
     class Meta:
         db_table = "gen_documento_detalle"
         ordering = ['id', 'documento', 'item', 'cantidad']

@@ -3,6 +3,7 @@ from general.models.documento import GenDocumento
 from general.models.item import GenItem
 from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
+from humano.models.concepto import HumConcepto
 from rest_framework import serializers
 
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
@@ -11,9 +12,12 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), default=None, allow_null=True)
+    concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenDocumentoDetalle
-        fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'contacto', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'naturaleza', 'impuesto', 'detalle', 'numero']
+        fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'contacto', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 
+                  'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'hora', 'naturaleza', 'impuesto', 
+                  'detalle', 'numero', 'concepto']
 
     def to_representation(self, instance):
         item = instance.item
@@ -35,6 +39,9 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         contacto_nombre_corto = ''
         if instance.contacto:
             contacto_nombre_corto = instance.contacto.nombre_corto
+        concepto_nombre = ''
+        if instance.concepto:
+            concepto_nombre = instance.concepto.nombre
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,        
@@ -45,6 +52,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'cantidad': instance.cantidad,
             'precio': instance.precio,
             'pago': instance.pago,
+            'porcentaje': instance.porcentaje,
             'porcentaje_descuento': instance.porcentaje_descuento,
             'descuento' :  instance.descuento,
             'subtotal' : instance.subtotal,
@@ -52,6 +60,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'base_impuesto' : instance.base_impuesto,
             'impuesto' : instance.impuesto,
             'total' : instance.total,
+            'hora' : instance.hora,
             'documento_afectado_id': instance.documento_afectado_id,
             'documento_afectado_numero': documento_afectado_numero,
             'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto,
@@ -59,7 +68,9 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'contacto_nombre_corto': contacto_nombre_corto,
             'naturaleza':instance.naturaleza,
             'detalle': instance.detalle,
-            'numero': instance.numero
+            'numero': instance.numero,
+            'concepto_id': instance.concepto_id,
+            'concepto_nombre': concepto_nombre
         }  
 
 class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
