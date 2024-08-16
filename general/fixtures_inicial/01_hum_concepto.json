@@ -108,5 +108,25 @@
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true
         }
-    }        
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 12,
+        "fields": {
+            "nombre": "Bonificacion", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 13,
+        "fields": {
+            "nombre": "Bonificacion no prestacional", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false
+        }
+    }    
 ]

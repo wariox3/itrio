@@ -5,6 +5,7 @@ from humano.models.programacion import HumProgramacion
 from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.models.concepto_nomina import HumConceptoNomina
+from humano.models.adicional import HumAdicional
 from general.models.documento import GenDocumento
 from general.models.configuracion import GenConfiguracion
 from humano.serializers.programacion import HumProgramacionSerializador
@@ -140,9 +141,9 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         # Variables generales
                         valor_dia_contrato = programacion_detalle.salario / 30
                         valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']
-                        #valor_hora_contrato = f"{valor_hora_contrato:20.6f}"
 
 
+                        # Horas y salarios
                         horas = horas_programacion(programacion_detalle)
                         for hora in horas:
                             if hora['cantidad'] > 0:
@@ -163,7 +164,28 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 if documento_detalle_serializador.is_valid():
                                     documento_detalle_serializador.save()
                                 else:
-                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
+                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                
+                        # Adicionales
+                        adicionales = HumAdicional.objects.filter(
+                                inactivo = False, 
+                                inactivo_periodo = False,
+                                contrato_id = programacion_detalle.contrato_id
+                            ).filter(
+                                Q(permanente=True) | Q(programacion_id=programacion.id)
+                            )
+                        for adicional in adicionales:                        
+                            data = {
+                                'documento': documento.id,                                                                                                                
+                                'pago': adicional.valor,
+                                'horas': adicional.horas,
+                                'concepto': adicional.concepto_id
+                            }
+                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                            if documento_detalle_serializador.is_valid():
+                                documento_detalle_serializador.save()
+                            else:
+                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
                     else:
                         return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
                 return Response({'contratos_cargados': True}, status=status.HTTP_200_OK)

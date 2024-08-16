@@ -11,7 +11,8 @@ class HumAdicionalSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumAdicional
-        fields = ['id', 'valor', 'horas', 'aplica_dia_laborado', 'detalle', 'concepto', 'contrato', 'programacion']
+        fields = ['id', 'valor', 'horas', 'aplica_dia_laborado', 'detalle', 'concepto', 'contrato', 'programacion', 'permanente',
+                  'inactivo', 'inactivo_periodo']
 
     def to_representation(self, instance):      
         concepto_nombre = ''
@@ -27,7 +28,10 @@ class HumAdicionalSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,
             'valor': instance.valor,
             'horas': instance.horas,
-            'aplica_dia_laborado': instance.aplica_dia_laborado,            
+            'aplica_dia_laborado': instance.aplica_dia_laborado, 
+            'permanente': instance.permanente,
+            'inactivo': instance.inactivo,
+            'inactivo_periodo': instance.inactivo_periodo,           
             'detalle': instance.detalle,
             'concepto_id': instance.concepto_id,
             'concepto_nombre': concepto_nombre,
