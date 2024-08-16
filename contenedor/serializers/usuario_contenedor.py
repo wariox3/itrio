@@ -18,10 +18,11 @@ class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
             planNombre = plan.nombre
             usuariosBase = plan.usuarios_base
         acceso_restringido = False
-        if instance.usuario:
-            usuario = instance.usuario
-            if usuario.vr_saldo > 0 and datetime.now().date() > usuario.fecha_limite_pago:
-                acceso_restringido = True            
+        if instance.contenedor:
+            if instance.contenedor.usuario:
+                usuario = instance.contenedor.usuario
+                if usuario.vr_saldo > 0 and datetime.now().date() > usuario.fecha_limite_pago:
+                    acceso_restringido = True            
         return {
             'id': instance.id,
             'usuario_id': instance.usuario_id,

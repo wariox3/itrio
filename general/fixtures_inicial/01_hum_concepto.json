@@ -1,0 +1,112 @@
+[
+    {
+        "model": "humano.HumConcepto",
+        "pk": 1,
+        "fields": {
+            "nombre": "Salario ordinario", 
+            "porcentaje": 100,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 2,
+        "fields": {
+            "nombre": "Hora nocturna", 
+            "porcentaje": 135,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 3,
+        "fields": {
+            "nombre": "Festiva diurna", 
+            "porcentaje": 175,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 4,
+        "fields": {
+            "nombre": "Festiva nocturna", 
+            "porcentaje": 210,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 5,
+        "fields": {
+            "nombre": "Extra diurna", 
+            "porcentaje": 125,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 6,
+        "fields": {
+            "nombre": "Extra nocturna", 
+            "porcentaje": 175,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 7,
+        "fields": {
+            "nombre": "Extra festiva diurna", 
+            "porcentaje": 200,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 8,
+        "fields": {
+            "nombre": "Extra festiva nocturna", 
+            "porcentaje": 250,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 9,
+        "fields": {
+            "nombre": "Recargo nocturno", 
+            "porcentaje": 35,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 10,
+        "fields": {
+            "nombre": "Recargo festivo diurno", 
+            "porcentaje": 75,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 11,
+        "fields": {
+            "nombre": "Recargo festivo nocturno", 
+            "porcentaje": 110,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true
+        }
+    }        
+]

@@ -1,0 +1,57 @@
+[
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 1,
+        "fields": {"concepto": 1}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 2,
+        "fields": {"concepto": 2}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 3,
+        "fields": {"concepto": 3}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 4,
+        "fields": {"concepto": 4}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 5,
+        "fields": {"concepto": 5}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 6,
+        "fields": {"concepto": 6}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 7,
+        "fields": {"concepto": 7}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 8,
+        "fields": {"concepto": 8}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 9,
+        "fields": {"concepto": 9}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 10,
+        "fields": {"concepto": 10}
+    },
+    {
+        "model": "humano.HumConceptoNomina",
+        "pk": 11,
+        "fields": {"concepto": 11}
+    }    
+]
