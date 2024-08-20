@@ -135,6 +135,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'numero' : instance.numero,
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence, 
+            'fecha_hasta' : instance.fecha_hasta, 
             'contacto_id' : instance.contacto_id,
             'contacto_nombre_corto' : contacto_nombre_corto,
             'descuento': instance.descuento,
