@@ -45,7 +45,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         contacto_numero_identificacion = ""
         if instance.contacto:
             contacto_nombre_corto = instance.contacto.nombre_corto
-            contacto_numero_identificacion = instance.contacto.numero_dentificacion
+            contacto_numero_identificacion = instance.contacto.numero_identificacion
         asesor_nombre_corto = ""
         if instance.asesor:
             asesor_nombre_corto = instance.asesor.nombre_corto    
