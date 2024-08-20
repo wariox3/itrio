@@ -41,18 +41,17 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'grupo', 'contrato', 'salario', 'devengado', 'deduccion']
 
     def to_representation(self, instance):        
-        contacto = instance.contacto
-        contacto_nombre_corto = None
-        if contacto:
-            contacto_nombre_corto = contacto.nombre_corto
-        asesor = instance.asesor
-        asesor_nombre_corto = None
-        if asesor:
-            asesor_nombre_corto = asesor.nombre_corto
-        sede = instance.sede
-        sede_nombre = None
-        if sede:
-            sede_nombre = sede.nombre            
+        contacto_nombre_corto = ""
+        contacto_numero_identificacion = ""
+        if instance.contacto:
+            contacto_nombre_corto = instance.contacto.nombre_corto
+            contacto_numero_identificacion = instance.contacto.numero_dentificacion
+        asesor_nombre_corto = ""
+        if instance.asesor:
+            asesor_nombre_corto = instance.asesor.nombre_corto    
+        sede_nombre = ""
+        if instance.sede:
+            sede_nombre = instance.sede.nombre            
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -69,12 +68,12 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'devengado': instance.devengado,
             'deduccion': instance.deduccion,
             'salario': instance.salario,
-            'estado_aprobado' : instance.estado_aprobado,
-            'contacto' : instance.contacto_id,            
-            'documento_tipo': instance.documento_tipo_id,
-            'metodo_pago': instance.metodo_pago_id,
+            'estado_aprobado' : instance.estado_aprobado,           
             'contacto_id': instance.contacto_id,
+            'contacto_numero_identificacion': contacto_numero_identificacion,
             'contacto_nombre_corto': contacto_nombre_corto,
+            'documento_tipo_id': instance.documento_tipo_id,
+            'metodo_pago': instance.metodo_pago_id,        
             'estado_anulado' : instance.estado_anulado,
             'comentario' : instance.comentario,
             'estado_electronico' : instance.estado_electronico,
@@ -87,9 +86,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'resolucion': instance.resolucion_id,
             'documento_referencia' :  instance.documento_referencia_id,
             'plazo_pago': instance.plazo_pago_id,
-            'asesor': instance.asesor_id,
+            'asesor_id': instance.asesor_id,
             'asesor_nombre_corto': asesor_nombre_corto,
-            'sede': instance.sede_id,
+            'sede_id': instance.sede_id,
             'sede_nombre': sede_nombre,
             'programacion_detalle_id': instance.programacion_detalle_id
         }
