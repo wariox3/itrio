@@ -61,5 +61,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
             'pago_tipo_id': instance.pago_tipo_id,
             'pago_tipo_nombre': pago_tipo_nombre,
             'grupo_id': instance.grupo_id,
-            'grupo_nombre': grupo_nombre
+            'grupo_nombre': grupo_nombre,
+            'estado_generado': instance.estado_generado,
+            'estado_aprobado': instance.estado_aprobado
         }        
