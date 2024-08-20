@@ -70,6 +70,8 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'devengado': instance.devengado,
             'deducion': instance.deduccion,
             'operacion': instance.operacion,
+            'base_cotizacion': instance.base_cotizacion,
+            'base_prestacion': instance.base_prestacion,
             'documento_afectado_id': instance.documento_afectado_id,
             'documento_afectado_numero': documento_afectado_numero,
             'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto,
