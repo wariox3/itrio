@@ -20,7 +20,8 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         model = GenDocumentoDetalle
         fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'contacto', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'hora', 'naturaleza', 'impuesto', 
-                  'detalle', 'numero', 'concepto', 'credito', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 'devengado', 'deduccion']
+                  'detalle', 'numero', 'concepto', 'credito', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 
+                  'devengado', 'deduccion', 'dias']
 
     def to_representation(self, instance):
         item = instance.item
@@ -65,6 +66,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'impuesto' : instance.impuesto,
             'total' : instance.total,
             'hora' : instance.hora,
+            'dias' : instance.dias,
             'devengado': instance.devengado,
             'deducion': instance.deduccion,
             'operacion': instance.operacion,
