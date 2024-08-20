@@ -38,7 +38,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
                   'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
-                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion']
+                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
@@ -68,6 +68,8 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'pendiente': instance.pendiente,
             'devengado': instance.devengado,
             'deduccion': instance.deduccion,
+            'base_cotizacion': instance.base_cotizacion,            
+            'base_prestacion': instance.base_prestacion,
             'salario': instance.salario,
             'estado_aprobado' : instance.estado_aprobado,           
             'contacto_id': instance.contacto_id,
@@ -141,7 +143,12 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'afectado': instance.afectado,
             'pendiente': instance.pendiente,
             'impuesto': instance.impuesto,
-            'total' :  instance.total,        
+            'total' :  instance.total,   
+            'devengado': instance.devengado,
+            'deduccion': instance.deduccion,
+            'base_cotizacion': instance.base_cotizacion,            
+            'base_prestacion': instance.base_prestacion,
+            'salario': instance.salario,     
             'estado_aprobado' : instance.estado_aprobado,
             'documento_tipo_id' : instance.documento_tipo_id,
             'metodo_pago_id' : instance.metodo_pago_id,
