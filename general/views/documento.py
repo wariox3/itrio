@@ -17,7 +17,7 @@ from general.serializers.documento import GenDocumentoReferenciaSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
-from general.formatos.prueba import FormatoPrueba
+from general.formatos.nomina import FormatoNomina
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
@@ -388,53 +388,38 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
         raw = request.data
-        codigoDocumento = raw.get('documento_id')
-        documento = self.consulta_imprimir(codigoDocumento)
-        configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
-        if configuracion['formato_factura'] == 'F':
-            formatoFactura = FormatoFactura()
-            pdf = formatoFactura.generar_pdf(documento, configuracion)  
-            numero_documento = documento.get('numero')
-            tipo_documento = documento.get('documento_tipo__documento_clase_id')
-            nombres_archivo = {
-                100: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
-                101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
-            }
-            nombre_archivo = nombres_archivo.get(tipo_documento)            
-        else:     
-            formatoCuentaCobro = FormatoCuentaCobro()
-            pdf = formatoCuentaCobro.generar_pdf(documento, configuracion)
-            numero_documento = documento.get('numero')
-            tipo_documento = documento.get('documento_tipo__documento_clase_id')
-            nombres_archivo = {
-                100: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf",
-                101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
-            }
-            nombre_archivo = nombres_archivo.get(tipo_documento)
-
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
-        return response
-
-    @action(detail=False, methods=["post"], url_path=r'imprimirv2',)
-    def imprimirV2(self, request):
-        raw = request.data
-        codigoDocumento = raw.get('documento_id')
-        documento = self.consulta_imprimir(codigoDocumento)
+        id = raw.get('documento_id')
+        documento = GenDocumento.objects.get(pk=id)
+        if documento.documento_tipo_id in (1,2,3):
+            documento_consulta = self.consulta_imprimir(id)
+            configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
+            if configuracion['formato_factura'] == 'F':
+                formato = FormatoFactura()
+                pdf = formato.generar_pdf(documento_consulta, configuracion)  
+                numero_documento = documento_consulta.get('numero')
+                tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
+                nombres_archivo = {
+                    100: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
+                    101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
+                    102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
+                }
+                nombre_archivo = nombres_archivo.get(tipo_documento)            
+            else:     
+                formato = FormatoCuentaCobro()
+                pdf = formato.generar_pdf(documento_consulta, configuracion)
+                numero_documento = documento_consulta.get('numero')
+                tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
+                nombres_archivo = {
+                    100: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf",
+                    101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
+                    102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
+                }
+                nombre_archivo = nombres_archivo.get(tipo_documento)
         
-        formatoFactura = FormatoPrueba()
-        pdf = formatoFactura.generar_pdf(documento)  
-        numero_documento = documento.get('numero')
-        tipo_documento = documento.get('documento_tipo__documento_clase_id')
-        nombres_archivo = {
-            100: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
-            101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-            102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
-        }
-        nombre_archivo = nombres_archivo.get(tipo_documento)            
+        if documento.documento_tipo_id == 14:
+            formato = FormatoNomina()
+            pdf = formato.generar_pdf(documento)              
+            nombre_archivo = f"nomina_{documento.numero}.pdf" if documento.numero else "nomina.pdf"                        
 
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Access-Control-Expose-Headers'] = 'Content-Disposition'
