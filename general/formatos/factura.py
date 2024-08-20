@@ -87,11 +87,16 @@ class FormatoFactura():
                 numero_identificacion = numero_identificacion+data['empresa__numero_identificacion']
             if data['empresa__digito_verificacion']:
                 numero_identificacion = numero_identificacion+"-"+data['empresa__digito_verificacion']
+            direccion = ""
+            if data['empresa__direccion']:
+                direccion = direccion+data['empresa__direccion']
+            if data['empresa__ciudad__nombre']:
+                direccion = direccion+" - "+data['empresa__ciudad__nombre'].upper()
             p.setFont("Helvetica-Bold", 9)
             p.drawString(x + 75, 735, data['empresa__nombre_corto'].upper() if data['empresa__nombre_corto'] else "")
             p.setFont("Helvetica", 8)
             p.drawString(x + 75, 725, "NIT: " + numero_identificacion + (" - PERSONA " + data['empresa__tipo_persona__nombre'].upper() if data['empresa__tipo_persona__nombre'] else ""))
-            p.drawString(x + 75, 715, "DIRECCIÓN: " + data['empresa__direccion'].upper() + " - " +data['empresa__ciudad__nombre'].upper())
+            p.drawString(x + 75, 715, "DIRECCIÓN: " + direccion)
             p.drawString(x + 75, 705, "TEL: " + data['empresa__telefono'] if data['empresa__telefono'] else "")
 
 
