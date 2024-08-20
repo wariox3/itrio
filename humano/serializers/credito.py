@@ -36,6 +36,8 @@ class HumCreditoSerializador(serializers.HyperlinkedModelSerializer):
             'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
             'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
             'concepto_id': instance.concepto_id,
-            'concepto_nombre': concepto_nombre
+            'concepto_nombre': concepto_nombre,
+            'inactivo': instance.inactivo,
+            'inactivo_periodo': instance.inactivo_periodo
         }         
         
