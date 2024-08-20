@@ -1,0 +1,42 @@
+[
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 1,
+        "fields": {"nombre": "Salario"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 2,
+        "fields": {"nombre": "Extras"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 3,
+        "fields": {"nombre": "Devengado prestacional"}
+    },    
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 4,
+        "fields": {"nombre": "Devengado no prestacional"}
+    },    
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 5,
+        "fields": {"nombre": "Salud"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 6,
+        "fields": {"nombre": "Pension"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 7,
+        "fields": {"nombre": "Transporte"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 8,
+        "fields": {"nombre": "Credito"}
+    }    
+]

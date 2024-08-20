@@ -4,7 +4,7 @@ from general.models.item import GenItem
 from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
 from humano.models.concepto import HumConcepto
-from decimal import Decimal, ROUND_HALF_UP
+from humano.models.credito import HumCredito
 
 class GenDocumentoDetalle(models.Model):    
     cantidad = models.FloatField(default=0)
@@ -34,6 +34,7 @@ class GenDocumentoDetalle(models.Model):
     cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_cuenta_rel')
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_contacto_rel')
     concepto = models.ForeignKey(HumConcepto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_concepto_rel')
+    credito = models.ForeignKey(HumCredito, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_credito_rel')
     class Meta:
         db_table = "gen_documento_detalle"
         ordering = ['id', 'documento', 'item', 'cantidad']

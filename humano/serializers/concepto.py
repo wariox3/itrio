@@ -5,10 +5,23 @@ class HumConceptoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumConcepto
-        fields = ['id', 'nombre', 'porcentaje', 'ingreso_base_prestacion', 'ingreso_base_cotizacion', 'orden']
+        fields = ['id', 'nombre', 'porcentaje', 'ingreso_base_prestacion', 'ingreso_base_cotizacion', 'orden', 
+                  'concepto_tipo']
 
-    
-
+    def to_representation(self, instance):
+        concepto_tipo_nombre = ''
+        if instance.concepto_tipo:
+            concepto_tipo_nombre = instance.concepto_tipo.nombre        
+        return {
+            'id': instance.id,
+            'nombre': instance.nombre,
+            'porcentaje': instance.porcentaje,
+            'ingreso_base_prestacion': instance.ingreso_base_prestacion,
+            'ingreso_base_cotizacion': instance.ingreso_base_cotizacion,
+            'orden': instance.orden,            
+            'concepto_tipo_id': instance.concepto_tipo_id,
+            'concepto_tipo_nombre': concepto_tipo_nombre
+        } 
 class HumConceptoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:

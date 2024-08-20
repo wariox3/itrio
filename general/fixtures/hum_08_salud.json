@@ -1,0 +1,20 @@
+[
+  {
+      "model": "humano.HumSalud",
+      "pk": 1,
+      "fields": {
+          "nombre": "EMPLEADO",
+          "concepto": 14, 
+          "porcentaje_empleado":4
+      }
+  },
+  {
+    "model": "humano.HumSalud",
+    "pk": 2,
+    "fields": {
+        "nombre": "EMPLEADOR",
+        "concepto": 14, 
+        "porcentaje_empleado":4
+    }
+  }    
+]

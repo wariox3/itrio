@@ -1,0 +1,30 @@
+[
+  {
+      "model": "humano.HumPension",
+      "pk": 1,
+      "fields": {
+          "nombre": "EMPLEADO 4% Y EMPLEADOR 12%", "porcentaje_empleado":4, "porcentaje_empleador":12, "concepto": 15
+      }
+  },   
+  {
+    "model": "humano.HumPension",
+    "pk": 2,
+    "fields": {
+        "nombre": "EMPLEADOR 16%", "porcentaje_empleado":0, "porcentaje_empleador":16, "concepto": 15
+    }
+  },
+  {
+    "model": "humano.HumPension",
+    "pk": 3,
+    "fields": {
+        "nombre": "ALTO RIESGO", "porcentaje_empleado":4, "porcentaje_empleador":22, "concepto": 15
+    }
+  },
+  {
+    "model": "humano.HumPension",
+    "pk": 4,
+    "fields": {
+        "nombre": "PENSIONADO", "porcentaje_empleado":0, "porcentaje_empleador":0, "concepto": 15
+    }
+  }
+]

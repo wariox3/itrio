@@ -13,10 +13,9 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
     descuento_pension = serializers.BooleanField(required=True)
     descuento_fondo_solidaridad = serializers.BooleanField(required=True)
     descuento_retencion_fuente = serializers.BooleanField(required=True)
-    descuento_adicional_permanente = serializers.BooleanField(required=True)
-    descuento_adicional_programacion = serializers.BooleanField(required=True)
     descuento_credito = serializers.BooleanField(required=True)
     descuento_embargo = serializers.BooleanField(required=True)
+    adicional = serializers.BooleanField(required=True)    
     programacion = serializers.PrimaryKeyRelatedField(queryset=HumProgramacion.objects.all())
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
 
@@ -27,7 +26,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
                   'programacion', 'contrato', 'ingreso',
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
-                  'descuento_adicional_permanente', 'descuento_adicional_programacion', 'descuento_credito', 'descuento_embargo']
+                  'descuento_credito', 'descuento_embargo', 'adicional', 'devengado', 'deduccion', 'total']
 
     def to_representation(self, instance):      
         if instance.contrato:
@@ -39,7 +38,9 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'dias': instance.dias,
             'dias_transporte': instance.dias_transporte,
             'salario': instance.salario,
-            'neto': instance.neto,
+            'devengado': instance.devengado,
+            'deduccion': instance.deduccion,
+            'total': instance.total,
             'fecha_desde': instance.fecha_desde,
             'fecha_hasta': instance.fecha_hasta,
             'diurna': instance.diurna ,
@@ -66,10 +67,9 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'descuento_salud' : instance.descuento_salud,
             'descuento_pension' : instance.descuento_pension,
             'descuento_fondo_solidaridad': instance.descuento_fondo_solidaridad,
-            'descuento_retencion_fuente' : instance.descuento_retencion_fuente,
-            'descuento_adicional_permanente' : instance.descuento_adicional_permanente,
-            'descuento_adicional_programacion': instance.descuento_adicional_programacion,
+            'descuento_retencion_fuente' : instance.descuento_retencion_fuente,                        
             'descuento_credito': instance.descuento_credito,
-            'descuento_embargo' : instance.descuento_embargo
+            'descuento_embargo' : instance.descuento_embargo,
+            'adicional': instance.adicional
         }         
         

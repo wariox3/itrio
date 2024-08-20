@@ -4,6 +4,7 @@ from general.models.item import GenItem
 from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
 from humano.models.concepto import HumConcepto
+from humano.models.credito import HumCredito
 from rest_framework import serializers
 
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
@@ -13,11 +14,13 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), default=None, allow_null=True)
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
+    credito = serializers.PrimaryKeyRelatedField(queryset=HumCredito.objects.all(), default=None, allow_null=True)
+
     class Meta:
         model = GenDocumentoDetalle
         fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'contacto', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'hora', 'naturaleza', 'impuesto', 
-                  'detalle', 'numero', 'concepto', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 'devengado', 'deduccion']
+                  'detalle', 'numero', 'concepto', 'credito', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 'devengado', 'deduccion']
 
     def to_representation(self, instance):
         item = instance.item
@@ -74,7 +77,8 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'detalle': instance.detalle,
             'numero': instance.numero,
             'concepto_id': instance.concepto_id,
-            'concepto_nombre': concepto_nombre
+            'concepto_nombre': concepto_nombre,
+            'credito_id': instance.credito_id
         }  
 
 class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):

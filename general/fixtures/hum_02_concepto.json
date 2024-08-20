@@ -7,7 +7,9 @@
             "porcentaje": 100,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden": 1,
+            "concepto_tipo": 1
         }
     },
     {
@@ -18,7 +20,9 @@
             "porcentaje": 135,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden": 2,
+            "concepto_tipo": 2
         }
     },
     {
@@ -29,7 +33,9 @@
             "porcentaje": 175,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":3,
+            "concepto_tipo": 2
         }
     },
     {
@@ -40,7 +46,9 @@
             "porcentaje": 210,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":4,
+            "concepto_tipo": 2
         }
     },
     {
@@ -51,7 +59,9 @@
             "porcentaje": 125,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":5,
+            "concepto_tipo": 2
         }
     },
     {
@@ -62,7 +72,9 @@
             "porcentaje": 175,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":6,
+            "concepto_tipo": 2
         }
     },
     {
@@ -73,7 +85,9 @@
             "porcentaje": 200,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":7,
+            "concepto_tipo": 2
         }
     },
     {
@@ -84,7 +98,9 @@
             "porcentaje": 250,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":8,
+            "concepto_tipo": 2
         }
     },
     {
@@ -95,7 +111,9 @@
             "porcentaje": 35,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":9,
+            "concepto_tipo": 2
         }
     },
     {
@@ -106,7 +124,9 @@
             "porcentaje": 75,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":10,
+            "concepto_tipo": 2
         }
     },
     {
@@ -117,7 +137,9 @@
             "porcentaje": 110,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":11,
+            "concepto_tipo": 2
         }
     },
     {
@@ -128,7 +150,9 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1
+            "operacion":1,
+            "orden":12,
+            "concepto_tipo": 3
         }
     },
     {
@@ -139,7 +163,61 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
-            "operacion":1
+            "operacion":1,
+            "orden":13,
+            "concepto_tipo": 4
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 14,
+        "fields": {
+            "nombre": "Salud", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "operacion":-1,
+            "orden":200,
+            "concepto_tipo": 5
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 15,
+        "fields": {
+            "nombre": "Pension", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "operacion":-1,
+            "orden":201,
+            "concepto_tipo": 6
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 16,
+        "fields": {
+            "nombre": "Auxilio de transporte", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "operacion":1,
+            "orden":14,
+            "concepto_tipo": 7
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 17,
+        "fields": {
+            "nombre": "Credito", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "operacion":-1,
+            "orden":202,
+            "concepto_tipo": 8
         }
     }    
 ]

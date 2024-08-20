@@ -1,4 +1,5 @@
 from django.db import models
+from humano.models.concepto_tipo import HumConceptoTipo
 
 class HumConcepto(models.Model):        
     nombre = models.CharField(max_length=80)  
@@ -7,6 +8,7 @@ class HumConcepto(models.Model):
     ingreso_base_cotizacion = models.BooleanField(default = False)
     operacion = models.BigIntegerField(default=0)
     orden = models.IntegerField(default = 0)
-
+    concepto_tipo = models.ForeignKey(HumConceptoTipo, on_delete=models.PROTECT, null=True, related_name='conceptos_concepto_tipo_rel')
+    
     class Meta:
         db_table = "hum_concepto"

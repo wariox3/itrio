@@ -7,6 +7,8 @@ from humano.models.contrato import HumContrato
 from humano.models.concepto import HumConcepto
 from humano.models.concepto_nomina import HumConceptoNomina
 from humano.models.adicional import HumAdicional
+from humano.models.credito import HumCredito
+from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.configuracion import GenConfiguracion
@@ -61,6 +63,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             raw = request.data
             id = raw.get('id')
             if id:
+                cantidad = 0
                 configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor')[0]
                 programacion = HumProgramacion.objects.get(pk=id)                                
                 contratos = HumContrato.objects.filter(
@@ -88,11 +91,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         'descuento_salud': programacion.descuento_salud,
                         'descuento_pension': programacion.descuento_pension,
                         'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
-                        'descuento_retencion_fuente': programacion.descuento_retencion_fuente,
-                        'descuento_adicional_permanente': programacion.descuento_adicional_permanente,
-                        'descuento_adicional_programacion': programacion.descuento_adicional_programacion,
+                        'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
                         'descuento_credito': programacion.descuento_credito,
                         'descuento_embargo': programacion.descuento_embargo,
+                        'adicional': programacion.adicional,
                         'ingreso': ingreso
                     }
                     if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
@@ -123,9 +125,12 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                     programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
                     if programacion_detalle_serializador.is_valid():
                         programacion_detalle_serializador.save()
+                        cantidad += 1
                     else:
                         return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
-                return Response({'contratos_cargados': True}, status=status.HTTP_200_OK)
+                programacion.contratos = cantidad
+                programacion.save()
+                return Response({'contratos': cantidad}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumProgramacion.DoesNotExist:
@@ -138,9 +143,12 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             id = raw.get('id')
             if id:
                 programacion = HumProgramacion.objects.get(pk=id)
-                if programacion.estado_generado == False:
+                if programacion.estado_generado == False and programacion.estado_aprobado == False:
+                    total_programacion = 0
+                    devengado_programacion = 0
+                    deduccion_programacion = 0
                     conceptos_nomina = HumConceptoNomina.objects.all().order_by('id')
-                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor')[0]
+                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte')[0]
                     programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                                           
                     for programacion_detalle in programacion_detalles:                                  
                         data = {
@@ -159,8 +167,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         if documento_serializador.is_valid():
                             documento = documento_serializador.save()
                             # Variables generales
+                            contrato = programacion_detalle.contrato
                             valor_dia_contrato = programacion_detalle.salario / 30
                             valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']
+                            horas = horas_programacion(programacion_detalle)                           
                             data_general = {
                                 'devengado': 0,
                                 'deduccion': 0,
@@ -168,62 +178,170 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 'base_prestacion': 0
                             }
                             # Horas y salarios
-                            horas = horas_programacion(programacion_detalle)
-                            for hora in horas:
-                                if hora['cantidad'] > 0:
-                                    concepto_nomina = conceptos_nomina[hora['clave']] 
-                                    concepto = concepto_nomina.concepto                                                                    
-                                    valor_hora_detalle = (valor_hora_contrato * concepto.porcentaje) / 100                                                                    
-                                    pago = valor_hora_detalle * hora['cantidad']
-                                    valor_hora_detalle = Decimal(valor_hora_detalle).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
-                                    pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                            if programacion_detalle.pago_horas:                                
+                                for hora in horas:
+                                    if hora['cantidad'] > 0:
+                                        concepto_nomina = conceptos_nomina[hora['clave']] 
+                                        concepto = concepto_nomina.concepto                                                                    
+                                        valor_hora_detalle = (valor_hora_contrato * concepto.porcentaje) / 100                                                                    
+                                        pago = valor_hora_detalle * hora['cantidad']
+                                        valor_hora_detalle = Decimal(valor_hora_detalle).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                        pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                        data = {
+                                            'documento': documento.id,
+                                            'cantidad': hora['cantidad'],                   
+                                            'hora': valor_hora_detalle,
+                                            'porcentaje': concepto.porcentaje,
+                                            'pago': pago,
+                                            'concepto': concepto_nomina.concepto_id
+                                        }
+                                        datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                        
+                            # Adicionales
+                            if programacion_detalle.adicional:
+                                adicionales = HumAdicional.objects.filter(
+                                        inactivo = False, 
+                                        inactivo_periodo = False,
+                                        contrato_id = programacion_detalle.contrato_id
+                                    ).filter(
+                                        Q(permanente=True) | Q(programacion_id=programacion.id)
+                                    )
+                                for adicional in adicionales:                        
+                                    concepto = adicional.concepto
                                     data = {
-                                        'documento': documento.id,
-                                        'cantidad': hora['cantidad'],                   
-                                        'hora': valor_hora_detalle,
-                                        'porcentaje': concepto.porcentaje,
-                                        'pago': pago,
-                                        'concepto': concepto_nomina.concepto_id
+                                        'documento': documento.id,                                                                                                                
+                                        'pago': adicional.valor,
+                                        'horas': adicional.horas,
+                                        'concepto': adicional.concepto_id
                                     }
-                                    datos_detalle(data_general, data, concepto)
+                                    data = datos_detalle(data_general, data, concepto)
                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                     if documento_detalle_serializador.is_valid():
                                         documento_detalle_serializador.save()
                                     else:
-                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
-                                    
-                            # Adicionales
-                            adicionales = HumAdicional.objects.filter(
-                                    inactivo = False, 
-                                    inactivo_periodo = False,
-                                    contrato_id = programacion_detalle.contrato_id
-                                ).filter(
-                                    Q(permanente=True) | Q(programacion_id=programacion.id)
-                                )
-                            for adicional in adicionales:                        
-                                concepto = adicional.concepto
-                                data = {
-                                    'documento': documento.id,                                                                                                                
-                                    'pago': adicional.valor,
-                                    'horas': adicional.horas,
-                                    'concepto': adicional.concepto_id
-                                }
-                                data = datos_detalle(data_general, data, concepto)
-                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                if documento_detalle_serializador.is_valid():
-                                    documento_detalle_serializador.save()
-                                else:
-                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
+                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
+                            
+                            # Auxilio transporte
+                            if programacion_detalle.pago_auxilio_transporte:
+                                if contrato.auxilio_transporte:
+                                    dia_auxilio_transporte = configuracion['hum_auxilio_transporte'] / 30
+                                    concepto_nomina = conceptos_nomina[11]
+                                    concepto = concepto_nomina.concepto
+                                    pago = dia_auxilio_transporte * programacion_detalle.dias_transporte                                        
+                                    pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                    if pago > 0:
+                                        data = {
+                                            'documento': documento.id,                                                                                    
+                                            'pago': pago,
+                                            'concepto': concepto.id
+                                        }
+                                        datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+                            # Salud
+                            if programacion_detalle.descuento_salud:
+                                salud = contrato.salud
+                                if salud:
+                                    if salud.porcentaje_empleado > 0:                                        
+                                        concepto = salud.concepto                                        
+                                        pago = (data_general['base_cotizacion'] * salud.porcentaje_empleado) / 100                                        
+                                        pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                        data = {
+                                            'documento': documento.id,                                            
+                                            'porcentaje': salud.porcentaje_empleado,
+                                            'pago': pago,
+                                            'concepto': concepto.id
+                                        }
+                                        datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+                            # Pension
+                            if programacion_detalle.descuento_pension:
+                                pension = contrato.pension
+                                if pension:
+                                    if pension.porcentaje_empleado > 0:                                        
+                                        concepto = pension.concepto                                        
+                                        pago = (data_general['base_cotizacion'] * pension.porcentaje_empleado) / 100                                        
+                                        pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                        data = {
+                                            'documento': documento.id,                                            
+                                            'porcentaje': pension.porcentaje_empleado,
+                                            'pago': pago,
+                                            'concepto': concepto.id
+                                        }
+                                        datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+                            #creditos
+                            if programacion_detalle.descuento_credito:
+                                creditos = HumCredito.objects.filter(
+                                        inactivo = False, 
+                                        inactivo_periodo = False,
+                                        pagado = False,
+                                        contrato_id = programacion_detalle.contrato_id
+                                    )
+                                for credito in creditos: 
+                                    if credito.saldo > 0:                       
+                                        concepto = credito.concepto
+                                        if credito.saldo >= credito.cuota:
+                                            pago = credito.cuota
+                                        else:
+                                            pago = credito.saldo;                                                                                                
+                                        data = {
+                                            'documento': documento.id,                                                                                                                
+                                            'pago': pago,
+                                            'concepto': credito.concepto_id,
+                                            'credito': credito.id
+                                        }
+                                        data = datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                
+                            
+                            total = data_general['devengado'] - data_general['deduccion']
+                            devengado = data_general['devengado']
+                            deduccion = data_general['deduccion']
                             documento.base_cotizacion = data_general['base_cotizacion']
                             documento.base_prestacion = data_general['base_prestacion']
-                            documento.devengado = data_general['devengado']
-                            documento.deduccion = data_general['deduccion']
+                            documento.devengado = devengado
+                            documento.deduccion = deduccion
+                            documento.total = total
                             documento.save()
+
+                            programacion_detalle.devengado = devengado
+                            programacion_detalle.deduccion = deduccion
+                            programacion_detalle.total = total
+                            programacion_detalle.save()
+                            total_programacion += total
+                            devengado_programacion += devengado
+                            deduccion_programacion += deduccion
                         else:
                             return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
-                    programacion.estado_generado = True                    
+                    programacion.estado_generado = True  
+                    programacion.total = total_programacion
+                    programacion.devengado = devengado_programacion
+                    programacion.deduccion = deduccion_programacion
                     programacion.save()
-                    return Response({'mensaje': 'Programacion generada'}, status=status.HTTP_200_OK)
+                    return Response({'total': total_programacion, 'devengado': devengado_programacion, 'deduccion': deduccion_programacion}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'La programacion ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
             else:
@@ -246,7 +364,14 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                             documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
                             documento_detalles.delete()
                         documentos.delete()
+                        programacion_detalle.devengado = 0
+                        programacion_detalle.deduccion = 0
+                        programacion_detalle.total = 0
+                        programacion_detalle.save()
                     programacion.estado_generado = False
+                    programacion.total = 0
+                    programacion.devengado = 0
+                    programacion.deduccion = 0
                     programacion.save()
                     return Response({'mensaje': 'Programacion desgenerada'}, status=status.HTTP_200_OK)
                 else:
@@ -255,3 +380,50 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumProgramacion.DoesNotExist:
             return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)               
+        
+    @action(detail=False, methods=["post"], url_path=r'aprobar',)
+    def aprobar(self, request):             
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                programacion = HumProgramacion.objects.get(pk=id)
+                if programacion.estado_generado == True and programacion.estado_aprobado == False:
+                    documento_tipo = GenDocumentoTipo.objects.get(pk=14)                    
+                    programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)
+                    for programacion_detalle in programacion_detalles:
+                        if programacion_detalle.total < 0:
+                            return Response({'mensaje':'La programacion tiene detalles negativos', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        documentos = GenDocumento.objects.filter(programacion_detalle_id=programacion_detalle.id)
+                        for documento in documentos:
+                            documento.numero = documento_tipo.consecutivo
+                            documento.save()
+                            documento_tipo.consecutivo += 1
+
+                            # Afectar creditos
+                            documentos_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+                            for documento_detalle in documentos_detalles:
+                                if documento_detalle.credito:
+                                    credito = documento_detalle.credito
+                                    credito.abono += documento_detalle.pago
+                                    credito.saldo -= documento_detalle.pago
+                                    credito.cuota_actual += 1
+                                    credito.save()
+
+                        # Afectar contratos
+                        contrato = programacion_detalle.contrato
+                        contrato.fecha_ultimo_pago = programacion.fecha_hasta
+                        contrato.save()                        
+
+                    # Para guardar el consecutivo que sigue
+                    documento_tipo.save()
+                    programacion.estado_aprobado = True
+                    programacion.save()
+                    return Response({'mensaje': 'Programacion aprobada'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'La programacion ya esta aprobada o no esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumProgramacion.DoesNotExist:
+            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)        
