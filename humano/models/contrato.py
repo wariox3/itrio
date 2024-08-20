@@ -1,5 +1,6 @@
 from django.db import models
 from general.models.contacto import GenContacto
+from general.models.ciudad import GenCiudad
 from humano.models.contrato_tipo import HumContratoTipo
 from humano.models.grupo import HumGrupo
 from humano.models.sucursal import HumSucursal
@@ -21,6 +22,8 @@ class HumContrato(models.Model):
     fecha_ultimo_pago = models.DateField(null=True)
     contrato_tipo = models.ForeignKey(HumContratoTipo, on_delete=models.PROTECT, related_name='contratos_contrato_tipo_rel')
     contacto = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='contratos_contacto_rel')
+    ciudad_contrato = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, null=True, related_name='contratos_ciudad_contrato_rel')
+    ciudad_labora = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, null=True, related_name='contratos_ciudad_labora_rel')
     grupo = models.ForeignKey(HumGrupo, on_delete=models.PROTECT, related_name='contratos_grupo_rel')
     sucursal = models.ForeignKey(HumSucursal, on_delete=models.PROTECT, null=True, related_name='contratos_sucursal_rel')
     riesgo = models.ForeignKey(HumRiesgo, on_delete=models.PROTECT, null=True, related_name='contratos_riesgo_rel')

@@ -27,7 +27,7 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         model = HumContrato
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'salario', 'auxilio_transporte', 'salario_integral', 'estado_terminado', 
                   'comentario', 'contrato_tipo', 'grupo', 'contacto', 'sucursal', 'riesgo', 'cargo', 'tipo_cotizante', 'subtipo_cotizante',
-                  'salud', 'pension']
+                  'salud', 'pension', 'ciudad_contrato', 'ciudad_labora']
 
     def to_representation(self, instance):
         contrato_tipo_nombre = ''
@@ -62,6 +62,12 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         pension_nombre = ''
         if instance.pension:
             pension_nombre = instance.pension.nombre
+        ciudad_contrato_nombre = ''
+        if instance.ciudad_contrato:            
+            ciudad_contrato_nombre = instance.ciudad_contrato.nombre
+        ciudad_labora_nombre = ''
+        if instance.ciudad_labora:            
+            ciudad_labora_nombre = instance.ciudad_labora.nombre            
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
@@ -91,7 +97,11 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'salud_id': instance.salud_id,
             'salud_nombre': salud_nombre,
             'pension_id': instance.pension_id,
-            'pension_nombre': pension_nombre
+            'pension_nombre': pension_nombre,
+            'ciudad_contrato_id': instance.ciudad_contrato_id,
+            'ciudad_contrato_nombre': ciudad_contrato_nombre,
+            'ciudad_labora_id': instance.ciudad_labora_id,
+            'ciudad_labora_nombre': ciudad_labora_nombre
         } 
 
 
