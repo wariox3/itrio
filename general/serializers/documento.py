@@ -58,6 +58,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence,
             'fecha_contable' : instance.fecha_contable,
+            'fecha_hasta' : instance.fecha_hasta,
             'descuento': instance.descuento,
             'base_impuesto': instance.base_impuesto,           
             'subtotal': instance.subtotal,            
