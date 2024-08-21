@@ -389,42 +389,48 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def imprimir(self, request):
         raw = request.data
         id = raw.get('documento_id')
-        documento = GenDocumento.objects.get(pk=id)
-        if documento.documento_tipo_id in (1,2,3):
-            documento_consulta = self.consulta_imprimir(id)
-            configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
-            if configuracion['formato_factura'] == 'F':
-                formato = FormatoFactura()
-                pdf = formato.generar_pdf(documento_consulta, configuracion)  
-                numero_documento = documento_consulta.get('numero')
-                tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
-                nombres_archivo = {
-                    100: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
-                    101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                    102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
-                }
-                nombre_archivo = nombres_archivo.get(tipo_documento)            
-            else:     
-                formato = FormatoCuentaCobro()
-                pdf = formato.generar_pdf(documento_consulta, configuracion)
-                numero_documento = documento_consulta.get('numero')
-                tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
-                nombres_archivo = {
-                    100: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf",
-                    101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                    102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
-                }
-                nombre_archivo = nombres_archivo.get(tipo_documento)
-        
-        if documento.documento_tipo_id == 14:
-            formato = FormatoNomina()
-            pdf = formato.generar_pdf(documento)              
-            nombre_archivo = f"nomina_{documento.numero}.pdf" if documento.numero else "nomina.pdf"                        
+        if id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)
+                if documento.documento_tipo_id in (1,2,3):
+                    documento_consulta = self.consulta_imprimir(id)
+                    configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
+                    if configuracion['formato_factura'] == 'F':
+                        formato = FormatoFactura()
+                        pdf = formato.generar_pdf(documento_consulta, configuracion)  
+                        numero_documento = documento_consulta.get('numero')
+                        tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
+                        nombres_archivo = {
+                            100: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
+                            101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
+                            102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
+                        }
+                        nombre_archivo = nombres_archivo.get(tipo_documento)            
+                    else:     
+                        formato = FormatoCuentaCobro()
+                        pdf = formato.generar_pdf(documento_consulta, configuracion)
+                        numero_documento = documento_consulta.get('numero')
+                        tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
+                        nombres_archivo = {
+                            100: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf",
+                            101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
+                            102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
+                        }
+                        nombre_archivo = nombres_archivo.get(tipo_documento)
+                
+                if documento.documento_tipo_id == 14:
+                    formato = FormatoNomina()
+                    pdf = formato.generar_pdf(documento)              
+                    nombre_archivo = f"nomina_{documento.numero}.pdf" if documento.numero else "nomina.pdf"                        
 
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
-        return response
+                response = HttpResponse(pdf, content_type='application/pdf')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                return response
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
     
     @action(detail=False, methods=["post"], url_path=r'emitir',)
     def emitir(self, request):

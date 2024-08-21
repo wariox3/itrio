@@ -299,7 +299,7 @@ class FormatoFactura():
             #Bloque totales
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 230, "SUBTOTAL")
-            p.drawRightString(x + 140, 230, f"$ {locale.format('%d', data['subtotal'], grouping=True)}")
+            p.drawRightString(x + 140, 230,  f"{data['subtotal']:,.0f}")
             
             # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
             impuesto_totals = {}
@@ -327,11 +327,11 @@ class FormatoFactura():
                 total_acumulado = data['total']
                 
                 p.drawString(x, y, nombre_impuesto.upper())
-                p.drawRightString(x + 140, y, f"$ {locale.format('%d', total_acumulado, grouping=True)}")
+                p.drawRightString(x + 140, y, f"{total_acumulado:,.0f}")
                 y -= 10
 
             p.drawString(x, y, "TOTAL GENERAL")
-            p.drawRightString(x + 140, y, f"$ {locale.format('%d', totalFactura, grouping=True)}")
+            p.drawRightString(x + 140, y, f"{totalFactura:,.0f}")
             
         y = 555
 
@@ -375,10 +375,10 @@ class FormatoFactura():
             p.drawCentredString(x + 7, y + alto + 8, str(index + 1))
             p.drawString(x + 25, y + alto + 8, str(detalle['item_id']))
             p.drawRightString(x + 365, y + alto + 8, str(detalle['cantidad']))
-            p.drawRightString(x + 417, y + alto + 8, locale.format_string("%d", detalle['precio'], grouping=True))
-            p.drawRightString(x + 458, y + alto + 8, locale.format_string("%d", detalle['descuento'], grouping=True))
-            p.drawRightString(x + 500, y + alto + 8, locale.format_string("%d", total_impuestos_detalle, grouping=True))
-            p.drawRightString(x + 555, y + alto + 8, locale.format_string("%d", detalle['total'], grouping=True))
+            p.drawRightString(x + 417, y + alto + 8, f"{detalle['precio']:,.0f}")
+            p.drawRightString(x + 458, y + alto + 8, f"{detalle['descuento']:,.0f}")
+            p.drawRightString(x + 500, y + alto + 8, f"{total_impuestos_detalle:,.0f}")
+            p.drawRightString(x + 555, y + alto + 8, f"{detalle['total']:,.0f}")
 
             y -= 10  # Ajuste de posición vertical para el siguiente ítem
             altura_acumulada += 10
