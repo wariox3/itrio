@@ -93,7 +93,8 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'asesor_nombre_corto': asesor_nombre_corto,
             'sede_id': instance.sede_id,
             'sede_nombre': sede_nombre,
-            'programacion_detalle_id': instance.programacion_detalle_id
+            'programacion_detalle_id': instance.programacion_detalle_id,
+            'contrato_id': instance.contrato_id
         }
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
@@ -173,7 +174,8 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'asesor_nombre_corto': asesor_nombre_corto,
             'sede': instance.sede_id,
             'sede_nombre': sede_nombre,
-            'programacion_detalle_id': instance.programacion_detalle_id
+            'programacion_detalle_id': instance.programacion_detalle_id,
+            'contrato_id': instance.contrato_id
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    

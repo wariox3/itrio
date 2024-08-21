@@ -4,6 +4,7 @@ from humano.models.contrato import HumContrato
 from humano.models.concepto import HumConcepto
 
 class HumCreditoSerializador(serializers.HyperlinkedModelSerializer):
+    total = serializers.DecimalField(max_digits=20, decimal_places=6)
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all())
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
 
