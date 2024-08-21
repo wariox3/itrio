@@ -18,6 +18,9 @@ from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from django.db.models import Q
 from decimal import Decimal, ROUND_HALF_UP
+from datetime import timedelta
+import calendar
+
 
 def horas_programacion(programacion_detalle):
     respuesta_horas = [
@@ -56,6 +59,32 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
     serializer_class = HumProgramacionSerializador
     permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        fecha_desde = serializer.validated_data.get('fecha_desde')
+        fecha_hasta = serializer.validated_data.get('fecha_hasta')
+        fecha_hasta_periodo = serializer.validated_data.get('fecha_hasta')
+        diferencia = fecha_hasta - fecha_desde
+        dias = diferencia.days + 1      
+                
+        if fecha_hasta.day == 30: 
+            ultimo_dia = calendar.monthrange(fecha_hasta.year, fecha_hasta.month)[1]       
+            if ultimo_dia == 31:
+                fecha_hasta_periodo = fecha_hasta + timedelta(days=1)
+        serializer.save(dias=dias, fecha_hasta_periodo=fecha_hasta_periodo)
+
+    def perform_update(self, serializer):
+        fecha_desde = serializer.validated_data.get('fecha_desde')
+        fecha_hasta = serializer.validated_data.get('fecha_hasta')
+        fecha_hasta_periodo = serializer.validated_data.get('fecha_hasta')
+        diferencia = fecha_hasta - fecha_desde
+        dias = diferencia.days + 1      
+                
+        if fecha_hasta.day == 30: 
+            ultimo_dia = calendar.monthrange(fecha_hasta.year, fecha_hasta.month)[1]       
+            if ultimo_dia == 31:
+                fecha_hasta_periodo = fecha_hasta + timedelta(days=1)
+        serializer.save(dias=dias, fecha_hasta_periodo=fecha_hasta_periodo)
 
     @action(detail=False, methods=["post"], url_path=r'cargar-contrato',)
     def cargar_contrato(self, request):
