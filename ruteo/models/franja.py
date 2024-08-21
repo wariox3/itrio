@@ -1,6 +1,7 @@
 from django.db import models
 
 class RutFranja(models.Model):
+    codigo = models.CharField(max_length=20)
     nombre = models.CharField(max_length=255)
     coordenadas = models.JSONField()
     '''coordenadas = [
