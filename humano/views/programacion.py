@@ -105,8 +105,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                             Q(fecha_hasta__gte=programacion.fecha_desde) | Q(contrato_tipo_id=1))                                             
                 for contrato in contratos:
                     ingreso = False
-                    if contrato.fecha_desde >= programacion.fecha_hasta and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
+                    if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
                         ingreso = True                
+                    retiro = False
+                    if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.contrato_tipo_id != 1:
+                        retiro = True
 
                     data = {
                         'programacion': programacion.id,
@@ -124,7 +127,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         'descuento_credito': programacion.descuento_credito,
                         'descuento_embargo': programacion.descuento_embargo,
                         'adicional': programacion.adicional,
-                        'ingreso': ingreso
+                        'ingreso': ingreso,
+                        'retiro': retiro
                     }
                     if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
                         data['descuento_pension'] = False
