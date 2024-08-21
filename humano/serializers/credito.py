@@ -9,7 +9,8 @@ class HumCreditoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumCredito
-        fields = ['id', 'fecha_inicio', 'total', 'cuota', 'abono', 'saldo', 'cantidad_cuotas', 'cuota_actual', 'validar_cuotas', 'contrato', 'concepto']
+        fields = ['id', 'fecha_inicio', 'total', 'cuota', 'abono', 'saldo', 'cantidad_cuotas', 'cuota_actual', 'validar_cuotas', 
+                  'contrato', 'concepto', 'inactivo', 'inactivo_periodo', 'pagado']
 
     def to_representation(self, instance):      
         contrato_contacto_numero_identificacion = ''
@@ -38,6 +39,7 @@ class HumCreditoSerializador(serializers.HyperlinkedModelSerializer):
             'concepto_id': instance.concepto_id,
             'concepto_nombre': concepto_nombre,
             'inactivo': instance.inactivo,
-            'inactivo_periodo': instance.inactivo_periodo
+            'inactivo_periodo': instance.inactivo_periodo,
+            'pagado': instance.pagado
         }         
         
