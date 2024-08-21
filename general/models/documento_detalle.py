@@ -18,7 +18,7 @@ class GenDocumentoDetalle(models.Model):
     impuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     hora = models.DecimalField(max_digits=20, decimal_places=6, default=0)
-    dias = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    dias = models.BigIntegerField(default=0)
     base_cotizacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     base_prestacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     porcentaje = models.DecimalField(max_digits=20, decimal_places=6, default=0)

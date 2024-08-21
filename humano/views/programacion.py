@@ -210,24 +210,27 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 'base_cotizacion': 0,
                                 'base_prestacion': 0
                             }
+
                             # Horas y salarios
                             if programacion_detalle.pago_horas:                                
                                 for hora in horas:
                                     if hora['cantidad'] > 0:
                                         concepto_nomina = conceptos_nomina[hora['clave']] 
                                         concepto = concepto_nomina.concepto                                                                    
-                                        valor_hora_detalle = (valor_hora_contrato * concepto.porcentaje) / 100                                                                    
-                                        pago = valor_hora_detalle * hora['cantidad']
+                                        valor_hora_detalle = (valor_hora_contrato * concepto.porcentaje) / 100                                                                                                                                                
                                         valor_hora_detalle = Decimal(valor_hora_detalle).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
-                                        pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                        pago = round(valor_hora_detalle * hora['cantidad'])
                                         data = {
                                             'documento': documento.id,
                                             'cantidad': hora['cantidad'],                   
-                                            'hora': valor_hora_detalle,
+                                            'hora': valor_hora_detalle,                                            
                                             'porcentaje': concepto.porcentaje,
                                             'pago': pago,
                                             'concepto': concepto_nomina.concepto_id
                                         }
+                                        if hora['clave'] == 0:
+                                            data['dias'] = programacion_detalle.dias
+
                                         datos_detalle(data_general, data, concepto)
                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                         if documento_detalle_serializador.is_valid():
@@ -248,8 +251,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     concepto = adicional.concepto
                                     data = {
                                         'documento': documento.id,                                                                                                                
-                                        'pago': adicional.valor,
-                                        'horas': adicional.horas,
+                                        'pago': round(adicional.valor),
                                         'concepto': adicional.concepto_id
                                     }
                                     data = datos_detalle(data_general, data, concepto)
@@ -265,12 +267,12 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     dia_auxilio_transporte = configuracion['hum_auxilio_transporte'] / 30
                                     concepto_nomina = conceptos_nomina[11]
                                     concepto = concepto_nomina.concepto
-                                    pago = dia_auxilio_transporte * programacion_detalle.dias_transporte                                        
-                                    pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                    pago = round(dia_auxilio_transporte * programacion_detalle.dias_transporte)                                    
                                     if pago > 0:
                                         data = {
                                             'documento': documento.id,                                                                                    
                                             'pago': pago,
+                                            'dias': programacion_detalle.dias_transporte,
                                             'concepto': concepto.id
                                         }
                                         datos_detalle(data_general, data, concepto)
@@ -286,8 +288,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 if salud:
                                     if salud.porcentaje_empleado > 0:                                        
                                         concepto = salud.concepto                                        
-                                        pago = (data_general['base_cotizacion'] * salud.porcentaje_empleado) / 100                                        
-                                        pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                        pago = round((data_general['base_cotizacion'] * salud.porcentaje_empleado) / 100)
                                         data = {
                                             'documento': documento.id,                                            
                                             'porcentaje': salud.porcentaje_empleado,
@@ -307,8 +308,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 if pension:
                                     if pension.porcentaje_empleado > 0:                                        
                                         concepto = pension.concepto                                        
-                                        pago = (data_general['base_cotizacion'] * pension.porcentaje_empleado) / 100                                        
-                                        pago = Decimal(pago).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                        pago = round((data_general['base_cotizacion'] * pension.porcentaje_empleado) / 100)                                        
                                         data = {
                                             'documento': documento.id,                                            
                                             'porcentaje': pension.porcentaje_empleado,
@@ -339,7 +339,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             pago = credito.saldo;                                                                                                
                                         data = {
                                             'documento': documento.id,                                                                                                                
-                                            'pago': pago,
+                                            'pago': round(pago),
                                             'concepto': credito.concepto_id,
                                             'credito': credito.id
                                         }
