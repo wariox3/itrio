@@ -92,78 +92,83 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             raw = request.data
             id = raw.get('id')
             if id:
-                cantidad = 0
-                configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor')[0]
                 programacion = HumProgramacion.objects.get(pk=id)                                
-                contratos = HumContrato.objects.filter(
-                        grupo_id=programacion.grupo_id                        
-                        ).filter(
-                            Q(fecha_ultimo_pago__isnull=True) | Q(fecha_ultimo_pago__lt=programacion.fecha_hasta) | Q(fecha_desde=programacion.fecha_hasta_periodo) | Q(fecha_desde=programacion.fecha_hasta)
-                        ).filter(
-                            fecha_desde__lte=programacion.fecha_hasta_periodo
-                        ).filter(
-                            Q(fecha_hasta__gte=programacion.fecha_desde) | Q(contrato_tipo_id=1))                                             
-                for contrato in contratos:
-                    ingreso = False
-                    if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
-                        ingreso = True                
-                    retiro = False
-                    if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.contrato_tipo_id != 1:
-                        retiro = True
+                if programacion.estado_generado == False:
+                    cantidad = programacion.contratos
+                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor')[0]                
+                    contratos = HumContrato.objects.filter(
+                            grupo_id=programacion.grupo_id                        
+                            ).filter(
+                                Q(fecha_ultimo_pago__isnull=True) | Q(fecha_ultimo_pago__lt=programacion.fecha_hasta) | Q(fecha_desde=programacion.fecha_hasta_periodo) | Q(fecha_desde=programacion.fecha_hasta)
+                            ).filter(
+                                fecha_desde__lte=programacion.fecha_hasta_periodo
+                            ).filter(
+                                Q(fecha_hasta__gte=programacion.fecha_desde) | Q(contrato_tipo_id=1))                                             
+                    for contrato in contratos:
+                        contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
+                        if not contrato_validar:
+                            ingreso = False
+                            if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
+                                ingreso = True                
+                            retiro = False
+                            if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.contrato_tipo_id != 1:
+                                retiro = True
 
-                    data = {
-                        'programacion': programacion.id,
-                        'contrato': contrato.id,
-                        'salario': contrato.salario,
-                        'pago_horas': programacion.pago_horas,
-                        'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
-                        'pago_incapacidad': programacion.pago_incapacidad,
-                        'pago_licencia': programacion.pago_licencia,
-                        'pago_vacacion': programacion.pago_vacacion,
-                        'descuento_salud': programacion.descuento_salud,
-                        'descuento_pension': programacion.descuento_pension,
-                        'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
-                        'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
-                        'descuento_credito': programacion.descuento_credito,
-                        'descuento_embargo': programacion.descuento_embargo,
-                        'adicional': programacion.adicional,
-                        'ingreso': ingreso,
-                        'retiro': retiro
-                    }
-                    if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
-                        data['descuento_pension'] = False
-                        data['descuento_salud'] = False
-                        data['pago_auxilio_transporte'] = False
-            
-                    if contrato.pension_id == 4:
-                        data['descuento_pension'] = False
+                            data = {
+                                'programacion': programacion.id,
+                                'contrato': contrato.id,
+                                'salario': contrato.salario,
+                                'pago_horas': programacion.pago_horas,
+                                'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
+                                'pago_incapacidad': programacion.pago_incapacidad,
+                                'pago_licencia': programacion.pago_licencia,
+                                'pago_vacacion': programacion.pago_vacacion,
+                                'descuento_salud': programacion.descuento_salud,
+                                'descuento_pension': programacion.descuento_pension,
+                                'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
+                                'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
+                                'descuento_credito': programacion.descuento_credito,
+                                'descuento_embargo': programacion.descuento_embargo,
+                                'adicional': programacion.adicional,
+                                'ingreso': ingreso,
+                                'retiro': retiro
+                            }
+                            if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
+                                data['descuento_pension'] = False
+                                data['descuento_salud'] = False
+                                data['pago_auxilio_transporte'] = False
                     
-                    fecha_desde = contrato.fecha_desde
-                    if fecha_desde < programacion.fecha_desde:
-                        fecha_desde = programacion.fecha_desde
-                    data['fecha_desde'] = fecha_desde
-                        
-                    fecha_hasta = contrato.fecha_hasta
-                    if contrato.contrato_tipo_id == 1:
-                        fecha_hasta = programacion.fecha_hasta_periodo
-                    if fecha_hasta > programacion.fecha_hasta_periodo:
-                        fecha_hasta = programacion.fecha_hasta_periodo
-                    data['fecha_hasta'] = fecha_hasta
-                    
-                    diferencia = fecha_hasta - fecha_desde
-                    dias = diferencia.days + 1
-                    data['dias'] = dias
-                    data['dias_transporte'] = dias
-                    data['diurna'] = dias * configuracion['hum_factor']
-                    programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
-                    if programacion_detalle_serializador.is_valid():
-                        programacion_detalle_serializador.save()
-                        cantidad += 1
-                    else:
-                        return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
-                programacion.contratos = cantidad
-                programacion.save()
-                return Response({'contratos': cantidad}, status=status.HTTP_200_OK)
+                            if contrato.pension_id == 4:
+                                data['descuento_pension'] = False
+                            
+                            fecha_desde = contrato.fecha_desde
+                            if fecha_desde < programacion.fecha_desde:
+                                fecha_desde = programacion.fecha_desde
+                            data['fecha_desde'] = fecha_desde
+                                
+                            fecha_hasta = contrato.fecha_hasta
+                            if contrato.contrato_tipo_id == 1:
+                                fecha_hasta = programacion.fecha_hasta_periodo
+                            if fecha_hasta > programacion.fecha_hasta_periodo:
+                                fecha_hasta = programacion.fecha_hasta_periodo
+                            data['fecha_hasta'] = fecha_hasta
+                            
+                            diferencia = fecha_hasta - fecha_desde
+                            dias = diferencia.days + 1
+                            data['dias'] = dias
+                            data['dias_transporte'] = dias
+                            data['diurna'] = dias * configuracion['hum_factor']
+                            programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
+                            if programacion_detalle_serializador.is_valid():
+                                programacion_detalle_serializador.save()
+                                cantidad += 1
+                            else:
+                                return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
+                    programacion.contratos = cantidad
+                    programacion.save()
+                    return Response({'contratos': cantidad}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'La programacion ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumProgramacion.DoesNotExist:

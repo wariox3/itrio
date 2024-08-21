@@ -13,6 +13,14 @@ class CuentaViewSet(viewsets.ModelViewSet):
     serializer_class = ConCuentaSerializador
     permission_classes = [permissions.IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        raw = request.data        
+        codigo = raw.get('codigo')
+        validar_cuenta = ConCuenta.objects.filter(codigo=codigo).exists()    
+        if validar_cuenta:
+            return Response({'mensaje':'Ya existe una cuenta con este codigo', 'codigo':14}, status=status.HTTP_400_BAD_REQUEST)
+        return super().create(request, *args, **kwargs)
+
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):
         raw = request.data        
