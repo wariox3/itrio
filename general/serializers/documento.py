@@ -106,10 +106,11 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago', 'cue']
 
     def to_representation(self, instance):
-        contacto = instance.contacto
+        contacto_numero_identificacion = ""
         contacto_nombre_corto = ""
-        if contacto is not None:
-            contacto_nombre_corto = contacto.nombre_corto
+        if instance.contacto:
+            contacto_numero_identificacion = instance.contacto.numero_identificacion
+            contacto_nombre_corto = instance.contacto.nombre_corto
         metodo_pago = instance.metodo_pago
         metodo_pago_nombre = ""
         if metodo_pago is not None:
@@ -137,7 +138,8 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'fecha_vence' : instance.fecha_vence, 
             'fecha_hasta' : instance.fecha_hasta, 
             'contacto_id' : instance.contacto_id,
-            'contacto_nombre_corto' : contacto_nombre_corto,
+            'contacto_numero_identificacion': contacto_numero_identificacion,
+            'contacto_nombre_corto' : contacto_nombre_corto,            
             'descuento': instance.descuento,
             'base_impuesto': instance.base_impuesto,
             'subtotal': instance.subtotal,  
@@ -170,7 +172,8 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'asesor': instance.asesor_id,
             'asesor_nombre_corto': asesor_nombre_corto,
             'sede': instance.sede_id,
-            'sede_nombre': sede_nombre
+            'sede_nombre': sede_nombre,
+            'programacion_detalle_id': instance.programacion_detalle_id
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
