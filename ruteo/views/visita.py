@@ -11,6 +11,7 @@ import openpyxl
 from datetime import datetime
 from django.utils import timezone
 from utilidades.zinc import Zinc
+from utilidades.holmio import Holmio
 from math import radians, cos, sin, asin, sqrt
 
 def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
@@ -69,8 +70,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         visitas = serializador.data
         return Response(visitas, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["post"], url_path=r'importar',)
-    def importar(self, request):
+    @action(detail=False, methods=["post"], url_path=r'importar-excel',)
+    def importar_excel(self, request):
         raw = request.data
         archivo_base64 = raw.get('archivo_base64')
         if archivo_base64:
@@ -111,7 +112,15 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)        
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        
+    
+    @action(detail=False, methods=["post"], url_path=r'importar-complemento',)
+    def importar_complemento(self, request):
+        raw = request.data
+        guias = []        
+        holmio = Holmio()
+        respuesta = holmio.importarGuias()
+        return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
     def decodificar(self, request):
         guias = RutVisita.objects.filter(decodificado = False)

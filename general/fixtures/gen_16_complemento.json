@@ -1,0 +1,7 @@
+[
+  {
+    "model": "general.GenComplemento",
+    "pk": 1,
+    "fields": {"nombre": "Semantica"}
+  }
+]
