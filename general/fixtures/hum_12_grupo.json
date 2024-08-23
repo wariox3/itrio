@@ -1,0 +1,9 @@
+[
+    {
+        "model": "humano.HumGrupo",
+        "pk": 1,
+        "fields": {
+            "nombre": "General"
+        }
+    }
+]

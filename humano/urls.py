@@ -6,6 +6,7 @@ from .views.programacion_detalle import HumProgramacionDetalleViewSet
 from .views.concepto_tipo import HumConceptoTipoViewSet
 from .views.concepto import HumConceptoViewSet
 from .views.adicional import HumAdicionalViewSet
+from .views.novedad_tipo import HumNovedadTipoViewSet
 from .views.novedad import HumNovedadViewSet
 from .views.credito import HumCreditoViewSet
 from .views.sucursal import HumSucursalViewSet
@@ -24,6 +25,7 @@ router.register(r'grupo', HumGrupoViewSet)
 router.register(r'concepto_tipo', HumConceptoTipoViewSet)
 router.register(r'concepto', HumConceptoViewSet)
 router.register(r'adicional', HumAdicionalViewSet)
+router.register(r'novedad_tipo', HumNovedadTipoViewSet)
 router.register(r'novedad', HumNovedadViewSet)
 router.register(r'credito', HumCreditoViewSet)
 router.register(r'programacion', HumProgramacionViewSet)

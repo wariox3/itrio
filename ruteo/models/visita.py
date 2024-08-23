@@ -3,7 +3,7 @@ from ruteo.models.despacho import RutDespacho
 
 class RutVisita(models.Model):
     guia = models.IntegerField(null=True)
-    fecha = models.DateField(null=True)    
+    fecha = models.DateTimeField(null=True)    
     documento = models.CharField(max_length=30, null=True)
     destinatario = models.CharField(max_length=150, null=True)
     destinatario_direccion = models.CharField(max_length=150, null=True)
@@ -14,8 +14,8 @@ class RutVisita(models.Model):
     ciudad = models.CharField(max_length=50, null=True)
     estado = models.CharField(max_length=50, null=True)
     pais = models.CharField(max_length=50, null=True)
-    latitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
-    longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    latitud = models.DecimalField(max_digits=20, decimal_places=10, null=True)
+    longitud = models.DecimalField(max_digits=20, decimal_places=10, null=True)
     decodificado = models.BooleanField(default = False)
     decodificado_error = models.BooleanField(default = False)
     estado_despacho = models.BooleanField(default = False)

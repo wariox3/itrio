@@ -5,8 +5,8 @@ class HumConceptoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumConcepto
-        fields = ['id', 'nombre', 'porcentaje', 'ingreso_base_prestacion', 'ingreso_base_cotizacion', 'orden', 
-                  'concepto_tipo']
+        fields = ['id', 'nombre', 'porcentaje', 'ingreso_base_prestacion', 'ingreso_base_cotizacion', 
+                  'orden', 'adicional', 'concepto_tipo']
 
     def to_representation(self, instance):
         concepto_tipo_nombre = ''
@@ -18,6 +18,7 @@ class HumConceptoSerializador(serializers.HyperlinkedModelSerializer):
             'porcentaje': instance.porcentaje,
             'ingreso_base_prestacion': instance.ingreso_base_prestacion,
             'ingreso_base_cotizacion': instance.ingreso_base_cotizacion,
+            'adicional': instance.adicional,
             'orden': instance.orden,            
             'concepto_tipo_id': instance.concepto_tipo_id,
             'concepto_tipo_nombre': concepto_tipo_nombre

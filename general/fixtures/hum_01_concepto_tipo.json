@@ -38,5 +38,55 @@
         "model": "humano.HumConceptoTipo",
         "pk": 8,
         "fields": {"nombre": "Credito"}
-    }    
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 9,
+        "fields": {"nombre": "Fondo solidaridad pensional"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 10,
+        "fields": {"nombre": "Retencion en la fuente"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 11,
+        "fields": {"nombre": "Descuento"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 12,
+        "fields": {"nombre": "Incapacidad por enfermedad general"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 13,
+        "fields": {"nombre": "Incapacidad por enfermedad laboral"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 14,
+        "fields": {"nombre": "Licencia maternidad / paternidad"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 15,
+        "fields": {"nombre": "Licencia de luto"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 16,
+        "fields": {"nombre": "Licencia remunerada"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 17,
+        "fields": {"nombre": "Licencia no remunerada"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 18,
+        "fields": {"nombre": "Vacaciones"}
+    }
 ]

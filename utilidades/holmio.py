@@ -6,13 +6,20 @@ from requests.auth import HTTPBasicAuth
 
 class Holmio():
 
-    def importarGuias(self):
-        url = "/api/transporte/guia/ruteo_pendiente"
-        datos = []
-        respuesta = self.consumirPost(datos, url)        
+    def ruteoPendiente(self, parametros):
+        url = "/api/transporte/guia/ruteo/pendiente"        
+        respuesta = self.consumirPost(parametros, url)        
         if respuesta['status'] == 200:
             datos = respuesta['datos']
-            return {'error':False, 'cuenta': datos['cuenta']}
+            return {'error':False, 'guias': datos['guias']}
+        else:
+            return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}
+
+    def ruteoMarcar(self, parametros):
+        url = "/api/transporte/guia/ruteo/marcar"        
+        respuesta = self.consumirPost(parametros, url)        
+        if respuesta['status'] == 200:
+            return {'error':False}
         else:
             return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}
 
@@ -29,7 +36,6 @@ class Holmio():
                         url_completa = url_base + url    
                         json_data = json.dumps(data)
                         headers = {'Content-Type': 'application/json'}
-                        response = requests.post(url_completa, data=json_data, headers=headers)
                         response = requests.post(
                             url_completa,
                             data=json_data,

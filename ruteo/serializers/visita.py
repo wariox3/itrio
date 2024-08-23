@@ -3,9 +3,13 @@ from ruteo.models.visita import RutVisita
 
 
 class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):    
+    destinatario_correo = serializers.CharField(allow_null=True)
+    documento = serializers.CharField(allow_null=True)
     class Meta:
         model = RutVisita
-        fields = ['id', 'guia', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'ciudad', 'estado', 'pais', 'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'latitud', 'longitud', 'decodificado', 'orden', 'distancia_proxima']
+        fields = ['id', 'guia', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'ciudad', 'estado', 'pais', 
+                  'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'latitud', 'longitud', 'decodificado', 
+                  'orden', 'distancia_proxima']
 
     def to_representation(self, instance):        
         return {

@@ -7,7 +7,8 @@
             "porcentaje": 100,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "operacion":1,
+            "adicional":false,
+            "operacion":1,            
             "orden": 1,
             "concepto_tipo": 1
         }
@@ -20,6 +21,7 @@
             "porcentaje": 135,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden": 2,
             "concepto_tipo": 2
@@ -33,6 +35,7 @@
             "porcentaje": 175,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":3,
             "concepto_tipo": 2
@@ -46,6 +49,7 @@
             "porcentaje": 210,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":4,
             "concepto_tipo": 2
@@ -59,6 +63,7 @@
             "porcentaje": 125,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":5,
             "concepto_tipo": 2
@@ -72,6 +77,7 @@
             "porcentaje": 175,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":6,
             "concepto_tipo": 2
@@ -85,6 +91,7 @@
             "porcentaje": 200,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":7,
             "concepto_tipo": 2
@@ -98,6 +105,7 @@
             "porcentaje": 250,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":8,
             "concepto_tipo": 2
@@ -111,6 +119,7 @@
             "porcentaje": 35,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":9,
             "concepto_tipo": 2
@@ -124,6 +133,7 @@
             "porcentaje": 75,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":10,
             "concepto_tipo": 2
@@ -137,6 +147,7 @@
             "porcentaje": 110,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":false,
             "operacion":1,
             "orden":11,
             "concepto_tipo": 2
@@ -150,6 +161,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
+            "adicional":true,
             "operacion":1,
             "orden":12,
             "concepto_tipo": 3
@@ -163,6 +175,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
+            "adicional":true,
             "operacion":1,
             "orden":13,
             "concepto_tipo": 4
@@ -176,6 +189,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
+            "adicional":false,
             "operacion":-1,
             "orden":200,
             "concepto_tipo": 5
@@ -189,6 +203,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
+            "adicional":false,
             "operacion":-1,
             "orden":201,
             "concepto_tipo": 6
@@ -202,6 +217,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
+            "adicional":false,
             "operacion":1,
             "orden":14,
             "concepto_tipo": 7
@@ -215,9 +231,178 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
+            "adicional":true,
             "operacion":-1,
             "orden":202,
             "concepto_tipo": 8
         }
-    }    
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 18,
+        "fields": {
+            "nombre": "Auxilio rodamiento", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":true,
+            "operacion":1,
+            "orden":14,
+            "concepto_tipo": 4
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 19,
+        "fields": {
+            "nombre": "Reembolso", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":true,
+            "operacion":1,
+            "orden":15,
+            "concepto_tipo": 4
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 20,
+        "fields": {
+            "nombre": "Fondo de solidaridad pensional", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":true,
+            "operacion":-1,
+            "orden":203,
+            "concepto_tipo": 9
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 21,
+        "fields": {
+            "nombre": "Retencion en la fuente", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":true,
+            "operacion":-1,
+            "orden":204,
+            "concepto_tipo": 10
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 22,
+        "fields": {
+            "nombre": "Descuento", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":true,
+            "operacion":-1,
+            "orden":205,
+            "concepto_tipo": 11
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 23,
+        "fields": {
+            "nombre": "Incapacidad por enfermedad general", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":16,
+            "concepto_tipo": 12
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 24,
+        "fields": {
+            "nombre": "Incapacidad por enfermedad laboral", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":17,
+            "concepto_tipo": 13
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 25,
+        "fields": {
+            "nombre": "Licencia maternidad / paternidad", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":18,
+            "concepto_tipo": 14
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 26,
+        "fields": {
+            "nombre": "Licencia de luto", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":18,
+            "concepto_tipo": 15
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 27,
+        "fields": {
+            "nombre": "Licencia remunerada", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":19,
+            "concepto_tipo": 16
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 28,
+        "fields": {
+            "nombre": "Licencia no remunerada", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":20,
+            "concepto_tipo": 17
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 29,
+        "fields": {
+            "nombre": "Vacaciones", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":false,
+            "operacion":1,
+            "orden":21,
+            "concepto_tipo": 18
+        }
+    }      
 ]

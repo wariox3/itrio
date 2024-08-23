@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from ruteo.models.visita import RutVisita
 from ruteo.models.despacho import RutDespacho
 from ruteo.models.vehiculo import RutVehiculo
+from general.models.ciudad import GenCiudad
 from ruteo.serializers.visita import RutVisitaSerializador
 import base64
 from io import BytesIO
@@ -115,11 +116,54 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=["post"], url_path=r'importar-complemento',)
     def importar_complemento(self, request):
-        raw = request.data
-        guias = []        
+        raw = request.data                
+        parametros = {'limite': 500}
         holmio = Holmio()
-        respuesta = holmio.importarGuias()
-        return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)
+        respuesta = holmio.ruteoPendiente(parametros)
+        if respuesta['error'] == False:
+            cantidad = 0
+            guias_marcar = []
+            guias = respuesta['guias']
+            for guia in guias:                
+                ciudad_id = guia['codigoCiudad']
+                if ciudad_id:
+                    ciudad = GenCiudad.objects.get(pk=ciudad_id)
+                    if ciudad:
+                        fecha = datetime.fromisoformat(guia['fechaIngreso'])  
+                        nombre_destinatario = (guia['nombreDestinatario'][:150] if guia['nombreDestinatario'] is not None and guia['nombreDestinatario'] != "" else None)                        
+                        direccion_destinatario = (guia['direccionDestinatario'][:150] if guia['direccionDestinatario'] is not None and guia['direccionDestinatario'] != "" else None)
+                        documentoCliente = (guia['documentoCliente'][:30] if guia['documentoCliente'] is not None and guia['documentoCliente'] != "" else None)
+                        telefono_destinatario = (guia['telefonoDestinatario'][:50] if guia['telefonoDestinatario'] is not None and guia['telefonoDestinatario'] != "" else None)
+                        data = {
+                            'guia': guia['codigoGuiaPk'],
+                            'fecha':fecha,
+                            'documento': documentoCliente,
+                            'destinatario': nombre_destinatario,
+                            'destinatario_direccion': direccion_destinatario,
+                            'ciudad': ciudad_id,
+                            'estado': ciudad.estado_id,
+                            'pais': ciudad.estado.pais_id,
+                            'destinatario_telefono': telefono_destinatario,
+                            'destinatario_correo': None,
+                            'peso': guia['pesoReal'],
+                            'volumen': guia['pesoVolumen'] or 0,
+                            'latitud': guia['latitud'] or 0,
+                            'longitud': guia['longitud'] or 0,
+                            'decodificado': True
+                        }
+                        visitaSerializador = RutVisitaSerializador(data=data)
+                        if visitaSerializador.is_valid():
+                            visitaSerializador.save()
+                            cantidad += 1
+                            guias_marcar.append(guia['codigoGuiaPk'])
+                        else:
+                            return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+            if cantidad > 0:
+                parametros = {'guias':guias_marcar}
+                holmio.ruteoMarcar(parametros)
+            return Response({'mensaje':f'Se importaron {cantidad} las guias con exito'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
     def decodificar(self, request):

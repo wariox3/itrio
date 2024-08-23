@@ -1,0 +1,9 @@
+[
+    {
+        "model": "humano.HumSucursal",
+        "pk": 1,
+        "fields": {
+            "nombre": "General"
+        }
+    }
+]
