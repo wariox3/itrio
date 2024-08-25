@@ -1,5 +1,7 @@
 from django.db import models
 from ruteo.models.despacho import RutDespacho
+from ruteo.models.franja import RutFranja
+from general.models.ciudad import GenCiudad
 
 class RutVisita(models.Model):
     guia = models.IntegerField(null=True)
@@ -11,17 +13,16 @@ class RutVisita(models.Model):
     destinatario_correo = models.CharField(max_length=255, null=True)
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)
-    ciudad = models.CharField(max_length=50, null=True)
-    estado = models.CharField(max_length=50, null=True)
-    pais = models.CharField(max_length=50, null=True)
     latitud = models.DecimalField(max_digits=20, decimal_places=10, null=True)
     longitud = models.DecimalField(max_digits=20, decimal_places=10, null=True)
-    decodificado = models.BooleanField(default = False)
-    decodificado_error = models.BooleanField(default = False)
+    estado_decodificado = models.BooleanField(null=True, default = None)
+    estado_franja = models.BooleanField(null=True, default=None)
     estado_despacho = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)
     distancia_proxima = models.DecimalField(max_digits=9, decimal_places=6, null=True, default=0)
     despacho = models.ForeignKey(RutDespacho, null=True, on_delete=models.PROTECT, related_name='visitas_despacho_rel')
+    franja = models.ForeignKey(RutFranja, null=True, on_delete=models.PROTECT, related_name='visitas_franja_rel')
+    ciudad = models.ForeignKey(GenCiudad, null=True, on_delete=models.PROTECT, related_name='visitas_ciudad_rel')
 
     class Meta:
         db_table = "rut_visita"
