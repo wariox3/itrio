@@ -8,6 +8,7 @@ from humano.models.concepto import HumConcepto
 from humano.models.concepto_nomina import HumConceptoNomina
 from humano.models.adicional import HumAdicional
 from humano.models.credito import HumCredito
+from humano.models.novedad import HumNovedad
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
@@ -153,10 +154,31 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 fecha_hasta = programacion.fecha_hasta_periodo
                             data['fecha_hasta'] = fecha_hasta
                             
+                            dias_novedad = 0
+                            novedades = HumNovedad.objects.filter(
+                                contrato_id = contrato.id,
+                                fecha_desde__lte=programacion.fecha_hasta, 
+                                fecha_hasta__gte=programacion.fecha_desde                                
+                                )
+                            for novedad in novedades:
+                                fecha_desde_novedad = fecha_desde
+                                fecha_hasta_novedad = fecha_hasta
+                                if novedad.fecha_desde > fecha_desde:
+                                    fecha_desde_novedad = novedad.fecha_desde                                
+
+                                if novedad.fecha_hasta < fecha_hasta:
+                                    fecha_hasta_novedad = novedad.fecha_hasta  
+
+                                diferencia = fecha_hasta_novedad - fecha_desde_novedad
+                                dias_novedad += diferencia.days + 1
+
+
                             diferencia = fecha_hasta - fecha_desde
                             dias = diferencia.days + 1
+                            dias = dias - dias_novedad
                             data['dias'] = dias
                             data['dias_transporte'] = dias
+                            data['dias_novedad'] = dias_novedad
                             data['diurna'] = dias * configuracion['hum_factor']
                             programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
                             if programacion_detalle_serializador.is_valid():
@@ -242,7 +264,46 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             documento_detalle_serializador.save()
                                         else:
                                             return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
-                                        
+
+                            # Novedades
+                            if programacion_detalle.pago_incapacidad or programacion_detalle.pago_licencia or programacion_detalle.pago_vacacion:                                                            
+                                novedades = HumNovedad.objects.filter(
+                                    contrato_id = contrato.id,
+                                    fecha_desde__lte=programacion.fecha_hasta, 
+                                    fecha_hasta__gte=programacion.fecha_desde                                
+                                    )
+                                for novedad in novedades:
+                                    fecha_desde_novedad = programacion.fecha_desde
+                                    fecha_hasta_novedad = programacion.fecha_hasta
+                                    if novedad.fecha_desde > programacion.fecha_desde:
+                                        fecha_desde_novedad = novedad.fecha_desde                                
+
+                                    if novedad.fecha_hasta < programacion.fecha_hasta:
+                                        fecha_hasta_novedad = novedad.fecha_hasta  
+
+                                    diferencia = fecha_hasta_novedad - fecha_desde_novedad
+                                    dias_novedad = diferencia.days + 1 
+                                    
+                                    pago = 0
+   
+                                    if novedad.novedad_tipo_id == 7:
+                                        concepto = novedad.novedad_tipo.concepto
+                                        pago = round(dias_novedad * novedad.pago_dia_disfrute)
+                                    
+                                    data = {
+                                        'documento': documento.id,  
+                                        'dias': dias_novedad,
+                                        'pago': pago,
+                                        'concepto': novedad.novedad_tipo.concepto_id
+                                    }
+                                    data = datos_detalle(data_general, data, concepto)
+                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                    if documento_detalle_serializador.is_valid():
+                                        documento_detalle_serializador.save()
+                                    else:
+                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                    
+
+
                             # Adicionales
                             if programacion_detalle.adicional:
                                 adicionales = HumAdicional.objects.filter(

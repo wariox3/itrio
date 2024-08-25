@@ -397,8 +397,8 @@
         "fields": {
             "nombre": "Vacaciones", 
             "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_cotizacion":false,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
             "adicional":false,
             "operacion":1,
             "orden":21,

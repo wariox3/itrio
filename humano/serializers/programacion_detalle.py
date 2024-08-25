@@ -21,7 +21,8 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
 
     class Meta:
         model = HumProgramacionDetalle
-        fields = ['id', 'dias', 'dias_transporte', 'salario', 'fecha_desde', 'fecha_hasta', 'diurna', 'nocturna', 'festiva_diurna', 'festiva_nocturna', 'extra_diurna', 'extra_nocturna', 
+        fields = ['id', 'dias', 'dias_transporte', 'dias_novedad', 'salario', 'fecha_desde', 'fecha_hasta', 'diurna', 'nocturna', 'festiva_diurna', 
+                  'festiva_nocturna', 'extra_diurna', 'extra_nocturna', 
                   'extra_festiva_diurna', 'extra_festiva_nocturna', 'recargo_nocturno', 'recargo_festivo_diurno', 'recargo_festivo_nocturno',
                   'programacion', 'contrato', 'ingreso', 'retiro',
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 

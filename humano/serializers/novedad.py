@@ -9,7 +9,7 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = HumNovedad
-        fields = ['id', 'fecha_desde', 'fecha_hasta', 'contrato', 'novedad_tipo']
+        fields = ['id', 'fecha_desde', 'fecha_hasta', 'dias_disfrutados', 'dias_dinero', 'pago_dia_disfrute', 'contrato', 'novedad_tipo']
 
     def to_representation(self, instance):      
         contrato_contacto_numero_identificacion = ''
@@ -25,6 +25,9 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
             'fecha_hasta': instance.fecha_hasta,
+            'dias_disfrutados': instance.dias_disfrutados,
+            'dias_dinero': instance.dias_dinero,
+            'pago_dia_disfrute': instance.pago_dia_disfrute,
             'contrato_id': instance.contrato_id,
             'contrato_contacto_id': instance.contrato.contacto_id,
             'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,

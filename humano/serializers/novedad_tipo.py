@@ -1,17 +1,19 @@
 from rest_framework import serializers
 from humano.models.novedad_tipo import HumNovedadTipo
+from humano.models.concepto import HumConcepto
 
 class HumNovedadTipoSerializador(serializers.HyperlinkedModelSerializer):
-    
+    concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all())
     class Meta:
         model = HumNovedadTipo
-        fields = ['id', 'nombre', 'novedad_clase_id']
+        fields = ['id', 'nombre', 'concepto', 'novedad_clase_id']
 
     def to_representation(self, instance):      
 
         return {
             'id': instance.id,
             'nombre': instance.nombre,
+            'concepto_id': instance.concepto_id,
             'novedad_clase_id': instance.novedad_clase_id
         }       
 
