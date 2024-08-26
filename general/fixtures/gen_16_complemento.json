@@ -2,6 +2,13 @@
   {
     "model": "general.GenComplemento",
     "pk": 1,
-    "fields": {"nombre": "Semantica"}
+    "fields": {
+      "nombre": "Semantica",      
+      "estructura_json": {
+        "url": "",
+        "clave": "",
+        "usuario": ""
+      }
+    }
   }
 ]
