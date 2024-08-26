@@ -13,10 +13,17 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
         contrato = novedad.contrato
         salario = contrato.salario
         if novedad.novedad_tipo_id == 7:
-            pago_disfrute = round(salario / 30 * novedad.dias_disfrutados)
-            pago_dinero = round(salario / 30 * novedad.dias_disfrutados)
+            pago_dia_disfrute = salario / 30
+            pago_disfrute = round(pago_dia_disfrute * novedad.dias_disfrutados_reales)
+            pago_dia_dinero = salario / 30
+            pago_dinero = round(pago_dia_dinero * novedad.dias_dinero)
+            #Esto se hace para pagar en dinero lo proporsional en el periodo en disfrute
+            pago_dia_dinero = pago_dinero / novedad.dias_disfrutados_reales
+            novedad.pago_dia_disfrute = pago_dia_disfrute
             novedad.pago_disfrute = pago_disfrute
+            novedad.pago_dia_dinero = pago_dia_dinero
             novedad.pago_dinero = pago_dinero
+        novedad.save()
         
 
     @action(detail=False, methods=["post"], url_path=r'liquidar',)

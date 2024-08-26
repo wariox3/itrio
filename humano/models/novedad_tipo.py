@@ -6,6 +6,7 @@ class HumNovedadTipo(models.Model):
     nombre = models.CharField(max_length=50)
     novedad_clase_id = models.IntegerField(null=True)
     concepto = models.ForeignKey(HumConcepto, on_delete=models.PROTECT, null=True, related_name='novedades_tipos_concepto_rel')
+    concepto2 = models.ForeignKey(HumConcepto, on_delete=models.PROTECT, null=True, related_name='novedades_tipos_concepto2_rel')
 
     class Meta:
         db_table = "hum_novedad_tipo"

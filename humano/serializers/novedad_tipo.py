@@ -6,7 +6,7 @@ class HumNovedadTipoSerializador(serializers.HyperlinkedModelSerializer):
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all())
     class Meta:
         model = HumNovedadTipo
-        fields = ['id', 'nombre', 'concepto', 'novedad_clase_id']
+        fields = ['id', 'nombre', 'concepto', 'concepto2', 'novedad_clase_id']
 
     def to_representation(self, instance):      
 
@@ -14,6 +14,7 @@ class HumNovedadTipoSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,
             'nombre': instance.nombre,
             'concepto_id': instance.concepto_id,
+            'concepto2_id': instance.concepto2_id,
             'novedad_clase_id': instance.novedad_clase_id
         }       
 

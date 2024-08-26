@@ -87,6 +87,11 @@
     {
         "model": "humano.HumConceptoTipo",
         "pk": 18,
-        "fields": {"nombre": "Vacaciones"}
+        "fields": {"nombre": "Vacaciones disfrutadas"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 19,
+        "fields": {"nombre": "Vacaciones dinero"}
     }
 ]

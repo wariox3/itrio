@@ -395,7 +395,7 @@
         "model": "humano.HumConcepto",
         "pk": 29,
         "fields": {
-            "nombre": "Vacaciones", 
+            "nombre": "Vacaciones disfrutadas", 
             "porcentaje": 0,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
@@ -404,5 +404,19 @@
             "orden":21,
             "concepto_tipo": 18
         }
-    }      
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 30,
+        "fields": {
+            "nombre": "Vacaciones dinero", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":22,
+            "concepto_tipo": 19
+        }
+    }           
 ]

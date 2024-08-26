@@ -45,7 +45,7 @@
         "model": "humano.HumNovedadTipo",
         "pk": 7,
         "fields": {
-            "nombre": "Vacaciones", "concepto":29,  "novedad_clase_id":3
+            "nombre": "Vacaciones", "concepto":29, "concepto2":30,  "novedad_clase_id":3
         }
     }
 ]

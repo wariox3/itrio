@@ -4,7 +4,7 @@ from humano.models.contrato import HumContrato
 
 class HumProgramacionDetalle(models.Model):        
     fecha_desde = models.DateField(null=True)
-    fecha_hasta = models.DateField(null=True)    
+    fecha_hasta = models.DateField(null=True)
     dias = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     dias_transporte = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     dias_novedad = models.DecimalField(max_digits=10, decimal_places=3, default=0)

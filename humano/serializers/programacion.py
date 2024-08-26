@@ -4,6 +4,7 @@ from humano.models.grupo import HumGrupo
 from humano.models.pago_tipo import HumPagoTipo
 
 class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
+    fecha_hasta_periodo = serializers.DateField(required=False)
     pago_horas = serializers.BooleanField(required=True)
     pago_auxilio_transporte = serializers.BooleanField(required=True)
     pago_incapacidad = serializers.BooleanField(required=True)

@@ -149,9 +149,9 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 
                             fecha_hasta = contrato.fecha_hasta
                             if contrato.contrato_tipo_id == 1:
-                                fecha_hasta = programacion.fecha_hasta_periodo
-                            if fecha_hasta > programacion.fecha_hasta_periodo:
-                                fecha_hasta = programacion.fecha_hasta_periodo
+                                fecha_hasta = programacion.fecha_hasta
+                            if fecha_hasta > programacion.fecha_hasta:
+                                fecha_hasta = programacion.fecha_hasta
                             data['fecha_hasta'] = fecha_hasta
                             
                             dias_novedad = 0
@@ -273,8 +273,13 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     fecha_hasta__gte=programacion.fecha_desde                                
                                     )
                                 for novedad in novedades:
+                                    dia31 = 0
                                     fecha_desde_novedad = programacion.fecha_desde
                                     fecha_hasta_novedad = programacion.fecha_hasta
+                                    # Si la novedad es mayor o igual a la fecha y es una quincena con 31
+                                    if programacion.fecha_hasta_periodo.day == 31:
+                                        if novedad.fecha_hasta >= programacion.fecha_hasta_periodo:
+                                            dia31 = 1
                                     if novedad.fecha_desde > programacion.fecha_desde:
                                         fecha_desde_novedad = novedad.fecha_desde                                
 
@@ -282,27 +287,40 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         fecha_hasta_novedad = novedad.fecha_hasta  
 
                                     diferencia = fecha_hasta_novedad - fecha_desde_novedad
-                                    dias_novedad = diferencia.days + 1 
-                                    
+                                    dias_novedad = diferencia.days + 1                                     
                                     pago = 0
    
                                     if novedad.novedad_tipo_id == 7:
+                                        dias_novedad_pago = dias_novedad + dia31
                                         concepto = novedad.novedad_tipo.concepto
-                                        pago = round(dias_novedad * novedad.pago_dia_disfrute)
-                                    
-                                    data = {
-                                        'documento': documento.id,  
-                                        'dias': dias_novedad,
-                                        'pago': pago,
-                                        'concepto': novedad.novedad_tipo.concepto_id
-                                    }
-                                    data = datos_detalle(data_general, data, concepto)
-                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                    if documento_detalle_serializador.is_valid():
-                                        documento_detalle_serializador.save()
-                                    else:
-                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                    
+                                        pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
+                                        data = {
+                                            'documento': documento.id,  
+                                            'dias': dias_novedad,
+                                            'pago': pago,
+                                            'concepto': novedad.novedad_tipo.concepto_id
+                                        }
+                                        data = datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
 
+                                        concepto = novedad.novedad_tipo.concepto2
+                                        pago = round(dias_novedad_pago * novedad.pago_dia_dinero)                                    
+                                        data = {
+                                            'documento': documento.id,  
+                                            'dias': dias_novedad,
+                                            'pago': pago,
+                                            'concepto': novedad.novedad_tipo.concepto2_id
+                                        }
+                                        data = datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                           
 
                             # Adicionales
                             if programacion_detalle.adicional:
