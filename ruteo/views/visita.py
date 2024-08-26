@@ -128,8 +128,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=["post"], url_path=r'importar-complemento',)
     def importar_complemento(self, request):
-        raw = request.data                
-        parametros = {'limite': 100}        
+        raw = request.data 
+        limite = raw.get('limite', 1)               
+        parametros = {'limite': limite}        
         holmio = Holmio()
         respuesta = holmio.ruteoPendiente(parametros)
         if respuesta['error'] == False:
