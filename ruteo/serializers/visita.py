@@ -32,7 +32,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'destinatario_correo': instance.destinatario_correo,
             'peso': instance.peso,
             'volumen': instance.volumen,
-            'estado_decodificado': instance.decodificado,
+            'estado_decodificado': instance.estado_decodificado,
             'latitud': instance.latitud,
             'longitud': instance.longitud,
             'orden': instance.orden,
