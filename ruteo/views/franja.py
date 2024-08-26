@@ -75,7 +75,7 @@ class RutFranjaViewSet(viewsets.ModelViewSet):
                         coord_list = []
                         for coord in coordinates.split():
                             lon, lat, *_ = coord.split(",")
-                            coord_list.append({'latitud': float(lat), 'longitud': float(lon)})
+                            coord_list.append({'lat': float(lat), 'lng': float(lon)})
 
                         data = {
                             "nombre": nombre,

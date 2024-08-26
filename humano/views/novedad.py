@@ -10,8 +10,13 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def liquidar_novedad(self, novedad):
+        contrato = novedad.contrato
+        salario = contrato.salario
         if novedad.novedad_tipo_id == 7:
-            pass
+            pago_disfrute = round(salario / 30 * novedad.dias_disfrutados)
+            pago_dinero = round(salario / 30 * novedad.dias_disfrutados)
+            novedad.pago_disfrute = pago_disfrute
+            novedad.pago_dinero = pago_dinero
         
 
     @action(detail=False, methods=["post"], url_path=r'liquidar',)
