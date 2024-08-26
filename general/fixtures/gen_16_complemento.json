@@ -4,11 +4,20 @@
     "pk": 1,
     "fields": {
       "nombre": "Semantica",      
-      "estructura_json": {
-        "url": "",
-        "clave": "",
-        "usuario": ""
-      }
+      "estructura_json": [
+        {
+            "nombre": "url",
+            "valor": ""
+        },
+        {
+            "nombre": "clave",
+            "valor": ""
+        },
+        {
+            "nombre": "usuario",
+            "valor": ""
+        }
+      ]
     }
   }
 ]
