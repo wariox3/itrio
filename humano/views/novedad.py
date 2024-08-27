@@ -23,6 +23,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             novedad.pago_disfrute = pago_disfrute
             novedad.pago_dia_dinero = pago_dia_dinero
             novedad.pago_dinero = pago_dinero
+            novedad.total = pago_disfrute + pago_dinero
         novedad.save()
 
     def perform_create(self, serializer):

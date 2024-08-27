@@ -13,7 +13,8 @@ class HumNovedad(models.Model):
     pago_disfrute = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pago_dinero = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pago_dia_disfrute = models.DecimalField(max_digits=20, decimal_places=6, default=0)       
-    pago_dia_dinero = models.DecimalField(max_digits=20, decimal_places=6, default=0)       
+    pago_dia_dinero = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='novedades_contrato_rel')
     novedad_tipo = models.ForeignKey(HumNovedadTipo, on_delete=models.PROTECT, null=True, related_name='novedades_novedad_tipo_rel')
 
