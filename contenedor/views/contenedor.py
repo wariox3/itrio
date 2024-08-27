@@ -42,7 +42,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 usuario = User.objects.get(pk=usuario_id)
                 imagenReferencia = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
                 call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1, reddoc=reddoc, ruteo=ruteo)  
-                os.system(f"python manage.py tenant_command loaddata general/fixtures/*.json --schema={subdominio}")                           
+                os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures/ --schema={subdominio}")                           
                 contenedor = Contenedor.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario.id, 'contenedor': contenedor.id, 'rol': 'propietario'}
                 usuarioContenedorSerializador = UsuarioContenedorSerializador(data=data)            

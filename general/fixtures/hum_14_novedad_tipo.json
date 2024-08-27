@@ -17,7 +17,7 @@
         "model": "humano.HumNovedadTipo",
         "pk": 3,
         "fields": {
-            "nombre": "Licencia maternidad / paternidad", "novedad_clase_id":2
+            "nombre": "Licencia maternidad o paternidad", "novedad_clase_id":2
         }
     },
     {
