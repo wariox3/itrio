@@ -24,7 +24,14 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             novedad.pago_dia_dinero = pago_dia_dinero
             novedad.pago_dinero = pago_dinero
         novedad.save()
-        
+
+    def perform_create(self, serializer):
+        novedad = serializer.save()
+        self.liquidar_novedad(novedad)
+
+    def perform_update(self, serializer):
+        novedad = serializer.save()
+        self.liquidar_novedad(novedad)       
 
     @action(detail=False, methods=["post"], url_path=r'liquidar',)
     def liquidar(self, request):        
