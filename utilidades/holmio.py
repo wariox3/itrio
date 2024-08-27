@@ -26,12 +26,11 @@ class Holmio():
     def consumirPost(self, data, url):
         complemento = GenComplemento.objects.get(pk=1)
         if complemento:
-            estructura = {"url", "usuario", "clave"}
-            if isinstance(complemento.datos_json, dict):
-                if set(complemento.datos_json.keys()) == estructura:
-                    url_base = complemento.datos_json.get('url')
-                    usuario = complemento.datos_json.get('usuario')
-                    clave = complemento.datos_json.get('clave')
+            if isinstance(complemento.datos_json, list):
+                    config_dict = {item['nombre']: item['valor'] for item in complemento.datos_json}
+                    url_base = config_dict.get('url')
+                    usuario = config_dict.get('usuario')
+                    clave = config_dict.get('clave')                
                     if url_base and usuario and clave:  
                         url_completa = url_base + url    
                         json_data = json.dumps(data)
@@ -46,8 +45,7 @@ class Holmio():
                         return {'status': response.status_code, 'datos': resp}
                     else:
                         return {'status': 500, 'mensaje': 'Debe configurar los datos del complemento'}    
-                else:
-                    return {'status': 500, 'mensaje': 'La estructura del complemento no es valida'}
+                
             else:
                 return {'status': 500, 'mensaje': 'El complemento no tiene json valido'}
         else:

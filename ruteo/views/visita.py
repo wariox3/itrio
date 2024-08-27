@@ -62,7 +62,7 @@ def ubicar_punto(franjas, latitud, longitud):
         poligono = Polygon(coordenadas)                
         punto = Point(longitud, latitud)
         if poligono.contains(punto):
-            return {'encontrado': True, 'franja': {'id':franja.id}}
+            return {'encontrado': True, 'franja': {'id':franja.id, 'codigo':franja.codigo}}
     return {'encontrado': False }
 
 class RutVisitaViewSet(viewsets.ModelViewSet):
@@ -169,6 +169,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         visitaSerializador = RutVisitaSerializador(data=data)
                         if visitaSerializador.is_valid():
                             visita = visitaSerializador.save()
+                            codigo_franja = None
                             if direccion_destinatario:
                                 datos = {
                                     "cuenta": "1",
@@ -184,11 +185,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                     datos = respuesta['datos']
                                     visita.estado_decodificado = datos['decodificado']                                                                                                   
                                     visita.latitud = datos['latitud']
-                                    visita.longitud = datos['longitud']  
+                                    visita.longitud = datos['longitud']                                      
                                     respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
                                     if respuesta['encontrado']:
                                         visita.franja_id = respuesta['franja']['id']
                                         visita.estado_franja = True
+                                        codigo_franja = respuesta['franja']['codigo']
                                     else:
                                         visita.estado_franja = False                                                        
                                     visita.save()
@@ -198,7 +200,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 visita.estado_decodificado = False                                                                                                                       
                                 visita.save()
                             cantidad += 1
-                            guias_marcar.append(guia['codigoGuiaPk'])
+                            datos_guia_marcar = {
+                                "guia": guia['codigoGuiaPk'],
+                                "franja": codigo_franja,
+                                "latitud": visita.latitud,
+                                "longitud": visita.longitud
+                            }
+                            guias_marcar.append(datos_guia_marcar)                            
                         else:
                             return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
             if cantidad > 0:
