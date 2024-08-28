@@ -311,8 +311,8 @@
         "model": "humano.HumConcepto",
         "pk": 23,
         "fields": {
-            "nombre": "Incapacidad por enfermedad general", 
-            "porcentaje": 0,
+            "nombre": "Incapacidad enfermedad general (empresa)", 
+            "porcentaje": 66.67,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
@@ -325,8 +325,8 @@
         "model": "humano.HumConcepto",
         "pk": 24,
         "fields": {
-            "nombre": "Incapacidad por enfermedad laboral", 
-            "porcentaje": 0,
+            "nombre": "Incapacidad enfermedad laboral", 
+            "porcentaje": 100,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
@@ -418,5 +418,19 @@
             "orden":22,
             "concepto_tipo": 19
         }
-    }           
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 23,
+        "fields": {
+            "nombre": "Incapacidad enfermedad general (entidad)", 
+            "porcentaje": 100,
+            "ingreso_base_prestacion": true,
+            "ingreso_base_cotizacion":true,
+            "adicional":false,
+            "operacion":1,
+            "orden":23,
+            "concepto_tipo": 12
+        }
+    }          
 ]

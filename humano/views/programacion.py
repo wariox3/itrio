@@ -291,6 +291,25 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     pago = 0
    
                                     if novedad.novedad_tipo_id == 7:
+                                        # Vacaciones disfrutadas
+                                        dias_novedad_pago = dias_novedad
+                                        concepto = novedad.novedad_tipo.concepto
+                                        pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
+                                        data = {
+                                            'documento': documento.id,  
+                                            'dias': dias_novedad,
+                                            'pago': pago,
+                                            'concepto': novedad.novedad_tipo.concepto_id
+                                        }
+                                        data = datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+
+                                    if novedad.novedad_tipo_id == 7:
+                                        # Vacaciones disfrutadas
                                         dias_novedad_pago = dias_novedad + dia31
                                         concepto = novedad.novedad_tipo.concepto
                                         pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
@@ -307,6 +326,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         else:
                                             return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
 
+                                        # Vacaciones en dinero
                                         concepto = novedad.novedad_tipo.concepto2
                                         pago = round(dias_novedad_pago * novedad.pago_dia_dinero)                                    
                                         data = {

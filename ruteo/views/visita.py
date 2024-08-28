@@ -58,7 +58,7 @@ def ordenar_ruta(visitas, lat_inicial, lon_inicial):
 
 def ubicar_punto(franjas, latitud, longitud):    
     for franja in franjas:
-        coordenadas = [(coord['longitud'], coord['latitud']) for coord in franja.coordenadas]
+        coordenadas = [(coord['lng'], coord['lat']) for coord in franja.coordenadas]
         poligono = Polygon(coordenadas)                
         punto = Point(longitud, latitud)
         if poligono.contains(punto):

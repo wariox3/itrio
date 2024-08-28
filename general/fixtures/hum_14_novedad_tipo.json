@@ -3,7 +3,7 @@
         "model": "humano.HumNovedadTipo",
         "pk": 1,
         "fields": {
-            "nombre": "Incapacidad por enfermedad general", "novedad_clase_id":1
+            "nombre": "Incapacidad por enfermedad general", "concepto":23, "concepto2":23, "novedad_clase_id":1
         }
     },
     {

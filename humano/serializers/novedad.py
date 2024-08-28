@@ -10,8 +10,10 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumNovedad
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_desde_periodo', 'fecha_hasta_periodo', 
-                  'dias_disfrutados', 'dias_disfrutados_reales', 'dias_dinero', 
-                  'pago_disfrute', 'pago_dinero', 'pago_dia_disfrute', 'pago_dia_dinero', 'total', 'contrato', 'novedad_tipo']
+                  'dias_disfrutados', 'dias_disfrutados_reales', 'dias_dinero', 'dias', 'dias_empresa', 'dias_entidad',
+                  'pago_disfrute', 'pago_dinero', 'pago_dia_disfrute', 'pago_dia_dinero', 
+                  'base_cotizacion_propuesto', 'base_cotizacion', 'hora_empresa', 'hora_entidad', 'pago_empresa', 'pago_entidad',
+                  'total', 'contrato', 'novedad_tipo']
 
     def to_representation(self, instance):      
         contrato_contacto_numero_identificacion = ''
@@ -32,10 +34,19 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
             'dias_disfrutados': instance.dias_disfrutados,
             'dias_disfrutados_reales': instance.dias_disfrutados_reales,
             'dias_dinero': instance.dias_dinero,
+            'dias': instance.dias,
+            'dias_empresa': instance.dias_empresa,
+            'dias_entidad': instance.dias_entidad,
             'pago_disfrute': instance.pago_disfrute,
             'pago_dinero': instance.pago_dinero,            
             'pago_dia_disfrute': instance.pago_dia_disfrute,
             'pago_dia_dinero': instance.pago_dia_dinero,
+            'base_cotizacion_propuesto': instance.base_cotizacion_propuesto ,
+            'base_cotizacion': instance.base_cotizacion ,
+            'hora_empresa': instance.hora_empresa ,
+            'hora_entidad': instance.hora_entidad ,
+            'pago_empresa': instance.pago_empresa ,
+            'pago_entidad': instance.pago_entidad ,
             'total': instance.total,
             'contrato_id': instance.contrato_id,
             'contrato_contacto_id': instance.contrato.contacto_id,
