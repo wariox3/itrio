@@ -110,7 +110,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                                     <h1>¡Hola {usuario}!</h1>
                                     <p>Recibimos una solicitud para cambiar tu clave, puedes cambiarla haciendo clic en 
                                     el siguiente enlace.</p>
-                                    <a href='{url}' class='button'>Cabmiar clave</a>
+                                    <a href='{url}' class='button'>Cambiar clave</a>
                                     """.format(url=url, usuario=usuario.nombre_corto)
                     correo = Zinc()  
                     correo.correo_reddoc(usuario.correo, 'Solicitud cambio clave RedDoc', html_content)
