@@ -31,7 +31,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
                 dias_entidad = dias - 2
             novedad.dias_empresa = dias_empresa
             novedad.dias_entidad = dias_entidad
-            porcentaje
+            porcentaje = 0
 
         if novedad.novedad_tipo_id == 7:
             pago_dia_disfrute = salario / 30
