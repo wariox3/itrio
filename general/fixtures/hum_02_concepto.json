@@ -421,7 +421,7 @@
     },
     {
         "model": "humano.HumConcepto",
-        "pk": 23,
+        "pk": 31,
         "fields": {
             "nombre": "Incapacidad enfermedad general (entidad)", 
             "porcentaje": 100,

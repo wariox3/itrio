@@ -290,8 +290,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     dias_novedad = diferencia.days + 1                                     
                                     pago = 0
    
-                                    if novedad.novedad_tipo_id == 7:
-                                        # Vacaciones disfrutadas
+                                    if novedad.novedad_tipo_id == 1:
                                         dias_novedad_pago = dias_novedad
                                         concepto = novedad.novedad_tipo.concepto
                                         pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
