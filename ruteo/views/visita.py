@@ -307,8 +307,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)
         
-    @action(detail=False, methods=["post"], url_path=r'ubicar-franja',)
-    def ubicar_franja(self, request):             
+    @action(detail=False, methods=["post"], url_path=r'ubicar',)
+    def ubicar(self, request):             
         raw = request.data
         cantidad = 0
         franjas = RutFranja.objects.all()
@@ -322,7 +322,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita.estado_franja = False
             visita.save()  
             cantidad += 1      
-        return Response({'mensaje': f'Se asigno franja a {cantidad} de visitas'}, status=status.HTTP_200_OK)
+        return Response({'mensaje': f'Se asignó franja a {cantidad} de visitas'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'ubicar-punto',)
     def ubicar_punto(self, request):             
