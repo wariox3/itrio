@@ -9,7 +9,8 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = HumNovedad
-        fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_desde_periodo', 'fecha_hasta_periodo', 
+        fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_desde_periodo', 'fecha_hasta_periodo', 'fecha_desde_empresa', 'fecha_hasta_empresa',
+                  'fecha_desde_entidad', 'fecha_hasta_entidad',
                   'dias_disfrutados', 'dias_disfrutados_reales', 'dias_dinero', 'dias', 'dias_empresa', 'dias_entidad',
                   'pago_disfrute', 'pago_dinero', 'pago_dia_disfrute', 'pago_dia_dinero', 
                   'base_cotizacion_propuesto', 'base_cotizacion', 'hora_empresa', 'hora_entidad', 'pago_empresa', 'pago_entidad',
@@ -30,7 +31,11 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
             'fecha_desde': instance.fecha_desde,
             'fecha_hasta': instance.fecha_hasta,
             'fecha_desde_periodo': instance.fecha_desde_periodo,
-            'fecha_hasta_periodo': instance.fecha_hasta_periodo,            
+            'fecha_hasta_periodo': instance.fecha_hasta_periodo,      
+            'fecha_desde_empresa': instance.fecha_desde_empresa,
+            'fecha_hasta_empresa': instance.fecha_hasta_empresa,
+            'fecha_desde_entidad': instance.fecha_desde_entidad,
+            'fecha_hasta_entidad': instance.fecha_hasta_entidad,      
             'dias_disfrutados': instance.dias_disfrutados,
             'dias_disfrutados_reales': instance.dias_disfrutados_reales,
             'dias_dinero': instance.dias_dinero,

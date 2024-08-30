@@ -250,7 +250,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         data = {
                                             'documento': documento.id,
                                             'cantidad': hora['cantidad'],                   
-                                            'hora': valor_hora_detalle,                                            
+                                            'hora': valor_hora_detalle, 
+                                            'dias': programacion_detalle.dias,
                                             'porcentaje': concepto.porcentaje,
                                             'pago': pago,
                                             'concepto': concepto_nomina.concepto_id
@@ -291,21 +292,63 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     pago = 0
    
                                     if novedad.novedad_tipo_id == 1:
-                                        dias_novedad_pago = dias_novedad
-                                        concepto = novedad.novedad_tipo.concepto
-                                        pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
-                                        data = {
-                                            'documento': documento.id,  
-                                            'dias': dias_novedad,
-                                            'pago': pago,
-                                            'concepto': novedad.novedad_tipo.concepto_id
-                                        }
-                                        data = datos_detalle(data_general, data, concepto)
-                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                        if documento_detalle_serializador.is_valid():
-                                            documento_detalle_serializador.save()
-                                        else:
-                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                        if novedad.dias_empresa > 0:
+                                            fecha_desde_empresa = programacion.fecha_desde
+                                            if novedad.fecha_desde_empresa > programacion.fecha_desde:
+                                                fecha_desde_empresa = novedad.fecha_desde_empresa                               
+                                            fecha_hasta_empresa = programacion.fecha_hasta
+                                            if novedad.fecha_hasta_empresa < programacion.fecha_hasta:
+                                                fecha_hasta_empresa = novedad.fecha_hasta_empresa
+                                            diferencia = fecha_hasta_empresa - fecha_desde_empresa
+                                            dias_empresa = diferencia.days + 1
+                                            if dias_empresa > 0:                                                
+                                                concepto = novedad.novedad_tipo.concepto
+                                                horas = dias_empresa * configuracion['hum_factor']                                                                                                                                                
+                                                pago = round(novedad.hora_empresa * horas)                                                                                 
+                                                data = {
+                                                    'documento': documento.id,  
+                                                    'dias': dias_empresa,
+                                                    'hora': novedad.hora_empresa,
+                                                    'cantidad': horas,
+                                                    'pago': pago,
+                                                    'porcentaje': concepto.porcentaje,
+                                                    'concepto': novedad.novedad_tipo.concepto_id
+                                                }
+                                                data = datos_detalle(data_general, data, concepto)
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()
+                                                else:
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                        
+                                        if novedad.dias_entidad > 0:
+                                            fecha_desde_entidad = programacion.fecha_desde
+                                            if novedad.fecha_desde_entidad > programacion.fecha_desde:
+                                                fecha_desde_entidad = novedad.fecha_desde_entidad                               
+                                            fecha_hasta_entidad = programacion.fecha_hasta
+                                            if novedad.fecha_hasta_entidad < programacion.fecha_hasta:
+                                                fecha_hasta_entidad = novedad.fecha_hasta_entidad
+                                            diferencia = fecha_hasta_entidad - fecha_desde_entidad
+                                            dias_entidad = diferencia.days + 1
+                                            if dias_entidad > 0:                                                
+                                                concepto = novedad.novedad_tipo.concepto2
+                                                horas = dias_entidad * configuracion['hum_factor']                                                                                                                                                
+                                                pago = round(novedad.hora_entidad * horas)                                                                                 
+                                                data = {
+                                                    'documento': documento.id,  
+                                                    'dias': dias_entidad,
+                                                    'hora': novedad.hora_entidad,
+                                                    'cantidad': horas,
+                                                    'pago': pago,
+                                                    'porcentaje': concepto.porcentaje,
+                                                    'concepto': novedad.novedad_tipo.concepto2_id
+                                                }
+                                                data = datos_detalle(data_general, data, concepto)
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()
+                                                else:
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
 
                                     if novedad.novedad_tipo_id == 7:
                                         # Vacaciones disfrutadas
