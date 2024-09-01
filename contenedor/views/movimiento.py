@@ -59,20 +59,20 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             for consumoUsuario in consumosUsuarios:
                 total = round(consumoUsuario['vr_total'])
                 usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
-                movimiento = CtnMovimiento(
-                    tipo = "PEDIDO",
-                    fecha = timezone.now(),
-                    fecha_vence = datetime.now().date() + timedelta(days=3),
-                    vr_total = total,
-                    vr_saldo = total,
-                    usuario_id = consumoUsuario['usuario_id'],
-                    socio_id=usuario.socio_id
-                )
-                facturas.append(movimiento)
-                usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
-                usuario.vr_saldo += total
-                usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
-                usuario.save()
+                if usuario.vr_saldo <= 0:
+                    movimiento = CtnMovimiento(
+                        tipo = "PEDIDO",
+                        fecha = timezone.now(),
+                        fecha_vence = datetime.now().date() + timedelta(days=3),
+                        vr_total = total,
+                        vr_saldo = total,
+                        usuario_id = consumoUsuario['usuario_id'],
+                        socio_id=usuario.socio_id
+                    )
+                    facturas.append(movimiento)                
+                    usuario.vr_saldo += total
+                    usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
+                    usuario.save()
             CtnMovimiento.objects.bulk_create(facturas)
             return Response({'proceso':True}, status=status.HTTP_200_OK)  
         else:
