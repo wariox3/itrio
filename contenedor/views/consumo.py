@@ -7,6 +7,7 @@ from seguridad.models import User
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models import Sum, Q, F
+import calendar
 
 class ConsumoViewSet(viewsets.ModelViewSet):
     queryset = CtnConsumo.objects.all()
@@ -17,13 +18,17 @@ class ConsumoViewSet(viewsets.ModelViewSet):
     def generar(self, request):
         raw = request.data
         fechaParametro = raw.get('fecha')
-        if fechaParametro:
+        if fechaParametro:            
+            fecha_obj = datetime.strptime(fechaParametro, '%Y-%m-%d').date()            
+            anio, mes = fecha_obj.year, fecha_obj.month            
+            cantidad_dias = calendar.monthrange(anio, mes)[1]
+
             if not CtnConsumoPeriodo.objects.filter(fecha=fechaParametro).exists():
                 usuariosContenedors = UsuarioContenedor.objects.all().filter(rol='propietario', contenedor__reddoc = True)
                 consumos = []
                 for usuarioContenedor in usuariosContenedors:            
                     vrPlan = usuarioContenedor.contenedor.plan.precio
-                    vrPlanDia = vrPlan / 30
+                    vrPlanDia = vrPlan / cantidad_dias
                     consumo = CtnConsumo(
                         #fecha = timezone.now().date(), 
                         fecha=fechaParametro,
