@@ -200,7 +200,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://reddocapi.co",
     'http://localhost:4200',
     "http://190.249.212.131",
-    "https://ruteo.co",        
+    "https://ruteo.co",
+    "http://ruteo.online",
 ]
 
 
