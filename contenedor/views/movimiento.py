@@ -52,9 +52,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         raw = request.data
         fechaDesde = raw.get('fechaDesde')
         fechaHasta = raw.get('fechaHasta')
+        usuario_id = raw.get('usuario_id')
         if fechaDesde and fechaHasta:
             consumosUsuarios = CtnConsumo.objects.values('usuario_id').filter(Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)
                                                                               ).annotate(vr_total=Sum('vr_total'))
+            if usuario_id:
+                query &= Q(usuario_id=usuario_id)           
             facturas = []
             for consumoUsuario in consumosUsuarios:
                 total = round(consumoUsuario['vr_total'])
