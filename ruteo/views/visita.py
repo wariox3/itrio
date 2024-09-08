@@ -247,7 +247,48 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 
-        
+
+    @action(detail=False, methods=["post"], url_path=r'decodificar-externo',)
+    def decodificar_externo(self, request):
+        raw = request.data 
+        guia_id = raw.get('guia_id')
+        direccion = raw.get('direccion')
+        ciudad_id = raw.get('ciudad_id')
+        if guia_id and direccion and ciudad_id:
+            try:
+                ciudad = GenCiudad.objects.get(pk=ciudad_id)
+                zinc = Zinc()                                      
+                datos = {
+                    "cuenta": "1",
+                    "modelo": "guia",
+                    "canal": 3,
+                    "codigo": guia_id,
+                    "direccion": direccion,
+                    "ciudad": ciudad_id,
+                    "principal": False,                
+                }
+                respuesta = zinc.decodificar_direccion(datos)
+                if respuesta['error'] == False:                     
+                    datos = respuesta['datos']
+                    codigo_franja = ""
+                    franjas = RutFranja.objects.all()
+                    respuesta = ubicar_punto(franjas, datos['latitud'], datos['longitud'])
+                    if respuesta['encontrado']:
+                        codigo_franja = respuesta['franja']['codigo']                 
+                    datosRespuesta = {
+                        "decodificado": datos['decodificado'],
+                        "latitud": datos['latitud'],
+                        "longitud": datos['longitud'],
+                        "franja": codigo_franja
+                    }
+                    return Response(datosRespuesta, status=status.HTTP_200_OK) 
+                else:
+                    return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)  
+            except GenCiudad.DoesNotExist:
+                return Response({'mensaje':'La ciudad no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):
         visitas = RutVisita.objects.all()
