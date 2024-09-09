@@ -20,6 +20,9 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
                   'ciudad', 'despacho', 'franja']
 
     def to_representation(self, instance): 
+        ciudad_nombre = ''
+        if instance.ciudad:
+            ciudad_nombre = instance.ciudad.nombre
         franja_nombre = ''
         franja_codigo = ''
         if instance.franja:
@@ -33,6 +36,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'destinatario': instance.destinatario,
             'destinatario_direccion': instance.destinatario_direccion,
             'ciudad_id': instance.ciudad_id,
+            'ciudad_nombre':ciudad_nombre,
             'destinatario_telefono': instance.destinatario_telefono,
             'destinatario_correo': instance.destinatario_correo,
             'peso': instance.peso,
