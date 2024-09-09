@@ -183,13 +183,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 codigo_franja = None
                                 if direccion_destinatario:
                                     datos = {
-                                        "cuenta": "1",
+                                        "cuenta": "18",
                                         "modelo": "guia",
                                         "canal": 3,
                                         "codigo": visita.id,
                                         "direccion": direccion_destinatario,
                                         "ciudad": ciudad.id,
-                                        "principal": False,                
+                                        "decodificarPrincipal": guia['decodificarPrincipal'],                
                                     }
                                     respuesta = zinc.decodificar_direccion(datos)
                                     if respuesta['error'] == False:                     
