@@ -254,6 +254,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         guia_id = raw.get('guia_id')
         direccion = raw.get('direccion')
         ciudad_id = raw.get('ciudad_id')
+        decodificar_principal = raw.get('decodificar_principal', False)
         if guia_id and direccion and ciudad_id:
             try:
                 ciudad = GenCiudad.objects.get(pk=ciudad_id)
@@ -265,7 +266,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     "codigo": guia_id,
                     "direccion": direccion,
                     "ciudad": ciudad_id,
-                    "principal": False,                
+                    "decodificarPrincipal": decodificar_principal,                
                 }
                 respuesta = zinc.decodificar_direccion(datos)
                 if respuesta['error'] == False:                     
