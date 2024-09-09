@@ -129,8 +129,16 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'importar-complemento',)
     def importar_complemento(self, request):
         raw = request.data 
-        limite = raw.get('limite', 1)               
-        parametros = {'limite': limite}        
+        limite = raw.get('limite', 1)
+        guia_desde = raw.get('guia_desde', None)
+        guia_hasta = raw.get('guia_hasta', None)
+        pendiente_despacho = raw.get('pendiente_despacho', None)
+        parametros = {
+            'limite': limite,
+            'guia_desde': guia_desde,
+            'guia_hasta': guia_hasta,
+            'pendiente_despacho': pendiente_despacho
+        }
         holmio = Holmio()
         respuesta = holmio.ruteoPendiente(parametros)
         if respuesta['error'] == False:
@@ -160,53 +168,56 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             'ciudad': ciudad.id,
                             'destinatario_telefono': telefono_destinatario,
                             'destinatario_correo': None,
-                            'peso': guia['pesoReal'],
+                            'peso': guia['pesoReal'] or 0,
                             'volumen': guia['pesoVolumen'] or 0,
-                            'latitud': guia['latitud'] or 0,
-                            'longitud': guia['longitud'] or 0
+                            'latitud': guia['latitud'] or None,
+                            'longitud': guia['longitud'] or None,
+                            'estado_decodificado': guia['estadoDecodificado'] or None,
                         }
 
                         visitaSerializador = RutVisitaSerializador(data=data)
                         if visitaSerializador.is_valid():
                             visita = visitaSerializador.save()
-                            codigo_franja = None
-                            if direccion_destinatario:
-                                datos = {
-                                    "cuenta": "1",
-                                    "modelo": "guia",
-                                    "canal": 3,
-                                    "codigo": visita.id,
-                                    "direccion": direccion_destinatario,
-                                    "ciudad": ciudad.id,
-                                    "principal": False,                
-                                }
-                                respuesta = zinc.decodificar_direccion(datos)
-                                if respuesta['error'] == False:                     
-                                    datos = respuesta['datos']
-                                    visita.estado_decodificado = datos['decodificado']                                                                                                   
-                                    visita.latitud = datos['latitud']
-                                    visita.longitud = datos['longitud']                                      
-                                    respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
-                                    if respuesta['encontrado']:
-                                        visita.franja_id = respuesta['franja']['id']
-                                        visita.estado_franja = True
-                                        codigo_franja = respuesta['franja']['codigo']
-                                    else:
-                                        visita.estado_franja = False                                                        
-                                    visita.save()
-                                else:
-                                    return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                            else:
-                                visita.estado_decodificado = False                                                                                                                       
-                                visita.save()
                             cantidad += 1
-                            datos_guia_marcar = {
-                                "guia": guia['codigoGuiaPk'],
-                                "franja": codigo_franja,
-                                "latitud": visita.latitud,
-                                "longitud": visita.longitud
-                            }
-                            guias_marcar.append(datos_guia_marcar)                            
+                            if visita.estado_decodificado == None:
+                                codigo_franja = None
+                                if direccion_destinatario:
+                                    datos = {
+                                        "cuenta": "1",
+                                        "modelo": "guia",
+                                        "canal": 3,
+                                        "codigo": visita.id,
+                                        "direccion": direccion_destinatario,
+                                        "ciudad": ciudad.id,
+                                        "principal": False,                
+                                    }
+                                    respuesta = zinc.decodificar_direccion(datos)
+                                    if respuesta['error'] == False:                     
+                                        datos = respuesta['datos']
+                                        visita.estado_decodificado = datos['decodificado']                                                                                                   
+                                        visita.latitud = datos['latitud']
+                                        visita.longitud = datos['longitud']                                      
+                                        respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
+                                        if respuesta['encontrado']:
+                                            visita.franja_id = respuesta['franja']['id']
+                                            visita.estado_franja = True
+                                            codigo_franja = respuesta['franja']['codigo']
+                                        else:
+                                            visita.estado_franja = False                                                        
+                                        visita.save()
+                                    else:
+                                        return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                                else:
+                                    visita.estado_decodificado = False                                                                                                                       
+                                    visita.save()
+                                datos_guia_marcar = {
+                                    "guia": guia['codigoGuiaPk'],
+                                    "franja": codigo_franja,
+                                    "latitud": visita.latitud,
+                                    "longitud": visita.longitud
+                                }
+                                guias_marcar.append(datos_guia_marcar)                                     
+                            
                         else:
                             return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
             if cantidad > 0:
@@ -376,6 +387,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             respuesta = ubicar_punto(franjas, latitud, longitud)
             return Response(respuesta, status=status.HTTP_200_OK)                                                    
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+
+    @action(detail=False, methods=["post"], url_path=r'eliminar-todos',)
+    def eliminar_todos(self, request):             
+        raw = request.data
+        RutVisita.objects.all().delete()
+        return Response({'mensaje':'eliminados'}, status=status.HTTP_200_OK)                                                    
 
                
