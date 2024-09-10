@@ -68,5 +68,10 @@
     "model": "general.GenDocumentoTipo",
     "pk": 14,
     "fields": {"nombre": "NOMINA", "documento_clase": 701}
-  }     
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 15,
+    "fields": {"nombre": "NOMINA ELECTRONICA", "documento_clase": 701}
+  }   
 ]

@@ -32,6 +32,7 @@ from datetime import datetime, timedelta, date
 from io import BytesIO
 import base64
 import openpyxl
+import calendar
 
 class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = GenDocumento.objects.all()
@@ -890,6 +891,28 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'generar-nomina-electronica',)
+    def generar_nomina_electronica(self, request):      
+        raw = request.data
+        anio = raw.get('anio')
+        mes = raw.get('mes')
+        if anio and mes:                    
+            fecha_desde = date(anio, mes, 1)            
+            ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
+            fecha_hasta = date(anio, mes, ultimo_dia_mes)
+
+            '''nominas = GenDocumento.objects.filter(fecha__year=fecha_actual.year, fecha__month=fecha_actual.month
+                                                    ).annotate(dia=TruncDay('fecha')
+                                                                ).values('dia'
+                                                                        ).annotate(total=Sum('total')).order_by('dia') '''
+  
+            return Response({'resumen': 1}, status=status.HTTP_200_OK)
+
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):

@@ -30,3 +30,13 @@ class GenCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerial
             'nombre': instance.nombre,
             'estado_nombre': estado_nombre
         }
+
+class GenCiudadListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = GenCiudad 
+        
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,                        
+            'nombre': instance.nombre
+        }    
