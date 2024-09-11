@@ -196,6 +196,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Los documentos aprobados no se pueden modificar', 'codigo':14}, status=status.HTTP_400_BAD_REQUEST)
 
+    def destroy(self, request, *args, **kwargs):        
+        instance = self.get_object()
+        if instance.estado_aprobado:
+                return Response({'mensaje': 'No se puede eliminar un documento aprobado.'}, status=status.HTTP_400_BAD_REQUEST)
+        if instance.documento_tipo_id == 15:
+            nominas = GenDocumento.objects.filter(documento_referencia_id=instance.id)
+            nominas.update(documento_referencia_id=None)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["post"], url_path=r'lista',)
     def lista(self, request):
         raw = request.data
@@ -895,24 +905,53 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'generar-nomina-electronica',)
     def generar_nomina_electronica(self, request):      
         raw = request.data
-        anio = raw.get('anio')
-        mes = raw.get('mes')
+        anio = int(raw.get('anio'))
+        mes = int(raw.get('mes'))
         if anio and mes:                    
             fecha_desde = date(anio, mes, 1)            
             ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
             fecha_hasta = date(anio, mes, ultimo_dia_mes)
+            nominas_mes = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
+                                                      fecha__lte=fecha_hasta, 
+                                                      documento_tipo_id=14,
+                                                      documento_referencia_id = None,
+                                                      estado_aprobado = True)\
+                                            .values('contacto_id')\
+                                            .annotate(
+                                                deduccion=Sum('deduccion'),
+                                                devengado=Sum('devengado'),
+                                                total=Sum('total'))
+            sql_query = str(nominas_mes.query)
+            print(sql_query)            
+            for nomina_mes in nominas_mes:
+                data = {
+                    'empresa': 1,
+                    'documento_tipo': 15,
+                    'fecha': fecha_desde,
+                    'contacto': nomina_mes['contacto_id'],
+                    'deduccion': nomina_mes['deduccion'],
+                    'devengado': nomina_mes['devengado'],
+                    'total': nomina_mes['total']
+                }
+                documento_serializador = GenDocumentoSerializador(data=data)
+                if documento_serializador.is_valid():
+                    documento = documento_serializador.save()
+                    nominas = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
+                                                          fecha__lte=fecha_hasta, 
+                                                          documento_tipo_id=14,
+                                                          contacto_id = nomina_mes['contacto_id'],
+                                                          documento_referencia_id = None,
+                                                          estado_aprobado = True) 
+                    for nomina in nominas:
+                        nomina.documento_referencia = documento
+                        nomina.save() 
 
-            '''nominas = GenDocumento.objects.filter(fecha__year=fecha_actual.year, fecha__month=fecha_actual.month
-                                                    ).annotate(dia=TruncDay('fecha')
-                                                                ).values('dia'
-                                                                        ).annotate(total=Sum('total')).order_by('dia') '''
-  
+                else:
+                    return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
             return Response({'resumen': 1}, status=status.HTTP_200_OK)
 
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
     @staticmethod
     def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):

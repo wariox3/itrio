@@ -577,6 +577,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         documentos = GenDocumento.objects.filter(programacion_detalle_id=programacion_detalle.id)
                         for documento in documentos:
                             documento.numero = documento_tipo.consecutivo
+                            documento.estado_aprobado = True
                             documento.save()
                             documento_tipo.consecutivo += 1
 
