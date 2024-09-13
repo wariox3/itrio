@@ -1,4 +1,4 @@
-from general.models.contacto import GenContacto, GenCiudad, GenIdentificacion, GenRegimen, GenTipoPersona, GenAsesor, GenPrecio, GenPlazoPago
+from general.models.contacto import GenContacto, GenCiudad, GenIdentificacion, GenRegimen, GenTipoPersona, GenAsesor, GenPrecio, GenPlazoPago, GenBanco
 from rest_framework import serializers
 
 class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
@@ -10,12 +10,13 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
     precio = serializers.PrimaryKeyRelatedField(queryset=GenPrecio.objects.all(), allow_null=True, required=False)
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True, required=False)
     plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True, required=False)
+    banco = serializers.PrimaryKeyRelatedField(queryset=GenBanco.objects.all(), allow_null=True, required=False)
     class Meta:
         model = GenContacto
         fields = [
             'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
             'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'tipo_persona', 'regimen', 'codigo_ciuu',
-            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado']  
+            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado', 'banco', 'numero_cuenta']  
         
     def to_representation(self, instance):
         asesor = instance.asesor
@@ -37,7 +38,10 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
         plazo_pago_proveedor_dias = 0
         if plazo_pago_proveedor:
             plazo_pago_proveedor_nombre = plazo_pago_proveedor.nombre
-            plazo_pago_proveedor_dias = plazo_pago_proveedor.dias            
+            plazo_pago_proveedor_dias = plazo_pago_proveedor.dias   
+        banco_nombre = ""
+        if instance.banco:
+            banco_nombre = instance.banco.nombre
         return {
             'id': instance.id,
             'identificacion_id': instance.identificacion_id, 
@@ -63,6 +67,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             'regimen_id': instance.regimen_id,
             'regimen_nombre': instance.regimen.nombre,  
             'codigo_ciuu': instance.codigo_ciuu,
+            'numero_cuenta': instance.numero_cuenta,
             'asesor_id': instance.asesor_id,
             'asesor_nombre_corto': asesor_nombre_corto,
             'precio_id': instance.precio_id,
@@ -75,7 +80,9 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             'plazo_pago_proveedor_dias': plazo_pago_proveedor_dias,
             'cliente': instance.cliente,
             'proveedor': instance.proveedor,
-            'empleado': instance.empleado
+            'empleado': instance.empleado,
+            'banco_id': instance.banco_id,
+            'banco_nombre': banco_nombre
         }     
 
 class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):

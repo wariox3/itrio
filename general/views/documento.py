@@ -606,54 +606,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             "numero" : documento.numero,
                                             "fecha" : str(documento.fecha),
                                             "hora" : str("12:00:00-05:00"),
-                                            "total_documento" : str(documento.total),
-
-                                    
-                                            
-                                            "pag_numero":213,
-                                            "pag_devengado":1657533,
-                                            "pag_deduccion":122666,
-                                            "pag_neto":1534867,                                            
-                                            "cuneAjuste":None,
-                                            "pag_fechaDesde":{
-                                                "date":"2024-08-01 00:00:00.000000",
-                                                "timezone_type":3,
-                                                "timezone":"America\/New_York"
-                                            },
-                                            "pag_fechaHasta":{
-                                                "date":"2024-08-31 00:00:00.000000",
-                                                "timezone_type":3,
-                                                "timezone":"America\/New_York"
-                                            },                                            
-                                                                                                                                    
-                                            "emp_cuenta":"62186515949",
-                                            "emp_banco":"BANCOLOMBIA",                                        
-                                            "con_fechaDesde":{
-                                                "date":"2024-08-08 00:00:00.000000",
-                                                "timezone_type":3,
-                                                "timezone":"America\/New_York"
-                                            },
-                                            "con_salario":2000000,
-                                            "con_salarioIntergral":False,
-                                            "con_tipoCotizante":"1",
-                                            "con_subtipoCotizante":0,
-                                            "con_contratoTipo":"1",
-                                            "con_departamentoLabora":"05",
-                                            "con_ciudadLabora":"05001",
-                                            "per_codigoDian":"4",
-
-
-
-
-
+                                            "devengado":str(documento.devengado),
+                                            "deduccion":str(documento.deduccion),
+                                            "total_documento" : str(documento.total),                                                                                                                                                                                                    
+                                            "fecha_desde":str(documento.fecha),
+                                            "fecha_hasta":str(documento.fecha_hasta),                                                                                                                    
                                             "empleado" : {
-                                                "codigo": documento.contato_id,
+                                                "codigo": documento.contacto_id,
                                                 "identificacion" : documento.contacto.identificacion.codigo,
                                                 "numero_identificacion" : documento.contacto.numero_identificacion,
                                                 "digito_verificacion" : documento.contacto.digito_verificacion,
                                                 "razon_social" : documento.contacto.nombre_corto,
                                                 "pais" : "CO",
                                                 "ciudad" : documento.contacto.ciudad.nombre,
+                                                "ciudad_codigo_postal" : documento.contacto.ciudad.codigo_postal,
                                                 "departamento" : documento.contacto.ciudad.estado.nombre,
                                                 "direccion" : documento.contacto.direccion,                                                
                                                 "nombre1" : documento.contacto.nombre1,
@@ -663,13 +629,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "correo" : documento.contacto.correo,
                                                 "telefono" : documento.contacto.telefono,
                                                 "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
-                                                "regimen_tributario" : documento.contacto.regimen.codigo_interface,
-                                                "codigo_postal" : documento.contacto.ciudad.codigo_postal,
+                                                "regimen_tributario" : documento.contacto.regimen.codigo_interface,                                                
+                                                "cuenta":documento.contacto.numero_cuenta,
+                                                "banco":documento.contacto.banco.nombre, 
                                                 "responsable" : 1,
                                                 "nacional" : 1
                                             },
+                                            "contrato" : {
+                                                "fecha_desde":str(documento.contrato.fecha_desde),
+                                                "salario":str(documento.salario),
+                                                "salario_intergral":documento.contrato.salario_integral,
+                                                "tipo_cotizante":documento.contrato.tipo_cotizante.codigo,
+                                                "subtipo_cotizante":documento.contrato.subtipo_cotizante.codigo,
+                                                "contrato_tipo":documento.contrato.contrato_tipo_id,                                            
+                                                "ciudad_labora" : documento.contrato.ciudad_labora.nombre,
+                                                "ciudad_labora_codigo_postal" : documento.contrato.ciudad_labora.codigo_postal,
+                                                "estado_labora_codigo_postal":documento.contrato.ciudad_labora.estado.codigo,
+                                            },
                                         }
-                                    }                                                                                            
+                                    }           
+                                    print(datos)                                                                                 
                                     wolframio = Wolframio()
                                     respuesta = wolframio.emitir(datos)
                                     if respuesta['error'] == False: 
@@ -1014,7 +993,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     'empresa': 1,
                     'documento_tipo': 15,
                     'fecha': fecha_desde,
-                    'fecha_contable': fecha_desde,
+                    'fecha_contable': fecha_desde,                    
+                    'fecha_hasta': fecha_hasta,
                     'contacto': nomina_mes['contacto_id'],
                     'contrato': nomina_mes['contrato_id'],
                     'grupo': contrato.grupo_id,

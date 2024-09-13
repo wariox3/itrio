@@ -1,0 +1,7 @@
+[
+  {
+    "model": "general.GenBanco",
+    "pk": 1,
+    "fields": {"nombre": "Bancolombia"}
+  }
+]
