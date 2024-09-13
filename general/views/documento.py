@@ -9,6 +9,7 @@ from general.models.documento_pago import GenDocumentoPago
 from general.models.empresa import GenEmpresa
 from general.models.contacto import GenContacto
 from general.models.configuracion import GenConfiguracion
+from humano.models.contrato import HumContrato
 from contabilidad.models.cuenta import ConCuenta
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
@@ -453,22 +454,149 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento.estado_aprobado == True:
                     empresa = GenEmpresa.objects.get(pk=1)
                     if empresa.rededoc_id:
-                        if documento.resolucion: 
+                        if documento.estado_electronico_enviado == False: 
                             if documento.numero: 
-                                if documento.estado_electronico_enviado == False: 
-                                    #Las facturas y documento soporte toman prefijo de la resolucion
-                                    prefijo = documento.resolucion.prefijo
-                                    documento_referencia_id = None
-                                    forma_pago = 2
-                                    if documento.plazo_pago_id == 1:
-                                        forma_pago = 1                                            
-                                    if documento.documento_tipo.documento_clase_id == 101:
-                                        prefijo = "NC"
-                                    if documento.documento_tipo.documento_clase_id == 102:
-                                        prefijo = "ND" 
-                                    if documento.documento_tipo.documento_clase_id == 304:
-                                        prefijo = "DSAJ"
-                                    datos_factura = {
+                                if documento.documento_tipo_id in [1,2,3,11,12]:
+                                    if documento.resolucion: 
+                                        #Las facturas y documento soporte toman prefijo de la resolucion
+                                        prefijo = documento.resolucion.prefijo
+                                        documento_referencia_id = None
+                                        forma_pago = 2
+                                        if documento.plazo_pago_id == 1:
+                                            forma_pago = 1                                            
+                                        if documento.documento_tipo.documento_clase_id == 101:
+                                            prefijo = "NC"
+                                        if documento.documento_tipo.documento_clase_id == 102:
+                                            prefijo = "ND" 
+                                        if documento.documento_tipo.documento_clase_id == 304:
+                                            prefijo = "DSAJ"
+                                        datos_factura = {
+                                            "cuentaId": empresa.rededoc_id,
+                                            "documentoClaseId" : documento.documento_tipo_id,
+                                            "documentoClienteId": documento.id,
+                                            "documento" : {
+                                                "ambiente" : 1,
+                                                "prefijo" : prefijo,
+                                                "numero" : documento.numero,
+                                                "fecha" : str(documento.fecha),
+                                                "hora" : str("12:00:00-05:00"),
+                                                "fecha_vence" : str(documento.fecha_vence),
+                                                "tipo_operacion" : str(10),
+                                                "moneda" : "COP",
+                                                "orden_compra": documento.orden_compra,
+                                                "resolucion" : str(documento.resolucion.numero),
+                                                "forma_pago" : forma_pago,
+                                                "cantidad_detalles" :1,
+                                                "subtotal" : str(documento.subtotal),
+                                                "subtotal_mas_impuestos" : str(documento.subtotal + documento.impuesto),
+                                                "base" : str(documento.base_impuesto),
+                                                "total_impuestos" : str(documento.impuesto),
+                                                "total_descuentos" : str(documento.descuento),
+                                                "total_cargos" : str(0),
+                                                "total_anticipos" : str(0),
+                                                "total_documento" : str(documento.total),
+                                                "total_iva" : str(0),
+                                                "total_consumo" : str(0),
+                                                "total_ica" : str(0),
+                                                "documento_referencia": documento_referencia_id,
+                                                "adquiriente" : {
+                                                    "identificacion" : documento.contacto.identificacion.codigo,
+                                                    "numero_identificacion" : documento.contacto.numero_identificacion,
+                                                    "digito_verificacion" : documento.contacto.digito_verificacion,
+                                                    "razon_social" : documento.contacto.nombre_corto,
+                                                    "pais" : "CO",
+                                                    "ciudad" : documento.contacto.ciudad.nombre,
+                                                    "departamento" : documento.contacto.ciudad.estado.nombre,
+                                                    "direccion" : documento.contacto.direccion,
+                                                    "obligaciones" : "0-99",
+                                                    "nombres" : documento.contacto.nombre1,
+                                                    "apellidos" : documento.contacto.apellido1,
+                                                    "correo" : documento.contacto.correo,
+                                                    "telefono" : documento.contacto.telefono,
+                                                    "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
+                                                    "regimen_tributario" : documento.contacto.regimen.codigo_interface,
+                                                    "codigo_postal" : documento.contacto.ciudad.codigo_postal,
+                                                    "responsable" : 1,
+                                                    "nacional" : 1
+                                                },
+                                            }
+                                        }
+                                        arr_medio_pago = []
+
+                                        arr_medio_pago.append({
+                                            "medio_pago": 31,
+                                            "descripcion": "",
+                                        })
+
+                                        datos_factura['documento']['medios_pago'] = arr_medio_pago
+
+                                        arr_item = []
+                                        cantidad_items = 0
+                                        impuestos_agrupados = {}
+                                        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=codigoDocumento)
+                                        for documentoDetalle in documentoDetalles:
+                                            arr_impuestos = []
+                                            documentoImpuestoDetalles = GenDocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
+                                            for documentoImpuestoDetalle in documentoImpuestoDetalles:
+                                                impuesto_id = documentoImpuestoDetalle.impuesto_id
+                                                total = documentoImpuestoDetalle.total
+                                                arr_impuestos.append({
+                                                    "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
+                                                    "total" : str(documentoImpuestoDetalle.total),
+                                                    "porcentual" : str(documentoImpuestoDetalle.porcentaje)
+                                                })
+
+                                                if impuesto_id in impuestos_agrupados:
+                                                    impuestos_agrupados[impuesto_id] += total
+                                                else:
+                                                    impuestos_agrupados[impuesto_id] = total
+
+                                            cantidad_items += 1
+                                            arr_item.append({
+                                                "consecutivo": cantidad_items,
+                                                "codigo": documentoDetalle.item.codigo,
+                                                "descripcion" : documentoDetalle.item.nombre,
+                                                "marca" : "",
+                                                "modelo" : "",
+                                                "observacion" : "",
+                                                "cantidad" : str(documentoDetalle.cantidad),
+                                                "cantidad_empque": str(documentoDetalle.cantidad),
+                                                "obserquio" : str(0),
+                                                "precio_unitario" : str(documentoDetalle.precio),
+                                                "precio_referencia" : str(documentoDetalle.precio),
+                                                "valor" : str(documentoDetalle.precio),
+                                                "total_descuentos" : str(documentoDetalle.descuento),
+                                                "total_cargos" : str(0),
+                                                "total_impuestos" : str(documentoDetalle.impuesto),
+                                                "base" : str(documentoDetalle.base_impuesto),
+                                                "subtotal" : str(documentoDetalle.subtotal),
+                                                "impuestos" : arr_impuestos
+                                            })
+                                        datos_factura['documento']['cantidad_detalles'] = cantidad_items
+                                        arr_impuestos = []
+                                        for impuesto_id, total in impuestos_agrupados.items():
+                                            arr_impuestos.append({
+                                                "tipo_impuesto": impuesto_id,
+                                                "total": str(total),
+                                                "porcentual" : str(19.00)
+                                            })
+                                        
+                                        datos_factura['documento']['detalles'] = arr_item
+                                        datos_factura['doc_cantidad_item'] = cantidad_items
+                                        datos_factura['documento']['impuestos'] = arr_impuestos
+                                        wolframio = Wolframio()
+                                        respuesta = wolframio.emitir(datos_factura)
+                                        if respuesta['error'] == False: 
+                                            documento.estado_electronico_enviado = True
+                                            documento.electronico_id = respuesta['id']
+                                            documento.save()                                        
+                                        else:
+                                            return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                                    else:
+                                        return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                                if documento.documento_tipo_id in [15]:                                
+                                    prefijo = "NE"                                
+                                    datos = {
                                         "cuentaId": empresa.rededoc_id,
                                         "documentoClaseId" : documento.documento_tipo_id,
                                         "documentoClienteId": documento.id,
@@ -478,26 +606,48 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             "numero" : documento.numero,
                                             "fecha" : str(documento.fecha),
                                             "hora" : str("12:00:00-05:00"),
-                                            "fecha_vence" : str(documento.fecha_vence),
-                                            "tipo_operacion" : str(10),
-                                            "moneda" : "COP",
-                                            "orden_compra": documento.orden_compra,
-                                            "resolucion" : str(documento.resolucion.numero),
-                                            "forma_pago" : forma_pago,
-                                            "cantidad_detalles" :1,
-                                            "subtotal" : str(documento.subtotal),
-                                            "subtotal_mas_impuestos" : str(documento.subtotal + documento.impuesto),
-                                            "base" : str(documento.base_impuesto),
-                                            "total_impuestos" : str(documento.impuesto),
-                                            "total_descuentos" : str(documento.descuento),
-                                            "total_cargos" : str(0),
-                                            "total_anticipos" : str(0),
                                             "total_documento" : str(documento.total),
-                                            "total_iva" : str(0),
-                                            "total_consumo" : str(0),
-                                            "total_ica" : str(0),
-                                            "documento_referencia": documento_referencia_id,
-                                            "adquiriente" : {
+
+                                    
+                                            
+                                            "pag_numero":213,
+                                            "pag_devengado":1657533,
+                                            "pag_deduccion":122666,
+                                            "pag_neto":1534867,                                            
+                                            "cuneAjuste":None,
+                                            "pag_fechaDesde":{
+                                                "date":"2024-08-01 00:00:00.000000",
+                                                "timezone_type":3,
+                                                "timezone":"America\/New_York"
+                                            },
+                                            "pag_fechaHasta":{
+                                                "date":"2024-08-31 00:00:00.000000",
+                                                "timezone_type":3,
+                                                "timezone":"America\/New_York"
+                                            },                                            
+                                                                                                                                    
+                                            "emp_cuenta":"62186515949",
+                                            "emp_banco":"BANCOLOMBIA",                                        
+                                            "con_fechaDesde":{
+                                                "date":"2024-08-08 00:00:00.000000",
+                                                "timezone_type":3,
+                                                "timezone":"America\/New_York"
+                                            },
+                                            "con_salario":2000000,
+                                            "con_salarioIntergral":False,
+                                            "con_tipoCotizante":"1",
+                                            "con_subtipoCotizante":0,
+                                            "con_contratoTipo":"1",
+                                            "con_departamentoLabora":"05",
+                                            "con_ciudadLabora":"05001",
+                                            "per_codigoDian":"4",
+
+
+
+
+
+                                            "empleado" : {
+                                                "codigo": documento.contato_id,
                                                 "identificacion" : documento.contacto.identificacion.codigo,
                                                 "numero_identificacion" : documento.contacto.numero_identificacion,
                                                 "digito_verificacion" : documento.contacto.digito_verificacion,
@@ -505,10 +655,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "pais" : "CO",
                                                 "ciudad" : documento.contacto.ciudad.nombre,
                                                 "departamento" : documento.contacto.ciudad.estado.nombre,
-                                                "direccion" : documento.contacto.direccion,
-                                                "obligaciones" : "0-99",
-                                                "nombres" : documento.contacto.nombre1,
-                                                "apellidos" : documento.contacto.apellido1,
+                                                "direccion" : documento.contacto.direccion,                                                
+                                                "nombre1" : documento.contacto.nombre1,
+                                                "nombre2" : documento.contacto.nombre2,
+                                                "apellido1" : documento.contacto.apellido1,
+                                                "apellido2" : documento.contacto.apellido2,
                                                 "correo" : documento.contacto.correo,
                                                 "telefono" : documento.contacto.telefono,
                                                 "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
@@ -518,92 +669,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "nacional" : 1
                                             },
                                         }
-                                    }
-                                    arr_medio_pago = []
-
-                                    arr_medio_pago.append({
-                                        "medio_pago": 31,
-                                        "descripcion": "",
-                                    })
-
-                                    datos_factura['documento']['medios_pago'] = arr_medio_pago
-
-                                    arr_item = []
-                                    cantidad_items = 0
-                                    impuestos_agrupados = {}
-                                    documentoDetalles = GenDocumentoDetalle.objects.filter(documento=codigoDocumento)
-                                    for documentoDetalle in documentoDetalles:
-                                        arr_impuestos = []
-                                        documentoImpuestoDetalles = GenDocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
-                                        for documentoImpuestoDetalle in documentoImpuestoDetalles:
-                                            impuesto_id = documentoImpuestoDetalle.impuesto_id
-                                            total = documentoImpuestoDetalle.total
-                                            arr_impuestos.append({
-                                                "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
-                                                "total" : str(documentoImpuestoDetalle.total),
-                                                "porcentual" : str(documentoImpuestoDetalle.porcentaje)
-                                            })
-
-                                            if impuesto_id in impuestos_agrupados:
-                                                impuestos_agrupados[impuesto_id] += total
-                                            else:
-                                                impuestos_agrupados[impuesto_id] = total
-
-                                        cantidad_items += 1
-                                        arr_item.append({
-                                            "consecutivo": cantidad_items,
-                                            "codigo": documentoDetalle.item.codigo,
-                                            "descripcion" : documentoDetalle.item.nombre,
-                                            "marca" : "",
-                                            "modelo" : "",
-                                            "observacion" : "",
-                                            "cantidad" : str(documentoDetalle.cantidad),
-                                            "cantidad_empque": str(documentoDetalle.cantidad),
-                                            "obserquio" : str(0),
-                                            "precio_unitario" : str(documentoDetalle.precio),
-                                            "precio_referencia" : str(documentoDetalle.precio),
-                                            "valor" : str(documentoDetalle.precio),
-                                            "total_descuentos" : str(documentoDetalle.descuento),
-                                            "total_cargos" : str(0),
-                                            "total_impuestos" : str(documentoDetalle.impuesto),
-                                            "base" : str(documentoDetalle.base_impuesto),
-                                            "subtotal" : str(documentoDetalle.subtotal),
-                                            "impuestos" : arr_impuestos
-                                        })
-                                    datos_factura['documento']['cantidad_detalles'] = cantidad_items
-                                    arr_impuestos = []
-                                    for impuesto_id, total in impuestos_agrupados.items():
-                                        arr_impuestos.append({
-                                            "tipo_impuesto": impuesto_id,
-                                            "total": str(total),
-                                            "porcentual" : str(19.00)
-                                        })
-                                    
-                                    datos_factura['documento']['detalles'] = arr_item
-                                    datos_factura['doc_cantidad_item'] = cantidad_items
-                                    datos_factura['documento']['impuestos'] = arr_impuestos
+                                    }                                                                                            
                                     wolframio = Wolframio()
-                                    respuesta = wolframio.emitir(datos_factura)
+                                    respuesta = wolframio.emitir(datos)
                                     if respuesta['error'] == False: 
                                         documento.estado_electronico_enviado = True
                                         documento.electronico_id = respuesta['id']
-                                        documento.save()
-                                        return Response({'mensaje': 'Documento emitido correctamente', 'codigo': 15}, status=status.HTTP_200_OK)
+                                        documento.save()                                        
                                     else:
                                         return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                                else:
-                                    return Response({'mensaje': "El documento ya fue enviado", 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                                        
+                                return Response({'mensaje': 'Documento emitido correctamente', 'codigo': 15}, status=status.HTTP_200_OK)
                             else:
                                 return Response({'mensaje': 'La factura no cuenta con un número', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                         else:
-                            return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({'mensaje': "El documento ya fue enviado", 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                        
                     else:  
                         return Response({'mensaje': 'La empresa no se encuentra activada para emitir documentos electronicos', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                
+                return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
         except GenDocumento.DoesNotExist:
             return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -916,19 +1001,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                       documento_tipo_id=14,
                                                       documento_referencia_id = None,
                                                       estado_aprobado = True)\
-                                            .values('contacto_id')\
+                                            .values('contacto_id', 'contrato_id')\
                                             .annotate(
+                                                base_cotizacion=Sum('base_cotizacion'),
+                                                base_prestacion=Sum('base_prestacion'),
                                                 deduccion=Sum('deduccion'),
                                                 devengado=Sum('devengado'),
-                                                total=Sum('total'))
-            sql_query = str(nominas_mes.query)
-            print(sql_query)            
+                                                total=Sum('total'))           
             for nomina_mes in nominas_mes:
+                contrato = HumContrato.objects.get(pk=nomina_mes['contrato_id'])
                 data = {
                     'empresa': 1,
                     'documento_tipo': 15,
                     'fecha': fecha_desde,
+                    'fecha_contable': fecha_desde,
                     'contacto': nomina_mes['contacto_id'],
+                    'contrato': nomina_mes['contrato_id'],
+                    'grupo': contrato.grupo_id,
+                    'salario': contrato.salario,
+                    'base_cotizacion': nomina_mes['base_cotizacion'],
+                    'base_prestacion': nomina_mes['base_prestacion'],
                     'deduccion': nomina_mes['deduccion'],
                     'devengado': nomina_mes['devengado'],
                     'total': nomina_mes['total']
@@ -940,6 +1032,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                           fecha__lte=fecha_hasta, 
                                                           documento_tipo_id=14,
                                                           contacto_id = nomina_mes['contacto_id'],
+                                                          contrato_id = nomina_mes['contrato_id'],
                                                           documento_referencia_id = None,
                                                           estado_aprobado = True) 
                     for nomina in nominas:
