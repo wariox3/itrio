@@ -1070,7 +1070,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if consecutivo < documento.resolucion.consecutivo_desde or consecutivo > documento.resolucion.consecutivo_hasta:
                         return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
             documento_detalle = GenDocumentoDetalle.objects.filter(documento=documento)
-            if documento_detalle:
+            if documento_detalle or documento.documento_tipo_id == 15:
                 if documento.estado_aprobado == False:      
                     if documento.documento_tipo.documento_clase_id == 200:
                         resultado = (
