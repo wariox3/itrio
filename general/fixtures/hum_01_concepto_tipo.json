@@ -93,5 +93,35 @@
         "model": "humano.HumConceptoTipo",
         "pk": 19,
         "fields": {"nombre": "Vacaciones dinero"}
-    }
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 20,
+        "fields": {"nombre": "Primas"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 21,
+        "fields": {"nombre": "Primas liquidacion"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 22,
+        "fields": {"nombre": "Cesantias"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 23,
+        "fields": {"nombre": "Cesantias liquidacion"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 24,
+        "fields": {"nombre": "Intereses"}
+    },
+    {
+        "model": "humano.HumConceptoTipo",
+        "pk": 25,
+        "fields": {"nombre": "Insteres liquidacion"}
+    }    
 ]

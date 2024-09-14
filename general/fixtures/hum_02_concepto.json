@@ -432,5 +432,90 @@
             "orden":23,
             "concepto_tipo": 12
         }
-    }          
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 32,
+        "fields": {
+            "nombre": "Primas", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":false,
+            "operacion":1,
+            "orden":24,
+            "concepto_tipo": 20
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 33,
+        "fields": {
+            "nombre": "Primas liquidacion", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":false,
+            "operacion":1,
+            "orden":25,
+            "concepto_tipo": 21
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 34,
+        "fields": {
+            "nombre": "Cesantias", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":false,
+            "operacion":1,
+            "orden":26,
+            "concepto_tipo": 22
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 35,
+        "fields": {
+            "nombre": "Cesantias liquidacion", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":false,
+            "operacion":1,
+            "orden":27,
+            "concepto_tipo": 23
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 36,
+        "fields": {
+            "nombre": "Intereses", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":false,
+            "operacion":1,
+            "orden":28,
+            "concepto_tipo": 24
+        }
+    },
+    {
+        "model": "humano.HumConcepto",
+        "pk": 37,
+        "fields": {
+            "nombre": "Intereses liquidacion", 
+            "porcentaje": 0,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
+            "adicional":false,
+            "operacion":1,
+            "orden":29,
+            "concepto_tipo": 25
+        }
+    }
+
 ]
