@@ -177,7 +177,7 @@ class GenDocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerialize
             'documento_afectado_numero': documento_afectado_numero
         }      
     
-class GenDocumentoDetalleNominaDetalleSerializador(serializers.HyperlinkedModelSerializer):
+class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenDocumentoDetalle        
 
