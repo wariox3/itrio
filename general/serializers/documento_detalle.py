@@ -210,5 +210,5 @@ class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializ
             'deduccion': instance.deduccion,
             'base_cotizacion': instance.base_cotizacion,
             'base_prestacion': instance.base_prestacion,
-            'base': instance.base
+            'base_impuesto': instance.base_impuesto
         }     
