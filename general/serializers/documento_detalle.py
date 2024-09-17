@@ -209,5 +209,6 @@ class GenDocumentoDetalleNominaDetalleSerializador(serializers.HyperlinkedModelS
             'devengado': instance.devengado,
             'deduccion': instance.deduccion,
             'base_cotizacion': instance.base_cotizacion,
-            'base_prestacion': instance.base_prestacion
+            'base_prestacion': instance.base_prestacion,
+            'base': instance.base
         }     
