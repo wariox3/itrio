@@ -176,3 +176,38 @@ class GenDocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerialize
             'documento_afectado_id': instance.documento_afectado_id,
             'documento_afectado_numero': documento_afectado_numero
         }      
+    
+class GenDocumentoDetalleNominaDetalleSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = GenDocumentoDetalle        
+
+    def to_representation(self, instance):
+        documento_contacto_nombre = ""
+        if instance.documento.contacto:
+            documento_contacto_nombre = instance.documento.contacto.nombre_corto
+        concepto_nombre = ""
+        if instance.concepto:
+            concepto_nombre = instance.concepto.nombre
+            
+        return {
+            'id': instance.id,            
+            'documento_id': instance.documento_id,
+            'documento_tipo_nombre': instance.documento.documento_tipo.nombre,        
+            'documento_fecha': instance.documento.fecha,
+            'documento_numero': instance.documento.numero,    
+            'documento_contacto_nombre': documento_contacto_nombre,
+            'concepto_id': instance.concepto_id,
+            'concepto_nombre': concepto_nombre,
+            'detalle':instance.detalle,
+            'porcentaje': instance.porcentaje,
+            'cantidad': instance.cantidad,
+            'dias': instance.dias,
+            'hora': instance.hora,
+            'operacion': instance.operacion,
+            'pago': instance.pago,
+            'pago_operado': instance.pago_operado,
+            'devengado': instance.devengado,
+            'deduccion': instance.deduccion,
+            'base_cotizacion': instance.base_cotizacion,
+            'base_prestacion': instance.base_prestacion
+        }     

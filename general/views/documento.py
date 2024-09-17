@@ -544,7 +544,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         arr_item = []
                                         cantidad_items = 0
                                         impuestos_agrupados = {}
-                                        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=codigoDocumento)
+                                        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=id)
                                         for documentoDetalle in documentoDetalles:
                                             arr_impuestos = []
                                             documentoImpuestoDetalles = GenDocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
@@ -631,7 +631,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "pais" : "CO",
                                                 "ciudad" : documento.contacto.ciudad.nombre,
                                                 "ciudad_codigo_postal" : documento.contacto.ciudad.codigo_postal,
-                                                "departamento" : documento.contacto.ciudad.estado.nombre,
+                                                "departamento" : documento.contacto.ciudad.estado.codigo,
                                                 "direccion" : documento.contacto.direccion,                                                
                                                 "nombre1" : documento.contacto.nombre1,
                                                 "nombre2" : documento.contacto.nombre2,
@@ -784,13 +784,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         })
                                             
                                             if documento_detalle['concepto__concepto_tipo_id'] == 2:
+                                                # No se pueden cambiar los porcentajes
                                                 if documento_detalle['concepto_id'] in [5,3]:
                                                     detalle['Devengados']['HorasExtras']['HED'].append({
                                                         "Id":0,
                                                         "HoraInicio":fecha_desde_extra,
                                                         "HoraFin":fecha_hasta_extra,
                                                         "Cantidad":documento_detalle['cantidad'],
-                                                        "Porcentaje":documento_detalle['porcentaje'],
+                                                        "Porcentaje":25,
                                                         "Pago":documento_detalle['pago']
                                                         })                                                    
                                                 if documento_detalle['concepto_id'] in [6,4]:
@@ -799,7 +800,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         "HoraInicio":fecha_desde_extra,
                                                         "HoraFin":fecha_hasta_extra,
                                                         "Cantidad":documento_detalle['cantidad'],
-                                                        "Porcentaje":documento_detalle['porcentaje'],
+                                                        "Porcentaje":75,
                                                         "Pago":documento_detalle['pago']
                                                         }) 
                                                 if documento_detalle['concepto_id'] in [9,2]:
@@ -808,7 +809,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         "HoraInicio":fecha_desde_extra,
                                                         "HoraFin":fecha_hasta_extra,
                                                         "Cantidad":documento_detalle['cantidad'],
-                                                        "Porcentaje":documento_detalle['porcentaje'],
+                                                        "Porcentaje":35,
                                                         "Pago":documento_detalle['pago']
                                                         }) 
                                                 if documento_detalle['concepto_id'] in [7]:
@@ -817,7 +818,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         "HoraInicio":fecha_desde_extra,
                                                         "HoraFin":fecha_hasta_extra,
                                                         "Cantidad":documento_detalle['cantidad'],
-                                                        "Porcentaje":documento_detalle['porcentaje'],
+                                                        "Porcentaje":100,
                                                         "Pago":documento_detalle['pago']
                                                         }) 
                                                 if documento_detalle['concepto_id'] in [10]:
@@ -826,7 +827,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         "HoraInicio":fecha_desde_extra,
                                                         "HoraFin":fecha_hasta_extra,
                                                         "Cantidad":documento_detalle['cantidad'],
-                                                        "Porcentaje":documento_detalle['porcentaje'],
+                                                        "Porcentaje":75,
                                                         "Pago":documento_detalle['pago']
                                                         }) 
                                                 if documento_detalle['concepto_id'] in [8]:
@@ -835,7 +836,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         "HoraInicio":fecha_desde_extra,
                                                         "HoraFin":fecha_hasta_extra,
                                                         "Cantidad":documento_detalle['cantidad'],
-                                                        "Porcentaje":documento_detalle['porcentaje'],
+                                                        "Porcentaje":150,
                                                         "Pago":documento_detalle['pago']
                                                         }) 
                                                 if documento_detalle['concepto_id'] in [11]:
@@ -844,7 +845,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         "HoraInicio":fecha_desde_extra,
                                                         "HoraFin":fecha_hasta_extra,
                                                         "Cantidad":documento_detalle['cantidad'],
-                                                        "Porcentaje":documento_detalle['porcentaje'],
+                                                        "Porcentaje":110,
                                                         "Pago":documento_detalle['pago']
                                                         })                                                                                                                                                                                                                                                                                                 
 
@@ -1423,35 +1424,42 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         try:
             documento = GenDocumento.objects.get(id=documento_id)
             fecha = date.today()
-            if documento.documento_tipo.documento_clase_id in (100,303):
-                if documento.resolucion:
-                    if isinstance(documento.resolucion.fecha_hasta, date):
-                        if documento.resolucion.fecha_hasta <= fecha:
-                            return {'error':True, 'mensaje':'La fecha de la resolucion esta vencida', 'codigo':1}
-                    if consecutivo < documento.resolucion.consecutivo_desde or consecutivo > documento.resolucion.consecutivo_hasta:
-                        return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
-            documento_detalle = GenDocumentoDetalle.objects.filter(documento=documento)
-            if documento_detalle or documento.documento_tipo_id == 15:
-                if documento.estado_aprobado == False:      
-                    if documento.documento_tipo.documento_clase_id == 200:
-                        resultado = (
-                            GenDocumentoDetalle.objects
-                            .filter(documento_id=documento_id)
-                            .exclude(documento_afectado_id__isnull=True)
-                            .values('documento_afectado_id')
-                            .annotate(
-                                total_pago=Sum('pago'),
-                                pendiente=F('documento_afectado__pendiente')))                        
-                        for entrada in resultado:
-                            if entrada['pendiente'] < entrada['total_pago']:
-                                return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
-                        #result_list = list(resultado)
-                        #print(result_list)
-                    return {'error':False}                    
-                else:
-                    return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}
+            if documento.estado_aprobado == False:
+                if documento.documento_tipo.documento_clase_id in (100,303):
+                    documento_detalle = GenDocumentoDetalle.objects.filter(documento=documento)
+                    if documento_detalle or documento.documento_tipo_id == 15:
+                        if documento.resolucion:
+                            if isinstance(documento.resolucion.fecha_hasta, date):
+                                if documento.resolucion.fecha_hasta <= fecha:
+                                    return {'error':True, 'mensaje':'La fecha de la resolucion esta vencida', 'codigo':1}
+                            if consecutivo < documento.resolucion.consecutivo_desde or consecutivo > documento.resolucion.consecutivo_hasta:
+                                return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
+                    else:
+                        return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1} 
+
+                if documento.documento_tipo.documento_clase_id == 200:
+                    resultado = (
+                        GenDocumentoDetalle.objects
+                        .filter(documento_id=documento_id)
+                        .exclude(documento_afectado_id__isnull=True)
+                        .values('documento_afectado_id')
+                        .annotate(
+                            total_pago=Sum('pago'),
+                            pendiente=F('documento_afectado__pendiente')))                        
+                    for entrada in resultado:
+                        if entrada['pendiente'] < entrada['total_pago']:
+                            return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
+                    #result_list = list(resultado)
+                    #print(result_list)
+                
+                if documento.documento_tipo.documento_clase_id == 702:
+                    if documento.contacto.nombre1 and documento.contacto.apellido1:
+                        pass
+                    else:                        
+                        return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
+                return {'error':False}                    
             else:
-                return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1}            
+                return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}        
         except GenDocumento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}
         
