@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from general.models.documento import GenDocumento
 from rest_framework.permissions import IsAuthenticated
 from general.views.documento import DocumentoViewSet
+
 class PendienteView(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -15,5 +16,4 @@ class PendienteView(APIView):
         filtros = [{'propiedad':'cobrar_pendiente__gt', 'valor_1':0}] 
         #raw.get('filtros')
         ordenamientos = raw.get('ordenamientos')                                     
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos) 
-        return Response(respuesta, status=status.HTTP_200_OK)
+        return Response("reractorizar", status=status.HTTP_200_OK)

@@ -218,56 +218,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=["post"], url_path=r'lista',)
-    def lista(self, request):
-        raw = request.data
-        #documento_clase_id = raw.get('documento_clase_id')
-        #if documento_clase_id:
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        ordenamientos = raw.get('ordenamientos', [])            
-        ordenamientos.insert(0, 'estado_aprobado')
-        ordenamientos.append('-numero')
-        ordenamientos.append('-fecha')
-        filtros = raw.get('filtros', [])            
-        #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase_id})        
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = GenDocumentoSerializador(respuesta['documentos'], many=True)
-        documentos = serializador.data
-        return Response(documentos, status=status.HTTP_200_OK)
-        #return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=["post"], url_path=r'informe',)
-    def informe(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        ordenamientos = raw.get('ordenamientos', [])            
-        ordenamientos.insert(0, 'estado_aprobado')
-        ordenamientos.append('-numero')
-        filtros = raw.get('filtros', [])                    
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = GenDocumentoInformeSerializador(respuesta['documentos'], many=True)
-        documentos = serializador.data
-        return Response(documentos, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=["post"], url_path=r'adicionar',)
-    def adicionar(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        ordenamientos = raw.get('ordenamientos', [])            
-        ordenamientos.insert(0, 'estado_aprobado')
-        ordenamientos.append('-numero')
-        filtros = raw.get('filtros', [])                    
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = GenDocumentoAdicionarSerializador(respuesta['documentos'], many=True)
-        documentos = serializador.data
-        return Response(documentos, status=status.HTTP_200_OK)
-
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
     def eliminar(self, request):
         try:
@@ -372,42 +322,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except GenDocumento.DoesNotExist:
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=["post"], url_path=r'excel',)
-    def excel(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 5000)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        filtros = raw.get('filtros', [])        
-        ordenamientos = raw.get('ordenamientos', [])            
-        ordenamientos.insert(0, 'estado_aprobado')
-        ordenamientos.append('-numero')        
-        #documento_clase = raw.get('documento_clase_id')
-        #if documento_clase:
-        #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase})
-        respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-        serializador = GenDocumentoExcelSerializador(respuesta['documentos'], many=True)
-        documentos = serializador.data
-        field_names = list(documentos[0].keys()) if documentos else []
-        wb = Workbook()
-        ws = wb.active
-        ws.append(field_names)
-        for row in documentos:
-            row_data = [row[field] for field in field_names]
-            ws.append(row_data)
-
-        estilos_excel = WorkbookEstilos(wb)
-        estilos_excel.aplicar_estilos()
-
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-        response['Content-Disposition'] = 'attachment; filename=documentos.xlsx'
-        wb.save(response)
-        return response
-        #else: 
-        #    return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-    
+   
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
         raw = request.data
@@ -1051,29 +966,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
 
-    @action(detail=False, methods=["post"], url_path=r'referencia')
-    def referencia(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        filtros = raw.get('filtros', [])
-        ordenamientos = raw.get('ordenamientos')  
-        documento_clase = raw.get('documento_clase_id')
-        contacto_id = raw.get('contacto_id')
-        if (contacto_id and documento_clase):
-            filtros.extend([
-                {'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase},
-                {'propiedad': 'contacto_id', 'valor1': contacto_id},
-                {'propiedad': 'estado_aprobado', 'valor1': True}
-            ])
-            respuesta = DocumentoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-            serializador = GenDocumentoReferenciaSerializador(respuesta['documentos'], many=True)
-            documentos = serializador.data
-            return Response(documentos, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-
     @action(detail=False, methods=["post"], url_path=r'proceso_corregir_pendiente')
     def proceso_corregir_pendiente(self, request):
         #update gen_documento as d set cobrar = d.total from gen_documento_tipo as dt where d.documento_tipo_id = dt.id and dt.documento_clase_id in (100, 101, 102);
@@ -1313,20 +1205,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'resumen': 1}, status=status.HTTP_200_OK)
 
         else:
-            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-
-    @staticmethod
-    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-        documentos = GenDocumento.objects.all()
-        if filtros:
-            for filtro in filtros:
-                documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})
-        if ordenamientos:
-            documentos = documentos.order_by(*ordenamientos)              
-        documentos = documentos[desplazar:limite+desplazar]
-        itemsCantidad = GenDocumento.objects.all()[:limiteTotal].count()                   
-        respuesta = {'documentos': documentos, "cantidad_registros": itemsCantidad}
-        return respuesta              
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)           
 
     @staticmethod
     def notificar(documento_id):
