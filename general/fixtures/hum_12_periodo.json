@@ -1,0 +1,9 @@
+[
+    {
+        "model": "humano.HumPeriodo",
+        "pk": 1,
+        "fields": {
+            "nombre": "QUINCENAL", "codigo":"QUI", "dias":15
+        }
+    }
+]

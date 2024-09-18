@@ -2,6 +2,7 @@ from rest_framework import serializers
 from humano.models.programacion import HumProgramacion
 from humano.models.grupo import HumGrupo
 from humano.models.pago_tipo import HumPagoTipo
+from humano.models.periodo import HumPeriodo
 
 class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
     fecha_hasta_periodo = serializers.DateField(required=False)
@@ -19,6 +20,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
     adicional = serializers.BooleanField(required=True)
     pago_tipo = serializers.PrimaryKeyRelatedField(queryset=HumPagoTipo.objects.all())
     grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all())
+    periodo = serializers.PrimaryKeyRelatedField(queryset=HumPeriodo.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = HumProgramacion
@@ -26,7 +28,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
                   'devengado', 'deduccion', 'total', 'contratos', 'dias', 'comentario',
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
-                  'descuento_credito', 'descuento_embargo', 'adicional']
+                  'descuento_credito', 'descuento_embargo', 'adicional', 'periodo']
 
     def to_representation(self, instance):      
         pago_tipo_nombre = ''
@@ -35,6 +37,9 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
         grupo_nombre = ''            
         if instance.grupo:
             grupo_nombre = instance.grupo.nombre
+        periodo_nombre = ''
+        if instance.periodo:
+            periodo_nombre = instance.periodo.nombre
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
@@ -63,6 +68,8 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
             'pago_tipo_nombre': pago_tipo_nombre,
             'grupo_id': instance.grupo_id,
             'grupo_nombre': grupo_nombre,
+            'periodo_id': instance.periodo_id,
+            'periodo_nombre': periodo_nombre,
             'estado_generado': instance.estado_generado,
             'estado_aprobado': instance.estado_aprobado
         }        

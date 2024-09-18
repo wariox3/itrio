@@ -3,7 +3,7 @@
         "model": "humano.HumGrupo",
         "pk": 1,
         "fields": {
-            "nombre": "General"
+            "nombre": "General", "periodo":1
         }
     }
 ]

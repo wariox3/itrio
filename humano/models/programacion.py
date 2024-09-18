@@ -1,6 +1,7 @@
 from django.db import models
 from humano.models.pago_tipo import HumPagoTipo
 from humano.models.grupo import HumGrupo
+from humano.models.periodo import HumPeriodo
 
 class HumProgramacion(models.Model):        
     fecha_desde = models.DateField()
@@ -29,6 +30,7 @@ class HumProgramacion(models.Model):
     comentario = models.CharField(max_length=300, null=True)
     grupo = models.ForeignKey(HumGrupo, on_delete=models.PROTECT, related_name='pogramaciones_grupo_rel')
     pago_tipo = models.ForeignKey(HumPagoTipo, on_delete=models.PROTECT, related_name='pogramaciones_pago_tipo_rel')
+    periodo = models.ForeignKey(HumPeriodo, on_delete=models.PROTECT, null=True, related_name='programaciones_periodo_rel')
 
     class Meta:
         db_table = "hum_programacion"
