@@ -360,11 +360,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     formato = FormatoNomina()
                     pdf = formato.generar_pdf(documento)              
                     nombre_archivo = f"nomina_{documento.numero}.pdf" if documento.numero else "nomina.pdf"                        
-
-                response = HttpResponse(pdf, content_type='application/pdf')
-                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
-                return response
+                if pdf:
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                    response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                    return response
+                else:
+                    return Response({'mensaje':'El documento no tiene un formato', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -1236,44 +1238,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @staticmethod
     def consulta_imprimir(codigoDocumento):
         documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=codigoDocumento).values(
-            'id',
-            'fecha',
-            'fecha_validacion',
-            'fecha_vence',
-            'numero',
-            'soporte',
-            'qr',
-            'cue',
-            'resolucion_id',
-            'contacto_id',
-            'subtotal',
-            'total',
-            'comentario',
-            'orden_compra',
-            'metodo_pago__nombre',
-            'contacto__nombre_corto',
-            'contacto__correo',
-            'contacto__telefono',
-            'contacto__numero_identificacion',
-            'contacto__direccion',
-            'contacto__ciudad__nombre',
-            'empresa__tipo_persona__nombre',
-            'empresa__numero_identificacion',
-            'empresa__digito_verificacion',
-            'empresa__direccion',
-            'empresa__telefono',
-            'empresa__nombre_corto',
-            'empresa__imagen',
-            'empresa__ciudad__nombre',
-            'documento_tipo__nombre',
-            'resolucion__prefijo',
-            'resolucion__consecutivo_desde',
-            'resolucion__consecutivo_hasta',
-            'resolucion__numero',
-            'resolucion__fecha_hasta',
-            'documento_referencia__numero',
-            'documento_tipo__documento_clase_id',
-            'plazo_pago__nombre'
+            'id', 'fecha', 'fecha_validacion', 'fecha_vence', 'numero', 'soporte', 'qr', 'cue', 'resolucion_id', 'contacto_id',
+            'subtotal', 'total', 'comentario', 'orden_compra', 'metodo_pago__nombre',
+            'contacto__nombre_corto', 'contacto__correo', 'contacto__telefono', 'contacto__numero_identificacion', 'contacto__direccion', 
+            'contacto__ciudad__nombre', 
+            'empresa__tipo_persona__nombre', 'empresa__numero_identificacion', 'empresa__digito_verificacion', 'empresa__direccion', 'empresa__telefono',
+            'empresa__nombre_corto', 'empresa__imagen', 'empresa__ciudad__nombre', 'documento_tipo__nombre', 'resolucion__prefijo',
+            'resolucion__consecutivo_desde', 'resolucion__consecutivo_hasta', 'resolucion__numero', 'resolucion__fecha_hasta',
+            'documento_referencia__numero', 'documento_tipo__documento_clase_id', 'plazo_pago__nombre'
         ).first()
 
         # Obtener los detalles del documento
