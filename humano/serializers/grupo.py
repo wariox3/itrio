@@ -19,6 +19,7 @@ class HumGrupoListaAutocompletarSerializador(serializers.HyperlinkedModelSeriali
         return {
             'grupo_id': instance.id,
             'grupo_nombre': instance.nombre,
+            'grupo_periodo_id': instance.periodo_id,
             'grupo_periodo_dias': periodo_dias
         }         
     
