@@ -7,6 +7,17 @@ class HumGrupoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumGrupo
         fields = ['id', 'nombre', 'periodo']
+        
+    def to_representation(self, instance):
+        periodo_dias = 0
+        if instance.periodo:
+            periodo_dias = instance.periodo.dias
+        return {
+            'grupo_id': instance.id,
+            'grupo_nombre': instance.nombre,
+            'grupo_periodo_id': instance.periodo_id,
+            'grupo_periodo_dias': periodo_dias
+        }         
 
 class HumGrupoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
