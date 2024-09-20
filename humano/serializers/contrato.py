@@ -75,7 +75,20 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             ciudad_contrato_nombre = instance.ciudad_contrato.nombre
         ciudad_labora_nombre = ''
         if instance.ciudad_labora:            
-            ciudad_labora_nombre = instance.ciudad_labora.nombre            
+            ciudad_labora_nombre = instance.ciudad_labora.nombre  
+        entidad_salud_nombre = ''
+        if instance.entidad_salud:
+            entidad_salud_nombre = instance.entidad_salud.nombre
+        entidad_pension_nombre = ''
+        if instance.entidad_pension:
+            entidad_pension_nombre = instance.entidad_pension.nombre
+        entidad_cesantias_nombre = ''
+        if instance.entidad_cesantias:
+            entidad_cesantias_nombre = instance.entidad_cesantias.nombre        
+        entidad_caja_nombre = ''
+        if instance.entidad_caja:
+            entidad_caja_nombre = instance.entidad_caja.nombre
+
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
@@ -109,7 +122,15 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'ciudad_contrato_id': instance.ciudad_contrato_id,
             'ciudad_contrato_nombre': ciudad_contrato_nombre,
             'ciudad_labora_id': instance.ciudad_labora_id,
-            'ciudad_labora_nombre': ciudad_labora_nombre
+            'ciudad_labora_nombre': ciudad_labora_nombre,
+            'entidad_salud_id': instance.entidad_salud_id,
+            'entidad_salud_nombre': entidad_salud_nombre,
+            'entidad_pension_id': instance.entidad_pension_id,
+            'entidad_pension_nombre': entidad_pension_nombre,
+            'entidad_cesantias_id': instance.entidad_cesantias_id,
+            'entidad_cesantias_nombre': entidad_cesantias_nombre,
+            'entidad_caja_id': instance.entidad_caja_id,
+            'entidad_caja_nombre': entidad_cesantias_nombre
         } 
 
 
