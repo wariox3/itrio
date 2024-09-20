@@ -70,6 +70,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
                 fecha_hasta_entidad = novedad.fecha_hasta
 
         if novedad.novedad_tipo_id in [3]:
+            dias_entidad = novedad.dias
             base_cotizacion = salario
             if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
                 base_cotizacion = configuracion['hum_salario_minimo']
