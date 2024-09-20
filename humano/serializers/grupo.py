@@ -13,10 +13,10 @@ class HumGrupoSerializador(serializers.HyperlinkedModelSerializer):
         if instance.periodo:
             periodo_dias = instance.periodo.dias
         return {
-            'grupo_id': instance.id,
-            'grupo_nombre': instance.nombre,
-            'grupo_periodo_id': instance.periodo_id,
-            'grupo_periodo_dias': periodo_dias
+            'id': instance.id,
+            'nombre': instance.nombre,
+            'periodo_id': instance.periodo_id,
+            'periodo_dias': periodo_dias
         }         
 
 class HumGrupoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):    
