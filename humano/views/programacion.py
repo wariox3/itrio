@@ -49,8 +49,12 @@ def datos_detalle(data_general, data, concepto):
         data['deduccion'] = data['pago']   
         data_general['deduccion'] += data['pago']     
     if concepto.ingreso_base_cotizacion:
-        data['base_cotizacion'] = data['pago']
-        data_general['base_cotizacion'] += data['pago']
+        if concepto.id == 28:
+            data['base_cotizacion'] = round(data['cantidad'] * data['hora'])
+            data_general['base_cotizacion'] += round(data['cantidad'] * data['hora'])            
+        else:
+            data['base_cotizacion'] = data['pago']
+            data_general['base_cotizacion'] += data['pago']
     if concepto.ingreso_base_prestacion:
         data['base_prestacion'] = data['pago']
         data_general['base_prestacion'] += data['pago']
@@ -302,7 +306,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     dias_novedad = diferencia.days + 1                                     
                                     pago = 0
    
-                                    if novedad.novedad_tipo_id == 1:
+                                    if novedad.novedad_tipo_id in [1, 2]:
                                         if novedad.dias_empresa > 0:
                                             fecha_desde_empresa = programacion.fecha_desde
                                             if novedad.fecha_desde_empresa > programacion.fecha_desde:
@@ -360,6 +364,37 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     documento_detalle_serializador.save()
                                                 else:
                                                     return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
+
+                                    if novedad.novedad_tipo_id in [3, 4, 5, 6]:
+                                        if novedad.dias > 0:               
+                                            hora = 0
+                                            if novedad.novedad_tipo_id in [3]:
+                                                hora = novedad.hora_entidad
+                                            if novedad.novedad_tipo_id in [4, 5]:
+                                                hora = novedad.hora_empresa
+                                            if novedad.novedad_tipo_id in [6]:
+                                                hora = round(valor_hora_contrato, 6)
+                                            concepto = novedad.novedad_tipo.concepto
+                                            horas = novedad.dias * configuracion['hum_factor']                                                                                                                                                
+                                            pago = round(hora * horas)
+                                            if novedad.novedad_tipo_id == 6:
+                                                pago = 0
+                                            data = {
+                                                'documento': documento.id,  
+                                                'dias': novedad.dias,
+                                                'hora': hora,
+                                                'cantidad': horas,
+                                                'pago': pago,
+                                                'porcentaje': concepto.porcentaje,
+                                                'concepto': novedad.novedad_tipo.concepto_id
+                                            }
+                                            data = datos_detalle(data_general, data, concepto)
+                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                            if documento_detalle_serializador.is_valid():
+                                                documento_detalle_serializador.save()
+                                            else:
+                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
                                     if novedad.novedad_tipo_id == 7:
                                         # Vacaciones disfrutadas

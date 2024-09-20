@@ -340,7 +340,7 @@
         "pk": 25,
         "fields": {
             "nombre": "Licencia maternidad / paternidad", 
-            "porcentaje": 0,
+            "porcentaje": 100,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
@@ -354,7 +354,7 @@
         "pk": 26,
         "fields": {
             "nombre": "Licencia de luto", 
-            "porcentaje": 0,
+            "porcentaje": 100,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
@@ -368,7 +368,7 @@
         "pk": 27,
         "fields": {
             "nombre": "Licencia remunerada", 
-            "porcentaje": 0,
+            "porcentaje": 100,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
@@ -383,10 +383,10 @@
         "fields": {
             "nombre": "Licencia no remunerada", 
             "porcentaje": 0,
-            "ingreso_base_prestacion": true,
+            "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":true,
             "adicional":false,
-            "operacion":1,
+            "operacion":0,
             "orden":20,
             "concepto_tipo": 17
         }

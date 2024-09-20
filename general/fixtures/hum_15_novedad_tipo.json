@@ -10,35 +10,35 @@
         "model": "humano.HumNovedadTipo",
         "pk": 2,
         "fields": {
-            "nombre": "Incapacidad por enfermedad laboral", "novedad_clase_id":1
+            "nombre": "Incapacidad por enfermedad laboral", "concepto":24, "concepto2":24, "novedad_clase_id":1
         }
     },    
     {
         "model": "humano.HumNovedadTipo",
         "pk": 3,
         "fields": {
-            "nombre": "Licencia maternidad o paternidad", "novedad_clase_id":2
+            "nombre": "Licencia maternidad o paternidad", "concepto":25, "novedad_clase_id":2
         }
     },
     {
         "model": "humano.HumNovedadTipo",
         "pk": 4,
         "fields": {
-            "nombre": "Licencia de luto", "novedad_clase_id":2
+            "nombre": "Licencia de luto","concepto":26, "novedad_clase_id":2
         }
     },    
     {
         "model": "humano.HumNovedadTipo",
         "pk": 5,
         "fields": {
-            "nombre": "Licencia remunerada", "novedad_clase_id":2
+            "nombre": "Licencia remunerada", "concepto":27, "novedad_clase_id":2
         }
     },    
     {
         "model": "humano.HumNovedadTipo",
         "pk": 6,
         "fields": {
-            "nombre": "Licencia no remunerada", "novedad_clase_id":2
+            "nombre": "Licencia no remunerada", "concepto":28, "novedad_clase_id":2
         }
     },  
     {
