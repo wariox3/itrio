@@ -11,6 +11,7 @@ from humano.models.subtipo_cotizante import HumSubtipoCotizante
 from humano.models.cargo import HumCargo
 from humano.models.salud import HumSalud
 from humano.models.pension import HumPension
+from humano.models.entidad import HumEntidad
 
 class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     contrato_tipo = serializers.PrimaryKeyRelatedField(queryset=HumContratoTipo.objects.all())
@@ -25,12 +26,16 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     pension = serializers.PrimaryKeyRelatedField(queryset=HumPension.objects.all())
     tipo_cotizante = serializers.PrimaryKeyRelatedField(queryset=HumTipoCotizante.objects.all())
     subtipo_cotizante = serializers.PrimaryKeyRelatedField(queryset=HumSubtipoCotizante.objects.all())
+    entidad_salud = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
+    entidad_pension = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)    
+    entidad_caja = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
+    entidad_cesantias = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = HumContrato
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'salario', 'auxilio_transporte', 'salario_integral', 'estado_terminado', 
                   'comentario', 'contrato_tipo', 'grupo', 'contacto', 'sucursal', 'riesgo', 'cargo', 'tipo_cotizante', 'subtipo_cotizante',
-                  'salud', 'pension', 'ciudad_contrato', 'ciudad_labora']
+                  'salud', 'pension', 'ciudad_contrato', 'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_cesantias']
 
     def to_representation(self, instance):
         contrato_tipo_nombre = ''

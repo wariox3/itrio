@@ -10,6 +10,7 @@ from humano.models.salud import HumSalud
 from humano.models.pension import HumPension
 from humano.models.tipo_cotizante import HumTipoCotizante
 from humano.models.subtipo_cotizante import HumSubtipoCotizante
+from humano.models.entidad import HumEntidad
 
 class HumContrato(models.Model):        
     fecha_desde = models.DateField()
@@ -32,6 +33,10 @@ class HumContrato(models.Model):
     cargo = models.ForeignKey(HumCargo, on_delete=models.PROTECT, null=True, related_name='contratos_cargo_rel')
     salud = models.ForeignKey(HumSalud, on_delete=models.PROTECT, null=True, related_name='contratos_salud_rel')
     pension = models.ForeignKey(HumPension, on_delete=models.PROTECT, null=True, related_name='contratos_pension_rel')
+    entidad_salud = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_salud_rel')
+    entidad_pension = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_pension_rel')
+    entidad_cesantias = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_cesantias_rel')
+    entidad_caja = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_caja_rel')
 
     class Meta:
         db_table = "hum_contrato"   

@@ -18,6 +18,7 @@ from .views.salud import HumSaludViewSet
 from .views.pension import HumPensionViewSet
 from .views.concepto_nomina import HumConceptoNominaViewSet
 from .views.periodo import HumPeriodoViewSet
+from .views.entidad import HumEntidadViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -40,6 +41,7 @@ router.register(r'salud', HumSaludViewSet)
 router.register(r'pension', HumPensionViewSet)
 router.register(r'concepto_nomina', HumConceptoNominaViewSet)
 router.register(r'periodo', HumPeriodoViewSet)
+router.register(r'entidad', HumEntidadViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
