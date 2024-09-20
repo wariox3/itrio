@@ -87,6 +87,16 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                 fecha_hasta_periodo = fecha_hasta + timedelta(days=1)
         serializer.save(dias=dias, fecha_hasta_periodo=fecha_hasta_periodo)
 
+    def destroy(self, request, *args, **kwargs):        
+        instance = self.get_object()
+        if instance.estado_aprobado:
+                return Response({'mensaje': 'No se puede eliminar un documento aprobado.'}, status=status.HTTP_400_BAD_REQUEST)
+        programacionDetalles = HumProgramacionDetalle.objects.filter(programacion_id=instance.id).first()
+        if programacionDetalles:
+            return Response({'mensaje': 'La programacion tiene detalles y no se puede eliminar'}, status=status.HTTP_400_BAD_REQUEST)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["post"], url_path=r'cargar-contrato',)
     def cargar_contrato(self, request):
         try:
