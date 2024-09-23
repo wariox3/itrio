@@ -78,6 +78,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
     def importar(self, request):
         raw = request.data        
         archivo_base64 = raw.get('archivo_base64')
+        solo_nuevos = raw.get('solo_nuevos', False)
         if archivo_base64:
             try:
                 archivo_data = base64.b64decode(archivo_base64)
@@ -92,6 +93,11 @@ class ContactoViewSet(viewsets.ModelViewSet):
             errores_datos = []
             registros_importados = 0
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                if solo_nuevos:
+                    if row[0]:
+                        contacto = GenContacto.objects.filter(numero_identificacion=row[0]).first()
+                        if contacto:
+                            continue
                 data = {
                     'numero_identificacion': row[0],                    
                     'identificacion':row[1],
