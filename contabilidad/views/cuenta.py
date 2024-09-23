@@ -2,6 +2,9 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.cuenta import ConCuenta
+from contabilidad.models.cuenta_clase import ConCuentaClase
+from contabilidad.models.cuenta_grupo import ConCuentaGrupo
+from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
 from contabilidad.serializers.cuenta import ConCuentaSerializador
 from io import BytesIO
 import base64
@@ -41,12 +44,16 @@ class CuentaViewSet(viewsets.ModelViewSet):
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 data = {
                     'codigo': row[0],
-                    'nombre':row[1],
-                    'clase_id': row[2],
-                    'exige_tercero': row[3],
-                    'exige_base': row[4],
-                    'exige_grupo': row[5],
-                    'permite_movimiento': row[6]
+                    'nombre':row[1],            
+                    'exige_tercero': row[2],
+                    'exige_base': row[3],
+                    'exige_grupo': row[4],
+                    'permite_movimiento': row[5],
+                    'cuenta_clase_id': None,
+                    'cuenta_grupo_id': None,
+                    'cuenta_subcuenta_id': None,
+                    'nivel': None
+                    
                 }  
                 if not data['codigo']:
                     error_dato = {
@@ -64,7 +71,61 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         }
                         errores_datos.append(error_dato)
                         errores = True
-                    
+                    else:
+                        codigo_str = str(data['codigo'])
+                        longitud_codigo = len(codigo_str)
+                        if longitud_codigo == 1:                            
+                            cuenta_clase_id = codigo_str[0]
+                            if not ConCuentaClase.objects.filter(id=cuenta_clase_id).exists():
+                                error_dato = {
+                                    'fila': i,
+                                    'Mensaje': f'La clase {cuenta_clase_id} no existe'
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True
+
+                        if longitud_codigo == 2:
+                            cuenta_grupo_id = codigo_str[:2]                        
+                            if not ConCuentaGrupo.objects.filter(id=cuenta_grupo_id).exists():
+                                error_dato = {
+                                    'fila': i,
+                                    'Mensaje': f'El grupo {cuenta_grupo_id} no existe'
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True    
+
+                        if longitud_codigo == 4:
+                            cuenta_subcuenta_id = codigo_str[:4]                            
+                            if not ConCuentaSubcuenta.objects.filter(id=cuenta_subcuenta_id).exists():
+                                error_dato = {
+                                    'fila': i,
+                                    'Mensaje': f'La subcuenta {cuenta_subcuenta_id} no existe'
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True 
+                        if longitud_codigo >= 1:
+                            data['cuenta_clase_id'] = codigo_str[0]
+                        if longitud_codigo >= 2:
+                            data['cuenta_grupo_id'] = codigo_str[:2]
+                        if longitud_codigo >= 4:                            
+                            data['cuenta_subcuenta_id'] = codigo_str[:4]
+                        if longitud_codigo <= 1:
+                            data['nivel'] = 1
+                        if longitud_codigo > 1 and longitud_codigo <= 2:
+                            data['nivel'] = 2
+                        if longitud_codigo > 2 and longitud_codigo <= 4:
+                            data['nivel'] = 3  
+                        if longitud_codigo > 4 and longitud_codigo <= 6:
+                            data['nivel'] = 4
+                        if longitud_codigo > 6 and longitud_codigo <= 8:
+                            data['nivel'] = 5
+                        if longitud_codigo > 8:
+                            error_dato = {
+                                'fila': i,
+                                'Mensaje': f'La cuenta tiene una longitud invalida'
+                            }
+                            errores_datos.append(error_dato)
+                            errores = True 
 
                 if not data['nombre']:
                     error_dato = {
@@ -73,14 +134,6 @@ class CuentaViewSet(viewsets.ModelViewSet):
                     }
                     errores_datos.append(error_dato)
                     errores = True                                 
-
-                if not data['clase_id']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar un codigo'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
 
                 if not data['exige_tercero']:
                     error_dato = {
@@ -152,18 +205,24 @@ class CuentaViewSet(viewsets.ModelViewSet):
                             'Mensaje': 'Los valores validos son SI o NO'
                         }
                         errores_datos.append(error_dato)
-                        errores = True                        
+                        errores = True    
+
+
+
                 data_modelo.append(data)
             if errores == False:
                 for detalle in data_modelo:
                     ConCuenta.objects.create(
                         codigo=detalle['codigo'],
                         nombre=detalle['nombre'],
-                        cuenta_clase_id=detalle['clase_id'],
+                        cuenta_clase_id=detalle['cuenta_clase_id'],
+                        cuenta_grupo_id=detalle['cuenta_grupo_id'],
+                        cuenta_subcuenta_id=detalle['cuenta_subcuenta_id'],
                         exige_tercero=detalle['exige_tercero'],
                         exige_base=detalle['exige_base'],
                         exige_grupo=detalle['exige_grupo'],
-                        permite_movimiento=detalle['permite_movimiento']
+                        permite_movimiento=detalle['permite_movimiento'],
+                        nivel=detalle['nivel']
                     )
                     registros_importados += 1
                 gc.collect()

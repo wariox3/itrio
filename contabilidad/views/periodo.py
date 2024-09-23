@@ -9,8 +9,14 @@ class PeriodoViewSet(viewsets.ModelViewSet):
     serializer_class = ConPeriodoSerializador
     permission_classes = [permissions.IsAuthenticated]  
 
-    @action(detail=False, methods=["post"], url_path=r'generar',)
-    def generar(self, request):
+    @action(detail=False, methods=["get"], url_path=r'anio',)
+    def anio(self, request):
+        periodos = ConPeriodo.objects.values_list('anio', flat=True).distinct()
+        return Response({'anios': periodos}, status=status.HTTP_200_OK)
+        
+
+    @action(detail=False, methods=["post"], url_path=r'anio-nuevo',)
+    def anio_nuevo(self, request):
         raw = request.data        
         anio = raw.get('anio')
         if anio:

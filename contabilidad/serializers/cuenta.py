@@ -1,12 +1,18 @@
 from rest_framework import serializers
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.cuenta_clase import ConCuentaClase
+from contabilidad.models.cuenta_grupo import ConCuentaGrupo
+from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
 
 class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_clase = serializers.PrimaryKeyRelatedField(queryset=ConCuentaClase.objects.all(), allow_null=True)
+    cuenta_grupo = serializers.PrimaryKeyRelatedField(queryset=ConCuentaGrupo.objects.all(), allow_null=True)
+    cuenta_subcuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuentaSubcuenta.objects.all(), allow_null=True)
+
     class Meta:
         model = ConCuenta
-        fields = ['id', 'codigo', 'nombre', 'exige_base', 'exige_tercero', 'exige_grupo', 'permite_movimiento', 'cuenta_clase']
+        fields = ['id', 'codigo', 'nombre', 'exige_base', 'exige_tercero', 'exige_grupo', 'permite_movimiento', 'nivel',
+                  'cuenta_clase', 'cuenta_grupo', 'cuenta_subcuenta']
 
     def to_representation(self, instance):
         return {

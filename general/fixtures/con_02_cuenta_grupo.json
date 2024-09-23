@@ -1,0 +1,366 @@
+[
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 11,
+      "fields": {
+          "nombre": "Disponible"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 12,
+      "fields": {
+          "nombre": "Inversiones"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 13,
+      "fields": {
+          "nombre": "Deudores"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 14,
+      "fields": {
+          "nombre": "Inventarios"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 15,
+      "fields": {
+          "nombre": "Propiedades, planta y equipo"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 16,
+      "fields": {
+          "nombre": "Intangibles"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 17,
+      "fields": {
+          "nombre": "Diferidos"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 18,
+      "fields": {
+          "nombre": "Otros activos"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 19,
+      "fields": {
+          "nombre": "Valorizaciones"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 21,
+      "fields": {
+          "nombre": "Obligaciones financieras"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 22,
+      "fields": {
+          "nombre": "Proveedores"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 23,
+      "fields": {
+          "nombre": "Cuentas por pagar"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 24,
+      "fields": {
+          "nombre": "Impuestos, gravámenes y tasas"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 25,
+      "fields": {
+          "nombre": "Obligaciones laborales"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 26,
+      "fields": {
+          "nombre": "Pasivos estimados y provisiones"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 27,
+      "fields": {
+          "nombre": "Diferidos"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 28,
+      "fields": {
+          "nombre": "Otros pasivos"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 29,
+      "fields": {
+          "nombre": "Bonos y papeles comerciales"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 31,
+      "fields": {
+          "nombre": "Capital social"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 32,
+      "fields": {
+          "nombre": "Superávit de capital"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 33,
+      "fields": {
+          "nombre": "Reservas"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 34,
+      "fields": {
+          "nombre": "Revalorización del patrimonio"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 35,
+      "fields": {
+          "nombre": "Dividendos o participaciones decretados en acciones, cuotas o partes de interés social"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 36,
+      "fields": {
+          "nombre": "Resultados del ejercicio"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 37,
+      "fields": {
+          "nombre": "Resultados de ejercicios anteriores"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 38,
+      "fields": {
+          "nombre": "Superávit por valorizaciones"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 41,
+      "fields": {
+          "nombre": "Operacionales"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 42,
+      "fields": {
+          "nombre": "No operacionales"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 47,
+      "fields": {
+          "nombre": "Ajustes por inflación"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 51,
+      "fields": {
+          "nombre": "Operacionales de administración"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 52,
+      "fields": {
+          "nombre": "Operacionales de ventas"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 53,
+      "fields": {
+          "nombre": "No operacionales"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 54,
+      "fields": {
+          "nombre": "Impuesto de renta y complementarios"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 59,
+      "fields": {
+          "nombre": "Ganancias y pérdidas"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 61,
+      "fields": {
+          "nombre": "Costo de ventas y de prestación de servicios"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 62,
+      "fields": {
+          "nombre": "Compras"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 71,
+      "fields": {
+          "nombre": "Materia prima"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 72,
+      "fields": {
+          "nombre": "Mano de obra directa"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 73,
+      "fields": {
+          "nombre": "Costos indirectos"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 74,
+      "fields": {
+          "nombre": "Contratos de servicios"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 81,
+      "fields": {
+          "nombre": "Derechos contingentes"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 82,
+      "fields": {
+          "nombre": "Deudoras fiscales"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 83,
+      "fields": {
+          "nombre": "Deudoras de control"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 84,
+      "fields": {
+          "nombre": "Derechos contingentes por contra (CR)"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 85,
+      "fields": {
+          "nombre": "Deudoras fiscales por contra (CR)"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 86,
+      "fields": {
+          "nombre": "Deudoras de control por contra (CR)"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 91,
+      "fields": {
+          "nombre": "Responsabilidades contingentes"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 92,
+      "fields": {
+          "nombre": "Acreedoras fiscales"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 93,
+      "fields": {
+          "nombre": "Acreedoras de control"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 94,
+      "fields": {
+          "nombre": "Responsabilidades contingentes por contra (DB)"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 95,
+      "fields": {
+          "nombre": "Acreedoras fiscales por contra (DB)"
+      }
+  },
+  {
+      "model": "contabilidad.ConCuentaGrupo",
+      "pk": 96,
+      "fields": {
+          "nombre": "Acreedoras de control por contra (DB)"
+      }
+  }
+]
