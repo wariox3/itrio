@@ -10,8 +10,10 @@ from general.models.contacto import GenContacto
 from contabilidad.serializers.movimiento import ConMovimientoSerializador
 from datetime import datetime
 from io import BytesIO
+from django.db.models import F,Sum
 import base64
 import openpyxl
+import json
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ConMovimiento.objects.all()
@@ -185,3 +187,45 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        
+    @action(detail=False, methods=["post"], url_path=r'informe-balance-general',)
+    def informe_balance_general(self, request):    
+        
+        movimientos = ConCuenta.objects.values(
+            'cuenta_clase_id').annotate(
+                total_debitos=Sum('movimientos_cuenta_rel__debito'),
+                total_creditos=Sum('movimientos_cuenta_rel__credito')
+            )
+
+        query = '''
+            SELECT
+                c.id,
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_subcuenta_id,
+                c.nivel,
+                (SELECT SUM(debito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND m.periodo_id < 202408) AS vr_debito_anterior,
+                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND m.periodo_id < 202408) AS vr_credito_anterior,
+                (SELECT SUM(debito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND (m.periodo_id >= 202409 AND m.periodo_id <= 202409)) AS vr_debito,
+                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND (m.periodo_id >= 202409 AND m.periodo_id <= 202409)) AS vr_credito
+            FROM
+                con_cuenta c
+        '''
+        resultados = ConCuenta.objects.raw(query)
+
+        # Convertir el RawQuerySet en una lista de diccionarios
+        resultados_json = [
+            {
+                'id': cuenta.id,
+                'cuenta_clase_id': cuenta.cuenta_clase_id,
+                'cuenta_grupo_id': cuenta.cuenta_grupo_id,
+                'cuenta_subcuenta_id': cuenta.cuenta_subcuenta_id,
+                'nivel': cuenta.nivel,
+                'vr_debito_anterior': cuenta.vr_debito_anterior,
+                'vr_credito_anterior': cuenta.vr_credito_anterior,
+                'vr_debito': cuenta.vr_debito,
+                'vr_credito': cuenta.vr_credito,
+            }
+            for cuenta in resultados
+        ]
+        return Response({'movimientos': resultados_json}, status=status.HTTP_200_OK)
