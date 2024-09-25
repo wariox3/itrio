@@ -188,8 +188,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
-    @action(detail=False, methods=["post"], url_path=r'informe-balance-general',)
-    def informe_balance_general(self, request):    
+    @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
+    def informe_balance_prueba(self, request):    
         
         query = '''
             SELECT
