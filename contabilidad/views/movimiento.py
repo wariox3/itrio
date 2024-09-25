@@ -191,32 +191,26 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'informe-balance-general',)
     def informe_balance_general(self, request):    
         
-        movimientos = ConCuenta.objects.values(
-            'cuenta_clase_id').annotate(
-                total_debitos=Sum('movimientos_cuenta_rel__debito'),
-                total_creditos=Sum('movimientos_cuenta_rel__credito')
-            )
-
         query = '''
             SELECT
                 c.id,
-                c.cuenta_clase_id,
-                c.cuenta_grupo_id,
-                c.cuenta_subcuenta_id,
-                c.nivel,
+                c.codigo,
+                c.cuenta_clase_id ,
+                c.cuenta_grupo_id ,
+                c.cuenta_cuenta_id ,
+                c.nivel,                      
                 (SELECT SUM(debito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND m.periodo_id < 202408) AS vr_debito_anterior,
-                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND m.periodo_id < 202408) AS vr_credito_anterior,
+                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND m.periodo_id < 202408) AS vr_credito_anterior,      
                 (SELECT SUM(debito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND (m.periodo_id >= 202409 AND m.periodo_id <= 202409)) AS vr_debito,
-                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND (m.periodo_id >= 202409 AND m.periodo_id <= 202409)) AS vr_credito
+                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND (m.periodo_id >= 202409 AND m.periodo_id <= 202409)) AS vr_credito      
             FROM
                 con_cuenta c
         '''
         resultados = ConCuenta.objects.raw(query)
-
-        # Convertir el RawQuerySet en una lista de diccionarios
         resultados_json = [
             {
                 'id': cuenta.id,
+                'codigo': cuenta.codigo,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
                 'cuenta_subcuenta_id': cuenta.cuenta_subcuenta_id,

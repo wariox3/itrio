@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.cuenta_clase import ConCuentaClase
 from contabilidad.models.cuenta_grupo import ConCuentaGrupo
+from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
 from contabilidad.serializers.cuenta import ConCuentaSerializador
 from io import BytesIO
@@ -51,9 +52,8 @@ class CuentaViewSet(viewsets.ModelViewSet):
                     'permite_movimiento': row[5],
                     'cuenta_clase_id': None,
                     'cuenta_grupo_id': None,
-                    'cuenta_subcuenta_id': None,
-                    'nivel': None
-                    
+                    'cuenta_cuenta_id': None,
+                    'nivel': None                    
                 }  
                 if not data['codigo']:
                     error_dato = {
@@ -95,11 +95,11 @@ class CuentaViewSet(viewsets.ModelViewSet):
                                 errores = True    
 
                         if longitud_codigo == 4:
-                            cuenta_subcuenta_id = codigo_str[:4]                            
-                            if not ConCuentaSubcuenta.objects.filter(id=cuenta_subcuenta_id).exists():
+                            cuenta_cuenta_id = codigo_str[:4]                            
+                            if not ConCuentaCuenta.objects.filter(id=cuenta_cuenta_id).exists():
                                 error_dato = {
                                     'fila': i,
-                                    'Mensaje': f'La subcuenta {cuenta_subcuenta_id} no existe'
+                                    'Mensaje': f'La cuenta {cuenta_cuenta_id} no existe'
                                 }
                                 errores_datos.append(error_dato)
                                 errores = True 
@@ -108,7 +108,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         if longitud_codigo >= 2:
                             data['cuenta_grupo_id'] = codigo_str[:2]
                         if longitud_codigo >= 4:                            
-                            data['cuenta_subcuenta_id'] = codigo_str[:4]
+                            data['cuenta_cuenta_id'] = codigo_str[:4]
                         if longitud_codigo <= 1:
                             data['nivel'] = 1
                         if longitud_codigo > 1 and longitud_codigo <= 2:
@@ -217,7 +217,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         nombre=detalle['nombre'],
                         cuenta_clase_id=detalle['cuenta_clase_id'],
                         cuenta_grupo_id=detalle['cuenta_grupo_id'],
-                        cuenta_subcuenta_id=detalle['cuenta_subcuenta_id'],
+                        cuenta_cuenta_id=detalle['cuenta_cuenta_id'],
                         exige_tercero=detalle['exige_tercero'],
                         exige_base=detalle['exige_base'],
                         exige_grupo=detalle['exige_grupo'],

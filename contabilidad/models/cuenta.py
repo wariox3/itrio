@@ -1,6 +1,7 @@
 from django.db import models
 from contabilidad.models.cuenta_clase import ConCuentaClase
 from contabilidad.models.cuenta_grupo import ConCuentaGrupo
+from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
 
 class ConCuenta(models.Model):        
@@ -13,6 +14,7 @@ class ConCuenta(models.Model):
     nivel = models.IntegerField(null=True) 
     cuenta_clase = models.ForeignKey(ConCuentaClase, on_delete=models.PROTECT, null=True)
     cuenta_grupo = models.ForeignKey(ConCuentaGrupo, on_delete=models.PROTECT, null=True)
+    cuenta_cuenta = models.ForeignKey(ConCuentaCuenta, on_delete=models.PROTECT, null=True)
     cuenta_subcuenta = models.ForeignKey(ConCuentaSubcuenta, on_delete=models.PROTECT, null=True)
     
     class Meta:

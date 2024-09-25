@@ -1,0 +1,2403 @@
+[
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1105,
+        "fields": {
+            "nombre": "Caja"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1110,
+        "fields": {
+            "nombre": "Bancos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1115,
+        "fields": {
+            "nombre": "Remesas en tránsito"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1120,
+        "fields": {
+            "nombre": "Cuentas de ahorro"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1125,
+        "fields": {
+            "nombre": "Fondos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1205,
+        "fields": {
+            "nombre": "Acciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1210,
+        "fields": {
+            "nombre": "Cuotas o partes de interés social"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1215,
+        "fields": {
+            "nombre": "Bonos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1220,
+        "fields": {
+            "nombre": "Cédulas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1225,
+        "fields": {
+            "nombre": "Certificados"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1230,
+        "fields": {
+            "nombre": "Papeles comerciales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1235,
+        "fields": {
+            "nombre": "Títulos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1240,
+        "fields": {
+            "nombre": "Aceptaciones bancarias o financieras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1245,
+        "fields": {
+            "nombre": "Derechos fiduciarios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1250,
+        "fields": {
+            "nombre": "Derechos de recompra de inversiones negociadas (repos)"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1255,
+        "fields": {
+            "nombre": "Obligatorias"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1260,
+        "fields": {
+            "nombre": "Cuentas en participación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1295,
+        "fields": {
+            "nombre": "Otras inversiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1299,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1305,
+        "fields": {
+            "nombre": "Clientes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1310,
+        "fields": {
+            "nombre": "Cuentas corrientes comerciales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1315,
+        "fields": {
+            "nombre": "Cuentas por cobrar a casa matriz"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1320,
+        "fields": {
+            "nombre": "Cuentas por cobrar a vinculados económicos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1323,
+        "fields": {
+            "nombre": "Cuentas por cobrar a directores"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1325,
+        "fields": {
+            "nombre": "Cuentas por cobrar a socios y accionistas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1328,
+        "fields": {
+            "nombre": "Aportes por cobrar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1330,
+        "fields": {
+            "nombre": "Anticipos y avances"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1332,
+        "fields": {
+            "nombre": "Cuentas de operación conjunta"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1335,
+        "fields": {
+            "nombre": "Depósitos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1340,
+        "fields": {
+            "nombre": "Promesas de compra venta"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1345,
+        "fields": {
+            "nombre": "Ingresos por cobrar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1350,
+        "fields": {
+            "nombre": "Retención sobre contratos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1355,
+        "fields": {
+            "nombre": "Anticipo de impuestos y contribuciones o saldos a favor"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1360,
+        "fields": {
+            "nombre": "Reclamaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1365,
+        "fields": {
+            "nombre": "Cuentas por cobrar a trabajadores"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1370,
+        "fields": {
+            "nombre": "Préstamos a particulares"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1380,
+        "fields": {
+            "nombre": "Deudores varios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1385,
+        "fields": {
+            "nombre": "Derechos de recompra de cartera negociada"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1390,
+        "fields": {
+            "nombre": "Deudas de difícil cobro"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1399,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1405,
+        "fields": {
+            "nombre": "Materias primas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1410,
+        "fields": {
+            "nombre": "Productos en proceso"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1415,
+        "fields": {
+            "nombre": "Obras de construcción en curso"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1417,
+        "fields": {
+            "nombre": "Obras de urbanismo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1420,
+        "fields": {
+            "nombre": "Contratos en ejecución"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1425,
+        "fields": {
+            "nombre": "Cultivos en desarrollo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1428,
+        "fields": {
+            "nombre": "Plantaciones agrícolas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1430,
+        "fields": {
+            "nombre": "Productos terminados"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1435,
+        "fields": {
+            "nombre": "Mercancías no fabricadas por la empresa"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1440,
+        "fields": {
+            "nombre": "Bienes raíces para la venta"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1445,
+        "fields": {
+            "nombre": "Semovientes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1450,
+        "fields": {
+            "nombre": "Terrenos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1455,
+        "fields": {
+            "nombre": "Materiales, repuestos y accesorios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1460,
+        "fields": {
+            "nombre": "Envases y empaques"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1465,
+        "fields": {
+            "nombre": "Inventarios en tránsito"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1499,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1504,
+        "fields": {
+            "nombre": "Terrenos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1506,
+        "fields": {
+            "nombre": "Materiales proyectos petroleros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1508,
+        "fields": {
+            "nombre": "Construcciones en curso"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1512,
+        "fields": {
+            "nombre": "Maquinaria y equipos en montaje"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1516,
+        "fields": {
+            "nombre": "Construcciones y edificaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1520,
+        "fields": {
+            "nombre": "Maquinaria y equipo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1524,
+        "fields": {
+            "nombre": "Equipo de oficina"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1528,
+        "fields": {
+            "nombre": "Equipo de computación y comunicación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1532,
+        "fields": {
+            "nombre": "Equipo médico-científico"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1536,
+        "fields": {
+            "nombre": "Equipo de hoteles y restaurantes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1540,
+        "fields": {
+            "nombre": "Flota y equipo de transporte"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1544,
+        "fields": {
+            "nombre": "Flota y equipo fluvial y/o marítimo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1548,
+        "fields": {
+            "nombre": "Flota y equipo aéreo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1552,
+        "fields": {
+            "nombre": "Flota y equipo férreo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1556,
+        "fields": {
+            "nombre": "Acueductos, plantas y redes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1560,
+        "fields": {
+            "nombre": "Armamento de vigilancia"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1562,
+        "fields": {
+            "nombre": "Envases y empaques"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1564,
+        "fields": {
+            "nombre": "Plantaciones agrícolas y forestales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1568,
+        "fields": {
+            "nombre": "Vías de comunicación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1572,
+        "fields": {
+            "nombre": "Minas y canteras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1576,
+        "fields": {
+            "nombre": "Pozos artesianos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1580,
+        "fields": {
+            "nombre": "Yacimientos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1584,
+        "fields": {
+            "nombre": "Semovientes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1588,
+        "fields": {
+            "nombre": "Propiedades, planta y equipo en tránsito"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1592,
+        "fields": {
+            "nombre": "Depreciación acumulada"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1596,
+        "fields": {
+            "nombre": "Depreciación diferida"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1597,
+        "fields": {
+            "nombre": "Amortización acumulada"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1598,
+        "fields": {
+            "nombre": "Agotamiento acumulado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1599,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1605,
+        "fields": {
+            "nombre": "Crédito mercantil"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1610,
+        "fields": {
+            "nombre": "Marcas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1615,
+        "fields": {
+            "nombre": "Patentes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1620,
+        "fields": {
+            "nombre": "Concesiones y franquicias"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1625,
+        "fields": {
+            "nombre": "Derechos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1630,
+        "fields": {
+            "nombre": "Know how"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1635,
+        "fields": {
+            "nombre": "Licencias"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1698,
+        "fields": {
+            "nombre": "Depreciación y/o amortización acumulada"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1699,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1705,
+        "fields": {
+            "nombre": "Gastos pagados por anticipado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1710,
+        "fields": {
+            "nombre": "Cargos diferidos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1715,
+        "fields": {
+            "nombre": "Costos de exploración por amortizar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1720,
+        "fields": {
+            "nombre": "Costos de explotación y desarrollo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1730,
+        "fields": {
+            "nombre": "Cargos por corrección monetaria diferida"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1798,
+        "fields": {
+            "nombre": "Amortización acumulada"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1805,
+        "fields": {
+            "nombre": "Bienes de arte y cultura"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1895,
+        "fields": {
+            "nombre": "Diversos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1899,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1905,
+        "fields": {
+            "nombre": "De inversiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1910,
+        "fields": {
+            "nombre": "De propiedades, planta y equipo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 1995,
+        "fields": {
+            "nombre": "De otros activos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2105,
+        "fields": {
+            "nombre": "Bancos nacionales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2110,
+        "fields": {
+            "nombre": "Bancos del exterior"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2115,
+        "fields": {
+            "nombre": "Corporaciones financieras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2120,
+        "fields": {
+            "nombre": "Compañías de financiamiento comercial"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2125,
+        "fields": {
+            "nombre": "Corporaciones de ahorro y vivienda"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2130,
+        "fields": {
+            "nombre": "Entidades financieras del exterior"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2135,
+        "fields": {
+            "nombre": "Compromisos de recompra de inversiones negociadas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2140,
+        "fields": {
+            "nombre": "Compromisos de recompra de cartera negociada"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2145,
+        "fields": {
+            "nombre": "Obligaciones gubernamentales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2195,
+        "fields": {
+            "nombre": "Otras obligaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2205,
+        "fields": {
+            "nombre": "Nacionales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2210,
+        "fields": {
+            "nombre": "Del exterior"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2215,
+        "fields": {
+            "nombre": "Cuentas corrientes comerciales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2220,
+        "fields": {
+            "nombre": "Casa matriz"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2225,
+        "fields": {
+            "nombre": "Compañías vinculadas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2305,
+        "fields": {
+            "nombre": "Cuentas corrientes comerciales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2310,
+        "fields": {
+            "nombre": "A casa matriz"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2315,
+        "fields": {
+            "nombre": "A compañías vinculadas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2320,
+        "fields": {
+            "nombre": "A contratistas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2330,
+        "fields": {
+            "nombre": "Órdenes de compra por utilizar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2335,
+        "fields": {
+            "nombre": "Costos y gastos por pagar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2340,
+        "fields": {
+            "nombre": "Instalamentos por pagar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2345,
+        "fields": {
+            "nombre": "Acreedores oficiales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2350,
+        "fields": {
+            "nombre": "Regalías por pagar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2355,
+        "fields": {
+            "nombre": "Deudas con accionistas o socios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2357,
+        "fields": {
+            "nombre": "Deudas con directores"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2360,
+        "fields": {
+            "nombre": "Dividendos o participaciones por pagar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2365,
+        "fields": {
+            "nombre": "Retención en la fuente"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2367,
+        "fields": {
+            "nombre": "Impuesto a las ventas retenido"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2368,
+        "fields": {
+            "nombre": "Impuesto de industria y comercio retenido"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2370,
+        "fields": {
+            "nombre": "Retenciones y aportes de nómina"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2375,
+        "fields": {
+            "nombre": "Cuotas por devolver"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2380,
+        "fields": {
+            "nombre": "Acreedores varios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2404,
+        "fields": {
+            "nombre": "De renta y complementarios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2405,
+        "fields": {
+            "nombre": "De renta y complementarios"
+        }
+    },    
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2408,
+        "fields": {
+            "nombre": "Impuesto sobre las ventas por pagar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2412,
+        "fields": {
+            "nombre": "De industria y comercio"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2416,
+        "fields": {
+            "nombre": "A la propiedad raíz"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2420,
+        "fields": {
+            "nombre": "Derechos sobre instrumentos públicos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2424,
+        "fields": {
+            "nombre": "De valorización"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2428,
+        "fields": {
+            "nombre": "De turismo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2432,
+        "fields": {
+            "nombre": "Tasa por utilización de puertos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2436,
+        "fields": {
+            "nombre": "De vehículos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2440,
+        "fields": {
+            "nombre": "De espectáculos públicos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2444,
+        "fields": {
+            "nombre": "De hidrocarburos y minas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2448,
+        "fields": {
+            "nombre": "Regalías e impuestos a la pequeña y mediana minería"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2452,
+        "fields": {
+            "nombre": "A las exportaciones cafeteras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2456,
+        "fields": {
+            "nombre": "A las importaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2460,
+        "fields": {
+            "nombre": "Cuotas de fomento"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2464,
+        "fields": {
+            "nombre": "De licores, cervezas y cigarrillos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2468,
+        "fields": {
+            "nombre": "Al sacrificio de ganado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2472,
+        "fields": {
+            "nombre": "Al azar y juegos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2476,
+        "fields": {
+            "nombre": "Gravámenes y regalías por utilización del suelo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2495,
+        "fields": {
+            "nombre": "Otros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2505,
+        "fields": {
+            "nombre": "Salarios por pagar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2510,
+        "fields": {
+            "nombre": "Cesantías consolidadas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2515,
+        "fields": {
+            "nombre": "Intereses sobre cesantías"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2520,
+        "fields": {
+            "nombre": "Prima de servicios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2525,
+        "fields": {
+            "nombre": "Vacaciones consolidadas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2530,
+        "fields": {
+            "nombre": "Prestaciones extralegales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2532,
+        "fields": {
+            "nombre": "Pensiones por pagar"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2535,
+        "fields": {
+            "nombre": "Cuotas partes pensiones de jubilación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2540,
+        "fields": {
+            "nombre": "Indemnizaciones laborales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2605,
+        "fields": {
+            "nombre": "Para costos y gastos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2610,
+        "fields": {
+            "nombre": "Para obligaciones laborales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2615,
+        "fields": {
+            "nombre": "Para obligaciones fiscales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2620,
+        "fields": {
+            "nombre": "Pensiones de jubilación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2625,
+        "fields": {
+            "nombre": "Para obras de urbanismo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2630,
+        "fields": {
+            "nombre": "Para mantenimiento y reparaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2635,
+        "fields": {
+            "nombre": "Para contingencias"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2640,
+        "fields": {
+            "nombre": "Para obligaciones de garantías"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2695,
+        "fields": {
+            "nombre": "Provisiones diversas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2705,
+        "fields": {
+            "nombre": "Ingresos recibidos por anticipado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2710,
+        "fields": {
+            "nombre": "Abonos diferidos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2715,
+        "fields": {
+            "nombre": "Utilidad diferida en ventas a plazos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2720,
+        "fields": {
+            "nombre": "Crédito por corrección monetaria diferida"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2725,
+        "fields": {
+            "nombre": "Impuestos diferidos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2805,
+        "fields": {
+            "nombre": "Anticipos y avances recibidos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2810,
+        "fields": {
+            "nombre": "Depósitos recibidos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2815,
+        "fields": {
+            "nombre": "Ingresos recibidos para terceros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2820,
+        "fields": {
+            "nombre": "Cuentas de operación conjunta"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2825,
+        "fields": {
+            "nombre": "Retenciones a terceros sobre contratos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2830,
+        "fields": {
+            "nombre": "Embargos judiciales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2835,
+        "fields": {
+            "nombre": "Acreedores del sistema"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2840,
+        "fields": {
+            "nombre": "Cuentas en participación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2860,
+        "fields": {
+            "nombre": "Cuentas en participación"
+        }
+    },    
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2895,
+        "fields": {
+            "nombre": "Diversos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2905,
+        "fields": {
+            "nombre": "Bonos en circulación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2910,
+        "fields": {
+            "nombre": "Bonos obligatoriamente convertibles en acciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2915,
+        "fields": {
+            "nombre": "Papeles comerciales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2920,
+        "fields": {
+            "nombre": "Bonos pensionales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 2925,
+        "fields": {
+            "nombre": "Títulos pensionales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3105,
+        "fields": {
+            "nombre": "Capital suscrito y pagado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3115,
+        "fields": {
+            "nombre": "Aportes sociales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3120,
+        "fields": {
+            "nombre": "Capital asignado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3125,
+        "fields": {
+            "nombre": "Inversión suplementaria al capital asignado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3130,
+        "fields": {
+            "nombre": "Capital de personas naturales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3135,
+        "fields": {
+            "nombre": "Aportes del Estado"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3140,
+        "fields": {
+            "nombre": "Fondo social"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3205,
+        "fields": {
+            "nombre": "Prima en colocación de acciones, cuotas o partes de interés social"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3210,
+        "fields": {
+            "nombre": "Donaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3215,
+        "fields": {
+            "nombre": "Crédito mercantil"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3220,
+        "fields": {
+            "nombre": "Know how"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3225,
+        "fields": {
+            "nombre": "Superávit método de participación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3305,
+        "fields": {
+            "nombre": "Reservas obligatorias"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3310,
+        "fields": {
+            "nombre": "Reservas estatutarias"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3315,
+        "fields": {
+            "nombre": "Reservas ocasionales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3405,
+        "fields": {
+            "nombre": "Ajustes por inflación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3410,
+        "fields": {
+            "nombre": "Saneamiento fiscal"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3415,
+        "fields": {
+            "nombre": "Ajustes por inflación Decreto 3019 de 1989"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3505,
+        "fields": {
+            "nombre": "Dividendos decretados en acciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3510,
+        "fields": {
+            "nombre": "Participaciones decretadas en cuotas o partes de interés social"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3605,
+        "fields": {
+            "nombre": "Utilidad del ejercicio"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3610,
+        "fields": {
+            "nombre": "Pérdida del ejercicio"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3705,
+        "fields": {
+            "nombre": "Utilidades acumuladas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3710,
+        "fields": {
+            "nombre": "Pérdidas acumuladas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3805,
+        "fields": {
+            "nombre": "De inversiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3810,
+        "fields": {
+            "nombre": "De propiedades, planta y equipo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 3895,
+        "fields": {
+            "nombre": "De otros activos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4105,
+        "fields": {
+            "nombre": "Agricultura, ganadería, caza y silvicultura"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4110,
+        "fields": {
+            "nombre": "Pesca"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4115,
+        "fields": {
+            "nombre": "Explotación de minas y canteras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4120,
+        "fields": {
+            "nombre": "Industrias manufactureras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4125,
+        "fields": {
+            "nombre": "Suministro de electricidad, gas y agua"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4130,
+        "fields": {
+            "nombre": "Construcción"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4135,
+        "fields": {
+            "nombre": "Comercio al por mayor y al por menor"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4140,
+        "fields": {
+            "nombre": "Hoteles y restaurantes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4145,
+        "fields": {
+            "nombre": "Transporte, almacenamiento y comunicaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4150,
+        "fields": {
+            "nombre": "Actividad financiera"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4155,
+        "fields": {
+            "nombre": "Actividades inmobiliarias, empresariales y de alquiler"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4160,
+        "fields": {
+            "nombre": "Enseñanza"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4165,
+        "fields": {
+            "nombre": "Servicios sociales y de salud"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4170,
+        "fields": {
+            "nombre": "Otras actividades de servicios comunitarios, sociales y personales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4175,
+        "fields": {
+            "nombre": "Devoluciones en ventas (DB)"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4205,
+        "fields": {
+            "nombre": "Otras ventas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4210,
+        "fields": {
+            "nombre": "Financieros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4215,
+        "fields": {
+            "nombre": "Dividendos y participaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4218,
+        "fields": {
+            "nombre": "Ingresos método de participación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4220,
+        "fields": {
+            "nombre": "Arrendamientos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4225,
+        "fields": {
+            "nombre": "Comisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4230,
+        "fields": {
+            "nombre": "Honorarios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4235,
+        "fields": {
+            "nombre": "Servicios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4240,
+        "fields": {
+            "nombre": "Utilidad en venta de inversiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4245,
+        "fields": {
+            "nombre": "Utilidad en venta de propiedades, planta y equipo"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4248,
+        "fields": {
+            "nombre": "Utilidad en venta de otros bienes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4250,
+        "fields": {
+            "nombre": "Recuperaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4255,
+        "fields": {
+            "nombre": "Indemnizaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4260,
+        "fields": {
+            "nombre": "Participaciones en concesiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4265,
+        "fields": {
+            "nombre": "Ingresos de ejercicios anteriores"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4275,
+        "fields": {
+            "nombre": "Devoluciones en otras ventas (DB)"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4295,
+        "fields": {
+            "nombre": "Diversos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 4705,
+        "fields": {
+            "nombre": "Corrección monetaria"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5105,
+        "fields": {
+            "nombre": "Gastos de personal"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5110,
+        "fields": {
+            "nombre": "Honorarios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5115,
+        "fields": {
+            "nombre": "Impuestos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5120,
+        "fields": {
+            "nombre": "Arrendamientos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5125,
+        "fields": {
+            "nombre": "Contribuciones y afiliaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5130,
+        "fields": {
+            "nombre": "Seguros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5135,
+        "fields": {
+            "nombre": "Servicios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5140,
+        "fields": {
+            "nombre": "Gastos legales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5145,
+        "fields": {
+            "nombre": "Mantenimiento y reparaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5150,
+        "fields": {
+            "nombre": "Adecuación e instalación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5155,
+        "fields": {
+            "nombre": "Gastos de viaje"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5160,
+        "fields": {
+            "nombre": "Depreciaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5165,
+        "fields": {
+            "nombre": "Amortizaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5195,
+        "fields": {
+            "nombre": "Diversos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5199,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5205,
+        "fields": {
+            "nombre": "Gastos de personal"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5210,
+        "fields": {
+            "nombre": "Honorarios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5215,
+        "fields": {
+            "nombre": "Impuestos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5220,
+        "fields": {
+            "nombre": "Arrendamientos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5225,
+        "fields": {
+            "nombre": "Contribuciones y afiliaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5230,
+        "fields": {
+            "nombre": "Seguros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5235,
+        "fields": {
+            "nombre": "Servicios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5240,
+        "fields": {
+            "nombre": "Gastos legales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5245,
+        "fields": {
+            "nombre": "Mantenimiento y reparaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5250,
+        "fields": {
+            "nombre": "Adecuación e instalación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5255,
+        "fields": {
+            "nombre": "Gastos de viaje"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5260,
+        "fields": {
+            "nombre": "Depreciaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5265,
+        "fields": {
+            "nombre": "Amortizaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5270,
+        "fields": {
+            "nombre": "Financieros-reajuste del sistema"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5275,
+        "fields": {
+            "nombre": "Pérdidas método de participación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5295,
+        "fields": {
+            "nombre": "Diversos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5299,
+        "fields": {
+            "nombre": "Provisiones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5305,
+        "fields": {
+            "nombre": "Financieros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5310,
+        "fields": {
+            "nombre": "Pérdida en venta y retiro de bienes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5313,
+        "fields": {
+            "nombre": "Pérdidas método de participación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5315,
+        "fields": {
+            "nombre": "Gastos extraordinarios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5395,
+        "fields": {
+            "nombre": "Gastos diversos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5405,
+        "fields": {
+            "nombre": "Impuesto de renta y complementarios"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 5905,
+        "fields": {
+            "nombre": "Ganancias y pérdidas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6105,
+        "fields": {
+            "nombre": "Agricultura, ganadería, caza y silvicultura"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6110,
+        "fields": {
+            "nombre": "Pesca"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6115,
+        "fields": {
+            "nombre": "Explotación de minas y canteras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6120,
+        "fields": {
+            "nombre": "Industrias manufactureras"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6125,
+        "fields": {
+            "nombre": "Suministro de electricidad, gas y agua"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6130,
+        "fields": {
+            "nombre": "Construcción"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6135,
+        "fields": {
+            "nombre": "Comercio al por mayor y al por menor"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6140,
+        "fields": {
+            "nombre": "Hoteles y restaurantes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6145,
+        "fields": {
+            "nombre": "Transporte, almacenamiento y comunicaciones"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6150,
+        "fields": {
+            "nombre": "Actividad financiera"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6155,
+        "fields": {
+            "nombre": "Actividades inmobiliarias, empresariales y de alquiler"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6160,
+        "fields": {
+            "nombre": "Enseñanza"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6165,
+        "fields": {
+            "nombre": "Servicios sociales y de salud"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6170,
+        "fields": {
+            "nombre": "Otras actividades de servicios comunitarios, sociales y personales"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6205,
+        "fields": {
+            "nombre": "De mercancías"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6210,
+        "fields": {
+            "nombre": "De materias primas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6215,
+        "fields": {
+            "nombre": "De materiales indirectos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6220,
+        "fields": {
+            "nombre": "Compra de energía"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 6225,
+        "fields": {
+            "nombre": "Devoluciones en compras (CR)"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 7205,
+        "fields": {
+            "nombre": "Mano de obra"
+        }
+    },    
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8105,
+        "fields": {
+            "nombre": "Bienes y valores entregados en custodia"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8110,
+        "fields": {
+            "nombre": "Bienes y valores entregados en garantía"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8115,
+        "fields": {
+            "nombre": "Bienes y valores en poder de terceros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8120,
+        "fields": {
+            "nombre": "Litigios y/o demandas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8125,
+        "fields": {
+            "nombre": "Promesas de compraventa"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8195,
+        "fields": {
+            "nombre": "Diversas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8305,
+        "fields": {
+            "nombre": "Bienes recibidos en arrendamiento financiero"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8310,
+        "fields": {
+            "nombre": "Títulos de inversión no colocados"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8315,
+        "fields": {
+            "nombre": "Propiedades, planta y equipo totalmente depreciados, agotados y/o amortizados"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8320,
+        "fields": {
+            "nombre": "Créditos a favor no utilizados"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8325,
+        "fields": {
+            "nombre": "Activos castigados"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8330,
+        "fields": {
+            "nombre": "Títulos de inversión amortizados"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8335,
+        "fields": {
+            "nombre": "Capitalización por revalorización de patrimonio"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8395,
+        "fields": {
+            "nombre": "Otras cuentas deudoras de control"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 8399,
+        "fields": {
+            "nombre": "Ajustes por inflación activos"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9105,
+        "fields": {
+            "nombre": "Bienes y valores recibidos en custodia"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9110,
+        "fields": {
+            "nombre": "Bienes y valores recibidos en garantía"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9115,
+        "fields": {
+            "nombre": "Bienes y valores recibidos de terceros"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9120,
+        "fields": {
+            "nombre": "Litigios y/o demandas"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9125,
+        "fields": {
+            "nombre": "Promesas de compraventa"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9130,
+        "fields": {
+            "nombre": "Contratos de administración delegada"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9135,
+        "fields": {
+            "nombre": "Cuentas en participación"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9195,
+        "fields": {
+            "nombre": "Otras responsabilidades contingentes"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9305,
+        "fields": {
+            "nombre": "Contratos de arrendamiento financiero"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9395,
+        "fields": {
+            "nombre": "Otras cuentas de orden acreedoras de control"
+        }
+    },
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 9399,
+        "fields": {
+            "nombre": "Ajustes por inflación patrimonio"
+        }
+    }
+]
