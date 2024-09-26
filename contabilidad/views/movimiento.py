@@ -213,7 +213,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'codigo': cuenta.codigo,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
-                'cuenta_subcuenta_id': cuenta.cuenta_subcuenta_id,
+                'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
                 'nivel': cuenta.nivel,
                 'vr_debito_anterior': cuenta.vr_debito_anterior,
                 'vr_credito_anterior': cuenta.vr_credito_anterior,
