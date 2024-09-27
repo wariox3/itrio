@@ -1,0 +1,34 @@
+[
+  {
+    "model": "general.GenImpuestoTipo",
+    "pk": 1,
+    "fields": {
+      "nombre": "IVA",
+      "codigo":"IVA"
+    }
+  },
+  {
+    "model": "general.GenImpuestoTipo",
+    "pk": 2,
+    "fields": {
+      "nombre": "ICA",
+      "codigo":"ICA"
+    }
+  },
+  {
+    "model": "general.GenImpuestoTipo",
+    "pk": 3,
+    "fields": {
+      "nombre": "RETENCION FUENTE",
+      "codigo":"RTF"
+    }
+  },
+  {
+    "model": "general.GenImpuestoTipo",
+    "pk": 4,
+    "fields": {
+      "nombre": "RETENCION IVA",
+      "codigo":"RTI"
+    }
+  }      
+]

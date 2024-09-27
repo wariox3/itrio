@@ -3,6 +3,7 @@ from .views.prueba import PruebaView, enviar_coreo
 from .views.general import ListaView
 from .views.item import ItemViewSet
 from .views.resolucion import ResolucionViewSet
+from .views.impuesto_tipo import ImpuestoTipoViewSet
 from .views.impuesto import ImpuestoViewSet
 from .views.item_impuesto import ItemImpuestoViewSet
 from .views.contacto import ContactoViewSet
@@ -36,6 +37,7 @@ router.register(r'identificacion', IdentificacionViewSet)
 router.register(r'contacto', ContactoViewSet)
 router.register(r'item', ItemViewSet)
 router.register(r'resolucion', ResolucionViewSet)
+router.register(r'impuesto_tipo', ImpuestoTipoViewSet)
 router.register(r'impuesto', ImpuestoViewSet)
 router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'documento_tipo', DocumentoTipoViewSet)

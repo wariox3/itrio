@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from general.models.impuesto import GenImpuesto
+from general.models.impuesto_tipo import GenImpuestoTipo
 
 class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
-
+    impuesto_tipo = serializers.PrimaryKeyRelatedField(queryset=GenImpuestoTipo.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenImpuesto
-        fields = ['nombre']
+        fields = ['nombre', 'nombre_extendido', 'porcentaje', 'impuesto_tipo']
 
     def to_representation(self, instance):
       return {
