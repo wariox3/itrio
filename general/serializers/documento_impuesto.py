@@ -8,7 +8,7 @@ class GenDocumentoImpuestoSerializador(serializers.HyperlinkedModelSerializer):
     impuesto = serializers.PrimaryKeyRelatedField(queryset=GenImpuesto.objects.all())
     class Meta:
         model = GenDocumentoImpuesto
-        fields = ['documento_detalle', 'impuesto', 'base', 'porcentaje', 'total', 'porcentaje_base']
+        fields = ['documento_detalle', 'impuesto', 'base', 'porcentaje', 'total', 'total_operado', 'porcentaje_base']
     def to_representation(self, instance):
         return {
             'id': instance.id,            
@@ -22,4 +22,5 @@ class GenDocumentoImpuestoSerializador(serializers.HyperlinkedModelSerializer):
             'base': instance.base,
             'porcentaje': instance.porcentaje,
             'total': instance.total,
+            'total_operado': instance.total_operado
         }         

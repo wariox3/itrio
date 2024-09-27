@@ -7,6 +7,7 @@ class GenDocumentoImpuesto(models.Model):
     porcentaje = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     porcentaje_base = models.DecimalField(max_digits=20, decimal_places=6, default=100)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    total_operado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     documento_detalle = models.ForeignKey(GenDocumentoDetalle, on_delete=models.CASCADE)
     impuesto = models.ForeignKey(GenImpuesto, on_delete=models.PROTECT)
 
