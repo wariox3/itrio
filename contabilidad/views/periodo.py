@@ -31,3 +31,63 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                 
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        
+    @action(detail=False, methods=["post"], url_path=r'bloquear',)
+    def bloquear(self, request):
+        raw = request.data        
+        id = raw.get('id')
+        if id:
+            periodo = ConPeriodo.objects.get(pk=id)
+            if periodo:
+                if not periodo.estado_bloqueado:
+                    periodo.estado_bloqueado = True
+                    periodo.save()
+                    return Response({'mensaje': 'Periodo bloqueado'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje': 'El periodo ya estaba bloqueado previamente'}, status=status.HTTP_400_BAD_REQUEST)    
+            else:
+                return Response({'mensaje': 'No existe el periodo'}, status=status.HTTP_400_BAD_REQUEST)                
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)         
+        
+    @action(detail=False, methods=["post"], url_path=r'desbloquear',)
+    def desbloquear(self, request):
+        raw = request.data        
+        id = raw.get('id')
+        if id:
+            periodo = ConPeriodo.objects.get(pk=id)
+            if periodo:
+                if periodo.estado_bloqueado:
+                    if not periodo.estado_cerrado:
+                        periodo.estado_bloqueado = False
+                        periodo.save()
+                        return Response({'mensaje': 'Periodo desbloqueado'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje': 'El periodo esta cerrado y no se puede desbloquear'}, status=status.HTTP_400_BAD_REQUEST)        
+                else:
+                    return Response({'mensaje': 'El periodo no esta bloqueado'}, status=status.HTTP_400_BAD_REQUEST)    
+            else:
+                return Response({'mensaje': 'No existe el periodo'}, status=status.HTTP_400_BAD_REQUEST)                
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+
+    @action(detail=False, methods=["post"], url_path=r'cerrar',)
+    def cerrar(self, request):
+        raw = request.data        
+        id = raw.get('id')
+        if id:
+            periodo = ConPeriodo.objects.get(pk=id)
+            if periodo:
+                if periodo.estado_bloqueado == True:
+                    if not periodo.estado_cerrado:
+                        periodo.estado_cerrado = True
+                        periodo.save()
+                        return Response({'mensaje': 'Periodo cerrado'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje': 'El periodo ya estaba cerrado previamente'}, status=status.HTTP_400_BAD_REQUEST)    
+                else:
+                    return Response({'mensaje': 'El periodo debe estar bloqueado para cerrar'}, status=status.HTTP_400_BAD_REQUEST)                    
+            else:
+                return Response({'mensaje': 'No existe el periodo'}, status=status.HTTP_400_BAD_REQUEST)                
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)             
