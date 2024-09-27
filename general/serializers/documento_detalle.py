@@ -183,8 +183,10 @@ class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializ
 
     def to_representation(self, instance):
         documento_contacto_nombre = ""
+        documento_contacto_numero_identificacion = ""
         if instance.documento.contacto:
             documento_contacto_nombre = instance.documento.contacto.nombre_corto
+            documento_contacto_numero_identificacion = instance.documento.contacto.numero_identificacion
         concepto_nombre = ""
         if instance.concepto:
             concepto_nombre = instance.concepto.nombre
@@ -195,7 +197,11 @@ class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializ
             'documento_tipo_nombre': instance.documento.documento_tipo.nombre,        
             'documento_fecha': instance.documento.fecha,
             'documento_numero': instance.documento.numero,    
+            'documento_contacto_id': instance.documento.contacto_id,
+            'documento_contacto_numero_identificacion': documento_contacto_numero_identificacion,
             'documento_contacto_nombre': documento_contacto_nombre,
+            'documento_contrato_id': instance.documento.contrato_id,
+            'documento_fecha_hasta': instance.documento.fecha_hasta,
             'concepto_id': instance.concepto_id,
             'concepto_nombre': concepto_nombre,
             'detalle':instance.detalle,
