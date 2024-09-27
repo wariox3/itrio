@@ -16,6 +16,11 @@
   },
   {
     "model": "general.GenDocumentoClase",
+    "pk": 103,
+    "fields": {"nombre": "Factura recurrente", "codigo_dian": "01", "grupo":1}
+  },
+  {
+    "model": "general.GenDocumentoClase",
     "pk": 200,
     "fields": {"nombre": "Pago", "codigo_dian": "01", "grupo":2}
   },      
