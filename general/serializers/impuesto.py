@@ -13,7 +13,8 @@ class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id,            
             'nombre': instance.nombre,
             'nombre_extendido' : instance.nombre_extendido,
-            'porcentaje': instance.porcentaje
+            'porcentaje': instance.porcentaje,
+            'operacion': instance.operacion
         }         
 
 class GenImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
@@ -30,4 +31,5 @@ class GenImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSeri
             'impuesto_compra': instance.compra,
             'impuesto_venta': instance.venta,
             'impuesto_porcentaje_base': instance.porcentaje_base,
+            'impuesto_operacion': instance.operacion
         }             
