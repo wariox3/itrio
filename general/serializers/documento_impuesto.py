@@ -16,6 +16,7 @@ class GenDocumentoImpuestoSerializador(serializers.HyperlinkedModelSerializer):
             'impuesto_nombre': instance.impuesto.nombre,
             'impuesto_nombre_extendido': instance.impuesto.nombre_extendido,
             'impuesto_porcentaje': instance.impuesto.porcentaje,
+            'impuesto_operacion': instance.impuesto.operacion,
             'impuesto_porcentaje_base': instance.impuesto.porcentaje_base,
             'impuesto_venta': instance.impuesto.venta,
             'impuesto_compra': instance.impuesto.compra,
