@@ -58,5 +58,15 @@
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
     }
-  }
+  },
+  {
+    "model": "general.GenImpuesto",
+    "pk": 102,
+    "fields": {
+      "nombre": "RTF 6%", "nombre_extendido": "RTF PERSONAS NATURALES ND 6%", 
+      "porcentaje":"6", "porcentaje_base":"100", 
+      "venta": "False",  "compra":"True",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  }  
 ]
