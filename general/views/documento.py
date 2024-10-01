@@ -1215,6 +1215,43 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)           
 
+    @action(detail=False, methods=["post"], url_path=r'generar-masivo',)
+    def generar_masivo(self, request):      
+        raw = request.data
+        documento_tipo_id = raw.get('documento_tipo_id', 1)
+        if documento_tipo_id:                    
+            documentos = GenDocumento.objects.filter(documento_tipo_id=16)          
+            for documento in documentos:
+                dias_plazo = documento.plazo_pago.dias                            
+                documento_data = documento.__dict__.copy()                            
+                documento_data.pop('id', None)           
+                documento_data.pop('_state', None)    
+                documento_data['documento_tipo_id'] = documento_tipo_id
+                documento_data['fecha'] = timezone.now() 
+                documento_data['fecha_contable'] = timezone.now()                 
+                documento_data['fecha_vence'] = timezone.now() + timedelta(days=dias_plazo)                      
+                documento_nuevo = GenDocumento(**documento_data)
+                documento_nuevo.save()
+                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+                for documento_detalle in documento_detalles:
+                    documento_detalle_data = documento_detalle.__dict__.copy()                            
+                    documento_detalle_data.pop('id', None)           
+                    documento_detalle_data.pop('_state', None)    
+                    documento_detalle_data['documento_id'] = documento_nuevo.id
+                    documento_detalle_nuevo = GenDocumentoDetalle(**documento_detalle_data)
+                    documento_detalle_nuevo.save()
+                    documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
+                    for documento_impuesto in documento_impuestos:
+                        documento_impuesto_data = documento_impuesto.__dict__.copy()                            
+                        documento_impuesto_data.pop('id', None)           
+                        documento_impuesto_data.pop('_state', None)    
+                        documento_impuesto_data['documento_detalle_id'] = documento_detalle_nuevo.id
+                        documento_impuesto_nuevo = GenDocumentoImpuesto(**documento_impuesto_data)
+                        documento_impuesto_nuevo.save()                       
+            return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
     @staticmethod
     def notificar(documento_id):
         try:
