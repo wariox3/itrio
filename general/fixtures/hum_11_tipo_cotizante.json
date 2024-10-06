@@ -3,7 +3,7 @@
       "model": "humano.HumTipoCotizante",
       "pk": 1,
       "fields": {
-          "codigo": "1",
+          "codigo": "01",
           "nombre": "Dependiente"
       }
   },
@@ -11,7 +11,7 @@
     "model": "humano.HumTipoCotizante",
     "pk": 2,
     "fields": {
-        "codigo": "2",
+        "codigo": "02",
         "nombre": "Servicio Doméstico"
     }
   },
@@ -19,7 +19,7 @@
     "model": "humano.HumTipoCotizante",
     "pk": 3,
     "fields": {
-        "codigo": "3",
+        "codigo": "03",
         "nombre": "Independiente"
     }
 },
@@ -27,7 +27,7 @@
     "model": "humano.HumTipoCotizante",
     "pk": 4,
     "fields": {
-        "codigo": "4",
+        "codigo": "04",
         "nombre": "Madre Comunitaria"
     }
 },

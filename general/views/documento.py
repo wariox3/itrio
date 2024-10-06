@@ -860,16 +860,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 detalle['Deducciones']['OtrasDeducciones'].append(documento_detalle['pago'])
 
                                     datos = transformar_decimal(datos)
-                                    '''wolframio = Wolframio()
+                                    wolframio = Wolframio()
                                     respuesta = wolframio.emitir(datos)
                                     if respuesta['error'] == False: 
                                         documento.estado_electronico_enviado = True
                                         documento.electronico_id = respuesta['id']
                                         documento.save()                                        
                                     else:
-                                        return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)'''
-                                return Response({'mensaje': 'Documento emitido correctamente', 'codigo': 15}, status=status.HTTP_200_OK)
-                                #return Response(datos, status=status.HTTP_200_OK)
+                                        return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                                return Response({'mensaje': 'Documento emitido correctamente'}, status=status.HTTP_200_OK)
                             else:
                                 return Response({'mensaje': 'La factura no cuenta con un número', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                         else:
