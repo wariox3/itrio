@@ -1218,7 +1218,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def generar_masivo(self, request):      
         raw = request.data
         documento_tipo_id = raw.get('documento_tipo_id', 1)
-        if documento_tipo_id:                    
+        if documento_tipo_id: 
+            documento_tipo = GenDocumentoTipo.objects.get(pk=documento_tipo_id)            
             documentos = GenDocumento.objects.filter(documento_tipo_id=16)          
             for documento in documentos:
                 dias_plazo = documento.plazo_pago.dias                            
@@ -1226,6 +1227,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento_data.pop('id', None)           
                 documento_data.pop('_state', None)    
                 documento_data['documento_tipo_id'] = documento_tipo_id
+                documento_data['resolucion_id'] = documento_tipo.resolucion_id
                 documento_data['fecha'] = timezone.now() 
                 documento_data['fecha_contable'] = timezone.now()                 
                 documento_data['fecha_vence'] = timezone.now() + timedelta(days=dias_plazo)                      

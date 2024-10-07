@@ -16,6 +16,22 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
                   'base_cotizacion_propuesto', 'base_cotizacion', 'hora_empresa', 'hora_entidad', 'pago_empresa', 'pago_entidad',
                   'total', 'contrato', 'novedad_tipo']
 
+    def validate(self, data):
+        fecha_desde = data.get('fecha_desde')
+        fecha_hasta = data.get('fecha_hasta')        
+        novedades = HumNovedad.objects.filter(
+            fecha_desde__lte=fecha_hasta,
+            fecha_hasta__gte=fecha_desde
+        )
+
+        if self.instance:
+            novedades = novedades.exclude(pk=self.instance.pk)
+
+        if novedades.exists():
+            raise serializers.ValidationError("Las fechas se cruzan con otra novedad existente.")
+
+        return data
+
     def to_representation(self, instance):      
         contrato_contacto_numero_identificacion = ''
         contrato_contacto_nombre_corto = ''
