@@ -28,7 +28,7 @@ class FormatoEncabezado():
             p.drawImage(logo, 10, 680, width=100, height=100, mask='auto')
         except Exception as e:
             pass
-        
+        p.setFont("Helvetica", 10)
         p.drawString(120,760, "COMPORBANTE DE PAGO DE NÓMINA")
         p.drawString(120,740, empresa.nombre_corto or "")
         p.drawString(120,725, empresa.numero_identificacion or "")
