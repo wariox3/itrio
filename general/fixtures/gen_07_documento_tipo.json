@@ -67,7 +67,7 @@
   {
     "model": "general.GenDocumentoTipo",
     "pk": 14,
-    "fields": {"nombre": "NOMINA", "documento_clase": 701}
+    "fields": {"nombre": "NOMINA", "documento_clase": 701, "pagar":true}
   },
   {
     "model": "general.GenDocumentoTipo",

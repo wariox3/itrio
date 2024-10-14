@@ -6,18 +6,23 @@ class GenCuentaBancoSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_banco_tipo = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBancoTipo.objects.all())
     class Meta:
         model = GenCuentaBanco
-        fields = ['id', 'cuenta_banco_tipo', 'nombre', 'numero_cuenta']
+        fields = ['id', 'cuenta_banco_tipo', 'cuenta_banco_clase', 'nombre', 'numero_cuenta']
 
     def to_representation(self, instance):
         cuenta_banco_tipo_nombre = ""
         if instance.cuenta_banco_tipo:
             cuenta_banco_tipo_nombre = instance.cuenta_banco_tipo.nombre
+        cuenta_banco_clase_nombre = ""
+        if instance.cuenta_banco_clase:
+            cuenta_banco_clase_nombre = instance.cuenta_banco_clase.nombre
         return {
             'id': instance.id,            
             'nombre': instance.nombre,
             'numero_cuenta': instance.numero_cuenta,
             'cuenta_banco_tipo_id': instance.cuenta_banco_tipo_id,
-            'cuenta_banco_tipo_nombre': cuenta_banco_tipo_nombre
+            'cuenta_banco_tipo_nombre': cuenta_banco_tipo_nombre,
+            'cuenta_banco_clase_id': instance.cuenta_banco_clase_id,
+            'cuenta_banco_clase_nombre': cuenta_banco_clase_nombre
         }
         
 class GenCuentaBancoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):

@@ -1,0 +1,12 @@
+[
+  {
+    "model": "general.GenCuentaBancoClase",
+    "pk": 1,
+    "fields": {"nombre": "Ahorro"}
+  },
+  {
+    "model": "general.GenCuentaBancoClase",
+    "pk": 2,
+    "fields": {"nombre": "Corriente"}
+  }
+]

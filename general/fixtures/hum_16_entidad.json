@@ -1815,5 +1815,22 @@
             "sena": true,
             "icbf": false
         }
-    }
+    },
+    {
+        "model": "humano.HumEntidad",
+        "pk": 114,
+        "fields": {
+            "codigo": "15",
+            "numero_identificacion": 899999284,
+            "nombre": "FNA",
+            "nombre_extendido": "Fondo nacional del ahorro",
+            "salud": false,
+            "pension": false,
+            "cesantias": true,
+            "caja": false,
+            "riesgo": false,
+            "sena": false,
+            "icbf": false
+        }
+    }   
 ]

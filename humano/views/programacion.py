@@ -624,6 +624,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         for documento in documentos:
                             documento.numero = documento_tipo.consecutivo
                             documento.estado_aprobado = True
+                            documento.pendiente = documento.total 
                             documento.save()
                             documento_tipo.consecutivo += 1
 

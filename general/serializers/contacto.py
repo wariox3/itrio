@@ -1,4 +1,4 @@
-from general.models.contacto import GenContacto, GenCiudad, GenIdentificacion, GenRegimen, GenTipoPersona, GenAsesor, GenPrecio, GenPlazoPago, GenBanco
+from general.models.contacto import GenContacto, GenCiudad, GenIdentificacion, GenRegimen, GenTipoPersona, GenAsesor, GenPrecio, GenPlazoPago, GenBanco, GenCuentaBancoClase
 from rest_framework import serializers
 
 class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
@@ -11,12 +11,13 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True, required=False)
     plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True, required=False)
     banco = serializers.PrimaryKeyRelatedField(queryset=GenBanco.objects.all(), allow_null=True, required=False)
+    cuenta_banco_clase = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBancoClase.objects.all(), allow_null=True, required=False)
     class Meta:
         model = GenContacto
         fields = [
             'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
             'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'tipo_persona', 'regimen', 'codigo_ciuu',
-            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado', 'banco', 'numero_cuenta']  
+            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado', 'banco', 'numero_cuenta', 'cuenta_banco_clase']  
         
     def to_representation(self, instance):
         asesor = instance.asesor

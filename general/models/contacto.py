@@ -7,6 +7,7 @@ from general.models.gen_asesor import GenAsesor
 from general.models.precio import GenPrecio
 from general.models.plazo_pago import GenPlazoPago
 from general.models.banco import GenBanco
+from general.models.cuenta_banco_clase import GenCuentaBancoClase
 
 class GenContacto(models.Model):        
     numero_identificacion = models.CharField(max_length=20)
@@ -36,6 +37,7 @@ class GenContacto(models.Model):
     plazo_pago = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago')
     plazo_pago_proveedor = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago_proveedor')
     banco = models.ForeignKey(GenBanco, null=True, on_delete=models.PROTECT)
+    cuenta_banco_clase = models.ForeignKey(GenCuentaBancoClase, null=True, on_delete=models.PROTECT)
     
     class Meta:
         db_table = "gen_contacto"

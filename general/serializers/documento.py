@@ -7,6 +7,7 @@ from general.models.empresa import GenEmpresa
 from general.models.plazo_pago import GenPlazoPago
 from general.models.gen_asesor import GenAsesor
 from general.models.sede import GenSede
+from general.models.cuenta_banco import GenCuentaBanco
 from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
@@ -33,6 +34,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all(), default=None, allow_null=True)
     grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all(), default=None, allow_null=True)
     periodo = serializers.PrimaryKeyRelatedField(queryset=HumPeriodo.objects.all(), default=None, allow_null=True)
+    cuenta_banco = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBanco.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = GenDocumento
@@ -40,7 +42,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
                   'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
-                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo']
+                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""

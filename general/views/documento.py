@@ -27,6 +27,7 @@ from django.utils import timezone
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
+from utilidades.utilidades import Utilidades
 from decimal import Decimal
 from openpyxl import Workbook
 from datetime import datetime, timedelta, date
@@ -1253,6 +1254,136 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'plano-banco',)
+    def plano_banco(self, request):        
+        raw = request.data
+        id = raw.get('id')
+        # 1 Bancolombia sap
+        # 2 Bancolombia pap
+        tipo_plano = raw.get('tipo_plano')
+        if id and tipo_plano:
+            if tipo_plano == 1 or tipo_plano == 2:
+                try:                    
+                    documento = GenDocumento.objects.get(pk=id)
+                    if documento.cuenta_banco:
+                        if tipo_plano == 1:
+                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id = id)
+                            numero_registros = 0
+                            total_pagar = 0
+                            for documento_detalle in documento_detalles:
+                                numero_registros += 1
+                                total_pagar += documento_detalle.pago
+                            empresa = GenEmpresa.objects.get(pk=1)
+                            lineas = []       
+                            nit = Utilidades.rellenar(empresa.numero_identificacion, 10, "0", "I")
+                            nombre = Utilidades.eliminar_caracteres_especiales(empresa.nombre_corto).upper()
+                            nombre = Utilidades.rellenar(nombre, 16, "0", "D")
+                            fecha = datetime.now().strftime('%y%m%d')
+                            numero_registros = Utilidades.rellenar(str(numero_registros), 6, "0", "I")
+                            total_pagar = int(total_pagar)
+                            total_pagar = Utilidades.rellenar(str(total_pagar), 24, "0", "I")
+                            numero_cuenta = documento.cuenta_banco.numero_cuenta
+                            cuenta_banco_clase = "S"
+                            if documento.cuenta_banco.cuenta_banco_clase:
+                                if documento.cuenta_banco.cuenta_banco_clase_id == 2:
+                                    cuenta_banco_clase = "D"
+                            lineas.append(f"1{nit}{nombre}225PAGONOMINA{fecha}A{fecha}{numero_registros}{total_pagar}{numero_cuenta}{cuenta_banco_clase}\n")                    
+                            for documento_detalle in documento_detalles:
+                                numero_identificacion = Utilidades.rellenar(documento_detalle.contacto.numero_identificacion, 15, "0", "I")
+                                nombre = Utilidades.rellenar(documento_detalle.contacto.nombre_corto, 18, "0", "D")
+                                codigo_banco = "1007"
+                                if documento_detalle.contacto.banco:
+                                    if documento_detalle.contacto.banco_id == 1:
+                                        codigo_banco = "1007"
+                                codigo_banco_bancolombia = Utilidades.rellenar(codigo_banco, 9, "0", "I")
+                                numero_cuenta = Utilidades.rellenar(documento_detalle.contacto.numero_cuenta, 17, "0", "I")
+                                cuenta_banco_clase = "S37"
+                                if documento_detalle.contacto.cuenta_banco_clase:
+                                    if documento_detalle.contacto.cuenta_banco_clase_id == 2:
+                                        cuenta_banco_clase = "D37"         
+                                pago = int(documento_detalle.pago)
+                                pago = Utilidades.rellenar(str(pago), 10, "0", "I")     
+                                concepto = Utilidades.rellenar("NOMINA", 9, " ", "D")
+                                numero = ""
+                                if documento_detalle.documento_afectado:
+                                    numero = documento_detalle.documento_afectado.numero
+                                referencia = Utilidades.rellenar(numero, 13, " ", "D")
+                                lineas.append(f"6{numero_identificacion}{nombre}{codigo_banco_bancolombia}{numero_cuenta}{cuenta_banco_clase}{pago}{concepto}{referencia}\n")
+                            
+                            contenido_archivo = "".join(lineas)
+                            fecha_nombre_archivo = datetime.now().strftime('%Y%m%d%H%M%S')
+                            nombre_archivo = f"planoBancolombiaSAP{fecha_nombre_archivo}.txt"
+                            response = HttpResponse(contenido_archivo, content_type='text/csv')
+                            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                            response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'                    
+                            return response   
+                        if tipo_plano == 2:
+                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id = id)
+                            numero_registros = 0
+                            total_pagar = 0
+                            for documento_detalle in documento_detalles:
+                                numero_registros += 1
+                                total_pagar += documento_detalle.pago
+                            empresa = GenEmpresa.objects.get(pk=1)
+                            lineas = []       
+                            nit = Utilidades.rellenar(empresa.numero_identificacion, 15, "0", "I")                            
+                            fecha = datetime.now().strftime('%Y%m%d')
+                            numero_registros = Utilidades.rellenar(str(numero_registros), 6, "0", "I")
+                            total_pagar = int(total_pagar)
+                            total_pagar = Utilidades.rellenar(str(total_pagar), 32, "0", "I")
+                            numero_cuenta = documento.cuenta_banco.numero_cuenta
+                            cuenta_banco_clase = "S"
+                            if documento.cuenta_banco.cuenta_banco_clase:
+                                if documento.cuenta_banco.cuenta_banco_clase_id == 2:
+                                    cuenta_banco_clase = "D"
+                            lineas.append(f"1{nit}I               225NOMINA    {fecha}AA{fecha}{numero_registros}{total_pagar}00{numero_cuenta}{cuenta_banco_clase}\n")                        
+                            
+                            for documento_detalle in documento_detalles:
+                                numero_identificacion = Utilidades.rellenar(documento_detalle.contacto.numero_identificacion, 15, " ", "D")
+                                nombre = Utilidades.rellenar(documento_detalle.contacto.nombre_corto, 30, " ", "D")                            
+                                codigo_banco = "1007"
+                                if documento_detalle.contacto.banco:
+                                    if documento_detalle.contacto.banco_id == 1:
+                                        codigo_banco = "1007"
+                                codigo_banco_bancolombia = Utilidades.rellenar(codigo_banco, 9, "0", "I")
+                                numero_cuenta = Utilidades.rellenar(documento_detalle.contacto.numero_cuenta, 17, " ", "D")
+                                cuenta_banco_clase = "S37"
+                                if documento_detalle.contacto.cuenta_banco_clase:
+                                    if documento_detalle.contacto.cuenta_banco_clase_id == 2:
+                                        cuenta_banco_clase = "D37"         
+                                pago = int(documento_detalle.pago)
+                                pago = Utilidades.rellenar(str(pago), 15, "0", "I")                                     
+                                numero = ""
+                                if documento_detalle.documento_afectado:
+                                    numero = documento_detalle.documento_afectado.numero
+                                referencia = Utilidades.rellenar(numero, 21, " ", "D")
+                                identificacion = "1" # 1-Cedula 2-Cedula extranjeria 3-NIT 4-Tarjeta identidad 5-Pasaporte
+                                if documento_detalle.contacto.identificacion_id == 5:
+                                    identificacion="2"
+                                if documento_detalle.contacto.identificacion_id == 6:
+                                    identificacion="3"                                    
+                                if documento_detalle.contacto.identificacion_id == 2:
+                                    identificacion="4"
+                                if documento_detalle.contacto.identificacion_id == 7:
+                                    identificacion="5"     
+                                espacios = Utilidades.rellenar("", 137, " ", "D")                               
+                                lineas.append(f"6{numero_identificacion}{nombre}{codigo_banco_bancolombia}{numero_cuenta}{cuenta_banco_clase}{pago}00{fecha}{referencia}{identificacion}00000{espacios}\n")                            
+                            contenido_archivo = "".join(lineas)
+                            fecha_nombre_archivo = datetime.now().strftime('%Y%m%d%H%M%S')
+                            nombre_archivo = f"planoBancolombiaPAB{fecha_nombre_archivo}.txt"
+                            response = HttpResponse(contenido_archivo, content_type='text/csv')
+                            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                            response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'                    
+                            return response                          
+                    else:
+                        return Response({'mensaje':'El documento no tiene cuenta de banco asociada', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)              
+                except GenDocumento.DoesNotExist:
+                    return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'El tipo de plano solo puede ser 1 o 2', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def notificar(documento_id):

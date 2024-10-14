@@ -7,6 +7,7 @@ from general.models.empresa import GenEmpresa
 from general.models.plazo_pago import GenPlazoPago
 from general.models.gen_asesor import GenAsesor
 from general.models.sede import GenSede
+from general.models.cuenta_banco import GenCuentaBanco
 from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
@@ -59,6 +60,7 @@ class GenDocumento(models.Model):
     contrato = models.ForeignKey(HumContrato, null=True, on_delete=models.PROTECT,related_name='documentos_contrato_rel')
     grupo = models.ForeignKey(HumGrupo, null=True, on_delete=models.PROTECT,related_name='documentos_grupo_rel')
     periodo = models.ForeignKey(HumPeriodo, on_delete=models.PROTECT, null=True, related_name='documentos_periodo_rel')
+    cuenta_banco = models.ForeignKey(GenCuentaBanco, null=True, on_delete=models.PROTECT, related_name='documentos_cuenta_banco_rel')
 
     class Meta:
         db_table = "gen_documento"
