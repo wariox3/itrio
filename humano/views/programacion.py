@@ -17,7 +17,9 @@ from humano.serializers.programacion import HumProgramacionSerializador
 from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador
 from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
+from general.formatos.programacion import FormatoProgramacion
 from django.db.models import Q
+from django.http import HttpResponse
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import timedelta
 import calendar
@@ -653,4 +655,25 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumProgramacion.DoesNotExist:
-            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)        
+            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+
+    @action(detail=False, methods=["post"], url_path=r'imprimir',)
+    def imprimir(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                pdf = None                
+                programacion = HumProgramacion.objects.get(pk=id)                            
+                formato = FormatoProgramacion()
+                pdf = formato.generar_pdf(id)              
+                nombre_archivo = f"programacion_{id}.pdf"       
+                
+                response = HttpResponse(pdf, content_type='application/pdf')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                return response
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)              
