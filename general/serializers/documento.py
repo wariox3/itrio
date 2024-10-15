@@ -55,7 +55,10 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             asesor_nombre_corto = instance.asesor.nombre_corto    
         sede_nombre = ""
         if instance.sede:
-            sede_nombre = instance.sede.nombre            
+            sede_nombre = instance.sede.nombre    
+        cuenta_banco_nombre = ""
+        if instance.cuenta_banco:
+            cuenta_banco_nombre = instance.cuenta_banco.nombre        
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -98,7 +101,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'sede_id': instance.sede_id,
             'sede_nombre': sede_nombre,
             'programacion_detalle_id': instance.programacion_detalle_id,
-            'contrato_id': instance.contrato_id
+            'contrato_id': instance.contrato_id,
+            'cuenta_banco_id': instance.cuenta_banco_id,
+            'cuenta_banco_nombre': cuenta_banco_nombre
         }
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
@@ -136,6 +141,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
         sede_nombre = None
         if sede:
             sede_nombre = sede.nombre 
+        cuenta_banco_nombre = ""
+        if instance.cuenta_banco:
+            cuenta_banco_nombre = instance.cuenta_banco.nombre             
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -179,7 +187,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'sede': instance.sede_id,
             'sede_nombre': sede_nombre,
             'programacion_detalle_id': instance.programacion_detalle_id,
-            'contrato_id': instance.contrato_id
+            'contrato_id': instance.contrato_id,
+            'cuenta_banco_id': instance.cuenta_banco_id,
+            'cuenta_banco_nombre': cuenta_banco_nombre            
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
