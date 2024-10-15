@@ -1,9 +1,11 @@
 from general.models.cuenta_banco import GenCuentaBanco
 from general.models.cuenta_banco_tipo import GenCuentaBancoTipo
+from general.models.cuenta_banco_clase import GenCuentaBancoClase
 from rest_framework import serializers
 
 class GenCuentaBancoSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_banco_tipo = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBancoTipo.objects.all())
+    cuenta_banco_clase = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBancoClase.objects.all())
     class Meta:
         model = GenCuentaBanco
         fields = ['id', 'cuenta_banco_tipo', 'cuenta_banco_clase', 'nombre', 'numero_cuenta']

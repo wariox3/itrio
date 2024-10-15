@@ -68,5 +68,15 @@
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
     }
-  }  
+  },
+  {
+    "model": "general.GenImpuesto",
+    "pk": 103,
+    "fields": {
+      "nombre": "RTF 1%", "nombre_extendido": "RTF VEHICULOS 1%", 
+      "porcentaje":"1", "porcentaje_base":"100", 
+      "venta": "False",  "compra":"True",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  }
 ]

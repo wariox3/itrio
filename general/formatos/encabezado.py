@@ -1,23 +1,11 @@
 from general.models.empresa import GenEmpresa
-from io import BytesIO
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import Paragraph
-from reportlab.lib.styles import ParagraphStyle
-from utilidades.utilidades import convertir_a_letras
-from utilidades.utilidades import generar_qr
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import Paragraph
 from reportlab.lib.utils import ImageReader
-from reportlab.lib.units import inch
-from reportlab.graphics import renderPDF
+from reportlab.lib import colors
 from decouple import config
-
-import locale
 
 class FormatoEncabezado():
 
-    def generar_pdf(self, p):
+    def generar_pdf(self, p, titulo):
         region = config('DO_REGION')
         bucket = config('DO_BUCKET')  
         empresa = GenEmpresa.objects.get(pk=1)
@@ -28,11 +16,17 @@ class FormatoEncabezado():
             p.drawImage(logo, 10, 680, width=100, height=100, mask='auto')
         except Exception as e:
             pass
-        p.setFont("Helvetica", 10)
-        p.drawString(120,760, "COMPORBANTE DE PAGO DE NÓMINA")
+        p.setFillColor(colors.lightgrey)
+        p.rect(120, 757, 450, 17, stroke=0, fill=1)        
+        p.setFillColor(colors.black)        
+        p.setFont("Helvetica-Bold", 10)        
+        p.drawCentredString(350,760, titulo)        
         p.drawString(120,740, empresa.nombre_corto or "")
-        p.drawString(120,725, empresa.numero_identificacion or "")
+        p.setFont("Helvetica", 10)
+        nit = empresa.numero_identificacion or ""
+        p.drawString(120,725, f"NIT {nit}")
         p.drawString(120,710, empresa.direccion or "")
-        p.drawString(120,695, empresa.telefono or "")
+        telefono = empresa.telefono or ""
+        p.drawString(120,695, f"TEL {telefono}")        
 
     
