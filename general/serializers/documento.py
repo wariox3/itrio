@@ -351,6 +351,39 @@ class GenDocumentoNominaSerializador(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
         contacto_numero_identificacion = ""
+        if instance.contacto:
+            contacto_nombre_corto = instance.contacto.nombre_corto
+            contacto_numero_identificacion = instance.contacto.numero_identificacion
+        return {
+            'id': instance.id,            
+            'documento_tipo_id': instance.documento_tipo_id,
+            'numero' : instance.numero,
+            'fecha' : instance.fecha,
+            'fecha_hasta' : instance.fecha_hasta,            
+            'contacto_id': instance.contacto_id,
+            'contacto_numero_identificacion': contacto_numero_identificacion,
+            'contacto_nombre_corto': contacto_nombre_corto,            
+            'salario': instance.salario,
+            'devengado': instance.devengado,
+            'deduccion': instance.deduccion,
+            'total':  instance.total,
+            'base_cotizacion': instance.base_cotizacion,
+            'base_prestacion': instance.base_prestacion,
+            'contrato_id': instance.contrato_id,
+            'estado_aprobado': instance.estado_aprobado,
+            'estado_anulado': instance.estado_anulado,
+            'estado_electronico': instance.estado_electronico,
+            'cue': instance.cue
+        } 
+
+class GenDocumentoNominaExcelSerializador(serializers.HyperlinkedModelSerializer):    
+
+    class Meta:
+        model = GenDocumento
+    
+    def to_representation(self, instance):        
+        contacto_nombre_corto = ""
+        contacto_numero_identificacion = ""
         numero_cuenta = ""
         banco_nombre = ""        
         if instance.contacto:
