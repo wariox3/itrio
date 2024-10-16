@@ -18,6 +18,7 @@ from general.serializers.documento import GenDocumentoReferenciaSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
+from general.formatos.documento_soporte import FormatoDocumentoSoporte
 from general.formatos.nomina import FormatoNomina
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -363,6 +364,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         }
                         nombre_archivo = nombres_archivo.get(tipo_documento)
                 
+                if documento.documento_tipo_id == 11:
+                    formato = FormatoDocumentoSoporte()
+                    pdf = formato.generar_pdf(id)              
+                    nombre_archivo = f"doc_soporte_{id}.pdf" 
+
                 if documento.documento_tipo_id == 14:
                     formato = FormatoNomina()
                     pdf = formato.generar_pdf(id)              
