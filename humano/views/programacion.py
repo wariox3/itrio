@@ -238,7 +238,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                             'contacto': programacion_detalle.contrato.contacto_id,
                             'grupo': programacion_detalle.contrato.grupo_id,
                             'periodo': programacion.periodo_id,
-                            'salario': programacion_detalle.salario                      
+                            'salario': programacion_detalle.salario,
+                            'dias': programacion_detalle.dias                    
                         }
                         documento_serializador = GenDocumentoSerializador(data=data)
                         if documento_serializador.is_valid():

@@ -14,6 +14,6 @@ def custom_exception_handler(exc, context):
             response.data = {
                 'mensaje': 'Mensajes de validación',
                 'codigo': 14,
-                'validacion': response.data
+                'validaciones': response.data
             }            
     return response

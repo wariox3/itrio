@@ -74,5 +74,50 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'descuento_credito': instance.descuento_credito,
             'descuento_embargo' : instance.descuento_embargo,
             'adicional': instance.adicional
-        }         
+        }   
+
+class HumProgramacionDetalleNominaSerializador(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = HumProgramacionDetalle
+
+    def to_representation(self, instance):      
+        contrato_contacto_numero_identificacion = ""
+        contrato_contacto_nombre_corto = ""
+        cargo_nombre = ""
+        if instance.contrato:
+            if instance.contrato.contacto:
+                contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
+                contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
+            if instance.contrato.cargo:
+                cargo_nombre = instance.contrato.cargo.nombre                        
+        return {
+            'ID': instance.id,
+            'COD': instance.contrato.contacto_id,
+            'IDENTIFICACION': contrato_contacto_numero_identificacion,
+            'EMPLEADO': contrato_contacto_nombre_corto,
+            'CONT': instance.contrato_id,
+            'DESDE': instance.fecha_desde,
+            'HASTA': instance.fecha_hasta,            
+            'SALARIO': instance.salario,            
+            'DIAS': instance.dias,
+            'DIAS_T': instance.dias_transporte,
+            'D': instance.diurna,
+            'N': instance.nocturna,
+            'FD': instance.festiva_diurna,
+            'FN': instance.festiva_nocturna,
+            'ED': instance.extra_diurna,
+            'EN': instance.extra_nocturna,
+            'EFD': instance.extra_festiva_diurna,
+            'EFN': instance.extra_festiva_nocturna,
+            'RN': instance.recargo_nocturno,
+            'RFD': instance.recargo_festivo_diurno,
+            'RFN': instance.recargo_festivo_nocturno,            
+            'DEVENGADO': instance.devengado,
+            'DEDUCCION': instance.deduccion,
+            'TOTAL': instance.total,
+            'ING': instance.ingreso,
+            'RET': instance.retiro,
+            'CARGO': cargo_nombre
+        }           
         

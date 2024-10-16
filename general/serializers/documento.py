@@ -42,7 +42,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
                   'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
-                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco']
+                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 'dias']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
@@ -351,28 +351,36 @@ class GenDocumentoNominaSerializador(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
         contacto_numero_identificacion = ""
+        numero_cuenta = ""
+        banco_nombre = ""        
         if instance.contacto:
             contacto_nombre_corto = instance.contacto.nombre_corto
             contacto_numero_identificacion = instance.contacto.numero_identificacion
+            numero_cuenta = instance.contacto.numero_cuenta
+            if instance.contacto.banco:
+                banco_nombre = instance.contacto.banco.nombre
+        grupo_nombre = ""
+        if instance.contrato:
+            if instance.contrato.grupo:
+                grupo_nombre = instance.contrato.grupo.nombre         
         return {
-            'id': instance.id,            
-            'documento_tipo_id': instance.documento_tipo_id,
-            'numero' : instance.numero,
-            'fecha' : instance.fecha,
-            'fecha_hasta' : instance.fecha_hasta,            
-            'contacto_id': instance.contacto_id,
-            'contacto_numero_identificacion': contacto_numero_identificacion,
-            'contacto_nombre_corto': contacto_nombre_corto,            
-            'salario': instance.salario,
-            'devengado': instance.devengado,
-            'deduccion': instance.deduccion,
-            'total':  instance.total,
-            'base_cotizacion': instance.base_cotizacion,
-            'base_prestacion': instance.base_prestacion,
-            'contrato_id': instance.contrato_id,
-            'estado_aprobado': instance.estado_aprobado,
-            'estado_anulado': instance.estado_anulado,
-            'estado_electronico': instance.estado_electronico,
-            'cue': instance.cue
+            'ID': instance.id,            
+            'NUMERO' : instance.numero,
+            'DESDE' : instance.fecha,
+            'HASTA' : instance.fecha_hasta,            
+            'COD_EMP': instance.contacto_id,
+            'IDENTIFICACION': contacto_numero_identificacion,
+            'EMPLEADO': contacto_nombre_corto,            
+            'CUENTA': numero_cuenta,
+            'BANCO': banco_nombre,            
+            'CONT': instance.contrato_id,
+            'GRUPO': grupo_nombre,
+            'DIAS': instance.dias,
+            'SALARIO': instance.salario,
+            'DEVENGADO': instance.devengado,
+            'DEDUCCION': instance.deduccion,
+            'TOTAL':  instance.total,
+            'IBC': instance.base_cotizacion,
+            'IBP': instance.base_prestacion,                    
         }    
          

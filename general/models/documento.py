@@ -30,6 +30,7 @@ class GenDocumento(models.Model):
     impuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)    
     afectado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pendiente = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    dias = models.BigIntegerField(default=0)
     salario = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     devengado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     deduccion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
