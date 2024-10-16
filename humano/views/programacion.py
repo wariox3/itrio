@@ -52,8 +52,10 @@ def datos_detalle(data_general, data, concepto):
         data_general['deduccion'] += data['pago']     
     if concepto.ingreso_base_cotizacion:
         if concepto.id == 28:
-            data['base_cotizacion'] = round(data['cantidad'] * data['hora'])
-            data_general['base_cotizacion'] += round(data['cantidad'] * data['hora'])            
+            base =  round(data['cantidad'] * data['hora'])
+            data['base_cotizacion'] = base
+            data_general['base_cotizacion'] += base
+            data_general['base_licencia'] += base
         else:
             data['base_cotizacion'] = data['pago']
             data_general['base_cotizacion'] += data['pago']
@@ -253,7 +255,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 'devengado': 0,
                                 'deduccion': 0,
                                 'base_cotizacion': 0,
-                                'base_prestacion': 0
+                                'base_prestacion': 0,
+                                'base_licencia': 0,
                             }
 
                             # Horas y salarios
@@ -308,7 +311,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     diferencia = fecha_hasta_novedad - fecha_desde_novedad
                                     dias_novedad = diferencia.days + 1                                     
                                     pago = 0
-   
+                                    # Incapacidad
                                     if novedad.novedad_tipo_id in [1, 2]:
                                         if novedad.dias_empresa > 0:
                                             fecha_desde_empresa = programacion.fecha_desde
@@ -367,7 +370,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     documento_detalle_serializador.save()
                                                 else:
                                                     return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
-
+                                    # Licencia
                                     if novedad.novedad_tipo_id in [3, 4, 5, 6]:
                                         if novedad.dias > 0:               
                                             hora = 0
@@ -397,8 +400,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 documento_detalle_serializador.save()
                                             else:
                                                 return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-
+                                    # Vacacion
                                     if novedad.novedad_tipo_id == 7:
                                         # Vacaciones disfrutadas
                                         dias_novedad_pago = dias_novedad + dia31
@@ -482,8 +484,9 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 salud = contrato.salud
                                 if salud:
                                     if salud.porcentaje_empleado > 0:                                        
-                                        concepto = salud.concepto                                        
-                                        pago = round((data_general['base_cotizacion'] * salud.porcentaje_empleado) / 100)
+                                        concepto = salud.concepto     
+                                        base = data_general['base_cotizacion'] - data_general['base_licencia'];                                  
+                                        pago = round((base * salud.porcentaje_empleado) / 100)
                                         data = {
                                             'documento': documento.id,                                            
                                             'porcentaje': salud.porcentaje_empleado,
