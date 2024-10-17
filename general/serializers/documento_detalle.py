@@ -193,6 +193,48 @@ class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializ
             concepto_nombre = instance.concepto.nombre
             
         return {
+            'id': instance.id,            
+            'documento_id': instance.documento_id,
+            'documento_tipo_nombre': instance.documento.documento_tipo.nombre,        
+            'documento_fecha': instance.documento.fecha,
+            'documento_numero': instance.documento.numero,    
+            'documento_contacto_id': instance.documento.contacto_id,
+            'documento_contacto_numero_identificacion': documento_contacto_numero_identificacion,
+            'documento_contacto_nombre': documento_contacto_nombre,
+            'documento_contrato_id': instance.documento.contrato_id,
+            'documento_fecha_hasta': instance.documento.fecha_hasta,
+            'concepto_id': instance.concepto_id,
+            'concepto_nombre': concepto_nombre,
+            'detalle':instance.detalle,
+            'porcentaje': instance.porcentaje,
+            'cantidad': instance.cantidad,
+            'dias': instance.dias,
+            'hora': instance.hora,
+            'operacion': instance.operacion,
+            'pago': instance.pago,
+            'pago_operado': instance.pago_operado,
+            'devengado': instance.devengado,
+            'deduccion': instance.deduccion,
+            'base_cotizacion': instance.base_cotizacion,
+            'base_prestacion': instance.base_prestacion,
+            'base_impuesto': instance.base_impuesto
+        } 
+
+class GenDocumentoDetalleNominaExcelSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = GenDocumentoDetalle        
+
+    def to_representation(self, instance):
+        documento_contacto_nombre = ""
+        documento_contacto_numero_identificacion = ""
+        if instance.documento.contacto:
+            documento_contacto_nombre = instance.documento.contacto.nombre_corto
+            documento_contacto_numero_identificacion = instance.documento.contacto.numero_identificacion
+        concepto_nombre = ""
+        if instance.concepto:
+            concepto_nombre = instance.concepto.nombre
+            
+        return {
             'ID': instance.id,            
             'DOC_ID': instance.documento_id,
             'DOCUMENTO': instance.documento.documento_tipo.nombre,    
