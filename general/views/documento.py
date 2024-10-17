@@ -585,7 +585,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "subtipo_cotizante":documento.contrato.subtipo_cotizante.codigo,
                                                 "contrato_tipo":documento.contrato.contrato_tipo_id,                                            
                                                 "ciudad_labora" : documento.contrato.ciudad_labora.nombre,
-                                                "ciudad_labora_codigo_postal" : documento.contrato.ciudad_labora.codigo_postal,
+                                                "ciudad_labora_codigo_postal" : documento.contrato.ciudad_labora.codigo,
                                                 "estado_labora_codigo_postal":documento.contrato.ciudad_labora.estado.codigo,
                                             },
                                         }
