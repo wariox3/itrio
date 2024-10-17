@@ -76,7 +76,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'adicional': instance.adicional
         }   
 
-class HumProgramacionDetalleNominaExcelSerializador(serializers.HyperlinkedModelSerializer):
+class HumProgramacionDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumProgramacionDetalle
