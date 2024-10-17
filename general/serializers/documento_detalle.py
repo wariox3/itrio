@@ -69,7 +69,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'hora' : instance.hora,
             'dias' : instance.dias,
             'devengado': instance.devengado,
-            'deducion': instance.deduccion,
+            'deduccion': instance.deduccion,
             'operacion': instance.operacion,
             'base_cotizacion': instance.base_cotizacion,
             'base_prestacion': instance.base_prestacion,

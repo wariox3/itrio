@@ -372,7 +372,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
                                     # Licencia
                                     if novedad.novedad_tipo_id in [3, 4, 5, 6]:
-                                        if novedad.dias > 0:               
+                                        if dias_novedad > 0:               
                                             hora = 0
                                             if novedad.novedad_tipo_id in [3]:
                                                 hora = novedad.hora_entidad
@@ -381,7 +381,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             if novedad.novedad_tipo_id in [6]:
                                                 hora = round(valor_hora_contrato, 6)
                                             concepto = novedad.novedad_tipo.concepto
-                                            horas = novedad.dias * configuracion['hum_factor']                                                                                                                                                
+                                            horas = dias_novedad * configuracion['hum_factor']                                                                                                                                                
                                             pago = round(hora * horas)
                                             if novedad.novedad_tipo_id == 6:
                                                 pago = 0
