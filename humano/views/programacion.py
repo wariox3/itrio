@@ -387,7 +387,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 pago = 0
                                             data = {
                                                 'documento': documento.id,  
-                                                'dias': novedad.dias,
+                                                'dias': dias_novedad,
                                                 'hora': hora,
                                                 'cantidad': horas,
                                                 'pago': pago,
