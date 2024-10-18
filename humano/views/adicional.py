@@ -16,7 +16,8 @@ class HumAdicionalViewSet(viewsets.ModelViewSet):
     def importar(self, request):
         raw = request.data        
         archivo_base64 = raw.get('archivo_base64')
-        if archivo_base64:
+        permanente = raw.get('permanente')
+        if archivo_base64 and permanente:
             try:
                 archivo_data = base64.b64decode(archivo_base64)
                 archivo = BytesIO(archivo_data)
@@ -96,6 +97,7 @@ class HumAdicionalViewSet(viewsets.ModelViewSet):
                         valor=detalle['valor'],
                         detalle=detalle['detalle'],
                         aplica_dia_laborado=detalle['aplica_dia_laborado'],
+                        permanente = permanente
                     )
                     registros_importados += 1
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
