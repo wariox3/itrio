@@ -45,7 +45,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             banco_nombre = instance.banco.nombre
         cuenta_banco_clase_nombre =""
         if instance.cuenta_banco_clase:
-            cuenta_banco_clase_nombre = instance.cuenta_banco_clase 
+            cuenta_banco_clase_nombre = instance.cuenta_banco_clase.nombre
         return {
             'id': instance.id,
             'identificacion_id': instance.identificacion_id, 
