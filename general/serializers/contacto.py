@@ -43,6 +43,9 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
         banco_nombre = ""
         if instance.banco:
             banco_nombre = instance.banco.nombre
+        cuenta_banco_clase_nombre =""
+        if instance.cuenta_banco_clase:
+            cuenta_banco_clase_nombre = instance.cuenta_banco_clase 
         return {
             'id': instance.id,
             'identificacion_id': instance.identificacion_id, 
@@ -83,7 +86,9 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             'proveedor': instance.proveedor,
             'empleado': instance.empleado,
             'banco_id': instance.banco_id,
-            'banco_nombre': banco_nombre
+            'banco_nombre': banco_nombre,
+            'cuenta_banco_clase_id': instance.cuenta_banco_clase_id,
+            'cuenta_banco_clase_nombre': cuenta_banco_clase_nombre
         }     
 
 class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
