@@ -12,6 +12,7 @@ from reportlab.lib.units import inch
 from reportlab.graphics import renderPDF
 from decouple import config
 import locale
+from django.utils.timezone import localtime
 
 class FormatoFactura():
 
@@ -262,7 +263,13 @@ class FormatoFactura():
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 80, "FECHA VALIDACIÓN: ")
             p.setFont("Helvetica", 8)
-            p.drawString(120, 80, str(data['fecha_validacion']) if str(data['fecha_validacion']) else "")
+            fecha = data['fecha_validacion']
+            if fecha:
+                fecha_local = localtime(fecha)
+                fecha_str = fecha_local.strftime('%Y-%m-%d %H:%M:%S')
+            else:
+                fecha_str = ""
+            p.drawString(120, 80, fecha_str)            
 
             p.setStrokeColorRGB(0.8, 0.8, 0.8)
             p.setLineWidth(0.5)
