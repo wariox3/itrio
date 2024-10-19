@@ -1278,9 +1278,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if tipo_plano == 1 or tipo_plano == 2:
                 try:                    
                     documento = GenDocumento.objects.get(pk=id)
-                    if documento.cuenta_banco:
-                        if tipo_plano == 1:
-                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id = id)
+                    if documento.cuenta_banco:                        
+                        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id = id)
+                        for documento_detalle in documento_detalles:
+                            if documento_detalle.contacto == None:
+                                return Response({'mensaje':'Uno de los detalles no tiene contacto', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
+                        if tipo_plano == 1:                            
                             numero_registros = 0
                             total_pagar = 0
                             for documento_detalle in documento_detalles:
@@ -1330,8 +1333,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
                             response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'                    
                             return response   
-                        if tipo_plano == 2:
-                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id = id)
+                        if tipo_plano == 2:                           
                             numero_registros = 0
                             total_pagar = 0
                             for documento_detalle in documento_detalles:
