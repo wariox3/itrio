@@ -7,6 +7,7 @@ from contabilidad.models.cuenta_grupo import ConCuentaGrupo
 from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
 from contabilidad.serializers.cuenta import ConCuentaSerializador
+from django.db.models import ProtectedError
 from io import BytesIO
 import base64
 import openpyxl
@@ -16,6 +17,14 @@ class CuentaViewSet(viewsets.ModelViewSet):
     queryset = ConCuenta.objects.all()
     serializer_class = ConCuentaSerializador
     permission_classes = [permissions.IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):        
+        instance = self.get_object()
+        try:            
+            self.perform_destroy(instance)
+        except ProtectedError:            
+            return Response({'mensaje': 'No se puede eliminar porque está relacionado con otros registros.'}, status=status.HTTP_400_BAD_REQUEST)        
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def create(self, request, *args, **kwargs):
         raw = request.data        
