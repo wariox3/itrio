@@ -235,6 +235,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documentoEliminar:
                         if documentoEliminar.estado_aprobado == False:
                             if not documentoEliminar.detalles.exists():
+                                if documentoEliminar.documento_tipo_id == 15:
+                                    nominas = GenDocumento.objects.filter(documento_referencia_id=documentoEliminar.id)
+                                    nominas.update(documento_referencia_id=None)                                
                                 if not documentoEliminar.documentos_detalles_documento_afectado_rel.exists():
                                     documentoEliminar.delete()   
                                 else:
