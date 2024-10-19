@@ -901,14 +901,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             try:
                 documento = GenDocumento.objects.get(pk=documento_id)
                 if documento.estado_electronico_enviado:
-                    fecha_validacion_obj = datetime.strptime(fecha_validacion, '%Y-%m-%d %H:%M:%S')
-                    documento.qr = qr
-                    documento.cue = cue
-                    documento.fecha_validacion = fecha_validacion_obj
-                    documento.estado_electronico = True
-                    documento.save()                
-                    self.notificar(documento_id)
-                    return Response({'respuesta':True}, status=status.HTTP_200_OK)
+                    if documento.estado_electronico == False:
+                        fecha_validacion_obj = datetime.strptime(fecha_validacion, '%Y-%m-%d %H:%M:%S')
+                        documento.qr = qr
+                        documento.cue = cue
+                        documento.fecha_validacion = fecha_validacion_obj
+                        documento.estado_electronico = True
+                        documento.save()                
+                        self.notificar(documento_id)
+                        return Response({'respuesta':True}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':'El documento ya tiene respuesta'}, status=status.HTTP_400_BAD_REQUEST)    
                 else:
                     return Response({'mensaje':'No se puede entregar una respuesta porque el documento no se ha enviado'}, status=status.HTTP_400_BAD_REQUEST)
             except GenDocumento.DoesNotExist:
