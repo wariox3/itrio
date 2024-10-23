@@ -38,5 +38,6 @@ class HumAdicionalSerializador(serializers.HyperlinkedModelSerializer):
             'contrato_id': instance.contrato_id,
             'contrato_contacto_id': instance.contrato.contacto_id,
             'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
-            'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto
+            'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
+            'programacion_id': instance.programacion_id
         }         
