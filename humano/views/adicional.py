@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from humano.models.adicional import HumAdicional
+from humano.models.programacion import HumProgramacion
 from humano.serializers.adicional import HumAdicionalSerializador
 from io import BytesIO
 import base64
@@ -17,7 +18,18 @@ class HumAdicionalViewSet(viewsets.ModelViewSet):
         raw = request.data        
         archivo_base64 = raw.get('archivo_base64')
         permanente = raw.get('permanente')
-        if archivo_base64 and permanente:
+        if archivo_base64:
+            if permanente == True:
+                programacion_id = None
+            else:
+                programacion_id = raw.get('programacion_id', None)
+                if programacion_id:
+                    programacion = HumProgramacion.objects.filter(id=programacion_id).first()
+                    if not programacion:
+                        return Response({'mensaje':'La programacion no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+                else:
+                   return Response({'mensaje':'Si el adicional no es permanente debe tener el id de la programacion', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
             try:
                 archivo_data = base64.b64decode(archivo_base64)
                 archivo = BytesIO(archivo_data)
@@ -97,7 +109,8 @@ class HumAdicionalViewSet(viewsets.ModelViewSet):
                         valor=detalle['valor'],
                         detalle=detalle['detalle'],
                         aplica_dia_laborado=detalle['aplica_dia_laborado'],
-                        permanente = permanente
+                        permanente = permanente,
+                        programacion_id = programacion_id
                     )
                     registros_importados += 1
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
