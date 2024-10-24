@@ -339,7 +339,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if id:
             try:
                 pdf = None
-                #Tratar de quitar este find y hacerlo en el formato segun la demanda
                 documento = GenDocumento.objects.get(pk=id)
                 if documento.documento_tipo_id in (1,2,3):
                     documento_consulta = self.consulta_imprimir(id)
@@ -370,7 +369,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento.documento_tipo_id in (11, 12):
                     formato = FormatoDocumentoSoporte()
                     pdf = formato.generar_pdf(id)              
-                    nombre_archivo = f"doc_soporte_{id}.pdf" 
+                    nombre_archivo = f"doc_soporte_{id}.pdf"
 
                 if documento.documento_tipo_id == 14:
                     formato = FormatoNomina()
