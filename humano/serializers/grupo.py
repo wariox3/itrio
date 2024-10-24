@@ -10,13 +10,16 @@ class HumGrupoSerializador(serializers.HyperlinkedModelSerializer):
         
     def to_representation(self, instance):
         periodo_dias = 0
+        periodo_nombre = ""
         if instance.periodo:
             periodo_dias = instance.periodo.dias
+            periodo_nombre = instance.periodo.nombre
         return {
             'id': instance.id,
             'nombre': instance.nombre,
             'periodo_id': instance.periodo_id,
-            'periodo_dias': periodo_dias
+            'periodo_dias': periodo_dias,
+            'periodo_nombre' : periodo_nombre
         }         
 
 class HumGrupoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):    
@@ -40,7 +43,14 @@ class HumGrupoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'nombre']
 
     def to_representation(self, instance):
+        periodo_dias = 0
+        periodo_nombre = ""
+        if instance.periodo:
+            periodo_dias = instance.periodo.dias
+            periodo_nombre = instance.periodo.nombre
         return {
             'id': instance.id,
-            'nombre': instance.nombre
+            'nombre': instance.nombre,
+            'periodo_dias': periodo_dias,
+            'periodo_nombre' : periodo_nombre
         }     
