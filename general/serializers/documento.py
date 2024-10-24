@@ -38,7 +38,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = GenDocumento
-        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'fecha_hasta', 'descuento', 'subtotal', 'impuesto', 'total', 
+        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'fecha_hasta', 'descuento', 'subtotal', 'impuesto', 'total_bruto', 'total', 
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
                   'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
@@ -70,6 +70,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'base_impuesto': instance.base_impuesto,           
             'subtotal': instance.subtotal,            
             'impuesto': instance.impuesto,
+            'total_bruto' :  instance.total_bruto,
             'total' :  instance.total,
             'afectado' :  instance.afectado,
             'pendiente': instance.pendiente,
@@ -113,7 +114,11 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True)    
     class Meta:
         model = GenDocumento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 'documento_referencia', 'plazo_pago', 'cue']
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'total_bruto', 
+                  'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 
+                  'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 
+                  'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 
+                  'documento_referencia', 'plazo_pago', 'cue']
 
     def to_representation(self, instance):
         contacto_numero_identificacion = ""
@@ -159,6 +164,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'afectado': instance.afectado,
             'pendiente': instance.pendiente,
             'impuesto': instance.impuesto,
+            'total_bruto' :  instance.total_bruto,   
             'total' :  instance.total,   
             'devengado': instance.devengado,
             'deduccion': instance.deduccion,
