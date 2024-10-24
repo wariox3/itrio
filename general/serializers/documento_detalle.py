@@ -19,7 +19,8 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenDocumentoDetalle
         fields = ['documento', 'documento_afectado', 'item', 'cuenta', 'contacto', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 
-                  'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'hora', 'naturaleza', 'impuesto', 'impuesto_operado', 
+                  'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'hora', 'naturaleza', 
+                  'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'detalle', 'numero', 'concepto', 'credito', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 
                   'devengado', 'deduccion', 'dias']
 
@@ -64,6 +65,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'total_bruto' : instance.total_bruto,
             'base_impuesto' : instance.base_impuesto,
             'impuesto' : instance.impuesto,
+            'impuesto_retencion' : instance.impuesto_retencion,
             'impuesto_operado' : instance.impuesto_operado,
             'total' : instance.total,
             'hora' : instance.hora,
