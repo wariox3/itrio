@@ -53,7 +53,7 @@
     "model": "general.GenImpuesto",
     "pk": 101,
     "fields": {
-      "nombre": "RTF 10%", "nombre_extendido": "RTF HONORARIOS COMISIONES 10%", 
+      "nombre": "RTF 10%", "nombre_extendido": "RTF Honorarios comisiones 10%", 
       "porcentaje":"10", "porcentaje_base":"100", 
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
@@ -63,7 +63,7 @@
     "model": "general.GenImpuesto",
     "pk": 102,
     "fields": {
-      "nombre": "RTF 6%", "nombre_extendido": "RTF PERSONAS NATURALES ND 6%", 
+      "nombre": "RTF 6%", "nombre_extendido": "RTF Personas naturales ND 6%", 
       "porcentaje":"6", "porcentaje_base":"100", 
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
@@ -73,9 +73,29 @@
     "model": "general.GenImpuesto",
     "pk": 103,
     "fields": {
-      "nombre": "RTF 1%", "nombre_extendido": "RTF VEHICULOS 1%", 
+      "nombre": "RTF 1%", "nombre_extendido": "RTF Vehiculos 1%", 
       "porcentaje":"1", "porcentaje_base":"100", 
       "venta": "False",  "compra":"True",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  },
+  {
+    "model": "general.GenImpuesto",
+    "pk": 200,
+    "fields": {
+      "nombre": "RteFte 3.5%", "nombre_extendido": "RteFte 3.5%", 
+      "porcentaje":"3.5", "porcentaje_base":"100", 
+      "venta": "True",  "compra":"False",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  },
+  {
+    "model": "general.GenImpuesto",
+    "pk": 201,
+    "fields": {
+      "nombre": "RteFte 2.5%", "nombre_extendido": "RteFte 2.5%", 
+      "porcentaje":"2.5", "porcentaje_base":"100", 
+      "venta": "True",  "compra":"False",
       "operacion":-1, "impuesto_tipo":3
     }
   }
