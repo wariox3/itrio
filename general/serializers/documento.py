@@ -167,6 +167,8 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'afectado': instance.afectado,
             'pendiente': instance.pendiente,
             'impuesto': instance.impuesto,
+            'impuesto_retencion': instance.impuesto_retencion,
+            'impuesto_operado': instance.impuesto_operado,
             'total_bruto' :  instance.total_bruto,   
             'total' :  instance.total,   
             'devengado': instance.devengado,
