@@ -25,8 +25,9 @@ from decimal import Decimal, ROUND_HALF_UP
 from datetime import timedelta
 import calendar
 from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from utilidades.zinc import Zinc
+from utilidades.utilidades import Utilidades
+import base64
 
 def horas_programacion(programacion_detalle):
     respuesta_horas = [
@@ -693,20 +694,24 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             try:
                 programacion = HumProgramacion.objects.get(pk=id)                
                 nominas = GenDocumento.objects.filter(programacion_detalle__programacion_id=id)
-                '''for nomina in nominas:
-                    formato = FormatoNomina()
-                    pdf = formato.generar_pdf(nomina.id)              
-                    nombre_archivo = f"nomina_{nomina.id}.pdf" '''
-                contenido_html = render_to_string('prueba.html', {
-                    'nombre': 'Mario Andres',
-                    'fecha': '20241025',
-                })
-                contenido_texto = strip_tags(contenido_html)
-                correo = Zinc()  
-                correo.correo_reddoc_v2("maestradaz3@gmail.com", 'Correo de prueba', contenido_html) 
-                #return Response(contenido, status=status.HTTP_200_OK)
-                #return Response({'mensaje': 'Programacion notificada'}, status=status.HTTP_200_OK)
-                return HttpResponse(contenido_html, content_type="text/html")
+                for nomina in nominas:
+                    if nomina.contacto:
+                        if nomina.contacto.correo:
+                            if Utilidades.correo_valido(nomina.contacto.correo):
+                                formato = FormatoNomina()
+                                pdf_bytes = formato.generar_pdf(nomina.id)                             
+                                pdf_base64 = base64.b64encode(pdf_bytes).decode('utf-8')                    
+                                archivos = [{
+                                    'B64': pdf_base64,
+                                    'NombreArchivo': f"nomina_{nomina.id}.pdf"
+                                }]
+                                contenido_html = render_to_string('nomina_notificar.html', {
+                                    'contacto': nomina.contacto.nombre_corto
+                                })                    
+                                correo = Zinc()  
+                                correo.correo_reddoc_v2("maestradaz3@gmail.com", 'Notificacion nomina', contenido_html, archivos)                 
+                return Response({'mensaje': 'Programacion notificada'}, status=status.HTTP_200_OK)
+                #return HttpResponse(contenido_html, content_type="text/html")
             except HumProgramacion.DoesNotExist:
                 return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:

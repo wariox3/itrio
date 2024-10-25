@@ -1,6 +1,8 @@
 from num2words import num2words
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.barcode.qr import QrCodeWidget
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 import re
 
 def convertir_a_letras(numero):
@@ -45,4 +47,12 @@ class Utilidades:
         
     @staticmethod
     def eliminar_caracteres_especiales(cadena):
-        return re.sub(r'[^a-zA-Z0-9\s]', '', cadena)           
+        return re.sub(r'[^a-zA-Z0-9\s]', '', cadena)  
+             
+    @staticmethod
+    def correo_valido(correo):
+        try:
+            validate_email(correo)
+            return True
+        except ValidationError:
+            return False    
