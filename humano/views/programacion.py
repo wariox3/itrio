@@ -18,12 +18,15 @@ from humano.serializers.programacion_detalle import HumProgramacionDetalleSerial
 from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.formatos.programacion import FormatoProgramacion
+from general.formatos.nomina import FormatoNomina
 from django.db.models import Q
 from django.http import HttpResponse
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import timedelta
 import calendar
-
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from utilidades.zinc import Zinc
 
 def horas_programacion(programacion_detalle):
     respuesta_horas = [
@@ -680,4 +683,31 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)              
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+
+    @action(detail=False, methods=["post"], url_path=r'notificar',)
+    def notificar(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                programacion = HumProgramacion.objects.get(pk=id)                
+                nominas = GenDocumento.objects.filter(programacion_detalle__programacion_id=id)
+                '''for nomina in nominas:
+                    formato = FormatoNomina()
+                    pdf = formato.generar_pdf(nomina.id)              
+                    nombre_archivo = f"nomina_{nomina.id}.pdf" '''
+                contenido_html = render_to_string('prueba.html', {
+                    'nombre': 'Mario Andres',
+                    'fecha': '20241025',
+                })
+                contenido_texto = strip_tags(contenido_html)
+                correo = Zinc()  
+                correo.correo_reddoc_v2("maestradaz3@gmail.com", 'Correo de prueba', contenido_html) 
+                #return Response(contenido, status=status.HTTP_200_OK)
+                #return Response({'mensaje': 'Programacion notificada'}, status=status.HTTP_200_OK)
+                return HttpResponse(contenido_html, content_type="text/html")
+            except HumProgramacion.DoesNotExist:
+                return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                     

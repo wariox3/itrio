@@ -67,6 +67,19 @@ class Zinc():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
 
+    def correo_reddoc_v2(self, correo, asunto, contenido):
+        url = "/api/correo/reddoc/v2"
+        datos = {
+            "correo" : correo,
+            "asunto" : asunto,
+            "contenido": contenido
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            return {'error': False}
+        else:
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
+
     def consumirPost(self, data, url):
         url = "http://zinc.semantica.com.co" + url
         json_data = json.dumps(data)
