@@ -109,7 +109,8 @@ class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSeri
         if plazo_pago_proveedor:
             plazo_pago_proveedor_dias = plazo_pago_proveedor.dias
         return {
-            'contacto_id': instance.id,            
+            'contacto_id': instance.id,  
+            'numero_identificacion': instance.numero_identificacion,          
             'contacto_nombre_corto': instance.nombre_corto,
             'plazo_pago_id': instance.plazo_pago_id,
             'plazo_pago_dias': plazo_pago_dias,
