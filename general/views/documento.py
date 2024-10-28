@@ -438,7 +438,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "total_descuentos" : str(documento.descuento),
                                                 "total_cargos" : str(0),
                                                 "total_anticipos" : str(0),
-                                                "total_documento" : str(documento.total),
+                                                "total_documento" : str(documento.total_bruto),
                                                 "total_iva" : str(0),
                                                 "total_consumo" : str(0),
                                                 "total_ica" : str(0),
@@ -480,14 +480,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         documentoDetalles = GenDocumentoDetalle.objects.filter(documento=id)
                                         for documentoDetalle in documentoDetalles:
                                             arr_impuestos = []
-                                            documentoImpuestoDetalles = GenDocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id)
-                                            for documentoImpuestoDetalle in documentoImpuestoDetalles:
-                                                impuesto_id = documentoImpuestoDetalle.impuesto_id
-                                                total = documentoImpuestoDetalle.total
+                                            documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id, impuesto__impuesto_tipo_id=1)
+                                            for documentoImpuesto in documentoImpuestos:
+                                                impuesto_id = documentoImpuesto.impuesto_id
+                                                total = documentoImpuesto.total
                                                 arr_impuestos.append({
-                                                    "tipo_impuesto" : documentoImpuestoDetalle.impuesto_id,
-                                                    "total" : str(documentoImpuestoDetalle.total),
-                                                    "porcentual" : str(documentoImpuestoDetalle.porcentaje)
+                                                    "tipo_impuesto" : documentoImpuesto.impuesto_id,
+                                                    "total" : str(documentoImpuesto.total),
+                                                    "porcentual" : str(documentoImpuesto.porcentaje)
                                                 })
 
                                                 if impuesto_id in impuestos_agrupados:
@@ -536,6 +536,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             documento.save()                                        
                                         else:
                                             return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                                        #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)
                                     else:
                                         return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                                 if documento.documento_tipo_id in [15]:                                
