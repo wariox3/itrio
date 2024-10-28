@@ -140,7 +140,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)
             else:
                 gc.collect()                    
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
             
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
