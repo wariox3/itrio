@@ -6,7 +6,6 @@ from general.models.ciudad import GenCiudad
 
 class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):    
     destinatario_correo = serializers.CharField(allow_null=True)
-    destinatario_direccion = serializers.CharField(allow_null=True, allow_blank=True)
     documento = serializers.CharField(allow_null=True)
     despacho = serializers.PrimaryKeyRelatedField(queryset=RutDespacho.objects.all(), default=None, allow_null=True)
     franja = serializers.PrimaryKeyRelatedField(queryset=RutFranja.objects.all(), default=None, allow_null=True)    

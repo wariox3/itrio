@@ -17,6 +17,7 @@ from utilidades.holmio import Holmio
 from shapely.geometry import Point, Polygon
 from math import radians, cos, sin, asin, sqrt
 import re
+import gc
 
 def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
     visitas = RutVisita.objects.all()
@@ -92,13 +93,19 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             archivo = BytesIO(archivo_data)
             wb = openpyxl.load_workbook(archivo)
             sheet = wb.active    
-            for row in sheet.iter_rows(min_row=2, values_only=True):
+            data_modelo = []
+            errores = False
+            errores_datos = []            
+            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 fecha_texto = str(row[1])
-                fecha = datetime.strptime(fecha_texto, '%Y%m%d').date()
+                try:                                        
+                    fecha = datetime.strptime(fecha_texto, '%Y%m%d')
+                except ValueError:
+                    fecha = None
                 documento = str(row[2])
-                telefono_destinatario = str(row[8])
+                telefono_destinatario = str(row[6])
                 decodificado = False
-                if row[14] == 1:
+                if row[12] == 1:
                     decodificado = True
                 data = {
                     'guia': row[0],
@@ -107,22 +114,34 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     'destinatario': row[3],
                     'destinatario_direccion': row[4],
                     'ciudad': row[5],
-                    'estado': row[6],
-                    'pais': row[7],
                     'destinatario_telefono': telefono_destinatario[:50],
-                    'destinatario_correo': row[9],
-                    'peso': row[10],
-                    'volumen': row[11],
-                    'latitud': row[12],
-                    'longitud': row[13],
+                    'destinatario_correo': row[7],
+                    'peso': row[8],
+                    'volumen': row[9],
+                    'latitud': row[10],
+                    'longitud': row[11],
                     'decodificado': decodificado
                 }
-                visitaSerializador = RutVisitaSerializador(data=data)
-                if visitaSerializador.is_valid():
-                    visitaSerializador.save()
+                
+                serializer = RutVisitaSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
                 else:
-                    return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'mensaje':'Se importo el archivo con exito'}, status=status.HTTP_200_OK)        
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }
+                    errores_datos.append(error_dato)
+            if not errores:
+                for detalle in data_modelo:
+                    RutVisita.objects.create(**detalle)
+                gc.collect()
+                return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)
+            else:
+                gc.collect()                    
+                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
+            
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
