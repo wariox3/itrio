@@ -345,7 +345,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
                     if configuracion['formato_factura'] == 'F':
                         formato = FormatoFactura()
-                        pdf = formato.generar_pdf(documento_consulta, configuracion)  
+                        pdf = formato.generar_pdf(id)  
                         numero_documento = documento_consulta.get('numero')
                         tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
                         nombres_archivo = {
@@ -1404,11 +1404,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         try:
             documento = GenDocumento.objects.get(id=documento_id)
             if documento.estado_electronico_notificado == False:
-                if documento.documento_tipo.documento_clase_id in [100, 101, 102]:
-                    configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
-                    documentoGenerar = DocumentoViewSet.consulta_imprimir(documento_id)
+                if documento.documento_tipo.documento_clase_id in [100, 101, 102]:                                        
                     formatoFactura = FormatoFactura()
-                    pdf = formatoFactura.generar_pdf(documentoGenerar, configuracion)   
+                    pdf = formatoFactura.generar_pdf(documento_id)   
                     pdf_base64 = "data:application/pdf;base64," + base64.b64encode(pdf).decode('utf-8')            
                     wolframio = Wolframio()
                     respuesta = wolframio.notificar(documento.electronico_id, pdf_base64)
