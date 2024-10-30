@@ -2,8 +2,7 @@ from django.db import models
 from general.models.empresa import GenEmpresa
 
 class GenConfiguracion(models.Model):   
-    id = models.BigIntegerField(primary_key=True)     
-    formato_factura = models.CharField(max_length=2, default='F')
+    id = models.BigIntegerField(primary_key=True)         
     informacion_factura = models.TextField(null=True)
     informacion_factura_superior = models.TextField(null=True)
     venta_asesor = models.BooleanField(default = False)

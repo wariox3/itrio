@@ -1,3 +1,7 @@
+from general.models.documento import GenDocumento
+from general.models.documento_detalle import GenDocumentoDetalle
+from general.models.documento_impuesto import GenDocumentoImpuesto
+from general.models.configuracion import GenConfiguracion
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle
@@ -13,13 +17,22 @@ from decouple import config
 
 class FormatoCuentaCobro():
 
-    def generar_pdf(self, data, configuracion):
+    def generar_pdf(self, id):
         buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=letter)
-
+        documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=id).values(
+        'id', 'fecha', 'fecha_validacion', 'fecha_vence', 'numero', 'soporte', 'qr', 'cue', 'resolucion_id', 'contacto_id',
+        'subtotal', 'total', 'comentario', 'orden_compra', 'metodo_pago__nombre',
+        'contacto__nombre_corto', 'contacto__correo', 'contacto__telefono', 'contacto__numero_identificacion', 'contacto__direccion', 
+        'contacto__ciudad__nombre', 
+        'empresa__tipo_persona__nombre', 'empresa__numero_identificacion', 'empresa__digito_verificacion', 'empresa__direccion', 'empresa__telefono',
+        'empresa__nombre_corto', 'empresa__imagen', 'empresa__ciudad__nombre', 'documento_tipo__nombre', 'resolucion__prefijo',
+        'resolucion__consecutivo_desde', 'resolucion__consecutivo_hasta', 'resolucion__numero', 'resolucion__fecha_hasta',
+        'documento_referencia__numero', 'documento_tipo__documento_clase_id', 'plazo_pago__nombre'
+        ).first()
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8)
         informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>", estilo_helvetica)
-        comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(data['comentario'] if data['comentario'] else  ""), estilo_helvetica)
+        comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(documento['comentario'] if documento['comentario'] else  ""), estilo_helvetica)
 
         try:
             locale.setlocale(locale.LC_ALL, 'es_CO.utf8')
@@ -35,7 +48,7 @@ class FormatoCuentaCobro():
             imagen_defecto_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
 
             # Intenta cargar la imagen desde la URL
-            imagen_empresa = data['empresa__imagen']
+            imagen_empresa = documento['empresa__imagen']
 
             logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{imagen_empresa}'
             try:
@@ -60,39 +73,39 @@ class FormatoCuentaCobro():
 
             #Emisor
             p.setFont("Helvetica-Bold", 9)
-            p.drawString(x + 75, 720, data['empresa__nombre_corto'].upper() if data['empresa__nombre_corto'] else "")
+            p.drawString(x + 75, 720, documento['empresa__nombre_corto'].upper() if documento['empresa__nombre_corto'] else "")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 75, 710, "PERSONA " + data['empresa__tipo_persona__nombre'].upper() if data['empresa__tipo_persona__nombre'] else "")
-            p.drawString(x + 75, 700, "NIT: " + data['empresa__numero_identificacion'] + "-" +  data['empresa__digito_verificacion'])
-            p.drawString(x + 75, 690, "DIRECCIÓN: " + data['empresa__direccion'].upper() + " - " +data['empresa__ciudad__nombre'].upper())
-            p.drawString(x + 75, 680, "TEL: " + data['empresa__telefono'] if data['empresa__telefono'] else "")
+            p.drawString(x + 75, 710, "PERSONA " + documento['empresa__tipo_persona__nombre'].upper() if documento['empresa__tipo_persona__nombre'] else "")
+            p.drawString(x + 75, 700, "NIT: " + documento['empresa__numero_identificacion'] + "-" +  documento['empresa__digito_verificacion'])
+            p.drawString(x + 75, 690, "DIRECCIÓN: " + str(documento['empresa__direccion']).upper() + " - " + str(documento['empresa__ciudad__nombre']).upper())
+            p.drawString(x + 75, 680, "TEL: " + documento['empresa__telefono'] if documento['empresa__telefono'] else "")
 
             #Datos factura
             p.setFont("Helvetica-Bold", 9)
-            p.drawCentredString(x + 460, 710, str(data['numero'] if data['numero'] else ""))
+            p.drawCentredString(x + 460, 710, str(documento['numero'] if documento['numero'] else ""))
             p.setFont("Helvetica-Bold", 9)
             p.drawCentredString(x + 460, 720, "CUENTA DE COBRO")
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 350, 650, "FECHA EMISIÓN: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 650, str(data['fecha']))
+            p.drawRightString(x + 540, 650, str(documento['fecha']))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 350, 640, "FECHA VENCIMIENTO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 540, 640, str(data['fecha_vence']))
+            p.drawRightString(x + 540, 640, str(documento['fecha_vence']))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 350, 630, "PLAZO PAGO: ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 540, 630, "")
 
-            if 'metodo_pago__nombre' in data and data['metodo_pago__nombre']:
+            if 'metodo_pago__nombre' in documento and documento['metodo_pago__nombre']:
 
                 p.setFont("Helvetica-Bold", 8)
                 p.drawString(x + 350, 620, "FORMA PAGO: ")
                 p.setFont("Helvetica", 8)
-                p.drawRightString(x + 540, 620, str(data['metodo_pago__nombre'].upper()))
+                p.drawRightString(x + 540, 620, str(documento['metodo_pago__nombre'].upper()))
 
             #Cliente
             clienteNombre = ""
@@ -101,13 +114,13 @@ class FormatoCuentaCobro():
             clienteTelefono = ""
             clienteIdentificacion = ""
             clienteDireccion = ""
-            if data['contacto_id'] is not None:
-                 clienteNombre = data['contacto__nombre_corto']
-                 clienteCiudad = data['contacto__ciudad__nombre']
-                 clienteCorreo = data['contacto__correo']
-                 clienteTelefono = data['contacto__telefono']
-                 clienteIdentificacion =  data['contacto__numero_identificacion']
-                 clienteDireccion = data['contacto__direccion']
+            if documento['contacto_id'] is not None:
+                 clienteNombre = documento['contacto__nombre_corto']
+                 clienteCiudad = documento['contacto__ciudad__nombre']
+                 clienteCorreo = documento['contacto__correo']
+                 clienteTelefono = documento['contacto__telefono']
+                 clienteIdentificacion =  documento['contacto__numero_identificacion']
+                 clienteDireccion = documento['contacto__direccion']
 
 
             p.setFont("Helvetica-Bold", 8)
@@ -152,7 +165,7 @@ class FormatoCuentaCobro():
             p.drawString(x + 520, 575, "TOTAL")
             p.setFont("Helvetica", 8)
 
-        def draw_totals(p, y, data):
+        def draw_totals(p, y, data, documento_impuestos):
 
             x = 440
             totalFactura = data['total']
@@ -166,7 +179,7 @@ class FormatoCuentaCobro():
             impuesto_totals = {}
 
             # Recorrer los objetos DocumentoImpuesto
-            for impuesto in data['documento_impuestos']:
+            for impuesto in documento_impuestos:
                 impuesto_id = impuesto['impuesto_id']  # ID del impuesto
                 nombre_impuesto = impuesto['impuesto__nombre_extendido']  # Nombre del impuesto
                 total = impuesto['total']
@@ -212,16 +225,23 @@ class FormatoCuentaCobro():
 
         draw_header()
         x = 24
-
-        for index, detalle in enumerate(data['documento_detalles']):
+        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'impuesto', 'subtotal', 'total','item__nombre', 'item_id')
+        for index, detalle in enumerate(documento_detalles):
 
             itemNombre = ""
             if detalle['item__nombre'] is not None:
                 itemNombre = detalle['item__nombre'][:100]
 
-            impuestos_detalle = [impuesto for impuesto in data['documento_impuestos'] if impuesto['documento_detalle_id'] == detalle['id']]
+            #impuestos_detalle = [impuesto for impuesto in documento['documento_impuestos'] if impuesto['documento_detalle_id'] == detalle['id']]
+            #total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
+            documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=detalle['id']).values(
+                'id', 'total', 'total_operado', 'impuesto_id',
+                'impuesto__nombre',
+                'impuesto__nombre_extendido',  
+                'impuesto__porcentaje',          
+                'documento_detalle_id'
+            ).order_by('impuesto_id')
 
-            total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
 
             p.setFont("Helvetica", 7)
             p.drawCentredString(x + 7, y, str(index + 1))
@@ -230,15 +250,15 @@ class FormatoCuentaCobro():
             p.drawRightString(x + 365, y, str(int(detalle['cantidad'])))
             p.drawRightString(x + 417, y, locale.format_string("%d", detalle['precio'], grouping=True))
             p.drawRightString(x + 458, y, locale.format_string("%d", detalle['descuento'], grouping=True))
-            p.drawRightString(x + 500, y, locale.format_string("%d", total_impuestos_detalle, grouping=True))
+            p.drawRightString(x + 500, y, locale.format_string("%d", detalle['impuesto'], grouping=True))
             p.drawRightString(x + 555, y, locale.format_string("%d", detalle['total'], grouping=True))
             y -= 30
             detalles_en_pagina += 1
 
-            if detalles_en_pagina == 4 or index == len(data['documento_detalles']) - 1:
-                draw_totals(p, y, data)
+            if detalles_en_pagina == 4 or index == len(documento_detalles) - 1:
+                draw_totals(p, y, documento, documento_impuestos)
 
-                if index != len(data['documento_detalles']) - 1:
+                if index != len(documento_detalles) - 1:
                     p.showPage()
                     page_number += 1
                     y = 520
@@ -249,7 +269,7 @@ class FormatoCuentaCobro():
         def draw_footer(pageCount):
             x = 30
 
-            valorLetras = convertir_a_letras(int(data['total']))
+            valorLetras = convertir_a_letras(int(documento['total']))
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 410, "VALOR EN LETRAS: " + str(valorLetras))

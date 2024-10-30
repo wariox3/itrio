@@ -340,31 +340,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             try:
                 pdf = None
                 documento = GenDocumento.objects.get(pk=id)
-                if documento.documento_tipo_id in (1,2,3):
-                    documento_consulta = self.consulta_imprimir(id)
-                    configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
-                    if configuracion['formato_factura'] == 'F':
-                        formato = FormatoFactura()
-                        pdf = formato.generar_pdf(id)  
-                        numero_documento = documento_consulta.get('numero')
-                        tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
-                        nombres_archivo = {
-                            100: f"Factura_{numero_documento}.pdf" if numero_documento else "Factura.pdf",
-                            101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                            102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
-                        }
-                        nombre_archivo = nombres_archivo.get(tipo_documento)            
-                    else:     
-                        formato = FormatoCuentaCobro()
-                        pdf = formato.generar_pdf(documento_consulta, configuracion)
-                        numero_documento = documento_consulta.get('numero')
-                        tipo_documento = documento_consulta.get('documento_tipo__documento_clase_id')
-                        nombres_archivo = {
-                            100: f"CuentaCobro{numero_documento}.pdf" if numero_documento else "CuentaCobro.pdf",
-                            101: f"NotaCredito{numero_documento}.pdf" if numero_documento else "NotaCredito.pdf",
-                            102: f"NotaDebito{numero_documento}.pdf" if numero_documento else "NotaDebito.pdf"
-                        }
-                        nombre_archivo = nombres_archivo.get(tipo_documento)
+                if documento.documento_tipo_id in (1,2,3):                                        
+                    formato = FormatoFactura()
+                    pdf = formato.generar_pdf(id)                                          
+                    nombres_archivo = {
+                        100: f"factura_{documento.numero}.pdf" if documento.numero else "Factura.pdf",
+                        101: f"notaCredito{documento.numero}.pdf" if documento.numero else "NotaCredito.pdf",
+                        102: f"notaDebito{documento.numero}.pdf" if documento.numero else "NotaDebito.pdf"
+                    }
+                    nombre_archivo = nombres_archivo.get(documento.documento_tipo.documento_clase.id)                
                 
                 if documento.documento_tipo_id in (11, 12):
                     formato = FormatoDocumentoSoporte()
@@ -374,7 +358,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento.documento_tipo_id == 14:
                     formato = FormatoNomina()
                     pdf = formato.generar_pdf(id)              
-                    nombre_archivo = f"nomina_{id}.pdf"       
+                    nombre_archivo = f"nomina_{id}.pdf"  
+
+                if documento.documento_tipo_id == 17:
+                    formato = FormatoCuentaCobro()
+                    pdf = formato.generar_pdf(id)                                        
+                    nombre_archivo = f"cuentaCobro{documento.numero}.pdf" if documento.numero else f"cuentaCobro.pdf"
 
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')
@@ -1421,42 +1410,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             else:  
                 return {'error':True, 'mensaje':'El documento ya fue notificado con anterioridad pruebe re-notificando'}
         except GenDocumento.DoesNotExist:
-            return {'error':True, 'mensaje':'El documento no existe'}
-        
-    @staticmethod
-    def consulta_imprimir(codigoDocumento):
-        documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=codigoDocumento).values(
-            'id', 'fecha', 'fecha_validacion', 'fecha_vence', 'numero', 'soporte', 'qr', 'cue', 'resolucion_id', 'contacto_id',
-            'subtotal', 'total', 'comentario', 'orden_compra', 'metodo_pago__nombre',
-            'contacto__nombre_corto', 'contacto__correo', 'contacto__telefono', 'contacto__numero_identificacion', 'contacto__direccion', 
-            'contacto__ciudad__nombre', 
-            'empresa__tipo_persona__nombre', 'empresa__numero_identificacion', 'empresa__digito_verificacion', 'empresa__direccion', 'empresa__telefono',
-            'empresa__nombre_corto', 'empresa__imagen', 'empresa__ciudad__nombre', 'documento_tipo__nombre', 'resolucion__prefijo',
-            'resolucion__consecutivo_desde', 'resolucion__consecutivo_hasta', 'resolucion__numero', 'resolucion__fecha_hasta',
-            'documento_referencia__numero', 'documento_tipo__documento_clase_id', 'plazo_pago__nombre'
-        ).first()
-
-        # Obtener los detalles del documento
-        documentoDetalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'total','item__nombre', 'item_id')
-
-        # Obtener los IDs de los detalles del documento
-        ids_documentodetalles = list(documentoDetalles.values_list('id', flat=True))
-
-        # Filtrar los DocumentoImpuesto que están asociados a los detalles del documento
-        documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle__in=ids_documentodetalles).values(
-        'id',
-        'total',
-        'impuesto__nombre',
-        'impuesto__nombre_extendido',
-        'impuesto_id',
-        'documento_detalle_id'
-        )
-
-        # Agregar los detalles al diccionario documento
-        documento['documento_detalles'] = list(documentoDetalles)
-        documento['documento_impuestos'] = list(documentoImpuestos)
-
-        return documento
+            return {'error':True, 'mensaje':'El documento no existe'}        
     
     @staticmethod
     def validacion_aprobar(documento_id, consecutivo):
