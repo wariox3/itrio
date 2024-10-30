@@ -487,7 +487,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             cantidad_items += 1
                                             arr_item.append({
                                                 "consecutivo": cantidad_items,
-                                                "codigo": documentoDetalle.item.codigo,
+                                                "codigo": documentoDetalle.item_id,
                                                 "descripcion" : documentoDetalle.item.nombre,
                                                 "marca" : "",
                                                 "modelo" : "",
