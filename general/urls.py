@@ -25,6 +25,7 @@ from .views.sede import SedeViewSet
 from .views.plazo_pago import PlazoPagoViewSet
 from .views.empresa import EmpresaViewSet
 from .views.configuracion import ConfiguracionViewSet
+from .views.parametros import ParametrosViewSet
 from .views.configuracion_usuario import ConfiguracionUsuarioViewSet
 from .views.complemento import ComplementoViewSet
 from rest_framework import routers
@@ -54,6 +55,7 @@ router.register(r'sede', SedeViewSet)
 router.register(r'plazopago', PlazoPagoViewSet)
 router.register(r'empresa', EmpresaViewSet)
 router.register(r'configuracion', ConfiguracionViewSet)
+router.register(r'parametros', ParametrosViewSet)
 router.register(r'configuracion_usuario', ConfiguracionUsuarioViewSet)
 router.register(r'complemento', ComplementoViewSet)
 

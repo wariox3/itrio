@@ -1,0 +1,12 @@
+[
+  {
+    "model": "general.GenParametros",
+    "pk": 1,
+    "fields": {
+      "uvt": 47065,
+      "factor": 7.666,
+      "salario_minimo": 1300000,
+      "auxilio_transporte": 162000
+    }
+  }
+]
