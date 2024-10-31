@@ -3,10 +3,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from humano.models.adicional import HumAdicional
 from humano.models.programacion import HumProgramacion
+from humano.models.contrato import HumContrato
 from humano.serializers.adicional import HumAdicionalSerializador
 from io import BytesIO
 import base64
 import openpyxl
+import gc
 
 class HumAdicionalViewSet(viewsets.ModelViewSet):
     queryset = HumAdicional.objects.all()
@@ -44,77 +46,39 @@ class HumAdicionalViewSet(viewsets.ModelViewSet):
             registros_importados = 0
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 data = {
+                    'programacion': programacion_id,
                     'identificacion': row[0],
-                    'contrato_id':row[1],
-                    'concepto_id':row[2],
+                    'contrato':row[1],
+                    'concepto':row[2],
                     'valor':row[3],
                     'detalle':row[4],
                     'aplica_dia_laborado':row[5],
+                    'permanente': permanente
                 }  
-                if not data['identificacion']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar un numero identificacion'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
+                if data['contrato'] is None:
+                    if data['identificacion'] is not None:
+                        contrato = HumContrato.objects.filter(contacto__numero_identificacion=data['identificacion']).order_by('-fecha_desde').first()
+                        if contrato:
+                            data['contrato'] = contrato.id
 
-                if not data['contrato_id']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el id del contrato'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['concepto_id']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el id del concepto'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['valor']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el valor'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True    
-
-                if not data['aplica_dia_laborado']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar si aplica dia laborado'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    if data['aplica_dia_laborado'] in ['SI', 'NO']:
-                        data['aplica_dia_laborado'] = data['aplica_dia_laborado'] == 'SI'
-                    else:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': 'Los valores validos son SI o NO'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True                                    
-                data_modelo.append(data)
-            if errores == False:
-                for detalle in data_modelo:
-                    HumAdicional.objects.create(
-                        contrato_id=detalle['contrato_id'],
-                        concepto_id=detalle['concepto_id'],
-                        valor=detalle['valor'],
-                        detalle=detalle['detalle'],
-                        aplica_dia_laborado=detalle['aplica_dia_laborado'],
-                        permanente = permanente,
-                        programacion_id = programacion_id
-                    )
+                serializer = HumAdicionalSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
                     registros_importados += 1
-                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }
+                    errores_datos.append(error_dato)                                
+            if not errores:
+                for detalle in data_modelo:
+                    HumAdicional.objects.create(**detalle)
+                gc.collect()
+                return Response({'mensaje': f"Se importaron {registros_importados} con éxito"}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                 
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     

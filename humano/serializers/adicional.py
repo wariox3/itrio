@@ -9,6 +9,11 @@ class HumAdicionalSerializador(serializers.HyperlinkedModelSerializer):
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
     programacion = serializers.PrimaryKeyRelatedField(queryset=HumProgramacion.objects.all(), default=None, allow_null=True)
 
+    def validate_valor(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("El valor debe ser mayor a cero.")
+        return value
+
     class Meta:
         model = HumAdicional
         fields = ['id', 'valor', 'horas', 'aplica_dia_laborado', 'detalle', 'concepto', 'contrato', 'programacion', 'permanente',

@@ -1,0 +1,12 @@
+[
+  {
+    "model": "general.GenConfiguracion",
+    "pk": 1,
+    "fields": {
+      "gen_uvt": 47065,
+      "hum_factor": 7.666,
+      "hum_salario_minimo": 1300000,
+      "hum_auxilio_transporte": 162000
+    }
+  }
+]
