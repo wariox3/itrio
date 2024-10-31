@@ -18,10 +18,12 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
 
     def validate(self, data):
         fecha_desde = data.get('fecha_desde')
-        fecha_hasta = data.get('fecha_hasta')        
+        fecha_hasta = data.get('fecha_hasta') 
+        contrato_id = data.get('contrato_id')       
         novedades = HumNovedad.objects.filter(
             fecha_desde__lte=fecha_hasta,
-            fecha_hasta__gte=fecha_desde
+            fecha_hasta__gte=fecha_desde,
+            contrato_id=contrato_id
         )
 
         if self.instance:
