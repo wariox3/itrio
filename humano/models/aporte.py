@@ -2,9 +2,9 @@ from django.db import models
 from humano.models.sucursal import HumSucursal
 
 class HumAporte(models.Model):        
-    fecha_desde = models.DateField()
-    fecha_hasta = models.DateField()
-    fecha_hasta_periodo = models.DateField()
+    fecha_desde = models.DateField(null=True)
+    fecha_hasta = models.DateField(null=True)
+    fecha_hasta_periodo = models.DateField(null=True)
     anio = models.BigIntegerField(default=0)
     anio_salud = models.BigIntegerField(default=0)
     mes = models.BigIntegerField(default=0)
