@@ -98,5 +98,15 @@
       "venta": "True",  "compra":"False",
       "operacion":-1, "impuesto_tipo":3
     }
-  }
+  },
+  {
+    "model": "general.GenImpuesto",
+    "pk": 202,
+    "fields": {
+      "nombre": "RteFte 11%", "nombre_extendido": "RteFte 11%", 
+      "porcentaje":"11", "porcentaje_base":"100", 
+      "venta": "True",  "compra":"False",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  }  
 ]
