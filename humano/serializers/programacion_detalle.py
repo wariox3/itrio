@@ -30,8 +30,12 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
                   'descuento_credito', 'descuento_embargo', 'adicional', 'devengado', 'deduccion', 'total']
 
     def to_representation(self, instance):      
+        contrato_contacto_id = ''        
+        contrato_contacto_numero_identificacion = ''
+        contrato_contacto_nombre_corto = ''
         if instance.contrato:
             if instance.contrato.contacto:
+                contrato_contacto_id = instance.contrato.contacto_id
                 contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
                 contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
         return {
@@ -57,7 +61,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'recargo_festivo_diurno': instance.recargo_festivo_diurno ,
             'recargo_festivo_nocturno': instance.recargo_festivo_nocturno ,
             'contrato_id': instance.contrato_id,
-            'contrato_contacto_id': instance.contrato.contacto_id,
+            'contrato_contacto_id': contrato_contacto_id,
             'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
             'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
             'ingreso': instance.ingreso,
