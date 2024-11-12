@@ -19,4 +19,18 @@ class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
             'base_cotizacion': instance.base_cotizacion,
             'aporte_id': instance.aporte_id,
             'cotrato_id': instance.contrato_id           
-        }         
+        }      
+
+class HumAporteContratoExcelSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = HumAporteContrato   
+
+    def to_representation(self, instance):         
+        return {
+            'id': instance.id,
+            'dias': instance.dias,
+            'salario': instance.salario,
+            'base_cotizacion': instance.base_cotizacion,
+            'aporte_id': instance.aporte_id,
+            'cotrato_id': instance.contrato_id           
+        }       
