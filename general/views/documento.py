@@ -1388,6 +1388,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=["post"], url_path=r'exportar-zip',)
+    def exportar_zip(self, request):        
+        raw = request.data
+        return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
+
+
     @staticmethod
     def notificar(documento_id):
         try:

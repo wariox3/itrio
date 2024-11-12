@@ -20,6 +20,7 @@ class FormatoCuentaCobro():
     def generar_pdf(self, id):
         buffer = BytesIO()
         p = canvas.Canvas(buffer, pagesize=letter)
+        p.setTitle("cuenta_cobro")
         documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=id).values(
         'id', 'fecha', 'fecha_validacion', 'fecha_vence', 'numero', 'soporte', 'qr', 'cue', 'resolucion_id', 'contacto_id',
         'subtotal', 'total', 'comentario', 'orden_compra', 'metodo_pago__nombre',

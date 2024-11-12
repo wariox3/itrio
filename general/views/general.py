@@ -2,12 +2,17 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from general.models.documento import GenDocumento
+from general.formatos.nomina import FormatoNomina
+from general.formatos.factura import FormatoFactura
 from django.apps import apps
 from importlib import import_module
 from openpyxl import Workbook
 from django.http import HttpResponse
 from utilidades.excel import WorkbookEstilos
 import re
+import zipfile
+import io
 
 
 class ListaView(APIView):
@@ -18,6 +23,7 @@ class ListaView(APIView):
         modelo_nombre = raw.get('modelo')
         serializador_parametro = raw.get('serializador', '')
         excel = raw.get('excel', False)
+        zip = raw.get('zip', False)
         if modelo_nombre:
             aplicacion_prefijo = modelo_nombre[:3].lower()
             modelo_serializado_nombre = modelo_nombre[3:]        
@@ -43,7 +49,7 @@ class ListaView(APIView):
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')
             items = modelo.objects.all()
-            print(items.query)
+            #print(items.query)
             if filtros:
                 for filtro in filtros:
                     items = items.filter(**{filtro['propiedad']: filtro['valor1']})
@@ -71,6 +77,34 @@ class ListaView(APIView):
                 response['Access-Control-Expose-Headers'] = 'Content-Disposition'
                 response['Content-Disposition'] = f'attachment; filename={serializador_nombre}{serializador_parametro}.xlsx'
                 wb.save(response)
+                return response
+            
+            if zip:
+                data = serializadorDatos.data                
+                zip_buffer = io.BytesIO()
+                with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                    for index, record in enumerate(data):
+                        id = record.pop('id', None)
+                        pdf_bytes = None
+                        documento = GenDocumento.objects.get(pk=id)                        
+                        if documento.documento_tipo_id in (1,2,3):                                        
+                            formato = FormatoFactura()
+                            pdf_bytes = formato.generar_pdf(id)                                          
+                            nombres_archivo = {
+                                100: f"factura_{id}_{documento.numero}.pdf" if documento.numero else f"Factura_{id}.pdf",
+                                101: f"notaCredito_{id}_{documento.numero}.pdf" if documento.numero else f"NotaCredito_{id}.pdf",
+                                102: f"notaDebito_{id}_{documento.numero}.pdf" if documento.numero else f"NotaDebito_{id}.pdf"
+                            }
+                            nombre_archivo = nombres_archivo.get(documento.documento_tipo.documento_clase.id)
+                        
+                        if documento.documento_tipo_id == 14:
+                            formato = FormatoNomina()
+                            pdf_bytes = formato.generar_pdf(id)              
+                            nombre_archivo = f"nomina_{id}.pdf"                    
+                        zip_file.writestr(nombre_archivo, pdf_bytes)                         
+                zip_buffer.seek(0)
+                response = HttpResponse(zip_buffer, content_type='application/zip')
+                response['Content-Disposition'] = f'attachment; filename="{modelo_serializado_nombre.lower()}.zip"'
                 return response
             else:
                 return Response({"registros": serializadorDatos.data, "cantidad_registros": itemsCantidad}, status=status.HTTP_200_OK)
