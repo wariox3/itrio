@@ -29,5 +29,4 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
             'estado_aprobado': instance.estado_aprobado,
             'sucursal_id': instance.sucursal_id,
             'sucursal_nombre': sucursal_nombre            
-
         }          

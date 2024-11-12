@@ -10,3 +10,13 @@ class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumAporteContrato
         fields = ['id', 'dias', 'salario','base_cotizacion', 'aporte', 'contrato']        
+
+    def to_representation(self, instance):         
+        return {
+            'id': instance.id,
+            'dias': instance.dias,
+            'salario': instance.salario,
+            'base_cotizacion': instance.base_cotizacion,
+            'aporte_id': instance.aporte_id,
+            'cotrato_id': instance.contrato_id           
+        }         
