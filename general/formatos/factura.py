@@ -15,6 +15,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.units import inch
 from reportlab.graphics import renderPDF
 from decouple import config
+from django.db.models import Sum
 import locale
 from django.utils.timezone import localtime
 
@@ -309,44 +310,6 @@ class FormatoFactura():
             y2 = 160
             comentario.drawOn(p, x, y)
             informacionPago.drawOn(p, x, y2)
-
-
-        def draw_totals(p, y, documento, documento_impuestos):
-
-            x = 440
-            totalFactura = documento['total']
-            #Bloque totales
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 230, "SUBTOTAL")
-            p.drawRightString(x + 140, 230,  f"{documento['subtotal']:,.0f}")
-            
-            # Crear un diccionario para almacenar los totales por impuesto_id y su nombre
-            impuesto_totals = {}
-
-            # Recorrer los objetos DocumentoImpuesto
-            for impuesto in documento_impuestos:
-                impuesto_id = impuesto['impuesto_id']  # ID del impuesto
-                nombre_impuesto = impuesto['impuesto__nombre_extendido']  # Nombre del impuesto
-                total = impuesto['total_operado']                
-                if impuesto_id in impuesto_totals:
-                    impuesto_totals[impuesto_id]['total'] += total
-                else:
-                    impuesto_totals[impuesto_id] = {'total': total, 'nombre': nombre_impuesto}
-
-            # Definir la posición "y" inicial
-            y = 220
-
-            # Recorrer el diccionario de totales de impuestos
-            for impuesto_id, data in impuesto_totals.items():
-                nombre_impuesto = data['nombre']
-                total_acumulado = data['total']
-                
-                p.drawString(x, y, nombre_impuesto.upper())
-                p.drawRightString(x + 140, y, f"{total_acumulado:,.0f}")
-                y -= 10
-
-            p.drawString(x, y, "TOTAL GENERAL")
-            p.drawRightString(x + 140, y, f"{totalFactura:,.0f}")
             
         y = 555
 
@@ -359,32 +322,15 @@ class FormatoFactura():
         detalles_en_pagina = 0
         cantidad_total_items = 0
 
-        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'total','item__nombre', 'item_id')
+        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'impuesto', 'total','item__nombre', 'item_id')
         for index, detalle in enumerate(documento_detalles):
 
             itemNombre = ""
             if detalle['item__nombre'] is not None:
                 itemNombre = detalle['item__nombre']
-
-            documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=detalle['id']).values(
-                'id', 'total', 'total_operado', 'impuesto_id',
-                'impuesto__nombre',
-                'impuesto__nombre_extendido',  
-                'impuesto__porcentaje',          
-                'documento_detalle_id'
-            ).order_by('impuesto_id')
-            '''impuestos_detalle = [impuesto for impuesto in documento_impuestos if impuesto['documento_detalle_id'] == detalle['id']]
-            total_impuestos_detalle = sum(impuesto['total'] for impuesto in impuestos_detalle)
-            '''
-            #impuestos = [str(item['impuesto__porcentaje']) for item in documento_impuestos]
-            #impuestos = ', '.join(impuestos)
-            impuestos = [f"{item['impuesto__porcentaje']:.1f}%" for item in documento_impuestos]
-            impuestos = ', '.join(impuestos)
-
             item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7))
-            ancho, alto = item_nombre_paragraph.wrap(280, 100)
-            
-            altura_requerida = alto + 10  # Altura requerida incluyendo un margen adicional
+            ancho, alto = item_nombre_paragraph.wrap(280, 100)        
+            altura_requerida = alto + 10
             
             # Verificar si hay suficiente espacio para el siguiente ítem
             if altura_acumulada + altura_requerida > max_altura_disponible:
@@ -404,7 +350,7 @@ class FormatoFactura():
             p.drawRightString(x + 365, y + alto + 8, str(detalle['cantidad']))
             p.drawRightString(x + 417, y + alto + 8, f"{detalle['precio']:,.0f}")
             p.drawRightString(x + 458, y + alto + 8, f"{detalle['descuento']:,.0f}")
-            p.drawString(x + 470, y + alto + 8, impuestos)
+            p.drawRightString(x + 505, y + alto + 8, f"{detalle['impuesto']:,.0f}")
             p.drawRightString(x + 555, y + alto + 8, f"{detalle['subtotal']:,.0f}")
 
             y -= 10  # Ajuste de posición vertical para el siguiente ítem
@@ -412,10 +358,31 @@ class FormatoFactura():
             detalles_en_pagina += 1
             cantidad_total_items += 1
 
-            if index == len(documento_detalles) - 1:
-                draw_totals(p, y, documento, documento_impuestos)
-
         p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(cantidad_total_items))
+        x = 440
+        totalFactura = documento['total']        
+        p.setFont("Helvetica-Bold", 8)
+        p.drawString(x, 230, "SUBTOTAL")
+        p.drawRightString(x + 140, 230,  f"{documento['subtotal']:,.0f}")
+
+        documento_impuestos = GenDocumentoImpuesto.objects.filter(
+            documento_detalle__documento_id=documento['id']
+        ).values(
+            'impuesto_id', 'impuesto__nombre_extendido'
+        ).annotate(
+            total_operado=Sum('total_operado')
+        ).order_by('impuesto_id')
+
+        y = 220
+        for impuesto in documento_impuestos:
+            nombre_impuesto = impuesto['impuesto__nombre_extendido']
+            total_acumulado = impuesto['total_operado']            
+            p.drawString(x, y, nombre_impuesto.upper())
+            p.drawRightString(x + 140, y, f"{total_acumulado:,.0f}")
+            y -= 10
+
+        p.drawString(x, y, "TOTAL GENERAL")
+        p.drawRightString(x + 140, y, f"{totalFactura:,.0f}")
 
         p.save()
         
