@@ -97,14 +97,28 @@ class Wolframio():
             datos = respuesta['datos']
             return {'error':True, 'mensaje':f"Ocurrio un error en el servicio wolframio: {datos['mensaje']}"}
 
+    def eventos(self, documento_id):
+        url = "/api/documento/evento"
+        datos = {
+            "documentoId" : documento_id
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            eventos = datos['eventos']
+            return {'error': False, 'eventos': eventos}
+        else:
+            datos = respuesta['datos']
+            return {'error':True, 'mensaje':f"Ocurrio un error en el servicio wolframio: {datos['mensaje']}"}    
+
     def consumirPost(self, data, url):
         if config('ENV') == "prod":
-            url = "http://rededoc.co" + url
+            url_base = "http://rededoc.co" + url
         else:
-            url = "http://prueba.rededoc.co" + url    
+            url_base = "http://prueba.rededoc.co" + url            
         json_data = json.dumps(data)
         headers = {'Content-Type': 'application/json'}
-        response = requests.post(url, data=json_data, headers=headers)
+        response = requests.post(url_base, data=json_data, headers=headers)
         resp = response.json()
         return {'status': response.status_code, 'datos': resp}
 
