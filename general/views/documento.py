@@ -296,37 +296,47 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             id = raw.get('id')
             if id:
                 documento = GenDocumento.objects.get(pk=id)                
-                respuesta = self.validacion_anular(id)
-                if respuesta['error'] == False:    
-                    documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)                                          
-                    for documento_detalle in documento_detalles:                                               
-                        documento_detalle.cantidad = 0
-                        documento_detalle.precio = 0
-                        documento_detalle.porcentaje_descuento = 0
-                        documento_detalle.descuento = 0
-                        documento_detalle.subtotal = 0
-                        documento_detalle.impuesto = 0
-                        documento_detalle.base_impuesto = 0
-                        documento_detalle.total = 0
-                        documento_detalle.total_bruto = 0
-                        documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'impuesto', 'base_impuesto', 'total', 'total_bruto'])
-                        documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
-                        for documento_impuesto in documento_impuestos:
-                            documento_impuesto.base = 0
-                            documento_impuesto.total = 0 
-                            documento_impuesto.save(update_fields=['base','total'])
-                    documento.estado_anulado = True  
-                    documento.subtotal = 0
-                    documento.total = 0
-                    documento.total_bruto = 0
-                    documento.base_impuesto = 0
-                    documento.descuento = 0
-                    documento.impuesto = 0
-                    documento.pendiente = 0
-                    documento.save(update_fields=['estado_anulado', 'subtotal', 'total', 'total_bruto', 'pendiente', 'base_impuesto', 'descuento', 'impuesto'])
-                    return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
+                if documento.estado_anulado == False and documento.estado_aprobado == True:    
+                    if documento.estado_electronico_enviado == False:
+                        if documento.afectado <= 0:
+                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)                                          
+                            for documento_detalle in documento_detalles:                                               
+                                documento_detalle.cantidad = 0
+                                documento_detalle.precio = 0
+                                documento_detalle.porcentaje_descuento = 0
+                                documento_detalle.descuento = 0
+                                documento_detalle.subtotal = 0
+                                documento_detalle.impuesto = 0
+                                documento_detalle.impuesto_operado = 0
+                                documento_detalle.impuesto_retencion = 0
+                                documento_detalle.base_impuesto = 0
+                                documento_detalle.total = 0
+                                documento_detalle.total_bruto = 0
+                                documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'impuesto', 'impuesto_operado', 'impuesto_retencion', 'base_impuesto', 'total', 'total_bruto'])
+                                documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
+                                for documento_impuesto in documento_impuestos:
+                                    documento_impuesto.base = 0
+                                    documento_impuesto.total = 0 
+                                    documento_impuesto.total_operado = 0 
+                                    documento_impuesto.save(update_fields=['base','total', 'total_operado'])
+                            documento.estado_anulado = True  
+                            documento.subtotal = 0
+                            documento.total = 0
+                            documento.total_bruto = 0
+                            documento.base_impuesto = 0
+                            documento.descuento = 0
+                            documento.impuesto = 0
+                            documento.impuesto_operado = 0
+                            documento.impuesto_retencion = 0
+                            documento.pendiente = 0
+                            documento.save(update_fields=['estado_anulado', 'subtotal', 'total', 'total_bruto', 'pendiente', 'base_impuesto', 'descuento', 'impuesto', 'impuesto_operado', 'impuesto_retencion'])
+                            return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({'mensaje':'El documento esta afectado, no se puede anular', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
+                    else:
+                        return Response({'mensaje':'Los documentos electronicos enviados a la DIAN no se pueden anular', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje':'El documento no esta aprobado o ya esta anulado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except GenDocumento.DoesNotExist:
@@ -1461,29 +1471,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}        
         except GenDocumento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}
-        
-    @staticmethod
-    def validacion_anular(documento_id):
-        try:
-            documento = GenDocumento.objects.get(id=documento_id)
-            if documento.documento_tipo_id == 1:                
-                if documento.estado_anulado == False:    
-                    if documento.estado_aprobado == True:
-                        if documento.estado_electronico_enviado == False:
-                            if documento.afectado <= 0:
-                                #documento_detalle = DocumentoDetalle.objects.filter(documento=documento)
-                                return {'error':False}                    
-                            else:
-                                return {'error':True, 'mensaje':'El documento esta afectado, no se puede anular', 'codigo':1}
-                        else:
-                            return {'error':True, 'mensaje':'Los documentos electronicos enviados a la DIAN no se pueden anular', 'codigo':1}
-                    else:
-                        return {'error':True, 'mensaje':'El documento debe estar aprobado', 'codigo':1}
-                else:
-                    return {'error':True, 'mensaje':'El documento ya esta anulado', 'codigo':1}        
-            else:
-                return {'error':True, 'mensaje':'El tipo de documento no se puede anular'}            
-        except GenDocumento.DoesNotExist:
-            return {'error':True, 'mensaje':'El documento no existe'}        
+
+
+     
+          
+      
     
 

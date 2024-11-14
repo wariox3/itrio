@@ -124,7 +124,7 @@ class FormatoFactura():
                 else:
                     texto_resolucion = documento['resolucion__prefijo']
             else:
-                texto_resolucion = ""
+                texto_resolucion =  str(documento['numero']) if documento['numero'] else ""
             p.setFont("Helvetica-Bold", 9)
             p.drawCentredString(x + 460, 710, texto_resolucion if texto_resolucion else  "")
             p.setFont("Helvetica-Bold", 8)
