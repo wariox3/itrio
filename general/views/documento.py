@@ -1431,7 +1431,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
 
-
     @staticmethod
     def notificar(documento_id):
         try:
