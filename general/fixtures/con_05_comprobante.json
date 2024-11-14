@@ -1,0 +1,106 @@
+[
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 1,
+    "fields": {
+      "nombre":"SALDO INICIAL", 
+      "codigo":"SI"}
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 2,
+    "fields": {
+      "nombre":"RECIBO DE CAJA", 
+      "codigo":"RC"}
+  },  
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 3,
+    "fields": {
+      "nombre":"EGRESO", 
+      "codigo":"RC"}
+  },  
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 4,
+    "fields": {
+      "nombre":"VENTA", 
+      "codigo":"VEN"}
+  },  
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 5,
+    "fields": {
+      "nombre":"NOTA CREDITO VENTA", 
+      "codigo":"NCV"}
+  },  
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 6,
+    "fields": {
+      "nombre":"NOTA DEBITO VENTA", 
+      "codigo":"NDV"}
+  },   
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 7,
+    "fields": {
+      "nombre":"COMPRA", 
+      "codigo":"COM"}
+  },  
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 8,
+    "fields": {
+      "nombre":"NOTA CREDITO COMPRA", 
+      "codigo":"NCC"}
+  },  
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 9,
+    "fields": {
+      "nombre":"NOTA DEBITO COMPRA", 
+      "codigo":"NDC"}
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 10,
+    "fields": {
+      "nombre":"AJUSTE CONTABLE", 
+      "codigo":"AJU",
+      "permite_asiento":"True"
+    }
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 11,
+    "fields": {
+      "nombre":"NOMINA", 
+      "codigo":"NOM"
+    }
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 12,
+    "fields": {
+      "nombre":"SEGURIDAD SOCIAL", 
+      "codigo":"SSO"
+    }
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 13,
+    "fields": {
+      "nombre":"PROVISION", 
+      "codigo":"PRO"
+    }
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 14,
+    "fields": {
+      "nombre":"DEPRECIACION", 
+      "codigo":"DEP"
+    }
+  }    
+]

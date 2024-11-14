@@ -7,6 +7,7 @@ from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
 
 class GenDocumentoDetalle(models.Model):    
+    tipo_registro = models.CharField(max_length=1, default="I") # I=Item, C=Cuenta
     cantidad = models.FloatField(default=0)
     precio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pago = models.DecimalField(max_digits=20, decimal_places=6, default=0)
