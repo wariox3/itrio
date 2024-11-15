@@ -25,7 +25,8 @@ DO_REGION="xyz"
 DO_BUCKET="xyz"
 #GoogleKey
 GOOGLE_MAPS_API_KEY=""
-
+#Pasarela de pago
+WOMPI_SECRETO_INTEGRIDAD=
 python3.10 -m venv ~/.venvs/itrio
 source ~/.venvs/itrio/bin/activate
 pip3 install -r requirements.txt
