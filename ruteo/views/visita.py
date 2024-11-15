@@ -6,6 +6,7 @@ from ruteo.models.despacho import RutDespacho
 from ruteo.models.vehiculo import RutVehiculo
 from ruteo.models.franja import RutFranja
 from general.models.ciudad import GenCiudad
+from contenedor.models import CtnDireccion
 from ruteo.serializers.visita import RutVisitaSerializador
 import base64
 from io import BytesIO
@@ -14,6 +15,7 @@ from datetime import datetime
 from django.utils import timezone
 from utilidades.zinc import Zinc
 from utilidades.holmio import Holmio
+from utilidades.google import Google
 from shapely.geometry import Point, Polygon
 from math import radians, cos, sin, asin, sqrt
 import re
@@ -95,7 +97,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             sheet = wb.active    
             data_modelo = []
             errores = False
-            errores_datos = []            
+            errores_datos = []    
+            google = Google()
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 fecha_texto = str(row[1])
                 try:                                        
@@ -103,26 +106,48 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 except ValueError:
                     fecha = None
                 documento = str(row[2])
-                telefono_destinatario = str(row[6])
-                decodificado = False
-                if row[12] == 1:
+                direccion_destinatario = row[4] or ""
+                direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
+                direccion_destinatario = direccion_destinatario[:150]
+                telefono_destinatario = row[6]
+                if telefono_destinatario:
+                    telefono_destinatario[:50]
+                decodificado = None
+                if row[12] == 1 or row[12] == "1":
                     decodificado = True
+
                 data = {
                     'guia': row[0],
                     'fecha':fecha,
                     'documento': documento[:30],
                     'destinatario': row[3],
-                    'destinatario_direccion': row[4],
+                    'destinatario_direccion': direccion_destinatario,
                     'ciudad': row[5],
-                    'destinatario_telefono': telefono_destinatario[:50],
+                    'destinatario_telefono': telefono_destinatario,
                     'destinatario_correo': row[7],
                     'peso': row[8],
                     'volumen': row[9],
                     'latitud': row[10],
                     'longitud': row[11],
-                    'decodificado': decodificado
+                    'estado_decodificado': decodificado
                 }
-                
+                if decodificado == None or decodificado == False: 
+                    if direccion_destinatario:                   
+                        direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
+                        if direccion:
+                            decodificado = True    
+                            data['estado_decodificado'] = True            
+                            data['latitud'] = direccion.latitud                        
+                            data['longitud'] = direccion.longitud
+                            data['destinatario_direccion_formato'] = direccion.direccion_formato
+                        else:
+                            respuesta = google.decodificar_direccion(data['destinatario_direccion'])
+                            if respuesta['error'] == False:
+                                decodificado = True    
+                                data['estado_decodificado'] = True            
+                                data['latitud'] = respuesta['latitud']
+                                data['longitud'] = respuesta['longitud']
+                                data['destinatario_direccion_formato'] = respuesta['direccion_formato']
                 serializer = RutVisitaSerializador(data=data)
                 if serializer.is_valid():
                     data_modelo.append(serializer.validated_data)
@@ -248,12 +273,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
     def decodificar(self, request):
-        visitas = RutVisita.objects.filter(estado_decodificado = None)
+        visitas = RutVisita.objects.filter(estado_decodificado = None)[:1]
         if visitas.exists():            
-            zinc = Zinc()                        
+            datosVisitas = []           
             for visita in visitas:  
                 if visita.destinatario_direccion:
-                    datos = {
+                    datosVisita = {
                         "cuenta": "1",
                         "modelo": "guia",
                         "canal": 3,
@@ -261,19 +286,20 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         "direccion": visita.destinatario_direccion,
                         "ciudad": visita.ciudad_id,
                         "principal": False,                
-                    }
-                    respuesta = zinc.decodificar_direccion(datos)
-                    if respuesta['error'] == False:                     
-                        datos = respuesta['datos']
-                        visita.estado_decodificado = datos['decodificado']                                                                                                   
-                        visita.latitud = datos['latitud']
-                        visita.longitud = datos['longitud']                    
-                        visita.save()
-                    else:
-                        return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    visita.estado_decodificado = False                                                                                                                       
-                    visita.save()
+                    }    
+                    datosVisitas.append(datosVisita)                
+            if datosVisitas:
+                datos = {
+                    "lote": datosVisitas
+                }
+                #zinc = Zinc()
+                #respuesta = zinc.decodificar_direccion_lote(datos)
+                '''if respuesta['error'] == False:                     
+                    datos = respuesta['datos']
+                    visita.estado_decodificado = datos['decodificado']                                                                                                   
+                    visita.latitud = datos['latitud']
+                    visita.longitud = datos['longitud']                    
+                    visita.save()'''
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 

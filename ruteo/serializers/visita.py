@@ -9,11 +9,11 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.CharField(allow_null=True)
     despacho = serializers.PrimaryKeyRelatedField(queryset=RutDespacho.objects.all(), default=None, allow_null=True)
     franja = serializers.PrimaryKeyRelatedField(queryset=RutFranja.objects.all(), default=None, allow_null=True)    
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())
+    ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all(), default=None, allow_null=True)
     
     class Meta:
         model = RutVisita
-        fields = ['id', 'guia', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 
+        fields = ['id', 'guia', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
                   'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'latitud', 'longitud', 'estado_decodificado', 
                   'orden', 'distancia_proxima',
                   'ciudad', 'despacho', 'franja']

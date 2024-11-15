@@ -43,16 +43,7 @@ class Zinc():
             datos = respuesta['datos']
             return {'error': False, 'log': datos['log']}
         else:
-            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
-
-    def decodificar_direccion(self, datos):
-        url = "/api/direccion/nuevo"
-        respuesta = self.consumirPost(datos, url)
-        if respuesta['status'] == 200:
-            datos = respuesta['datos']
-            return {'error': False, 'datos': datos}
-        else:
-            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
+            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}           
 
     def correo_reddoc(self, correo, asunto, contenido):
         url = "/api/correo/reddoc"
@@ -82,8 +73,7 @@ class Zinc():
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
 
     def consumirPost(self, data, url):
-        url = "http://zinc.semantica.com.co" + url
-        #url = "http://localhost/zinc/public/index.php" + url
+        url = "http://zinc.semantica.com.co" + url        
         json_data = json.dumps(data)
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url, data=json_data, headers=headers)

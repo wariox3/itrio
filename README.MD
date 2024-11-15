@@ -23,6 +23,8 @@ DO_CLAVE_ACCESO="xyz"
 DO_CLAVE_SECRETA="xyz"
 DO_REGION="xyz"
 DO_BUCKET="xyz"
+#GoogleKey
+GOOGLE_MAPS_API_KEY=""
 
 python3.10 -m venv ~/.venvs/itrio
 source ~/.venvs/itrio/bin/activate

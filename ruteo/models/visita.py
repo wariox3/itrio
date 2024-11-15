@@ -9,6 +9,7 @@ class RutVisita(models.Model):
     documento = models.CharField(max_length=30, null=True)
     destinatario = models.CharField(max_length=150, default='Destinatario')
     destinatario_direccion = models.CharField(max_length=150, default='')
+    destinatario_direccion_formato = models.CharField(max_length=150, null=True, default='')
     destinatario_telefono = models.CharField(max_length=50, null=True)
     destinatario_correo = models.CharField(max_length=255, null=True)
     peso = models.FloatField(default=0)
@@ -22,7 +23,7 @@ class RutVisita(models.Model):
     distancia_proxima = models.DecimalField(max_digits=9, decimal_places=6, null=True, default=0)
     despacho = models.ForeignKey(RutDespacho, null=True, on_delete=models.PROTECT, related_name='visitas_despacho_rel')
     franja = models.ForeignKey(RutFranja, null=True, on_delete=models.PROTECT, related_name='visitas_franja_rel')
-    ciudad = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, default=1, related_name='visitas_ciudad_rel')
+    ciudad = models.ForeignKey(GenCiudad, null=True, on_delete=models.PROTECT, default=1, related_name='visitas_ciudad_rel')
 
     class Meta:
         db_table = "rut_visita"

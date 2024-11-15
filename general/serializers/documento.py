@@ -12,6 +12,7 @@ from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
+from contabilidad.models.comprobante import ConComprobante
 from seguridad.models import User
 
 class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):        
@@ -35,6 +36,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all(), default=None, allow_null=True)
     periodo = serializers.PrimaryKeyRelatedField(queryset=HumPeriodo.objects.all(), default=None, allow_null=True)
     cuenta_banco = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBanco.objects.all(), default=None, allow_null=True)
+    comprobante = serializers.PrimaryKeyRelatedField(queryset=ConComprobante.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = GenDocumento
@@ -43,7 +45,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
                   'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
-                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 'dias']
+                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 'comprobante', 'dias']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
@@ -59,7 +61,10 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             sede_nombre = instance.sede.nombre    
         cuenta_banco_nombre = ""
         if instance.cuenta_banco:
-            cuenta_banco_nombre = instance.cuenta_banco.nombre        
+            cuenta_banco_nombre = instance.cuenta_banco.nombre  
+        comprobante_nombre = ""
+        if instance.comprobante:
+            comprobante_nombre = instance.comprobante.nombre                   
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -107,7 +112,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'programacion_detalle_id': instance.programacion_detalle_id,
             'contrato_id': instance.contrato_id,
             'cuenta_banco_id': instance.cuenta_banco_id,
-            'cuenta_banco_nombre': cuenta_banco_nombre
+            'cuenta_banco_nombre': cuenta_banco_nombre,
+            'comprobante_id': instance.comprobante_id,
+            'comprobante_nombre': comprobante_nombre 
         }
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
@@ -151,7 +158,10 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             sede_nombre = sede.nombre 
         cuenta_banco_nombre = ""
         if instance.cuenta_banco:
-            cuenta_banco_nombre = instance.cuenta_banco.nombre             
+            cuenta_banco_nombre = instance.cuenta_banco.nombre        
+        comprobante_nombre = ""
+        if instance.comprobante:
+            comprobante_nombre = instance.comprobante.nombre     
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -200,7 +210,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'programacion_detalle_id': instance.programacion_detalle_id,
             'contrato_id': instance.contrato_id,
             'cuenta_banco_id': instance.cuenta_banco_id,
-            'cuenta_banco_nombre': cuenta_banco_nombre            
+            'cuenta_banco_nombre': cuenta_banco_nombre,
+            'comprobante_id': instance.comprobante_id,
+            'comprobante_nombre': comprobante_nombre          
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    

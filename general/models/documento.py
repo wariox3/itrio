@@ -12,6 +12,7 @@ from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
+from contabilidad.models.comprobante import ConComprobante
 from seguridad.models import User
 from decimal import Decimal, ROUND_HALF_UP
 
@@ -67,6 +68,7 @@ class GenDocumento(models.Model):
     grupo = models.ForeignKey(HumGrupo, null=True, on_delete=models.PROTECT,related_name='documentos_grupo_rel')
     periodo = models.ForeignKey(HumPeriodo, on_delete=models.PROTECT, null=True, related_name='documentos_periodo_rel')
     cuenta_banco = models.ForeignKey(GenCuentaBanco, null=True, on_delete=models.PROTECT, related_name='documentos_cuenta_banco_rel')
+    comprobante = models.ForeignKey(ConComprobante, null=True, on_delete=models.PROTECT, related_name='documentos_comprobante_rel')
 
     class Meta:
         db_table = "gen_documento"

@@ -184,3 +184,13 @@ class CtnInformacionFacturacion(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.PROTECT)
     class Meta:
         db_table = "cnt_informacion_facturacion"
+
+class CtnDireccion(models.Model):
+    fecha = models.DateTimeField()
+    direccion = models.CharField(max_length=150)
+    direccion_formato = models.CharField(max_length=150)
+    latitud = models.DecimalField(max_digits=20, decimal_places=10, null=True)
+    longitud = models.DecimalField(max_digits=20, decimal_places=10, null=True)
+    ciudad = models.ForeignKey(CtnCiudad, on_delete=models.PROTECT, null=True)
+    class Meta:
+        db_table = "cnt_direccion"        
