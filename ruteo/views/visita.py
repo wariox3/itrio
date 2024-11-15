@@ -18,6 +18,8 @@ from utilidades.holmio import Holmio
 from utilidades.google import Google
 from shapely.geometry import Point, Polygon
 from math import radians, cos, sin, asin, sqrt
+from django.db.models import Sum, F, Count
+from django.db.models.functions import Coalesce
 import re
 import gc
 
@@ -438,6 +440,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     def eliminar_todos(self, request):             
         raw = request.data
         RutVisita.objects.all().delete()
-        return Response({'mensaje':'eliminados'}, status=status.HTTP_200_OK)                                                    
+        return Response({'mensaje':'eliminados'}, status=status.HTTP_200_OK) 
+
+    @action(detail=False, methods=["post"], url_path=r'resumen',)
+    def resumen(self, request):
+        visitas = RutVisita.objects.filter(estado_despacho = False).aggregate(cantidad=Count('id'), peso=Coalesce(Sum('peso'), 0.0))        
+        return Response({'resumen': visitas}, status=status.HTTP_200_OK)                                                       
 
                
