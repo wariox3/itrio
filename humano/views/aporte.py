@@ -63,7 +63,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             ).filter(
                                 Q(fecha_hasta__gte=aporte.fecha_desde) | Q(contrato_tipo_id=1))
                     sql_query = str(contratos.query)
-                    print(sql_query)
+                    #print(sql_query)
                     for contrato in contratos:
                         contrato_validar = HumAporteContrato.objects.filter(aporte_id=aporte.id, contrato_id=contrato.id).exists()
                         if not contrato_validar:
