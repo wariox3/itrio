@@ -114,7 +114,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 telefono_destinatario = row[6]
                 if telefono_destinatario:
                     telefono_destinatario[:50]
-                decodificado = None
+                decodificado = False
                 if row[12] == 1 or row[12] == "1":
                     decodificado = True
 
@@ -133,7 +133,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     'longitud': row[11],
                     'estado_decodificado': decodificado
                 }
-                if decodificado == None or decodificado == False: 
+                if decodificado == False: 
                     if direccion_destinatario:                   
                         direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
                         if direccion:
@@ -444,7 +444,14 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'resumen',)
     def resumen(self, request):
-        visitas = RutVisita.objects.filter(estado_despacho = False).aggregate(cantidad=Count('id'), peso=Coalesce(Sum('peso'), 0.0))        
+        visitas = RutVisita.objects.filter(estado_despacho = False).aggregate(
+            cantidad=Count('id'), 
+            peso=Coalesce(Sum('peso'), 0.0)
+            )        
         return Response({'resumen': visitas}, status=status.HTTP_200_OK)                                                       
 
-               
+    @action(detail=False, methods=["post"], url_path=r'error',)
+    def error(self, request):
+        visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado=False).aggregate(
+            cantidad=Count('id'))        
+        return Response({'error': visitas}, status=status.HTTP_200_OK)                
