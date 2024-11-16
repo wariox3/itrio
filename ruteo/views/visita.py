@@ -439,7 +439,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'eliminar-todos',)
     def eliminar_todos(self, request):             
         raw = request.data
-        RutVisita.objects.all().delete()
+        estado_decodificado = raw.get('estado_decodificado', None)
+        if estado_decodificado == False:
+            RutVisita.objects.filter(estado_decodificado=False).delete()
+        else:
+            RutVisita.objects.all().delete()
         return Response({'mensaje':'eliminados'}, status=status.HTTP_200_OK) 
 
     @action(detail=False, methods=["post"], url_path=r'resumen',)
