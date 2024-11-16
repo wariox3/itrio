@@ -75,19 +75,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     serializer_class = RutVisitaSerializador
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=False, methods=["post"], url_path=r'lista',)
-    def lista(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        ordenamientos = raw.get('ordenamientos', [])            
-        filtros = raw.get('filtros', [])                   
-        respuesta = listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = RutVisitaSerializador(respuesta['visitas'], many=True)
-        visitas = serializador.data
-        return Response(visitas, status=status.HTTP_200_OK)
-
     @action(detail=False, methods=["post"], url_path=r'importar-excel',)
     def importar_excel(self, request):
         raw = request.data
