@@ -49,4 +49,40 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'franja_codigo': franja_codigo,
             'franja_nombre': franja_nombre
         }
+
+class RutVisitaExcelSerializador(serializers.HyperlinkedModelSerializer):    
+    class Meta:
+        model = RutVisita
+
+    def to_representation(self, instance): 
+        ciudad_nombre = ''
+        if instance.ciudad:
+            ciudad_nombre = instance.ciudad.nombre
+        franja_nombre = ''
+        franja_codigo = ''
+        if instance.franja:
+            franja_nombre = instance.franja.nombre
+            franja_codigo = instance.franja.codigo       
+        return {
+            'id': instance.id,  
+            'guia': instance.guia,
+            'fecha': instance.fecha,
+            'documento': instance.documento,
+            'destinatario': instance.destinatario,
+            'destinatario_direccion': instance.destinatario_direccion,
+            'ciudad_id': instance.ciudad_id,
+            'ciudad_nombre':ciudad_nombre,
+            'destinatario_telefono': instance.destinatario_telefono,
+            'destinatario_correo': instance.destinatario_correo,
+            'peso': instance.peso,
+            'volumen': instance.volumen,
+            'estado_decodificado': instance.estado_decodificado,
+            'latitud': instance.latitud,
+            'longitud': instance.longitud,
+            'orden': instance.orden,
+            'distancia_proxima': instance.distancia_proxima,
+            'franja_id': instance.franja_id,
+            'franja_codigo': franja_codigo,
+            'franja_nombre': franja_nombre
+        }    
     

@@ -13,7 +13,7 @@ from utilidades.excel import WorkbookEstilos
 import re
 import zipfile
 import io
-
+from datetime import datetime
 
 class ListaView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -65,7 +65,16 @@ class ListaView(APIView):
                 ws = wb.active
                 ws.append(field_names)
                 for row in data:
-                    row_data = [row[field] for field in field_names]
+                    #row_data = [row[field] for field in field_names]
+                    row_data = []
+                    for field in field_names:
+                        value = row.get(field)
+                        if value is None:
+                            row_data.append("")
+                        elif isinstance(value, datetime) and value.tzinfo is not None:
+                            row_data.append(value.replace(tzinfo=None))
+                        else:
+                            row_data.append(value)
                     ws.append(row_data)
 
                 estilos_excel = WorkbookEstilos(wb)
