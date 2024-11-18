@@ -41,6 +41,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         cuenta = instance.cuenta
         if cuenta:
             cuenta_codigo = cuenta.codigo
+            cuenta_nombre = instance.cuenta.nombre
         contacto_nombre_corto = ''
         if instance.contacto:
             contacto_nombre_corto = instance.contacto.nombre_corto
@@ -55,6 +56,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'item_nombre': item_nombre,
             'cuenta': instance.cuenta_id,
             'cuenta_codigo': cuenta_codigo,           
+            'cuenta_nombre': cuenta_nombre,
             'cantidad': instance.cantidad,
             'precio': instance.precio,
             'pago': instance.pago,
