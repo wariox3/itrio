@@ -39,6 +39,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
                 documento_afectado_contacto_nombre_corto = contacto.nombre_corto
         cuenta_codigo = ""
         cuenta = instance.cuenta
+        cuenta_nombre = ''
         if cuenta:
             cuenta_codigo = cuenta.codigo
             cuenta_nombre = instance.cuenta.nombre
