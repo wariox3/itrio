@@ -39,3 +39,35 @@ class Google():
                 return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de google')}
         else:
             return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
+
+    def calcular_ruta(self, visitas):                                
+        api_key = config('GOOGLE_MAPS_API_KEY')
+        base_url = "https://maps.googleapis.com/maps/api/directions/json"
+        waypoints = "|".join([f"{visita['latitud']},{visita['longitud']}" for visita in visitas])        
+        
+        params = {
+            "origin": f"6.197023,-75.585760",
+            "destination": f"6.197023,-75.585760",
+            "waypoints": f"optimize:true|{waypoints}",
+            "key": api_key
+        }
+        response = requests.get(base_url, params=params)                
+        if response.status_code == 200:
+            data = response.json()
+            if data['status'] == 'OK':                                
+                ruta_optima = data["routes"][0]
+                entregas_ordenadas = [
+                    visitas[i] for i in ruta_optima["waypoint_order"]
+                ]
+
+                return {
+                    "error": False,
+                    "ruta": ruta_optima["overview_polyline"]["points"],
+                    "orden_entregas": entregas_ordenadas,
+                    "distancia_total": ruta_optima["legs"],
+                    "tiempo_total": sum(leg["duration"]["value"] for leg in ruta_optima["legs"])
+                }
+            else:
+                return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de google')}
+        else:
+            return {"error": True, "mensaje": "Estatus code de google diferente a 200"}

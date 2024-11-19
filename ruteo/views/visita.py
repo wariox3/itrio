@@ -336,12 +336,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
-    def ordenar(self, request):
-        visitas = RutVisita.objects.all()
+    def ordenar(self, request):        
+        visitas = RutVisita.objects.filter(estado_despacho=False).values('latitud', 'longitud')
         if visitas.exists():
             lat_inicial = 6.197023
             lon_inicial = -75.585760
-            
+            gogle = Google()
+            gogle.calcular_ruta(visitas)
             #visitas_ordenadas = ordenar_ruta(visitas, lat_inicial, lon_inicial)            
             #serializer = self.get_serializer(visitas_ordenadas, many=True)            
             return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)

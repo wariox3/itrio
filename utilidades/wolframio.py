@@ -84,11 +84,12 @@ class Wolframio():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio wolframio'}
 
-    def renotificar(self, documento_id, correo):
+    def renotificar(self, documento_id, correo, base64):
         url = "/api/documento/renotificar"
         datos = {
             "documentoId" : documento_id,
-            "correo" : correo
+            "correo" : correo,
+            "facturaB64" : base64
         }
         respuesta = self.consumirPost(datos, url)
         if respuesta['status'] == 200:
