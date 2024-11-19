@@ -341,9 +341,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if visitas.exists():
             lat_inicial = 6.197023
             lon_inicial = -75.585760
-            visitas_ordenadas = ordenar_ruta(visitas, lat_inicial, lon_inicial)            
-            serializer = self.get_serializer(visitas_ordenadas, many=True)            
-            return Response({'visitas_ordenadas': serializer.data}, status=status.HTTP_200_OK)
+            
+            #visitas_ordenadas = ordenar_ruta(visitas, lat_inicial, lon_inicial)            
+            #serializer = self.get_serializer(visitas_ordenadas, many=True)            
+            return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
+        
         else:
             return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
         
