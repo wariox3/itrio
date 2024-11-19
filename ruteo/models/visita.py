@@ -17,6 +17,7 @@ class RutVisita(models.Model):
     latitud = models.DecimalField(max_digits=20, decimal_places=12, null=True)
     longitud = models.DecimalField(max_digits=20, decimal_places=12, null=True)
     estado_decodificado = models.BooleanField(null=True, default = None)
+    estado_decodificado_alerta = models.BooleanField(default = False)
     estado_franja = models.BooleanField(null=True, default=None)
     estado_despacho = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)
