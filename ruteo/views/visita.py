@@ -337,16 +337,22 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):        
-        visitas = RutVisita.objects.filter(estado_despacho=False).values('latitud', 'longitud')
+        visitas = RutVisita.objects.filter(estado_despacho=False).values('id', 'latitud', 'longitud')
         if visitas.exists():
             lat_inicial = 6.197023
             lon_inicial = -75.585760
             gogle = Google()
-            gogle.calcular_ruta(visitas)
-            #visitas_ordenadas = ordenar_ruta(visitas, lat_inicial, lon_inicial)            
-            #serializer = self.get_serializer(visitas_ordenadas, many=True)            
-            return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
-        
+            resultado = gogle.calcular_ruta(visitas)
+            if not resultado["error"]:
+                for visita in resultado["orden_entregas"]:
+                    visita_actualizar = RutVisita.objects.get(id=visita["id"])
+                    visita_actualizar.orden = visita["orden"]
+                    #visita_actualizar. = visita["tiempo_desde_anterior"]
+                    visita_actualizar.save()                
+                return Response({'mensaje':'visitas ordenadas', 'orden':resultado["orden_entregas"]}, status=status.HTTP_200_OK)
+            else:                
+                return Response({'mensaje':resultado["mensaje"], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)       
+            
         else:
             return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
         

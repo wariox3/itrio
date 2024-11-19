@@ -55,17 +55,30 @@ class Google():
         if response.status_code == 200:
             data = response.json()
             if data['status'] == 'OK':                                
-                ruta_optima = data["routes"][0]
-                entregas_ordenadas = [
-                    visitas[i] for i in ruta_optima["waypoint_order"]
-                ]
+                ruta_optima = data["routes"][0]                
+                orden_optimo = ruta_optima["waypoint_order"]
+                entregas_ordenadas = []
+                tiempo_entre_visitas = []
 
+                for i, orden in enumerate(orden_optimo):
+                    visita_actual = visitas[orden]
+                    visita_actual["orden"] = i + 1
+
+                    if i > 0:
+                        tiempo = ruta_optima["legs"][i - 1]["duration"]["value"]  # Tiempo en segundos
+                        visita_actual["tiempo_desde_anterior"] = tiempo
+                        tiempo_entre_visitas.append(tiempo)
+                    else:
+                        visita_actual["tiempo_desde_anterior"] = 0  # Primera visita no tiene tiempo anterior
+
+                    entregas_ordenadas.append(visita_actual)
                 return {
                     "error": False,
                     "ruta": ruta_optima["overview_polyline"]["points"],
                     "orden_entregas": entregas_ordenadas,
-                    "distancia_total": ruta_optima["legs"],
-                    "tiempo_total": sum(leg["duration"]["value"] for leg in ruta_optima["legs"])
+                    "distancia_total": sum(leg["distance"]["value"] for leg in ruta_optima["legs"]),
+                    "tiempo_total": sum(leg["duration"]["value"] for leg in ruta_optima["legs"]),
+                    "tiempo_entre_visitas": tiempo_entre_visitas
                 }
             else:
                 return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de google')}
