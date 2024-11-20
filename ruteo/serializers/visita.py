@@ -13,8 +13,8 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = RutVisita
-        fields = ['id', 'guia', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
-                  'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'latitud', 'longitud', 'estado_decodificado', 
+        fields = ['id', 'guia', 'numero', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
+                  'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo_servicio', 'latitud', 'longitud', 'estado_decodificado', 
                   'estado_decodificado_alerta', 'orden', 'distancia_proxima',
                   'ciudad', 'despacho', 'franja']
 
@@ -30,6 +30,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,  
             'guia': instance.guia,
+            'numero': instance.numero,
             'fecha': instance.fecha,
             'documento': instance.documento,
             'destinatario': instance.destinatario,
@@ -40,8 +41,10 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'destinatario_correo': instance.destinatario_correo,
             'peso': instance.peso,
             'volumen': instance.volumen,
+            'tiempo_servicio': instance.tiempo_servicio,
             'estado_decodificado': instance.estado_decodificado,
             'estado_decodificado_alerta': instance.estado_decodificado_alerta,
+            'estado_despacho': instance.estado_despacho,
             'latitud': instance.latitud,
             'longitud': instance.longitud,
             'orden': instance.orden,
@@ -67,6 +70,7 @@ class RutVisitaExcelSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,  
             'guia': instance.guia,
+            'numero': instance.guia,
             'fecha': instance.fecha,
             'documento': instance.documento,
             'destinatario': instance.destinatario,
@@ -77,6 +81,7 @@ class RutVisitaExcelSerializador(serializers.HyperlinkedModelSerializer):
             'destinatario_correo': instance.destinatario_correo,
             'peso': instance.peso,
             'volumen': instance.volumen,
+            'tiempo_servicio': instance.tiempo_servicio,
             'estado_decodificado': instance.estado_decodificado,
             'estado_decodificado_alerta': instance.estado_decodificado_alerta,
             'latitud': instance.latitud,

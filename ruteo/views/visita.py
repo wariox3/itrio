@@ -101,7 +101,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 direccion_destinatario = row[4] or ""
                 direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
                 direccion_destinatario = direccion_destinatario[:150]
-                telefono_destinatario = row[6]
+                telefono_destinatario = str(row[6])
                 if telefono_destinatario:
                     telefono_destinatario[:50]
                 decodificado = False
@@ -109,7 +109,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     decodificado = True
 
                 data = {
-                    'guia': row[0],
+                    'numero': row[0],
                     'fecha':fecha,
                     'documento': documento[:30],
                     'destinatario': row[3],
@@ -121,7 +121,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     'volumen': row[9],
                     'latitud': row[10],
                     'longitud': row[11],
-                    'estado_decodificado': decodificado
+                    'estado_decodificado': decodificado,
+                    'tiempo_servicio': row[13]
                 }
                 if decodificado == False: 
                     if direccion_destinatario:                   
@@ -175,12 +176,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             'guia_hasta': guia_hasta,
             'pendiente_despacho': pendiente_despacho
         }
-        holmio = Holmio()
+        cantidad = 0
+        return Response({'mensaje':f'Se importaron {cantidad} las guias con exito'}, status=status.HTTP_200_OK)
+        '''holmio = Holmio()
         respuesta = holmio.ruteoPendiente(parametros)
         if respuesta['error'] == False:
             franjas = RutFranja.objects.all()
-            zinc = Zinc()
-            cantidad = 0
+            zinc = Zinc()            
             guias_marcar = []
             guias = respuesta['guias']
             for guia in guias:                
@@ -261,7 +263,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 holmio.ruteoMarcar(parametros)
             return Response({'mensaje':f'Se importaron {cantidad} las guias con exito'}, status=status.HTTP_200_OK)
         else:
-            return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)'''
 
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
     def decodificar(self, request):
@@ -462,7 +464,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if estado_decodificado == False:
             RutVisita.objects.filter(estado_decodificado=False).delete()
         else:
-            RutVisita.objects.all().delete()
+            RutVisita.objects.filter(estado_despacho=False).delete()
         return Response({'mensaje':'eliminados'}, status=status.HTTP_200_OK) 
 
     @action(detail=False, methods=["post"], url_path=r'resumen',)

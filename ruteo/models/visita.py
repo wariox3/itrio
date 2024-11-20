@@ -4,6 +4,7 @@ from ruteo.models.franja import RutFranja
 from general.models.ciudad import GenCiudad
 
 class RutVisita(models.Model):
+    numero = models.IntegerField(null=True)
     guia = models.IntegerField(null=True)
     fecha = models.DateTimeField(null=True)    
     documento = models.CharField(max_length=30, null=True)
@@ -14,6 +15,7 @@ class RutVisita(models.Model):
     destinatario_correo = models.CharField(max_length=255, null=True)
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)
+    tiempo_servicio = models.IntegerField(default=0)
     latitud = models.DecimalField(max_digits=20, decimal_places=12, null=True)
     longitud = models.DecimalField(max_digits=20, decimal_places=12, null=True)
     estado_decodificado = models.BooleanField(null=True, default = None)
