@@ -452,4 +452,34 @@ class GenDocumentoNominaExcelSerializador(serializers.HyperlinkedModelSerializer
             'IBC': instance.base_cotizacion,
             'IBP': instance.base_prestacion,                    
         }    
+    
+class GenDocumentoEventoCompraSerializador(serializers.HyperlinkedModelSerializer):        
+
+    class Meta:
+        model = GenDocumento
+
+    def to_representation(self, instance):        
+        contacto_nombre_corto = ""
+        contacto_numero_identificacion = ""
+        if instance.contacto:
+            contacto_nombre_corto = instance.contacto.nombre_corto
+            contacto_numero_identificacion = instance.contacto.numero_identificacion                            
+        return {
+            'id': instance.id,            
+            'numero' : instance.numero,
+            'fecha' : instance.fecha,
+            'fecha_vence' : instance.fecha_vence,                
+            'soporte' : instance.soporte,
+            'orden_compra' : instance.orden_compra,
+            'cue' : instance.cue,
+            'total' :  instance.total,                        
+            'estado_aprobado' : instance.estado_aprobado,           
+            'estado_anulado' : instance.estado_anulado,
+            'evento_documento': instance.evento_documento,
+            'evento_recepcion': instance.evento_recepcion,
+            'evento_aceptacion': instance.evento_aceptacion,
+            'contacto_id': instance.contacto_id,
+            'contacto_numero_identificacion': contacto_numero_identificacion,
+            'contacto_nombre_corto': contacto_nombre_corto
+        }    
          

@@ -39,7 +39,9 @@
     "pk": 5,
     "fields": {
       "nombre": "COMPRA",
-      "documento_clase": 300
+      "documento_clase": 300,
+      "compra": true,
+      "pagar": true
     }
   },
   {
@@ -47,7 +49,9 @@
     "pk": 6,
     "fields": {
       "nombre": "NOTA CREDITO COMPRA",
-      "documento_clase": 301
+      "documento_clase": 301,
+      "compra": true,
+      "pagar": true
     }
   },
   {
@@ -55,7 +59,9 @@
     "pk": 7,
     "fields": {
       "nombre": "NOTA DEBITO COMPRA",
-      "documento_clase": 302
+      "documento_clase": 302,
+      "compra": true,
+      "pagar": true
     }
   },
   {
@@ -88,7 +94,8 @@
     "fields": {
       "nombre": "DOCUMENTO SOPORTE",
       "documento_clase": 303,
-      "compra": true
+      "compra": true,
+      "pagar": true
     }
   },
   {
@@ -97,7 +104,8 @@
     "fields": {
       "nombre": "NOTA AJUSTE",
       "documento_clase": 304,
-      "compra": true
+      "compra": true,
+      "pagar": true
     }
   },
   {
@@ -105,8 +113,7 @@
     "pk": 13,
     "fields": {
       "nombre": "ASIENTO",
-      "documento_clase": 601,
-      "compra": true
+      "documento_clase": 601
     }
   },
   {
