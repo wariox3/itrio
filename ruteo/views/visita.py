@@ -5,6 +5,7 @@ from ruteo.models.visita import RutVisita
 from ruteo.models.despacho import RutDespacho
 from ruteo.models.vehiculo import RutVehiculo
 from ruteo.models.franja import RutFranja
+from ruteo.models.flota import RutFlota
 from general.models.ciudad import GenCiudad
 from contenedor.models import CtnDireccion
 from ruteo.serializers.visita import RutVisitaSerializador
@@ -46,20 +47,22 @@ def calcular_distancia(lat1, lon1, lat2, lon2):
     r = 6371
     return c * r
 
-def ordenar_ruta(visitas, lat_inicial, lon_inicial):
-    visitas_con_distancias = []
-    for visita in visitas:
-        distancia = calcular_distancia(lat_inicial, lon_inicial, visita.latitud, visita.longitud)
-        visita.distancia_proxima = distancia
-        visitas_con_distancias.append((visita, distancia))
+# Resolver el problema del viajante (TSP) para determinar la ruta óptima
+def tsp_ruta(inicio, distancias):
+    n = len(distancias)
+    visited = [False] * n
+    ruta = [inicio]
+    visited[inicio] = True
 
-    visitas_con_distancias.sort(key=lambda x: x[1])
-    for index, (visita, _) in enumerate(visitas_con_distancias):
-        visita.orden = index + 1
-        visita.save()
-    return [visita for visita, _ in visitas_con_distancias]        
-    #direcciones_ordenadas = [visita for visita, distancia in visitas_con_distancias]    
-    #return direcciones_ordenadas
+    for _ in range(n - 1):
+        last = ruta[-1]
+        next_city = min(
+            (i for i in range(n) if not visited[i]),
+            key=lambda i: distancias[last][i]
+        )
+        ruta.append(next_city)
+        visited[next_city] = True
+    return ruta
 
 def ubicar_punto(franjas, latitud, longitud):    
     for franja in franjas:
@@ -337,48 +340,70 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):        
-        visitas = RutVisita.objects.filter(estado_despacho=False).values('id', 'latitud', 'longitud')
+        visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
         if visitas.exists():
-            lat_inicial = 6.197023
-            lon_inicial = -75.585760
+            ubicacion_inicial = (6.197023, -75.585760)
+            visitas_ubicaciones = [ubicacion_inicial] + [(visita['latitud'], visita['longitud']) for visita in visitas]
             gogle = Google()
-            resultado = gogle.calcular_ruta(visitas)
-            if not resultado["error"]:
-                for visita in resultado["orden_entregas"]:
-                    visita_actualizar = RutVisita.objects.get(id=visita["id"])
-                    visita_actualizar.orden = visita["orden"]
-                    #visita_actualizar. = visita["tiempo_desde_anterior"]
-                    visita_actualizar.save()                
-                return Response({'mensaje':'visitas ordenadas', 'orden':resultado["orden_entregas"]}, status=status.HTTP_200_OK)
+            resultado = gogle.matriz_distancia(visitas_ubicaciones)
+            if not resultado["error"]:  
+                distancias = resultado['distancias']
+                duraciones = resultado['duraciones']                                
+                ruta = tsp_ruta(0, distancias)
+                visitas_ordenadas = []
+                for orden, i in enumerate(ruta):
+                    if i == 0:  # Ubicación inicial no tiene id
+                        visitas_ordenadas.append({
+                            "id": None,
+                            "latitud": visitas_ubicaciones[i][0],
+                            "longitud": visitas_ubicaciones[i][1],
+                            "orden": orden,
+                            "tiempo_hasta_proxima": None,
+                            "distancia_hasta_proxima": None
+                        })
+                    else:
+                        visita = visitas[i - 1]
+                        tiempo_hasta_proxima = None
+                        distancia_hasta_proxima = None
+                        if orden < len(ruta) - 1:  # Si no es la última visita
+                            tiempo_hasta_proxima = duraciones[i][ruta[orden + 1]]
+                            distancia_hasta_proxima = distancias[i][ruta[orden + 1]]
+                        visitas_ordenadas.append({
+                            "id": visita['id'],
+                            "latitud": visitas_ubicaciones[i][0],
+                            "longitud": visitas_ubicaciones[i][1],
+                            "orden": orden,
+                            "tiempo_hasta_proxima": tiempo_hasta_proxima,
+                            "distancia_hasta_proxima": distancia_hasta_proxima
+                        })                    
+                        RutVisita.objects.filter(id=visita['id']).update(orden=orden)                       
+                return Response({'mensaje':'visitas ordenadas', 'datos': visitas_ordenadas}, status=status.HTTP_200_OK)
             else:                
-                return Response({'mensaje':resultado["mensaje"], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)       
-            
+                return Response({'mensaje':resultado["mensaje"], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                   
         else:
             return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
         
     @action(detail=False, methods=["post"], url_path=r'rutear',)
     def rutear(self, request):
-        vehiculos = RutVehiculo.objects.filter(estado_asignado = False, estado_activo = True).order_by('id')
-        visitas = RutVisita.objects.filter(estado_despacho = False).order_by('orden')
-        if visitas.exists() and vehiculos.exists():
-            cantidad_vehiculos = len(vehiculos)
-            posicion_vehiculo = 0
-            vehiculo = vehiculos[posicion_vehiculo]
+        flota = RutFlota.objects.all()        
+        if flota.exists():
+            visitas = RutVisita.objects.filter(estado_despacho = False).order_by('orden')                            
+            cantidad_vehiculos = len(flota)
+            vehiculo_indice = 0
+            vehiculo = flota[vehiculo_indice].vehiculo            
             peso_total = 0  
-            flota_insuficiente = False
             crear_despacho = True
             for visita in visitas:
                 if peso_total + visita.peso > vehiculo.capacidad:
                     asignado = False
                     peso_total = 0
-                    while posicion_vehiculo + 2 <= cantidad_vehiculos and asignado == False:                         
-                        posicion_vehiculo += 1
-                        vehiculo = vehiculos[posicion_vehiculo]
+                    while vehiculo_indice + 1 <= cantidad_vehiculos and asignado == False:                         
+                        vehiculo_indice += 1
+                        vehiculo = flota[vehiculo_indice].vehiculo
                         if peso_total + visita.peso <= vehiculo.capacidad:                             
                             crear_despacho = True
                             asignado = True
-                    if posicion_vehiculo + 2 > cantidad_vehiculos:
-                        flota_insuficiente = True
+                    if vehiculo_indice + 1 > cantidad_vehiculos:
                         break
                 
                 if crear_despacho:
@@ -388,8 +413,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     despacho.peso = despacho.peso + visita.peso
                     despacho.visitas = despacho.visitas + 1
                     despacho.save()
-                    vehiculo.estado_asignado = True
-                    vehiculo.save()
                     crear_despacho = False
                 else:
                     despacho.peso = despacho.peso + visita.peso
@@ -399,7 +422,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita.estado_despacho = True
                 visita.despacho = despacho
                 visita.save()
-            return Response({'mensaje': 'Se crean las rutas exitosamente', 'flota_insuficiente': flota_insuficiente}, status=status.HTTP_200_OK)                
+            return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)
         
