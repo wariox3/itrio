@@ -286,7 +286,10 @@ class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):
         contacto_numero_identificacion = ""
         if instance.contacto:
             contacto_nombre_corto = instance.contacto.nombre_corto
-            contacto_numero_identificacion = instance.contacto.numero_identificacion  
+            contacto_numero_identificacion = instance.contacto.numero_identificacion 
+        documento_tipo_nombre = "" 
+        if instance.documento_tipo:
+            documento_tipo_nombre = instance.documento_tipo.nombre
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -318,7 +321,9 @@ class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):
             'empresa': instance.empresa_id,
             'resolucion': instance.resolucion_id,
             'documento_referencia' :  instance.documento_referencia_id,
-            'plazo_pago': instance.plazo_pago_id
+            'plazo_pago': instance.plazo_pago_id,
+            'documento_tipo_id': instance.documento_tipo_id,
+            'documento_tipo_nombre': documento_tipo_nombre
         }
     
 class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):    

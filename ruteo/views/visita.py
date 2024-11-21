@@ -21,6 +21,7 @@ from shapely.geometry import Point, Polygon
 from math import radians, cos, sin, asin, sqrt
 from django.db.models import Sum, F, Count
 from django.db.models.functions import Coalesce
+from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 import re
 import gc
 
@@ -335,6 +336,53 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     def ordenar(self, request):        
         visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
         if visitas.exists():
+            num_locations = len(visitas)
+
+            distance_matrix = [[
+                calcular_distancia(loc1['latitud'], loc1['longitud'], loc2['latitud'], loc2['longitud'])
+                for loc2 in visitas
+            ] for loc1 in visitas]
+
+            # Configurar el problema de enrutamiento
+            manager = pywrapcp.RoutingIndexManager(num_locations, 1, 0)
+            routing = pywrapcp.RoutingModel(manager)
+
+            # Función de costo
+            def distance_callback(from_index, to_index):
+                from_node = manager.IndexToNode(from_index)
+                to_node = manager.IndexToNode(to_index)
+                return distance_matrix[from_node][to_node]
+
+            transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+            routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+
+            # Resolver el problema
+            search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+            search_parameters.first_solution_strategy = (
+                routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
+            solution = routing.SolveWithParameters(search_parameters)
+
+            if solution:
+                # Extraer la ruta optimizada y asignar el orden
+                route = []
+                index = routing.Start(0)
+                while not routing.IsEnd(index):
+                    route.append(manager.IndexToNode(index))
+                    index = solution.Value(routing.NextVar(index))
+
+                # Actualizar el orden en la base de datos
+                for order, visit_index in enumerate(route):
+                    visita_id = visitas[visit_index]['id']
+                    RutVisita.objects.filter(id=visita_id).update(orden=order + 1)
+
+            return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
+
+    @action(detail=False, methods=["post"], url_path=r'ordenar-google',)
+    def ordenar_google(self, request):        
+        visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
+        if visitas.exists():
             ubicacion_inicial = (6.197023, -75.585760)
             visitas_ubicaciones = [ubicacion_inicial] + [(visita['latitud'], visita['longitud']) for visita in visitas]
             gogle = Google()
@@ -373,14 +421,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'visitas ordenadas', 'datos': visitas_ordenadas}, status=status.HTTP_200_OK)
             else:                
                 return Response({'mensaje':resultado["mensaje"], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                   
-        else:
-            return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
-
-    @action(detail=False, methods=["post"], url_path=r'ordenarv2',)
-    def ordenarv2(self, request):        
-        visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
-        if visitas.exists():
-            return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
 
