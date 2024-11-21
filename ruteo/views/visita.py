@@ -511,11 +511,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         visitas = RutVisita.objects.filter(estado_despacho = False).aggregate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0)
-            )        
-        return Response({'resumen': visitas}, status=status.HTTP_200_OK)                                                       
-
-    @action(detail=False, methods=["post"], url_path=r'error',)
-    def error(self, request):
-        visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado=False).aggregate(
+            )     
+        errores = RutVisita.objects.filter(estado_despacho = False, estado_decodificado=False).aggregate(
+            cantidad=Count('id'))
+        alertas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado_alerta=True).aggregate(
             cantidad=Count('id'))        
-        return Response({'error': visitas}, status=status.HTTP_200_OK)                
+        return Response({'resumen': visitas, 'errores': errores, 'alertas':alertas}, status=status.HTTP_200_OK)                                                                      
