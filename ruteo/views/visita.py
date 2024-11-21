@@ -24,18 +24,6 @@ from django.db.models.functions import Coalesce
 import re
 import gc
 
-def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-    visitas = RutVisita.objects.all()
-    if filtros:
-        for filtro in filtros:
-            visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
-    if ordenamientos:
-        visitas = visitas.order_by(*ordenamientos)              
-    visitas = visitas[desplazar:limite+desplazar]
-    itemsCantidad = RutVisita.objects.all()[:limiteTotal].count()                   
-    respuesta = {'visitas': visitas, "cantidad_registros": itemsCantidad}
-    return respuesta 
-
 def calcular_distancia(lat1, lon1, lat2, lon2):
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 
@@ -91,12 +79,15 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             errores = False
             errores_datos = []    
             google = Google()
-            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):                
+                if len(row) < 14:
+                    return Response({'mensaje':'El archivo no tiene la estructura requerida', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 fecha_texto = str(row[1])
                 try:                                        
                     fecha = datetime.strptime(fecha_texto, '%Y%m%d')
                 except ValueError:
                     fecha = None
+                
                 documento = str(row[2])
                 direccion_destinatario = row[4] or ""
                 direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
@@ -384,7 +375,15 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':resultado["mensaje"], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                   
         else:
             return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
-        
+
+    @action(detail=False, methods=["post"], url_path=r'ordenarv2',)
+    def ordenarv2(self, request):        
+        visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
+        if visitas.exists():
+            return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
+
     @action(detail=False, methods=["post"], url_path=r'rutear',)
     def rutear(self, request):
         flota = RutFlota.objects.all()        

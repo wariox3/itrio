@@ -84,7 +84,6 @@ class Google():
         else:
             return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
     
-
     def matriz_distancia(self, visitas_ubicaciones):
         api_key = config('GOOGLE_MAPS_API_KEY')                                                        
         url = "https://maps.googleapis.com/maps/api/distancematrix/json"

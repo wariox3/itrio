@@ -282,10 +282,11 @@ class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):
         model = GenDocumento        
 
     def to_representation(self, instance):        
-        contacto = instance.contacto
-        contacto_nombre_corto = None
-        if contacto:
-            contacto_nombre_corto = contacto.nombre_corto
+        contacto_nombre_corto = ""
+        contacto_numero_identificacion = ""
+        if instance.contacto:
+            contacto_nombre_corto = instance.contacto.nombre_corto
+            contacto_numero_identificacion = instance.contacto.numero_identificacion  
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -304,6 +305,7 @@ class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):
             'documento_tipo': instance.documento_tipo_id,
             'metodo_pago': instance.metodo_pago_id,
             'contacto_id': instance.contacto_id,
+            'contacto_numero_identificacion': contacto_numero_identificacion,
             'contacto_nombre_corto': contacto_nombre_corto,
             'estado_anulado' : instance.estado_anulado,
             'comentario' : instance.comentario,
