@@ -48,15 +48,16 @@ class ListaView(APIView):
             cantidadLimite = raw.get('cantidad_limite', 5000)    
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')
-            items = modelo.objects.all()
+            items = modelo.objects.all()            
             #print(items.query)
             if filtros:
                 for filtro in filtros:
                     items = items.filter(**{filtro['propiedad']: filtro['valor1']})
+            itemsCantidad = items[:cantidadLimite].count()
             if ordenamientos:
                 items = items.order_by(*ordenamientos)              
-            items = items[desplazar:limite+desplazar]
-            itemsCantidad = modelo.objects.all()[:cantidadLimite].count()
+            items = items[desplazar:limite+desplazar]             
+            #itemsCantidad = modelo.objects.all()[:cantidadLimite].count()
             serializadorDatos = serializador(items, many=True) 
             if excel:
                 data = serializadorDatos.data
