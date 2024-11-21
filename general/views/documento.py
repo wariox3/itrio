@@ -538,7 +538,45 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)
                                     else:
                                         return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                                if documento.documento_tipo_id in [15]:                                
+                                    
+                                if documento.documento_tipo_id == 5:                                    
+                                    if documento.referencia_prefijo and documento.referencia_numero and documento.referencia_cue:
+                                        datos_compra = {
+                                            "cuentaId": empresa.rededoc_id,
+                                            "documentoClaseId" : documento.documento_tipo_id,
+                                            "documentoClienteId": documento.id,
+                                            "documento" : {                                                
+                                                "prefijo" : documento.referencia_prefijo,
+                                                "numero" : documento.referencia_numero,
+                                                "cue" : documento.referencia_cue,
+                                                "fecha" : str(documento.fecha),
+                                                "hora" : str("12:00:00-05:00"),
+                                                "fecha_vence" : str(documento.fecha_vence),                                                                                                
+                                                "total_documento" : str(documento.total_bruto), 
+                                                "proveedor" : {                                                        
+                                                    "identificacion" : documento.contacto.identificacion.codigo,
+                                                    "numero_identificacion" : documento.contacto.numero_identificacion,
+                                                    "digito_verificacion" : documento.contacto.digito_verificacion,
+                                                    "razon_social" : documento.contacto.nombre_corto,   
+                                                    "correo" : documento.contacto.correo,                                                     
+                                                }
+                                            }
+                                        }
+                                                                                                    
+                                        wolframio = Wolframio()
+                                        respuesta = wolframio.emitir(datos_compra)
+                                        if respuesta['error'] == False: 
+                                            documento.estado_electronico_enviado = True
+                                            documento.estado_electronico = True
+                                            documento.electronico_id = respuesta['id']
+                                            documento.save()                                        
+                                        else:
+                                            return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                                        #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)
+                                    else:
+                                        return Response({'mensaje': 'Los documentos de compra deben tener prefijo, numero y cue', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                                    
+                                if documento.documento_tipo_id == 15:                                
                                     prefijo = "NE"                                
                                     datos = {
                                         "cuentaId": empresa.rededoc_id,
@@ -878,6 +916,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         documento.save()                                        
                                     else:
                                         return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                                
                                 return Response({'mensaje': 'Documento emitido correctamente'}, status=status.HTTP_200_OK)
                             else:
                                 return Response({'mensaje': 'La factura no cuenta con un número', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)

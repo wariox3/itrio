@@ -115,8 +115,10 @@ class Wolframio():
     def consumirPost(self, data, url):
         if config('ENV') == "prod":
             url_base = "http://rededoc.co" + url
-        else:
-            url_base = "http://prueba.rededoc.co" + url            
+        if config('ENV') == "test":
+            url_base = "http://prueba.rededoc.co" + url
+        if config('ENV') == "dev":
+            url_base = "http://localhost/wolframio/public/index.php" + url
         json_data = json.dumps(data)
         headers = {'Content-Type': 'application/json'}
         response = requests.post(url_base, data=json_data, headers=headers)

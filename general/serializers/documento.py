@@ -47,7 +47,8 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
                   'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
-                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 'comprobante', 'grupo_contabilidad', 'dias']
+                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 
+                  'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
@@ -106,7 +107,10 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'soporte' : instance.soporte,
             'orden_compra' : instance.orden_compra,
             'cue' : instance.cue,
-            'empresa': instance.empresa_id,
+            'referencia_cue' : instance.referencia_cue,
+            'referencia_numero' : instance.referencia_numero,
+            'referencia_prefijo' : instance.referencia_prefijo,
+            'empresa': instance.empresa_id,            
             'resolucion': instance.resolucion_id,
             'documento_referencia' :  instance.documento_referencia_id,
             'plazo_pago': instance.plazo_pago_id,
@@ -136,7 +140,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
                   'total_bruto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 
                   'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 
                   'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 
-                  'documento_referencia', 'plazo_pago', 'cue']
+                  'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
 
     def to_representation(self, instance):
         contacto_numero_identificacion = ""
@@ -213,6 +217,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'documento_referencia_id': instance.documento_referencia_id,
             'documento_referencia_numero': documento_referencia_numero,
             'cue' : instance.cue,
+            'referencia_cue' : instance.referencia_cue,
+            'referencia_numero' : instance.referencia_numero,
+            'referencia_prefijo' : instance.referencia_prefijo,            
             'electronico_id': instance.electronico_id,
             'asesor': instance.asesor_id,
             'asesor_nombre_corto': asesor_nombre_corto,
@@ -479,6 +486,9 @@ class GenDocumentoEventoCompraSerializador(serializers.HyperlinkedModelSerialize
             'soporte' : instance.soporte,
             'orden_compra' : instance.orden_compra,
             'cue' : instance.cue,
+            'referencia_cue' : instance.referencia_cue,
+            'referencia_numero' : instance.referencia_numero,
+            'referencia_prefijo' : instance.referencia_prefijo,            
             'total' :  instance.total,                        
             'estado_aprobado' : instance.estado_aprobado,           
             'estado_anulado' : instance.estado_anulado,
