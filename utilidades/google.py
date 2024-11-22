@@ -15,8 +15,10 @@ class Google():
         api_key = config('GOOGLE_MAPS_API_KEY')
         base_url = "https://maps.googleapis.com/maps/api/geocode/json"
         params = {
+            #"address": f"{direccion_parametro}, COLOMBIA",
             "address": direccion_parametro,
-            "key": api_key
+            "key": api_key,
+            "components": "country:CO"
         }
         response = requests.get(base_url, params=params)
         
