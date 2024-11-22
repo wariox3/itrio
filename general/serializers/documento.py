@@ -490,6 +490,8 @@ class GenDocumentoEventoCompraSerializador(serializers.HyperlinkedModelSerialize
             'referencia_numero' : instance.referencia_numero,
             'referencia_prefijo' : instance.referencia_prefijo,            
             'total' :  instance.total,                        
+            'estado_electronico' : instance.estado_electronico,
+            'estado_electronico_enviado': instance.estado_electronico_enviado,
             'estado_aprobado' : instance.estado_aprobado,           
             'estado_anulado' : instance.estado_anulado,
             'evento_documento': instance.evento_documento,
