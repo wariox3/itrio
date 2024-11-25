@@ -930,7 +930,72 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
         except GenDocumento.DoesNotExist:
             return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-    
+   
+    @action(detail=False, methods=["post"], url_path=r'emitir-evento',)
+    def emitir_evento(self, request):
+        try:
+            raw = request.data
+            id = raw.get('id')
+            evento_id = raw.get('evento_id')
+            nombre = raw.get('nombre')
+            apellido = raw.get('apellido')
+            identificacion = raw.get('identificacion')
+            numero_identifiacion = raw.get('numero_identificacion')
+            cargo = raw.get('cargo')
+            area = raw.get('area')
+            if id and evento_id and nombre and apellido and identificacion and numero_identifiacion and cargo and area:
+                documento = GenDocumento.objects.get(pk=id)
+                if documento.estado_aprobado == True:
+                    empresa = GenEmpresa.objects.get(pk=1)
+                    if empresa.rededoc_id:
+                        if documento.estado_electronico == True: 
+                            if documento.numero:
+                                if evento_id in [30, 32, 33]:                                                                                                            
+                                    datos_evento = {
+                                        "cuentaId": empresa.rededoc_id,
+                                        "documentoId" : documento.electronico_id,                                            
+                                        "eventoTipoId" : evento_id,
+                                        "evento" : {                                                
+                                            "evento_tipo_id" : evento_id,
+                                            "nombre" : nombre,
+                                            "apellido" : apellido,
+                                            "identificacion" :identificacion,
+                                            "numero_identificacion" : numero_identifiacion,
+                                            "cargo" : cargo,
+                                            "area" : area,
+                                            "valor_aceptado":"",
+                                            "concepto_reclamo" : "",
+                                        }
+                                    }                                                                                                
+                                    wolframio = Wolframio()
+                                    respuesta = wolframio.emitir_evento(datos_evento)
+                                    if respuesta['error'] == False: 
+                                        if evento_id == 30:
+                                            documento.evento_documento = 'RC'
+                                        if evento_id == 32:
+                                            documento.evento_recepcion = 'RC'                                            
+                                        if evento_id == 33:
+                                            documento.evento_aceptacion = 'AC'
+                                        documento.save()
+                                        return Response({'mensaje': 'Evento emitido correctamente'}, status=status.HTTP_200_OK)
+                                    #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)                                    
+                                    else:
+                                        return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                                    
+                                else:
+                                    return Response({'mensaje': 'Solo se admiten eventos 30, 32, 33', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                                                        
+                            else:
+                                return Response({'mensaje': 'La factura no cuenta con un número', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                        else:
+                            return Response({'mensaje': "El documento debe estar emitido", 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                        
+                    else:  
+                        return Response({'mensaje': 'La empresa no se encuentra activada para emitir documentos electronicos', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje': 'El documento no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
+        except GenDocumento.DoesNotExist:
+            return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'electronico_respuesta_emitir', permission_classes=[permissions.AllowAny])
     def electronico_respuesta_emitir(self, request):
         raw = request.data

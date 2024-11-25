@@ -57,7 +57,7 @@ class GenDocumento(models.Model):
     referencia_cue = models.CharField(max_length=150, null=True)
     referencia_numero = models.IntegerField(null=True)
     referencia_prefijo = models.CharField(max_length=50, null=True)
-    documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, related_name='gen_documentos')
+    documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, related_name='documentos_documento_tipo_rel')
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')
     metodo_pago = models.ForeignKey(GenMetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
     resolucion = models.ForeignKey(GenResolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
