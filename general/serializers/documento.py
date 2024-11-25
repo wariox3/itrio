@@ -45,7 +45,8 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'fecha_hasta', 
                   'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 'total_bruto', 'total', 
                   'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
-                  'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'estado_electronico_enviado', 'estado_electronico_notificado', 
+                  'estado_anulado', 'comentario', 'soporte',  
+                  'estado_electronico_enviado', 'estado_electronico', 'estado_electronico_notificado', 'estado_electronico_evento',
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
                   'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 
                   'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
@@ -104,6 +105,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_electronico' : instance.estado_electronico,
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
+            'estado_electronico_evento' : instance.estado_electronico_evento,
             'soporte' : instance.soporte,
             'orden_compra' : instance.orden_compra,
             'cue' : instance.cue,
@@ -139,7 +141,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'total_bruto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 
                   'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 
-                  'estado_electronico_enviado', 'estado_electronico_notificado', 'orden_compra', 
+                  'estado_electronico_enviado', 'estado_electronico_notificado', 'estado_electronico_evento', 'orden_compra', 
                   'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
 
     def to_representation(self, instance):
@@ -210,6 +212,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'estado_electronico' : instance.estado_electronico,
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
+            'estado_electronico_evento' : instance.estado_electronico_evento,
             'soporte' : instance.soporte,
             'orden_compra': instance.orden_compra,
             'plazo_pago_id': instance.plazo_pago_id,
@@ -492,6 +495,7 @@ class GenDocumentoEventoCompraSerializador(serializers.HyperlinkedModelSerialize
             'total' :  instance.total,                        
             'estado_electronico' : instance.estado_electronico,
             'estado_electronico_enviado': instance.estado_electronico_enviado,
+            'estado_electronico_evento' : instance.estado_electronico_evento,
             'estado_aprobado' : instance.estado_aprobado,           
             'estado_anulado' : instance.estado_anulado,
             'evento_documento': instance.evento_documento,

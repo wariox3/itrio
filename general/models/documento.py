@@ -48,6 +48,7 @@ class GenDocumento(models.Model):
     estado_electronico = models.BooleanField(default = False)    
     estado_electronico_enviado = models.BooleanField(default = False)    
     estado_electronico_notificado = models.BooleanField(default = False)    
+    estado_electronico_evento = models.BooleanField(default = False)
     orden_compra = models.CharField(max_length=50,null=True)
     cue = models.CharField(max_length=150, null=True)
     soporte = models.CharField(max_length=100, null=True)
