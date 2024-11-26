@@ -93,7 +93,10 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     
                     documento = str(row[2])
                     direccion_destinatario = row[4] or ""
-                    direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
+                    direccion_destinatario = direccion_destinatario.replace("\t", "").replace("\n", "")
+                    direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion_destinatario).strip()   
+                    direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion_destinatario).strip()                 
+                    direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())                    
                     direccion_destinatario = direccion_destinatario[:150]
                     telefono_destinatario = str(row[6])
                     if telefono_destinatario:
@@ -181,6 +184,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             for guia in guias:                                                                        
                 direccion_destinatario = f"{guia['direccionDestinatario']}, {guia['ciudadDestinoNombre']}" or ""
                 direccion_destinatario = direccion_destinatario.replace("\t", "").replace("\n", "")
+                direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion_destinatario).strip()   
+                direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion_destinatario).strip()                 
                 direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
                 direccion_destinatario = direccion_destinatario[:150]                                                
                 fecha = datetime.fromisoformat(guia['fechaIngreso'])  
