@@ -79,6 +79,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             data_modelo = []
             errores = False
             errores_datos = []    
+            franjas = RutFranja.objects.all()
             google = Google()
             total_registros = sheet.max_row - 1
             if total_registros <= 1000:
@@ -119,7 +120,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         'latitud': row[10],
                         'longitud': row[11],
                         'estado_decodificado': decodificado,
-                        'tiempo_servicio': row[13]
+                        'tiempo_servicio': row[13],
+                        'estado_franja': False,
+                        'franja': None
                     }
                     if decodificado == False: 
                         if direccion_destinatario:                   
@@ -138,6 +141,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                     data['latitud'] = respuesta['latitud']
                                     data['longitud'] = respuesta['longitud']
                                     data['destinatario_direccion_formato'] = respuesta['direccion_formato']
+                    if data['estado_decodificado'] == True:
+                        respuesta = ubicar_punto(franjas, data['latitud'], data['longitud'])
+                        if respuesta['encontrado']:
+                            data['franja'] = respuesta['franja']['id']
+                            data['estado_franja'] = True
+                        else:
+                            data['estado_franja'] = False
                     serializer = RutVisitaSerializador(data=data)
                     if serializer.is_valid():
                         data_modelo.append(serializer.validated_data)
