@@ -188,9 +188,10 @@ class CtnInformacionFacturacion(models.Model):
 class CtnDireccion(models.Model):
     fecha = models.DateTimeField()
     direccion = models.CharField(max_length=150)
-    direccion_formato = models.CharField(max_length=150)
+    direccion_formato = models.CharField(max_length=150)    
     latitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
+    cantidad_resultados = models.IntegerField(default=0)
     ciudad = models.ForeignKey(CtnCiudad, on_delete=models.PROTECT, null=True)
     class Meta:
         db_table = "cnt_direccion"        

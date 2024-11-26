@@ -141,6 +141,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                     data['latitud'] = respuesta['latitud']
                                     data['longitud'] = respuesta['longitud']
                                     data['destinatario_direccion_formato'] = respuesta['direccion_formato']
+                                    if respuesta['cantidad_resultados'] > 1:
+                                        data['estado_decodificado_alerta'] = True
                     if data['estado_decodificado'] == True:
                         respuesta = ubicar_punto(franjas, data['latitud'], data['longitud'])
                         if respuesta['encontrado']:

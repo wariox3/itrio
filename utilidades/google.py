@@ -25,6 +25,7 @@ class Google():
         if response.status_code == 200:
             data = response.json()
             if data['status'] == 'OK':                
+                cantidad_resultados = len(data['results'])
                 location = data['results'][0]['geometry']['location']
                 direccion_formato = data['results'][0]['formatted_address']
                 direccion = CtnDireccion()
@@ -33,12 +34,14 @@ class Google():
                 direccion.direccion_formato = direccion_formato
                 direccion.latitud = location['lat']
                 direccion.longitud = location['lng']
+                direccion.cantidad_resultados = cantidad_resultados
                 direccion.save()
                 return {
                     "error": False,
                     "direccion_formato": direccion_formato,
                     "latitud": location['lat'],
-                    "longitud": location['lng']
+                    "longitud": location['lng'],
+                    "cantidad_resultados": cantidad_resultados
                 }
             else:
                 return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de google')}
