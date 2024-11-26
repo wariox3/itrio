@@ -131,10 +131,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return Response({'documento':documentoRespuesta}, status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
-        raw = request.data
+        raw = request.data        
+        saltar_aprobado = raw.get('saltar_aprobado', False)
         try:
             documento = GenDocumento.objects.get(pk=pk)        
-            if documento.estado_aprobado == False:
+            if documento.estado_aprobado == False or saltar_aprobado == True:
                 documentoSerializador = GenDocumentoSerializador(documento, data=raw, partial=True)
                 if documentoSerializador.is_valid():
                     documentoSerializador.save()

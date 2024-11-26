@@ -80,78 +80,81 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             errores = False
             errores_datos = []    
             google = Google()
-            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):                
-                if len(row) < 14:
-                    return Response({'mensaje':'El archivo no tiene la estructura requerida', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-                fecha_texto = str(row[1])
-                try:                                        
-                    fecha = datetime.strptime(fecha_texto, '%Y%m%d')
-                except ValueError:
-                    fecha = None
-                
-                documento = str(row[2])
-                direccion_destinatario = row[4] or ""
-                direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
-                direccion_destinatario = direccion_destinatario[:150]
-                telefono_destinatario = str(row[6])
-                if telefono_destinatario:
-                    telefono_destinatario[:50]
-                decodificado = False
-                if row[12] == 1 or row[12] == "1":
-                    decodificado = True
+            total_registros = sheet.max_row - 1
+            if total_registros <= 1000:
+                for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):                
+                    if len(row) < 14:
+                        return Response({'mensaje':'El archivo no tiene la estructura requerida', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                    fecha_texto = str(row[1])
+                    try:                                        
+                        fecha = datetime.strptime(fecha_texto, '%Y%m%d')
+                    except ValueError:
+                        fecha = None
+                    
+                    documento = str(row[2])
+                    direccion_destinatario = row[4] or ""
+                    direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
+                    direccion_destinatario = direccion_destinatario[:150]
+                    telefono_destinatario = str(row[6])
+                    if telefono_destinatario:
+                        telefono_destinatario[:50]
+                    decodificado = False
+                    if row[12] == 1 or row[12] == "1":
+                        decodificado = True
 
-                data = {
-                    'numero': row[0],
-                    'fecha':fecha,
-                    'documento': documento[:30],
-                    'destinatario': row[3],
-                    'destinatario_direccion': direccion_destinatario,
-                    'ciudad': row[5],
-                    'destinatario_telefono': telefono_destinatario,
-                    'destinatario_correo': row[7],
-                    'peso': row[8],
-                    'volumen': row[9],
-                    'latitud': row[10],
-                    'longitud': row[11],
-                    'estado_decodificado': decodificado,
-                    'tiempo_servicio': row[13]
-                }
-                if decodificado == False: 
-                    if direccion_destinatario:                   
-                        direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
-                        if direccion:
-                            decodificado = True    
-                            data['estado_decodificado'] = True            
-                            data['latitud'] = direccion.latitud                        
-                            data['longitud'] = direccion.longitud
-                            data['destinatario_direccion_formato'] = direccion.direccion_formato
-                        else:
-                            respuesta = google.decodificar_direccion(data['destinatario_direccion'])
-                            if respuesta['error'] == False:
+                    data = {
+                        'numero': row[0],
+                        'fecha':fecha,
+                        'documento': documento[:30],
+                        'destinatario': row[3],
+                        'destinatario_direccion': direccion_destinatario,
+                        'ciudad': row[5],
+                        'destinatario_telefono': telefono_destinatario,
+                        'destinatario_correo': row[7],
+                        'peso': row[8],
+                        'volumen': row[9],
+                        'latitud': row[10],
+                        'longitud': row[11],
+                        'estado_decodificado': decodificado,
+                        'tiempo_servicio': row[13]
+                    }
+                    if decodificado == False: 
+                        if direccion_destinatario:                   
+                            direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
+                            if direccion:
                                 decodificado = True    
                                 data['estado_decodificado'] = True            
-                                data['latitud'] = respuesta['latitud']
-                                data['longitud'] = respuesta['longitud']
-                                data['destinatario_direccion_formato'] = respuesta['direccion_formato']
-                serializer = RutVisitaSerializador(data=data)
-                if serializer.is_valid():
-                    data_modelo.append(serializer.validated_data)
+                                data['latitud'] = direccion.latitud                        
+                                data['longitud'] = direccion.longitud
+                                data['destinatario_direccion_formato'] = direccion.direccion_formato
+                            else:
+                                respuesta = google.decodificar_direccion(data['destinatario_direccion'])
+                                if respuesta['error'] == False:
+                                    decodificado = True    
+                                    data['estado_decodificado'] = True            
+                                    data['latitud'] = respuesta['latitud']
+                                    data['longitud'] = respuesta['longitud']
+                                    data['destinatario_direccion_formato'] = respuesta['direccion_formato']
+                    serializer = RutVisitaSerializador(data=data)
+                    if serializer.is_valid():
+                        data_modelo.append(serializer.validated_data)
+                    else:
+                        errores = True
+                        error_dato = {
+                            'fila': i,
+                            'errores': serializer.errors
+                        }
+                        errores_datos.append(error_dato)
+                if not errores:
+                    for detalle in data_modelo:
+                        RutVisita.objects.create(**detalle)
+                    gc.collect()
+                    return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)
                 else:
-                    errores = True
-                    error_dato = {
-                        'fila': i,
-                        'errores': serializer.errors
-                    }
-                    errores_datos.append(error_dato)
-            if not errores:
-                for detalle in data_modelo:
-                    RutVisita.objects.create(**detalle)
-                gc.collect()
-                return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)
+                    gc.collect()                    
+                    return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
             else:
-                gc.collect()                    
-                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
-            
+                return Response({'mensaje':'Solo se permiten importar hasta 1000 registros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
