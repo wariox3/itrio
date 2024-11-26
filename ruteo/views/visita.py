@@ -178,8 +178,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         respuesta = holmio.ruteoPendiente(parametros)
         if respuesta['error'] == False:                                   
             guias = respuesta['guias']
-            for guia in guias:                                                        
+            for guia in guias:                                                                        
                 direccion_destinatario = f"{guia['direccionDestinatario']}, {guia['ciudadDestinoNombre']}" or ""
+                direccion_destinatario = direccion_destinatario.replace("\t", "").replace("\n", "")
                 direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
                 direccion_destinatario = direccion_destinatario[:150]                                                
                 fecha = datetime.fromisoformat(guia['fechaIngreso'])  
