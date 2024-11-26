@@ -133,6 +133,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 data['latitud'] = direccion.latitud                        
                                 data['longitud'] = direccion.longitud
                                 data['destinatario_direccion_formato'] = direccion.direccion_formato
+                                if direccion.cantidad_resultados > 1:
+                                    data['estado_decodificado_alerta'] = True                                
                             else:
                                 respuesta = google.decodificar_direccion(data['destinatario_direccion'])
                                 if respuesta['error'] == False:
