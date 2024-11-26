@@ -171,94 +171,71 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             'guia_hasta': guia_hasta,
             'pendiente_despacho': pendiente_despacho
         }
-        cantidad = 0
-        return Response({'mensaje':f'Se importaron {cantidad} las guias con exito'}, status=status.HTTP_200_OK)
-        '''holmio = Holmio()
+        franjas = RutFranja.objects.all()
+        cantidad = 0       
+        google = Google() 
+        holmio = Holmio()
         respuesta = holmio.ruteoPendiente(parametros)
-        if respuesta['error'] == False:
-            franjas = RutFranja.objects.all()
-            zinc = Zinc()            
-            guias_marcar = []
+        if respuesta['error'] == False:                                   
             guias = respuesta['guias']
-            for guia in guias:                
-                ciudad_id = guia['codigoCiudad']
-                if ciudad_id:
-                    ciudad = GenCiudad.objects.get(pk=ciudad_id)
-                    if ciudad:
-                        direccion_destinatario = guia['direccionDestinatario'] or ""
-                        direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
-                        direccion_destinatario = direccion_destinatario[:150]                                                
-                        fecha = datetime.fromisoformat(guia['fechaIngreso'])  
-                        nombre_destinatario = (guia['nombreDestinatario'][:150] if guia['nombreDestinatario'] is not None and guia['nombreDestinatario'] != "" else None)                                                
-                        documentoCliente = (guia['documentoCliente'][:30] if guia['documentoCliente'] is not None and guia['documentoCliente'] != "" else None)
-                        telefono_destinatario = (guia['telefonoDestinatario'][:50] if guia['telefonoDestinatario'] is not None and guia['telefonoDestinatario'] != "" else None)
-                        data = {
-                            'guia': guia['codigoGuiaPk'],
-                            'fecha':fecha,
-                            'documento': documentoCliente,
-                            'destinatario': nombre_destinatario,
-                            'destinatario_direccion': direccion_destinatario,
-                            'ciudad': ciudad.id,
-                            'destinatario_telefono': telefono_destinatario,
-                            'destinatario_correo': None,
-                            'peso': guia['pesoReal'] or 0,
-                            'volumen': guia['pesoVolumen'] or 0,
-                            'latitud': guia['latitud'] or None,
-                            'longitud': guia['longitud'] or None,
-                            'estado_decodificado': guia['estadoDecodificado'] or None,
-                        }
+            for guia in guias:                                                        
+                direccion_destinatario = f"{guia['direccionDestinatario']}, {guia['ciudadDestinoNombre']}" or ""
+                direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
+                direccion_destinatario = direccion_destinatario[:150]                                                
+                fecha = datetime.fromisoformat(guia['fechaIngreso'])  
+                nombre_destinatario = (guia['nombreDestinatario'][:150] if guia['nombreDestinatario'] is not None and guia['nombreDestinatario'] != "" else None)                                                
+                documentoCliente = (guia['documentoCliente'][:30] if guia['documentoCliente'] is not None and guia['documentoCliente'] != "" else None)
+                telefono_destinatario = (guia['telefonoDestinatario'][:50] if guia['telefonoDestinatario'] is not None and guia['telefonoDestinatario'] != "" else None)
+                data = {
+                    'guia': guia['codigoGuiaPk'],
+                    'fecha':fecha,
+                    'documento': documentoCliente,
+                    'destinatario': nombre_destinatario,
+                    'destinatario_direccion': direccion_destinatario,
+                    'ciudad': None,
+                    'destinatario_telefono': telefono_destinatario,
+                    'destinatario_correo': None,
+                    'peso': guia['pesoReal'] or 0,
+                    'volumen': guia['pesoVolumen'] or 0,
+                    'latitud': None,
+                    'longitud': None,
+                    'tiempo_servicio': 3,
+                    'estado_decodificado': False,
+                    'estado_franja': False,
+                    'franja': None
+                }
 
-                        visitaSerializador = RutVisitaSerializador(data=data)
-                        if visitaSerializador.is_valid():
-                            visita = visitaSerializador.save()
-                            cantidad += 1
-                            if visita.estado_decodificado == None:
-                                codigo_franja = None
-                                if direccion_destinatario:
-                                    datos = {
-                                        "cuenta": "18",
-                                        "modelo": "guia",
-                                        "canal": 3,
-                                        "codigo": visita.id,
-                                        "direccion": direccion_destinatario,
-                                        "ciudad": ciudad.id,
-                                        "decodificarPrincipal": guia['decodificarPrincipal'],                
-                                    }
-                                    respuesta = zinc.decodificar_direccion(datos)
-                                    if respuesta['error'] == False:                     
-                                        datos = respuesta['datos']
-                                        visita.estado_decodificado = datos['decodificado']                                                                                                   
-                                        visita.latitud = datos['latitud']
-                                        visita.longitud = datos['longitud']                                      
-                                        respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
-                                        if respuesta['encontrado']:
-                                            visita.franja_id = respuesta['franja']['id']
-                                            visita.estado_franja = True
-                                            codigo_franja = respuesta['franja']['codigo']
-                                        else:
-                                            visita.estado_franja = False                                                        
-                                        visita.save()
-                                    else:
-                                        return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                                else:
-                                    visita.estado_decodificado = False                                                                                                                       
-                                    visita.save()
-                                datos_guia_marcar = {
-                                    "guia": guia['codigoGuiaPk'],
-                                    "franja": codigo_franja,
-                                    "latitud": visita.latitud,
-                                    "longitud": visita.longitud
-                                }
-                                guias_marcar.append(datos_guia_marcar)                                     
-                            
-                        else:
-                            return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-            if cantidad > 0:
-                parametros = {'guias':guias_marcar}
-                holmio.ruteoMarcar(parametros)
+                                          
+                direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
+                if direccion:    
+                    data['estado_decodificado'] = True            
+                    data['latitud'] = direccion.latitud                        
+                    data['longitud'] = direccion.longitud
+                    data['destinatario_direccion_formato'] = direccion.direccion_formato
+                else:
+                    respuesta = google.decodificar_direccion(data['destinatario_direccion'])
+                    if respuesta['error'] == False:                        
+                        data['estado_decodificado'] = True            
+                        data['latitud'] = respuesta['latitud']
+                        data['longitud'] = respuesta['longitud']
+                        data['destinatario_direccion_formato'] = respuesta['direccion_formato']
+                
+                if data['estado_decodificado'] == True:
+                    respuesta = ubicar_punto(franjas, data['latitud'], data['longitud'])
+                    if respuesta['encontrado']:
+                        data['franja'] = respuesta['franja']['id']
+                        data['estado_franja'] = True
+                    else:
+                        data['estado_franja'] = False
+                visitaSerializador = RutVisitaSerializador(data=data)
+                if visitaSerializador.is_valid():
+                    visitaSerializador.save()
+                    cantidad += 1                                                                                    
+                else:
+                    return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                              
             return Response({'mensaje':f'Se importaron {cantidad} las guias con exito'}, status=status.HTTP_200_OK)
         else:
-            return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)'''
+            return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
     def decodificar(self, request):

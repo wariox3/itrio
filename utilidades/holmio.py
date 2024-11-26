@@ -27,10 +27,10 @@ class Holmio():
         complemento = GenComplemento.objects.get(pk=1)
         if complemento:
             if isinstance(complemento.datos_json, list):
-                    config_dict = {item['nombre']: item['valor'] for item in complemento.datos_json}
-                    url_base = config_dict.get('url')
-                    usuario = config_dict.get('usuario')
-                    clave = config_dict.get('clave')                
+                    propiedades = {item['nombre']: item['valor'] for item in complemento.datos_json}
+                    url_base = propiedades.get('url')
+                    usuario = propiedades.get('usuario')
+                    clave = propiedades.get('clave')                
                     if url_base and usuario and clave:  
                         url_completa = url_base + url    
                         json_data = json.dumps(data)
@@ -40,9 +40,15 @@ class Holmio():
                             data=json_data,
                             headers=headers,
                             auth=HTTPBasicAuth(usuario, clave)
-                        )                        
-                        resp = response.json()
-                        return {'status': response.status_code, 'datos': resp}
+                        )                     
+                        status = response.status_code
+                        if status == 200:
+                            resp = response.json()
+                            return {'status': status, 'datos': resp}
+                        if status == 401:
+                            return {'status': status, 'mensaje':"Error de autorizacion"}  
+                        else:                                                                     
+                            return {'status': status, 'mensaje':"Error no especificado"}                                            
                     else:
                         return {'status': 500, 'mensaje': 'Debe configurar los datos del complemento'}    
                 
