@@ -548,43 +548,56 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         raw = request.data
         id = raw.get('id')
         destinatario_direccion = raw.get('destinatario_direccion')
-        if id and destinatario_direccion:
+        numero = raw.get('numero')
+        documento = raw.get('documento')
+        destinatario = raw.get('destinatario')
+        destinatario_telefono = raw.get('destinatario_telefono')
+        peso = raw.get('peso')
+        volumen = raw.get('volumen')
+        if id and destinatario and destinatario_direccion:
             try:  
                 google = Google()              
-                visita = RutVisita.objects.get(pk=id)                
+                visita = RutVisita.objects.get(pk=id)                                 
                 destinatario_direccion = destinatario_direccion.replace("\t", "").replace("\n", "")
                 destinatario_direccion = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', destinatario_direccion).strip()   
                 destinatario_direccion = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', destinatario_direccion).strip()                 
                 destinatario_direccion = re.sub(r'\s+', ' ', destinatario_direccion.strip())                    
                 destinatario_direccion = destinatario_direccion[:150]
-                visita.estado_decodificado = False
-                visita.estado_decodificado_alerta = False
-                if destinatario_direccion:                   
-                    direccion = CtnDireccion.objects.filter(direccion=destinatario_direccion).first()
-                    if direccion:
-                        visita.estado_decodificado = True            
-                        visita.latitud = direccion.latitud                        
-                        visita.longitud = direccion.longitud
-                        visita.destinatario_direccion_formato = direccion.direccion_formato
-                        if direccion.cantidad_resultados > 1:
-                            visita.estado_decodificado_alerta = True                                
-                    else:
-                        respuesta = google.decodificar_direccion(destinatario_direccion)
-                        if respuesta['error'] == False:   
+                if visita.destinatario_direccion != destinatario_direccion:
+                    visita.estado_decodificado = False
+                    visita.estado_decodificado_alerta = False
+                    if destinatario_direccion:                   
+                        direccion = CtnDireccion.objects.filter(direccion=destinatario_direccion).first()
+                        if direccion:
                             visita.estado_decodificado = True            
-                            visita.latitud = respuesta['latitud']
-                            visita.longitud = respuesta['longitud']
-                            visita.destinatario_direccion_formato = respuesta['direccion_formato']
-                            if respuesta['cantidad_resultados'] > 1:
-                                visita.estado_decodificado_alerta = True                
-                if visita.estado_decodificado == True:
-                    franjas = RutFranja.objects.all()
-                    respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
-                    if respuesta['encontrado']:
-                        visita.franja = respuesta['franja']['id']
-                        visita.estado_franja = True
-                    else:
-                        visita.estado_franja = False                                 
+                            visita.latitud = direccion.latitud                        
+                            visita.longitud = direccion.longitud
+                            visita.destinatario_direccion_formato = direccion.direccion_formato
+                            if direccion.cantidad_resultados > 1:
+                                visita.estado_decodificado_alerta = True                                
+                        else:
+                            respuesta = google.decodificar_direccion(destinatario_direccion)
+                            if respuesta['error'] == False:   
+                                visita.estado_decodificado = True            
+                                visita.latitud = respuesta['latitud']
+                                visita.longitud = respuesta['longitud']
+                                visita.destinatario_direccion_formato = respuesta['direccion_formato']
+                                if respuesta['cantidad_resultados'] > 1:
+                                    visita.estado_decodificado_alerta = True                
+                    if visita.estado_decodificado == True:
+                        franjas = RutFranja.objects.all()
+                        respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
+                        if respuesta['encontrado']:
+                            visita.franja = respuesta['franja']['id']
+                            visita.estado_franja = True
+                        else:
+                            visita.estado_franja = False                                                     
+                visita.numero = numero
+                visita.documento = documento
+                visita.destinatario = destinatario
+                visita.destinatario_telefono = destinatario_telefono
+                visita.peso = peso
+                visita.volumen = volumen
                 visita.save()               
                 return Response({'mensaje': 'Se actualizo la visita'}, status=status.HTTP_200_OK)
             except RutVisita.DoesNotExist:
