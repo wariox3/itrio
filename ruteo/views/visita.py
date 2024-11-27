@@ -129,6 +129,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             data['latitud'] = direccion.latitud                        
                             data['longitud'] = direccion.longitud
                             data['destinatario_direccion_formato'] = direccion.direccion_formato
+                            data['resultados'] = direccion.resultados
                             if direccion.cantidad_resultados > 1:
                                 data['estado_decodificado_alerta'] = True                                
                         else:
@@ -138,6 +139,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 data['latitud'] = respuesta['latitud']
                                 data['longitud'] = respuesta['longitud']
                                 data['destinatario_direccion_formato'] = respuesta['direccion_formato']
+                                data['resultados'] = respuesta['resultados']
                                 if respuesta['cantidad_resultados'] > 1:
                                     data['estado_decodificado_alerta'] = True
                     if data['estado_decodificado'] == True:
