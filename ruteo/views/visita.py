@@ -535,6 +535,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita.latitud = latitud
                 visita.longitud = longitud
                 visita.destinatario_direccion_formato = destinatario_direccion_formato
+                visita.estado_decodificado_alerta = False
                 visita.save()               
                 return Response({'mensaje': 'Se actualizo la visita'}, status=status.HTTP_200_OK)
             except RutVisita.DoesNotExist:
