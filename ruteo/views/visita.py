@@ -574,6 +574,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             visita.latitud = direccion.latitud                        
                             visita.longitud = direccion.longitud
                             visita.destinatario_direccion_formato = direccion.direccion_formato
+                            visita.resultados = direccion.resultados
                             if direccion.cantidad_resultados > 1:
                                 visita.estado_decodificado_alerta = True                                
                         else:
@@ -583,13 +584,14 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 visita.latitud = respuesta['latitud']
                                 visita.longitud = respuesta['longitud']
                                 visita.destinatario_direccion_formato = respuesta['direccion_formato']
+                                visita.resultados = respuesta['resultados']
                                 if respuesta['cantidad_resultados'] > 1:
                                     visita.estado_decodificado_alerta = True                
                     if visita.estado_decodificado == True:
                         franjas = RutFranja.objects.all()
                         respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
                         if respuesta['encontrado']:
-                            visita.franja = respuesta['franja']['id']
+                            visita.franja_id = respuesta['franja']['id']
                             visita.estado_franja = True
                         else:
                             visita.estado_franja = False                                                     
