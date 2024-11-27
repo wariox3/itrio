@@ -192,6 +192,8 @@ class CtnDireccion(models.Model):
     latitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     cantidad_resultados = models.IntegerField(default=0)
+    resultados = models.JSONField(null=True, blank=True)
     ciudad = models.ForeignKey(CtnCiudad, on_delete=models.PROTECT, null=True)
+    
     class Meta:
         db_table = "cnt_direccion"        
