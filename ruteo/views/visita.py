@@ -527,10 +527,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita = RutVisita.objects.get(pk=id)
                 franjas = RutFranja.objects.all()
                 respuesta = ubicar_punto(franjas, latitud, longitud)
-                if respuesta['encontrado']:
-                    visita.franja = respuesta['franja']['id']
+                if respuesta['encontrado']:                    
+                    visita.franja_id = respuesta['franja']['id']
                     visita.estado_franja = True
                 else:
+                    visita.franja_id = None
                     visita.estado_franja = False 
                 visita.latitud = latitud
                 visita.longitud = longitud
@@ -594,6 +595,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             visita.franja_id = respuesta['franja']['id']
                             visita.estado_franja = True
                         else:
+                            visita.franja_id = None
                             visita.estado_franja = False                                                     
                 visita.numero = numero
                 visita.documento = documento
