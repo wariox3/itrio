@@ -3,6 +3,7 @@ from contabilidad.models.movimiento import ConMovimiento
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.periodo import ConPeriodo
 from contabilidad.models.comprobante import ConComprobante
+from contabilidad.models.grupo import ConGrupo
 from general.models.contacto import GenContacto
 from general.models.documento import GenDocumento
 
@@ -11,11 +12,12 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all())
     periodo = serializers.PrimaryKeyRelatedField(queryset=ConPeriodo.objects.all())
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
-    documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)
+    documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)        
+    grupo = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), allow_null=True)
 
     class Meta:
         model = ConMovimiento
-        fields = ['id', 'numero', 'fecha', 'debito', 'credito', 'base', 'naturaleza', 'cuenta', 'comprobante', 'contacto', 'documento', 'periodo']
+        fields = ['id', 'numero', 'fecha', 'debito', 'credito', 'base', 'naturaleza', 'cuenta', 'comprobante', 'contacto', 'documento', 'periodo', 'grupo']
 
     def to_representation(self, instance):
         cuenta_codigo = ''

@@ -14,6 +14,7 @@ from django.db.models import F,Sum
 import base64
 import openpyxl
 import json
+import gc
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ConMovimiento.objects.all()
@@ -40,151 +41,66 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 data = {
                     'numero': row[0],
-                    'fecha':row[1],
+                    'fecha': None,
                     'debito': row[2] if row[2] is not None else 0,
                     'credito': row[3] if row[3] is not None else 0,
                     'base': row[4] if row[4] is not None else 0, 
-                    'naturaleza': row[5],
-                    'comprobante': row[6],
-                    'cuenta': row[7],
-                    'grupo': row[8],
-                    'numero_identificacion': row[9],
-                    'detalle': row[10],
+                    'naturaleza': None,
+                    'comprobante': row[5],
+                    'cuenta': row[6],
+                    'grupo': row[7],
+                    'contacto': row[8],
+                    'detalle': row[9],
+                    'periodo': None,
+                    'documento': None
                 }  
 
-                if not data['fecha']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar fecha'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    periodo_id = data['fecha'][:6]   
-                    periodo = ConPeriodo.objects.filter(id=periodo_id).first()
-                    if not periodo:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El periodo {periodo_id} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['periodo_id'] = periodo_id
+                if row[1]:
+                    fecha = row[1]        
+                    data['periodo'] = fecha[:6]
+                    fecha_valida = datetime.strptime(fecha, "%Y%m%d").date()
+                    data['fecha'] = fecha_valida                 
 
-
-                if not data['naturaleza']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar la naturaleza'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    if data['naturaleza'] not in ['D', 'C']:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': 'Los valores validos son D o C'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True                    
-
-                if not data['comprobante']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el codigo de comprobante'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True  
-                else:
-                    comprobante = ConComprobante.objects.filter(codigo=data['comprobante']).first()
-                    if comprobante is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El comprobante con codigo {data["comprobante"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['comprobante_id'] = comprobante.id 
-
-                if not data['cuenta']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el codigo de cuenta'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True  
-                else:
+                if data['cuenta']:
                     cuenta = ConCuenta.objects.filter(codigo=data['cuenta']).first()
-                    if cuenta is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'La cuenta con codigo {data["cuenta"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['cuenta_id'] = cuenta.id 
+                    if cuenta:
+                        data['cuenta'] = cuenta.id 
 
                 if data['grupo']:
                     grupo = ConGrupo.objects.filter(codigo=data['grupo']).first()
-                    if grupo is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El grupo con codigo {data["grupo"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['grupo_id'] = grupo.id 
-                else:
-                    data['grupo_id'] = None
+                    if grupo:
+                        data['grupo'] = grupo.id                         
 
-                if data['numero_identificacion']:
-                    contacto = GenContacto.objects.filter(numero_identificacion=data['numero_identificacion']).first()
-                    if contacto is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El contacto con numero identificacion {data["numero_identificacion"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['contacto_id'] = contacto.id
-                else:
-                    data['contacto_id'] = None
+                if data['contacto']:
+                    contacto = GenContacto.objects.filter(numero_identificacion=data['contacto']).first()
+                    if contacto:
+                        data['contacto'] = contacto.id                        
+                
+                naturaleza = 'D'
+                if data['credito'] > 0:
+                    naturaleza = 'C'
+                data['naturaleza'] = naturaleza
 
-                if data['detalle']:
-                    if len(data['detalle']) > 150:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El maximo numero de caracteres del detalle puede ser de 150'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                data_modelo.append(data)
-            if errores == False:
-                for detalle in data_modelo:
-                    fecha_formateada = datetime.strptime(detalle['fecha'], "%Y%m%d").strftime("%Y-%m-%d")
-                    ConMovimiento.objects.create(
-                        numero=detalle['numero'],
-                        fecha=fecha_formateada,
-                        debito=detalle['debito'],
-                        credito=detalle['credito'],
-                        base=detalle['base'],
-                        naturaleza=detalle['naturaleza'],
-                        detalle=detalle['detalle'],
-                        comprobante_id=detalle['comprobante_id'],
-                        cuenta_id=detalle['cuenta_id'],
-                        grupo_id=detalle['grupo_id'],
-                        contacto_id=detalle['contacto_id'],
-                        periodo_id=detalle['periodo_id']
-                    )
+                serializer = ConMovimientoSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
                     registros_importados += 1
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)
+
+            if not errores:
+                for detalle in data_modelo:
+                    ConMovimiento.objects.create(**detalle)
+                gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                          
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
