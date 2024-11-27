@@ -564,6 +564,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 destinatario_direccion = re.sub(r'\s+', ' ', destinatario_direccion.strip())                    
                 destinatario_direccion = destinatario_direccion[:150]
                 if visita.destinatario_direccion != destinatario_direccion:
+                    visita.destinatario_direccion = destinatario_direccion
                     visita.estado_decodificado = False
                     visita.estado_decodificado_alerta = False
                     if destinatario_direccion:                   
