@@ -5,5 +5,12 @@
         "fields": {
             "nombre": "QUINCENAL", "codigo":"QUI", "dias":15
         }
-    }
+    },
+    {
+        "model": "humano.HumPeriodo",
+        "pk": 2,
+        "fields": {
+            "nombre": "MENSUAL", "codigo":"MEN", "dias":30
+        }
+    }    
 ]
