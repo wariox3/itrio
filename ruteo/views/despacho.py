@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from ruteo.models.despacho import RutDespacho
+from ruteo.models.visita import RutVisita
 from ruteo.serializers.despacho import RutDespachoSerializador
 
 def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
@@ -21,16 +22,11 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
     serializer_class = RutDespachoSerializador
     permission_classes = [permissions.IsAuthenticated]      
 
-
-    @action(detail=False, methods=["post"], url_path=r'lista',)
-    def lista(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        ordenamientos = raw.get('ordenamientos', [])            
-        filtros = raw.get('filtros', [])                   
-        respuesta = listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = RutDespachoSerializador(respuesta['despachos'], many=True)
-        visitas = serializador.data
-        return Response(visitas, status=status.HTTP_200_OK)               
+    def destroy(self, request, *args, **kwargs):        
+        instance = self.get_object()
+        if instance.estado_aprobado:
+                return Response({'mensaje': 'No se puede eliminar un despacho aprobado.'}, status=status.HTTP_400_BAD_REQUEST)        
+        RutVisita.objects.filter(despacho_id=instance.id).update(despacho=None, estado_despacho=False)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)    
+             

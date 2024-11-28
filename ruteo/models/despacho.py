@@ -6,6 +6,7 @@ class RutDespacho(models.Model):
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)
     visitas = models.FloatField(default=0)
+    estado_aprobado = models.BooleanField(default = False)
     vehiculo = models.ForeignKey(RutVehiculo, null=True, on_delete=models.PROTECT, related_name='despachos_vehiculo_rel')
 
     class Meta:

@@ -511,12 +511,15 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     asignado = False
                     peso_total = 0
                     while vehiculo_indice + 1 <= cantidad_vehiculos and asignado == False:                         
-                        vehiculo_indice += 1
-                        vehiculo = flota[vehiculo_indice].vehiculo
-                        if peso_total + visita.peso <= vehiculo.capacidad:                             
-                            crear_despacho = True
+                        vehiculo_indice += 1                        
+                        if vehiculo_indice >= cantidad_vehiculos:
                             asignado = True
-                    if vehiculo_indice + 1 > cantidad_vehiculos:
+                        else: 
+                            vehiculo = flota[vehiculo_indice].vehiculo
+                            if peso_total + visita.peso <= vehiculo.capacidad:                             
+                                crear_despacho = True
+                                asignado = True
+                    if vehiculo_indice >= cantidad_vehiculos:
                         break
                 
                 if crear_despacho:
