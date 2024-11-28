@@ -544,7 +544,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         raw = request.data
         cantidad = 0
         franjas = RutFranja.objects.all()
-        visitas = RutVisita.objects.filter(estado_franja = None)
+        visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
         for visita in visitas:
             respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
             if respuesta['encontrado']:
