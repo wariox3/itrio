@@ -18,12 +18,13 @@ from utilidades.zinc import Zinc
 from utilidades.holmio import Holmio
 from utilidades.google import Google
 from shapely.geometry import Point, Polygon
-from math import radians, cos, sin, asin, sqrt
+from math import radians, cos, sin, asin, sqrt, atan2
 from django.db.models import Sum, F, Count
 from django.db.models.functions import Coalesce
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 import re
 import gc
+import numpy as np
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
@@ -61,6 +62,28 @@ def ubicar_punto(franjas, latitud, longitud):
         if poligono.contains(punto):
             return {'encontrado': True, 'franja': {'id':franja.id, 'codigo':franja.codigo}}
     return {'encontrado': False }
+
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371.0  # Radio de la Tierra en kilómetros
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return R * c  # Retorna la distancia en kilómetros
+
+def construir_matriz_distancias(visitas, punto_inicial):
+    n = len(visitas)
+    matriz = np.zeros((n + 1, n + 1))  # +1 para incluir el punto de partida
+    puntos = [(punto_inicial['latitud'], punto_inicial['longitud'])] + [(v['latitud'], v['longitud']) for v in visitas]
+
+    for i in range(n + 1):
+        for j in range(n + 1):
+            matriz[i][j] = haversine(puntos[i][0], puntos[i][1], puntos[j][0], puntos[j][1])
+    
+    return matriz
 
 class RutVisitaViewSet(viewsets.ModelViewSet):
     queryset = RutVisita.objects.all()
@@ -331,6 +354,58 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):        
+        visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
+        if visitas.exists():
+            cantidad_visitas = len(visitas)   
+            punto_inicial = (6.200479, -75.586350)     
+            punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
+
+            matriz = construir_matriz_distancias(visitas, punto_inicial)
+            n = len(visitas)
+            
+            # Crear el gestor de datos
+            manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)  # 1 vehículo, nodo inicial en 0
+            routing = pywrapcp.RoutingModel(manager)
+            
+            # Función de costo
+            def distancia_callback(from_index, to_index):
+                from_node = manager.IndexToNode(from_index)
+                to_node = manager.IndexToNode(to_index)
+                return int(matriz[from_node][to_node] * 1000)  # Multiplicado por 1000 para evitar decimales
+            
+            transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
+            routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+            
+            # Parámetros de búsqueda
+            search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+            search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+            
+            # Resolver
+            solution = routing.SolveWithParameters(search_parameters)
+            
+            if not solution:
+                return None
+
+            # Extraer el orden óptimo
+            index = routing.Start(0)
+            orden = []
+            while not routing.IsEnd(index):
+                node = manager.IndexToNode(index)
+                if node != 0:  # Ignorar el punto de partida
+                    orden.append(node - 1)  # Ajustar índice
+                index = solution.Value(routing.NextVar(index))
+
+            # Actualizar la base de datos con el orden calculado
+            for idx, visita_idx in enumerate(orden):
+                visita_id = visitas[visita_idx]['id']
+                RutVisita.objects.filter(id=visita_id).update(orden=idx + 1)
+
+            return Response({'mensaje':'visitas ordenadas', 'orden': orden}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
+
+    @action(detail=False, methods=["post"], url_path=r'ordenar2',)
+    def ordenar2(self, request):        
         visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
         if visitas.exists():
             num_locations = len(visitas)
