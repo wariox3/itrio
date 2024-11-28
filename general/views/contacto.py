@@ -119,9 +119,14 @@ class ContactoViewSet(viewsets.ModelViewSet):
                     'empleado':row[16],
                     'plazo_pago':row[17],
                     'plazo_pago_proveedor':row[18],
-                }  
-            
-                serializer = GenContacto(data=data)
+                }                   
+                if data['identificacion'] == 6:
+                    data['regimen'] = 1
+                    data['tipo_persona'] = 1
+                else:
+                    data['regimen'] = 2
+                    data['tipo_persona'] = 2
+                serializer = GenContactoSerializador(data=data)
                 if serializer.is_valid():
                     data_modelo.append(serializer.validated_data)
                     registros_importados += 1
