@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from io import BytesIO
 import base64
 import openpyxl
+import gc
 
 class ContactoViewSet(viewsets.ModelViewSet):
     queryset = GenContacto.objects.all()
@@ -119,221 +120,26 @@ class ContactoViewSet(viewsets.ModelViewSet):
                     'plazo_pago':row[17],
                     'plazo_pago_proveedor':row[18],
                 }  
-                if not data['numero_identificacion']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar un numero_identificacion'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    contacto = GenContacto.objects.filter(numero_identificacion=data['numero_identificacion']).first()
-                    if contacto:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El contacto con numero de identificacion {data["numero_identificacion"]} ya existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-
-                if not data['nombre_corto']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar un nombre o razon social'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['direccion']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar una direccion'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['telefono']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar un telefono'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['correo']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar un correo'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['identificacion']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el tipo de identificacion'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True  
-                else:
-                    identificacion = GenIdentificacion.objects.filter(codigo=data['identificacion']).first()
-                    if identificacion is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'La identificacion con codigo {data["identificacion"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['identificacion_id'] = identificacion.id 
-                        if data['identificacion_id'] == 6:
-                            data['regimen_id'] = 1
-                            data['tipo_persona_id'] = 1
-                        else:
-                            data['regimen_id'] = 2
-                            data['tipo_persona_id'] = 2
-
-                if not data['ciudad']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar la ciudad'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True  
-                else:
-                    ciudad = GenCiudad.objects.filter(id=data['ciudad']).first()
-                    if ciudad is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'La ciudad con codigo {data["ciudad"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['ciudad_id'] = ciudad.id
-
-                if not data['cliente']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar si el contacto es cliente'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    if data['cliente'] in ['SI', 'NO']:
-                        data['cliente'] = data['cliente'] == 'SI'
-                    else:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': 'Los valores validos son SI o NO'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-
-                if not data['proveedor']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar si el contacto es proveedor'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    if data['proveedor'] in ['SI', 'NO']:
-                        data['proveedor'] = data['proveedor'] == 'SI'
-                    else:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': 'Los valores validos son SI o NO'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-
-                if not data['empleado']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar si el contacto es empleado'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-                else:
-                    if data['empleado'] in ['SI', 'NO']:
-                        data['empleado'] = data['empleado'] == 'SI'
-                    else:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': 'Los valores validos son SI o NO'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-
-                if not data['plazo_pago']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el plazo de pago cliente'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True  
-                else:
-                    plazo_pago = GenPlazoPago.objects.filter(id=data['plazo_pago']).first()
-                    if plazo_pago is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El plazo de pago cliente con codigo {data["plazo_pago"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['plazo_pago_id'] = plazo_pago.id
-
-                if not data['plazo_pago_proveedor']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar el plazo de pago proveedor'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True  
-                else:
-                    plazo_pago_proveedor = GenPlazoPago.objects.filter(id=data['plazo_pago_proveedor']).first()
-                    if plazo_pago_proveedor is None:
-                        error_dato = {
-                            'fila': i,
-                            'Mensaje': f'El plazo de pago proveedor con codigo {data["plazo_pago_proveedor"]} no existe'
-                        }
-                        errores_datos.append(error_dato)
-                        errores = True
-                    else:
-                        data['plazo_pago_proveedor_id'] = plazo_pago_proveedor.id
-
-                data_modelo.append(data)
-            if errores == False:
-                for detalle in data_modelo:
-                    GenContacto.objects.create(
-                        numero_identificacion=detalle['numero_identificacion'],                        
-                        identificacion_id=detalle['identificacion_id'],
-                        nombre_corto=detalle['nombre_corto'],
-                        nombre1=detalle['nombre1'],
-                        nombre2=detalle['nombre2'],
-                        apellido1=detalle['apellido1'],
-                        apellido2=detalle['apellido2'],
-                        direccion=detalle['direccion'],
-                        barrio=detalle['barrio'],
-                        codigo_postal=detalle['codigo_postal'],
-                        ciudad_id=detalle['ciudad_id'],
-                        telefono=detalle['telefono'],
-                        celular=detalle['celular'],
-                        correo=detalle['correo'],
-                        cliente=detalle['cliente'],
-                        proveedor=detalle['proveedor'],
-                        empleado=detalle['empleado'],
-                        plazo_pago_id=detalle['plazo_pago_id'],
-                        plazo_pago_proveedor_id=detalle['plazo_pago_proveedor_id'],
-                        regimen_id=detalle['regimen_id'],
-                        tipo_persona_id=detalle['tipo_persona_id'],
-                    )
+            
+                serializer = GenContacto(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
                     registros_importados += 1
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)                    
+            if not errores:
+                for detalle in data_modelo:
+                    GenContacto.objects.create(**detalle)
+                gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
