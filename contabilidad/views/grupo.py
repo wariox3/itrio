@@ -6,6 +6,7 @@ from contabilidad.serializers.grupo import ConGrupoSerializador
 from io import BytesIO
 import base64
 import openpyxl
+import gc
 
 class GrupoViewSet(viewsets.ModelViewSet):
     queryset = ConGrupo.objects.all()
@@ -34,32 +35,25 @@ class GrupoViewSet(viewsets.ModelViewSet):
                     'codigo': row[0],
                     'nombre':row[1],
                 }  
-                if not data['codigo']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar un codigo'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
 
-                if not data['nombre']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar nombre'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True 
-
-                data_modelo.append(data)
-            if errores == False:
-                for detalle in data_modelo:
-                    ConGrupo.objects.create(
-                        codigo=detalle['codigo'],
-                        nombre=detalle['nombre']                    
-                    )
+                serializer = ConGrupoSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
                     registros_importados += 1
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)
+            if not errores:
+                for detalle in data_modelo:
+                    ConGrupo.objects.create(**detalle)
+                gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
