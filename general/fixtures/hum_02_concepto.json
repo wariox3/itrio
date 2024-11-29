@@ -312,7 +312,7 @@
         "pk": 23,
         "fields": {
             "nombre": "Incapacidad enfermedad general (empresa)", 
-            "porcentaje": 100,
+            "porcentaje": 66.67,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
