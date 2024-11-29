@@ -326,7 +326,7 @@
         "pk": 24,
         "fields": {
             "nombre": "Incapacidad enfermedad laboral", 
-            "porcentaje": 66.67,
+            "porcentaje": 100,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
@@ -424,7 +424,7 @@
         "pk": 31,
         "fields": {
             "nombre": "Incapacidad enfermedad general (entidad)", 
-            "porcentaje": 100,
+            "porcentaje": 66.67,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
             "adicional":false,
