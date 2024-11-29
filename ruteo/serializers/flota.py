@@ -26,13 +26,25 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):      
         vehiculo_placa = ""
         vehiculo_capacidad = ""
+        vehiculo_franja_id = ""
+        vehiculo_franja_nombre = ""
+        vehiculo_franja_codigo = ""
         if instance.vehiculo:
             vehiculo_placa = instance.vehiculo.placa
             vehiculo_capacidad = instance.vehiculo.capacidad
+            vehiculo_franja_id = instance.vehiculo.franja_id
+            if instance.vehiculo.franja:
+                vehiculo_franja_codigo = instance.vehiculo.franja.codigo
+                vehiculo_franja_nombre = instance.vehiculo.franja.nombre
+
+
         return {
             'id': instance.id,  
             'vehiculo_id': instance.vehiculo_id,
             'vehiculo_placa': vehiculo_placa,
-            'vehiculo_capacidad': vehiculo_capacidad
+            'vehiculo_capacidad': vehiculo_capacidad,
+            'vehiculo_franja_id': vehiculo_franja_id,
+            'vehiculo_franja_codigo': vehiculo_franja_codigo,
+            'vehiculo_franja_nombre': vehiculo_franja_nombre
         }
     
