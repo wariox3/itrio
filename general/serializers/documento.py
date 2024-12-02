@@ -349,18 +349,19 @@ class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
         contacto_nombre_corto = None
         if contacto:
             contacto_nombre_corto = contacto.nombre_corto
+        documento_tipo_nombre = ""
         documento_tipo_cuenta_cobrar_id = ""
         documento_tipo_cuenta_cobrar_cuenta_codigo = ""
         documento_tipo_cuenta_pagar_id = ""
-        documento_tipo_cuenta_pagar_cuenta_codigo = ""        
-        documento_tipo = instance.documento_tipo
-        if documento_tipo:
-            documento_tipo_cuenta_cobrar_id = documento_tipo.cuenta_cobrar_id
-            cuenta_cobrar = documento_tipo.cuenta_cobrar
+        documento_tipo_cuenta_pagar_cuenta_codigo = ""                 
+        if instance.documento_tipo:
+            documento_tipo_cuenta_cobrar_id = instance.documento_tipo.cuenta_cobrar_id
+            cuenta_cobrar = instance.documento_tipo.cuenta_cobrar
+            documento_tipo_nombre = instance.nombre
             if cuenta_cobrar:
                 documento_tipo_cuenta_cobrar_cuenta_codigo = cuenta_cobrar.codigo
-            documento_tipo_cuenta_pagar_id = documento_tipo.cuenta_pagar_id
-            cuenta_pagar = documento_tipo.cuenta_pagar
+            documento_tipo_cuenta_pagar_id = instance.documento_tipo.cuenta_pagar_id
+            cuenta_pagar = instance.documento_tipo.cuenta_pagar
             if cuenta_pagar:
                 documento_tipo_cuenta_pagar_cuenta_codigo = cuenta_pagar.codigo                
         return {
@@ -378,7 +379,8 @@ class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
             'pendiente':instance.pendiente,
             'estado_aprobado' : instance.estado_aprobado,
             'contacto' : instance.contacto_id,            
-            'documento_tipo': instance.documento_tipo_id,        
+            'documento_tipo': instance.documento_tipo_id,      
+            'documento_tipo_nombre': documento_tipo_nombre,  
             'documento_tipo_cuenta_cobrar_id': documento_tipo_cuenta_cobrar_id,
             'documento_tipo_cuenta_cobrar_cuenta_codigo':documento_tipo_cuenta_cobrar_cuenta_codigo,
             'documento_tipo_cuenta_pagar_id': documento_tipo_cuenta_pagar_id,

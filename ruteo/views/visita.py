@@ -553,16 +553,19 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         raw = request.data
         filtros = raw.get('filtros')
         visitas = RutVisita.objects.all()
+        errores = RutVisita.objects.filter(estado_decodificado=False)
+        alertas = RutVisita.objects.filter(estado_decodificado_alerta=True)
         if filtros:
             for filtro in filtros:
                 visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
+                errores = errores.filter(**{filtro['propiedad']: filtro['valor1']})
+                alertas = alertas.filter(**{filtro['propiedad']: filtro['valor1']})
         visitas = visitas.aggregate(
             cantidad=Count('id'), 
-            peso=Coalesce(Sum('peso'), 0.0)
-            )     
-        errores = RutVisita.objects.filter(estado_despacho = False, estado_decodificado=False).aggregate(
-            cantidad=Count('id'))
-        alertas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado_alerta=True).aggregate(
+            peso=Coalesce(Sum('peso'), 0.0))    
+        errores = errores.aggregate(
+            cantidad=Count('id'))        
+        alertas = alertas.aggregate(
             cantidad=Count('id'))        
         return Response({'resumen': visitas, 'errores': errores, 'alertas':alertas}, status=status.HTTP_200_OK)   
 
