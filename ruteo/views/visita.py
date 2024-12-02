@@ -585,6 +585,19 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             cantidad=Count('id'))        
         return Response({'resumen': visitas, 'errores': errores, 'alertas':alertas}, status=status.HTTP_200_OK)   
 
+    @action(detail=False, methods=["post"], url_path=r'resumen-pendiente',)
+    def resumen_pendiente(self, request):
+        raw = request.data
+        filtros = raw.get('filtros')
+        visitas = RutVisita.objects.all()
+        if filtros:
+            for filtro in filtros:
+                visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
+        visitas = visitas.values('franja_id','franja__nombre').annotate(
+            cantidad=Count('id'), 
+            peso=Coalesce(Sum('peso'), 0.0))    
+        return Response({'resumen': visitas}, status=status.HTTP_200_OK) 
+
     @action(detail=False, methods=["post"], url_path=r'seleccionar-direccion-alternativa',)
     def seleccionar_direccion_alternativa(self, request):             
         raw = request.data
