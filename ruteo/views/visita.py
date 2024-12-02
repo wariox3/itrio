@@ -90,6 +90,20 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     serializer_class = RutVisitaSerializador
     permission_classes = [permissions.IsAuthenticated]
 
+    def destroy(self, request, *args, **kwargs):        
+        visita = self.get_object()
+        if visita.despacho_id:
+                despacho = RutDespacho.objects.get(pk=visita.despacho_id)                
+                if despacho.estado_aprobado == True:
+                    return Response({'mensaje': 'No se puede eliminar la visita porque el despacho esta aprobado.'}, status=status.HTTP_400_BAD_REQUEST)        
+                else:
+                    despacho.peso = despacho.peso - visita.peso
+                    despacho.volumen = despacho.volumen - visita.volumen
+                    despacho.visitas -= 1
+                    despacho.save()        
+        self.perform_destroy(visita)
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
     @action(detail=False, methods=["post"], url_path=r'importar-excel',)
     def importar_excel(self, request):
         raw = request.data
@@ -494,11 +508,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     despacho.fecha = timezone.now()
                     despacho.vehiculo = vehiculo
                     despacho.peso = despacho.peso + visita.peso
+                    despacho.volumen = despacho.volumen + visita.volumen
                     despacho.visitas = despacho.visitas + 1
                     despacho.save()
                     crear_despacho = False
                 else:
                     despacho.peso = despacho.peso + visita.peso
+                    despacho.volumen = despacho.volumen + visita.volumen
                     despacho.visitas = despacho.visitas + 1
                     despacho.save()        
                 peso_total += visita.peso
@@ -662,4 +678,28 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             except RutVisita.DoesNotExist:
                 return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                           
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+
+    @action(detail=False, methods=["post"], url_path=r'despacho-retirar',)
+    def despacho_retirar(self, request):             
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:                               
+                visita = RutVisita.objects.get(pk=id) 
+                despacho = RutDespacho.objects.get(pk=visita.despacho_id)
+                if despacho.estado_aprobado == True:
+                    return Response({'mensaje': 'No se puede retirar la visita porque el despacho esta aprobado.'}, status=status.HTTP_400_BAD_REQUEST)        
+                else:
+                    despacho.peso = despacho.peso - visita.peso
+                    despacho.volumen = despacho.volumen - visita.volumen
+                    despacho.visitas -= 1
+                    despacho.save()                 
+                    visita.despacho = None
+                    visita.estado_despacho = False
+                    visita.save()               
+                    return Response({'mensaje': 'Se retiro la visita del despacho'}, status=status.HTTP_200_OK)
+            except RutVisita.DoesNotExist:
+                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                               
