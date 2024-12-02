@@ -71,7 +71,10 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             comprobante_nombre = instance.comprobante.nombre       
         grupo_contabilidad_nombre = ""
         if instance.grupo_contabilidad:
-            grupo_contabilidad_nombre = instance.grupo_contabilidad.nombre                         
+            grupo_contabilidad_nombre = instance.grupo_contabilidad.nombre   
+        documento_tipo_nombre = ""
+        if instance.documento_tipo:
+            documento_tipo_nombre = instance.documento_tipo.nombre
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -99,6 +102,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'contacto_numero_identificacion': contacto_numero_identificacion,
             'contacto_nombre_corto': contacto_nombre_corto,
             'documento_tipo_id': instance.documento_tipo_id,
+            'documento_tipo_nombre': documento_tipo_nombre,
             'metodo_pago': instance.metodo_pago_id,        
             'estado_anulado' : instance.estado_anulado,
             'comentario' : instance.comentario,
