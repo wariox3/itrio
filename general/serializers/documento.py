@@ -357,7 +357,7 @@ class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
         if instance.documento_tipo:
             documento_tipo_cuenta_cobrar_id = instance.documento_tipo.cuenta_cobrar_id
             cuenta_cobrar = instance.documento_tipo.cuenta_cobrar
-            documento_tipo_nombre = instance.nombre
+            documento_tipo_nombre = instance.documento_tipo.nombre
             if cuenta_cobrar:
                 documento_tipo_cuenta_cobrar_cuenta_codigo = cuenta_cobrar.codigo
             documento_tipo_cuenta_pagar_id = instance.documento_tipo.cuenta_pagar_id
