@@ -593,7 +593,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if filtros:
             for filtro in filtros:
                 visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
-        visitas = visitas.values('franja_id','franja__nombre').annotate(
+        visitas = visitas.values('franja_id','franja__nombre', 'franja__color').annotate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0))    
         return Response({'resumen': visitas}, status=status.HTTP_200_OK) 
