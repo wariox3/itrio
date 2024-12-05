@@ -715,4 +715,38 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             except RutVisita.DoesNotExist:
                 return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                               
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
+
+    @action(detail=False, methods=["post"], url_path=r'despacho-cambiar',)
+    def despacho_cambiar(self, request):             
+        raw = request.data
+        id = raw.get('id')
+        despacho_id = raw.get('despacho_id')
+        if id and despacho_id:
+            try:                               
+                visita = RutVisita.objects.get(pk=id) 
+                try:
+                    despacho_nuevo = RutDespacho.objects.get(pk=despacho_id)
+                    if visita.despacho_id:                                                
+                        despacho_actual = RutDespacho.objects.get(pk=visita.despacho_id)
+                        despacho_actual.peso = despacho_actual.peso - visita.peso
+                        despacho_actual.volumen = despacho_actual.volumen - visita.volumen
+                        despacho_actual.visitas -= 1
+                        despacho_actual.save()
+
+                        despacho_nuevo.peso = despacho_nuevo.peso + visita.peso
+                        despacho_nuevo.volumen = despacho_nuevo.volumen + visita.volumen
+                        despacho_nuevo.visitas += 1
+                        despacho_nuevo.save()
+
+                        visita.despacho = despacho_nuevo
+                        visita.save() 
+                        return Response({'mensaje': 'Se cambio la visita de despacho'}, status=status.HTTP_200_OK)                        
+                    else:
+                        return Response({'mensaje':'La visita no tiene despacho', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                            
+                except RutDespacho.DoesNotExist:
+                    return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+            except RutVisita.DoesNotExist:
+                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                                    
