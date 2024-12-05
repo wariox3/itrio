@@ -53,6 +53,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'franja_id': instance.franja_id,
             'franja_codigo': franja_codigo,
             'franja_nombre': franja_nombre,
+            'despacho_id': instance.despacho_id,
             'resultados': instance.resultados
         }
 
