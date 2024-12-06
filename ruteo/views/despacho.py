@@ -68,21 +68,26 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
         if id:
             try:                
                 despacho = RutDespacho.objects.get(pk=id)    
-                visitas = RutVisita.objects.filter(despacho_id=id).values('numero')                
+                visitas = RutVisita.objects.filter(despacho_id=id).values('numero').order_by('orden')                
                 field_names = list(visitas[0].keys()) if visitas else []
+                field_names.append('orden')
+                orden = 0
                 wb = Workbook()
                 ws = wb.active
                 ws.append(field_names)
-                for row in visitas:                    
+                for row in visitas:
+                    orden += 1                    
                     row_data = []
-                    for field in field_names:
+                    # -1 para que no tome orden
+                    for field in field_names[:-1]:
                         value = row.get(field)
                         if value is None:
                             row_data.append("")
                         elif isinstance(value, datetime) and value.tzinfo is not None:
                             row_data.append(value.replace(tzinfo=None))
                         else:
-                            row_data.append(value)
+                            row_data.append(value) 
+                    row_data.append(orden)                       
                     ws.append(row_data)
                 estilos_excel = WorkbookEstilos(wb)
                 estilos_excel.aplicar_estilos()         
