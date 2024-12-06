@@ -22,6 +22,7 @@ class RutVisita(models.Model):
     estado_decodificado_alerta = models.BooleanField(default = False)
     estado_franja = models.BooleanField(null=True, default=None)
     estado_despacho = models.BooleanField(default = False)
+    estado_entregado = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)
     distancia_proxima = models.DecimalField(max_digits=9, decimal_places=6, null=True, default=0)
     resultados = models.JSONField(null=True, blank=True)

@@ -5,7 +5,7 @@ from ruteo.models.despacho import RutDespacho
 class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = RutDespacho
-        fields = ['id', 'peso', 'volumen', 'visitas', 'vehiculo', 'estado_aprobado']
+        fields = ['id', 'peso', 'volumen', 'visitas', 'visitas_entregadas', 'vehiculo', 'estado_aprobado', 'estado_terminado']
 
     def to_representation(self, instance):      
         vehiculo_placa = ""
@@ -17,8 +17,10 @@ class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):
             'peso': instance.peso,
             'volumen': instance.volumen,
             'visitas': instance.visitas,
+            'visitas_entregadas': instance.visitas_entregadas,
             'vehiculo_id': instance.vehiculo_id,
             'vehiculo_placa': vehiculo_placa,
-            'estado_aprobado': instance.estado_aprobado
+            'estado_aprobado': instance.estado_aprobado,
+            'estado_terminado': instance.estado_terminado
         }
     
