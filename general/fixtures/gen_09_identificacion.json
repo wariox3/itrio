@@ -37,11 +37,11 @@
   {
     "model": "general.GenIdentificacion",
     "pk": 8,
-    "fields": {"nombre": "Tipo de documento extranjero", "pais": "CO", "codigo":"42", "orden":8, "abreviatura":"TDE"}
+    "fields": {"nombre": "Documento de identificación extranjero", "pais": "CO", "codigo":"42", "orden":8, "abreviatura":"TDE"}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 9,
-    "fields": {"nombre": "Sin identificación del exterior", "pais": "CO", "codigo":"43", "orden":9, "abreviatura":"SI"}
+    "fields": {"nombre": "NIT de otro país", "pais": "CO", "codigo":"50", "orden":9, "abreviatura":"SI"}
   }
 ]
