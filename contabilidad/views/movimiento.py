@@ -115,8 +115,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         c.cuenta_grupo_id,
                         c.cuenta_cuenta_id,
                         c.nivel,
-                        COALESCE(SUM(CASE WHEN m.periodo_id < 202409 THEN m.debito ELSE 0 END), 0) AS vr_debito_anterior,
-                        COALESCE(SUM(CASE WHEN m.periodo_id < 202409 THEN m.credito ELSE 0 END), 0) AS vr_credito_anterior,
+                        COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.debito ELSE 0 END), 0) AS vr_debito_anterior,
+                        COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.credito ELSE 0 END), 0) AS vr_credito_anterior,
                         COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.debito ELSE 0 END), 0) AS vr_debito,
                         COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.credito ELSE 0 END), 0) AS vr_credito
                     FROM
