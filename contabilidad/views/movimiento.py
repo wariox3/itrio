@@ -108,19 +108,27 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     def informe_balance_prueba(self, request):    
         
         query = '''
-            SELECT
-                c.id,
-                c.codigo,
-                c.cuenta_clase_id ,
-                c.cuenta_grupo_id ,
-                c.cuenta_cuenta_id ,
-                c.nivel,                      
-                (SELECT SUM(debito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND m.periodo_id < 202408) AS vr_debito_anterior,
-                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND m.periodo_id < 202408) AS vr_credito_anterior,      
-                (SELECT SUM(debito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND (m.periodo_id >= 202409 AND m.periodo_id <= 202409)) AS vr_debito,
-                (SELECT SUM(credito) FROM con_movimiento m WHERE m.cuenta_id = c.id AND (m.periodo_id >= 202409 AND m.periodo_id <= 202409)) AS vr_credito      
-            FROM
-                con_cuenta c
+                    SELECT
+                        c.id,
+                        c.codigo,
+                        c.cuenta_clase_id,
+                        c.cuenta_grupo_id,
+                        c.cuenta_cuenta_id,
+                        c.nivel,
+                        COALESCE(SUM(CASE WHEN m.periodo_id < 202409 THEN m.debito ELSE 0 END), 0) AS vr_debito_anterior,
+                        COALESCE(SUM(CASE WHEN m.periodo_id < 202409 THEN m.credito ELSE 0 END), 0) AS vr_credito_anterior,
+                        COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.debito ELSE 0 END), 0) AS vr_debito,
+                        COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.credito ELSE 0 END), 0) AS vr_credito
+                    FROM
+                        con_cuenta c
+                    LEFT JOIN
+                        con_movimiento m ON m.cuenta_id = c.id
+                    GROUP BY
+                        c.id, c.codigo, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
+                    ORDER BY
+                        c.cuenta_clase_id,
+                        c.cuenta_grupo_id,
+                        c.cuenta_cuenta_id;
         '''
         resultados = ConCuenta.objects.raw(query)
         resultados_json = [
