@@ -81,6 +81,16 @@
   },
   {
     "model": "general.GenImpuesto",
+    "pk": 104,
+    "fields": {
+      "nombre": "RTF 4%", "nombre_extendido": "RTF Arrendamiento de bienes muebles", 
+      "porcentaje":"4", "porcentaje_base":"100", 
+      "venta": "False",  "compra":"True",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  },
+  {
+    "model": "general.GenImpuesto",
     "pk": 200,
     "fields": {
       "nombre": "RteFte 3.5%", "nombre_extendido": "RteFte 3.5%", 
