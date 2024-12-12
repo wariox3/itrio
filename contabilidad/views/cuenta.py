@@ -60,6 +60,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
                     'cuenta_clase': None,
                     'cuenta_grupo': None,
                     'cuenta_cuenta': None,
+                    'cuenta_subcuenta': None,
                     'nivel': None                    
                 } 
 
@@ -73,6 +74,9 @@ class CuentaViewSet(viewsets.ModelViewSet):
                         data['cuenta_grupo'] = codigo_str[:2]
                     if longitud_codigo >= 4:                            
                         data['cuenta_cuenta'] = codigo_str[:4]
+                    #if longitud_codigo >= 6:                            
+                    #    data['cuenta_subcuenta'] = codigo_str[:6]
+
                     if longitud_codigo <= 1:
                         data['nivel'] = 1
                     if longitud_codigo > 1 and longitud_codigo <= 2:

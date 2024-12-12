@@ -1254,6 +1254,13 @@
     },
     {
         "model": "contabilidad.ConCuentaSubcuenta",
+        "pk": 135519,
+        "fields": {
+            "nombre": "IVA ACTIVOS FIJOS DESCT RENTA"
+        }
+    },    
+    {
+        "model": "contabilidad.ConCuentaSubcuenta",
         "pk": 135518,
         "fields": {
             "nombre": "Impuesto de industria y comercio retenido"
@@ -4233,7 +4240,7 @@
         "fields": {
             "nombre": "Otras"
         }
-    },
+    },    
     {
         "model": "contabilidad.ConCuentaSubcuenta",
         "pk": 233505,
@@ -4611,14 +4618,14 @@
         "fields": {
             "nombre": "Vigencias fiscales anteriores"
         }
-    },
+    },       
     {
         "model": "contabilidad.ConCuentaSubcuenta",
-        "pk": 241205,
+        "pk": 240805,
         "fields": {
-            "nombre": "Vigencia fiscal corriente"
+            "nombre": "Impuesto sobre las ventas por pagar"
         }
-    },
+    },    
     {
         "model": "contabilidad.ConCuentaSubcuenta",
         "pk": 241210,

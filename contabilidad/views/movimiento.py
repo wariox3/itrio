@@ -131,8 +131,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         c.cuenta_cuenta_id;
         '''
         resultados = ConCuenta.objects.raw(query)
-        resultados_json = [
-            {
+        resultados_json = []
+        clases_dict = {}
+        grupos_dict = {}
+        cuentas_dict = {}
+        for cuenta in resultados:
+            resultados_json.append({
+                'tipo': 'movimiento',
                 'id': cuenta.id,
                 'codigo': cuenta.codigo,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
@@ -143,7 +148,62 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'vr_credito_anterior': cuenta.vr_credito_anterior,
                 'vr_debito': cuenta.vr_debito,
                 'vr_credito': cuenta.vr_credito,
-            }
-            for cuenta in resultados
-        ]
+            })  
+            clase_id = cuenta.cuenta_clase_id
+            if clase_id not in clases_dict:  
+                clases_dict[clase_id] = {
+                    'tipo': 'clase',
+                    'id': clase_id,
+                    'codigo': str(clase_id),
+                    'cuenta_clase_id': clase_id,
+                    'nivel': 1,
+                    'vr_debito_anterior_total': 0,
+                    'vr_credito_anterior_total': 0,
+                    'vr_debito_total': 0,
+                    'vr_credito_total': 0
+                }
+            clases_dict[clase_id]['vr_debito_anterior_total'] += cuenta.vr_debito_anterior
+            clases_dict[clase_id]['vr_credito_anterior_total'] += cuenta.vr_credito_anterior
+            clases_dict[clase_id]['vr_debito_total'] += cuenta.vr_debito
+            clases_dict[clase_id]['vr_credito_total'] += cuenta.vr_credito
+        
+            grupo_id = cuenta.cuenta_grupo_id
+            if grupo_id not in grupos_dict:  
+                grupos_dict[grupo_id] = {
+                    'tipo': 'grupo',
+                    'id': grupo_id,
+                    'codigo': str(grupo_id),
+                    'cuenta_grupo_id': grupo_id,
+                    'vr_debito_anterior_total': 0,
+                    'vr_credito_anterior_total': 0,
+                    'vr_debito_total': 0,
+                    'vr_credito_total': 0
+                }
+            grupos_dict[grupo_id]['vr_debito_anterior_total'] += cuenta.vr_debito_anterior
+            grupos_dict[grupo_id]['vr_credito_anterior_total'] += cuenta.vr_credito_anterior
+            grupos_dict[grupo_id]['vr_debito_total'] += cuenta.vr_debito
+            grupos_dict[grupo_id]['vr_credito_total'] += cuenta.vr_credito
+
+            cuenta_id = cuenta.cuenta_cuenta_id
+            if cuenta_id not in cuentas_dict:  
+                cuentas_dict[cuenta_id] = {
+                    'tipo': 'cuenta',
+                    'id': cuenta_id,
+                    'codigo': str(cuenta_id),
+                    'cuenta_cuenta_id': cuenta_id,
+                    'vr_debito_anterior_total': 0,
+                    'vr_credito_anterior_total': 0,
+                    'vr_debito_total': 0,
+                    'vr_credito_total': 0
+                }
+            cuentas_dict[cuenta_id]['vr_debito_anterior_total'] += cuenta.vr_debito_anterior
+            cuentas_dict[cuenta_id]['vr_credito_anterior_total'] += cuenta.vr_credito_anterior
+            cuentas_dict[cuenta_id]['vr_debito_total'] += cuenta.vr_debito
+            cuentas_dict[cuenta_id]['vr_credito_total'] += cuenta.vr_credito
+            
+        resultados_json.extend(clases_dict.values())
+        resultados_json.extend(grupos_dict.values())
+        resultados_json.extend(cuentas_dict.values())
+        resultados_json.sort(key=lambda x: str(x['codigo']))
+
         return Response({'movimientos': resultados_json}, status=status.HTTP_200_OK)
