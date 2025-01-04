@@ -411,8 +411,8 @@
         "fields": {
             "nombre": "Vacaciones dinero", 
             "porcentaje": 0,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_cotizacion":true,
+            "ingreso_base_prestacion": false,
+            "ingreso_base_cotizacion":false,
             "adicional":true,
             "operacion":1,
             "orden":22,
