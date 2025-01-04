@@ -399,7 +399,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "adicional":false,
+            "adicional":true,
             "operacion":1,
             "orden":21,
             "concepto_tipo": 18
@@ -413,7 +413,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": true,
             "ingreso_base_cotizacion":true,
-            "adicional":false,
+            "adicional":true,
             "operacion":1,
             "orden":22,
             "concepto_tipo": 19
