@@ -20,6 +20,7 @@ from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.documento_soporte import FormatoDocumentoSoporte
 from general.formatos.nomina import FormatoNomina
+from general.formatos.recibo_caja import FormatoRecibo
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
@@ -375,6 +376,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     formato = FormatoCuentaCobro()
                     pdf = formato.generar_pdf(id)                                        
                     nombre_archivo = f"cuentaCobro{documento.numero}.pdf" if documento.numero else f"cuentaCobro.pdf"
+
+                if documento.documento_tipo_id == 4:
+                    formato = FormatoRecibo()
+                    pdf = formato.generar_pdf(id)                                        
+                    nombre_archivo = f"reciboCaja{documento.numero}.pdf" if documento.numero else f"reciboCaja.pdf"
 
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')

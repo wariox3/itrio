@@ -19,14 +19,16 @@ class FormatoEncabezado():
         p.setFillColor(colors.lightgrey)
         p.rect(120, 757, 450, 17, stroke=0, fill=1)        
         p.setFillColor(colors.black)        
-        p.setFont("Helvetica-Bold", 10)        
-        p.drawCentredString(350,760, titulo)        
-        p.drawString(120,740, empresa.nombre_corto or "")
-        p.setFont("Helvetica", 10)
-        nit = empresa.numero_identificacion or ""
-        p.drawString(120,725, f"NIT {nit}")
-        p.drawString(120,710, empresa.direccion or "")
+        p.setFont("Helvetica-Bold", 9)        
+        p.drawCentredString(350, 760, titulo)        
+        p.drawString(120, 740, empresa.nombre_corto.upper() or "")
+        
+        p.setFont("Helvetica", 8)
+        nit = empresa.numero_identificacion.upper() or ""
+        p.drawString(120, 730, f"NIT: {nit}")
+        p.drawString(120, 720, f"DIRECCIÓN: {empresa.direccion.upper() or ''}")
         telefono = empresa.telefono or ""
-        p.drawString(120,695, f"TEL {telefono}")        
+        p.drawString(120, 710, f"TEL: {telefono.upper()}")   
+     
 
     
