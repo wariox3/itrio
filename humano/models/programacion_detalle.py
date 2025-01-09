@@ -9,6 +9,7 @@ class HumProgramacionDetalle(models.Model):
     dias_transporte = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     dias_novedad = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     salario = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    salario_promedio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     diurna = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     nocturna = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     festiva_diurna = models.DecimalField(max_digits=10, decimal_places=3, default=0)

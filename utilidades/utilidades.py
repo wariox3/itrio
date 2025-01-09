@@ -3,6 +3,7 @@ from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.barcode.qr import QrCodeWidget
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from datetime import datetime
 import re
 
 def convertir_a_letras(numero):
@@ -56,3 +57,28 @@ class Utilidades:
             return True
         except ValidationError:
             return False    
+        
+    @staticmethod    
+    def dias_prestacionales(fecha_inicio, fecha_fin):
+        """
+        Calcula el número de días entre dos fechas suponiendo meses de 30 días.
+
+        :param fecha_inicio: Fecha inicial en formato 'YYYY-MM-DD'.
+        :param fecha_fin: Fecha final en formato 'YYYY-MM-DD'.
+        :return: Número de días entre las dos fechas, con meses de 30 días.
+        """
+        # Convertimos las fechas en objetos datetime
+        inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
+        fin = datetime.strptime(fecha_fin, "%Y-%m-%d")
+        
+        # Calculamos las diferencias de años, meses y días
+        años = fin.year - inicio.year
+        meses = fin.month - inicio.month
+        dias = fin.day - inicio.day
+
+        # Totalizamos los meses y los días
+        total_meses = años * 12 + meses
+        total_dias = total_meses * 30 + dias
+        total_dias += 1
+        return total_dias
+           

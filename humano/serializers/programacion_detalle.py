@@ -21,7 +21,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
 
     class Meta:
         model = HumProgramacionDetalle
-        fields = ['id', 'dias', 'dias_transporte', 'dias_novedad', 'salario', 'fecha_desde', 'fecha_hasta', 'diurna', 'nocturna', 'festiva_diurna', 
+        fields = ['id', 'dias', 'dias_transporte', 'dias_novedad', 'salario', 'salario_promedio', 'fecha_desde', 'fecha_hasta', 'diurna', 'nocturna', 'festiva_diurna', 
                   'festiva_nocturna', 'extra_diurna', 'extra_nocturna', 
                   'extra_festiva_diurna', 'extra_festiva_nocturna', 'recargo_nocturno', 'recargo_festivo_diurno', 'recargo_festivo_nocturno',
                   'programacion', 'contrato', 'ingreso', 'retiro',
@@ -44,6 +44,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'dias': instance.dias,
             'dias_transporte': instance.dias_transporte,
             'salario': instance.salario,
+            'salario_promedio': instance.salario_promedio,
             'devengado': instance.devengado,
             'deduccion': instance.deduccion,
             'total': instance.total,

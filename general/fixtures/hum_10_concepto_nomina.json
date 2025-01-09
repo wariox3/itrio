@@ -94,5 +94,13 @@
           "nombre": "Auxilio transporte",
           "concepto": 16
       }
+    },
+    {
+      "model": "humano.HumConceptoNomina",
+      "pk": 13,
+      "fields": {
+          "nombre": "Prima",
+          "concepto": 32
+      }
     }   
 ]
