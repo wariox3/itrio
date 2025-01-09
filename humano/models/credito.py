@@ -14,6 +14,7 @@ class HumCredito(models.Model):
     inactivo = models.BooleanField(default = False)    
     inactivo_periodo = models.BooleanField(default = False)
     pagado = models.BooleanField(default = False)
+    comentario = models.CharField(max_length=300, null=True)
     concepto = models.ForeignKey(HumConcepto, on_delete=models.PROTECT, null=True, related_name='creditos_concepto_rel')
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='creditos_contrato_rel')
 
