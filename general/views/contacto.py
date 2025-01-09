@@ -94,11 +94,10 @@ class ContactoViewSet(viewsets.ModelViewSet):
             errores_datos = []
             registros_importados = 0
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-                if solo_nuevos:
-                    if row[0]:
-                        contacto = GenContacto.objects.filter(numero_identificacion=row[0]).first()
-                        if contacto:
-                            continue
+                if row[0]:
+                    contacto = GenContacto.objects.filter(numero_identificacion=row[0]).first()
+                    if contacto:
+                        continue
                 data = {
                     'numero_identificacion': row[0],                    
                     'identificacion':row[1],
@@ -125,7 +124,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
                     data['tipo_persona'] = 1
                 else:
                     data['regimen'] = 2
-                    data['tipo_persona'] = 2
+                    data['tipo_persona'] = 2                
                 serializer = GenContactoSerializador(data=data)
                 if serializer.is_valid():
                     data_modelo.append(serializer.validated_data)
