@@ -24,6 +24,7 @@ class GenContacto(models.Model):
     telefono = models.CharField(max_length=50)
     celular = models.CharField(max_length=50, null=True)
     correo = models.CharField(max_length = 255)
+    correo_facturacion_electronica = models.CharField(max_length = 255, null=True)
     cliente = models.BooleanField(default = False) 
     proveedor = models.BooleanField(default = False)
     empleado = models.BooleanField(default = False)

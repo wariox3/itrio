@@ -5,6 +5,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from datetime import datetime
 import re
+import string
 
 def convertir_a_letras(numero):
     if numero == 0:
@@ -81,4 +82,14 @@ class Utilidades:
         total_dias = total_meses * 30 + dias
         total_dias += 1
         return total_dias
-           
+    
+    @staticmethod
+    def digito_verificacion(nit):
+        factores = [3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71]
+        #rut_ajustado=string.rjust(str(nit), 15, '0')
+        rut_ajustado=str(nit).rjust( 15, '0')
+        s = sum(int(rut_ajustado[14-i]) * factores[i] for i in range(14)) % 11
+        if s > 1:
+            return 11 - s
+        else:
+            return s                 

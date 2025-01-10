@@ -16,7 +16,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
         model = GenContacto
         fields = [
             'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
-            'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'tipo_persona', 'regimen', 'codigo_ciuu',
+            'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'correo_facturacion_electronica', 'tipo_persona', 'regimen', 'codigo_ciuu',
             'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado', 'banco', 'numero_cuenta', 'cuenta_banco_clase']  
         
     def to_representation(self, instance):
@@ -58,6 +58,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             'apellido1': instance.apellido1,
             'apellido2': instance.apellido2,
             'correo': instance.correo,
+            'correo_facturacion_electronica': instance.correo_facturacion_electronica,
             'telefono': instance.telefono,
             'celular': instance.celular,
             'direccion': instance.direccion,  

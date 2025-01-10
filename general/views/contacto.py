@@ -11,6 +11,7 @@ from rest_framework.decorators import action
 from openpyxl import Workbook
 from django.http import HttpResponse
 from io import BytesIO
+from utilidades.utilidades import Utilidades
 import base64
 import openpyxl
 import gc
@@ -78,8 +79,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):
         raw = request.data        
-        archivo_base64 = raw.get('archivo_base64')
-        solo_nuevos = raw.get('solo_nuevos', False)
+        archivo_base64 = raw.get('archivo_base64')        
         if archivo_base64:
             try:
                 archivo_data = base64.b64decode(archivo_base64)
@@ -113,18 +113,21 @@ class ContactoViewSet(viewsets.ModelViewSet):
                     'telefono':row[11],
                     'celular':row[12],
                     'correo':row[13],
-                    'cliente':row[14],
-                    'proveedor':row[15],
-                    'empleado':row[16],
-                    'plazo_pago':row[17],
-                    'plazo_pago_proveedor':row[18],
+                    'correo_facturacion_electronica':row[14],
+                    'cliente':row[15],
+                    'proveedor':row[16],
+                    'empleado':row[17],
+                    'plazo_pago':row[18],
+                    'plazo_pago_proveedor':row[19],
+                    'digito_verificacion': '0'
                 }                   
                 if data['identificacion'] == 6:
                     data['regimen'] = 2
                     data['tipo_persona'] = 2
                 else:
                     data['regimen'] = 1
-                    data['tipo_persona'] = 1                
+                    data['tipo_persona'] = 1  
+                data['digito_verificacion'] = str(Utilidades.digito_verificacion(data['numero_identificacion']))
                 serializer = GenContactoSerializador(data=data)
                 if serializer.is_valid():
                     data_modelo.append(serializer.validated_data)

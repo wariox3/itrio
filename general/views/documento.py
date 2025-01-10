@@ -412,6 +412,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if empresa.rededoc_id:
                         if documento.estado_electronico_enviado == False: 
                             if documento.numero: 
+                                # Factura
                                 if documento.documento_tipo_id in [1,2,3,11,12]:
                                     if documento.resolucion: 
                                         #Las facturas y documento soporte toman prefijo de la resolucion
@@ -426,6 +427,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             prefijo = "ND" 
                                         if documento.documento_tipo.documento_clase_id == 304:
                                             prefijo = "DSAJ"
+                                        correo = documento.contacto.correo_facturacion_electronica if documento.contacto.correo_facturacion_electronica else documento.contacto.correo
                                         datos_factura = {
                                             "cuentaId": empresa.rededoc_id,
                                             "documentoClaseId" : documento.documento_tipo_id,
@@ -467,7 +469,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                     "obligaciones" : "0-99",
                                                     "nombres" : documento.contacto.nombre1,
                                                     "apellidos" : documento.contacto.apellido1,
-                                                    "correo" : documento.contacto.correo,
+                                                    "correo" : correo,
                                                     "telefono" : documento.contacto.telefono,
                                                     "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
                                                     "regimen_tributario" : documento.contacto.regimen.codigo_interface,
@@ -552,6 +554,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     else:
                                         return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                                     
+                                # Documento soporte
                                 if documento.documento_tipo_id == 5:                                    
                                     if documento.referencia_prefijo and documento.referencia_numero and documento.referencia_cue:
                                         datos_compra = {
@@ -588,7 +591,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)
                                     else:
                                         return Response({'mensaje': 'Los documentos de compra deben tener prefijo, numero y cue', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                                    
+
+                                # Nomina    
                                 if documento.documento_tipo_id == 15:                                
                                     prefijo = "NE"                                
                                     datos = {
