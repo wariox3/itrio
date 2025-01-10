@@ -122,11 +122,11 @@ class ContactoViewSet(viewsets.ModelViewSet):
                     'digito_verificacion': '0'
                 }                   
                 if data['identificacion'] == 6:
+                    data['regimen'] = 1
+                    data['tipo_persona'] = 1
+                else:
                     data['regimen'] = 2
                     data['tipo_persona'] = 2
-                else:
-                    data['regimen'] = 1
-                    data['tipo_persona'] = 1  
                 data['digito_verificacion'] = str(Utilidades.digito_verificacion(data['numero_identificacion']))
                 serializer = GenContactoSerializador(data=data)
                 if serializer.is_valid():
