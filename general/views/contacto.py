@@ -121,7 +121,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
                     'plazo_pago_proveedor':row[19],
                     'digito_verificacion': '0'
                 }                   
-                if data['identificacion'] == 6:
+                if data['identificacion'] == 6 or data['identificacion'] == '6':
                     data['regimen'] = 1
                     data['tipo_persona'] = 1
                 else:
