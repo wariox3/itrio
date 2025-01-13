@@ -22,6 +22,7 @@ from general.formatos.documento_soporte import FormatoDocumentoSoporte
 from general.formatos.nomina import FormatoNomina
 from general.formatos.recibo_caja import FormatoRecibo
 from general.formatos.egreso import FormatoEgreso
+from general.formatos.compra import FormatoCompra
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
@@ -387,6 +388,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     formato = FormatoEgreso()
                     pdf = formato.generar_pdf(id)                                        
                     nombre_archivo = f"egreso{documento.numero}.pdf" if documento.numero else f"egreso.pdf"
+
+                if documento.documento_tipo_id == 5:
+                    formato = FormatoCompra()
+                    pdf = formato.generar_pdf(id)                                        
+                    nombre_archivo = f"compra{documento.numero}.pdf" if documento.numero else f"compra.pdf"
 
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')
