@@ -39,8 +39,8 @@ class FormatoNomina():
         p.drawString(40, y - alto_fila * 3, 'CARGO')
         p.drawString(40, y - alto_fila * 4, 'GRUPO')
         p.setFont("Helvetica", tamano_texto_encabezado)
-        p.drawString(110, y - alto_fila * 1, str(documento['numero']))
-        p.drawString(110, y - alto_fila * 2, documento['contacto__nombre_corto'])
+        p.drawString(110, y - alto_fila * 1, str(documento['numero']) if documento['numero'] is not None else '0')
+        p.drawString(110, y - alto_fila * 2, documento['contacto__nombre_corto'][:29])
         p.drawString(110, y - alto_fila * 3, documento['contrato__cargo__nombre'])
         p.drawString(110, y - alto_fila * 4, documento['contrato__grupo__nombre'])    
 
@@ -61,8 +61,8 @@ class FormatoNomina():
         p.drawString(460, y - alto_fila * 3, 'SALARIO')
         p.drawString(460, y - alto_fila * 4, '')
         p.setFont("Helvetica", tamano_texto_encabezado)
-        p.drawString(510, y - alto_fila * 1, documento['contacto__numero_cuenta'])
-        p.drawString(510, y - alto_fila * 2, documento['contacto__banco__nombre'])
+        p.drawString(510, y - alto_fila * 1, str(documento.get('contacto__numero_cuenta') or ''))
+        p.drawString(510, y - alto_fila * 2, str(documento.get('contacto__banco__nombre') or ''))
         p.drawString(510, y - alto_fila * 3, f"{documento['contrato__salario']:,.0f}")
         p.drawString(510, y - alto_fila * 4, '')  
 
