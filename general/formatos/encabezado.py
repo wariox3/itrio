@@ -4,7 +4,6 @@ from reportlab.lib import colors
 from decouple import config
 
 class FormatoEncabezado():
-
     def generar_pdf(self, p, titulo):
         region = config('DO_REGION')
         bucket = config('DO_BUCKET')  
@@ -21,14 +20,19 @@ class FormatoEncabezado():
         p.setFillColor(colors.black)        
         p.setFont("Helvetica-Bold", 9)        
         p.drawCentredString(350, 760, titulo)        
-        p.drawString(120, 740, empresa.nombre_corto.upper() or "")
-        
-        p.setFont("Helvetica", 8)
-        nit = empresa.numero_identificacion.upper() or ""
-        p.drawString(120, 730, f"NIT: {nit}")
-        p.drawString(120, 720, f"DIRECCIÓN: {empresa.direccion.upper() or ''}")
+
+        # Manejo seguro de valores None
+        nombre_corto = (empresa.nombre_corto or "").upper()
+        nit = (empresa.numero_identificacion or "").upper()
+        direccion = (empresa.direccion or "").upper()
         telefono = empresa.telefono or ""
-        p.drawString(120, 710, f"TEL: {telefono.upper()}")   
+
+        p.drawString(120, 740, nombre_corto)
+        p.setFont("Helvetica", 8)
+        p.drawString(120, 730, f"NIT: {nit}")
+        p.drawString(120, 720, f"DIRECCIÓN: {direccion}")
+        p.drawString(120, 710, f"TEL: {telefono}")
+
      
 
     
