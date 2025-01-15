@@ -497,7 +497,7 @@
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
-            "adicional":false,
+            "adicional":true,
             "operacion":1,
             "orden":28,
             "concepto_tipo": 24
