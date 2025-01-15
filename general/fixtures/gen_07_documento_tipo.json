@@ -5,7 +5,8 @@
     "fields": {
       "nombre": "FACTURA ELECTRÓNICA DE VENTA",
       "documento_clase": 100,
-      "venta": true
+      "venta": true,
+      "cobrar" : true
     }
   },
   {
@@ -14,7 +15,8 @@
     "fields": {
       "nombre": "NOTA CRÉDITO DE VENTA",
       "documento_clase": 101,
-      "venta": true
+      "venta": true,
+      "cobrar" : true
     }
   },
   {
@@ -23,7 +25,8 @@
     "fields": {
       "nombre": "NOTA DÉBITO DE VENTA",
       "documento_clase": 102,
-      "venta": true
+      "venta": true,
+      "cobrar" : true
     }
   },
   {
@@ -148,7 +151,8 @@
     "fields": {
       "nombre": "CUENTA COBRO",
       "documento_clase": 104,
-      "venta": true
+      "venta": true,
+      "cobrar" : true
     }
   }
 ]
