@@ -90,12 +90,15 @@ class HumProgramacionDetalleExcelSerializador(serializers.HyperlinkedModelSerial
         contrato_contacto_numero_identificacion = ""
         contrato_contacto_nombre_corto = ""
         cargo_nombre = ""
+        contrato__riesgo_arl_porcentaje = ""
         if instance.contrato:
             if instance.contrato.contacto:
                 contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
                 contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
             if instance.contrato.cargo:
-                cargo_nombre = instance.contrato.cargo.nombre                        
+                cargo_nombre = instance.contrato.cargo.nombre      
+            if instance.contrato.riesgo:  # Verifica si existe la relación hum_riesgo
+                contrato__riesgo_arl_porcentaje = instance.contrato.riesgo.porcentaje
         return {
             'ID': instance.id,
             'COD': instance.contrato.contacto_id,
@@ -123,6 +126,7 @@ class HumProgramacionDetalleExcelSerializador(serializers.HyperlinkedModelSerial
             'TOTAL': instance.total,
             'ING': instance.ingreso,
             'RET': instance.retiro,
-            'CARGO': cargo_nombre
+            'CARGO': cargo_nombre,
+            '%ARL' : contrato__riesgo_arl_porcentaje
         }           
         
