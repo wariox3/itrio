@@ -321,14 +321,13 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                             # Variables generales
                             contrato = programacion_detalle.contrato
                             valor_dia_contrato = programacion_detalle.salario / 30
-                            valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']
-                                                       
+                            valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']                                                      
                             data_general = {
                                 'devengado': 0,
                                 'deduccion': 0,
                                 'base_cotizacion': 0,
                                 'base_prestacion': 0,
-                                'base_licencia': 0,
+                                'base_licencia': 0
                             }
                             #Nomina
                             if programacion.pago_tipo_id == 1:
@@ -383,7 +382,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             fecha_hasta_novedad = novedad.fecha_hasta  
 
                                         diferencia = fecha_hasta_novedad - fecha_desde_novedad
-                                        dias_novedad = diferencia.days + 1                                     
+                                        dias_novedad = diferencia.days + 1 
                                         pago = 0
                                         # Incapacidad
                                         if novedad.novedad_tipo_id in [1, 2]:
@@ -520,9 +519,14 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         )
                                     for adicional in adicionales:                        
                                         concepto = adicional.concepto
+                                        if adicional.aplica_dia_laborado:                                                                
+                                            valor_adicional_dia = adicional.valor / programacion.dias;                        
+                                            valor_adicional = valor_adicional_dia * programacion_detalle.dias
+                                        else:
+                                            valor_adicional = adicional.valor
                                         data = {
                                             'documento': documento.id,                                                                                                                
-                                            'pago': round(adicional.valor),
+                                            'pago': round(valor_adicional),
                                             'concepto': adicional.concepto_id
                                         }
                                         data = datos_detalle(data_general, data, concepto)
