@@ -53,7 +53,7 @@
     "model": "general.GenImpuesto",
     "pk": 101,
     "fields": {
-      "nombre": "RTF 10%", "nombre_extendido": "RTF Honorarios comisiones 10%", 
+      "nombre": "RTF 10%", "nombre_extendido": "RTF 10% Honorarios comisiones", 
       "porcentaje":"10", "porcentaje_base":"100", 
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
@@ -63,7 +63,7 @@
     "model": "general.GenImpuesto",
     "pk": 102,
     "fields": {
-      "nombre": "RTF 6%", "nombre_extendido": "RTF Personas naturales ND 6%", 
+      "nombre": "RTF 6%", "nombre_extendido": "RTF 6% Personas naturales ND", 
       "porcentaje":"6", "porcentaje_base":"100", 
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
@@ -73,7 +73,7 @@
     "model": "general.GenImpuesto",
     "pk": 103,
     "fields": {
-      "nombre": "RTF 1%", "nombre_extendido": "RTF Vehiculos 1%", 
+      "nombre": "RTF 1%", "nombre_extendido": "RTF 1% Vehiculos", 
       "porcentaje":"1", "porcentaje_base":"100", 
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
@@ -83,8 +83,18 @@
     "model": "general.GenImpuesto",
     "pk": 104,
     "fields": {
-      "nombre": "RTF 4%", "nombre_extendido": "RTF Arrendamiento de bienes muebles", 
+      "nombre": "RTF 4%", "nombre_extendido": "RTF 4% Arrendamiento de bienes muebles", 
       "porcentaje":"4", "porcentaje_base":"100", 
+      "venta": "False",  "compra":"True",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  },
+  {
+    "model": "general.GenImpuesto",
+    "pk": 105,
+    "fields": {
+      "nombre": "RTF 2.5%", "nombre_extendido": "RTF 2.5% Otros ingresos tributarios", 
+      "porcentaje":"2.5", "porcentaje_base":"100", 
       "venta": "False",  "compra":"True",
       "operacion":-1, "impuesto_tipo":3
     }
