@@ -76,27 +76,27 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         fecha_desde = serializer.validated_data.get('fecha_desde')
         fecha_hasta = serializer.validated_data.get('fecha_hasta')
-        fecha_hasta_periodo = serializer.validated_data.get('fecha_hasta')
-        diferencia = fecha_hasta - fecha_desde
-        dias = diferencia.days + 1      
-                
+        fecha_hasta_periodo = serializer.validated_data.get('fecha_hasta')                    
         if fecha_hasta.day == 30: 
             ultimo_dia = calendar.monthrange(fecha_hasta.year, fecha_hasta.month)[1]       
             if ultimo_dia == 31:
-                fecha_hasta_periodo = fecha_hasta + timedelta(days=1)
+                fecha_hasta_periodo = fecha_hasta + timedelta(days=1)        
+        #diferencia = fecha_hasta - fecha_desde        
+        #dias = diferencia.days + 1         
+        dias = Utilidades.dias_prestacionales(fecha_desde.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d"))         
         serializer.save(dias=dias, fecha_hasta_periodo=fecha_hasta_periodo)
 
     def perform_update(self, serializer):
         fecha_desde = serializer.validated_data.get('fecha_desde')
         fecha_hasta = serializer.validated_data.get('fecha_hasta')
-        fecha_hasta_periodo = serializer.validated_data.get('fecha_hasta')
-        diferencia = fecha_hasta - fecha_desde
-        dias = diferencia.days + 1      
-                
+        fecha_hasta_periodo = serializer.validated_data.get('fecha_hasta')                    
         if fecha_hasta.day == 30: 
             ultimo_dia = calendar.monthrange(fecha_hasta.year, fecha_hasta.month)[1]       
             if ultimo_dia == 31:
-                fecha_hasta_periodo = fecha_hasta + timedelta(days=1)
+                fecha_hasta_periodo = fecha_hasta + timedelta(days=1)        
+        #diferencia = fecha_hasta - fecha_desde        
+        #dias = diferencia.days + 1         
+        dias = Utilidades.dias_prestacionales(fecha_desde.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d"))         
         serializer.save(dias=dias, fecha_hasta_periodo=fecha_hasta_periodo)
 
     def destroy(self, request, *args, **kwargs):        
