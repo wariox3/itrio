@@ -28,7 +28,12 @@
     "model": "general.GenDocumentoClase",
     "pk": 200,
     "fields": {"nombre": "Pago", "codigo_dian": "01", "grupo":2}
-  },      
+  },   
+  {
+    "model": "general.GenDocumentoClase",
+    "pk": 201,
+    "fields": {"nombre": "Saldo inicial CXC", "codigo_dian": "01", "grupo":2}
+  },    
   {
     "model": "general.GenDocumentoClase",
     "pk": 300,
@@ -59,6 +64,11 @@
     "pk": 400,
     "fields": {"nombre": "Egreso", "codigo_dian": "01", "grupo":4}
   },   
+  {
+    "model": "general.GenDocumentoClase",
+    "pk": 401,
+    "fields": {"nombre": "Saldo inicial CXP", "codigo_dian": "01", "grupo":4}
+  },
   {
     "model": "general.GenDocumentoClase",
     "pk": 500,

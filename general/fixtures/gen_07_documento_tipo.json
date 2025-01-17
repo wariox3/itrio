@@ -154,5 +154,23 @@
       "venta": true,
       "cobrar" : true
     }
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 18,
+    "fields": {
+      "nombre": "SALDO INCIAL CXC",
+      "documento_clase": 201,
+      "cobrar" : true
+    }
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 19,
+    "fields": {
+      "nombre": "SALDO INCIAL CXP",
+      "documento_clase": 401,
+      "pagar": true
+    }
   }
 ]
