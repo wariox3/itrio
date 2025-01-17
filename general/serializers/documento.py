@@ -78,7 +78,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,            
             'numero' : instance.numero,
-            'fecha' : instance.fecha,
+            'fecha': instance.fecha,
             'fecha_vence' : instance.fecha_vence,
             'fecha_contable' : instance.fecha_contable,
             'fecha_hasta' : instance.fecha_hasta,
