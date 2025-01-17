@@ -1,10 +1,10 @@
 from humano.models.programacion import HumProgramacion
 from humano.models.programacion_detalle import HumProgramacionDetalle
-
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from general.formatos.encabezado import FormatoEncabezado
+from utilidades.utilidades import Utilidades
 
 class FormatoProgramacion():
     def __init__(self):
@@ -47,10 +47,10 @@ class FormatoProgramacion():
         p.drawString(270, y - alto_fila * 3, '')
         p.drawString(270, y - alto_fila * 4, '')
         p.setFont("Helvetica", tamano_texto_encabezado)
-        p.drawString(370, y - alto_fila * 1, programacion['nombre'] or "")
-        p.drawString(370, y - alto_fila * 2, '')
-        p.drawString(370, y - alto_fila * 3, '')
-        p.drawString(370, y - alto_fila * 4, '')  
+        p.drawString(320, y - alto_fila * 1, Utilidades.pdf_texto(programacion['nombre'], 30))
+        p.drawString(320, y - alto_fila * 2, '')
+        p.drawString(320, y - alto_fila * 3, '')
+        p.drawString(320, y - alto_fila * 4, '')  
 
         p.setFont("Helvetica-Bold", tamano_texto_encabezado) 
         p.drawString(460, y - alto_fila * 1, 'DEVENGADO')

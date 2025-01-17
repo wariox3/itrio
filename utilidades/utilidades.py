@@ -92,4 +92,13 @@ class Utilidades:
         if s > 1:
             return 11 - s
         else:
-            return s                 
+            return s 
+
+    @staticmethod
+    def pdf_texto(texto, caracteres=None):
+        if not texto or len(texto.strip()) == 0:
+            texto = ""
+
+        if caracteres is not None and len(texto) > caracteres:
+            texto = texto[:caracteres]
+        return texto
