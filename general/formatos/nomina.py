@@ -13,7 +13,7 @@ class FormatoNomina():
         buffer = BytesIO()   
         p = canvas.Canvas(buffer, pagesize=letter)  
         p.setTitle("nomina")              
-        self.encabezado.generar_pdf(p, "COMPORBANTE DE PAGO DE NÓMINA")
+        self.encabezado.generar_pdf(p, "COMPROBANTE DE PAGO NÓMINA")
         p.setFont("Helvetica", 10)        
         documento = GenDocumento.objects.filter(pk=id).values(
             'numero', 'deduccion', 'devengado', 'total', 'fecha', 'fecha_hasta', 

@@ -368,7 +368,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     formato = FormatoDocumentoSoporte()
                     pdf = formato.generar_pdf(id)              
                     nombre_archivo = f"doc_soporte_{id}.pdf"
-
+                # Nomina
                 if documento.documento_tipo_id == 14:
                     formato = FormatoNomina()
                     pdf = formato.generar_pdf(id)              
