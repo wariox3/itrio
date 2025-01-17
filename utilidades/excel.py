@@ -13,12 +13,10 @@ class WorkbookEstilos(Workbook):
     def aplicar_estilos(self):
         for sheet in self.wb.sheetnames:
             ws = self.wb[sheet]
-            
-            # Aplicar estilos por celda
             for row in ws.iter_rows():
                 for cell in row:
                     cell.font = self.font
-                    if cell.row == 1:  # Si es la primera fila (encabezado)
+                    if cell.row == 1: 
                         cell.font = self.bold_font
                         cell.fill = self.fill
                     if isinstance(cell.value, (int, float)):
@@ -26,17 +24,15 @@ class WorkbookEstilos(Workbook):
                     if isinstance(cell.value, bool):
                         cell.value = "SI" if cell.value else "NO"
 
-            # Ajustar el ancho de las columnas según el contenido más amplio
             for column in ws.columns:
                 max_length = 0
                 column_letter = get_column_letter(column[0].column)
                 for cell in column:
                     try:
-                        if cell.value is not None:  # Asegurarse de que no sea None
+                        if cell.value is not None:
                             max_length = max(max_length, len(str(cell.value)))
                     except Exception as e:
                         print(f"Error al calcular el ancho para la celda {cell.coordinate}: {e}")
                 
-                # Ajustar el ancho de la columna con un margen adicional
-                adjusted_width = (max_length + 2)
+                adjusted_width = (max_length + 1)
                 ws.column_dimensions[column_letter].width = adjusted_width
