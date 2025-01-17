@@ -101,6 +101,16 @@
   },
   {
     "model": "general.GenImpuesto",
+    "pk": 106,
+    "fields": {
+      "nombre": "RTF 11%", "nombre_extendido": "RTF 11% Honorarios y comisiones", 
+      "porcentaje":"11", "porcentaje_base":"100", 
+      "venta": "False",  "compra":"True",
+      "operacion":-1, "impuesto_tipo":3
+    }
+  },
+  {
+    "model": "general.GenImpuesto",
     "pk": 200,
     "fields": {
       "nombre": "RteFte 3.5%", "nombre_extendido": "RteFte 3.5%", 
