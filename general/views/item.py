@@ -75,10 +75,25 @@ class ItemViewSet(viewsets.ModelViewSet):
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        relaciones = instance.itemes_rel.first()
-        if relaciones:
-            modelo_asociado = relaciones.__class__.__name__           
-            return Response({'mensaje':f"El registro no se puede eliminar porque tiene registros asociados en {modelo_asociado}", 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+
+        # Obtén todos los campos relacionados del modelo
+        related_objects = []
+        for related_object in instance._meta.related_objects:
+            related_manager = getattr(instance, related_object.get_accessor_name())
+            if related_manager.exists():
+                related_objects.append(related_object.related_model.__name__)
+
+        if related_objects:
+            # Si hay relaciones, devuelve un mensaje indicando dónde se usa
+            relaciones_texto = ', '.join(related_objects)
+            return Response(
+                {
+                    'mensaje': f"El registro no se puede eliminar porque tiene registros asociados en: {relaciones_texto}"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Si no hay relaciones, elimina el objeto
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
