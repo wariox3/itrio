@@ -39,6 +39,7 @@ from io import BytesIO
 import base64
 import openpyxl
 import calendar
+import gc
 
 def transformar_decimal(obj):
     if isinstance(obj, dict):
@@ -237,7 +238,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 for documento in documentos:
                     documentoEliminar = GenDocumento.objects.get(pk=documento)  
                     if documentoEliminar:
-                        if documentoEliminar.estado_aprobado == False:
+                        if documentoEliminar.estado_aprobado == False or documentoEliminar.documento_tipo_id in (18,19):
                             if not documentoEliminar.detalles.exists():
                                 if documentoEliminar.documento_tipo_id == 15:
                                     nominas = GenDocumento.objects.filter(documento_referencia_id=documentoEliminar.id)
@@ -1204,6 +1205,69 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         ventas_dict = {venta['dia']: venta['total'] for venta in ventas_por_dia}
         venta_dia = [{'dia': dia, 'total': ventas_dict.get(dia, 0)} for dia in dias_del_mes]        
         return Response({'resumen': venta_dia}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path=r'importar',)
+    def importar(self, request):
+        raw = request.data        
+        archivo_base64 = raw.get('archivo_base64')   
+        documento_clase_id = raw.get('documento_tipo_id')     
+        if archivo_base64 and documento_clase_id:
+            try:
+                archivo_data = base64.b64decode(archivo_base64)
+                archivo = BytesIO(archivo_data)
+                wb = openpyxl.load_workbook(archivo)
+                sheet = wb.active    
+            except Exception as e:     
+                return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+            
+            data_modelo = []
+            errores = False
+            errores_datos = []
+            documento_tipo_id = None
+            if documento_clase_id == 201:
+                documento_tipo_id = 18
+            if documento_clase_id == 401:
+                documento_tipo_id = 19
+            registros_importados = 0            
+            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):     
+                pendiente = 0
+                if documento_clase_id in (201,401):
+                    pendiente = row[4]
+                fecha = row[1].date()
+                fecha_vence = row[2].date()
+                data = {
+                    'numero': row[0],                    
+                    'fecha':fecha,
+                    'fecha_contable': fecha,
+                    'fecha_vence':fecha_vence,
+                    'contacto':row[3],
+                    'total':row[4],
+                    'pendiente': pendiente,
+                    'documento_tipo': documento_tipo_id,
+                    'estado_aprobado': True,
+                    'empresa': 1
+                }                                   
+                serializer = GenDocumentoSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
+                    registros_importados += 1
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)                    
+            if not errores:
+                for detalle in data_modelo:
+                    GenDocumento.objects.create(**detalle)
+                gc.collect()
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+            else:
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)   
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'importar-detalle',)
     def importar_detalle(self, request):
