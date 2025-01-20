@@ -52,14 +52,15 @@ class ListaView(APIView):
             #print(items.query)
             if filtros:
                 for filtro in filtros:
-                    operador = filtro.get('operador', None)
+                    items = items.filter(**{filtro['propiedad']: filtro['valor1']})
+                    '''operador = filtro.get('operador', None)
                     if operador:
                         if operador == 'range':
                             items = items.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
                         else:
                             items = items.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
                     else:
-                        items = items.filter(**{filtro['propiedad']: filtro['valor1']})
+                        items = items.filter(**{filtro['propiedad']: filtro['valor1']})'''
             itemsCantidad = items[:cantidadLimite].count()
             if ordenamientos:
                 items = items.order_by(*ordenamientos)              
