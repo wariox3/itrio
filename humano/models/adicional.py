@@ -10,7 +10,7 @@ class HumAdicional(models.Model):
     inactivo = models.BooleanField(default = False)
     inactivo_periodo = models.BooleanField(default = False)
     permanente = models.BooleanField(default = False)
-    detalle = models.CharField(max_length=200, null=True)
+    detalle = models.CharField(max_length=150, null=True)
     programacion = models.ForeignKey(HumProgramacion, on_delete=models.PROTECT, null=True, related_name='adicionales_programacion_rel')
     concepto = models.ForeignKey(HumConcepto, on_delete=models.PROTECT, related_name='adicionales_concepto_rel')
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='adicionales_contrato_rel')

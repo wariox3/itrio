@@ -298,7 +298,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
         
     @action(detail=False, methods=["post"], url_path=r'generar',)
-    def generar(self, request):             
+    def generar(self, request):
         try:
             raw = request.data
             id = raw.get('id')
@@ -538,7 +538,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         data = {
                                             'documento': documento.id,                                                                                                                
                                             'pago': round(valor_adicional),
-                                            'concepto': adicional.concepto_id
+                                            'concepto': adicional.concepto_id,
+                                            'detalle': adicional.detalle
                                         }
                                         data = datos_detalle(data_general, data, concepto)
                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)

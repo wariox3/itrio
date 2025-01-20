@@ -4,7 +4,7 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from general.formatos.encabezado import FormatoEncabezado
-
+from utilidades.utilidades import Utilidades
 class FormatoNomina():
     def __init__(self):
         self.encabezado = FormatoEncabezado()
@@ -40,7 +40,7 @@ class FormatoNomina():
         p.drawString(40, y - alto_fila * 4, 'GRUPO')
         p.setFont("Helvetica", tamano_texto_encabezado)
         p.drawString(110, y - alto_fila * 1, str(documento['numero']) if documento['numero'] is not None else '0')
-        p.drawString(110, y - alto_fila * 2, documento['contacto__nombre_corto'][:29])
+        p.drawString(110, y - alto_fila * 2, Utilidades.pdf_texto(documento['contacto__nombre_corto'], 30))
         p.drawString(110, y - alto_fila * 3, documento['contrato__cargo__nombre'])
         p.drawString(110, y - alto_fila * 4, documento['contrato__grupo__nombre'])    
 
@@ -69,7 +69,7 @@ class FormatoNomina():
 
         y = 580
         margen = 2
-        ancho_columna = [30, 180, 80, 40, 40, 20, 70, 70]  
+        ancho_columna = [30, 180, 130, 35, 30, 20, 55, 55]  
 
         p.setFont("Helvetica-Bold", 8)                 
         p.drawString(x + sum(ancho_columna[:0]) + margen, y + 4, 'COD')
@@ -89,7 +89,7 @@ class FormatoNomina():
             y_texto = y + 5
             p.drawString(x + sum(ancho_columna[:0]) + margen, y_texto, str(documento_detalle['concepto_id']))
             p.drawString(x + sum(ancho_columna[:1]) + margen, y_texto, str(documento_detalle['concepto__nombre']))
-            p.drawString(x + sum(ancho_columna[:2]) + margen, y_texto, str(documento_detalle['detalle'] or ""))            
+            p.drawString(x + sum(ancho_columna[:2]) + margen, y_texto, Utilidades.pdf_texto(documento_detalle['detalle'], 36))            
             p.drawRightString(x + sum(ancho_columna[:3]) + ancho_columna[3] - margen, y_texto, f"{documento_detalle['cantidad']:.2f}")
             p.drawRightString(x + sum(ancho_columna[:4]) + ancho_columna[4] - margen, y_texto, str(int(documento_detalle['dias'])))
             p.drawRightString(x + sum(ancho_columna[:5]) + ancho_columna[5] - margen, y_texto, str(int(documento_detalle['porcentaje'])))
