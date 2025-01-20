@@ -8,7 +8,7 @@ class GenConfiguracion(models.Model):
     venta_asesor = models.BooleanField(default = False)
     venta_sede = models.BooleanField(default = False)
     gen_uvt = models.DecimalField(max_digits=20, decimal_places=6, default=49799)
-    hum_factor = models.DecimalField(max_digits=6, decimal_places=3, default=7.667)
+    hum_factor = models.DecimalField(max_digits=6, decimal_places=3, default=7.666)
     hum_salario_minimo = models.DecimalField(max_digits=20, decimal_places=6, default=1423500)
     hum_auxilio_transporte = models.DecimalField(max_digits=20, decimal_places=6, default=200000)
     empresa = models.ForeignKey(GenEmpresa, on_delete=models.PROTECT, default=1)    
