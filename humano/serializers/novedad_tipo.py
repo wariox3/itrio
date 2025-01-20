@@ -28,4 +28,14 @@ class HumNovedadTipoListaAutocompletarSerializador(serializers.HyperlinkedModelS
             'id': instance.id,
             'nombre': instance.nombre,
             'novedad_clase_id': instance.novedad_clase_id
-        }        
+        }    
+
+class HumNovedadTipoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = HumNovedadTipo
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'nombre': instance.nombre
+        }         
