@@ -104,34 +104,56 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
+
+            #opcion con filtros
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
+        filtros = request.data.get("filtros", [])
+
+        # Extraer las fechas desde los filtros
+        fecha_desde = None
+        fecha_hasta = None
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde__gte":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta__lte":
+                fecha_hasta = filtro["valor1"]
         
-        query = '''
-                    SELECT
-                        c.id,
-                        c.codigo,
-                        c.nombre,
-                        c.cuenta_clase_id,                        
-                        c.cuenta_grupo_id,
-                        c.cuenta_cuenta_id,
-                        c.nivel,
-                        COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.debito ELSE 0 END), 0) AS debito_anterior,
-                        COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.credito ELSE 0 END), 0) AS credito_anterior,
-                        COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.debito ELSE 0 END), 0) AS debito,
-                        COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.credito ELSE 0 END), 0) AS credito
-                    FROM
-                        con_cuenta c
-                    LEFT JOIN
-                        con_movimiento m ON m.cuenta_id = c.id
-                    GROUP BY
-                        c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
-                    ORDER BY
-                        c.cuenta_clase_id,
-                        c.cuenta_grupo_id,
-                        c.cuenta_cuenta_id;
+        # Validar que las fechas estén presentes
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        query = f'''
+            SELECT
+                c.id,
+                c.codigo,
+                c.nombre,
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_cuenta_id,
+                c.nivel,
+                COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.debito ELSE 0 END), 0) AS debito_anterior,
+                COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.credito ELSE 0 END), 0) AS credito_anterior,
+                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' THEN m.debito ELSE 0 END), 0) AS debito,
+                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' THEN m.credito ELSE 0 END), 0) AS credito
+            FROM
+                con_cuenta c
+            LEFT JOIN
+                con_movimiento m ON m.cuenta_id = c.id
+            GROUP BY
+                c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
+            ORDER BY
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_cuenta_id;
         '''
+        # Ejecutar la consulta
         resultados = ConCuenta.objects.raw(query)
+        
+        # Procesar los resultados como en tu lógica original
         resultados_json = []
         clases_dict = {}
         grupos_dict = {}
@@ -148,13 +170,15 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
                 'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
                 'nivel': cuenta.nivel,
-                'saldo_anterior': saldo_anterior,                
+                'saldo_anterior': saldo_anterior,
                 'debito': cuenta.debito,
                 'credito': cuenta.credito,
                 'saldo_actual': saldo_actual
-            })  
+            })
+            
+            # Agrupación en clases, grupos y cuentas
             clase_id = cuenta.cuenta_clase_id
-            if clase_id not in clases_dict:  
+            if clase_id not in clases_dict:
                 clases_dict[clase_id] = {
                     'tipo': 'clase',
                     'id': clase_id,
@@ -171,9 +195,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             clases_dict[clase_id]['debito'] += cuenta.debito
             clases_dict[clase_id]['credito'] += cuenta.credito
             clases_dict[clase_id]['saldo_actual'] += saldo_actual
-        
+            
             grupo_id = cuenta.cuenta_grupo_id
-            if grupo_id not in grupos_dict:  
+            if grupo_id not in grupos_dict:
                 grupos_dict[grupo_id] = {
                     'tipo': 'grupo',
                     'id': grupo_id,
@@ -191,7 +215,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             grupos_dict[grupo_id]['saldo_actual'] += saldo_actual
 
             cuenta_id = cuenta.cuenta_cuenta_id
-            if cuenta_id not in cuentas_dict:  
+            if cuenta_id not in cuentas_dict:
                 cuentas_dict[cuenta_id] = {
                     'tipo': 'cuenta',
                     'id': cuenta_id,
@@ -207,10 +231,122 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             cuentas_dict[cuenta_id]['debito'] += cuenta.debito
             cuentas_dict[cuenta_id]['credito'] += cuenta.credito
             cuentas_dict[cuenta_id]['saldo_actual'] += saldo_actual
-            
+        
+        # Agregar las clases, grupos y cuentas al resultado final
         resultados_json.extend(clases_dict.values())
         resultados_json.extend(grupos_dict.values())
         resultados_json.extend(cuentas_dict.values())
         resultados_json.sort(key=lambda x: str(x['codigo']))
-
+        
         return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
+        
+    # @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
+    # def informe_balance_prueba(self, request):    
+        
+    #     query = '''
+    #                 SELECT
+    #                     c.id,
+    #                     c.codigo,
+    #                     c.nombre,
+    #                     c.cuenta_clase_id,                        
+    #                     c.cuenta_grupo_id,
+    #                     c.cuenta_cuenta_id,
+    #                     c.nivel,
+    #                     COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.debito ELSE 0 END), 0) AS debito_anterior,
+    #                     COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.credito ELSE 0 END), 0) AS credito_anterior,
+    #                     COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.debito ELSE 0 END), 0) AS debito,
+    #                     COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.credito ELSE 0 END), 0) AS credito
+    #                 FROM
+    #                     con_cuenta c
+    #                 LEFT JOIN
+    #                     con_movimiento m ON m.cuenta_id = c.id
+    #                 GROUP BY
+    #                     c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
+    #                 ORDER BY
+    #                     c.cuenta_clase_id,
+    #                     c.cuenta_grupo_id,
+    #                     c.cuenta_cuenta_id;
+    #     '''
+    #     resultados = ConCuenta.objects.raw(query)
+    #     resultados_json = []
+    #     clases_dict = {}
+    #     grupos_dict = {}
+    #     cuentas_dict = {}
+    #     for cuenta in resultados:
+    #         saldo_anterior = cuenta.debito_anterior - cuenta.credito_anterior
+    #         saldo_actual = saldo_anterior + (cuenta.debito - cuenta.credito)
+    #         resultados_json.append({
+    #             'tipo': 'movimiento',
+    #             'id': cuenta.id,
+    #             'codigo': cuenta.codigo,
+    #             'nombre': cuenta.nombre,
+    #             'cuenta_clase_id': cuenta.cuenta_clase_id,
+    #             'cuenta_grupo_id': cuenta.cuenta_grupo_id,
+    #             'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
+    #             'nivel': cuenta.nivel,
+    #             'saldo_anterior': saldo_anterior,                
+    #             'debito': cuenta.debito,
+    #             'credito': cuenta.credito,
+    #             'saldo_actual': saldo_actual
+    #         })  
+    #         clase_id = cuenta.cuenta_clase_id
+    #         if clase_id not in clases_dict:  
+    #             clases_dict[clase_id] = {
+    #                 'tipo': 'clase',
+    #                 'id': clase_id,
+    #                 'codigo': str(clase_id),
+    #                 'nombre': "",
+    #                 'cuenta_clase_id': clase_id,
+    #                 'nivel': 1,
+    #                 'saldo_anterior': 0,
+    #                 'debito': 0,
+    #                 'credito': 0,
+    #                 'saldo_actual': 0
+    #             }
+    #         clases_dict[clase_id]['saldo_anterior'] += saldo_anterior
+    #         clases_dict[clase_id]['debito'] += cuenta.debito
+    #         clases_dict[clase_id]['credito'] += cuenta.credito
+    #         clases_dict[clase_id]['saldo_actual'] += saldo_actual
+        
+    #         grupo_id = cuenta.cuenta_grupo_id
+    #         if grupo_id not in grupos_dict:  
+    #             grupos_dict[grupo_id] = {
+    #                 'tipo': 'grupo',
+    #                 'id': grupo_id,
+    #                 'codigo': str(grupo_id),
+    #                 'nombre': "",
+    #                 'cuenta_grupo_id': grupo_id,
+    #                 'saldo_anterior': 0,
+    #                 'debito': 0,
+    #                 'credito': 0,
+    #                 'saldo_actual': 0
+    #             }
+    #         grupos_dict[grupo_id]['saldo_anterior'] += saldo_anterior
+    #         grupos_dict[grupo_id]['debito'] += cuenta.debito
+    #         grupos_dict[grupo_id]['credito'] += cuenta.credito
+    #         grupos_dict[grupo_id]['saldo_actual'] += saldo_actual
+
+    #         cuenta_id = cuenta.cuenta_cuenta_id
+    #         if cuenta_id not in cuentas_dict:  
+    #             cuentas_dict[cuenta_id] = {
+    #                 'tipo': 'cuenta',
+    #                 'id': cuenta_id,
+    #                 'codigo': str(cuenta_id),
+    #                 'nombre': "",
+    #                 'cuenta_cuenta_id': cuenta_id,
+    #                 'saldo_anterior': 0,
+    #                 'debito': 0,
+    #                 'credito': 0,
+    #                 'saldo_actual': 0
+    #             }
+    #         cuentas_dict[cuenta_id]['saldo_anterior'] += saldo_anterior
+    #         cuentas_dict[cuenta_id]['debito'] += cuenta.debito
+    #         cuentas_dict[cuenta_id]['credito'] += cuenta.credito
+    #         cuentas_dict[cuenta_id]['saldo_actual'] += saldo_actual
+            
+    #     resultados_json.extend(clases_dict.values())
+    #     resultados_json.extend(grupos_dict.values())
+    #     resultados_json.extend(cuentas_dict.values())
+    #     resultados_json.sort(key=lambda x: str(x['codigo']))
+
+    #     return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
