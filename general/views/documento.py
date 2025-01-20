@@ -955,6 +955,27 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except GenDocumento.DoesNotExist:
             return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
    
+    @action(detail=False, methods=["post"], url_path=r'electronico_descartar',)
+    def electronico_descartar(self, request):
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                documento = GenDocumento.objects.get(pk=id)
+                if documento.estado_aprobado == True:
+                    if documento.estado_electronico_enviado == False:
+                        documento.estado_electronico_descartado = True
+                        documento.save()
+                        return Response({'mensaje': 'Documento descartado correctamente'}, status=status.HTTP_200_OK)
+                    else:                
+                        return Response({'mensaje': 'El documento ya se encuentra enviado electronicamente', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
+        except GenDocumento.DoesNotExist:
+            return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'emitir-evento',)
     def emitir_evento(self, request):
         try:

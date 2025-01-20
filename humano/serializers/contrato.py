@@ -88,11 +88,14 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         entidad_caja_nombre = ''
         if instance.entidad_caja:
             entidad_caja_nombre = instance.entidad_caja.nombre
-
+        fecha_hasta = instance.fecha_hasta
+        if instance.estado_terminado == False:
+            if instance.contrato_tipo_id == 1:
+                fecha_hasta = None
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
-            'fecha_hasta': instance.fecha_hasta,
+            'fecha_hasta': fecha_hasta,
             'salario': instance.salario,
             'auxilio_transporte': instance.auxilio_transporte,
             'salario_integral': instance.salario_integral,
@@ -130,7 +133,7 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'entidad_cesantias_id': instance.entidad_cesantias_id,
             'entidad_cesantias_nombre': entidad_cesantias_nombre,
             'entidad_caja_id': instance.entidad_caja_id,
-            'entidad_caja_nombre': entidad_cesantias_nombre
+            'entidad_caja_nombre': entidad_caja_nombre
         } 
 
 
