@@ -22,6 +22,7 @@ class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
             'resolucion_numero' : resolucion_numero,
             'resolucion_prefijo' : resolucion_prefijo,
             'venta' : instance.venta,
-            'compra' : instance.compra            
+            'compra' : instance.compra,
+            'operacion': instance.operacion            
         }        
         

@@ -6,7 +6,8 @@
       "nombre": "FACTURA ELECTRÓNICA DE VENTA",
       "documento_clase": 100,
       "venta": true,
-      "cobrar" : true
+      "cobrar" : true,
+      "operacion": 1
     }
   },
   {
@@ -16,7 +17,8 @@
       "nombre": "NOTA CRÉDITO DE VENTA",
       "documento_clase": 101,
       "venta": true,
-      "cobrar" : true
+      "cobrar" : true,
+      "operacion": -1
     }
   },
   {
@@ -26,7 +28,8 @@
       "nombre": "NOTA DÉBITO DE VENTA",
       "documento_clase": 102,
       "venta": true,
-      "cobrar" : true
+      "cobrar" : true,
+      "operacion": 1
     }
   },
   {
@@ -44,7 +47,8 @@
       "nombre": "COMPRA",
       "documento_clase": 300,
       "compra": true,
-      "pagar": true
+      "pagar": true,
+      "operacion": 1
     }
   },
   {
@@ -54,7 +58,8 @@
       "nombre": "NOTA CREDITO COMPRA",
       "documento_clase": 301,
       "compra": true,
-      "pagar": true
+      "pagar": true,
+      "operacion": -1
     }
   },
   {
@@ -64,7 +69,8 @@
       "nombre": "NOTA DEBITO COMPRA",
       "documento_clase": 302,
       "compra": true,
-      "pagar": true
+      "pagar": true,
+      "operacion": 1
     }
   },
   {
@@ -98,7 +104,8 @@
       "nombre": "DOCUMENTO SOPORTE",
       "documento_clase": 303,
       "compra": true,
-      "pagar": true
+      "pagar": true,
+      "operacion": 1
     }
   },
   {
@@ -108,7 +115,8 @@
       "nombre": "NOTA AJUSTE",
       "documento_clase": 304,
       "compra": true,
-      "pagar": true
+      "pagar": true,
+      "operacion": -1
     }
   },
   {
@@ -152,7 +160,8 @@
       "nombre": "CUENTA COBRO",
       "documento_clase": 104,
       "venta": true,
-      "cobrar" : true
+      "cobrar" : true,
+      "operacion": 1
     }
   },
   {
@@ -161,7 +170,8 @@
     "fields": {
       "nombre": "SALDO INCIAL CXC",
       "documento_clase": 201,
-      "cobrar" : true
+      "cobrar" : true,
+      "operacion": 1
     }
   },
   {
@@ -170,7 +180,8 @@
     "fields": {
       "nombre": "SALDO INCIAL CXP",
       "documento_clase": 401,
-      "pagar": true
+      "pagar": true,
+      "operacion": 1
     }
   }
 ]
