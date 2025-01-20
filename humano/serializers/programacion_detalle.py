@@ -67,6 +67,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
             'ingreso': instance.ingreso,
             'retiro': instance.retiro,
+            'error_terminacion': instance.error_terminacion,
             'pago_horas': instance.pago_horas,
             'pago_auxilio_transporte' : instance.pago_auxilio_transporte,
             'pago_incapacidad' : instance.pago_incapacidad,

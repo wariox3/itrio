@@ -128,7 +128,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     fecha_desde__lte=programacion.fecha_hasta_periodo
                                 ).filter(
                                     Q(fecha_hasta__gte=programacion.fecha_desde) | Q(estado_terminado=False))
-                        print(contratos.query)                                             
+                        #print(contratos.query)                                             
                         for contrato in contratos:
                             contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
                             if not contrato_validar:
