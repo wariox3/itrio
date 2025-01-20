@@ -35,6 +35,7 @@ class HumProgramacionDetalle(models.Model):
     adicional = models.BooleanField(default = True)
     ingreso = models.BooleanField(default = False)
     retiro = models.BooleanField(default = False)
+    error_terminacion = models.BooleanField(default = False)
     devengado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     deduccion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)

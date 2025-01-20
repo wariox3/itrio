@@ -127,7 +127,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 ).filter(
                                     fecha_desde__lte=programacion.fecha_hasta_periodo
                                 ).filter(
-                                    Q(fecha_hasta__gte=programacion.fecha_desde) | Q(contrato_tipo_id=1))                                             
+                                    Q(fecha_hasta__gte=programacion.fecha_desde) | Q(estado_terminado=False))
+                        print(contratos.query)                                             
                         for contrato in contratos:
                             contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
                             if not contrato_validar:
@@ -155,7 +156,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     'descuento_embargo': programacion.descuento_embargo,
                                     'adicional': programacion.adicional,
                                     'ingreso': ingreso,
-                                    'retiro': retiro
+                                    'retiro': retiro,
+                                    'error_terminacion': False
                                 }
                                 if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
                                     data['descuento_pension'] = False
@@ -169,14 +171,21 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 if fecha_desde < programacion.fecha_desde:
                                     fecha_desde = programacion.fecha_desde
                                 data['fecha_desde'] = fecha_desde
-                                    
+
+                                error_terminacion = False    
                                 fecha_hasta = contrato.fecha_hasta
                                 if contrato.contrato_tipo_id == 1:
                                     fecha_hasta = programacion.fecha_hasta
+                                else:
+                                    if contrato.estado_terminado == False:
+                                        if contrato.fecha_hasta < programacion.fecha_desde:
+                                            fecha_hasta = programacion.fecha_desde
+                                            error_terminacion = True
                                 if fecha_hasta > programacion.fecha_hasta:
                                     fecha_hasta = programacion.fecha_hasta
-                                data['fecha_hasta'] = fecha_hasta
-                                
+                                            
+                                data['fecha_hasta'] = fecha_hasta  
+                                data['error_terminacion'] = error_terminacion                         
                                 dias_novedad = 0
                                 novedades = HumNovedad.objects.filter(
                                     contrato_id = contrato.id,
@@ -199,6 +208,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 diferencia = fecha_hasta - fecha_desde
                                 dias = diferencia.days + 1
                                 dias = dias - dias_novedad
+                                if error_terminacion:
+                                    dias = 0
                                 data['dias'] = dias
                                 data['dias_transporte'] = dias
                                 data['dias_novedad'] = dias_novedad
@@ -563,40 +574,42 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     if salud:
                                         if salud.porcentaje_empleado > 0:                                        
                                             concepto = salud.concepto     
-                                            base = data_general['base_cotizacion'] - data_general['base_licencia'];                                  
-                                            pago = round((base * salud.porcentaje_empleado) / 100)
-                                            data = {
-                                                'documento': documento.id,                                            
-                                                'porcentaje': salud.porcentaje_empleado,
-                                                'pago': pago,
-                                                'concepto': concepto.id
-                                            }
-                                            datos_detalle(data_general, data, concepto)
-                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                            if documento_detalle_serializador.is_valid():
-                                                documento_detalle_serializador.save()
-                                            else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                            base = data_general['base_cotizacion'] - data_general['base_licencia'];
+                                            if base > 0:                                  
+                                                pago = round((base * salud.porcentaje_empleado) / 100)
+                                                data = {
+                                                    'documento': documento.id,                                            
+                                                    'porcentaje': salud.porcentaje_empleado,
+                                                    'pago': pago,
+                                                    'concepto': concepto.id
+                                                }
+                                                datos_detalle(data_general, data, concepto)
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()
+                                                else:
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
                                 # Pension
                                 if programacion_detalle.descuento_pension:
                                     pension = contrato.pension
                                     if pension:
-                                        if pension.porcentaje_empleado > 0:                                        
-                                            concepto = pension.concepto                                        
-                                            pago = round((data_general['base_cotizacion'] * pension.porcentaje_empleado) / 100)                                        
-                                            data = {
-                                                'documento': documento.id,                                            
-                                                'porcentaje': pension.porcentaje_empleado,
-                                                'pago': pago,
-                                                'concepto': concepto.id
-                                            }
-                                            datos_detalle(data_general, data, concepto)
-                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                            if documento_detalle_serializador.is_valid():
-                                                documento_detalle_serializador.save()
-                                            else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                        if pension.porcentaje_empleado > 0:  
+                                            if data_general['base_cotizacion'] > 0:
+                                                concepto = pension.concepto                                        
+                                                pago = round((data_general['base_cotizacion'] * pension.porcentaje_empleado) / 100)                                        
+                                                data = {
+                                                    'documento': documento.id,                                            
+                                                    'porcentaje': pension.porcentaje_empleado,
+                                                    'pago': pago,
+                                                    'concepto': concepto.id
+                                                }
+                                                datos_detalle(data_general, data, concepto)
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()
+                                                else:
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
                                 #creditos
                                 if programacion_detalle.descuento_credito:

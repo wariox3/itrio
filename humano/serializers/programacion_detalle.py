@@ -24,7 +24,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
         fields = ['id', 'dias', 'dias_transporte', 'dias_novedad', 'salario', 'salario_promedio', 'fecha_desde', 'fecha_hasta', 'diurna', 'nocturna', 'festiva_diurna', 
                   'festiva_nocturna', 'extra_diurna', 'extra_nocturna', 
                   'extra_festiva_diurna', 'extra_festiva_nocturna', 'recargo_nocturno', 'recargo_festivo_diurno', 'recargo_festivo_nocturno',
-                  'programacion', 'contrato', 'ingreso', 'retiro',
+                  'programacion', 'contrato', 'ingreso', 'retiro', 'error_terminacion',
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
                   'descuento_credito', 'descuento_embargo', 'adicional', 'devengado', 'deduccion', 'total']
