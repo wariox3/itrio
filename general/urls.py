@@ -23,6 +23,7 @@ from .views.cuenta_banco import CuentaBancoViewSet
 from .views.asesor import AsesorViewSet
 from .views.sede import SedeViewSet
 from .views.plazo_pago import PlazoPagoViewSet
+from .views.archivo import ArchivoViewSet
 from .views.empresa import EmpresaViewSet
 from .views.configuracion import ConfiguracionViewSet
 from .views.parametros import ParametrosViewSet
@@ -53,6 +54,7 @@ router.register(r'cuenta_banco', CuentaBancoViewSet)
 router.register(r'asesor', AsesorViewSet)
 router.register(r'sede', SedeViewSet)
 router.register(r'plazopago', PlazoPagoViewSet)
+router.register(r'archivo', ArchivoViewSet)
 router.register(r'empresa', EmpresaViewSet)
 router.register(r'configuracion', ConfiguracionViewSet)
 router.register(r'parametros', ParametrosViewSet)

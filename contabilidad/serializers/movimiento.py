@@ -59,5 +59,49 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
             'contacto_nombre_corto': contacto_nombre_corto,
             'documento_id': instance.documento_id,
             'periodo_id': instance.periodo_id
-        }         
+        } 
+
+class ConMovimientoExcelSerializador(serializers.HyperlinkedModelSerializer):    
+
+    class Meta:
+        model = ConMovimiento
+
+    def to_representation(self, instance):
+        cuenta_codigo = ''
+        cuenta_nombre = ''
+        if instance.cuenta:
+            cuenta_codigo = instance.cuenta.codigo
+            cuenta_nombre = instance.cuenta.nombre
+        comprobante_codigo = ''
+        comprobante_nombre = ''
+        if instance.comprobante:
+            comprobante_codigo = instance.comprobante.codigo
+            comprobante_nombre = instance.comprobante.nombre
+        grupo_codigo = ''
+        grupo_nombre = ''
+        if instance.grupo:
+            grupo_codigo = instance.grupo.codigo
+            grupo_nombre = instance.grupo.nombre
+        contacto_nombre_corto = ''
+        if instance.contacto:
+            contacto_nombre_corto = instance.contacto.nombre_corto
+        return {
+            'ID': instance.id,
+            'COMPROBANTE': comprobante_codigo,
+            'COMPROBANTE_NOMBRE': comprobante_nombre,
+            'NUMERO': instance.numero,
+            'FECHA': instance.fecha,
+            'CUENTA': cuenta_codigo,
+            'CUENTA_NOMBRE': cuenta_nombre,
+            'DEBITO': instance.debito ,
+            'CREDITO': instance.credito ,
+            'BASE': instance.base ,
+            'NAT': instance.naturaleza ,                                            
+            'GRUPO': grupo_codigo,
+            'GRUPO_NOMBRE': grupo_nombre,
+            'IDENTIFICACION': instance.contacto_id,
+            'NOMBRE_CORTO': contacto_nombre_corto,
+            'DOCUMENTO_ID': instance.documento_id,
+            'PERIODO': instance.periodo_id
+        }             
         
