@@ -111,6 +111,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
             'estado_electronico_notificado' : instance.estado_electronico_notificado,
             'estado_electronico_evento' : instance.estado_electronico_evento,
+            'estado_electronico_descartado' : instance.estado_electronico_descartado,
             'soporte' : instance.soporte,
             'orden_compra' : instance.orden_compra,
             'cue' : instance.cue,
