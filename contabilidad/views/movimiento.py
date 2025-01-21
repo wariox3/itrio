@@ -15,6 +15,13 @@ import base64
 import openpyxl
 import json
 import gc
+from io import BytesIO
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Table, TableStyle
+from reportlab.lib import colors
+import datetime
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ConMovimiento.objects.all()
@@ -104,28 +111,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
-
-            #opcion con filtros
-    @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
-    def informe_balance_prueba(self, request):    
-        filtros = request.data.get("filtros", [])
-
-        # Extraer las fechas desde los filtros
-        fecha_desde = None
-        fecha_hasta = None
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde__gte":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta__lte":
-                fecha_hasta = filtro["valor1"]
-        
-        # Validar que las fechas estén presentes
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
+    def obtener_balance_prueba(self, fecha_desde, fecha_hasta):
         query = f'''
             SELECT
                 c.id,
@@ -150,10 +136,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 c.cuenta_grupo_id,
                 c.cuenta_cuenta_id;
         '''
-        # Ejecutar la consulta
         resultados = ConCuenta.objects.raw(query)
         
-        # Procesar los resultados como en tu lógica original
+        # Procesar resultados
         resultados_json = []
         clases_dict = {}
         grupos_dict = {}
@@ -232,121 +217,122 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             cuentas_dict[cuenta_id]['credito'] += cuenta.credito
             cuentas_dict[cuenta_id]['saldo_actual'] += saldo_actual
         
-        # Agregar las clases, grupos y cuentas al resultado final
+        # Agregar clases, grupos y cuentas al resultado final
         resultados_json.extend(clases_dict.values())
         resultados_json.extend(grupos_dict.values())
         resultados_json.extend(cuentas_dict.values())
         resultados_json.sort(key=lambda x: str(x['codigo']))
+        return resultados_json
+
+    @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
+    def informe_balance_prueba(self, request):    
+        filtros = request.data.get("filtros", [])
+
+        # Extraer las fechas desde los filtros
+        fecha_desde = None
+        fecha_hasta = None
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde__gte":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta__lte":
+                fecha_hasta = filtro["valor1"]
         
+        # Validar que las fechas estén presentes
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta)
         return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
-        
-    # @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
-    # def informe_balance_prueba(self, request):    
-        
-    #     query = '''
-    #                 SELECT
-    #                     c.id,
-    #                     c.codigo,
-    #                     c.nombre,
-    #                     c.cuenta_clase_id,                        
-    #                     c.cuenta_grupo_id,
-    #                     c.cuenta_cuenta_id,
-    #                     c.nivel,
-    #                     COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.debito ELSE 0 END), 0) AS debito_anterior,
-    #                     COALESCE(SUM(CASE WHEN m.periodo_id < 202410 THEN m.credito ELSE 0 END), 0) AS credito_anterior,
-    #                     COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.debito ELSE 0 END), 0) AS debito,
-    #                     COALESCE(SUM(CASE WHEN m.periodo_id BETWEEN 202410 AND 202410 THEN m.credito ELSE 0 END), 0) AS credito
-    #                 FROM
-    #                     con_cuenta c
-    #                 LEFT JOIN
-    #                     con_movimiento m ON m.cuenta_id = c.id
-    #                 GROUP BY
-    #                     c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
-    #                 ORDER BY
-    #                     c.cuenta_clase_id,
-    #                     c.cuenta_grupo_id,
-    #                     c.cuenta_cuenta_id;
-    #     '''
-    #     resultados = ConCuenta.objects.raw(query)
-    #     resultados_json = []
-    #     clases_dict = {}
-    #     grupos_dict = {}
-    #     cuentas_dict = {}
-    #     for cuenta in resultados:
-    #         saldo_anterior = cuenta.debito_anterior - cuenta.credito_anterior
-    #         saldo_actual = saldo_anterior + (cuenta.debito - cuenta.credito)
-    #         resultados_json.append({
-    #             'tipo': 'movimiento',
-    #             'id': cuenta.id,
-    #             'codigo': cuenta.codigo,
-    #             'nombre': cuenta.nombre,
-    #             'cuenta_clase_id': cuenta.cuenta_clase_id,
-    #             'cuenta_grupo_id': cuenta.cuenta_grupo_id,
-    #             'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
-    #             'nivel': cuenta.nivel,
-    #             'saldo_anterior': saldo_anterior,                
-    #             'debito': cuenta.debito,
-    #             'credito': cuenta.credito,
-    #             'saldo_actual': saldo_actual
-    #         })  
-    #         clase_id = cuenta.cuenta_clase_id
-    #         if clase_id not in clases_dict:  
-    #             clases_dict[clase_id] = {
-    #                 'tipo': 'clase',
-    #                 'id': clase_id,
-    #                 'codigo': str(clase_id),
-    #                 'nombre': "",
-    #                 'cuenta_clase_id': clase_id,
-    #                 'nivel': 1,
-    #                 'saldo_anterior': 0,
-    #                 'debito': 0,
-    #                 'credito': 0,
-    #                 'saldo_actual': 0
-    #             }
-    #         clases_dict[clase_id]['saldo_anterior'] += saldo_anterior
-    #         clases_dict[clase_id]['debito'] += cuenta.debito
-    #         clases_dict[clase_id]['credito'] += cuenta.credito
-    #         clases_dict[clase_id]['saldo_actual'] += saldo_actual
-        
-    #         grupo_id = cuenta.cuenta_grupo_id
-    #         if grupo_id not in grupos_dict:  
-    #             grupos_dict[grupo_id] = {
-    #                 'tipo': 'grupo',
-    #                 'id': grupo_id,
-    #                 'codigo': str(grupo_id),
-    #                 'nombre': "",
-    #                 'cuenta_grupo_id': grupo_id,
-    #                 'saldo_anterior': 0,
-    #                 'debito': 0,
-    #                 'credito': 0,
-    #                 'saldo_actual': 0
-    #             }
-    #         grupos_dict[grupo_id]['saldo_anterior'] += saldo_anterior
-    #         grupos_dict[grupo_id]['debito'] += cuenta.debito
-    #         grupos_dict[grupo_id]['credito'] += cuenta.credito
-    #         grupos_dict[grupo_id]['saldo_actual'] += saldo_actual
+    
+    @action(detail=False, methods=["post"], url_path=r'imprimir')
+    def informe_balance_prueba_pdf(self, request):
+        filtros = request.data.get("filtros", [])
 
-    #         cuenta_id = cuenta.cuenta_cuenta_id
-    #         if cuenta_id not in cuentas_dict:  
-    #             cuentas_dict[cuenta_id] = {
-    #                 'tipo': 'cuenta',
-    #                 'id': cuenta_id,
-    #                 'codigo': str(cuenta_id),
-    #                 'nombre': "",
-    #                 'cuenta_cuenta_id': cuenta_id,
-    #                 'saldo_anterior': 0,
-    #                 'debito': 0,
-    #                 'credito': 0,
-    #                 'saldo_actual': 0
-    #             }
-    #         cuentas_dict[cuenta_id]['saldo_anterior'] += saldo_anterior
-    #         cuentas_dict[cuenta_id]['debito'] += cuenta.debito
-    #         cuentas_dict[cuenta_id]['credito'] += cuenta.credito
-    #         cuentas_dict[cuenta_id]['saldo_actual'] += saldo_actual
-            
-    #     resultados_json.extend(clases_dict.values())
-    #     resultados_json.extend(grupos_dict.values())
-    #     resultados_json.extend(cuentas_dict.values())
-    #     resultados_json.sort(key=lambda x: str(x['codigo']))
+        # Validar y procesar filtros
+        fecha_desde = None
+        fecha_hasta = None
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde__gte":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta__lte":
+                fecha_hasta = filtro["valor1"]
 
-    #     return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta)
+
+        # Crear PDF dinámicamente
+        try:
+            buffer = BytesIO()
+            pdf = canvas.Canvas(buffer, pagesize=letter)
+            pdf.setTitle("Informe Balance de Prueba")
+
+            # Configuración general
+            line_height = 20
+            margin_top = 680
+            margin_left = 30
+            current_y = margin_top
+
+            # Función para dibujar encabezados
+            def draw_headers(pdf, current_y):
+                pdf.setFont("Helvetica-Bold", 9)
+                pdf.drawString(margin_left, current_y, "Código")
+                pdf.drawString(margin_left + 60, current_y, "Nombre")
+                pdf.drawString(margin_left + 260, current_y, "Anterior")
+                pdf.drawString(margin_left + 340, current_y, "Débito")
+                pdf.drawString(margin_left + 420, current_y, "Crédito")
+                pdf.drawString(margin_left + 500, current_y, "Actual")
+
+            # Título inicial
+            pdf.setFont("Helvetica-Bold", 9)
+            pdf.drawString(50, 750, "Balance de Prueba")
+            pdf.setFont("Helvetica", 8)
+            pdf.drawString(50, 730, f"Generado el: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            pdf.drawString(50, 710, f"Periodo: {fecha_desde} a {fecha_hasta}")
+
+            # Dibujar encabezados iniciales
+            draw_headers(pdf, current_y)
+            current_y -= line_height
+
+            # Iterar resultados y generar contenido
+            pdf.setFont("Helvetica", 8)
+            for i, resultado in enumerate(resultados_json):
+                if current_y < 50:  # Crear nueva página si no hay suficiente espacio
+                    pdf.showPage()
+                    pdf.setFont("Helvetica-Bold", 9)
+                    pdf.drawString(50, 750, "Balance de Prueba")
+                    pdf.setFont("Helvetica", 8)
+                    pdf.drawString(50, 730, f"Generado el: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                    pdf.drawString(50, 710, f"Periodo: {fecha_desde} a {fecha_hasta}")
+
+                    # Dibujar encabezados en la nueva página
+                    draw_headers(pdf, margin_top)
+                    current_y = margin_top - line_height
+
+                # Dibujar contenido de cada fila
+                pdf.setFont("Helvetica", 8)
+                pdf.drawString(margin_left, current_y, str(resultado['codigo']))
+                pdf.drawString(margin_left + 60, current_y, resultado['nombre'][:30])
+                pdf.drawRightString(margin_left + 305, current_y, f"{resultado['saldo_anterior']:,.2f}")
+                pdf.drawRightString(margin_left + 385, current_y, f"{resultado['debito']:,.2f}")
+                pdf.drawRightString(margin_left + 465, current_y, f"{resultado['credito']:,.2f}")
+                pdf.drawRightString(margin_left + 545, current_y, f"{resultado['saldo_actual']:,.2f}")
+                current_y -= line_height
+
+            # Finalizar el PDF
+            pdf.save()
+            buffer.seek(0)
+            response = HttpResponse(buffer, content_type='application/pdf')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = 'attachment; filename="informe_balance_prueba.pdf"'
+            return response
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        
