@@ -9,7 +9,6 @@ class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_clase = serializers.PrimaryKeyRelatedField(queryset=ConCuentaClase.objects.all(), allow_null=True)
     cuenta_grupo = serializers.PrimaryKeyRelatedField(queryset=ConCuentaGrupo.objects.all(), allow_null=True)
     cuenta_cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuentaCuenta.objects.all(), allow_null=True)
-    cuenta_subcuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuentaSubcuenta.objects.all(), allow_null=True)
 
     class Meta:
         model = ConCuenta
