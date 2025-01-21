@@ -16,14 +16,29 @@ class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
                   'cuenta_clase', 'cuenta_grupo', 'cuenta_cuenta', 'cuenta_subcuenta']
 
     def to_representation(self, instance):
+        cuenta_clase_nombre = ""
+        if instance.cuenta_clase:
+            cuenta_clase_nombre = instance.cuenta_clase.nombre
+        cuenta_grupo_nombre = ""
+        if instance.cuenta_grupo:
+            cuenta_grupo_nombre = instance.cuenta_grupo.nombre
+        cuenta_cuenta_nombre = ""
+        if instance.cuenta_cuenta:
+            cuenta_cuenta_nombre = instance.cuenta_cuenta.nombre
         return {
             'id': instance.id,
             'codigo': instance.codigo,
             'nombre': instance.nombre,
+            'cuenta_clase_id': instance.cuenta_clase_id,
+            'cuenta_clase_nombre': cuenta_clase_nombre,
+            'cuenta_grupo_id': instance.cuenta_grupo_id,
+            'cuenta_grupo_nombre': cuenta_grupo_nombre,
+            'cuenta_cuenta_id': instance.cuenta_cuenta_id,
+            'cuenta_cuenta_nombre': cuenta_cuenta_nombre,
             'exige_base': instance.exige_base,
             'exige_tercero': instance.exige_tercero,
             'exige_grupo': instance.exige_grupo,
-            'permite_movimiento': instance.permite_movimiento            
+            'permite_movimiento': instance.permite_movimiento          
         } 
 
 
