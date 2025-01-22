@@ -131,3 +131,32 @@ class HumProgramacionDetalleExcelSerializador(serializers.HyperlinkedModelSerial
             '%ARL' : contrato__riesgo_arl_porcentaje
         }           
         
+class HumProgramacionDetalleImportarHorasSerializador(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = HumProgramacionDetalle
+
+    def to_representation(self, instance):      
+        contrato_contacto_numero_identificacion = ""
+        contrato_contacto_nombre_corto = ""
+        if instance.contrato:
+            if instance.contrato.contacto:
+                contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
+                contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
+        return {
+            'ID': instance.id,
+            'COD': instance.contrato.contacto_id,
+            'IDENTIFICACION': contrato_contacto_numero_identificacion,
+            'EMPLEADO': contrato_contacto_nombre_corto,
+            'D': instance.diurna,
+            'N': instance.nocturna,
+            'FD': instance.festiva_diurna,
+            'FN': instance.festiva_nocturna,
+            'ED': instance.extra_diurna,
+            'EN': instance.extra_nocturna,
+            'EFD': instance.extra_festiva_diurna,
+            'EFN': instance.extra_festiva_nocturna,
+            'RN': instance.recargo_nocturno,
+            'RFD': instance.recargo_festivo_diurno,
+            'RFN': instance.recargo_festivo_nocturno,            
+        }  

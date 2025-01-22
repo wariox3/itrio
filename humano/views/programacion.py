@@ -28,6 +28,8 @@ from django.template.loader import render_to_string
 from utilidades.zinc import Zinc
 from utilidades.utilidades import Utilidades
 import base64
+from io import BytesIO
+import openpyxl
 
 def horas_programacion(programacion_detalle):
     respuesta_horas = [
@@ -830,3 +832,146 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                     
+        
+    @action(detail=False, methods=['post'], url_path=r'importar_horas',)
+    def importar_horas(self, request):
+        raw = request.data        
+        archivo_base64 = raw.get('archivo_base64')
+        if archivo_base64:
+            try:
+                archivo_data = base64.b64decode(archivo_base64)
+                archivo = BytesIO(archivo_data)
+                wb = openpyxl.load_workbook(archivo)
+                sheet = wb.active    
+            except Exception as e:     
+                return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+            
+            data_modelo = []
+            errores = False
+            errores_datos = []
+            registros_actualizados = 0
+            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                data = {
+                    'id': row[0],
+                    'diurna': row[5],
+                    'nocturna':row[6],
+                    'festiva_diurna': row[6],
+                    'festiva_nocturna': row[7],
+                    'extra_diurna': row[8],
+                    'extra_nocturna': row[9],
+                    'extra_festiva_diurna': row[9],
+                    'extra_festiva_nocturna': row[10],
+                    'recargo_nocturno': row[11],
+                    'recargo_festivo_diurno': row[11],
+                    'recargo_festivo_nocturno': row[12],
+                }  
+                if not data['diurna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas diurnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+
+                if not data['nocturna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas nocturnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True    
+
+                if not data['festiva_diurna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas festivas diurnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+
+                if not data['festiva_nocturna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas festivas nocturnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+
+                if not data['extra_diurna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas extras diurnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True                    
+
+                if not data['extra_nocturna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas extras nocturnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+
+                if not data['extra_festiva_diurna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas extras festivas diurnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True
+
+                if not data['extra_festiva_nocturna']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas extras festivas nocturnas'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True        
+
+                if not data['recargo_nocturno']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas de recargo nocturno'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True              
+
+                if not data['recargo_festivo_diurno']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas de recargo festivo diurno'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True     
+
+                if not data['recargo_festivo_nocturno']:
+                    error_dato = {
+                        'fila': i,
+                        'Mensaje': 'Debe digitar las horas de recargo festivo nocturno'
+                    }
+                    errores_datos.append(error_dato)
+                    errores = True                                               
+
+                data_modelo.append(data)
+            if errores == False:
+                for detalle in data_modelo:
+                    HumProgramacionDetalle.objects.filter(id=detalle.get('id')).update(
+                        diurna=detalle['diurna'],
+                        nocturna=detalle['nocturna'],
+                        festiva_diurna=detalle['festiva_diurna'],
+                        festiva_nocturna=detalle['festiva_nocturna'],
+                        extra_diurna=detalle['extra_diurna'],
+                        extra_nocturna=detalle['extra_nocturna'],
+                        extra_festiva_diurna=detalle['extra_festiva_diurna'],
+                        extra_festiva_nocturna=detalle['extra_festiva_nocturna'],
+                        recargo_nocturno=detalle['recargo_nocturno'],
+                        recargo_festivo_diurno=detalle['recargo_festivo_diurno'],
+                        recargo_festivo_nocturno=detalle['recargo_festivo_nocturno'],
+                    )
+                    registros_actualizados += 1
+                return Response({'registros_actualizados': registros_actualizados}, status=status.HTTP_200_OK)
+            else:
+                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
