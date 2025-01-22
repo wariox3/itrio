@@ -60,6 +60,7 @@ class ListaView(APIView):
                             items = items.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
                     else:
                         items = items.filter(**{filtro['propiedad']: filtro['valor1']})
+            print(items.query)                        
             itemsCantidad = items[:cantidadLimite].count()
             if ordenamientos:
                 items = items.order_by(*ordenamientos)              

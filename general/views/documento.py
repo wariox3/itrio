@@ -306,6 +306,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if documento.afectado <= 0:
                             documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)                                          
                             for documento_detalle in documento_detalles:                                               
+                                if documento_detalle.documento_afectado_id:                                    
+                                    documento_afectado = GenDocumento.objects.get(pk=documento_detalle.documento_afectado_id)
+                                    if documento.documento_tipo.documento_clase_id in (200,400):                                                                    
+                                        documento_afectado.afectado -= documento_detalle.pago
+                                        documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                        documento_afectado.save(update_fields=['afectado', 'pendiente'])                                                                    
                                 documento_detalle.cantidad = 0
                                 documento_detalle.precio = 0
                                 documento_detalle.porcentaje_descuento = 0
@@ -317,13 +323,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 documento_detalle.base_impuesto = 0
                                 documento_detalle.total = 0
                                 documento_detalle.total_bruto = 0
-                                documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 'impuesto', 'impuesto_operado', 'impuesto_retencion', 'base_impuesto', 'total', 'total_bruto'])
+                                documento_detalle.pago = 0
+                                documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 
+                                                                      'impuesto', 'impuesto_operado', 'impuesto_retencion', 'base_impuesto', 
+                                                                      'total', 'total_bruto', 'pago'])
                                 documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
                                 for documento_impuesto in documento_impuestos:
                                     documento_impuesto.base = 0
                                     documento_impuesto.total = 0 
                                     documento_impuesto.total_operado = 0 
                                     documento_impuesto.save(update_fields=['base','total', 'total_operado'])
+
+
                             documento.estado_anulado = True  
                             documento.subtotal = 0
                             documento.total = 0
