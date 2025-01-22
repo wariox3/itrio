@@ -25,7 +25,7 @@ class FormatoProgramacion():
             'contrato__contacto__nombre_corto',
             'contrato__contacto__numero_cuenta',
             'contrato__contacto__banco__nombre',
-            ).order_by('-contrato__contacto__nombre_corto')
+            ).order_by('contrato__contacto__nombre_corto')
 
         x = 40
         y = 680
