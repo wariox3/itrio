@@ -1,6 +1,3 @@
-from general.models.empresa import GenEmpresa
-from general.models.documento_tipo import GenDocumentoTipo
-from general.models.resolucion import GenResolucion
 import requests
 import json
 
@@ -80,8 +77,6 @@ class Zinc():
             return {'error': False, 'datos': datos}
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
-
-
 
     def consumirPost(self, data, url):
         url = "http://zinc.semantica.com.co" + url        

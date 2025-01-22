@@ -85,8 +85,7 @@ class Utilidades:
     
     @staticmethod
     def digito_verificacion(nit):
-        factores = [3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71]
-        #rut_ajustado=string.rjust(str(nit), 15, '0')
+        factores = [3, 7, 13, 17, 19, 23, 29, 37, 41, 43, 47, 53, 59, 67, 71]        
         rut_ajustado=str(nit).rjust( 15, '0')
         s = sum(int(rut_ajustado[14-i]) * factores[i] for i in range(14)) % 11
         if s > 1:
@@ -102,3 +101,17 @@ class Utilidades:
         if caracteres is not None and len(texto) > caracteres:
             texto = texto[:caracteres]
         return texto
+    
+    @staticmethod
+    def separar_base64(base64_string):        
+        if ';base64,' in base64_string:
+            metadata, base64_data = base64_string.split(';base64,')            
+            content_type = metadata.split(':')[1]            
+            extension = content_type.split('/')[1]
+            return {
+                'content_type': content_type,
+                'extension': extension,
+                'base64_raw': base64_data
+            }
+        else:
+            raise ValueError("La cadena base64 no contiene el formato esperado 'data:[tipo]/[extensión];base64,'.")
