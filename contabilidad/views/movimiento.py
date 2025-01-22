@@ -22,6 +22,10 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 import datetime
+from utilidades.excel import WorkbookEstilos
+from openpyxl import Workbook
+from datetime import datetime
+from openpyxl.styles import Alignment, numbers
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ConMovimiento.objects.all()
@@ -335,4 +339,68 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        
+    @action(detail=False, methods=["post"], url_path=r'excel')
+    def informe_balance_prueba_excel(self, request):
+        filtros = request.data.get("filtros", [])
+        fecha_desde = None
+        fecha_hasta = None
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde__gte":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta__lte":
+                fecha_hasta = filtro["valor1"]
+
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta)
+
+        encabezados_personalizados = {
+            "CUENTA": "codigo",
+            "NOMBRE": "nombre",
+            "ANTERIOR": "saldo_anterior",
+            "DEBITO": "debito",
+            "CREDITO": "credito",
+            "ACTUAL": "saldo_actual"
+        }
+
+        # Crear el Excel
+        wb = Workbook()
+        ws = wb.active
+
+        # Agregar encabezados personalizados
+        ws.append(list(encabezados_personalizados.keys()))
+
+        # Agregar datos correspondientes a los encabezados
+        for row in resultados_json:
+            fila = []
+            for campo, key in encabezados_personalizados.items():
+                value = row.get(key, "")
+                if isinstance(value, datetime) and value.tzinfo is not None:
+                    value = value.replace(tzinfo=None)  # Eliminar la zona horaria
+                fila.append(value)
+            ws.append(fila)
+
+        columnas_numericas = ["ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+        for col_header in columnas_numericas:
+            col_index = list(encabezados_personalizados.keys()).index(col_header) + 1
+            for cell in ws.iter_cols(min_col=col_index, max_col=col_index, min_row=2):
+                for celda in cell:
+                    celda.alignment = Alignment(horizontal="right")  # Alinear a la derecha
+                    celda.number_format = "#,##0.00"
+
+        # Aplicar estilos
+        estilos_excel = WorkbookEstilos(wb)
+        estilos_excel.aplicar_estilos()
+
+        # Crear el nombre del archivo con fechas
+        nombre_archivo = f"balance_prueba_{fecha_desde}_al_{fecha_hasta}.xlsx"
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        response['Content-Disposition'] = f'attachment; filename={nombre_archivo}'
+        wb.save(response)
+        return response
