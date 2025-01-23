@@ -839,6 +839,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
     def importar_horas(self, request):
         raw = request.data        
         archivo_base64 = raw.get('archivo_base64')
+        programacion_id = raw.get('programacion_id')
         if archivo_base64:
             try:
                 archivo_data = base64.b64decode(archivo_base64)
@@ -871,6 +872,20 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                     'recargo_festivo_nocturno': row[14],
                 }  
 
+                registro = HumProgramacionDetalle.objects.filter(id=data['id'], programacion_id=programacion_id).first()
+                if not registro:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'programacion_id': [
+                                f"El registro con ID {data['id']} no pertenece a la programación con ID {programacion_id}."
+                            ]
+                        }
+                    }
+                    errores_datos.append(error_dato)
+                    continue
+
                 serializer = HumProgramacionDetalleImportarHorasSerializador(data=data)
                 if serializer.is_valid():
                     validated_data = serializer.validated_data
@@ -899,7 +914,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         recargo_festivo_diurno=detalle['recargo_festivo_diurno'],
                         recargo_festivo_nocturno=detalle['recargo_festivo_nocturno'],
                     )
-                return Response({'registros_actualizados': registros_actualizados}, status=status.HTTP_200_OK)
+                return Response({'mensaje': 'Registros actualizados exitosamente', 'registros_importados': registros_actualizados}, status=status.HTTP_200_OK)
             else:
                 return Response({'Mensaje': 'Errores de validación', 'codigo': 1 ,'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
