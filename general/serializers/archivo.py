@@ -11,5 +11,11 @@ class GenArchivoSerializador(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):        
         return {
-            'id': instance.id                        
+            'id': instance.id,
+            'fecha': instance.fecha,
+            'nombre': instance.nombre,
+            'tipo': instance.tipo,
+            'tamano': instance.tamano,
+            'almacenamiento_id': instance.almacenamiento_id,
+            'documento_id': instance.documento_id                        
         }
