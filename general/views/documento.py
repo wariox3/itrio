@@ -294,6 +294,33 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=["post"], url_path=r'desaprobar',)
+    def desaprobar(self, request):        
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)
+                if documento.estado_aprobado == True and documento.estado_anulado == False:              
+                    documento.estado_aprobado = False
+                    if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
+                        documento.pendiente = 0   
+                    if documento.documento_tipo.documento_clase_id in (200,400):
+                        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
+                        for documento_detalle in documento_detalles:
+                            documento_afectado = documento_detalle.documento_afectado                        
+                            documento_afectado.afectado -= documento_detalle.pago
+                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                            documento_afectado.save(update_fields=['afectado', 'pendiente'])
+                    documento.save()
+                    return Response({'estado_aprobado': False}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'El documento no esta aprobado o esta anulado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'anular',)
     def anular(self, request):
         try:
