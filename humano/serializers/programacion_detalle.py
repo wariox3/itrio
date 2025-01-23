@@ -135,28 +135,38 @@ class HumProgramacionDetalleImportarHorasSerializador(serializers.HyperlinkedMod
 
     class Meta:
         model = HumProgramacionDetalle
+        fields = [
+            'id', 'diurna', 'nocturna', 'festiva_diurna', 
+            'festiva_nocturna', 'extra_diurna', 'extra_nocturna', 
+            'extra_festiva_diurna', 'extra_festiva_nocturna', 
+            'recargo_nocturno', 'recargo_festivo_diurno', 
+            'recargo_festivo_nocturno',
+        ]
 
     def to_representation(self, instance):      
         contrato_contacto_numero_identificacion = ""
         contrato_contacto_nombre_corto = ""
-        if instance.contrato:
-            if instance.contrato.contacto:
-                contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
-                contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
+
+        # Validación del contrato y contacto asociados
+        if instance.contrato and instance.contrato.contacto:
+            contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
+            contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
+
+        # Representación personalizada del objeto
         return {
-            'ID': instance.id,
-            'COD': instance.contrato.contacto_id,
-            'IDENTIFICACION': contrato_contacto_numero_identificacion,
-            'EMPLEADO': contrato_contacto_nombre_corto,
-            'D': instance.diurna,
-            'N': instance.nocturna,
-            'FD': instance.festiva_diurna,
-            'FN': instance.festiva_nocturna,
-            'ED': instance.extra_diurna,
-            'EN': instance.extra_nocturna,
-            'EFD': instance.extra_festiva_diurna,
-            'EFN': instance.extra_festiva_nocturna,
-            'RN': instance.recargo_nocturno,
-            'RFD': instance.recargo_festivo_diurno,
-            'RFN': instance.recargo_festivo_nocturno,            
-        }  
+            'id': instance.id,
+            'contrato_id': instance.contrato.contacto_id if instance.contrato else None,
+            'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
+            'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
+            'diurna': instance.diurna,
+            'nocturna': instance.nocturna,
+            'festiva_diurna': instance.festiva_diurna,
+            'festiva_nocturna': instance.festiva_nocturna,
+            'extra_diurna': instance.extra_diurna,
+            'extra_nocturna': instance.extra_nocturna,
+            'extra_festiva_diurna': instance.extra_festiva_diurna,
+            'extra_festiva_nocturna': instance.extra_festiva_nocturna,
+            'recargo_nocturno': instance.recargo_nocturno,
+            'recargo_festivo_diurno': instance.recargo_festivo_diurno,
+            'recargo_festivo_nocturno': instance.recargo_festivo_nocturno,
+        }

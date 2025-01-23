@@ -15,6 +15,7 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.configuracion import GenConfiguracion
 from humano.serializers.programacion import HumProgramacionSerializador
 from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador
+from humano.serializers.programacion_detalle import  HumProgramacionDetalleImportarHorasSerializador
 from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.formatos.programacion import FormatoProgramacion
@@ -74,6 +75,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
     serializer_class = HumProgramacionSerializador
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class_2 = HumProgramacionDetalleSerializador
 
     def perform_create(self, serializer):
         fecha_desde = serializer.validated_data.get('fecha_desde')
@@ -853,108 +855,34 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 data = {
                     'id': row[0],
-                    'diurna': row[5],
-                    'nocturna':row[6],
+                    'contrato_id': row[1],
+                    'contrato_contacto_numero_identificacion': row[2],
+                    'contrato_contacto_nombre_corto': row[3],
+                    'diurna': row[4],
+                    'nocturna':row[5],
                     'festiva_diurna': row[6],
                     'festiva_nocturna': row[7],
                     'extra_diurna': row[8],
                     'extra_nocturna': row[9],
-                    'extra_festiva_diurna': row[9],
-                    'extra_festiva_nocturna': row[10],
-                    'recargo_nocturno': row[11],
-                    'recargo_festivo_diurno': row[11],
-                    'recargo_festivo_nocturno': row[12],
+                    'extra_festiva_diurna': row[10],
+                    'extra_festiva_nocturna': row[11],
+                    'recargo_nocturno': row[12],
+                    'recargo_festivo_diurno': row[13],
+                    'recargo_festivo_nocturno': row[14],
                 }  
-                if not data['diurna']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas diurnas'
-                    }
-                    errores_datos.append(error_dato)
+
+                serializer = HumProgramacionDetalleImportarHorasSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
+                    registros_actualizados += 1
+                else:
                     errores = True
-
-                if not data['nocturna']:
                     error_dato = {
                         'fila': i,
-                        'Mensaje': 'Debe digitar las horas nocturnas'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True    
-
-                if not data['festiva_diurna']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas festivas diurnas'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['festiva_nocturna']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas festivas nocturnas'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['extra_diurna']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas extras diurnas'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True                    
-
-                if not data['extra_nocturna']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas extras nocturnas'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['extra_festiva_diurna']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas extras festivas diurnas'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True
-
-                if not data['extra_festiva_nocturna']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas extras festivas nocturnas'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True        
-
-                if not data['recargo_nocturno']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas de recargo nocturno'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True              
-
-                if not data['recargo_festivo_diurno']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas de recargo festivo diurno'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True     
-
-                if not data['recargo_festivo_nocturno']:
-                    error_dato = {
-                        'fila': i,
-                        'Mensaje': 'Debe digitar las horas de recargo festivo nocturno'
-                    }
-                    errores_datos.append(error_dato)
-                    errores = True                                               
-
-                data_modelo.append(data)
-            if errores == False:
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)                                         
+            if not errores:
                 for detalle in data_modelo:
                     HumProgramacionDetalle.objects.filter(id=detalle.get('id')).update(
                         diurna=detalle['diurna'],
@@ -969,9 +897,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         recargo_festivo_diurno=detalle['recargo_festivo_diurno'],
                         recargo_festivo_nocturno=detalle['recargo_festivo_nocturno'],
                     )
-                    registros_actualizados += 1
                 return Response({'registros_actualizados': registros_actualizados}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                return Response({'Mensaje': 'Errores de validación', 'codigo': 1 ,'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
