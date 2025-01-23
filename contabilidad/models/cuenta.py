@@ -5,7 +5,7 @@ from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
 
 class ConCuenta(models.Model):        
-    codigo = models.CharField(max_length=20, default="0", unique=True)
+    codigo = models.CharField(max_length=20, default="0")
     nombre = models.CharField(max_length=100)
     exige_base = models.BooleanField(default = False)
     exige_tercero = models.BooleanField(default = False)
