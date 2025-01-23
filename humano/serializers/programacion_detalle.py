@@ -132,6 +132,7 @@ class HumProgramacionDetalleExcelSerializador(serializers.HyperlinkedModelSerial
         }           
         
 class HumProgramacionDetalleImportarHorasSerializador(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = HumProgramacionDetalle

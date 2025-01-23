@@ -873,6 +873,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                 serializer = HumProgramacionDetalleImportarHorasSerializador(data=data)
                 if serializer.is_valid():
+                    validated_data = serializer.validated_data
+                    validated_data['id'] = data.get('id')
                     data_modelo.append(serializer.validated_data)
                     registros_actualizados += 1
                 else:
