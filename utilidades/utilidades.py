@@ -95,6 +95,9 @@ class Utilidades:
 
     @staticmethod
     def pdf_texto(texto, caracteres=None):
+        if isinstance(texto, int):
+            texto = str(texto)
+
         if not texto or len(texto.strip()) == 0:
             texto = ""
 

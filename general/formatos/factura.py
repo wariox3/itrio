@@ -18,6 +18,7 @@ from decouple import config
 from django.db.models import Sum
 import locale
 from django.utils.timezone import localtime
+from utilidades.utilidades import Utilidades
 
 class FormatoFactura():
 
@@ -118,15 +119,13 @@ class FormatoFactura():
             p.setFont("Helvetica-Bold", 9)
             p.drawRightString(x + 540, 720, documento['documento_tipo__nombre'])
             p.setFont("Helvetica", 9)
-            if documento['resolucion_id']:
-                if documento['numero']:
-                    texto_resolucion = documento['resolucion__prefijo'] + str(documento['numero'])
-                else:
-                    texto_resolucion = documento['resolucion__prefijo']
-            else:
-                texto_resolucion =  str(documento['numero']) if documento['numero'] else ""
+            texto_resolucion = Utilidades.pdf_texto(documento['numero'])
+            if documento['resolucion_id']:                
+                if documento['documento_tipo__documento_clase_id'] == 100:
+                    texto_resolucion = f'{documento["resolucion__prefijo"]}{texto_resolucion}'
+
             p.setFont("Helvetica-Bold", 9)
-            p.drawCentredString(x + 460, 710, texto_resolucion if texto_resolucion else  "")
+            p.drawCentredString(x + 460, 710, texto_resolucion)
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 350, 650, "FECHA EMISIÓN: ")
             p.setFont("Helvetica", 8)
@@ -141,7 +140,7 @@ class FormatoFactura():
                 p.setFont("Helvetica-Bold", 8)
                 p.drawString(x + 350, 630, "DOCUMENTO REFERENCIA: ")
                 p.setFont("Helvetica", 8)
-                p.drawRightString(x + 560, 630, str(documento['documento_referencia__numero']))
+                p.drawRightString(x + 560, 630, Utilidades.pdf_texto(documento['documento_referencia__numero']))
             else:
                 if 'metodo_pago__nombre' in documento and documento['metodo_pago__nombre']:
 
