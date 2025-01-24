@@ -31,12 +31,13 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             item_nombre = item.nombre
         documento_afectado_numero = ""
         documento_afectado_contacto_nombre_corto = ""
-        documento_afectado = instance.documento_afectado    
-        if documento_afectado is not None:
-            documento_afectado_numero = documento_afectado.numero    
-            contacto = documento_afectado.contacto
-            if contacto is not None:
-                documento_afectado_contacto_nombre_corto = contacto.nombre_corto
+        documento_afectado_documento_tipo_nombre = ""        
+        if instance.documento_afectado is not None:
+            documento_afectado_numero = instance.documento_afectado.numero    
+            if instance.documento_afectado.contacto is not None:
+                documento_afectado_contacto_nombre_corto = instance.documento_afectado.contacto.nombre_corto
+            if instance.documento_afectado.documento_tipo:
+                documento_afectado_documento_tipo_nombre = instance.documento_afectado.documento_tipo.nombre
         cuenta_codigo = ""
         cuenta = instance.cuenta
         cuenta_nombre = ''
@@ -80,6 +81,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'base_cotizacion': instance.base_cotizacion,
             'base_prestacion': instance.base_prestacion,
             'documento_afectado_id': instance.documento_afectado_id,
+            'documento_afectado_documento_tipo_nombre': documento_afectado_documento_tipo_nombre,
             'documento_afectado_numero': documento_afectado_numero,
             'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto,
             'contacto_id': instance.contacto_id,
