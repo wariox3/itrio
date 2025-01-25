@@ -321,6 +321,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                             'documento_tipo': 14,
                             'empresa': 1,
                             'fecha': programacion_detalle.fecha_desde,
+                            'fecha_vence': programacion_detalle.fecha_desde,
                             'fecha_contable': programacion_detalle.fecha_desde,
                             'fecha_hasta': programacion_detalle.fecha_hasta,
                             'contrato': programacion_detalle.contrato_id,
@@ -740,39 +741,54 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                 programacion = HumProgramacion.objects.get(pk=id)
                 if programacion.estado_generado == True and programacion.estado_aprobado == False:
                     documento_tipo = GenDocumentoTipo.objects.get(pk=14)                    
-                    programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)
+                    programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                    
+                    inconsistencias = []
+                    if not programacion_detalles:
+                        inconsistencia = {
+                            'descripcion': "La programacion no tiene detalles"
+                        }
+                        inconsistencias.append(inconsistencia)
                     for programacion_detalle in programacion_detalles:
-                        if programacion_detalle.total < 0:
-                            return Response({'mensaje':'La programacion tiene detalles negativos', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-                        
-                        documentos = GenDocumento.objects.filter(programacion_detalle_id=programacion_detalle.id)
-                        for documento in documentos:
-                            documento.numero = documento_tipo.consecutivo
-                            documento.estado_aprobado = True
-                            documento.pendiente = documento.total 
-                            documento.save()
-                            documento_tipo.consecutivo += 1
+                        if programacion_detalle.error_terminacion:
+                            inconsistencia = {
+                                'descripcion': "El contrato tiene fecha de terminacion anterior a la programacion y no esta terminado"
+                            }
+                            inconsistencias.append(inconsistencia)
+                    if not inconsistencias:
+                        for programacion_detalle in programacion_detalles:
+                            if programacion_detalle.total < 0:
+                                return Response({'mensaje':'La programacion tiene detalles negativos', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                            
+                            documentos = GenDocumento.objects.filter(programacion_detalle_id=programacion_detalle.id)
+                            for documento in documentos:
+                                documento.numero = documento_tipo.consecutivo
+                                documento.estado_aprobado = True
+                                documento.pendiente = documento.total 
+                                documento.save()
+                                documento_tipo.consecutivo += 1
 
-                            # Afectar creditos
-                            documentos_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
-                            for documento_detalle in documentos_detalles:
-                                if documento_detalle.credito:
-                                    credito = documento_detalle.credito
-                                    credito.abono += documento_detalle.pago
-                                    credito.saldo -= documento_detalle.pago
-                                    credito.cuota_actual += 1
-                                    credito.save()
+                                # Afectar creditos
+                                documentos_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+                                for documento_detalle in documentos_detalles:
+                                    if documento_detalle.credito:
+                                        credito = documento_detalle.credito
+                                        credito.abono += documento_detalle.pago
+                                        credito.saldo -= documento_detalle.pago
+                                        credito.cuota_actual += 1
+                                        credito.save()
 
-                        # Afectar contratos
-                        contrato = programacion_detalle.contrato
-                        contrato.fecha_ultimo_pago = programacion.fecha_hasta
-                        contrato.save()                        
+                            # Afectar contratos
+                            contrato = programacion_detalle.contrato
+                            contrato.fecha_ultimo_pago = programacion.fecha_hasta
+                            contrato.save()                        
 
-                    # Para guardar el consecutivo que sigue
-                    documento_tipo.save()
-                    programacion.estado_aprobado = True
-                    programacion.save()
-                    return Response({'mensaje': 'Programacion aprobada'}, status=status.HTTP_200_OK)
+                        # Para guardar el consecutivo que sigue
+                        documento_tipo.save()
+                        programacion.estado_aprobado = True
+                        programacion.save()
+                        return Response({'mensaje': 'Programacion aprobada'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':'Se presentaron inconsistencias', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje':'La programacion ya esta aprobada o no esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
