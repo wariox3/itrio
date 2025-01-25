@@ -14,7 +14,7 @@ from decouple import config
 from utilidades.space_do import SpaceDo
 from django_tenants.utils import schema_context
 import os
-
+from datetime import datetime
 
 class ContenedorViewSet(viewsets.ModelViewSet):
     queryset = Contenedor.objects.all()
@@ -155,4 +155,19 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except Contenedor.DoesNotExist:
-            return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)               
+            return Response({'mensaje':'La empresa no existe', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)     
+
+    @action(detail=False, methods=["post"], url_path=r'conectar',)
+    def conectar(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                contenedor = Contenedor.objects.get(id=id)
+                contenedor.fecha_ultima_conexion = datetime.now()
+                contenedor.save()
+                return Response({'conetar': True}, status=status.HTTP_200_OK)
+            except Contenedor.DoesNotExist:
+                return Response({'mensaje':'El contenedor no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)              
