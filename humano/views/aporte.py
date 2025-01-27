@@ -148,21 +148,45 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte_contratos = HumAporteContrato.objects.filter(aporte_id=id)                                           
                     for aporte_contrato in aporte_contratos:                                  
                         data = {
-                            'contrato_detalle': aporte_contrato.id                                                
+                            'aporte_contrato': aporte_contrato.id,
+                            'ingreso': False,
+                            'retiro': False                                              
                         }
-                        aporte_detalle_serializador = HumAporte(data=data)
+                        aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
                         if aporte_detalle_serializador.is_valid():
-                            aporte_detalle = aporte_detalle_serializador.save()                            
+                            aporte_detalle_serializador.save()                            
                         else:
-                            return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
-
-
+                            return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                    aporte.estado_generado = True
                     aporte.total = 0                    
                     aporte.save()
                     return Response({'total': 0,}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'mensaje':'La programacion ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+                    return Response({'mensaje':'El aporte ya esta generado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumAporte.DoesNotExist:
-            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)               
+            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], url_path=r'desgenerar',)
+    def desgenerar(self, request):             
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                aporte = HumAporte.objects.get(pk=id)
+                if aporte.estado_aprobado == False and aporte.estado_generado == True:
+                    aporte_contratos = HumAporteContrato.objects.filter(aporte_id=id)
+                    for aporte_contrato in aporte_contratos:
+                        aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato_id=aporte_contrato.id)
+                        aporte_detalles.delete()
+                    aporte.estado_generado = False
+                    aporte.total = 0                    
+                    aporte.save()
+                    return Response({'mensaje': 'Aporte desgenerada'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'El aporte ya esta aprobado o no esta generado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumAporte.DoesNotExist:
+            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      

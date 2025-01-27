@@ -4,7 +4,7 @@ from humano.models.aporte_contrato import HumAporteContrato
 
 class HumAporteDetalleSerializador(serializers.HyperlinkedModelSerializer):    
     aporte_contrato = serializers.PrimaryKeyRelatedField(queryset=HumAporteContrato.objects.all())
-
+    
     class Meta:
         model = HumAporteDetalle
-        fields = ['id']            
+        fields = ['id','ingreso', 'retiro', 'aporte_contrato']            
