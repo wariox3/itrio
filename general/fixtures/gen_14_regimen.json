@@ -2,11 +2,31 @@
   {
     "model": "general.GenRegimen",
     "pk": 1,
-    "fields": {"nombre": "Ordinario común", "codigo_interface": "05"}
+    "fields": {"nombre": "Responsable de IVA", "codigo_interface": "05"}
   },
   {
     "model": "general.GenRegimen",
     "pk": 2,
-    "fields": {"nombre": "Simple", "codigo_interface": "04"}
-  }
+    "fields": {"nombre": "No responsable de IVA", "codigo_interface": "04"}
+  },
+  {
+    "model": "general.GenRegimen",
+    "pk": 3,
+    "fields": {"nombre": "Impuesto nacional al consumo INC", "codigo_interface": "00"}
+  },
+  {
+    "model": "general.GenRegimen",
+    "pk": 4,
+    "fields": {"nombre": "No responsable INC", "codigo_interface": "00"}
+  },
+  {
+    "model": "general.GenRegimen",
+    "pk": 5,
+    "fields": {"nombre": "Responsable Iva e INC", "codigo_interface": "00"}
+  },
+  {
+    "model": "general.GenRegimen",
+    "pk": 6,
+    "fields": {"nombre": "No aplica - Regimen especial", "codigo_interface": "00"}
+  }    
 ]

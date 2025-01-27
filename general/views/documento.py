@@ -476,6 +476,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         if documento.documento_tipo.documento_clase_id == 304:
                                             prefijo = "DSAJ"
                                         correo = documento.contacto.correo_facturacion_electronica if documento.contacto.correo_facturacion_electronica else documento.contacto.correo
+                                        responsable = 0
+                                        if documento.contacto.regimen_id in (1, 5):
+                                            responsable = 1
                                         datos_factura = {
                                             "cuentaId": empresa.rededoc_id,
                                             "documentoClaseId" : documento.documento_tipo_id,
@@ -522,7 +525,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                     "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
                                                     "regimen_tributario" : documento.contacto.regimen.codigo_interface,
                                                     "codigo_postal" : documento.contacto.ciudad.codigo_postal,
-                                                    "responsable" : 1,
+                                                    "responsable" : responsable,
                                                     "nacional" : 1
                                                 },
                                             }
