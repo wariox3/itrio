@@ -10,10 +10,12 @@ from humano.serializers.aporte import HumAporteSerializador
 from humano.serializers.aporte_contrato import HumAporteContratoSerializador
 from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
 from datetime import date, timedelta
-from django.db.models import Q
-import calendar
-from django.db.models import Sum, Value, DecimalField
+from django.db.models import Sum, Q, Value, DecimalField
 from django.db.models.functions import Coalesce
+import calendar
+
+import io
+from django.http import HttpResponse
 
 class HumAporteViewSet(viewsets.ModelViewSet):
     queryset = HumAporte.objects.all()
@@ -136,7 +138,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
         except HumAporte.DoesNotExist:
             return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
 
-
     @action(detail=False, methods=["post"], url_path=r'generar',)
     def generar(self, request):
         try:
@@ -183,10 +184,37 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte.estado_generado = False
                     aporte.total = 0                    
                     aporte.save()
-                    return Response({'mensaje': 'Aporte desgenerada'}, status=status.HTTP_200_OK)
+                    return Response({'mensaje': 'Aporte desgenerado'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'El aporte ya esta aprobado o no esta generado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumAporte.DoesNotExist:
-            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
+            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+
+    @action(detail=False, methods=["post"], url_path=r'plano-operador',)
+    def plano_operador(self, request):             
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                aporte = HumAporte.objects.get(pk=id)
+                if aporte.estado_generado == True:
+                    aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato__aporte_id=id)
+                    
+                    buffer = io.StringIO()
+                    buffer.write("Detalle del Aporte\n")
+                    buffer.write("===================\n")
+                    for aporte_detalle in aporte_detalles:
+                        buffer.write(f"Campo1: {aporte_detalle.id}\n")            
+                    buffer.seek(0)
+                    
+                    response = HttpResponse(buffer, content_type='text/plain')
+                    response['Content-Disposition'] = f'attachment; filename="plano_operador_{id}.txt"'
+                    return response
+                else:
+                    return Response({'mensaje':'El aporte aun no esta generado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumAporte.DoesNotExist:
+            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                           
