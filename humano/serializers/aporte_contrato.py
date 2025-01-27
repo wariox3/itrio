@@ -32,6 +32,9 @@ class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
             'contrato_contacto_id': contrato_contacto_id,
             'contrato_contacto_numero_identificacion': contrato_contacto_numero_identificacion,
             'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
+            'ingreso': instance.ingreso,
+            'retiro': instance.retiro,
+            'error_terminacion': instance.error_terminacion
         }      
 
 class HumAporteContratoExcelSerializador(serializers.HyperlinkedModelSerializer):
