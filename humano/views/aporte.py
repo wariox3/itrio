@@ -257,6 +257,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     buffer.seek(0)
                     
                     response = HttpResponse(buffer, content_type='text/plain')
+                    response['Access-Control-Expose-Headers'] = 'Content-Disposition'
                     response['Content-Disposition'] = f'attachment; filename="plano_operador_{id}.txt"'
                     return response
                 else:
