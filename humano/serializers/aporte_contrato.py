@@ -9,7 +9,7 @@ class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumAporteContrato
-        fields = ['id', 'dias', 'salario','base_cotizacion', 'aporte', 'contrato']        
+        fields = ['id', 'fecha_desde', 'fecha_hasta', 'dias', 'salario','base_cotizacion', 'aporte', 'contrato', 'ingreso', 'retiro', 'error_terminacion']        
 
     def to_representation(self, instance):    
         contrato_contacto_id = ''        
@@ -22,6 +22,8 @@ class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
                 contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto          
         return {
             'id': instance.id,
+            'fecha_desde': instance.fecha_desde,
+            'fecha_hasta': instance.fecha_hasta,
             'dias': instance.dias,
             'salario': instance.salario,
             'base_cotizacion': instance.base_cotizacion,
