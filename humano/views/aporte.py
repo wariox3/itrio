@@ -204,6 +204,11 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 aporte = HumAporte.objects.get(pk=id)
                 if aporte.estado_generado == True:
                     
+                    mes_formateado = str(aporte.mes).zfill(2)
+                    mes_salud_formateado = str(aporte.mes_salud).zfill(2)
+                    periodo_pago_diferente_salud = f"{aporte.anio}-{mes_formateado}"
+                    periodo_pago_salud = f"{aporte.anio_salud}-{mes_salud_formateado}"
+
                     empresa = GenEmpresa.objects.filter(pk=1).values('nombre_corto', 'numero_identificacion', 'digito_verificacion').first()
                     buffer = io.StringIO()
                     #1	2	1	2	N	Tipo de registro	Obligatorio. Debe ser 01
@@ -222,38 +227,105 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     buffer.write(Utilidades.rellenar(empresa['digito_verificacion'], 1, " ", "D"))                                        
                     #8	1	227	227	A	Tipo de Planilla	Obligatorio lo suministra el aportante
                     #fputs($ar, FuncionesController::RellenarNr("E", " ", 1, "D"));
+                    buffer.write(Utilidades.rellenar('E', 1, " ", "D"))
                     #9	10	228	237	N	Número de Planilla asociada a esta planilla.	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T o X. En este campo se incluirá el número de la planilla del periodo correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U por parte de la UGPP, en este campo se diligenciará el número del título del depósito judicial.
                     #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #10	10	238	247	A	Fecha de pago Planilla asociada a esta planilla. (AAAA-MM-DD)	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T, o X. En este campo se incluirá la fecha de pago de la planilla del período correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U, la UGPP diligenciará la fecha en que se constituyó el depósito judicial.
                     #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.
                     #fputs($ar, FuncionesController::RellenarNr($arAporte->getFormaPresentacion(), " ", 1, "D"));
+                    buffer.write(Utilidades.rellenar('S', 1, " ", "D"))
                     #12	10	249	258	A	Código de la sucursal del Aportante	El registrado en el campo 5 del archivo tipo 1.
                     #fputs($ar, FuncionesController::RellenarNr($codigoSucursal, " ", 10, "D"));
+                    buffer.write(Utilidades.rellenar(aporte.sucursal_id, 10, " ", "D"))
                     #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.
                     #fputs($ar, FuncionesController::RellenarNr($sucursal, " ", 40, "D"));
+                    buffer.write(Utilidades.rellenar(aporte.sucursal.nombre, 40, " ", "D"))
                     #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante
                     #fputs($ar, FuncionesController::RellenarNr($arEntidadRiesgos->getCodigoInterface(), " ", 6, "D"));
+                    buffer.write(Utilidades.rellenar('14-11', 6, " ", "D"))
                     #15	7	305	311	A	Periodo de pago para los sistemas diferentes al de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo calcula el Operador de Información.
                     #fputs($ar, FuncionesController::RellenarNr($periodoPagoDiferenteSalud, " ", 7, "D"));
+                    buffer.write(Utilidades.rellenar(periodo_pago_diferente_salud, 7, " ", "D"))
                     #16	7	312	318	A	Periodo de pago para el sistema de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo suministra el aportante.
                     #fputs($ar, FuncionesController::RellenarNr($periodoPagoSalud, " ", 7, "D"));
+                    buffer.write(Utilidades.rellenar(periodo_pago_salud, 7, " ", "D"))
                     #17	10	319	328	N	Número de radicación o de la Planilla Integrada de Liquidación de aportes.	Asignado por el sistema . Debe ser único por operador de información.
                     #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #18	10	329	338	A	Fecha de pago (aaaa-mm-dd)	Asignado por el sistema a partir de la fecha del día efectivo del pago.
                     #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #19	5	339	343	N	Número total de empleados	Obligatorio. Se debe validar que sea igual al número de cotizantes únicos incluidos en el detalle del registro tipo 2, exceptuando los que tengan 40 en el campo 5 – Tipo de cotizante.
                     #fputs($ar, FuncionesController::RellenarNr($arAporte->getCantidadEmpleados(), "0", 5, "I"));
+                    buffer.write(Utilidades.rellenar(aporte.contratos, 5, "0", "I"))
                     #20	12	344	355	N	Valor total de la nómina	Obligatorio. Lo suministra el aportante, corresponde a la sumatoria de los IBC para el pago de los aportes de parafiscales de la totalidad de los empleados. Puede ser 0 para independientes
                     #fputs($ar, FuncionesController::RellenarNr($arAporte->getVrIngresoBaseCotizacion(), "0", 12, "I"));
+                    buffer.write(Utilidades.rellenar('', 12, "0", "I"))
                     #21	2	356	357	N	Tipo de aportante	Obligatorio y debe ser igual al registrado en el campo 30 del archivo tipo 1
                     #fputs($ar, FuncionesController::RellenarNr("01", " ", 2, "D"));
+                    buffer.write(Utilidades.rellenar('01', 2, " ", "D"))
                     #22	2	358	359	N	Código del operador de información	Asignado por el sistema del operador de información.
                     #fputs($ar, FuncionesController::RellenarNr("88", " ", 2, "D"));
+                    buffer.write(Utilidades.rellenar('88', 2, " ", "D"))
                     buffer.write("\n") 
+                    secuencia = 1
                     aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato__aporte_id=id)                   
                     for aporte_detalle in aporte_detalles:
-                        buffer.write(f"02\n")            
+                        ingreso = "X" if aporte_detalle.aporte_contrato.ingreso else " "
+                        retiro = "X" if aporte_detalle.aporte_contrato.retiro else " "
+                        #1	2	1	2	N	Tipo de registro	Obligatorio. Debe ser 02.
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTipoRegistro(), "0", 2, "I"));
+                        buffer.write(Utilidades.rellenar('02', 2, " ", "D"))
+                        #2	5	3	7	N	Secuencia	Debe iniciar en 00001 y ser secuencial para el resto de registros. Lo genera el sistema en el caso en que se estén digitando los datos directamente en la web. El aportante debe reportarlo en el caso de que los datos se suban en archivos planos.
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSecuencia(), "0", 5, "I"));
+                        buffer.write(Utilidades.rellenar(secuencia, 5, "0", "I"))
+                        #3	2	8	9	A	Tipo documento el cotizante	Obligatorio. Lo suministra el aportante. Los valores validos son:
+                        #fputs($ar, FuncionesController::RellenarNr($identificacion, " ", 2, "D"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.identificacion.abreviatura, 2, " ", "D"))
+                        #4	16	10	25	A	Número de identificación del cotizante	Obligatorio. Lo suministra el aportante. El operador de información validará que este campo este compuesto por letras de la A a la Z y los caracteres numéricos del Cero (0) al nueve (9). Sólo es permitido el número de identificación alfanumérico para los siguientes tipos de documentos de identidad: CE.  Cédula de Extranjería PA.  Pasaporte CD.  Carne Diplomático. Para los siguientes tipos de documento deben ser dígitos numéricos: TI.   Tarjeta de Identidad CC. Cédula de ciudadanía  SC.  Salvoconducto de permanencia RC.  Registro Civil
+                        #fputs($ar, FuncionesController::RellenarNr($numeroIdentificacion, " ", 16, "D"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.numero_identificacion, 16, " ", "D"))
+                        #5	2	26	27	N	Tipo de cotizante	Obligatorio. Lo suministra el aportante. Los valores validos son:
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTipoCotizante(), "0", 2, "I"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.tipo_cotizante.codigo, 2, "0", "I"))
+                        #6	2	28	29	N	Subtipo de cotizante	Obligatorio. Lo suministra el aportante
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSubtipoCotizante(), "0", 2, "I"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.subtipo_cotizante.codigo, 2, "0", "I"))
+                        #7	1	30	30	A	Extranjero no obligado a cotizar a pensiones 	Puede ser blanco o X Cuando aplique este campo los únicos tipos de documentos válidos son: CE. Cédula de extranjería PA.  Pasaporte CD.  Carné diplomático Lo suministra el aportante.
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getExtranjeroNoObligadoCotizarPension(), " ", 1, "D"));
+                        buffer.write(Utilidades.rellenar(' ', 1, "", "I"))
+                        #8	1	31	31	A	Colombiano en el exterior	Puede ser blanco o X si aplica.  Este campo es utilizado cuando el tipo de documento es: CC.  Cédula de ciudadanía TI.    Tarjeta de identidad Lo suministra el aportante.
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getColombianoResidenteExterior(), " ", 1, "D"));
+                        buffer.write(Utilidades.rellenar(' ', 1, "", "I"))
+                        #9	2	32	33	A	Código del departamento de la ubicación laboral	Lo suministra el aportante. El operador de información deberá validar que este código este definido en la relación de la División Política y Administrativa – DIVIPOLA- expedida por el DANE Cuando marque el campo colombiano en el exterior se dejará  en blanco
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCodigoDepartamentoUbicacionlaboral(), "0", 2, "I"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.ciudad_labora.estado.codigo, 2, "0", "I"))
+                        #10	3	34	36	A	Código del Municipio de la ubicación laboral	Lo suministra el aportante. El operador de información deberá validar que este código este definido en la relación de la División Política y Administrativa – DIVIPOLA- expedida por el DANE Cuando marque el campo colombiano en el exterior se dejará en blanco
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCodigoMunicipioUbicacionlaboral(), "0", 3, "I"));
+                        buffer.write(aporte_detalle.aporte_contrato.contrato.ciudad_labora.codigo[-3:])
+                        #11	20	37	56	A	Primer apellido	Obligatorio. Lo suministra el aportante
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getPrimerApellido(), " ", 20, "D"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido1, 20, " ", "D"))
+                        #12	30	57	86	A	Segundo apellido	Lo suministra el aportante
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSegundoApellido(), " ", 30, "D"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido2, 30, " ", "D"))
+                        #13	20	87	106	A	Primer nombre	Obligatorio. Lo suministra el aportante
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getPrimerNombre(), " ", 20, "D"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre1, 20, " ", "D"))
+                        #14	30	107	136	A	Segundo nombre	Lo suministra el aportante
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSegundoNombre(), " ", 30, "D"));
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre2, 30, " ", "D"))
+                        #15	1	137	137	A	ING: ingreso	 Puede ser un blanco, R, X o C. Lo suministra el aportante.
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getIngreso(), " ", 1, "D"));
+                        buffer.write(Utilidades.rellenar(ingreso, 1, " ", "D"))
+                        #16	1	138	138	A	RET: retiro	Puede ser un blanco, P, R, X o C. Lo suministra el aportante.
+                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getRetiro(), " ", 1, "D"));
+                        buffer.write(Utilidades.rellenar(retiro, 1, " ", "D"))
+                        secuencia += 1
+                        buffer.write("\n") 
                     buffer.seek(0)
                     
                     response = HttpResponse(buffer, content_type='text/plain')
