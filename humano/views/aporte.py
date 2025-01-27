@@ -5,6 +5,8 @@ from humano.models.aporte import HumAporte
 from humano.models.aporte_contrato import HumAporteContrato
 from humano.models.aporte_detalle import HumAporteDetalle
 from humano.models.contrato import HumContrato
+from general.models.configuracion import GenConfiguracion
+from general.models.empresa import GenEmpresa
 from general.models.documento_detalle import GenDocumentoDetalle
 from humano.serializers.aporte import HumAporteSerializador
 from humano.serializers.aporte_contrato import HumAporteContratoSerializador
@@ -12,10 +14,11 @@ from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
 from datetime import date, timedelta
 from django.db.models import Sum, Q, Value, DecimalField
 from django.db.models.functions import Coalesce
-import calendar
-
-import io
+from utilidades.utilidades import Utilidades
 from django.http import HttpResponse
+import calendar
+import io
+
 
 class HumAporteViewSet(viewsets.ModelViewSet):
     queryset = HumAporte.objects.all()
@@ -200,13 +203,57 @@ class HumAporteViewSet(viewsets.ModelViewSet):
             if id:
                 aporte = HumAporte.objects.get(pk=id)
                 if aporte.estado_generado == True:
-                    aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato__aporte_id=id)
                     
+                    empresa = GenEmpresa.objects.filter(pk=1).values('nombre_corto', 'numero_identificacion', 'digito_verificacion').first()
                     buffer = io.StringIO()
-                    buffer.write("Detalle del Aporte\n")
-                    buffer.write("===================\n")
+                    #1	2	1	2	N	Tipo de registro	Obligatorio. Debe ser 01
+                    buffer.write("01")
+                    #2	1	3	3	N	Modalidad de la Planilla	Obligatorio. Lo genera autómaticamente el Operador de Información.
+                    buffer.write("1")
+                    #3	4	4	7	N	Secuencia	Obligatorio. Verificación de la secuencia ascendente. Para cada aportante inicia en 0001. Lo genera el sistema en el caso en que se estén digitando los datos directamente en la web. El aportante debe reportarlo en el caso de que los datos se suban en archivos planos.
+                    buffer.write("0001")
+                    #4	200	8	207	A	Nombre o razón social del aportante	El registrado en el campo 1 del archivo tipo 1
+                    buffer.write(Utilidades.rellenar(empresa['nombre_corto'], 200, " ", "D"))
+                    #5	2	208	209	A	Tipo documento del aportante	El registrado en el campo 2 del archivo tipo 1
+                    buffer.write("NI")
+                    #6	16	210	225	A	Número de identificación del aportante	El registrado en el campo 3 del archivo tipo 1
+                    buffer.write(Utilidades.rellenar(empresa['numero_identificacion'], 16, " ", "D"))                    
+                    #7	1	226	226	N	Dígito de verificación aportante	El registrado en el campo 4 del archivo tipo 1
+                    buffer.write(Utilidades.rellenar(empresa['digito_verificacion'], 1, " ", "D"))                                        
+                    #8	1	227	227	A	Tipo de Planilla	Obligatorio lo suministra el aportante
+                    #fputs($ar, FuncionesController::RellenarNr("E", " ", 1, "D"));
+                    #9	10	228	237	N	Número de Planilla asociada a esta planilla.	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T o X. En este campo se incluirá el número de la planilla del periodo correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U por parte de la UGPP, en este campo se diligenciará el número del título del depósito judicial.
+                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #10	10	238	247	A	Fecha de pago Planilla asociada a esta planilla. (AAAA-MM-DD)	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T, o X. En este campo se incluirá la fecha de pago de la planilla del período correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U, la UGPP diligenciará la fecha en que se constituyó el depósito judicial.
+                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.
+                    #fputs($ar, FuncionesController::RellenarNr($arAporte->getFormaPresentacion(), " ", 1, "D"));
+                    #12	10	249	258	A	Código de la sucursal del Aportante	El registrado en el campo 5 del archivo tipo 1.
+                    #fputs($ar, FuncionesController::RellenarNr($codigoSucursal, " ", 10, "D"));
+                    #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.
+                    #fputs($ar, FuncionesController::RellenarNr($sucursal, " ", 40, "D"));
+                    #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante
+                    #fputs($ar, FuncionesController::RellenarNr($arEntidadRiesgos->getCodigoInterface(), " ", 6, "D"));
+                    #15	7	305	311	A	Periodo de pago para los sistemas diferentes al de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo calcula el Operador de Información.
+                    #fputs($ar, FuncionesController::RellenarNr($periodoPagoDiferenteSalud, " ", 7, "D"));
+                    #16	7	312	318	A	Periodo de pago para el sistema de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo suministra el aportante.
+                    #fputs($ar, FuncionesController::RellenarNr($periodoPagoSalud, " ", 7, "D"));
+                    #17	10	319	328	N	Número de radicación o de la Planilla Integrada de Liquidación de aportes.	Asignado por el sistema . Debe ser único por operador de información.
+                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #18	10	329	338	A	Fecha de pago (aaaa-mm-dd)	Asignado por el sistema a partir de la fecha del día efectivo del pago.
+                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #19	5	339	343	N	Número total de empleados	Obligatorio. Se debe validar que sea igual al número de cotizantes únicos incluidos en el detalle del registro tipo 2, exceptuando los que tengan 40 en el campo 5 – Tipo de cotizante.
+                    #fputs($ar, FuncionesController::RellenarNr($arAporte->getCantidadEmpleados(), "0", 5, "I"));
+                    #20	12	344	355	N	Valor total de la nómina	Obligatorio. Lo suministra el aportante, corresponde a la sumatoria de los IBC para el pago de los aportes de parafiscales de la totalidad de los empleados. Puede ser 0 para independientes
+                    #fputs($ar, FuncionesController::RellenarNr($arAporte->getVrIngresoBaseCotizacion(), "0", 12, "I"));
+                    #21	2	356	357	N	Tipo de aportante	Obligatorio y debe ser igual al registrado en el campo 30 del archivo tipo 1
+                    #fputs($ar, FuncionesController::RellenarNr("01", " ", 2, "D"));
+                    #22	2	358	359	N	Código del operador de información	Asignado por el sistema del operador de información.
+                    #fputs($ar, FuncionesController::RellenarNr("88", " ", 2, "D"));
+                    buffer.write("\n") 
+                    aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato__aporte_id=id)                   
                     for aporte_detalle in aporte_detalles:
-                        buffer.write(f"Campo1: {aporte_detalle.id}\n")            
+                        buffer.write(f"02\n")            
                     buffer.seek(0)
                     
                     response = HttpResponse(buffer, content_type='text/plain')
