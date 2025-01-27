@@ -54,6 +54,7 @@ class ArchivoViewSet(viewsets.ModelViewSet):
                     backblaze = Backblaze()
                     contenido = backblaze.descargar(archivo.almacenamiento_id)          
                     response = HttpResponse(contenido, content_type=archivo.tipo)
+                    response['Access-Control-Expose-Headers'] = 'Content-Disposition'
                     response['Content-Disposition'] = f'attachment; filename="{archivo.nombre}"'                    
                     return response                                                                                   
                 except ValueError as e:
