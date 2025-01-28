@@ -413,160 +413,161 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_entero(aporte_detalle.aporte_contrato.base_cotizacion), 9, "0", "I"))
                         #46	7	238	244	N	Tarifa de aportes pensiones	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaPension() / 100, 5, '.', ''), "0", 7, "I"));
-                        buffer.write(Utilidades.rellenar((16 / 100), 7, "0", "I"))
+                        buffer.write(Utilidades.rellenar((16 / 100), 7, "0", "D"))
                         #47	9	245	253	N	Cotización obligatoria a Pensiones	Obligatorio. Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionPension(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(208000, 9, "0", "I"))
                         #48	9	254	262	N	Aporte voluntario del afiliado al Fondo de Pensiones Obligatorias	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionAporteVoluntarioAfiliadoFPO(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #49	9	263	271	N	Aporte voluntario del aportante al fondo de pensiones obligatoria. 	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionAporteVoluntarioAportanteFPO(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #50	9	272	280	N	Total cotización sistema general de pensiones	Lo calcula el sistema. Sumatoria de los campos 47, 48 y 49 del registro tipo 2.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTotalCotizacionFondos(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(208000, 9, "0", "I"))
                         #51	9	281	289	N	Aportes a Fondo de Solidaridad  Pensional- Subcuenta de solidaridad	Lo suministra el aportante cuando aplique
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getAportesFondoSolidaridadPensionalSolidaridad(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #52	9	290	298	N	Aportes a Fondo de Solidad Pensional- Subcuenta de subsistencia	Lo suministra el aportante cuando aplique
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getAportesFondoSolidaridadPensionalSubsistencia(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #53	9	299	307	N	Valor no retenido por aportes voluntarios	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr("", "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #54	7	308	314	N	Tarifa de aportes de salud	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaSalud() / 100, 5, '.', ''), "0", 7, "I"));
-
+                        buffer.write(Utilidades.rellenar((4/100), 7, "0", "D"))
                         #55	9	315	323	N	Cotización Obligatoria a salud	Obligatorio. Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionSalud(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(52000, 9, "0", "I"))
                         #56	9	324	332	N	Valor de la UPC adicional	Debe corresponder al valor reportado en el campo 11 del archivo “información de la Base de Datos Única de Afiliados – BDUA con destino a los operadores de información”
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getValorUpcAdicional(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #57	15	333	347	A	N° autorización de la incapacidad por enfermedad general	Debe reportarse en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getNumeroAutorizacionIncapacidadEnfermedadGeneral(), " ", 15, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 15, " ", "D"))
                         #58	9	348	356	N	Valor de incapacidad por enfermedad general	Debe reportarse en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getValorIncapacidadEnfermedadGeneral(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #59	15	357	371	A	N° autorización de la licencia de maternidad o paternidad	Debe reportarse en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getNumeroAutorizacionLicenciaMaternidadPaternidad(), " ", 15, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 15, " ", "D"))
                         #60	9	372	380	N	Valor de la licencia de maternidad	Debe reportarse en cero
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getValorIncapacidadLicenciaMaternidadPaternidad(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #61	9	381	389	N	Tarifa de aportes a Riesgos Laborales	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaRiesgos() / 100, 7, '.', ''), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar((0.522/100), 9, "0", "D"))
                         #62	9	390	398	N	Centro de Trabajo CT	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCodigoCentroTrabajo(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar("0", 9, "0", "I"))
                         #63	9	399	407	N	Cotización obligatoria al Sistema General de Riesgos Laborales	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionRiesgos(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(13600, 9, "0", "I"))
                         #64	7	408	414	N	Tarifa de aportes CCF	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaCaja() / 100, 5, '.', ''), "0", 7, "I"));
-
+                        buffer.write(Utilidades.rellenar((4/100), 7, "0", "D"))
                         #65	9	415	423	N	Valor aporte CCF	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionCaja(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(104100, 9, "0", "I"))
                         #66	7	424	430	N	Tarifa de aportes SENA	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaSENA() / 100, 5, '.', ''), "0", 7, "I"));
-
+                        buffer.write(Utilidades.rellenar((0/100), 7, "0", "D"))
                         #67	9	431	439	N	Valor aportes SENA	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionSena(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #68	7	440	446	N	Tarifa aportes ICBF	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaIcbf() / 100, 5, '.', ''), "0", 7, "I"));
-
+                        buffer.write(Utilidades.rellenar((0/100), 7, "0", "D"))
                         #69	9	447	455	N	Valor aporte ICBF	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizacionIcbf(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #70	7	456	462	N	Tarifa aportes ESAP	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaAportesESAP() / 100, 5, '.', ''), "0", 7, "I"));
-
+                        buffer.write(Utilidades.rellenar((0/100), 7, "0", "D"))
                         #71	9	463	471	N	Valor aporte ESAP	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getValorAportesESAP(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #72	7	472	478	N	Tarifa aportes MEN	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr(number_format($arAporteDetalle->getTarifaAportesMEN() / 100, 5, '.', ''), "0", 7, "I"));
-
+                        buffer.write(Utilidades.rellenar((0/100), 7, "0", "D"))
                         #73	9	479	487	N	Valor aporte MEN	Lo suministra el aportante
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getValorAportesMEN(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "I"))
                         #74	2	488	489	A	Tipo de documento del cotizante principal	Corresponde al tipo de documento del cotizante Principal que corresponde a: CC.  Cédula de ciudadanía CE.  Cédula de extranjería TI.    Tarjeta de identidad PA.  Pasaporte CD.  Carné diplomático SC.  Salvoconducto de permanencia Lo suministra el aportante Solo debe ser reportado cuando se reporte un cotizante 40.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTipoDocumentoResponsableUPC(), " ", 2, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 2, " ", "D"))
                         #75	16	490	505	A	Número de identificación del cotizante principal	Lo suministra el aportante Solo debe ser reportado cuando se reporte un cotizante 40. El operador de información validará que este campo este compuesto por letras de la A a la Z y los caracteres numéricos del Cero (0) al nueve (9). Sólo es permitido el número de identificación alfanumérico para los siguientes tipos de documentos de identidad: CE.  Cédula de Extranjería PA.  Pasaporte CD.  Carne Diplomático   Para los siguientes tipos de documento deben ser dígitos numéricos: TI.   Tarjeta de Identidad CC. Cédula de ciudadanía  SC.  Salvoconducto de permanencia
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getNumeroIdentificacionResponsableUPCAdicional(), " ", 16, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 16, " ", "D"))
                         #76	1	506	506	A	Cotizante exonerado de pago de aporte salud, SENA e ICBF - Ley 1607 de 2012 	Obligatorio.  Lo suministra el aportante. S = Si  N = No Cuando el valor del campo 43 – IBC Salud sea superior a 10 SMLMV este campo debe ser N Obligatorio.  Lo suministra el aportante. S = Si  N = No   Cuando personas naturales empleen dos o más trabajadores y el valor del campo 43 – IBC Salud sea superior a 10 SMLMV este campo debe ser N
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCotizanteExoneradoPagoAporteParafiscalesSalud(), " ", 1, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 1, " ", "D"))
                         #77	6	507	512	A	Código de la Administradora de Riesgos Laborales a la cual pertenece el afiliado	Lo suministra el aportante. Para el caso de cotizantes diferente al cotizante 3- independiente, se debe registrar el valor ingresado en el Campo 14 del registro Tipo 1 del archivo Tipo 2. Se deja en blanco cuando no sea obligatorio para el cotizante estar afiliado a una Administradora de Riesgos Laborales.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCodigoAdministradoraRiesgosLaborales(), " ", 6, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 6, " ", "D"))
                         #78	1	513	513	A	Clase de riesgo en la que se encuentra el afiliado	Lo suministra el aportante. 1. Clase de Riesgo I 2. Clase de Riesgo II 3. Clase de Riesgo III 4. Clase de Riesgo IV  5. Clase de Riesgo V  La clase de riesgo de acuerdo a la actividad económica establecida en el Decreto 1607 de 2002 o la norma que lo sustituya o modifique
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getClaseRiesgoAfiliado(), " ", 1, "D"));
-
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.riesgo.id, 1, " ", "D"))
                         #79	1	514	514	A	Indicador tarifa especial pensiones 	Lo suministra el aportante y es: Blanco  Tarifa normal 1. Actividades de alto riesgo 2. Senadores 3. CTI 4. Aviadores
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getIndicadorTarifaEspecialPensiones(), " ", 1, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 1, " ", "D"))
                         #80	10	515	524	A	Fecha de ingreso Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad de ingreso. Lo suministra el aportante. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaIngreso(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #81	10	525	534	A	Fecha de retiro. Formato (AAAA-MM- DD).	Es obligatorio cuando se reporte la novedad de retiro.  Lo suministra el aportante. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaRetiro(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #82	10	535	544	A	Fecha Inicio  VSP Formato (AAAA-MM- DD).	Es obligatorio cuando se reporte la novedad de VSP.  Lo suministra el aportante Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaInicioVsp(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #83	10	545	554	A	Fecha Inicio SLN Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad de SLN. Lo suministra el aportante.   Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaInicioSln(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #84	10	555	564	A	Fecha fin SLN Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad de SLN. Lo suministra el aportante.  Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaFinSln(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #85	10	565	574	A	Fecha inicio  IGE Formato (AAAA-MM- DD).	Es obligatorio cuando se reporte la novedad de IGE.  Lo suministra el aportante. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaInicioIge(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #86	10	575	584	A	Fecha fin IGE. Formato (AAAA-MM- DD) 	Es obligatorio cuando se reporte la novedad de IGE. Lo suministra el aportante.  Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaFinIge(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #87	10	585	594	A	Fecha inicio LMA Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad de LMA.  Lo suministra el aportante. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaInicioLma(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #88	10	595	604	A	Fecha fin LMA Formato (AAAA-MM- DD) 	Es obligatorio cuando se reporte la novedad de LMA.  Lo suministra el aportante. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaFinLma(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #89	10	605	614	A	Fecha inicio VAC - LR Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad VAC - LR. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaInicioVacLr(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #90	10	615	624	A	Fecha fin VAC - LR Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad VAC - LR. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaFinVacLr(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #91	10	625	634	A	Fecha inicio VCT Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad VCT.  Lo suministra el aportante. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaInicioVct(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #92	10	635	644	A	Fecha fin  VCT Formato (AAAA-MM- DD). 	Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaFinVct(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #93	10	645	654	A	Fecha inicio IRL Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad IRL. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaInicioIrl(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #94	10	655	664	A	Fecha fin  IRL Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad IRL. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getFechaFinIrl(), " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
                         #95	9	665	673	N	IBC otros parafiscales diferentes a CCF	Es un campo obligatorio para los tipos de cotizante 1, 18, 20, 22, 30, 31, y 55.   Lo suministra el aportante.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getIbcOtrosParafiscalesDiferentesCcf(), "0", 9, "I"));
-
+                        buffer.write(Utilidades.rellenar(0, 9, "0", "D"))
                         #96	3	674	676	N	Número de horas laboradas 	Es un campo obligatorio para los tipos de cotizante 1, 2, 18, 22, 30, 51 y 55.  Lo suministra el aportante.  Para el caso del tipo de cotizante 31 no es obligatorio cuando la cooperativa o precooperativa de trabajo asociado este exceptuada por el Ministerio del Trabajo.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getNumeroHorasLaboradas(), "0", 3, "I"));
-
+                        buffer.write(Utilidades.rellenar(240, 3, "0", "I"))
                         #97	10	???	???	A	Fecha
                         #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
-
+                        buffer.write(Utilidades.rellenar(" ", 10, " ", "D"))
+                        1620101
                         #97	7	687	693	A	Actividad económica para el sistema general de riesgos laborales
                         #$actividadEconomicaRiesgo = $arAporteDetalle->getCodigoActividadEconomicaRiesgo();
                         #if (!$actividadEconomicaRiesgo) {
@@ -576,7 +577,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         #    $actividadEconomicaRiesgo = "";
                         #}
                         #fputs($ar, FuncionesController::RellenarNr($actividadEconomicaRiesgo, "0", 7, "D"));
-
+                        buffer.write(Utilidades.rellenar(1620101, 7, "0", "D"))
                         secuencia += 1
                         buffer.write("\n") 
                     buffer.seek(0)
