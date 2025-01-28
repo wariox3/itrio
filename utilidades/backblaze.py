@@ -1,7 +1,7 @@
 from b2sdk.v2 import InMemoryAccountInfo, B2Api, UploadSourceBytes
 from decouple import config
 import base64
-import io
+import uuid
 
 class Backblaze():
 
@@ -13,17 +13,19 @@ class Backblaze():
         self.b2_api.authorize_account("production", app_key_id, app_key)
 
 
-    def subir_archivo(self, base64_data, nombre_archivo):
+    def subir_archivo(self, base64_data, tenant, nombre_archivo):
         bucket_nombre = config('B2_BUCKET_NAME')
         bucket = self.b2_api.get_bucket_by_name(bucket_nombre)
         if bucket is None:
             raise ValueError(f"El bucket '{bucket_nombre}' no existe.")         
         file_data = base64.b64decode(base64_data)                
+        uuid_referencia = uuid.uuid4()
+        nombre_archivo = f"{tenant}/{uuid_referencia}_{nombre_archivo}"
         response = bucket.upload_bytes(
             file_data,
             nombre_archivo
         )                
-        return response.id_, response.size, response.content_type   
+        return response.id_, response.size, response.content_type, uuid_referencia   
 
     def descargar(self, archivo_id):
         bucket_nombre = config('B2_BUCKET_NAME')

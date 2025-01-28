@@ -27,15 +27,16 @@ class ArchivoViewSet(viewsets.ModelViewSet):
                     tenant = request.tenant.nombre
                     objeto_base64 = Utilidades.separar_base64(archivo_base64)
                     backblaze = Backblaze()
-                    id, tamano, tipo = backblaze.subir_archivo(objeto_base64['base64_raw'], f'{tenant}/{nombre_archivo}')
+                    id, tamano, tipo, uuid = backblaze.subir_archivo(objeto_base64['base64_raw'], tenant, nombre_archivo)
                     archivo = GenArchivo()
                     archivo.almacenamiento_id = id
                     archivo.documento = documento
                     archivo.nombre = nombre_archivo
                     archivo.tipo = tipo
                     archivo.tamano = tamano
+                    archivo.uuid = uuid
                     archivo.save()
-                    return Response({'mensaje': f'Archivo cargado correctamente'}, status=status.HTTP_200_OK)                                         
+                    return Response({'id': str(archivo.id)}, status=status.HTTP_200_OK)                                         
                 except ValueError as e:
                     return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                   
             except GenDocumento.DoesNotExist:

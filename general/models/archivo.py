@@ -7,6 +7,7 @@ class GenArchivo(models.Model):
     tipo = models.CharField(max_length=100)
     tamano = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     almacenamiento_id = models.CharField(max_length=255)
+    uuid = models.CharField(max_length=100, null=True)
     documento = models.ForeignKey(GenDocumento, null=True, on_delete=models.PROTECT, related_name='archivos_documento_rel')
 
     class Meta:

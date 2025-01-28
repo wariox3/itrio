@@ -17,5 +17,6 @@ class GenArchivoSerializador(serializers.HyperlinkedModelSerializer):
             'tipo': instance.tipo,
             'tamano': instance.tamano,
             'almacenamiento_id': instance.almacenamiento_id,
-            'documento_id': instance.documento_id                        
+            'documento_id': instance.documento_id,
+            'uuid': instance.uuid                        
         }
