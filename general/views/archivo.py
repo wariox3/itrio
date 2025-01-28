@@ -24,7 +24,7 @@ class ArchivoViewSet(viewsets.ModelViewSet):
             try:
                 documento = GenDocumento.objects.get(pk=documento_id)
                 try:                        
-                    tenant = request.tenant.nombre
+                    tenant = request.tenant.schema_name
                     objeto_base64 = Utilidades.separar_base64(archivo_base64)
                     backblaze = Backblaze()
                     id, tamano, tipo, uuid = backblaze.subir_archivo(objeto_base64['base64_raw'], tenant, nombre_archivo)
