@@ -78,7 +78,7 @@ class Contenedor(TenantMixin):
     schema_name = models.CharField(max_length=100)
     nombre = models.CharField(max_length=200, null=True)
     fecha = models.DateTimeField(auto_now_add=True)
-    fecha_ultima_conexion = models.DateTimeField(null=True)
+    fecha_ultima_conexion = models.DateTimeField(auto_now_add=True, null=True)
     imagen = models.TextField(null=True)    
     usuarios = models.IntegerField(default=1) 
     reddoc = models.BooleanField(default = False)
