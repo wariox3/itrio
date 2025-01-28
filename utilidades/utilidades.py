@@ -118,3 +118,9 @@ class Utilidades:
             }
         else:
             raise ValueError("La cadena base64 no contiene el formato esperado 'data:[tipo]/[extensión];base64,'.")
+        
+    @staticmethod
+    def obtener_valor_entero(valor):
+        valor = int(valor)
+        valor_formateado = str(valor).zfill(9)
+        return valor_formateado    
