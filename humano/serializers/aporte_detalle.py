@@ -7,4 +7,13 @@ class HumAporteDetalleSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = HumAporteDetalle
-        fields = ['id','ingreso', 'retiro', 'aporte_contrato']            
+        fields = ['id','ingreso', 'retiro', 'aporte_contrato']     
+
+class HumAporteDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = HumAporteDetalle   
+
+    def to_representation(self, instance):         
+        return {
+            'ID': instance.id            
+        }                
