@@ -13,7 +13,7 @@ class Backblaze():
         self.b2_api.authorize_account("production", app_key_id, app_key)
 
 
-    def subir_archivo(self, base64_data, tenant, nombre_archivo):
+    def subir(self, base64_data, tenant, nombre_archivo):
         bucket_nombre = config('B2_BUCKET_NAME')
         bucket = self.b2_api.get_bucket_by_name(bucket_nombre)
         if bucket is None:
@@ -36,5 +36,14 @@ class Backblaze():
         downloaded_file = bucket.download_file_by_id(archivo_id)
         #downloaded_file.save_to("/home/desarrollo/Escritorio/prueba.png")    
         return downloaded_file.response
+    
+    def eliminar(self, archivo_id):
+        try:
+            file_info = self.b2_api.get_file_info(archivo_id)
+            file_name = file_info.file_name
+            self.b2_api.delete_file_version(archivo_id, file_name)
+            return True
+        except Exception as e:
+            return False
 
 

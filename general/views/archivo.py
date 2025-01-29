@@ -14,6 +14,13 @@ class ArchivoViewSet(viewsets.ModelViewSet):
     serializer_class = GenArchivoSerializador
     permission_classes = [permissions.IsAuthenticated]
 
+    def destroy(self, request, *args, **kwargs):        
+        instance = self.get_object()
+        backblaze = Backblaze()
+        backblaze.eliminar(instance.almacenamiento_id)    
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["post"], url_path=r'cargar',)
     def cargar(self, request):
         raw = request.data        
@@ -27,7 +34,7 @@ class ArchivoViewSet(viewsets.ModelViewSet):
                     tenant = request.tenant.schema_name
                     objeto_base64 = Utilidades.separar_base64(archivo_base64)
                     backblaze = Backblaze()
-                    id, tamano, tipo, uuid = backblaze.subir_archivo(objeto_base64['base64_raw'], tenant, nombre_archivo)
+                    id, tamano, tipo, uuid = backblaze.subir(objeto_base64['base64_raw'], tenant, nombre_archivo)
                     archivo = GenArchivo()
                     archivo.almacenamiento_id = id
                     archivo.documento = documento
