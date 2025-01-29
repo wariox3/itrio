@@ -9,6 +9,7 @@ class HumAporte(models.Model):
     anio_salud = models.BigIntegerField(default=0)
     mes = models.BigIntegerField(default=0)
     mes_salud = models.BigIntegerField(default=0)
+    presentacion = models.CharField(max_length=1, default='S')
     contratos = models.IntegerField(default=0)
     empleados = models.IntegerField(default=0)
     lineas = models.IntegerField(default=0)

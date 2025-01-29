@@ -225,14 +225,11 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     buffer.write(Utilidades.rellenar(empresa['numero_identificacion'], 16, " ", "D"))                    
                     #7	1	226	226	N	Dígito de verificación aportante	El registrado en el campo 4 del archivo tipo 1
                     buffer.write(Utilidades.rellenar(empresa['digito_verificacion'], 1, " ", "D"))                                        
-                    #8	1	227	227	A	Tipo de Planilla	Obligatorio lo suministra el aportante
-                    #fputs($ar, FuncionesController::RellenarNr("E", " ", 1, "D"));
+                    #8	1	227	227	A	Tipo de Planilla	Obligatorio lo suministra el aportante                    
                     buffer.write(Utilidades.rellenar('E', 1, " ", "D"))
-                    #9	10	228	237	N	Número de Planilla asociada a esta planilla.	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T o X. En este campo se incluirá el número de la planilla del periodo correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U por parte de la UGPP, en este campo se diligenciará el número del título del depósito judicial.
-                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #9	10	228	237	N	Número de Planilla asociada a esta planilla.	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T o X. En este campo se incluirá el número de la planilla del periodo correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U por parte de la UGPP, en este campo se diligenciará el número del título del depósito judicial.                    
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
-                    #10	10	238	247	A	Fecha de pago Planilla asociada a esta planilla. (AAAA-MM-DD)	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T, o X. En este campo se incluirá la fecha de pago de la planilla del período correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U, la UGPP diligenciará la fecha en que se constituyó el depósito judicial.
-                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #10	10	238	247	A	Fecha de pago Planilla asociada a esta planilla. (AAAA-MM-DD)	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T, o X. En este campo se incluirá la fecha de pago de la planilla del período correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U, la UGPP diligenciará la fecha en que se constituyó el depósito judicial.                    
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.
                     #fputs($ar, FuncionesController::RellenarNr($arAporte->getFormaPresentacion(), " ", 1, "D"));

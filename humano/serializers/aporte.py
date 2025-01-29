@@ -10,7 +10,7 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumAporte
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_hasta_periodo', 'anio', 'mes', 'anio_salud', 'mes_salud', 'sucursal',
-                  'estado_generado', 'estado_aprobado']      
+                  'presentacion', 'estado_generado', 'estado_aprobado']      
         
     def to_representation(self, instance):      
         sucursal_nombre = ''
@@ -25,6 +25,7 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
             'mes': instance.mes,
             'anio_salud': instance.anio_salud,
             'mes_salud': instance.mes_salud,
+            'presentacion': instance.presentacion,
             'estado_generado': instance.estado_generado,
             'estado_aprobado': instance.estado_aprobado,
             'sucursal_id': instance.sucursal_id,
