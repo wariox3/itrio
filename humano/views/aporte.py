@@ -231,15 +231,12 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #10	10	238	247	A	Fecha de pago Planilla asociada a esta planilla. (AAAA-MM-DD)	Debe dejarse en blanco cuando el tipo de planilla sea E, A, I, M, S, Y, T, o X. En este campo se incluirá la fecha de pago de la planilla del período correspondiente cuando el tipo de planilla sea N ó F. Cuando se utilice la planilla U, la UGPP diligenciará la fecha en que se constituyó el depósito judicial.                    
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
-                    #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.
-                    #fputs($ar, FuncionesController::RellenarNr($arAporte->getFormaPresentacion(), " ", 1, "D"));
-                    buffer.write(Utilidades.rellenar('S', 1, " ", "D"))
-                    #12	10	249	258	A	Código de la sucursal del Aportante	El registrado en el campo 5 del archivo tipo 1.
-                    #fputs($ar, FuncionesController::RellenarNr($codigoSucursal, " ", 10, "D"));
-                    buffer.write(Utilidades.rellenar(aporte.sucursal_id, 10, " ", "D"))
-                    #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.
-                    #fputs($ar, FuncionesController::RellenarNr($sucursal, " ", 40, "D"));
-                    buffer.write(Utilidades.rellenar(aporte.sucursal.nombre, 40, " ", "D"))
+                    #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.                    
+                    buffer.write(Utilidades.rellenar(aporte.presentacion, 1, " ", "D"))
+                    #12	10	249	258	A	Código de la sucursal del Aportante	El registrado en el campo 5 del archivo tipo 1.                    
+                    buffer.write(Utilidades.rellenar('', 10, " ", "D"))
+                    #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.                    
+                    buffer.write(Utilidades.rellenar('', 40, " ", "D"))
                     #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante
                     #fputs($ar, FuncionesController::RellenarNr($arEntidadRiesgos->getCodigoInterface(), " ", 6, "D"));
                     buffer.write(Utilidades.rellenar('14-11', 6, " ", "D"))
