@@ -7,6 +7,7 @@ class GenIdentificacion(models.Model):
     abreviatura = models.CharField(max_length=10, null=True)    
     orden = models.BigIntegerField(default=0)
     codigo = models.CharField(max_length=10, null=True)
+    aporte = models.CharField(max_length=10, null=True)
     pais = models.ForeignKey(GenPais, on_delete=models.PROTECT, null=True)
     
     class Meta:

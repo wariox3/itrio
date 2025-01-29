@@ -261,78 +261,57 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     for aporte_detalle in aporte_detalles:
                         ingreso = "X" if aporte_detalle.aporte_contrato.ingreso else " "
                         retiro = "X" if aporte_detalle.aporte_contrato.retiro else " "
-                        #1	2	1	2	N	Tipo de registro	Obligatorio. Debe ser 02.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTipoRegistro(), "0", 2, "I"));
+                        variacion_permanente_salario = "X" if aporte_detalle.variacion_permanente_salario else " "
+                        variacion_transitoria_salario = "X" if aporte_detalle.variacion_transitoria_salario else " "
+                        suspension_temporal_contrato = "X" if aporte_detalle.suspension_temporal_contrato else " "
+                        #1	2	1	2	N	Tipo de registro	Obligatorio. Debe ser 02.                        
                         buffer.write(Utilidades.rellenar('02', 2, " ", "D"))
                         #2	5	3	7	N	Secuencia	Debe iniciar en 00001 y ser secuencial para el resto de registros. Lo genera el sistema en el caso en que se estén digitando los datos directamente en la web. El aportante debe reportarlo en el caso de que los datos se suban en archivos planos.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSecuencia(), "0", 5, "I"));
                         buffer.write(Utilidades.rellenar(secuencia, 5, "0", "I"))
-                        #3	2	8	9	A	Tipo documento el cotizante	Obligatorio. Lo suministra el aportante. Los valores validos son:
-                        #fputs($ar, FuncionesController::RellenarNr($identificacion, " ", 2, "D"));
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.identificacion.abreviatura, 2, " ", "D"))
-                        #4	16	10	25	A	Número de identificación del cotizante	Obligatorio. Lo suministra el aportante. El operador de información validará que este campo este compuesto por letras de la A a la Z y los caracteres numéricos del Cero (0) al nueve (9). Sólo es permitido el número de identificación alfanumérico para los siguientes tipos de documentos de identidad: CE.  Cédula de Extranjería PA.  Pasaporte CD.  Carne Diplomático. Para los siguientes tipos de documento deben ser dígitos numéricos: TI.   Tarjeta de Identidad CC. Cédula de ciudadanía  SC.  Salvoconducto de permanencia RC.  Registro Civil
-                        #fputs($ar, FuncionesController::RellenarNr($numeroIdentificacion, " ", 16, "D"));
+                        #3	2	8	9	A	Tipo documento el cotizante	Obligatorio. Lo suministra el aportante. Los valores validos son:                        
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.identificacion.aporte, 2, " ", "D"))
+                        #4	16	10	25	A	Número de identificación del cotizante	Obligatorio. Lo suministra el aportante. El operador de información validará que este campo este compuesto por letras de la A a la Z y los caracteres numéricos del Cero (0) al nueve (9). Sólo es permitido el número de identificación alfanumérico para los siguientes tipos de documentos de identidad: CE.  Cédula de Extranjería PA.  Pasaporte CD.  Carne Diplomático. Para los siguientes tipos de documento deben ser dígitos numéricos: TI.   Tarjeta de Identidad CC. Cédula de ciudadanía  SC.  Salvoconducto de permanencia RC.  Registro Civil                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.numero_identificacion, 16, " ", "D"))
-                        #5	2	26	27	N	Tipo de cotizante	Obligatorio. Lo suministra el aportante. Los valores validos son:
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTipoCotizante(), "0", 2, "I"));
+                        #5	2	26	27	N	Tipo de cotizante	Obligatorio. Lo suministra el aportante. Los valores validos son:                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.tipo_cotizante.codigo, 2, "0", "I"))
-                        #6	2	28	29	N	Subtipo de cotizante	Obligatorio. Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSubtipoCotizante(), "0", 2, "I"));
+                        #6	2	28	29	N	Subtipo de cotizante	Obligatorio. Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.subtipo_cotizante.codigo, 2, "0", "I"))
-                        #7	1	30	30	A	Extranjero no obligado a cotizar a pensiones 	Puede ser blanco o X Cuando aplique este campo los únicos tipos de documentos válidos son: CE. Cédula de extranjería PA.  Pasaporte CD.  Carné diplomático Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getExtranjeroNoObligadoCotizarPension(), " ", 1, "D"));
+                        #7	1	30	30	A	Extranjero no obligado a cotizar a pensiones 	Puede ser blanco o X Cuando aplique este campo los únicos tipos de documentos válidos son: CE. Cédula de extranjería PA.  Pasaporte CD.  Carné diplomático Lo suministra el aportante.                        
                         buffer.write(Utilidades.rellenar(' ', 1, "", "I"))
-                        #8	1	31	31	A	Colombiano en el exterior	Puede ser blanco o X si aplica.  Este campo es utilizado cuando el tipo de documento es: CC.  Cédula de ciudadanía TI.    Tarjeta de identidad Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getColombianoResidenteExterior(), " ", 1, "D"));
+                        #8	1	31	31	A	Colombiano en el exterior	Puede ser blanco o X si aplica.  Este campo es utilizado cuando el tipo de documento es: CC.  Cédula de ciudadanía TI.    Tarjeta de identidad Lo suministra el aportante.                        
                         buffer.write(Utilidades.rellenar(' ', 1, "", "I"))
-                        #9	2	32	33	A	Código del departamento de la ubicación laboral	Lo suministra el aportante. El operador de información deberá validar que este código este definido en la relación de la División Política y Administrativa – DIVIPOLA- expedida por el DANE Cuando marque el campo colombiano en el exterior se dejará  en blanco
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCodigoDepartamentoUbicacionlaboral(), "0", 2, "I"));
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.ciudad_labora.estado.codigo, 2, "0", "I"))
-                        #10	3	34	36	A	Código del Municipio de la ubicación laboral	Lo suministra el aportante. El operador de información deberá validar que este código este definido en la relación de la División Política y Administrativa – DIVIPOLA- expedida por el DANE Cuando marque el campo colombiano en el exterior se dejará en blanco
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCodigoMunicipioUbicacionlaboral(), "0", 3, "I"));
-                        buffer.write(aporte_detalle.aporte_contrato.contrato.ciudad_labora.codigo[-3:])
-                        #11	20	37	56	A	Primer apellido	Obligatorio. Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getPrimerApellido(), " ", 20, "D"));
+                        #9	2	32	33	A	Código del departamento de la ubicación laboral	Lo suministra el aportante. El operador de información deberá validar que este código este definido en la relación de la División Política y Administrativa – DIVIPOLA- expedida por el DANE Cuando marque el campo colombiano en el exterior se dejará  en blanco                        
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.ciudad_labora.estado.codigo, 2, "0", "I"))
+                        #10	3	34	36	A	Código del Municipio de la ubicación laboral	Lo suministra el aportante. El operador de información deberá validar que este código este definido en la relación de la División Política y Administrativa – DIVIPOLA- expedida por el DANE Cuando marque el campo colombiano en el exterior se dejará en blanco                        
+                        buffer.write(aporte_detalle.aporte_contrato.ciudad_labora.codigo[-3:])
+                        #11	20	37	56	A	Primer apellido	Obligatorio. Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido1, 20, " ", "D"))
-                        #12	30	57	86	A	Segundo apellido	Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSegundoApellido(), " ", 30, "D"));
+                        #12	30	57	86	A	Segundo apellido	Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido2, 30, " ", "D"))
                         #13	20	87	106	A	Primer nombre	Obligatorio. Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getPrimerNombre(), " ", 20, "D"));
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre1, 20, " ", "D"))
-                        #14	30	107	136	A	Segundo nombre	Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSegundoNombre(), " ", 30, "D"));
+                        #14	30	107	136	A	Segundo nombre	Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre2, 30, " ", "D"))
                         #15	1	137	137	A	ING: ingreso	 Puede ser un blanco, R, X o C. Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getIngreso(), " ", 1, "D"));
                         buffer.write(Utilidades.rellenar(ingreso, 1, " ", "D"))
-                        #16	1	138	138	A	RET: retiro	Puede ser un blanco, P, R, X o C. Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getRetiro(), " ", 1, "D"));
+                        #16	1	138	138	A	RET: retiro	Puede ser un blanco, P, R, X o C. Lo suministra el aportante.                        
                         buffer.write(Utilidades.rellenar(retiro, 1, " ", "D"))
                         #17	1	139	139	A	TDE: Traslado desde otra EPS ó EOC	Puede ser un blanco o X. Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTrasladoDesdeOtraEps(), " ", 1, "D"));
                         buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
-                        #18	1	140	140	A	TAE: Traslado a otra EPS ó EOC	Puede ser un blanco o X. Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTrasladoAOtraEps(), " ", 1, "D"));
+                        #18	1	140	140	A	TAE: Traslado a otra EPS ó EOC	Puede ser un blanco o X. Lo suministra el aportante.                    
                         buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
-                        #19	1	141	141	A	TDP: Traslado desde otra Administradora de Pensiones	Puede ser un blanco o X. Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTrasladoDesdeOtraPension(), " ", 1, "D"));
+                        #19	1	141	141	A	TDP: Traslado desde otra Administradora de Pensiones	Puede ser un blanco o X. Lo suministra el aportante.                        
                         buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
-                        #20	1	142	142	A	TAP: Traslado a otra  administradora de pensiones	Puede ser un blanco o X. Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getTrasladoAOtraPension(), " ", 1, "D"));
+                        #20	1	142	142	A	TAP: Traslado a otra  administradora de pensiones	Puede ser un blanco o X. Lo suministra el aportante.                
                         buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
-                        #21	1	143	143	A	VSP: Variación permantente de salario	Puede ser un blanco o X. Lo suministra el aportante.
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getVariacionPermanenteSalario(), " ", 1, "D"));
-                        buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
+                        #21	1	143	143	A	VSP: Variación permantente de salario	Puede ser un blanco o X. Lo suministra el aportante.                        
+                        buffer.write(Utilidades.rellenar(variacion_permanente_salario, 1, " ", "D"))
                         #22	1	144	144	A	Correcciones	Puede ser un blanco, A o C. Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getCorrecciones(), " ", 1, "D"));
                         buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
-                        #23	1	145	145	A	VST: Variación transitoria del salario	Puede ser un blanco o X. Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getVariacionTransitoriaSalario(), " ", 1, "D"));
-                        buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
-                        #24	1	146	146	A	SLN: suspensión temporal del contrato de trabajo o licencia no remunerada o comisión de servicios	Puede ser un blanco, X o C. Lo suministra el aportante
-                        #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getSuspensionTemporalContratoLicenciaServicios(), " ", 1, "D"));
-                        buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))
+                        #23	1	145	145	A	VST: Variación transitoria del salario	Puede ser un blanco o X. Lo suministra el aportante                        
+                        buffer.write(Utilidades.rellenar(variacion_transitoria_salario, 1, " ", "D"))
+                        #24	1	146	146	A	SLN: suspensión temporal del contrato de trabajo o licencia no remunerada o comisión de servicios	Puede ser un blanco, X o C. Lo suministra el aportante                        
+                        buffer.write(Utilidades.rellenar(suspension_temporal_contrato, 1, " ", "D"))
                         #25	1	147	147	A	IGE: Incapacidad Temporal por Enfermedad General	Puede ser un blanco o X. Lo suministra el aportante.
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getIncapacidadGeneral(), " ", 1, "D"));
                         buffer.write(Utilidades.rellenar(' ', 1, " ", "D"))

@@ -2,46 +2,46 @@
   {
     "model": "general.GenIdentificacion",
     "pk": 1,
-    "fields": {"nombre": "Registro civil de nacimiento", "pais": "CO", "codigo":"11", "orden":3, "abreviatura":"RC"}
+    "fields": {"nombre": "Registro civil de nacimiento", "pais": "CO", "codigo":"11", "orden":3, "abreviatura":"RC", "aporte":"RC"}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 2,
-    "fields": {"nombre": "Tarjeta de identidad", "pais": "CO", "codigo":"12", "orden":4, "abreviatura":"TI"}
+    "fields": {"nombre": "Tarjeta de identidad", "pais": "CO", "codigo":"12", "orden":4, "abreviatura":"TI", "aporte":"TI"}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 3,
-    "fields": {"nombre": "Cédula de ciudadanía", "pais": "CO", "codigo":"13", "orden":2, "abreviatura":"CC"}
+    "fields": {"nombre": "Cédula de ciudadanía", "pais": "CO", "codigo":"13", "orden":2, "abreviatura":"CC", "aporte":"CC"}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 4,
-    "fields": {"nombre": "Tarjeta de extranjería", "pais": "CO", "codigo":"21", "orden":5, "abreviatura":"TE"}
+    "fields": {"nombre": "Tarjeta de extranjería", "pais": "CO", "codigo":"21", "orden":5, "abreviatura":"TE", "aporte":""}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 5,
-    "fields": {"nombre": "Cédula de extranjería", "pais": "CO", "codigo":"22", "orden":6, "abreviatura":"CE"}
+    "fields": {"nombre": "Cédula de extranjería", "pais": "CO", "codigo":"22", "orden":6, "abreviatura":"CE", "aporte":"CE"}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 6,
-    "fields": {"nombre": "Número de identificación tributaria ", "codigo":"31", "pais": "CO", "orden":1, "abreviatura":"NIT"}
+    "fields": {"nombre": "Número de identificación tributaria ", "codigo":"31", "pais": "CO", "orden":1, "abreviatura":"NIT", "aporte":""}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 7,
-    "fields": {"nombre": "Pasaporte", "pais": "CO", "codigo":"41", "orden":7, "abreviatura":"PA"}
+    "fields": {"nombre": "Pasaporte", "pais": "CO", "codigo":"41", "orden":7, "abreviatura":"PA", "aporte":"PT"}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 8,
-    "fields": {"nombre": "Documento de identificación extranjero", "pais": "CO", "codigo":"42", "orden":8, "abreviatura":"TDE"}
+    "fields": {"nombre": "Documento de identificación extranjero", "pais": "CO", "codigo":"42", "orden":8, "abreviatura":"TDE", "aporte":""}
   },
   {
     "model": "general.GenIdentificacion",
     "pk": 9,
-    "fields": {"nombre": "NIT de otro país", "pais": "CO", "codigo":"50", "orden":9, "abreviatura":"SI"}
+    "fields": {"nombre": "NIT de otro país", "pais": "CO", "codigo":"50", "orden":9, "abreviatura":"SI", "aporte":""}
   }
 ]
