@@ -5,7 +5,7 @@ class HumEntidadSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumEntidad
-        fields = ['id', 'codigo', 'numero_identificcion', 'nombre', 'nombre_extendido', 'salud', 'pension', 'cesantias', 'caja',
+        fields = ['id', 'codigo', 'numero_identificaion', 'nombre', 'nombre_extendido', 'salud', 'pension', 'cesantias', 'caja',
                   'riesgo', 'sena', 'icbf']
 
     
