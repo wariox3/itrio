@@ -14,6 +14,7 @@ class HumAporte(models.Model):
     contratos = models.IntegerField(default=0)
     empleados = models.IntegerField(default=0)
     lineas = models.IntegerField(default=0)
+    base_cotizacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pension = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     fondo_solidaridad = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     fondo_subsistencia = models.DecimalField(max_digits=20, decimal_places=6, default=0)

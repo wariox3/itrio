@@ -206,7 +206,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     
                     mes_formateado = str(aporte.mes).zfill(2)
                     mes_salud_formateado = str(aporte.mes_salud).zfill(2)
-                    periodo_pago_diferente_salud = f"{aporte.anio}-{mes_formateado}"
+                    periodo_pago = f"{aporte.anio}-{mes_formateado}"
                     periodo_pago_salud = f"{aporte.anio_salud}-{mes_salud_formateado}"
 
                     empresa = GenEmpresa.objects.filter(pk=1).values('nombre_corto', 'numero_identificacion', 'digito_verificacion').first()
@@ -237,32 +237,23 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.                    
                     buffer.write(Utilidades.rellenar('', 40, " ", "D"))
-                    #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante
-                    #fputs($ar, FuncionesController::RellenarNr($arEntidadRiesgos->getCodigoInterface(), " ", 6, "D"));
-                    buffer.write(Utilidades.rellenar('14-11', 6, " ", "D"))
-                    #15	7	305	311	A	Periodo de pago para los sistemas diferentes al de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo calcula el Operador de Información.
-                    #fputs($ar, FuncionesController::RellenarNr($periodoPagoDiferenteSalud, " ", 7, "D"));
-                    buffer.write(Utilidades.rellenar(periodo_pago_diferente_salud, 7, " ", "D"))
+                    #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante                    
+                    buffer.write(Utilidades.rellenar(aporte.entidad_riesgo.codigo, 6, " ", "D"))
+                    #15	7	305	311	A	Periodo de pago para los sistemas diferentes al de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo calcula el Operador de Información.                    
+                    buffer.write(Utilidades.rellenar(periodo_pago, 7, " ", "D"))
                     #16	7	312	318	A	Periodo de pago para el sistema de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo suministra el aportante.
-                    #fputs($ar, FuncionesController::RellenarNr($periodoPagoSalud, " ", 7, "D"));
                     buffer.write(Utilidades.rellenar(periodo_pago_salud, 7, " ", "D"))
-                    #17	10	319	328	N	Número de radicación o de la Planilla Integrada de Liquidación de aportes.	Asignado por el sistema . Debe ser único por operador de información.
-                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #17	10	319	328	N	Número de radicación o de la Planilla Integrada de Liquidación de aportes.	Asignado por el sistema . Debe ser único por operador de información.                    
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
-                    #18	10	329	338	A	Fecha de pago (aaaa-mm-dd)	Asignado por el sistema a partir de la fecha del día efectivo del pago.
-                    #fputs($ar, FuncionesController::RellenarNr("", " ", 10, "D"));
+                    #18	10	329	338	A	Fecha de pago (aaaa-mm-dd)	Asignado por el sistema a partir de la fecha del día efectivo del pago.                    
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
-                    #19	5	339	343	N	Número total de empleados	Obligatorio. Se debe validar que sea igual al número de cotizantes únicos incluidos en el detalle del registro tipo 2, exceptuando los que tengan 40 en el campo 5 – Tipo de cotizante.
-                    #fputs($ar, FuncionesController::RellenarNr($arAporte->getCantidadEmpleados(), "0", 5, "I"));
-                    buffer.write(Utilidades.rellenar(aporte.contratos, 5, "0", "I"))
-                    #20	12	344	355	N	Valor total de la nómina	Obligatorio. Lo suministra el aportante, corresponde a la sumatoria de los IBC para el pago de los aportes de parafiscales de la totalidad de los empleados. Puede ser 0 para independientes
-                    #fputs($ar, FuncionesController::RellenarNr($arAporte->getVrIngresoBaseCotizacion(), "0", 12, "I"));
-                    buffer.write(Utilidades.rellenar('', 12, "0", "I"))
-                    #21	2	356	357	N	Tipo de aportante	Obligatorio y debe ser igual al registrado en el campo 30 del archivo tipo 1
-                    #fputs($ar, FuncionesController::RellenarNr("01", " ", 2, "D"));
+                    #19	5	339	343	N	Número total de empleados	Obligatorio. Se debe validar que sea igual al número de cotizantes únicos incluidos en el detalle del registro tipo 2, exceptuando los que tengan 40 en el campo 5 – Tipo de cotizante.                    
+                    buffer.write(Utilidades.rellenar(aporte.empleados, 5, "0", "I"))
+                    #20	12	344	355	N	Valor total de la nómina	Obligatorio. Lo suministra el aportante, corresponde a la sumatoria de los IBC para el pago de los aportes de parafiscales de la totalidad de los empleados. Puede ser 0 para independientes                    
+                    buffer.write(Utilidades.rellenar(aporte.base_cotizacion, 12, "0", "I"))
+                    #21	2	356	357	N	Tipo de aportante	Obligatorio y debe ser igual al registrado en el campo 30 del archivo tipo 1                    
                     buffer.write(Utilidades.rellenar('01', 2, " ", "D"))
-                    #22	2	358	359	N	Código del operador de información	Asignado por el sistema del operador de información.
-                    #fputs($ar, FuncionesController::RellenarNr("88", " ", 2, "D"));
+                    #22	2	358	359	N	Código del operador de información	Asignado por el sistema del operador de información.                    
                     buffer.write(Utilidades.rellenar('88', 2, " ", "D"))
                     buffer.write("\n") 
                     secuencia = 1
