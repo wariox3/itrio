@@ -2,14 +2,23 @@ from rest_framework import serializers
 from humano.models.aporte_contrato import HumAporteContrato
 from humano.models.aporte import HumAporte
 from humano.models.contrato import HumContrato
+from humano.models.entidad import HumEntidad
+from humano.models.riesgo import HumRiesgo
+from general.models.ciudad import GenCiudad
 
 class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
     aporte = serializers.PrimaryKeyRelatedField(queryset=HumAporte.objects.all())
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
+    ciudad_labora = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())
+    entidad_salud = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    entidad_pension = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    entidad_caja = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    riesgo = serializers.PrimaryKeyRelatedField(queryset=HumRiesgo.objects.all())
 
     class Meta:
         model = HumAporteContrato
-        fields = ['id', 'fecha_desde', 'fecha_hasta', 'dias', 'salario','base_cotizacion', 'aporte', 'contrato', 'ingreso', 'retiro', 'error_terminacion']        
+        fields = ['id', 'fecha_desde', 'fecha_hasta', 'dias', 'salario','base_cotizacion', 'aporte', 'contrato', 'ingreso', 'retiro', 'error_terminacion',
+                  'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'riesgo']        
 
     def to_representation(self, instance):    
         contrato_contacto_id = ''        

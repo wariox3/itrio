@@ -33,8 +33,11 @@ def generar_qr(data):
 class Utilidades:
     @staticmethod
     def rellenar(cadena, largo, caracter, direccion = "I"):
+        if cadena is None:
+            cadena = ""
         if not isinstance(cadena, str):
             cadena = str(cadena)
+            
         if not cadena:
             cadena = ""
         longitud = len(cadena)

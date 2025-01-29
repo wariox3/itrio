@@ -1,6 +1,8 @@
 from django.db import models
 from humano.models.aporte import HumAporte
 from humano.models.contrato import HumContrato
+from humano.models.entidad import HumEntidad
+from humano.models.riesgo import HumRiesgo
 from general.models.ciudad import GenCiudad
 
 class HumAporteContrato(models.Model):        
@@ -15,6 +17,10 @@ class HumAporteContrato(models.Model):
     aporte = models.ForeignKey(HumAporte, on_delete=models.PROTECT, null=True, related_name='aportes_contratos_aporte_rel')
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, null=True, related_name='aportes_contratos_contrato_rel')
     ciudad_labora = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, null=True, related_name='aportes_contratos_ciudad_labora_rel')
+    entidad_salud = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='aportes_contratos_entidad_salud_rel')
+    entidad_pension = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='aportes_contratos_entidad_pension_rel')    
+    entidad_caja = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='aportes_contratos_entidad_caja_rel')
+    riesgo = models.ForeignKey(HumRiesgo, on_delete=models.PROTECT, null=True, related_name='aportes_contratos_riesgo_rel')
 
     class Meta:
         db_table = "hum_aporte_contrato"

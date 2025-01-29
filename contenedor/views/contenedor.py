@@ -63,12 +63,14 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                             data = {
                                 'id':1,
                                 'empresa':1,
-                                'formato_factura':'F'}
+                                'formato_factura':'F'
+                                }
                             configuracionSerializador = GenConfiguracionSerializador(data=data)                                                
                             if configuracionSerializador.is_valid():
                                 configuracionSerializador.save()                            
-                            return Response({'contenedor': usuarioContenedorSerializador.data}, status=status.HTTP_200_OK)            
-                        return Response({'mensaje':'Errores en la creacion de la empresa', 'codigo':12, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)        
+                                return Response({'contenedor': usuarioContenedorSerializador.data}, status=status.HTTP_200_OK)            
+                            return Response({'mensaje':'Errores en la creacion de la econfiguracion', 'codigo':12, 'validaciones': configuracionSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje':'Errores en la creacion de la empresa', 'codigo':12, 'validaciones': empresaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                 return Response({'mensaje':'Errores en la creacion del contenedor', 'codigo':12, 'validaciones': usuarioContenedorSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje': 'Faltan datos para el consumo de la api', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                   
         except User.DoesNotExist:

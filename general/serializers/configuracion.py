@@ -7,7 +7,7 @@ from decouple import config
 
 class GenConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=GenEmpresa.objects.all())
-    hum_entidad_riesgo = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    hum_entidad_riesgo = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenConfiguracion
         fields = ['id', 'empresa', 'informacion_factura', 'informacion_factura_superior',
