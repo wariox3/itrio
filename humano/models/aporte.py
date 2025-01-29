@@ -1,5 +1,6 @@
 from django.db import models
 from humano.models.sucursal import HumSucursal
+from humano.models.entidad import HumEntidad
 
 class HumAporte(models.Model):        
     fecha_desde = models.DateField(null=True)
@@ -26,6 +27,7 @@ class HumAporte(models.Model):
     estado_generado = models.BooleanField(default = False)
     comentario = models.CharField(max_length=300, null=True)
     sucursal = models.ForeignKey(HumSucursal, on_delete=models.PROTECT, null=True, related_name='aportes_sucursal_rel')
+    entidad_riesgo = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True)    
 
     class Meta:
         db_table = "hum_aporte"
