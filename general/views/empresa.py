@@ -1,11 +1,13 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from general.models.empresa import GenEmpresa
+from contenedor.models import Contenedor
 from general.serializers.empresa import GenEmpresaSerializador, GenEmpresaActualizarSerializador
 from rest_framework.decorators import action
 from decouple import config
 from utilidades.space_do import SpaceDo
 from utilidades.wolframio import Wolframio
+from utilidades.utilidades import Utilidades
 
 class EmpresaViewSet(viewsets.ModelViewSet):
     queryset = GenEmpresa.objects.all()
@@ -39,16 +41,15 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             imagenB64 = raw.get('imagenB64')
             if empresa_id:
                 empresa = GenEmpresa.objects.get(pk=empresa_id)
-                arrDatosB64 = imagenB64.split(",")
-                base64Crudo = arrDatosB64[1]
-                arrTipo = arrDatosB64[0].split(";")
-                arrData = arrTipo[0].split(":")
-                contentType = arrData[1]
-                archivo = f"itrio/{config('ENV')}/empresa/logo_{empresa.contenedor_id}_{empresa_id}.jpg"
+                objetoB64 = Utilidades.separar_base64(imagenB64)                            
+                ruta = f"itrio/{config('ENV')}/empresa/logo_{empresa.contenedor_id}_{empresa_id}.jpg"
                 spaceDo = SpaceDo()
-                spaceDo.putB64(archivo, base64Crudo, contentType)
-                empresa.imagen = archivo
+                spaceDo.putB64(ruta, objetoB64['base64_raw'], objetoB64['content_type'])
+                empresa.imagen = ruta
                 empresa.save()
+                contenedor = Contenedor.objects.get(pk=empresa.contenedor_id)
+                contenedor.imagen = ruta
+                contenedor.save()
                 return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
@@ -64,8 +65,12 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 empresa = GenEmpresa.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
-                empresa.imagen = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
+                ruta = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
+                empresa.imagen = ruta
                 empresa.save()
+                contenedor = Contenedor.objects.get(pk=empresa.contenedor_id)
+                contenedor.imagen = ruta
+                contenedor.save()                
                 return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
