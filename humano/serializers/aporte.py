@@ -12,8 +12,10 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumAporte
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_hasta_periodo', 'anio', 'mes', 'anio_salud', 'mes_salud', 'sucursal',
-                  'presentacion', 'estado_generado', 'estado_aprobado', 'entidad_riesgo']      
-        
+                  'presentacion', 'estado_generado', 'estado_aprobado', 'entidad_riesgo', 'cotizacion_pension', 'cotizacion_voluntario_pension_afiliado',
+                  'cotizacion_voluntario_pension_aportante', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia',
+                  'cotizacion_salud', 'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total']      
+
     def to_representation(self, instance):      
         sucursal_nombre = ''
         if instance.sucursal:
@@ -33,6 +35,17 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
             'presentacion': instance.presentacion,
             'estado_generado': instance.estado_generado,
             'estado_aprobado': instance.estado_aprobado,
+            'cotizacion_pension': instance.cotizacion_pension,
+            'cotizacion_voluntario_pension_afiliado': instance.cotizacion_voluntario_pension_afiliado,
+            'cotizacion_voluntario_pension_aportante': instance.cotizacion_voluntario_pension_aportante,
+            'cotizacion_solidaridad_solidaridad': instance.cotizacion_solidaridad_solidaridad,
+            'cotizacion_solidaridad_subsistencia': instance.cotizacion_solidaridad_subsistencia,
+            'cotizacion_salud': instance.cotizacion_salud,
+            'cotizacion_riesgos': instance.cotizacion_riesgos,
+            'cotizacion_caja': instance.cotizacion_caja,
+            'cotizacion_sena': instance.cotizacion_sena,
+            'cotizacion_icbf': instance.cotizacion_icbf,
+            'cotizacion_total': instance.cotizacion_total,
             'sucursal_id': instance.sucursal_id,
             'sucursal_nombre': sucursal_nombre,
             'entidad_riesgo_id': instance.entidad_riesgo_id,

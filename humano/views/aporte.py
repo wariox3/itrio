@@ -5,7 +5,6 @@ from humano.models.aporte import HumAporte
 from humano.models.aporte_contrato import HumAporteContrato
 from humano.models.aporte_detalle import HumAporteDetalle
 from humano.models.contrato import HumContrato
-from general.models.configuracion import GenConfiguracion
 from general.models.empresa import GenEmpresa
 from general.models.documento_detalle import GenDocumentoDetalle
 from humano.serializers.aporte import HumAporteSerializador
