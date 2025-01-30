@@ -43,7 +43,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 empresa = GenEmpresa.objects.get(pk=empresa_id)
                 objetoB64 = Utilidades.separar_base64(imagenB64)                            
                 ruta = f"itrio/{config('ENV')}/empresa/logo_{empresa.contenedor_id}_{empresa_id}.jpg"
-                spaceDo = SpaceDo()
+                spaceDo = SpaceDo()                
                 spaceDo.putB64(ruta, objetoB64['base64_raw'], objetoB64['content_type'])
                 empresa.imagen = ruta
                 empresa.save()
@@ -65,7 +65,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 empresa = GenEmpresa.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
-                ruta = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
+                ruta = f"itrio/logo_defecto.jpg"
                 empresa.imagen = ruta
                 empresa.save()
                 contenedor = Contenedor.objects.get(pk=empresa.contenedor_id)

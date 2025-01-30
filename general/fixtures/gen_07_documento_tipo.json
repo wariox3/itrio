@@ -138,7 +138,8 @@
     "fields": {
       "nombre": "NOMINA",
       "documento_clase": 701,
-      "pagar": true
+      "pagar": true,
+      "operacion": 1
     }
   },
   {

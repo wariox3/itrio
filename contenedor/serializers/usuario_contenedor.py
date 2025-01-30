@@ -2,6 +2,7 @@ from rest_framework import serializers
 from contenedor.models import Contenedor, UsuarioContenedor
 from seguridad.models import User
 from datetime import datetime
+from decouple import config
 
 class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
@@ -30,7 +31,7 @@ class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
             'rol': instance.rol,
             'subdominio': instance.contenedor.schema_name,
             'nombre': instance.contenedor.nombre,
-            'imagen': f"https://semantica.sfo3.digitaloceanspaces.com/{instance.contenedor.imagen}",
+            'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.contenedor.imagen}",
             'usuarios': instance.contenedor.usuarios,
             'usuarios_base': usuariosBase,
             'plan_id': instance.contenedor.plan_id,

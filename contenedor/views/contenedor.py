@@ -40,7 +40,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje': f"Ya existe una empresa con el subdominio {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
-                imagenReferencia = f"itrio/{config('ENV')}/empresa/logo_defecto.jpg"
+                imagenReferencia = f"itrio/logo_defecto.jpg"
                 call_command('create_tenant', schema_name=subdominio, domain_domain=subdominio+dominio, nombre=nombre, domain_is_primary='0', imagen=imagenReferencia, usuario_id=usuario.id, plan_id=plan_id, usuarios=1, reddoc=reddoc, ruteo=ruteo)  
                 os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures/ --schema={subdominio}")                           
                 contenedor = Contenedor.objects.filter(**{'schema_name':subdominio}).first()                        

@@ -65,3 +65,12 @@ class SpaceDo():
                 return {'error':True, 'mensaje':'No se encuentra el archivo'}
             else:
                 return {'error':True, 'mensaje':f"Error no especificado {str(e)}"} 
+            
+    def listar_bukets(self):
+        try:
+            response = self.client.list_buckets()
+            print("Conexión exitosa. Buckets disponibles:")
+            for bucket in response.get('Buckets', []):
+                print(f"- {bucket['Name']}")  
+        except Exception as e:
+            print("Error de conexión:", e)                     
