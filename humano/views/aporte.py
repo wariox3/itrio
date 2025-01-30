@@ -154,12 +154,68 @@ class HumAporteViewSet(viewsets.ModelViewSet):
             if id:
                 aporte = HumAporte.objects.get(pk=id)
                 if aporte.estado_generado == False and aporte.estado_aprobado == False:
+                    aporte_cotizacion_pension = 0
+                    aporte_cotizacion_solidaridad_solidaridad = 0
+                    aporte_cotizacion_solidaridad_subsistencia = 0
+                    aporte_cotizacion_voluntario_pension_afiliado = 0
+                    aporte_cotizacion_voluntario_pension_aportante = 0
+                    aporte_cotizacion_salud = 0
+                    aporte_cotizacion_riesgos = 0
+                    aporte_cotizacion_caja = 0
+                    aporte_cotizacion_total = 0                    
+                    
+                    contratos = 0
+                    lineas = 0
                     aporte_contratos = HumAporteContrato.objects.filter(aporte_id=id)                                           
-                    for aporte_contrato in aporte_contratos:                                  
+                    for aporte_contrato in aporte_contratos:                              
+                        horas = aporte_contrato.dias * 8   
+                        base_cotizacion_pension = aporte_contrato.base_cotizacion
+                        base_cotizacion_salud = aporte_contrato.base_cotizacion
+                        base_cotizacion_riesgos = aporte_contrato.base_cotizacion
+                        base_cotizacion_caja = aporte_contrato.base_cotizacion
+                        tarifa_pension = 16
+                        tarifa_salud = 4
+                        tarifa_riesgos = aporte_contrato.riesgo.porcentaje
+                        tarifa_caja = 4
+                        cotizacion_pension = base_cotizacion_pension * tarifa_pension / 100
+                        cotizacion_salud = base_cotizacion_salud * tarifa_salud / 100
+                        cotizacion_riesgos = base_cotizacion_riesgos * tarifa_riesgos / 100
+                        cotizacion_caja = base_cotizacion_caja * tarifa_caja / 100
+                        cotizacion_total = cotizacion_pension + cotizacion_salud + cotizacion_riesgos +cotizacion_caja
+                        aporte_cotizacion_total += cotizacion_total
+                        contratos += 1
+                        lineas += 1
                         data = {
                             'aporte_contrato': aporte_contrato.id,
-                            'ingreso': False,
-                            'retiro': False                                              
+                            'ingreso': aporte_contrato.ingreso,
+                            'retiro': aporte_contrato.retiro,
+                            'salario_integral': aporte_contrato.contrato.salario_integral,                            
+                            'horas': horas,
+                            'dias_pension': aporte_contrato.dias,
+                            'dias_salud': aporte_contrato.dias,
+                            'dias_riesgos': aporte_contrato.dias,
+                            'dias_caja': aporte_contrato.dias,
+                            'base_cotizacion_pension': base_cotizacion_pension,
+                            'base_cotizacion_salud': base_cotizacion_salud,
+                            'base_cotizacion_riesgos': base_cotizacion_riesgos,
+                            'base_cotizacion_caja': base_cotizacion_caja,
+                            'tarifa_pension': tarifa_pension,
+                            'tarifa_salud': tarifa_salud,
+                            'tarifa_riesgos': tarifa_riesgos,
+                            'tarifa_caja': tarifa_caja,
+                            'tarifa_sena': 0,
+                            'tarifa_icbf': 0,
+                            'cotizacion_pension': cotizacion_pension,
+                            'cotizacion_solidaridad_solidaridad': 0,
+                            'cotizacion_solidaridad_subsistencia': 0,
+                            'cotizacion_voluntario_pension_afiliado': 0,
+                            'cotizacion_voluntario_pension_aportante': 0,
+                            'cotizacion_salud': cotizacion_salud,
+                            'cotizacion_riesgos': cotizacion_riesgos,
+                            'cotizacion_caja': cotizacion_caja,
+                            'cotizacion_sena': 0,
+                            'cotizacion_icbf': 0,
+                            'cotizacion_total': cotizacion_total                            
                         }
                         aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
                         if aporte_detalle_serializador.is_valid():
@@ -167,7 +223,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         else:
                             return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                     aporte.estado_generado = True
-                    aporte.total = 0                    
+                    aporte.total = aporte_cotizacion_total  
+                    aporte.contratos = contratos    
+                    aporte.lineas = lineas              
                     aporte.save()
                     return Response({'total': 0,}, status=status.HTTP_200_OK)
                 else:
@@ -190,6 +248,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato_id=aporte_contrato.id)
                         aporte_detalles.delete()
                     aporte.estado_generado = False
+                    aporte.contratos = 0
+                    aporte.empleados = 0
+                    aporte.lineas = 0
                     aporte.total = 0                    
                     aporte.save()
                     return Response({'mensaje': 'Aporte desgenerado'}, status=status.HTTP_200_OK)
