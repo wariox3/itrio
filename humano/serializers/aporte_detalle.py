@@ -7,7 +7,13 @@ class HumAporteDetalleSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = HumAporteDetalle
-        fields = ['id','ingreso', 'retiro', 'aporte_contrato']     
+        fields = ['id','ingreso', 'retiro', 'aporte_contrato', 'salario_integral' , 'horas', 'dias_pension',  'dias_salud', 'dias_riesgos',
+                            'dias_caja', 'base_cotizacion_pension', 'base_cotizacion_salud', 'base_cotizacion_riesgos', 'base_cotizacion_caja',
+                            'tarifa_pension', 'tarifa_salud', 'tarifa_riesgos', 'tarifa_caja', 'tarifa_sena', 'tarifa_icbf', 'cotizacion_pension',
+                            'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia', 'cotizacion_voluntario_pension_afiliado',
+                            'cotizacion_voluntario_pension_aportante', 'cotizacion_salud', 'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena',
+                            'cotizacion_icbf', 'cotizacion_total' ]
+
 
     def to_representation(self, instance):         
         aporte_contrato_contrato_contacto_numero_identificacion = ""

@@ -5,8 +5,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from datetime import datetime
 import re
-import string
-
+import math
 def convertir_a_letras(numero):
     if numero == 0:
         return "Cero pesos"
@@ -123,7 +122,6 @@ class Utilidades:
             raise ValueError("La cadena base64 no contiene el formato esperado 'data:[tipo]/[extensión];base64,'.")
         
     @staticmethod
-    def obtener_valor_entero(valor):
-        valor = int(valor)
-        valor_formateado = str(valor).zfill(9)
-        return valor_formateado    
+    def redondear_cien(valor):
+        valor = math.ceil(valor / 100) * 100
+        return valor    
