@@ -356,7 +356,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     #19	5	339	343	N	Número total de empleados	Obligatorio. Se debe validar que sea igual al número de cotizantes únicos incluidos en el detalle del registro tipo 2, exceptuando los que tengan 40 en el campo 5 – Tipo de cotizante.                    
                     buffer.write(Utilidades.rellenar(aporte.empleados, 5, "0", "I"))
                     #20	12	344	355	N	Valor total de la nómina	Obligatorio. Lo suministra el aportante, corresponde a la sumatoria de los IBC para el pago de los aportes de parafiscales de la totalidad de los empleados. Puede ser 0 para independientes                    
-                    buffer.write(Utilidades.rellenar(aporte.base_cotizacion, 12, "0", "I"))
+                    buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte.base_cotizacion), 12, "0", "I"))
                     #21	2	356	357	N	Tipo de aportante	Obligatorio y debe ser igual al registrado en el campo 30 del archivo tipo 1                    
                     buffer.write(Utilidades.rellenar('01', 2, " ", "D"))
                     #22	2	358	359	N	Código del operador de información	Asignado por el sistema del operador de información.                    
@@ -377,7 +377,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             vacaciones = "L"      
                         aporte_voluntario_pension = "X" if aporte_detalle.aporte_voluntario_pension else " "
                         variacion_centro_trabajo = "X" if aporte_detalle.variacion_centro_trabajo else " "
-                        salario_integral = "X" if aporte_detalle.salario_integral else " "
+                        salario_integral = "X" if aporte_detalle.salario_integral else "F"
                         #1	2	1	2	N	Tipo de registro	Obligatorio. Debe ser 02.                        
                         buffer.write(Utilidades.rellenar('02', 2, " ", "D"))
                         #2	5	3	7	N	Secuencia	Debe iniciar en 00001 y ser secuencial para el resto de registros. Lo genera el sistema en el caso en que se estén digitando los datos directamente en la web. El aportante debe reportarlo en el caso de que los datos se suban en archivos planos.
@@ -457,40 +457,40 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         #39	2	190	191	N	Número de días cotizados a Caja de Compensación Familiar	Obligatorio y debe permitir valores entre 0 y 30. Solo se permite 0, si el tipo de cotizante no está obligado a aportar a Cajas de Compensación Familiar  Si es menor que 30 debe haber marcado la novedad correspondiente. Lo suministra el aportante.
                         buffer.write(Utilidades.rellenar(aporte_detalle.dias_caja, 2, "0", "I"))
                         #40	9	192	200	N	Salario básico 	Obligatorio, sin comas ni puntos. No puede ser menor cero. Puede ser menor que 1 smlmv. Lo suministra el aportante Este valor debe ser reportado sin centavos                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.salario, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.aporte_contrato.salario), 9, "0", "I"))
                         #41	1	201	201	A	Salario Integral	Se debe indicar con una X si el salario es integral o blanco si no lo es. Es responsabilidad del aportante suministrar esta información.                        
                         buffer.write(Utilidades.rellenar(salario_integral, 1, " ", "D"))
                         #42	9	202	210	N	IBC Pensión	Obligatorio. Lo suministra el aportante.                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.base_cotizacion_pension, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.base_cotizacion_pension), 9, "0", "I"))
                         #43	9	211	219	N	IBC Salud	Obligatorio. Lo suministra el aportante.                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.base_cotizacion_salud, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.base_cotizacion_salud), 9, "0", "I"))
                         #44	9	220	228	N	IBC Riesgos Laborales	Obligatorio. Lo suministra el aportante.                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.base_cotizacion_riesgos, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.base_cotizacion_riesgos), 9, "0", "I"))
                         #45	9	229	237	N	IBC CCF	 Es un campo obligatorio para los tipos de cotizante 1, 2, 18,22, 30, 51 y 55.  Lo suministra el aportante.  Para el caso del tipo de cotizante 31 no es obligatorio cuando la cooperativa o precooperativa de trabajo asociado este exceptuada por el Ministerio del Trabajo.                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.base_cotizacion_caja, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.base_cotizacion_caja), 9, "0", "I"))
                         #46	7	238	244	N	Tarifa de aportes pensiones	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_pension, 7, "0", "D"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_pension / 100, 7, "0", "D"))
                         #47	9	245	253	N	Cotización obligatoria a Pensiones	Obligatorio. Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_pension, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_pension), 9, "0", "I"))
                         #48	9	254	262	N	Aporte voluntario del afiliado al Fondo de Pensiones Obligatorias	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_voluntario_pension_afiliado, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_voluntario_pension_afiliado), 9, "0", "I"))
                         #49	9	263	271	N	Aporte voluntario del aportante al fondo de pensiones obligatoria. 	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_voluntario_pension_aportante, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_voluntario_pension_aportante), 9, "0", "I"))
                         #50	9	272	280	N	Total cotización sistema general de pensiones	Lo calcula el sistema. Sumatoria de los campos 47, 48 y 49 del registro tipo 2.                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.total_cotizacion_pension, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.total_cotizacion_pension), 9, "0", "I"))
                         #51	9	281	289	N	Aportes a Fondo de Solidaridad  Pensional- Subcuenta de solidaridad	Lo suministra el aportante cuando aplique                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_solidaridad_solidaridad, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_solidaridad_solidaridad), 9, "0", "I"))
                         #52	9	290	298	N	Aportes a Fondo de Solidad Pensional- Subcuenta de subsistencia	Lo suministra el aportante cuando aplique                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_solidaridad_solidaridad, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_solidaridad_subsistencia), 9, "0", "I"))
                         #53	9	299	307	N	Valor no retenido por aportes voluntarios	Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar("", 9, "0", "I"))
                         #54	7	308	314	N	Tarifa de aportes de salud	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_salud, 7, "0", "D"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_salud / 100, 7, "0", "D"))
                         #55	9	315	323	N	Cotización Obligatoria a salud	Obligatorio. Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_salud, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_salud), 9, "0", "I"))
                         #56	9	324	332	N	Valor de la UPC adicional	Debe corresponder al valor reportado en el campo 11 del archivo “información de la Base de Datos Única de Afiliados – BDUA con destino a los operadores de información”
                         #fputs($ar, FuncionesController::RellenarNr($arAporteDetalle->getValorUpcAdicional(), "0", 9, "I"));
-                        buffer.write(Utilidades.rellenar(aporte_detalle.upc_adicional, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.upc_adicional), 9, "0", "I"))
                         #57	15	333	347	A	N° autorización de la incapacidad por enfermedad general	Debe reportarse en blanco                        
                         buffer.write(Utilidades.rellenar("", 15, " ", "D"))
                         #58	9	348	356	N	Valor de incapacidad por enfermedad general	Debe reportarse en blanco                        
@@ -500,29 +500,29 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         #60	9	372	380	N	Valor de la licencia de maternidad	Debe reportarse en cero                        
                         buffer.write(Utilidades.rellenar("", 9, "0", "I"))
                         #61	9	381	389	N	Tarifa de aportes a Riesgos Laborales	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_riesgos, 9, "0", "D"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_riesgos / 100, 9, "0", "D"))
                         #62	9	390	398	N	Centro de Trabajo CT	Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar("", 9, "0", "I"))
                         #63	9	399	407	N	Cotización obligatoria al Sistema General de Riesgos Laborales	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_riesgos, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_riesgos), 9, "0", "I"))
                         #64	7	408	414	N	Tarifa de aportes CCF	Lo suministra el aportante y la valida el Operador de Información de acuerdo con las tarifas vigentes en el periodo a liquidar                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_caja, 7, "0", "D"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_caja / 100, 7, "0", "D"))
                         #65	9	415	423	N	Valor aporte CCF	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_caja, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_caja), 9, "0", "I"))
                         #66	7	424	430	N	Tarifa de aportes SENA	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_sena, 7, "0", "D"))
+                        buffer.write("0.00000" if (aporte_detalle.tarifa_sena / 100) == 0 else Utilidades.rellenar(aporte_detalle.tarifa_sena / 100, 7, 0, "D"))
                         #67	9	431	439	N	Valor aportes SENA	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_sena, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_sena), 9, "0", "I"))
                         #68	7	440	446	N	Tarifa aportes ICBF	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.tarifa_icbf, 7, "0", "D"))
+                        buffer.write("0.00000" if (aporte_detalle.tarifa_icbf / 100) == 0 else Utilidades.rellenar(aporte_detalle.tarifa_icbf / 100, 7, 0, "D"))
                         #69	9	447	455	N	Valor aporte ICBF	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.cotizacion_icbf, 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_icbf), 9, "0", "I"))
                         #70	7	456	462	N	Tarifa aportes ESAP	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar("", 7, "0", "D"))
+                        buffer.write(Utilidades.rellenar("0.00000", 7, "0", "D"))
                         #71	9	463	471	N	Valor aporte ESAP	Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar("", 9, "0", "I"))
                         #72	7	472	478	N	Tarifa aportes MEN	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar("", 7, "0", "D"))
+                        buffer.write(Utilidades.rellenar("0.00000", 7, "0", "D"))
                         #73	9	479	487	N	Valor aporte MEN	Lo suministra el aportante                        
                         buffer.write(Utilidades.rellenar("", 9, "0", "I"))
                         #74	2	488	489	A	Tipo de documento del cotizante principal	Corresponde al tipo de documento del cotizante Principal que corresponde a: CC.  Cédula de ciudadanía CE.  Cédula de extranjería TI.    Tarjeta de identidad PA.  Pasaporte CD.  Carné diplomático SC.  Salvoconducto de permanencia Lo suministra el aportante Solo debe ser reportado cuando se reporte un cotizante 40.                        
@@ -534,7 +534,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         #77	6	507	512	A	Código de la Administradora de Riesgos Laborales a la cual pertenece el afiliado	Lo suministra el aportante. Para el caso de cotizantes diferente al cotizante 3- independiente, se debe registrar el valor ingresado en el Campo 14 del registro Tipo 1 del archivo Tipo 2. Se deja en blanco cuando no sea obligatorio para el cotizante estar afiliado a una Administradora de Riesgos Laborales.                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.aporte.entidad_riesgo.codigo, 6, " ", "D"))
                         #78	1	513	513	A	Clase de riesgo en la que se encuentra el afiliado	Lo suministra el aportante. 1. Clase de Riesgo I 2. Clase de Riesgo II 3. Clase de Riesgo III 4. Clase de Riesgo IV  5. Clase de Riesgo V  La clase de riesgo de acuerdo a la actividad económica establecida en el Decreto 1607 de 2002 o la norma que lo sustituya o modifique                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.riesgo.codigo, 1, " ", "D"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.riesgo.id, 1, " ", "D"))
                         #79	1	514	514	A	Indicador tarifa especial pensiones 	Lo suministra el aportante y es: Blanco  Tarifa normal 1. Actividades de alto riesgo 2. Senadores 3. CTI 4. Aviadores                        
                         buffer.write(Utilidades.rellenar(" ", 1, " ", "D"))
                         #80	10	515	524	A	Fecha de ingreso Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad de ingreso. Lo suministra el aportante. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco.                        
@@ -568,7 +568,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         #94	10	655	664	A	Fecha fin  IRL Formato (AAAA-MM- DD). 	Es obligatorio cuando se reporte la novedad IRL. Debe reportarse una fecha valida siempre y cuando la novedad se presente en el periodo que se esté liquidando  Cuando no se reporte la novedad el campo se dejará en blanco                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.fecha_fin_incapacidad_laboral, 10, " ", "D"))
                         #95	9	665	673	N	IBC otros parafiscales diferentes a CCF	Es un campo obligatorio para los tipos de cotizante 1, 18, 20, 22, 30, 31, y 55.   Lo suministra el aportante.                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.base_cotizacion_otros_parafiscales, 9, "0", "D"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.base_cotizacion_otros_parafiscales), 9, "0", "D"))
                         #96	3	674	676	N	Número de horas laboradas 	Es un campo obligatorio para los tipos de cotizante 1, 2, 18, 22, 30, 51 y 55.  Lo suministra el aportante.  Para el caso del tipo de cotizante 31 no es obligatorio cuando la cooperativa o precooperativa de trabajo asociado este exceptuada por el Ministerio del Trabajo.                        
                         buffer.write(Utilidades.rellenar(aporte_detalle.horas, 3, "0", "I"))
                         #97	10	???	???	A	Fecha

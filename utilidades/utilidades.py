@@ -125,3 +125,11 @@ class Utilidades:
     def redondear_cien(valor):
         valor = math.ceil(valor / 100) * 100
         return valor    
+    
+    @staticmethod
+    def obtener_valor_formateado(valor):
+        """ Convierte un valor numérico a entero sin redondeo incorrecto """
+        try:
+            return int(format(float(valor), ".0f"))
+        except (ValueError, TypeError):
+            return 0 
