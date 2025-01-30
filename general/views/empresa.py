@@ -50,7 +50,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 contenedor = Contenedor.objects.get(pk=empresa.contenedor_id)
                 contenedor.imagen = ruta
                 contenedor.save()
-                return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
+                return Response({'cargar':True, 'imagen':ruta}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except GenEmpresa.DoesNotExist:
@@ -71,7 +71,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 contenedor = Contenedor.objects.get(pk=empresa.contenedor_id)
                 contenedor.imagen = ruta
                 contenedor.save()                
-                return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
+                return Response({'limpiar':True, 'imagen':ruta}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except GenEmpresa.DoesNotExist:
