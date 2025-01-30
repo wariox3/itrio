@@ -475,7 +475,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         #48	9	254	262	N	Aporte voluntario del afiliado al Fondo de Pensiones Obligatorias	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual                        
                         buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_voluntario_pension_afiliado), 9, "0", "I"))
                         #49	9	263	271	N	Aporte voluntario del aportante al fondo de pensiones obligatoria. 	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual                        
-                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_voluntario_pension_aportante), 9, "0", "I"))
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_pension), 9, "0", "I"))
                         #50	9	272	280	N	Total cotización sistema general de pensiones	Lo calcula el sistema. Sumatoria de los campos 47, 48 y 49 del registro tipo 2.                        
                         buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.total_cotizacion_pension), 9, "0", "I"))
                         #51	9	281	289	N	Aportes a Fondo de Solidaridad  Pensional- Subcuenta de solidaridad	Lo suministra el aportante cuando aplique                        
