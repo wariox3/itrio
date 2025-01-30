@@ -193,7 +193,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 usuario = User.objects.get(pk=usuario_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(usuario.imagen)
-                usuario.imagen = f"itrio/{config('ENV')}/usuario/imagen_defecto.jpg"
+                usuario.imagen = f"itrio/imagen_defecto.jpg"
                 usuario.save()
                 return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{usuario.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
