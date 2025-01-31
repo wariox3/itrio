@@ -65,7 +65,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
             if id:
                 aporte = HumAporte.objects.get(pk=id)                                
                 if aporte.estado_generado == False:
-                    cantidad = aporte.contratos                    
+                    cantidad = 0                    
                     contratos = HumContrato.objects.filter(
                             #grupo_id=programacion.grupo_id                        
                             ).filter(
