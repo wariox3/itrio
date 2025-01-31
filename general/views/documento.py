@@ -1775,7 +1775,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     document_uuid = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
                     document_id = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
                     issue_date = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
-                    due_date = inner_root.findtext('.//cbc:DueDate', namespaces=inner_namespaces)
+                    due_date = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)
                     note = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
                     document_id_numerico = re.sub(r'\D', '', document_id) if document_id else ''
                 
