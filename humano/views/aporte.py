@@ -442,7 +442,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     #15	7	305	311	A	Periodo de pago para los sistemas diferentes al de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo calcula el Operador de Información.                    
                     buffer.write(Utilidades.rellenar(periodo_pago, 7, " ", "D"))
                     #16	7	312	318	A	Periodo de pago para el sistema de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo suministra el aportante.
-                    buffer.write(Utilidades.rellenar(periodo_pago, 7, " ", "D"))
+                    buffer.write(Utilidades.rellenar(periodo_pago_salud, 7, " ", "D"))
                     #17	10	319	328	N	Número de radicación o de la Planilla Integrada de Liquidación de aportes.	Asignado por el sistema . Debe ser único por operador de información.                    
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #18	10	329	338	A	Fecha de pago (aaaa-mm-dd)	Asignado por el sistema a partir de la fecha del día efectivo del pago.                    
@@ -568,10 +568,11 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_pension), 9, "0", "I"))
                         #48	9	254	262	N	Aporte voluntario del afiliado al Fondo de Pensiones Obligatorias	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual                        
                         buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_voluntario_pension_afiliado), 9, "0", "I"))
-                        #49	9	263	271	N	Aporte voluntario del aportante al fondo de pensiones obligatoria. 	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual                        
-                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_pension), 9, "0", "I"))
+                        #49	9	263	271	N	Aporte voluntario del aportante al fondo de pensiones obligatoria. 	Lo suministra el aportante. Solo aplica para las Administradoras de Pensiones del Régimen de ahorro individual                                                
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_voluntario_pension_aportante), 9, "0", "I"))
                         #50	9	272	280	N	Total cotización sistema general de pensiones	Lo calcula el sistema. Sumatoria de los campos 47, 48 y 49 del registro tipo 2.                        
-                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.total_cotizacion_pension), 9, "0", "I"))
+                        total_pension = aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_voluntario_pension_afiliado + aporte_detalle.cotizacion_voluntario_pension_aportante
+                        buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(total_pension), 9, "0", "I"))
                         #51	9	281	289	N	Aportes a Fondo de Solidaridad  Pensional- Subcuenta de solidaridad	Lo suministra el aportante cuando aplique                        
                         buffer.write(Utilidades.rellenar(Utilidades.obtener_valor_formateado(aporte_detalle.cotizacion_solidaridad_solidaridad), 9, "0", "I"))
                         #52	9	290	298	N	Aportes a Fondo de Solidad Pensional- Subcuenta de subsistencia	Lo suministra el aportante cuando aplique                        
