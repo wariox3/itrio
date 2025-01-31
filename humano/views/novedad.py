@@ -35,6 +35,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
         hora_minimo = (configuracion['hum_salario_minimo'] / 30) / configuracion['hum_factor']
         dia_minimo = configuracion['hum_salario_minimo'] / 30
         base_cotizacion = salario
+        # Incapacidades
         if novedad.novedad_tipo_id in [1, 2]:
             concepto_empresa = novedad.novedad_tipo.concepto
             concepto_entidad = novedad.novedad_tipo.concepto2
@@ -77,13 +78,13 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
                 hora_entidad = dia_entidad / configuracion['hum_factor']
                 if hora_entidad < hora_minimo:
                     hora_entidad = hora_minimo
-                pago_entidad = dias_entidad * dia_entidad
-                total = pago_entidad
+                pago_entidad = dias_entidad * dia_entidad                
                 fecha_desde_entidad = novedad.fecha_desde + timedelta(days=(dias_empresa))                
                 fecha_hasta_entidad = novedad.fecha_hasta
                 total += pago_entidad
-
-        if novedad.novedad_tipo_id in [3]:
+        
+        # Licencia maternidad o paternidad
+        if novedad.novedad_tipo_id == 3:
             dias_entidad = novedad.dias
             base_cotizacion = salario
             if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
@@ -95,19 +96,20 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             dia_entidad = (valor_dia * concepto.porcentaje) / 100
             hora_entidad = dia_entidad / configuracion['hum_factor']
             pago_entidad = dias_entidad * dia_entidad
-            total = pago_entidad
+            total += pago_entidad
             fecha_desde_entidad = novedad.fecha_desde               
             fecha_hasta_entidad = novedad.fecha_hasta                
 
+        # Licencia luto y remunerada
         if novedad.novedad_tipo_id in [4, 5]:
             valor_dia = base_cotizacion / 30
-            if novedad.dias > 0:                            
-                total = novedad.dias * valor_dia
             hora_empresa = valor_dia / configuracion['hum_factor']
             pago_empresa = dias * valor_dia
             fecha_desde_empresa = novedad.fecha_desde               
-            fecha_hasta_empresa = novedad.fecha_hasta                 
+            fecha_hasta_empresa = novedad.fecha_hasta    
+            total += pago_empresa
 
+        # Vacaciones
         if novedad.novedad_tipo_id == 7:
             pago_dia_disfrute = salario / 30
             pago_disfrute = round(pago_dia_disfrute * novedad.dias_disfrutados_reales)
@@ -115,7 +117,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             pago_dinero = round(pago_dia_dinero * novedad.dias_dinero)
             #Esto se hace para pagar en dinero lo proporsional en el periodo en disfrute
             pago_dia_dinero = pago_dinero / novedad.dias_disfrutados_reales
-            total = pago_disfrute + pago_dinero
+            total += pago_disfrute + pago_dinero
         
         novedad.dias = dias
         novedad.base_cotizacion = base_cotizacion

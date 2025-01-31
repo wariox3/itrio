@@ -5,6 +5,7 @@ from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
 from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
+from humano.models.novedad import HumNovedad
 from rest_framework import serializers
 
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
@@ -15,13 +16,14 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), default=None, allow_null=True)
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
     credito = serializers.PrimaryKeyRelatedField(queryset=HumCredito.objects.all(), default=None, allow_null=True)
+    novedad = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = GenDocumentoDetalle
         fields = ['tipo_registro', 'documento', 'documento_afectado', 'item', 'cuenta', 'contacto', 'cantidad', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
-                  'detalle', 'numero', 'concepto', 'credito', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 
+                  'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 
                   'devengado', 'deduccion', 'dias']
 
     def to_representation(self, instance):

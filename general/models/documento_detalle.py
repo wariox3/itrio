@@ -5,6 +5,7 @@ from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
 from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
+from humano.models.novedad import HumNovedad
 
 class GenDocumentoDetalle(models.Model):    
     tipo_registro = models.CharField(max_length=1, default="I") # I=Item, C=Cuenta
@@ -39,6 +40,8 @@ class GenDocumentoDetalle(models.Model):
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_contacto_rel')
     concepto = models.ForeignKey(HumConcepto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_concepto_rel')
     credito = models.ForeignKey(HumCredito, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_credito_rel')
+    novedad = models.ForeignKey(HumNovedad, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_novedad_rel')
+
     class Meta:
         db_table = "gen_documento_detalle"
         ordering = ['id', 'documento', 'item', 'cantidad']

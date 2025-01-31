@@ -422,7 +422,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         'cantidad': horas,
                                                         'pago': pago,
                                                         'porcentaje': concepto.porcentaje,
-                                                        'concepto': novedad.novedad_tipo.concepto_id
+                                                        'concepto': novedad.novedad_tipo.concepto_id,
+                                                        'novedad': novedad.id
                                                     }
                                                     data = datos_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -451,7 +452,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         'cantidad': horas,
                                                         'pago': pago,
                                                         'porcentaje': concepto.porcentaje,
-                                                        'concepto': novedad.novedad_tipo.concepto2_id
+                                                        'concepto': novedad.novedad_tipo.concepto2_id,
+                                                        'novedad': novedad.id
                                                     }
                                                     data = datos_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -481,7 +483,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     'cantidad': horas,
                                                     'pago': pago,
                                                     'porcentaje': concepto.porcentaje,
-                                                    'concepto': novedad.novedad_tipo.concepto_id
+                                                    'concepto': novedad.novedad_tipo.concepto_id,
+                                                    'novedad': novedad.id
                                                 }
                                                 data = datos_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -499,7 +502,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 'documento': documento.id,  
                                                 'dias': dias_novedad,
                                                 'pago': pago,
-                                                'concepto': novedad.novedad_tipo.concepto_id
+                                                'concepto': novedad.novedad_tipo.concepto_id,
+                                                'novedad': novedad.id
                                             }
                                             data = datos_detalle(data_general, data, concepto)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -515,7 +519,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 'documento': documento.id,  
                                                 'dias': dias_novedad,
                                                 'pago': pago,
-                                                'concepto': novedad.novedad_tipo.concepto2_id
+                                                'concepto': novedad.novedad_tipo.concepto2_id,
+                                                'novedad': novedad.id
                                             }
                                             data = datos_detalle(data_general, data, concepto)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
