@@ -434,7 +434,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.                    
                     buffer.write(Utilidades.rellenar(aporte.presentacion, 1, " ", "D"))
                     #12	10	249	258	A	Código de la sucursal del Aportante	El registrado en el campo 5 del archivo tipo 1.                    
-                    buffer.write(Utilidades.rellenar(aporte.sucursal.codigo, 10, " ", "D"))
+                    buffer.write(Utilidades.rellenar(aporte.sucursal.codigo, 10, "0", "D"))
                     #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.                    
                     buffer.write(Utilidades.rellenar(aporte.sucursal.nombre, 40, " ", "D"))
                     #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante                    
@@ -442,7 +442,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     #15	7	305	311	A	Periodo de pago para los sistemas diferentes al de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo calcula el Operador de Información.                    
                     buffer.write(Utilidades.rellenar(periodo_pago, 7, " ", "D"))
                     #16	7	312	318	A	Periodo de pago para el sistema de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo suministra el aportante.
-                    buffer.write(Utilidades.rellenar(periodo_pago_salud, 7, " ", "D"))
+                    buffer.write(Utilidades.rellenar(periodo_pago, 7, " ", "D"))
                     #17	10	319	328	N	Número de radicación o de la Planilla Integrada de Liquidación de aportes.	Asignado por el sistema . Debe ser único por operador de información.                    
                     buffer.write(Utilidades.rellenar('', 10, " ", "D"))
                     #18	10	329	338	A	Fecha de pago (aaaa-mm-dd)	Asignado por el sistema a partir de la fecha del día efectivo del pago.                    
