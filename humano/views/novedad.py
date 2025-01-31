@@ -48,6 +48,8 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
                 if dias > 2:
                     dias_empresa = 2
                     dias_entidad = dias - 2
+                else:
+                    dias_empresa = dias
             else:
                 dias_entidad = dias
             # Liquidar empresa
