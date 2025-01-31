@@ -1727,7 +1727,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             }
 
             # Verificar si se envió el campo `zip_base64` en la petición
-            zip_base64 = request.data.get('base64')
+            zip_base64 = request.data.get('archivo_base64')
             if not zip_base64:
                 return Response({'error': 'No se envió ningún archivo ZIP en Base64'}, status=status.HTTP_400_BAD_REQUEST)
 
