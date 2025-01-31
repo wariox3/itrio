@@ -434,7 +434,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.                    
                     buffer.write(Utilidades.rellenar(aporte.presentacion, 1, " ", "D"))
                     #12	10	249	258	A	Código de la sucursal del Aportante	El registrado en el campo 5 del archivo tipo 1.                    
-                    buffer.write(Utilidades.rellenar(aporte.sucursal.codigo, 10, "0", "D"))
+                    buffer.write(Utilidades.rellenar(aporte.sucursal.codigo, 10, "0", "I"))
                     #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.                    
                     buffer.write(Utilidades.rellenar(aporte.sucursal.nombre, 40, " ", "D"))
                     #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante                    
