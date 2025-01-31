@@ -71,9 +71,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             ).filter(
                                 Q(fecha_desde__lte=aporte.fecha_hasta_periodo)                            
                             ).filter(
-                                Q(fecha_hasta__gte=aporte.fecha_desde) | Q(contrato_tipo_id=1))
+                                Q(fecha_hasta__gte=aporte.fecha_desde) | Q(contrato_tipo_id=1))                    
                     #sql_query = str(contratos.query)
                     #print(sql_query)
+                    empleados = contratos.values("contacto_id").distinct().count()
                     for contrato in contratos:
                         contrato_validar = HumAporteContrato.objects.filter(aporte_id=aporte.id, contrato_id=contrato.id).exists()
                         if not contrato_validar:
@@ -137,6 +138,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             else:
                                 return Response({'validaciones':aporte_contrato_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
                     aporte.contratos = cantidad
+                    aporte.empleados = empleados
                     aporte.save()
                     return Response({'contratos': cantidad}, status=status.HTTP_200_OK)
                 else:
@@ -154,6 +156,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
             if id:
                 aporte = HumAporte.objects.get(pk=id)
                 if aporte.estado_generado == False and aporte.estado_aprobado == False:
+                    base_cotizacion = 0
                     aporte_cotizacion_pension = 0
                     aporte_cotizacion_solidaridad_solidaridad = 0
                     aporte_cotizacion_solidaridad_subsistencia = 0
@@ -165,7 +168,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte_cotizacion_sena = 0
                     aporte_cotizacion_icbf = 0
                     aporte_cotizacion_total = 0                                        
-                    contratos = 0
                     lineas = 0
                     aporte_contratos = HumAporteContrato.objects.filter(aporte_id=id)                                           
                     for aporte_contrato in aporte_contratos:                              
@@ -223,9 +225,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             aporte_cotizacion_caja += cotizacion_caja   
                             aporte_cotizacion_sena += aporte_cotizacion_sena
                             aporte_cotizacion_icbf += aporte_cotizacion_icbf
-                            aporte_cotizacion_total += cotizacion_total
-                            contratos += 1
-                            lineas += 1
+                            aporte_cotizacion_total += cotizacion_total                            
                             data = {
                                 'aporte_contrato': aporte_contrato.id,
                                 'ingreso': aporte_contrato.ingreso,
@@ -265,6 +265,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             else:
                                 return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
                         
+                        base_cotizacion += aporte_contrato.base_cotizacion
                         horas = aporte_contrato.dias * 8   
                         base_cotizacion_pension = aporte_contrato.base_cotizacion
                         base_cotizacion_salud = aporte_contrato.base_cotizacion
@@ -298,7 +299,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         aporte_cotizacion_sena += aporte_cotizacion_sena
                         aporte_cotizacion_icbf += aporte_cotizacion_icbf
                         aporte_cotizacion_total += cotizacion_total
-                        contratos += 1
                         lineas += 1
                         data = {
                             'aporte_contrato': aporte_contrato.id,
@@ -348,9 +348,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte.cotizacion_caja = aporte_cotizacion_caja
                     aporte.cotizacion_sena = aporte_cotizacion_sena
                     aporte.cotizacion_icbf = aporte_cotizacion_icbf
-                    aporte.cotizacion_total = aporte_cotizacion_total                                                                   
-                    aporte.contratos = contratos    
-                    aporte.lineas = lineas              
+                    aporte.cotizacion_total = aporte_cotizacion_total                                                                    
+                    aporte.lineas = lineas   
+                    aporte.base_cotizacion = base_cotizacion           
                     aporte.save()
                     return Response({'total': 0,}, status=status.HTTP_200_OK)
                 else:
@@ -373,8 +373,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato_id=aporte_contrato.id)
                         aporte_detalles.delete()
                     aporte.estado_generado = False
-                    aporte.contratos = 0
-                    aporte.empleados = 0
                     aporte.lineas = 0
                     aporte.cotizacion_pension = 0
                     aporte.cotizacion_solidaridad_solidaridad = 0
