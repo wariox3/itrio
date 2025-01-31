@@ -32,6 +32,8 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
         pago_dia_dinero = 0
         pago_dinero = 0
         total = 0
+        hora_minimo = (configuracion['hum_salario_minimo'] / 30) / configuracion['hum_factor']
+        dia_minimo = configuracion['hum_salario_minimo'] / 30
         base_cotizacion = salario
         if novedad.novedad_tipo_id in [1, 2]:
             concepto_empresa = novedad.novedad_tipo.concepto
@@ -56,20 +58,30 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             if dias_empresa > 0:
                 porcentaje_empresa = concepto_empresa.porcentaje            
                 dia_empresa = (valor_dia * porcentaje_empresa) / 100
+                if dia_empresa < dia_minimo:
+                    dia_empresa = dia_minimo
                 hora_empresa = dia_empresa / configuracion['hum_factor']
+                if hora_empresa < hora_minimo:
+                    hora_empresa = hora_minimo
                 pago_empresa = dias_empresa * dia_empresa
                 fecha_desde_empresa = novedad.fecha_desde
                 fecha_hasta_empresa = fecha_desde_empresa + timedelta(days=(dias_empresa-1))
+                total += pago_empresa
 
             # Liquidar entidad
             if dias_entidad > 0:
                 porcentaje_entidad = concepto_entidad.porcentaje
                 dia_entidad = (valor_dia * porcentaje_entidad) / 100
+                if dia_entidad < dia_minimo:
+                    dia_entidad = dia_minimo
                 hora_entidad = dia_entidad / configuracion['hum_factor']
+                if hora_entidad < hora_minimo:
+                    hora_entidad = hora_minimo
                 pago_entidad = dias_entidad * dia_entidad
                 total = pago_entidad
                 fecha_desde_entidad = novedad.fecha_desde + timedelta(days=(dias_empresa))                
                 fecha_hasta_entidad = novedad.fecha_hasta
+                total += pago_entidad
 
         if novedad.novedad_tipo_id in [3]:
             dias_entidad = novedad.dias
