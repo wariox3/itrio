@@ -1719,97 +1719,81 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'importar-compra-zip')
     def importar_compra_zip(self, request):
-        try:
-            # Definir namespaces del XML
-            namespaces = {
-                'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
-                'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
-            }
-
-            # Verificar si se envió el campo `zip_base64` en la petición
-            zip_base64 = request.data.get('archivo_base64')
-            if not zip_base64:
-                return Response({'error': 'No se envió ningún archivo ZIP en Base64'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Decodificar el Base64
-            try:
-                zip_data = base64.b64decode(zip_base64)
-            except base64.binascii.Error:
-                return Response({'error': 'Base64 inválido'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Tratar los datos como un archivo en memoria
-            zip_buffer = io.BytesIO(zip_data)
-
-            # Procesar el ZIP
-            with zipfile.ZipFile(zip_buffer, 'r') as zip_ref:
-                xml_files = [f for f in zip_ref.namelist() if f.lower().endswith('.xml')]
-
-                if not xml_files:
-                    return Response({'error': 'El ZIP no contiene archivos XML'}, status=status.HTTP_400_BAD_REQUEST)
-
-                if len(xml_files) > 1:
-                    return Response({'error': 'El ZIP contiene múltiples archivos XML'}, status=status.HTTP_400_BAD_REQUEST)
-
-                xml_filename = xml_files[0]
-                with zip_ref.open(xml_filename) as xml_file:
-                    xml_content = xml_file.read()
-                    root = ET.fromstring(xml_content)
-
-                    prefix = ''
-                    company_id = ''
-                    document_uuid = ''
-                    document_id = ''
-                    issue_date = ''
-                    due_date = '',
-                    note = ''
-                    description = root.find('.//cac:Attachment/cac:ExternalReference/cbc:Description', namespaces=namespaces)
-                    if description is not None and description.text:
-                        try:
-                            cdata_content = description.text.strip()
-                            if cdata_content.startswith('<![CDATA['):
-                                cdata_content = cdata_content[9:-3]
-                            inner_root = ET.fromstring(cdata_content)
-                            inner_namespaces = {
-                                'sts': 'dian:gov:co:facturaelectronica:Structures-2-1',
-                                'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
-                                'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
-                            }
-                            
-                            # Namespace específico para el XML interno
-                            registration_name = root.findtext('.//cac:SenderParty/cac:PartyTaxScheme/cbc:RegistrationName', namespaces=namespaces)
-                            prefix = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)
-                            company_id = inner_root.findtext('.//cbc:CompanyID', namespaces=inner_namespaces)
-                            document_uuid = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
-                            document_id = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
-                            issue_date = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
-                            due_date = inner_root.findtext('.//cbc:DueDate', namespaces=inner_namespaces)
-                            note = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
-                            document_id_numerico = re.sub(r'\D', '', document_id) if document_id else ''
-
-                        except ET.ParseError:
-                            pass  # Manejar error de parseo si es necesario
-
-                    # Construir respuesta
-                    datos = {
-                        'contacto': registration_name.strip() if registration_name else '',
-                        'contacto_identificacion': company_id.strip() if company_id else '',
-                        'referencia_numero': document_id_numerico,
-                        'referencia_cue': document_uuid.strip() if document_uuid else '',
-                        'referencia_prefijo': prefix.strip() if prefix else '',
-                        'referencia_prefijo': prefix.strip() if prefix else '',
-                        'fecha': issue_date.strip() if issue_date else '',
-                        'fecha_vence': due_date.strip() if due_date else '',
-                        'comentario': note if note else '',
+        raw = request.data
+        zip_base64 = raw.get('archivo_base64')
+        
+        if not zip_base64:
+            return Response({'mensaje': 'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Definir namespaces del XML
+        namespaces = {
+            'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
+            'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
+        }
+        
+        # Decodificar el Base64
+        zip_data = base64.b64decode(zip_base64)
+        zip_buffer = io.BytesIO(zip_data)
+        
+        with zipfile.ZipFile(zip_buffer, 'r') as zip_ref:
+            xml_files = [f for f in zip_ref.namelist() if f.lower().endswith('.xml')]
+            
+            if not xml_files:
+                return Response({'mensaje': 'El ZIP no contiene archivos XML', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if len(xml_files) > 1:
+                return Response({'mensaje': 'El ZIP contiene múltiples archivos XML', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            
+            xml_filename = xml_files[0]
+            with zip_ref.open(xml_filename) as xml_file:
+                xml_content = xml_file.read()
+                root = ET.fromstring(xml_content)
+                
+                prefix = ''
+                company_id = ''
+                document_uuid = ''
+                document_id = ''
+                issue_date = ''
+                due_date = ''
+                note = ''
+                
+                description = root.find('.//cac:Attachment/cac:ExternalReference/cbc:Description', namespaces=namespaces)
+                if description is not None and description.text:
+                    cdata_content = description.text.strip()
+                    if cdata_content.startswith('<![CDATA['):
+                        cdata_content = cdata_content[9:-3]
+                    inner_root = ET.fromstring(cdata_content)
+                    inner_namespaces = {
+                        'sts': 'dian:gov:co:facturaelectronica:Structures-2-1',
+                        'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
+                        'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
                     }
-
-                    return Response(datos)
-
-        except zipfile.BadZipFile:
-            return Response({'error': 'El archivo no es un ZIP válido'}, status=status.HTTP_400_BAD_REQUEST)
-        except ET.ParseError as e:
-            return Response({'error': f'Error al parsear XML: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({'error': f'Error interno del servidor: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    
+                    registration_name = root.findtext('.//cac:SenderParty/cac:PartyTaxScheme/cbc:RegistrationName', namespaces=namespaces)
+                    prefix = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)
+                    company_id = inner_root.findtext('.//cbc:CompanyID', namespaces=inner_namespaces)
+                    document_uuid = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
+                    document_id = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
+                    issue_date = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
+                    due_date = inner_root.findtext('.//cbc:DueDate', namespaces=inner_namespaces)
+                    note = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
+                    document_id_numerico = re.sub(r'\D', '', document_id) if document_id else ''
+                
+                # Construir respuesta
+                datos = {
+                    'contacto': registration_name.strip() if registration_name else '',
+                    'contacto_identificacion': company_id.strip() if company_id else '',
+                    'referencia_numero': document_id_numerico,
+                    'referencia_cue': document_uuid.strip() if document_uuid else '',
+                    'referencia_prefijo': prefix.strip() if prefix else '',
+                    'fecha': issue_date.strip() if issue_date else '',
+                    'fecha_vence': due_date.strip() if due_date else '',
+                    'comentario': note if note else '',
+                }
+                
+                return Response(datos)
+        
+        return Response({'mensaje': 'Proceso finalizado sin resultados', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def notificar(documento_id):
