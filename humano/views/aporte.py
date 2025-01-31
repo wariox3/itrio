@@ -17,6 +17,7 @@ from utilidades.utilidades import Utilidades
 from django.http import HttpResponse
 import calendar
 import io
+from datetime import datetime
 
 
 
@@ -671,9 +672,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         secuencia += 1
                         buffer.write("\n") 
                     buffer.seek(0)                    
+                    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                     response = HttpResponse(buffer, content_type='text/plain')
                     response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-                    response['Content-Disposition'] = f'attachment; filename="plano_operador_{id}.txt"'
+                    response['Content-Disposition'] = f'attachment; filename="pila{timestamp}.txt"'
                     return response
                 else:
                     return Response({'mensaje':'El aporte aun no esta generado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
