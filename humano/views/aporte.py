@@ -374,6 +374,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         aporte_detalles.delete()
                     aporte.estado_generado = False
                     aporte.lineas = 0
+                    aporte.base_cotizacion = 0
                     aporte.cotizacion_pension = 0
                     aporte.cotizacion_solidaridad_solidaridad = 0
                     aporte.cotizacion_solidaridad_subsistencia = 0
