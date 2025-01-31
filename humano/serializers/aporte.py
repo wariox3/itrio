@@ -36,6 +36,7 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
             'presentacion': instance.presentacion,
             'estado_generado': instance.estado_generado,
             'estado_aprobado': instance.estado_aprobado,
+            'base_cotizacion': instance.base_cotizacion,
             'cotizacion_pension': instance.cotizacion_pension,
             'cotizacion_voluntario_pension_afiliado': instance.cotizacion_voluntario_pension_afiliado,
             'cotizacion_voluntario_pension_aportante': instance.cotizacion_voluntario_pension_aportante,

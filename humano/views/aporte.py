@@ -181,6 +181,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             base_cotizacion=Coalesce(Sum('base_cotizacion'), 0, output_field=DecimalField())
                         )
                         for documento_detalle in documento_detalles:
+                            lineas += 1
                             licencia_remunerada = False
                             base_cotizacion = documento_detalle['base_cotizacion']
                             tarifa_pension = 16
@@ -189,7 +190,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             tarifa_caja = 4
                             tarifa_sena = 0
                             tarifa_icbf = 0   
-                            
+
                             # Licencia remunerada                                                     
                             if documento_detalle['novedad__novedad_tipo_id'] == 5:
                                 licencia_remunerada = True
