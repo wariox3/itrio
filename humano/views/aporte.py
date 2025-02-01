@@ -521,13 +521,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         #10	3	34	36	A	Código del Municipio de la ubicación laboral	Lo suministra el aportante. El operador de información deberá validar que este código este definido en la relación de la División Política y Administrativa – DIVIPOLA- expedida por el DANE Cuando marque el campo colombiano en el exterior se dejará en blanco                        
                         buffer.write(aporte_detalle.aporte_contrato.ciudad_labora.codigo[-3:])
                         #11	20	37	56	A	Primer apellido	Obligatorio. Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido1, 20, " ", "D").encode("ISO-8859-15"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido1, 20, " ", "D"))
                         #12	30	57	86	A	Segundo apellido	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido2, 30, " ", "D").encode("ISO-8859-15"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.apellido2, 30, " ", "D"))
                         #13	20	87	106	A	Primer nombre	Obligatorio. Lo suministra el aportante
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre1, 20, " ", "D").encode("ISO-8859-15"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre1, 20, " ", "D"))
                         #14	30	107	136	A	Segundo nombre	Lo suministra el aportante                        
-                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre2, 30, " ", "D").encode("ISO-8859-15"))
+                        buffer.write(Utilidades.rellenar(aporte_detalle.aporte_contrato.contrato.contacto.nombre2, 30, " ", "D"))
                         #15	1	137	137	A	ING: ingreso	 Puede ser un blanco, R, X o C. Lo suministra el aportante.
                         buffer.write(Utilidades.rellenar(ingreso, 1, " ", "D"))
                         #16	1	138	138	A	RET: retiro	Puede ser un blanco, P, R, X o C. Lo suministra el aportante.                        
@@ -703,7 +703,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     buffer.seek(0)          
                     contenido_bytes = buffer.getvalue().encode("ISO-8859-15")          
                     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-                    response = HttpResponse(contenido_bytes, content_type='text/plain; charset=ISO-8859-15')
+                    response = HttpResponse(contenido_bytes, content_type='text/csv; charset=ISO-8859-15')
                     response['Access-Control-Expose-Headers'] = 'Content-Disposition'
                     response['Content-Disposition'] = f'attachment; filename="pila{timestamp}.txt"'
                     return response
