@@ -1717,7 +1717,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["post"], url_path=r'importar-compra-zip')
+    @action(detail=False, methods=["post"], url_path=r'importar-zip-dian')
     def importar_compra_zip(self, request):
         raw = request.data
         zip_base64 = raw.get('archivo_base64')
