@@ -190,6 +190,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 licencia_remunerada = False
                                 licencia_maternidad = False
                                 incapacidad_general = False
+                                dias_incapacidad_laboral = 0
                                 base_cotizacion_novedad = documento_detalle['base_cotizacion']
                                 dias_novedad = documento_detalle['dias']
                                 dias_novedad_contrato += dias_novedad
@@ -201,12 +202,15 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 tarifa_sena = 0
                                 tarifa_icbf = 0   
 
+                                # Incapacidad general
                                 if documento_detalle['novedad__novedad_tipo_id'] == 1:
                                     incapacidad_general = True
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
 
+                                # Incapacidad laboral
                                 if documento_detalle['novedad__novedad_tipo_id'] == 2:
+                                    dias_incapacidad_laboral = dias_novedad
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0                                    
 
@@ -218,8 +222,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
 
                                 # Licencia remunerada                                                     
                                 if documento_detalle['novedad__novedad_tipo_id'] == 5:
-                                    licencia_remunerada = True
-                                    tarifa_pension = 12
+                                    licencia_remunerada = True                                    
                                     tarifa_riesgos = 0
 
                                                                     
@@ -258,7 +261,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     'salario_integral': aporte_contrato.contrato.salario_integral,
                                     'licencia_remunerada': licencia_remunerada,     
                                     'licencia_maternidad': licencia_maternidad, 
-                                    'incapacidad_general': incapacidad_general,                    
+                                    'incapacidad_general': incapacidad_general, 
+                                    'dias_incapacidad_laboral': dias_incapacidad_laboral,                   
                                     'horas': horas_novedad,
                                     'dias_pension': dias_novedad,
                                     'dias_salud': dias_novedad,

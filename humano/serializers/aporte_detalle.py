@@ -10,7 +10,7 @@ class HumAporteDetalleSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id','ingreso', 'retiro', 'aporte_contrato', 'salario_integral', 'variacion_permanente_salario', 
                   'variacion_transitoria_salario', 'suspension_temporal_contrato', 'incapacidad_general',
                   'licencia_maternidad', 'vacaciones', 'licencia_remunerada', 'aporte_voluntario_pension',
-                  'variacion_centro_trabajo',                  
+                  'variacion_centro_trabajo', 'dias_incapacidad_laboral',                  
                   'horas', 'dias_pension',  'dias_salud', 'dias_riesgos', 'dias_caja', 
                   'base_cotizacion_pension', 'base_cotizacion_salud', 'base_cotizacion_riesgos', 'base_cotizacion_caja',
                   'tarifa_pension', 'tarifa_salud', 'tarifa_riesgos', 'tarifa_caja', 'tarifa_sena', 'tarifa_icbf', 
