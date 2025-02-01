@@ -21,7 +21,6 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
-import datetime
 from utilidades.excel import WorkbookEstilos
 from openpyxl import Workbook
 from datetime import datetime
@@ -296,7 +295,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             pdf.setFont("Helvetica-Bold", 9)
             pdf.drawString(50, 750, "Balance de Prueba")
             pdf.setFont("Helvetica", 8)
-            pdf.drawString(50, 730, f"Generado el: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            pdf.drawString(50, 730, f"Generado el: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             pdf.drawString(50, 710, f"Periodo: {fecha_desde} a {fecha_hasta}")
 
             # Dibujar encabezados iniciales
@@ -311,7 +310,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     pdf.setFont("Helvetica-Bold", 9)
                     pdf.drawString(50, 750, "Balance de Prueba")
                     pdf.setFont("Helvetica", 8)
-                    pdf.drawString(50, 730, f"Generado el: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                    pdf.drawString(50, 730, f"Generado el: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
                     pdf.drawString(50, 710, f"Periodo: {fecha_desde} a {fecha_hasta}")
 
                     # Dibujar encabezados en la nueva página
