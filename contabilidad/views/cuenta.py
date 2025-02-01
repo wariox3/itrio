@@ -2,10 +2,12 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.cuenta import ConCuenta
+from contabilidad.models.movimiento import ConMovimiento
 from contabilidad.models.cuenta_clase import ConCuentaClase
 from contabilidad.models.cuenta_grupo import ConCuentaGrupo
 from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
+from general.models.documento_detalle import GenDocumentoDetalle
 from contabilidad.serializers.cuenta import ConCuentaSerializador
 from django.db.models import ProtectedError
 from io import BytesIO
@@ -110,3 +112,26 @@ class CuentaViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
   
+    @action(detail=False, methods=["post"], url_path=r'trasladar',)
+    def trasladar(self, request):
+        raw = request.data
+        cuenta_origen_id = raw.get('cuenta_origen_id')
+        cuenta_destino_id = raw.get('cuenta_destino_id')
+        if cuenta_origen_id and cuenta_destino_id:
+            if cuenta_origen_id != cuenta_destino_id:
+                try:
+                    cuenta_origen = ConCuenta.objects.get(pk=cuenta_origen_id)  
+                    cuenta_destino = ConCuenta.objects.get(pk=cuenta_destino_id)  
+                    
+                    ConMovimiento.objects.filter(cuenta_id=cuenta_origen_id).update(cuenta_id=cuenta_destino_id)
+                    GenDocumentoDetalle.objects.filter(cuenta_id=cuenta_origen_id).update(cuenta_id=cuenta_destino_id)
+                    return Response({'mensaje': 'Se trasladaron los movimientos con éxito'}, status=status.HTTP_200_OK)
+
+                except ConCuenta.DoesNotExist:
+                    return Response({'mensaje':'La cuenta no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+            else:
+                return Response({'mensaje': 'Las cuentas no pueden ser iguales', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    
