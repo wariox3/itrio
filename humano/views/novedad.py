@@ -32,11 +32,21 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
         pago_dia_dinero = 0
         pago_dinero = 0
         total = 0
+        dias_acumulados = 0
         hora_minimo = (configuracion['hum_salario_minimo'] / 30) / configuracion['hum_factor']
         dia_minimo = configuracion['hum_salario_minimo'] / 30
         base_cotizacion = salario
         # Incapacidades
         if novedad.novedad_tipo_id in [1, 2]:
+            if novedad.novedad_id:
+                try:
+                    dias_prorroga = 0
+                    prorroga_novedad = HumNovedad.objects.get(pk=novedad.novedad_id)
+                    novedad.prorroga = True
+                    dias_prorroga = prorroga_novedad.dias_acumulados
+                except: 
+                    pass
+
             concepto_empresa = novedad.novedad_tipo.concepto
             concepto_entidad = novedad.novedad_tipo.concepto2
             base_cotizacion = salario
@@ -49,10 +59,26 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             dias_entidad = 0
             if novedad.novedad_tipo_id == 1:
                 if dias > 2:
-                    dias_empresa = 2
-                    dias_entidad = dias - 2
+                    if novedad.prorroga:
+                        if prorroga_novedad.dias_acumulados == 1:
+                            dias_empresa = 1
+                            dias_entidad = dias - 1        
+                        else:
+                            dias_empresa = 0
+                            dias_entidad = dias
+                    else:
+                        dias_empresa = 2
+                        dias_entidad = dias - 2
                 else:
-                    dias_empresa = dias
+                    if novedad.prorroga:
+                        if dias_prorroga < 2:
+                            dias_empresa = 1
+                            dias_entidad = dias_prorroga + dias - 2
+                        else:
+                            dias_entidad = dias
+                            dias_empresa = 0
+                    else:
+                        dias_empresa = dias
             else:
                 dias_entidad = dias
             # Liquidar empresa
@@ -119,6 +145,12 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             pago_dia_dinero = pago_dinero / novedad.dias_disfrutados_reales
             total += pago_disfrute + pago_dinero
         
+        if novedad.prorroga:
+            dias_acumulados = prorroga_novedad.dias_acumulados + dias
+            novedad.dias_acumulados = dias_acumulados
+        else:
+            novedad.dias_acumulados = dias
+
         novedad.dias = dias
         novedad.base_cotizacion = base_cotizacion
         novedad.dias_empresa = dias_empresa

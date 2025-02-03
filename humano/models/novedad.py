@@ -28,8 +28,12 @@ class HumNovedad(models.Model):
     pago_empresa = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pago_entidad = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    dias_acumulados = models.DecimalField(max_digits=10, decimal_places=3, default=0)
+    prorroga = models.BooleanField(default = False)
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='novedades_contrato_rel')
     novedad_tipo = models.ForeignKey(HumNovedadTipo, on_delete=models.PROTECT, null=True, related_name='novedades_novedad_tipo_rel')
+    novedad = models.ForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='novedades_novedad_rel')
+
 
     class Meta:
         db_table = "hum_novedad"
