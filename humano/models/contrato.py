@@ -21,6 +21,8 @@ class HumContrato(models.Model):
     estado_terminado = models.BooleanField(default = False)    
     comentario = models.CharField(max_length=300, null=True)
     fecha_ultimo_pago = models.DateField(null=True)
+    fecha_ultimo_pago_prima = models.DateField(null=True)
+    fecha_ultimo_pago_cesantia = models.DateField(null=True)
     contrato_tipo = models.ForeignKey(HumContratoTipo, on_delete=models.PROTECT, related_name='contratos_contrato_tipo_rel')
     contacto = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='contratos_contacto_rel')
     ciudad_contrato = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, null=True, related_name='contratos_ciudad_contrato_rel')

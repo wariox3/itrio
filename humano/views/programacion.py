@@ -900,7 +900,12 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                             # Afectar contratos
                             contrato = programacion_detalle.contrato
-                            contrato.fecha_ultimo_pago = programacion.fecha_hasta
+                            if programacion.pago_tipo_id == 1:
+                                contrato.fecha_ultimo_pago = programacion.fecha_hasta
+                            if programacion.pago_tipo_id == 2:
+                                contrato.fecha_ultimo_pago_prima = programacion.fecha_hasta
+                            if programacion.pago_tipo_id == 3:
+                                contrato.fecha_ultimo_pago_cesantia = programacion.fecha_hasta
                             contrato.save()                        
 
                         # Para guardar el consecutivo que sigue
