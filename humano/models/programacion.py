@@ -20,6 +20,8 @@ class HumProgramacion(models.Model):
     pago_incapacidad = models.BooleanField(default = True)
     pago_licencia = models.BooleanField(default = True)    
     pago_vacacion = models.BooleanField(default = True)
+    pago_cesantia = models.BooleanField(default = True)    
+    pago_interes = models.BooleanField(default = True)    
     descuento_salud = models.BooleanField(default = True)
     descuento_pension = models.BooleanField(default = True)
     descuento_fondo_solidaridad = models.BooleanField(default = True)

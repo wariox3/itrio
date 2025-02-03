@@ -465,7 +465,7 @@
         "model": "humano.HumConcepto",
         "pk": 34,
         "fields": {
-            "nombre": "Cesantias", 
+            "nombre": "Cesantias anuales", 
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
@@ -493,7 +493,7 @@
         "model": "humano.HumConcepto",
         "pk": 36,
         "fields": {
-            "nombre": "Intereses", 
+            "nombre": "Intereses anuales", 
             "porcentaje": 0,
             "ingreso_base_prestacion": false,
             "ingreso_base_cotizacion":false,
