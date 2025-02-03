@@ -620,23 +620,24 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                             
                             # Prima
                             if programacion.pago_tipo_id == 2:
-                                prima = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360
-                                concepto_nomina = conceptos_nomina[12]
-                                concepto = concepto_nomina.concepto
-                                pago = round(prima)                                    
-                                if pago > 0:
-                                    data = {
-                                        'documento': documento.id,                                                                                    
-                                        'pago': pago,
-                                        'dias': programacion_detalle.dias,
-                                        'concepto': concepto.id
-                                    }
-                                    datos_detalle(data_general, data, concepto)
-                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                    if documento_detalle_serializador.is_valid():
-                                        documento_detalle_serializador.save()
-                                    else:
-                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                
+                                if programacion.pago_prima:
+                                    prima = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360
+                                    concepto_nomina = conceptos_nomina[12]
+                                    concepto = concepto_nomina.concepto
+                                    pago = round(prima)                                    
+                                    if pago > 0:
+                                        data = {
+                                            'documento': documento.id,                                                                                    
+                                            'pago': pago,
+                                            'dias': programacion_detalle.dias,
+                                            'concepto': concepto.id
+                                        }
+                                        datos_detalle(data_general, data, concepto)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                
                             
                             # Cesantias
                             if programacion.pago_tipo_id == 3:

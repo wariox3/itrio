@@ -27,7 +27,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_hasta_periodo', 'nombre', 'grupo', 'pago_tipo', 
                   'devengado', 'deduccion', 'total', 'contratos', 'dias', 'comentario',
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
-                  'pago_cesantia', 'pago_interes',
+                  'pago_cesantia', 'pago_interes', 'pago_prima',
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
                   'descuento_credito', 'descuento_embargo', 'adicional', 'periodo']
 
@@ -60,6 +60,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
             'pago_vacacion': instance.pago_vacacion,
             'pago_cesantia': instance.pago_cesantia,
             'pago_interes': instance.pago_interes,
+            'pago_prima': instance.pago_prima,
             'descuento_salud': instance.descuento_salud,
             'descuento_pension': instance.descuento_pension,
             'descuento_fondo_solidaridad': instance.descuento_fondo_solidaridad,
