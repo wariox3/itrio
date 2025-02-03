@@ -115,8 +115,8 @@ class CuentaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'trasladar',)
     def trasladar(self, request):
         raw = request.data
-        cuenta_origen_id = raw.get('cuenta_origen_id')
-        cuenta_destino_id = raw.get('cuenta_destino_id')
+        cuenta_origen_id = raw.get('cuenta_origen_id', None)
+        cuenta_destino_id = raw.get('cuenta_destino_id', None)
         if cuenta_origen_id and cuenta_destino_id:
             if cuenta_origen_id != cuenta_destino_id:
                 try:
