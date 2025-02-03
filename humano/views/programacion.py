@@ -640,42 +640,44 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                             
                             # Cesantias
                             if programacion.pago_tipo_id == 3:
-                                # Cesantia
+                                # Cesantia                                
                                 cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360                                
-                                concepto_cesantias = conceptos_nomina[13].concepto                                
-                                pago = round(cesantia)                                    
-                                if pago > 0:
-                                    data = {
-                                        'documento': documento.id,                                                                                    
-                                        'pago': pago,
-                                        'dias': programacion_detalle.dias,
-                                        'concepto': concepto_cesantias.id
-                                    }
-                                    datos_detalle(data_general, data, concepto_cesantias)
-                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                    if documento_detalle_serializador.is_valid():
-                                        documento_detalle_serializador.save()
-                                    else:
-                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                if programacion.pago_cesantia:
+                                    concepto_cesantias = conceptos_nomina[13].concepto                                
+                                    pago = round(cesantia)                                    
+                                    if pago > 0:
+                                        data = {
+                                            'documento': documento.id,                                                                                    
+                                            'pago': pago,
+                                            'dias': programacion_detalle.dias,
+                                            'concepto': concepto_cesantias.id
+                                        }
+                                        datos_detalle(data_general, data, concepto_cesantias)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                                     
                                 # Interes
-                                concepto_interes = conceptos_nomina[14].concepto                                      
-                                porcentaje_interes = ((programacion_detalle.dias * 12) / 360) / 100
-                                insteres = cesantia * porcentaje_interes
-                                pago = round(insteres)                                    
-                                if pago > 0:
-                                    data = {
-                                        'documento': documento.id,                                                                                    
-                                        'pago': pago,
-                                        'dias': programacion_detalle.dias,
-                                        'concepto': concepto_interes.id
-                                    }
-                                    datos_detalle(data_general, data, concepto_interes)
-                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                    if documento_detalle_serializador.is_valid():
-                                        documento_detalle_serializador.save()
-                                    else:
-                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                  
+                                if programacion.pago_interes:
+                                    concepto_interes = conceptos_nomina[14].concepto                                      
+                                    porcentaje_interes = ((programacion_detalle.dias * 12) / 360) / 100
+                                    insteres = cesantia * porcentaje_interes
+                                    pago = round(insteres)                                    
+                                    if pago > 0:
+                                        data = {
+                                            'documento': documento.id,                                                                                    
+                                            'pago': pago,
+                                            'dias': programacion_detalle.dias,
+                                            'concepto': concepto_interes.id
+                                        }
+                                        datos_detalle(data_general, data, concepto_interes)
+                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                        if documento_detalle_serializador.is_valid():
+                                            documento_detalle_serializador.save()
+                                        else:
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                  
 
                             # Adicionales
                             if programacion_detalle.adicional:
