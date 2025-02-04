@@ -32,7 +32,7 @@ class HumNovedad(models.Model):
     prorroga = models.BooleanField(default = False)
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='novedades_contrato_rel')
     novedad_tipo = models.ForeignKey(HumNovedadTipo, on_delete=models.PROTECT, null=True, related_name='novedades_novedad_tipo_rel')
-    novedad = models.ForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='novedades_novedad_rel')
+    novedad_referencia = models.ForeignKey('self', on_delete=models.PROTECT, null=True, blank=True, related_name='novedades_novedad_referencia_rel')
 
 
     class Meta:

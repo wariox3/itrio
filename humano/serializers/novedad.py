@@ -6,7 +6,7 @@ from humano.models.contrato import HumContrato
 class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
     novedad_tipo = serializers.PrimaryKeyRelatedField(queryset=HumNovedadTipo.objects.all())
-    novedad = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), required=False, allow_null=True)
+    novedad_referencia = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), required=False, allow_null=True)
     
     class Meta:
         model = HumNovedad
@@ -15,7 +15,7 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
                   'dias_disfrutados', 'dias_disfrutados_reales', 'dias_dinero', 'dias', 'dias_empresa', 'dias_entidad',
                   'pago_disfrute', 'pago_dinero', 'pago_dia_disfrute', 'pago_dia_dinero', 
                   'base_cotizacion_propuesto', 'base_cotizacion', 'hora_empresa', 'hora_entidad', 'pago_empresa', 'pago_entidad',
-                  'total', 'contrato', 'novedad_tipo', 'novedad', 'prorroga']
+                  'total', 'contrato', 'novedad_tipo', 'novedad_referencia', 'prorroga']
 
     def validate(self, data):
         fecha_desde = data.get('fecha_desde')
@@ -78,6 +78,6 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
             'contrato_contacto_nombre_corto': contrato_contacto_nombre_corto,
             'novedad_tipo_id': instance.novedad_tipo_id,
             'novedad_tipo_nombre': novedad_tipo_nombre,
-            'novedad_id' : instance.novedad_id,
+            'novedad_referencia_id' : instance.novedad_referencia_id,
             'prroroga' : instance.prorroga
         }         

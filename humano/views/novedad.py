@@ -38,14 +38,14 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
         base_cotizacion = salario
         # Incapacidades
         if novedad.novedad_tipo_id in [1, 2]:
-            if novedad.novedad_id:
+            if novedad.novedad_referencia_id:
                 try:
                     dias_prorroga = 0
-                    prorroga_novedad = HumNovedad.objects.get(pk=novedad.novedad_id)
+                    novedad_referencia = HumNovedad.objects.get(pk=novedad.novedad_referencia_id)
                     novedad.prorroga = True
-                    dias_prorroga = prorroga_novedad.dias_acumulados
-                except: 
-                    pass
+                    dias_prorroga = novedad_referencia.dias_acumulados
+                except HumNovedad.DoesNotExist:
+                    return Response({'mensaje':'La novedad referenciada no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
 
             concepto_empresa = novedad.novedad_tipo.concepto
             concepto_entidad = novedad.novedad_tipo.concepto2
@@ -60,7 +60,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             if novedad.novedad_tipo_id == 1:
                 if dias > 2:
                     if novedad.prorroga:
-                        if prorroga_novedad.dias_acumulados == 1:
+                        if novedad_referencia.dias_acumulados == 1:
                             dias_empresa = 1
                             dias_entidad = dias - 1        
                         else:
@@ -146,7 +146,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             total += pago_disfrute + pago_dinero
         
         if novedad.prorroga:
-            dias_acumulados = prorroga_novedad.dias_acumulados + dias
+            dias_acumulados = novedad_referencia.dias_acumulados + dias
             novedad.dias_acumulados = dias_acumulados
         else:
             novedad.dias_acumulados = dias
