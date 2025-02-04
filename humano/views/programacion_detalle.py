@@ -13,9 +13,13 @@ class HumProgramacionDetalleViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):        
         instance = self.get_object()
         programacion = HumProgramacion.objects.get(pk=instance.programacion_id)
+        
         if programacion.estado_aprobado:
-                return Response({'mensaje': 'No se puede eliminar un documento aprobado.'}, status=status.HTTP_400_BAD_REQUEST)        
-        programacion.contratos -= 1
-        programacion.save()
+            return Response({'mensaje': 'No se puede eliminar un documento aprobado.'}, status=status.HTTP_400_BAD_REQUEST)        
+
         self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)    
+
+        programacion.contratos = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id).count()
+        programacion.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
