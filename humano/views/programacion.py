@@ -384,9 +384,14 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                     configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte')[0]
                     programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                                           
                     for programacion_detalle in programacion_detalles:                                  
+                        documento_tipo = 14
+                        if programacion.pago_tipo_id == 2:
+                            documento_tipo = 20
+                        if programacion.pago_tipo_id == 3:
+                            documento_tipo = 21
                         data = {
                             'programacion_detalle': programacion_detalle.id,
-                            'documento_tipo': 14,
+                            'documento_tipo': documento_tipo,
                             'empresa': 1,
                             'fecha': programacion_detalle.fecha_desde,
                             'fecha_vence': programacion_detalle.fecha_desde,

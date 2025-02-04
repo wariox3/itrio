@@ -5,9 +5,8 @@
     "fields": {
       "nombre": "FACTURA ELECTRÓNICA DE VENTA",
       "documento_clase": 100,
-      "venta": true,
-      "cobrar" : true,
-      "operacion": 1
+      "venta": true, "cobrar" : true, "operacion": 1,
+      "contabilidad": true
     }
   },
   {
@@ -18,7 +17,8 @@
       "documento_clase": 101,
       "venta": true,
       "cobrar" : true,
-      "operacion": -1
+      "operacion": -1,
+      "contabilidad": true
     }
   },
   {
@@ -29,7 +29,8 @@
       "documento_clase": 102,
       "venta": true,
       "cobrar" : true,
-      "operacion": 1
+      "operacion": 1,
+      "contabilidad": true
     }
   },
   {
@@ -37,7 +38,8 @@
     "pk": 4,
     "fields": {
       "nombre": "PAGO",
-      "documento_clase": 200
+      "documento_clase": 200,
+      "contabilidad": true
     }
   },
   {
@@ -49,7 +51,8 @@
       "compra": true,
       "pagar": true,
       "electronico" : false,
-      "operacion": 1
+      "operacion": 1,
+      "contabilidad": true
     }
   },
   {
@@ -61,7 +64,8 @@
       "compra": true,
       "pagar": true,
       "electronico" : false,
-      "operacion": -1
+      "operacion": -1,
+      "contabilidad": true
     }
   },
   {
@@ -73,7 +77,8 @@
       "compra": true,
       "pagar": true,
       "electronico" : false,
-      "operacion": 1
+      "operacion": 1,
+      "contabilidad": true
     }
   },
   {
@@ -81,7 +86,8 @@
     "pk": 8,
     "fields": {
       "nombre": "EGRESO",
-      "documento_clase": 400
+      "documento_clase": 400,
+      "contabilidad": true
     }
   },
   {
@@ -106,10 +112,8 @@
     "fields": {
       "nombre": "DOCUMENTO SOPORTE",
       "documento_clase": 303,
-      "compra": true,
-      "pagar": true,
-      "electronico" : true,
-      "operacion": 1
+      "compra": true, "pagar": true, "electronico" : true, "operacion": 1,
+      "contabilidad": true
     }
   },
   {
@@ -118,10 +122,8 @@
     "fields": {
       "nombre": "NOTA AJUSTE",
       "documento_clase": 304,
-      "compra": true,
-      "pagar": true,
-      "electronico" : true,
-      "operacion": -1
+      "compra": true, "pagar": true, "electronico" : true, "operacion": -1,
+      "contabilidad": true
     }
   },
   {
@@ -129,7 +131,8 @@
     "pk": 13,
     "fields": {
       "nombre": "ASIENTO",
-      "documento_clase": 601
+      "documento_clase": 601,
+      "contabilidad": true
     }
   },
   {
@@ -138,8 +141,8 @@
     "fields": {
       "nombre": "NOMINA",
       "documento_clase": 701,
-      "pagar": true,
-      "operacion": 1
+      "pagar": true, "operacion": 1,
+      "contabilidad": true
     }
   },
   {
@@ -165,9 +168,7 @@
     "fields": {
       "nombre": "CUENTA COBRO",
       "documento_clase": 104,
-      "venta": true,
-      "cobrar" : true,
-      "operacion": 1
+      "venta": true, "cobrar" : true, "operacion": 1
     }
   },
   {
@@ -176,8 +177,7 @@
     "fields": {
       "nombre": "SALDO INCIAL CXC",
       "documento_clase": 201,
-      "cobrar" : true,
-      "operacion": 1
+      "cobrar" : true, "operacion": 1
     }
   },
   {
@@ -186,8 +186,27 @@
     "fields": {
       "nombre": "SALDO INCIAL CXP",
       "documento_clase": 401,
-      "pagar": true,
-      "operacion": 1
+      "pagar": true, "operacion": 1
+    }
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 20,
+    "fields": {
+      "nombre": "PRIMA",
+      "documento_clase": 701,
+      "pagar": true, "operacion": 1,
+      "contabilidad": true
+    }
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 21,
+    "fields": {
+      "nombre": "CESANTIA",
+      "documento_clase": 701,
+      "pagar": true, "operacion": 1,
+      "contabilidad": true
     }
   }
 ]
