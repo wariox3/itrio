@@ -179,7 +179,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             documento__contrato_id=aporte_contrato.contrato_id,
                         ).values(
                             'novedad_id', 
-                            'novedad__novedad_tipo_id'
+                            'novedad__novedad_tipo_id',
+                            'novedad__fecha_desde',
+                            'novedad__fecha_hasta'
                         ).annotate(
                             base_cotizacion=Coalesce(Sum('base_cotizacion'), 0, output_field=DecimalField()), 
                             dias=Sum('dias')
@@ -201,29 +203,45 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 tarifa_caja = 4
                                 tarifa_sena = 0
                                 tarifa_icbf = 0   
+                                fecha_inicio_incapacidad_general = None
+                                fecha_fin_incapacidad_general = None
+                                fecha_inicio_licencia_maternidad = None
+                                fecha_fin_licencia_maternidad = None
+                                fecha_inicio_vacaciones = None
+                                fecha_fin_vacaciones = None
+                                fecha_inicio_incapacidad_laboral = None
+                                fecha_fin_incapacidad_laboral = None
 
                                 # Incapacidad general
                                 if documento_detalle['novedad__novedad_tipo_id'] == 1:
                                     incapacidad_general = True
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
+                                    fecha_inicio_incapacidad_general = documento_detalle['novedad__fecha_desde']
+                                    fecha_fin_incapacidad_general = documento_detalle['novedad__fecha_hasta']
 
                                 # Incapacidad laboral
                                 if documento_detalle['novedad__novedad_tipo_id'] == 2:
                                     dias_incapacidad_laboral = dias_novedad
                                     tarifa_riesgos = 0
-                                    tarifa_caja = 0                                    
+                                    tarifa_caja = 0  
+                                    fecha_inicio_incapacidad_laboral = documento_detalle['novedad__fecha_desde']
+                                    fecha_fin_incapacidad_laboral = documento_detalle['novedad__fecha_hasta']                                                                      
 
                                 # Licencia maternidad o paternidad
                                 if documento_detalle['novedad__novedad_tipo_id'] == 3:
                                     licencia_maternidad = True                                    
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
+                                    fecha_inicio_licencia_maternidad = documento_detalle['novedad__fecha_desde']
+                                    fecha_fin_licencia_maternidad = documento_detalle['novedad__fecha_hasta']                                    
 
                                 # Licencia remunerada                                                     
                                 if documento_detalle['novedad__novedad_tipo_id'] == 5:
                                     licencia_remunerada = True                                    
                                     tarifa_riesgos = 0
+                                    fecha_inicio_vacaciones = documento_detalle['novedad__fecha_desde']
+                                    fecha_fin_vacaciones = documento_detalle['novedad__fecha_hasta']                                    
 
                                                                     
                                 horas_novedad = dias_novedad * 8   
@@ -288,7 +306,15 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     'cotizacion_caja': cotizacion_caja,
                                     'cotizacion_sena': cotizacion_sena,
                                     'cotizacion_icbf': cotizacion_icbf,
-                                    'cotizacion_total': cotizacion_total                            
+                                    'cotizacion_total': cotizacion_total,
+                                    'fecha_inicio_incapacidad_general': fecha_inicio_incapacidad_general,
+                                    'fecha_fin_incapacidad_general': fecha_fin_incapacidad_general,
+                                    'fecha_inicio_licencia_maternidad': fecha_inicio_licencia_maternidad,
+                                    'fecha_fin_licencia_maternidad': fecha_fin_licencia_maternidad,
+                                    'fecha_inicio_vacaciones': fecha_inicio_vacaciones,
+                                    'fecha_fin_vacaciones': fecha_fin_vacaciones, 
+                                    'fecha_inicio_incapacidad_laboral': fecha_inicio_incapacidad_laboral,
+                                    'fecha_fin_incapacidad_laboral': fecha_fin_incapacidad_laboral
                                 }
                                 aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
                                 if aporte_detalle_serializador.is_valid():
@@ -442,6 +468,11 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     periodo_pago = f"{aporte.anio}-{mes_formateado}"
                     periodo_pago_salud = f"{aporte.anio_salud}-{mes_salud_formateado}"
                     empresa = GenEmpresa.objects.filter(pk=1).values('nombre_corto', 'numero_identificacion', 'digito_verificacion').first()
+                    sucursal_codigo = ""
+                    sucursal_nombre = ""
+                    if aporte.presentacion == "S":
+                        sucursal_codigo = aporte.sucursal.codigo
+                        sucursal_nombre = aporte.sucursal.nombre
                     buffer = io.StringIO()
                     #1	2	1	2	N	Tipo de registro	Obligatorio. Debe ser 01
                     buffer.write("01")
@@ -466,9 +497,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     #11	1	248	248	A	Forma de presentación	El registrado en el campo 10 del archivo tipo 1.                    
                     buffer.write(Utilidades.rellenar(aporte.presentacion, 1, " ", "D"))
                     #12	10	249	258	A	Código de la sucursal del Aportante	El registrado en el campo 5 del archivo tipo 1.                    
-                    buffer.write(Utilidades.rellenar(aporte.sucursal.codigo, 10, "0", "I"))
+                    buffer.write(Utilidades.rellenar(sucursal_codigo, 10, " ", "I"))
                     #13	40	259	298	A	Nombre de la sucursal	El registrado en el campo 6 del archivo tipo 1.                    
-                    buffer.write(Utilidades.rellenar(aporte.sucursal.nombre, 40, " ", "D"))
+                    buffer.write(Utilidades.rellenar(sucursal_nombre, 40, " ", "D"))
                     #14	6	299	304	A	Código de la ARL a la cual el aportante se encuentra afiliado	Lo suministra el aportante                    
                     buffer.write(Utilidades.rellenar(aporte.entidad_riesgo.codigo, 6, " ", "D"))
                     #15	7	305	311	A	Periodo de pago para los sistemas diferentes al de salud	Obligatorio. Formato año y mes (aaaa-mm). Lo calcula el Operador de Información.                    
