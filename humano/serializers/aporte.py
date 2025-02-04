@@ -8,11 +8,14 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
     mes = serializers.IntegerField(required=True)    
     sucursal = serializers.PrimaryKeyRelatedField(queryset=HumSucursal.objects.all())
     entidad_riesgo = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
+    entidad_sena = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
+    entidad_icbf = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = HumAporte
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_hasta_periodo', 'anio', 'mes', 'anio_salud', 'mes_salud', 'sucursal',
-                  'presentacion', 'estado_generado', 'estado_aprobado', 'entidad_riesgo', 'cotizacion_pension', 'cotizacion_voluntario_pension_afiliado',
+                  'presentacion', 'estado_generado', 'estado_aprobado', 'entidad_riesgo', 'entidad_sena', 'entidad_icbf',
+                  'cotizacion_pension', 'cotizacion_voluntario_pension_afiliado',
                   'cotizacion_voluntario_pension_aportante', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia',
                   'cotizacion_salud', 'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total',
                   'contratos', 'empleados', 'lineas']      
@@ -23,7 +26,13 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
             sucursal_nombre = instance.sucursal.nombre    
         entidad_riesgo_nombre = ''
         if instance.entidad_riesgo:
-            entidad_riesgo_nombre = instance.entidad_riesgo.nombre        
+            entidad_riesgo_nombre = instance.entidad_riesgo.nombre  
+        entidad_sena_nombre = ''
+        if instance.entidad_sena:
+            entidad_sena_nombre = instance.entidad_sena.nombre                   
+        entidad_icbf_nombre = ''
+        if instance.entidad_icbf:
+            entidad_icbf_nombre = instance.entidad_icbf.nombre             
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
@@ -54,5 +63,9 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
             'sucursal_id': instance.sucursal_id,
             'sucursal_nombre': sucursal_nombre,
             'entidad_riesgo_id': instance.entidad_riesgo_id,
-            'entidad_riesgo_nombre': entidad_riesgo_nombre,            
+            'entidad_riesgo_nombre': entidad_riesgo_nombre, 
+            'entidad_sena_id': instance.entidad_sena_id,
+            'entidad_sena_nombre': entidad_sena_nombre,                       
+            'entidad_icbf_id': instance.entidad_icbf_id,
+            'entidad_icbf_nombre': entidad_icbf_nombre
         }          

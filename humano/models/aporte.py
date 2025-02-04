@@ -30,7 +30,9 @@ class HumAporte(models.Model):
     estado_generado = models.BooleanField(default = False)
     comentario = models.CharField(max_length=300, null=True)
     sucursal = models.ForeignKey(HumSucursal, on_delete=models.PROTECT, null=True, related_name='aportes_sucursal_rel')
-    entidad_riesgo = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True)    
+    entidad_riesgo = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='aportes_entidad_riesgo_rel')
+    entidad_sena = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='aportes_entidad_sena_rel')    
+    entidad_icbf = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='aportes_entidad_icbf_rel')
 
     class Meta:
         db_table = "hum_aporte"

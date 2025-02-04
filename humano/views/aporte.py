@@ -10,8 +10,8 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from humano.serializers.aporte import HumAporteSerializador
 from humano.serializers.aporte_contrato import HumAporteContratoSerializador
 from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
-from datetime import date, timedelta
-from django.db.models import Sum, Q, Value, DecimalField
+from datetime import date
+from django.db.models import Sum, Q, DecimalField
 from django.db.models.functions import Coalesce
 from utilidades.utilidades import Utilidades
 from django.http import HttpResponse
@@ -168,6 +168,16 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte_cotizacion_icbf = 0
                     aporte_cotizacion_total = 0                                        
                     lineas = 0
+                    aporte_entidad_pension = {}
+                    aporte_entidad_salud = {}
+                    aporte_entidad_caja = {}
+                    aporte_entidad_riesgos = {}
+                    aporte_entidad_riesgos[aporte.entidad_riesgo_id] = {
+                        'entidad_id': aporte.entidad_riesgo_id,
+                        'total': 0
+                    }                    
+                    aporte_entidad_sena = {}
+                    aporte_entidad_icbf = {}
                     aporte_contratos = HumAporteContrato.objects.filter(aporte_id=id)                                           
                     for aporte_contrato in aporte_contratos:                              
                         base_cotizacion = 0
@@ -393,7 +403,29 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         }
                         aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
                         if aporte_detalle_serializador.is_valid():
-                            aporte_detalle_serializador.save()                            
+                            aporte_detalle = aporte_detalle_serializador.save()  
+                            if aporte_contrato.entidad_pension_id in aporte_entidad_pension:                                
+                                aporte_entidad_pension[aporte_contrato.entidad_pension_id]['total'] += aporte_detalle.cotizacion_pension                                
+                            else:                                
+                                aporte_entidad_pension[aporte_contrato.entidad_pension_id] = {
+                                    'entidad_id': aporte_contrato.entidad_pension_id,
+                                    'total': aporte_detalle.cotizacion_pension
+                                }                                                          
+                            if aporte_contrato.entidad_salud_id in aporte_entidad_salud:                                
+                                aporte_entidad_salud[aporte_contrato.entidad_salud_id]['total'] += aporte_detalle.cotizacion_salud                                
+                            else:                                
+                                aporte_entidad_salud[aporte_contrato.entidad_salud_id] = {
+                                    'entidad_id': aporte_contrato.entidad_salud_id,
+                                    'total': aporte_detalle.cotizacion_salud
+                                }   
+                            if aporte_contrato.entidad_caja_id in aporte_entidad_caja:                                
+                                aporte_entidad_caja[aporte_contrato.entidad_caja_id]['total'] += aporte_detalle.cotizacion_caja                                
+                            else:                                
+                                aporte_entidad_caja[aporte_contrato.entidad_caja_id] = {
+                                    'entidad_id': aporte_contrato.entidad_caja_id,
+                                    'total': aporte_detalle.cotizacion_caja
+                                }            
+                            aporte_entidad_riesgos[aporte.entidad_riesgo_id]['total'] += aporte_detalle.cotizacion_riesgos                                                                                                                                         
                         else:
                             return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                     aporte.estado_generado = True                                        
@@ -411,7 +443,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte.lineas = lineas   
                     aporte.base_cotizacion = base_cotizacion_total           
                     aporte.save()
-                    return Response({'total': 0,}, status=status.HTTP_200_OK)
+                    print(aporte_entidad_salud)
+                    return Response({'total': 0}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'El aporte ya esta generado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
             else:
