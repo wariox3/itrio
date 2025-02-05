@@ -320,7 +320,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             'fecha': documento.fecha_contable,
                             'comprobante': documento.documento_tipo.comprobante_id
                         }
-                        if documento.documento_tipo.cobrar:
+                        '''if documento.documento_tipo.cobrar:
                             data = data_general.copy()
                             data['cuenta'] = documento.documento_tipo.cuenta_cobrar                            
                             movimiento_serializador = ConMovimientoSerializador(data=data)
@@ -328,14 +328,31 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 movimiento_serializador.save()
                             else:
                                 return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                        #documento.estado_contabilizado = True
-                        #documento.save()
-                        return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)
-                    
+                        '''    
+                        documento.estado_contabilizado = True
+                        documento.save()
+                        return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)                    
                     except ConPeriodo.DoesNotExist:
                         return Response({'mensaje':f'El periodo contable {periodo_id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                       
                 else:
                     return Response({'mensaje':'El documento debe estar aprobado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'descontabilizar',)
+    def descontabilizar(self, request):        
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)                            
+                if documento.estado_contabilizado:                    
+                    documento.estado_contabilizado = False
+                    documento.save()
+                else:
+                    return Response({'mensaje':'El documento debe estar contabilizado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
