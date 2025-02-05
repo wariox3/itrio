@@ -12,7 +12,7 @@ class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ConCuenta
-        fields = ['id', 'codigo', 'nombre', 'exige_base', 'exige_tercero', 'exige_grupo', 'permite_movimiento', 'nivel',
+        fields = ['id', 'codigo', 'nombre', 'exige_base', 'exige_contacto', 'exige_grupo', 'permite_movimiento', 'nivel',
                   'cuenta_clase', 'cuenta_grupo', 'cuenta_cuenta', 'cuenta_subcuenta']
 
     def to_representation(self, instance):
@@ -36,7 +36,7 @@ class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_cuenta_id': instance.cuenta_cuenta_id,
             'cuenta_cuenta_nombre': cuenta_cuenta_nombre,
             'exige_base': instance.exige_base,
-            'exige_tercero': instance.exige_tercero,
+            'exige_contacto': instance.exige_contacto,
             'exige_grupo': instance.exige_grupo,
             'permite_movimiento': instance.permite_movimiento          
         } 

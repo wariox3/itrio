@@ -2213,11 +2213,32 @@
     },
     {
         "model": "contabilidad.ConCuentaCuenta",
+        "pk": 7105,
+        "fields": {
+            "nombre": "Materia prima"
+        }
+    },    
+    {
+        "model": "contabilidad.ConCuentaCuenta",
         "pk": 7205,
         "fields": {
             "nombre": "Mano de obra"
         }
-    },    
+    },  
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 7305,
+        "fields": {
+            "nombre": "Costos indirectos"
+        }
+    },     
+    {
+        "model": "contabilidad.ConCuentaCuenta",
+        "pk": 7405,
+        "fields": {
+            "nombre": "Contratos de servicios"
+        }
+    },           
     {
         "model": "contabilidad.ConCuentaCuenta",
         "pk": 8105,
