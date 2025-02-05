@@ -146,7 +146,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
-                  'total_bruto', 'total', 'afectado', 'estado_aprobado', 'contacto', 'documento_tipo', 'metodo_pago', 
+                  'total_bruto', 'total', 'afectado', 'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 'metodo_pago', 
                   'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 
                   'estado_electronico_enviado', 'estado_electronico_notificado', 'estado_electronico_evento', 'orden_compra', 
                   'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
@@ -215,6 +215,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'metodo_pago_id' : instance.metodo_pago_id,
             'metodo_pago_nombre' : metodo_pago_nombre,
             'estado_anulado' :instance.estado_anulado,
+            'estado_contabilizado' :instance.estado_contabilizado,
             'comentario': instance.comentario,
             'estado_electronico' : instance.estado_electronico,
             'estado_electronico_enviado' : instance.estado_electronico_enviado,
