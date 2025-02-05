@@ -11,9 +11,9 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
     comprobante = serializers.PrimaryKeyRelatedField(queryset=ConComprobante.objects.all())
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all())
     periodo = serializers.PrimaryKeyRelatedField(queryset=ConPeriodo.objects.all())
-    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
+    contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True, default=None)
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)        
-    grupo = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), allow_null=True)
+    grupo = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), allow_null=True, default=None)
 
     class Meta:
         model = ConMovimiento

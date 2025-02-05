@@ -15,7 +15,6 @@ from humano.models.periodo import HumPeriodo
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
 from seguridad.models import User
-from decimal import Decimal, ROUND_HALF_UP
 
 class GenDocumento(models.Model):    
     numero = models.IntegerField(null=True)
@@ -45,6 +44,7 @@ class GenDocumento(models.Model):
     evento_aceptacion = models.CharField(max_length=2, default='PE')
     estado_aprobado = models.BooleanField(default = False)
     estado_anulado = models.BooleanField(default = False)
+    estado_contabilizado = models.BooleanField(default = False)
     estado_electronico = models.BooleanField(default = False)    
     estado_electronico_enviado = models.BooleanField(default = False)    
     estado_electronico_notificado = models.BooleanField(default = False)    

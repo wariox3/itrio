@@ -11,12 +11,15 @@ from general.models.contacto import GenContacto
 from general.models.configuracion import GenConfiguracion
 from humano.models.contrato import HumContrato
 from contabilidad.models.cuenta import ConCuenta
+from contabilidad.models.periodo import ConPeriodo
+from contabilidad.models.movimiento import ConMovimiento
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento import GenDocumentoReferenciaSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
 from general.serializers.contacto import GenContactoSerializador
+from contabilidad.serializers.movimiento import ConMovimientoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
 from general.formatos.documento_soporte import FormatoDocumentoSoporte
@@ -294,6 +297,45 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'contabilizar',)
+    def contabilizar(self, request):        
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)                            
+                if documento.estado_aprobado:                    
+                    try:
+                        periodo_id = documento.fecha_contable.strftime("%Y%m")
+                        periodo = ConPeriodo.objects.get(pk=periodo_id)                    
+                        data_general = {
+                            'documento': id,
+                            'periodo': periodo_id,
+                            'numero': documento.numero,
+                            'fecha': documento.fecha_contable,
+                            'comprobante': documento.documento_tipo.comprobante_id
+                        }
+                        if documento.documento_tipo.cobrar:
+                            data = data_general.copy()
+                            data['cuenta'] = documento.documento_tipo.cuenta_cobrar                            
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimiento_serializador.save()
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        #documento.estado_contabilizado = True
+                        #documento.save()
+                        return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)
+                    
+                    except ConPeriodo.DoesNotExist:
+                        return Response({'mensaje':f'El periodo contable {periodo_id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                       
+                else:
+                    return Response({'mensaje':'El documento debe estar aprobado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -1866,10 +1908,3 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}        
         except GenDocumento.DoesNotExist:
             return {'error':True, 'mensaje':'El documento no existe'}
-
-
-     
-          
-      
-    
-

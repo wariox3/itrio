@@ -4,6 +4,7 @@ from general.models.resolucion import GenResolucion
 
 class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
     resolucion = serializers.PrimaryKeyRelatedField(queryset=GenResolucion.objects.all(), allow_null=True)
+
     class Meta:
         model = GenDocumentoTipo
         fields = ['consecutivo', 'resolucion']

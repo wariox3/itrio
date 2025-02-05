@@ -4,9 +4,8 @@
     "pk": 1,
     "fields": {
       "nombre": "FACTURA ELECTRÓNICA DE VENTA",
-      "documento_clase": 100,
-      "venta": true, "cobrar" : true, "operacion": 1,
-      "contabilidad": true
+      "documento_clase": 100, "comprobante": 4,
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true
     }
   },
   {
@@ -14,11 +13,8 @@
     "pk": 2,
     "fields": {
       "nombre": "NOTA CRÉDITO DE VENTA",
-      "documento_clase": 101,
-      "venta": true,
-      "cobrar" : true,
-      "operacion": -1,
-      "contabilidad": true
+      "documento_clase": 101, "comprobante": 5,
+      "venta": true, "cobrar" : true, "operacion": -1, "contabilidad": true
     }
   },
   {
@@ -26,7 +22,7 @@
     "pk": 3,
     "fields": {
       "nombre": "NOTA DÉBITO DE VENTA",
-      "documento_clase": 102,
+      "documento_clase": 102, "comprobante": 6,
       "venta": true,
       "cobrar" : true,
       "operacion": 1,
@@ -38,7 +34,7 @@
     "pk": 4,
     "fields": {
       "nombre": "PAGO",
-      "documento_clase": 200,
+      "documento_clase": 200, "comprobante": 2,
       "contabilidad": true
     }
   },
@@ -47,12 +43,8 @@
     "pk": 5,
     "fields": {
       "nombre": "COMPRA",
-      "documento_clase": 300,
-      "compra": true,
-      "pagar": true,
-      "electronico" : false,
-      "operacion": 1,
-      "contabilidad": true
+      "documento_clase": 300, "comprobante": 7,
+      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "contabilidad": true
     }
   },
   {
@@ -60,12 +52,8 @@
     "pk": 6,
     "fields": {
       "nombre": "NOTA CREDITO COMPRA",
-      "documento_clase": 301,
-      "compra": true,
-      "pagar": true,
-      "electronico" : false,
-      "operacion": -1,
-      "contabilidad": true
+      "documento_clase": 301,  "comprobante": 8,
+      "compra": true, "pagar": true, "electronico" : false, "operacion": -1, "contabilidad": true
     }
   },
   {
@@ -73,12 +61,8 @@
     "pk": 7,
     "fields": {
       "nombre": "NOTA DEBITO COMPRA",
-      "documento_clase": 302,
-      "compra": true,
-      "pagar": true,
-      "electronico" : false,
-      "operacion": 1,
-      "contabilidad": true
+      "documento_clase": 302, "comprobante": 9,
+      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "contabilidad": true
     }
   },
   {
@@ -86,7 +70,7 @@
     "pk": 8,
     "fields": {
       "nombre": "EGRESO",
-      "documento_clase": 400,
+      "documento_clase": 400, "comprobante": 3,
       "contabilidad": true
     }
   },
@@ -112,8 +96,7 @@
     "fields": {
       "nombre": "DOCUMENTO SOPORTE",
       "documento_clase": 303,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": 1,
-      "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : true, "operacion": 1, "contabilidad": true
     }
   },
   {
@@ -122,8 +105,7 @@
     "fields": {
       "nombre": "NOTA AJUSTE",
       "documento_clase": 304,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": -1,
-      "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : true, "operacion": -1, "contabilidad": true
     }
   },
   {
@@ -131,8 +113,7 @@
     "pk": 13,
     "fields": {
       "nombre": "ASIENTO",
-      "documento_clase": 601,
-      "contabilidad": true
+      "documento_clase": 601, "contabilidad": true
     }
   },
   {
@@ -140,7 +121,7 @@
     "pk": 14,
     "fields": {
       "nombre": "NOMINA",
-      "documento_clase": 701,
+      "documento_clase": 701, "comprobante": 11,
       "pagar": true, "operacion": 1,
       "contabilidad": true
     }
