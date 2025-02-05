@@ -95,21 +95,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
         self.perform_destroy(empresa)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["post"], url_path=r'consulta-subdominio',)
-    def consulta_subdominio(self, request):
-        raw = request.data
-        subdominio = raw.get('subdominio')
-        if subdominio:
-            try:
-                subdominio = request.data.get('subdominio')
-                contenedor = Contenedor.objects.get(schema_name=subdominio)
-                serializer = ContenedorSerializador(contenedor)
-                return Response({'empresa':serializer.data}, status=status.HTTP_200_OK)    
-            except Contenedor.DoesNotExist:
-                return Response({'mensaje':'No existe el registro', 'codigo':15}, status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        
+       
     @action(detail=False, methods=["post"], url_path=r'validar',)
     def validar(self, request):
         try:
@@ -163,10 +149,10 @@ class ContenedorViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'conectar',)
     def conectar(self, request):
         raw = request.data
-        id = raw.get('id')
-        if id:
+        subdominio = raw.get('subdominio', None)
+        if subdominio:
             try:
-                contenedor = Contenedor.objects.get(id=id)
+                contenedor = Contenedor.objects.get(schema_name=subdominio)
                 contenedor.fecha_ultima_conexion = timezone.now()
                 contenedor.save()
                 contenedor_serializador = ContenedorSerializador(contenedor)
