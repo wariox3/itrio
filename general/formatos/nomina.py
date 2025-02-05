@@ -22,7 +22,7 @@ class FormatoNomina():
             'contacto__numero_cuenta',
             'contacto__banco__nombre',
             'periodo__nombre', 
-            'contrato__salario',
+            'salario',
             'contrato__cargo__nombre', 
             'contrato__grupo__nombre'
             ).first()        
@@ -63,7 +63,7 @@ class FormatoNomina():
         p.setFont("Helvetica", tamano_texto_encabezado)
         p.drawString(510, y - alto_fila * 1, str(documento.get('contacto__numero_cuenta') or ''))
         p.drawString(510, y - alto_fila * 2, str(documento.get('contacto__banco__nombre') or ''))
-        p.drawString(510, y - alto_fila * 3, f"{documento['contrato__salario']:,.0f}")
+        p.drawString(510, y - alto_fila * 3, f"{documento['salario']:,.0f}")
         p.drawString(510, y - alto_fila * 4, '')  
 
 
