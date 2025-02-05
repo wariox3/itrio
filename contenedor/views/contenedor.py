@@ -168,7 +168,8 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 contenedor = Contenedor.objects.get(id=id)
                 contenedor.fecha_ultima_conexion = datetime.now()
                 contenedor.save()
-                return Response({'conetar': True}, status=status.HTTP_200_OK)
+                contenedor_serializador = ContenedorSerializador(contenedor)
+                return Response(contenedor_serializador.data, status=status.HTTP_200_OK)
             except Contenedor.DoesNotExist:
                 return Response({'mensaje':'El contenedor no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
