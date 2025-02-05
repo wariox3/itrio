@@ -507,7 +507,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if empresa.rededoc_id:
                         if documento.estado_electronico_enviado == False: 
                             if documento.numero: 
-                                # Factura
+                                # Factura y Documento soporte
                                 if documento.documento_tipo_id in [1,2,3,11,12]:
                                     if documento.resolucion: 
                                         #Las facturas y documento soporte toman prefijo de la resolucion
@@ -652,7 +652,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     else:
                                         return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                                     
-                                # Documento soporte
+                                # Compra
                                 if documento.documento_tipo_id == 5:                                    
                                     if documento.referencia_prefijo and documento.referencia_numero and documento.referencia_cue:
                                         datos_compra = {
@@ -1058,8 +1058,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento.estado_electronico_descartado = True
                         documento.save()
                         return Response({'mensaje': 'Documento descartado correctamente'}, status=status.HTTP_200_OK)
-                    else:                
-                        return Response({'mensaje': 'El documento ya se encuentra enviado electronicamente', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                    else:       
+                        if documento.documento_tipo_id == 5:
+                            if documento.evento_documento == 'PE':
+                                documento.estado_electronico_descartado = True
+                                documento.save()
+                                return Response({'mensaje': 'Documento descartado correctamente'}, status=status.HTTP_200_OK)
+                            else:
+                                return Response({'mensaje': 'El documento de compra solo se puede descartar si no ha enviado eventos', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
+                        else:
+                            return Response({'mensaje': 'El documento ya se encuentra enviado electronicamente', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
             else:
