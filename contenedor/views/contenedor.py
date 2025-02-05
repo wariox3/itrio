@@ -15,6 +15,7 @@ from utilidades.space_do import SpaceDo
 from django_tenants.utils import schema_context
 import os
 from datetime import datetime
+from django.utils import timezone
 
 class ContenedorViewSet(viewsets.ModelViewSet):
     queryset = Contenedor.objects.all()
@@ -166,7 +167,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
         if id:
             try:
                 contenedor = Contenedor.objects.get(id=id)
-                contenedor.fecha_ultima_conexion = datetime.now()
+                contenedor.fecha_ultima_conexion = timezone.now()
                 contenedor.save()
                 contenedor_serializador = ContenedorSerializador(contenedor)
                 return Response(contenedor_serializador.data, status=status.HTTP_200_OK)
