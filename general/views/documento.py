@@ -351,6 +351,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento.estado_contabilizado:                    
                     documento.estado_contabilizado = False
                     documento.save()
+                    return Response({'estado_contabilizado': False}, status=status.HTTP_200_OK) 
                 else:
                     return Response({'mensaje':'El documento debe estar contabilizado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
             except GenDocumento.DoesNotExist:
