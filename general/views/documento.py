@@ -1138,9 +1138,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             documento.evento_recepcion = 'RC'                                            
                                         if evento_id == 33:
                                             documento.evento_aceptacion = 'AC'
+                                            documento.estado_electronico_evento = True
                                         documento.save()
-                                        return Response({'mensaje': 'Evento emitido correctamente'}, status=status.HTTP_200_OK)
-                                    #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)                                    
+                                        return Response({'mensaje': 'Evento emitido correctamente'}, status=status.HTTP_200_OK)                                    
                                     else:
                                         return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                                    
                                 else:
