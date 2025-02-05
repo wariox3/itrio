@@ -500,6 +500,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     for aporte_contrato in aporte_contratos:
                         aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato_id=aporte_contrato.id)
                         aporte_detalles.delete()
+                    aporte_entidades = HumAporteEntidad.objects.filter(aporte_id=id).delete()
                     aporte.estado_generado = False
                     aporte.lineas = 0
                     aporte.base_cotizacion = 0
