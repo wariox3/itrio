@@ -46,6 +46,9 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
                     dias_prorroga = novedad_referencia.dias_acumulados
                 except HumNovedad.DoesNotExist:
                     return Response({'mensaje':'La novedad referenciada no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+                    
+            if novedad.prorroga == True and novedad.novedad_referencia_id is None:
+                novedad.prorroga = False
 
             concepto_empresa = novedad.novedad_tipo.concepto
             concepto_entidad = novedad.novedad_tipo.concepto2
@@ -57,7 +60,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             valor_dia = base_cotizacion / 30
             dias_empresa = 0
             dias_entidad = 0
-            if novedad.novedad_tipo_id == 1:
+            if novedad.novedad_tipo_id == 1:                
                 if dias > 2:
                     if novedad.prorroga:
                         if novedad_referencia.dias_acumulados == 1:
