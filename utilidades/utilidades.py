@@ -61,14 +61,15 @@ class Utilidades:
         except ValidationError:
             return False    
         
-    @staticmethod    
+    @staticmethod
     def dias_prestacionales(fecha_inicio, fecha_fin):
         """
-        Calcula el número de días entre dos fechas suponiendo meses de 30 días.
+        Calcula el número de días entre dos fechas suponiendo meses de 30 días,
+        con un ajuste especial para febrero.
 
         :param fecha_inicio: Fecha inicial en formato 'YYYY-MM-DD'.
         :param fecha_fin: Fecha final en formato 'YYYY-MM-DD'.
-        :return: Número de días entre las dos fechas, con meses de 30 días.
+        :return: Número de días entre las dos fechas, con meses de 30 días y ajuste para febrero.
         """
         # Convertimos las fechas en objetos datetime
         inicio = datetime.strptime(fecha_inicio, "%Y-%m-%d")
@@ -82,7 +83,17 @@ class Utilidades:
         # Totalizamos los meses y los días
         total_meses = años * 12 + meses
         total_dias = total_meses * 30 + dias
+
+        # Ajuste para febrero
+        if fin.month == 2:
+            if fin.day == 28:
+                total_dias += 2  
+            elif fin.day == 29:
+                total_dias += 1 
+
+        # Sumamos 1 día adicional
         total_dias += 1
+
         return total_dias
     
     @staticmethod
