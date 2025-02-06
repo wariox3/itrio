@@ -213,6 +213,20 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 diferencia = fecha_hasta - fecha_desde
                                 dias = diferencia.days + 1
                                 dias = dias - dias_novedad
+
+                                # Ajuste para febrero: sumar días adicionales según la fecha_hasta
+                                if (
+                                    programacion.fecha_desde.month == 2 
+                                    and programacion.fecha_hasta.month == 2  # Aseguramos que el periodo está en febrero
+                                ):
+                                    if programacion.fecha_hasta.day == 28:  # Febrero no bisiesto
+                                        dias += 2  # Sumamos 2 días para completar 30 días
+                                    elif programacion.fecha_hasta.day == 29:  # Febrero bisiesto
+                                        dias += 1  # Sumamos 1 día para completar 30 días
+
+                                if dias < 0:
+                                    dias = 0
+
                                 if error_terminacion:
                                     dias = 0
                                 data['dias'] = dias
