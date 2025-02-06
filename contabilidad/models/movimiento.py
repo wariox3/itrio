@@ -9,8 +9,8 @@ from general.models.documento import GenDocumento
 class ConMovimiento(models.Model):    
     numero = models.IntegerField(null=True)
     fecha = models.DateField()
-    debito = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    credito = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    debito = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    credito = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     base = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     naturaleza = models.CharField(max_length=1)
     detalle = models.CharField(max_length=150, null=True)

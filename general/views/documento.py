@@ -320,15 +320,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             'fecha': documento.fecha_contable,
                             'comprobante': documento.documento_tipo.comprobante_id
                         }
-                        '''if documento.documento_tipo.cobrar:
-                            data = data_general.copy()
-                            data['cuenta'] = documento.documento_tipo.cuenta_cobrar                            
+                        
+                        if documento.documento_tipo.cobrar:
+                            data = data_general.copy()                            
+                            data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
+                            data['contacto'] = documento.contacto_id        
+                            data['naturaleza'] = 'D'
+                            data['debito'] = documento.total                            
                             movimiento_serializador = ConMovimientoSerializador(data=data)
                             if movimiento_serializador.is_valid():
                                 movimiento_serializador.save()
                             else:
                                 return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                        '''    
+                        
+                        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
+                        for documento_detalle in documento_detalles:
+                            pass
                         documento.estado_contabilizado = True
                         documento.save()
                         return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)                    
@@ -349,6 +356,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             try:
                 documento = GenDocumento.objects.get(pk=id)                            
                 if documento.estado_contabilizado:                    
+                    movimientos = ConMovimiento.objects.filter(documento_id=id).delete()
                     documento.estado_contabilizado = False
                     documento.save()
                     return Response({'estado_contabilizado': False}, status=status.HTTP_200_OK) 
