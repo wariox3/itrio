@@ -14,7 +14,7 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
         cuenta_venta_codigo = ''
         if instance.cuenta_venta:
             cuenta_venta_nombre = instance.cuenta_venta.nombre
-            cuenta_venta_codigo = instance.cuenta_venta_codigo
+            cuenta_venta_codigo = instance.cuenta_venta.codigo
         return {
             'id': instance.id,            
             'codigo': instance.codigo,
