@@ -134,12 +134,6 @@ class CuentaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'Las cuentas no pueden ser iguales', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        
-    @action(detail=False, methods=["post"], url_path=r'predeterminado',)
-    def predeterminado(self, request):
-        raw = request.data
-        subdominio = request.tenant.schema_name
-        os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures_demanda/con_cuenta.json --schema={subdominio}")
-        return Response({'mensaje': 'Se creo un plan de cuentas predeterminado'}, status=status.HTTP_200_OK)     
+           
         
     

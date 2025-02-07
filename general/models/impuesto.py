@@ -1,5 +1,6 @@
 from django.db import models
 from general.models.impuesto_tipo import GenImpuestoTipo
+from contabilidad.models.cuenta import ConCuenta
 
 class GenImpuesto(models.Model):
     nombre = models.CharField(max_length=20)
@@ -10,6 +11,7 @@ class GenImpuesto(models.Model):
     venta = models.BooleanField()
     compra = models.BooleanField()
     impuesto_tipo = models.ForeignKey(GenImpuestoTipo, null=True, on_delete=models.PROTECT, related_name='impuestos_impuesto_tipo_rel')
+    cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='impuestos_cuenta_rel')
 
     class Meta:
         db_table = "gen_impuesto"

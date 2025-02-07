@@ -32,6 +32,8 @@ from django.http import HttpResponse
 from django.db.models import Sum, F, Count
 from django.db.models.functions import TruncDay
 from django.utils import timezone
+from django.db.models.functions import Coalesce
+from django.db.models import Sum, Q, DecimalField
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
@@ -341,17 +343,34 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             data['contacto'] = documento.contacto_id        
                             data['naturaleza'] = 'C'
                             data['credito'] = documento_detalle.subtotal
+                            data['detalle'] = 'VENTA'
                             movimiento_serializador = ConMovimientoSerializador(data=data)
                             if movimiento_serializador.is_valid():
                                 movimiento_serializador.save()
                             else:
                                 return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
 
-                        '''documento_impuestos = GenDocumentoImpuesto.objects.filter(
+                        documento_impuestos = GenDocumentoImpuesto.objects.filter(
                             documento_detalle__documento_id=id
                         ).values(
+                            'impuesto_id',
+                            'impuesto__cuenta_id'
+                        ).annotate(
+                            total=Coalesce(Sum('total'), 0, output_field=DecimalField()),
+                        )
+                        for documento_impuesto in documento_impuestos:
+                            data = data_general.copy()                            
+                            data['cuenta'] = documento_impuesto['impuesto__cuenta_id']
+                            data['contacto'] = documento.contacto_id        
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento_impuesto['total']
+                            data['detalle'] = 'IMPUESTO'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimiento_serializador.save()
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
 
-                        )'''
 
                         documento.estado_contabilizado = True
                         documento.save()

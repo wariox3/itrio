@@ -30,14 +30,6 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
             except GenResolucion.DoesNotExist:
                 return Response({'mensaje':'La resolucion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                         
         else:
-            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)      
-        
-    @action(detail=False, methods=["post"], url_path=r'predeterminado')
-    def predeterminado(self, request):
-        raw = request.data
-        documento_tipo = GenDocumentoTipo.objects.get(pk=1)                
-        documento_tipo.cuenta_cobrar_id = 124
-        documento_tipo.save()                
-        return Response({'proceso': True}, status=status.HTTP_200_OK)
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)              
                         
        
