@@ -70,6 +70,7 @@ class CtnPlan(models.Model):
     precio = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     precio_usuario_adicional = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     limite_electronicos = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    plan_tipo_id = models.CharField(max_length=1, null=True) 
 
     class Meta:
         db_table = "cnt_plan"

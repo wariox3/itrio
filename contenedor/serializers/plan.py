@@ -13,5 +13,6 @@ class CtnPlanSerializador(serializers.ModelSerializer):
             'limite_usuarios': instance.limite_usuarios,
             'limite_ingresos': instance.limite_ingresos,
             'precio': instance.precio,
-            'limite_electronicos': instance.limite_electronicos
+            'limite_electronicos': instance.limite_electronicos,
+            'plan_tipo_id': instance.plan_tipo_id
         }           
