@@ -12,8 +12,10 @@ class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
       cuenta_nombre = ''
+      cuenta_codigo = ''
       if instance.cuenta:
           cuenta_nombre = instance.cuenta.nombre
+          cuenta_codigo = instance.cuenta.codigo
       return {
             'id': instance.id,            
             'nombre': instance.nombre,
@@ -21,7 +23,8 @@ class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
             'porcentaje': instance.porcentaje,
             'operacion': instance.operacion,
             'cuenta_id': instance.cuenta_id,
-            'cuenta_nombre': cuenta_nombre
+            'cuenta_nombre': cuenta_nombre,
+            'cuenta_codigo' : cuenta_codigo
         }         
 
 class GenImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
