@@ -326,7 +326,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
                             data['contacto'] = documento.contacto_id        
                             data['naturaleza'] = 'D'
-                            data['debito'] = documento.total                            
+                            data['debito'] = documento.total
+                            data['detalle'] = 'CLIENTE'
                             movimiento_serializador = ConMovimientoSerializador(data=data)
                             if movimiento_serializador.is_valid():
                                 movimiento_serializador.save()
@@ -335,7 +336,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         
                         documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
                         for documento_detalle in documento_detalles:
-                            pass
+                            data = data_general.copy()                            
+                            data['cuenta'] = documento_detalle.item.cuenta_venta_id
+                            data['contacto'] = documento.contacto_id        
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento_detalle.subtotal
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimiento_serializador.save()
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+
+                        '''documento_impuestos = GenDocumentoImpuesto.objects.filter(
+                            documento_detalle__documento_id=id
+                        ).values(
+
+                        )'''
+
                         documento.estado_contabilizado = True
                         documento.save()
                         return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)                    

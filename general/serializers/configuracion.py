@@ -17,7 +17,7 @@ class GenConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
         ]      
         
 class GenConfiguracionActualizarSerializador(serializers.HyperlinkedModelSerializer):
-    hum_entidad_riesgo = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    hum_entidad_riesgo = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenConfiguracion
         fields = ['informacion_factura', 'informacion_factura_superior', 'venta_asesor',

@@ -36,8 +36,11 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
             grupo_codigo = instance.grupo.codigo
             grupo_nombre = instance.grupo.nombre
         contacto_nombre_corto = ''
+        contacto_numero_identificacion = ''
         if instance.contacto:
+            contacto_numero_identificacion = instance.contacto.numero_identificacion
             contacto_nombre_corto = instance.contacto.nombre_corto
+
         return {
             'id': instance.id,
             'numero': instance.numero,
@@ -45,7 +48,8 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
             'debito': instance.debito ,
             'credito': instance.credito ,
             'base': instance.base ,
-            'naturaleza': instance.naturaleza ,
+            'naturaleza': instance.naturaleza,
+            'detalle': instance.detalle,
             'cuenta_id': instance.cuenta_id,
             'cuenta_codigo': cuenta_codigo,
             'cuenta_nombre': cuenta_nombre,
@@ -56,6 +60,7 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
             'grupo_codigo': grupo_codigo,
             'grupo_nombre': grupo_nombre,
             'contacto_id': instance.contacto_id,
+            'contacto_numero_identificacion': contacto_numero_identificacion,
             'contacto_nombre_corto': contacto_nombre_corto,
             'documento_id': instance.documento_id,
             'periodo_id': instance.periodo_id
