@@ -1,13 +1,16 @@
 from rest_framework import serializers
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.resolucion import GenResolucion
+from contabilidad.models.cuenta import ConCuenta
 
 class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
     resolucion = serializers.PrimaryKeyRelatedField(queryset=GenResolucion.objects.all(), allow_null=True)
+    cuenta_cobrar = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
+    cuenta_pagar = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = GenDocumentoTipo
-        fields = ['consecutivo', 'resolucion']
+        fields = ['consecutivo', 'resolucion', 'cuenta_pagar', 'cuenta_cobrar']
 
     def to_representation(self, instance):  
         cuenta_cobrar_codigo = ""
