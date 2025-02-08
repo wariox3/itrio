@@ -159,3 +159,18 @@ class EmpresaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'El asistente ya esta terminado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
         except GenEmpresa.DoesNotExist:
             return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                
+        
+
+    @action(detail=False, methods=["post"], url_path=r'terminar-asistente-predeterminado',)
+    def terminar_asistente_predeterminado(self, request):
+        try:
+            raw = request.data 
+            empresa = GenEmpresa.objects.get(pk=1)
+            if empresa.asistente_predeterminado == False:                                                      
+                empresa.asistente_predeterminado = True
+                empresa.save()
+                return Response({'asistente_predeterminado_terminado':True}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje': 'El asistente ya esta terminado', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+        except GenEmpresa.DoesNotExist:
+            return Response({'mensaje': 'La empresa no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)            

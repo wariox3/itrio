@@ -17,6 +17,7 @@ class GenEmpresa(models.Model):
     rededoc_id = models.IntegerField(null=True)    
     subdominio = models.CharField(max_length=100, default='demo') 
     asistente_electronico = models.BooleanField(default = False)
+    asistente_predeterminado = models.BooleanField(default = False)
     identificacion = models.ForeignKey(GenIdentificacion, null=True, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(GenCiudad, null=True, on_delete=models.PROTECT)
     tipo_persona = models.ForeignKey(GenTipoPersona, null=True, on_delete=models.PROTECT)   
