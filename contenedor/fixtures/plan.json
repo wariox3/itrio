@@ -3,7 +3,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 1,
     "fields": {
-      "nombre": "Impulso (facturación)", 
+      "nombre": "Impulso", 
       "limite_usuarios":1, 
       "usuarios_base":1, 
       "limite_ingresos":10000000,
@@ -17,7 +17,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 2,
     "fields": {
-      "nombre": "Impulso ERP",
+      "nombre": "Impulso",
       "limite_usuarios":1, 
       "usuarios_base":1, 
       "limite_ingresos":10000000,
@@ -31,7 +31,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 3,
     "fields": {
-      "nombre": "Crecimiento (facturación)",
+      "nombre": "Crecimiento",
       "limite_usuarios":0, 
       "usuarios_base":2, 
       "limite_ingresos":50000000,
@@ -45,7 +45,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 4,
     "fields": {
-      "nombre": "Crecimiento ERP",
+      "nombre": "Crecimiento",
       "limite_usuarios":0, 
       "usuarios_base":2, 
       "limite_ingresos":50000000,
@@ -59,7 +59,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 5,
     "fields": {
-      "nombre": "Expansión (facturación)",
+      "nombre": "Expansión",
       "limite_usuarios":0, 
       "usuarios_base":3, 
       "limite_ingresos":200000000,
@@ -73,7 +73,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 6,
     "fields": {
-      "nombre": "Expansión ERP",
+      "nombre": "Expansión",
       "limite_usuarios":0, 
       "usuarios_base":3, 
       "limite_ingresos":200000000,
@@ -87,7 +87,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 7,
     "fields": {
-      "nombre": "Éxito (facturación)",
+      "nombre": "Éxito",
       "limite_usuarios":0, 
       "usuarios_base":8, 
       "limite_ingresos":500000000,
@@ -101,7 +101,7 @@
     "model": "contenedor.CtnPlan",
     "pk": 8,
     "fields": {
-      "nombre": "Éxito ERP",
+      "nombre": "Éxito",
       "limite_usuarios":0, 
       "usuarios_base":8, 
       "limite_ingresos":500000000,
