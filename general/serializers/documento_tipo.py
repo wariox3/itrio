@@ -10,6 +10,16 @@ class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['consecutivo', 'resolucion']
 
     def to_representation(self, instance):  
+        cuenta_cobrar_codigo = ""
+        cuenta_cobrar_nombre = ""
+        if instance.cuenta_cobrar:
+            cuenta_cobrar_codigo = instance.cuenta_cobrar.codigo
+            cuenta_cobrar_nombre = instance.cuenta_cobrar.nombre
+        cuenta_pagar_codigo = ""
+        cuenta_pagar_nombre = ""
+        if instance.cuenta_pagar:
+            cuenta_pagar_codigo = instance.cuenta_pagar.codigo
+            cuenta_pagar_nombre = instance.cuenta_pagar.nombre            
         resolucion_numero = ""
         resolucion_prefijo = ""
         if instance.resolucion:
@@ -24,6 +34,13 @@ class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
             'resolucion_prefijo' : resolucion_prefijo,
             'venta' : instance.venta,
             'compra' : instance.compra,
-            'operacion': instance.operacion            
+            'operacion': instance.operacion,
+            'cuenta_cobrar_id': instance.cuenta_cobrar_id,
+            'cuenta_cobrar_codigo': cuenta_cobrar_codigo,
+            'cuenta_cobrar_nombre' : cuenta_cobrar_nombre,
+            'cuenta_pagar_id': instance.cuenta_pagar_id,
+            'cuenta_pagar_codigo': cuenta_pagar_codigo,
+            'cuenta_pagar_nombre' : cuenta_pagar_nombre
+            
         }        
         
