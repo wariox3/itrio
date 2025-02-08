@@ -46,7 +46,8 @@ class GenEmpresaSerializador(serializers.HyperlinkedModelSerializer):
             'tipo_persona_nombre': tipo_persona_nombre,
             'rededoc_id' : instance.rededoc_id,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}",
-            'asistente_electronico': instance.asistente_electronico
+            'asistente_electronico': instance.asistente_electronico,
+            'asistente_predeterminado': instance.asistente_predeterminado
         }   
 
 class GenEmpresaActualizarSerializador(serializers.HyperlinkedModelSerializer):
