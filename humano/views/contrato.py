@@ -2,6 +2,18 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from humano.models.contrato import HumContrato
+from humano.models.grupo import HumGrupo
+from humano.models.cargo import HumCargo
+from humano.models.sucursal import HumSucursal
+from humano.models.riesgo import HumRiesgo
+from humano.models.salud import HumSalud
+from humano.models.pension import HumPension
+from humano.models.tipo_cotizante import HumTipoCotizante
+from humano.models.subtipo_cotizante import HumSubtipoCotizante
+from humano.models.entidad import HumEntidad
+from general.models.contacto import GenContacto
+from general.models.ciudad import GenCiudad
+from humano.models.contrato_tipo import HumContratoTipo
 from humano.serializers.contrato import HumContratoSerializador
 from django.db.models.deletion import ProtectedError
 from datetime import datetime
@@ -59,72 +71,142 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)         
         
 
-    # @action(detail=False, methods=["post"], url_path=r'importar',)
-    # def importar(self, request):
-    #     raw = request.data        
-    #     archivo_base64 = raw.get('archivo_base64')        
-    #     if archivo_base64:
-    #         try:
-    #             archivo_data = base64.b64decode(archivo_base64)
-    #             archivo = BytesIO(archivo_data)
-    #             wb = openpyxl.load_workbook(archivo)
-    #             sheet = wb.active    
-    #         except Exception as e:     
-    #             return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+    @action(detail=False, methods=["post"], url_path=r'importar',)
+    def importar(self, request):
+        raw = request.data        
+        archivo_base64 = raw.get('archivo_base64')        
+        if archivo_base64:
+            try:
+                archivo_data = base64.b64decode(archivo_base64)
+                archivo = BytesIO(archivo_data)
+                wb = openpyxl.load_workbook(archivo)
+                sheet = wb.active    
+            except Exception as e:     
+                return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
             
-    #         data_modelo = []
-    #         errores = False
-    #         errores_datos = []
-    #         registros_importados = 0
-    #         for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-    #             data = {
-    #                 'contacto_id': row[0],                    
-    #                 'contrato_tipo_id':row[1],
-    #                 'fecha_desde':row[2],
-    #                 'fecha_hasta':row[3],
-    #                 'grupo_id':row[4],
-    #                 'vr_salario':row[5],
-    #                 'auxilio_transporte':row[6],
-    #                 'direccion':row[7],
-    #                 'barrio':row[8],
-    #                 'codigo_postal':row[9],
-    #                 'ciudad':row[10],
-    #                 'telefono':row[11],
-    #                 'celular':row[12],
-    #                 'correo':row[13],
-    #                 'correo_facturacion_electronica':row[14],
-    #                 'cliente':row[15],
-    #                 'proveedor':row[16],
-    #                 'empleado':row[17],
-    #                 'plazo_pago':row[18],
-    #                 'plazo_pago_proveedor':row[19],
-    #                 'digito_verificacion': '0'
-    #             }                   
-    #             if data['identificacion'] == 6 or data['identificacion'] == '6':
-    #                 data['regimen'] = 1
-    #                 data['tipo_persona'] = 1
-    #             else:
-    #                 data['regimen'] = 2
-    #                 data['tipo_persona'] = 2
-    #             data['digito_verificacion'] = str(Utilidades.digito_verificacion(data['numero_identificacion']))
-    #             serializer = GenContactoSerializador(data=data)
-    #             if serializer.is_valid():
-    #                 data_modelo.append(serializer.validated_data)
-    #                 registros_importados += 1
-    #             else:
-    #                 errores = True
-    #                 error_dato = {
-    #                     'fila': i,
-    #                     'errores': serializer.errors
-    #                 }                                    
-    #                 errores_datos.append(error_dato)                    
-    #         if not errores:
-    #             # for detalle in data_modelo:
-    #             #     GenContacto.objects.create(**detalle)
-    #             # gc.collect()
-    #             return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
-    #         else:
-    #             gc.collect()                    
-    #             return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
-    #     else:
-    #         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            data_modelo = []
+            errores = False
+            errores_datos = []
+            registros_importados = 0
+            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                data = {
+                    'contacto': row[0],
+                    'contrato_tipo': row[1],
+                    'fecha_desde': row[2],
+                    'fecha_hasta': row[3],
+                    'salario': row[4],
+                    'auxilio_transporte': row[5],
+                    'salario_integral': row[6],
+                    'grupo': row[7],
+                    'cargo': row[8],
+                    'ciudad_contrato': row[9],
+                    'ciudad_labora': row[10],
+                    'sucursal': row[11],
+                    'riesgo': row[12],
+                    'tipo_cotizante': row[13],
+                    'subtipo_cotizante': row[14],
+                    'salud': row[15],
+                    'pension': row[16],
+                    'entidad_salud': row[17],
+                    'entidad_pension': row[18],
+                    'entidad_cesantias': row[19],
+                    'entidad_caja': row[20],
+                    'comentario': row[21],
+                    'estado_terminado' : False
+                }
+
+
+                if data['contacto']:
+                    contacto = GenContacto.objects.filter(codigo=data['contacto']).first()
+                    if contacto:
+                        data['contacto'] = contacto.id
+
+                if data['contrato_tipo']:
+                    contratoTipo = HumContratoTipo.objects.filter(codigo=data['contrato_tipo']).first()
+                    if contratoTipo:
+                        data['contrato_tipo'] = contratoTipo.id
+
+                if data['grupo']:
+                    grupo = HumGrupo.objects.filter(codigo=data['grupo']).first()
+                    if grupo:
+                        data['grupo'] = grupo.id
+
+                if data['cargo']:
+                    cargo = HumCargo.objects.filter(codigo=data['cargo']).first()
+                    if cargo:
+                        data['cargo'] = cargo.id
+
+                if data['ciudad_contrato']:
+                    ciudadContrato = GenCiudad.objects.filter(codigo=data['ciudad_contrato']).first()
+                    if cargo:
+                        data['ciudad_contrato'] = ciudadContrato.id
+
+                if data['ciudad_labora']:
+                    ciudadLabora = GenCiudad.objects.filter(codigo=data['ciudad_labora']).first()
+                    if ciudadLabora:
+                        data['ciudad_labora'] = ciudadLabora.id
+
+                if data['sucursal']:
+                    sucursal = HumSucursal.objects.filter(codigo=data['sucursal']).first()
+                    if sucursal:
+                        data['sucursal'] = sucursal.id
+
+                if data['riesgo']:
+                    riesgos = HumRiesgo.objects.filter(codigo=data['riesgo']).first()
+                    if riesgos:
+                        data['riesgo'] = riesgos.id
+
+                if data['tipo_cotizante']:
+                    tipoCotizante = HumTipoCotizante.objects.filter(codigo=data['tipo_cotizante']).first()
+                    if tipoCotizante:
+                        data['tipo_cotizante'] = tipoCotizante.id
+
+                if data['subtipo_cotizante']:
+                    subtipoCotizante = HumSubtipoCotizante.objects.filter(codigo=data['subtipo_cotizante']).first()
+                    if subtipoCotizante:
+                        data['subtipo_cotizante'] = subtipoCotizante.id
+
+                if data['salud']:
+                    salud = HumSalud.objects.filter(codigo=data['salud']).first()
+                    if salud:
+                        data['salud'] = salud.id
+
+                if data['pension']:
+                    pension = HumPension.objects.filter(codigo=data['pension']).first()
+                    if pension:
+                        data['pension'] = pension.id
+
+
+                if data['entidad_salud']:
+                    entidadSalud = HumEntidad.objects.filter(codigo=data['entidad_salud']).first()
+                    if entidadSalud:
+                        data['entidad_salud'] = entidadSalud.id
+
+                if data['entidad_pension']:
+                    entidadPension = HumEntidad.objects.filter(codigo=data['entidad_pension']).first()
+                    if entidadPension:
+                        data['entidad_pension'] = entidadPension.id
+
+
+                serializer = HumContratoSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
+                    registros_importados += 1
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)    
+
+            if not errores:
+                # for detalle in data_modelo:
+                #     GenContacto.objects.create(**detalle)
+                # gc.collect()
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+            else:
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)

@@ -56,7 +56,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
                 data = {
                     'codigo': row[0],
                     'nombre':row[1],            
-                    'exige_tercero': row[2],
+                    'exige_contacto': row[2],
                     'exige_base': row[3],
                     'exige_grupo': row[4],
                     'permite_movimiento': row[5],
