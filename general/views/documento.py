@@ -338,17 +338,34 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         
                         documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
                         for documento_detalle in documento_detalles:
-                            data = data_general.copy()                            
-                            data['cuenta'] = documento_detalle.item.cuenta_venta_id
-                            data['contacto'] = documento.contacto_id        
-                            data['naturaleza'] = 'C'
-                            data['credito'] = documento_detalle.subtotal
-                            data['detalle'] = 'VENTA'
-                            movimiento_serializador = ConMovimientoSerializador(data=data)
-                            if movimiento_serializador.is_valid():
-                                movimiento_serializador.save()
-                            else:
-                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                            if documento_detalle.documento_afectado:
+                                if documento_detalle.documento_afectado.documento_tipo.cobrar:
+                                    data = data_general.copy()                            
+                                    data['cuenta'] = documento_detalle.documento_afectado.documento_tipo.cuenta_cobrar_id
+                                    data['contacto'] = documento_detalle.documento.contacto_id        
+                                    data['naturaleza'] = 'C'
+                                    data['credito'] = documento_detalle.pago
+                                    data['detalle'] = 'CLIENTE'
+                                    movimiento_serializador = ConMovimientoSerializador(data=data)
+                                    if movimiento_serializador.is_valid():
+                                        movimiento_serializador.save()
+                                    else:
+                                        return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                    
+
+                        if documento.documento_tipo.venta:
+                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
+                            for documento_detalle in documento_detalles:
+                                data = data_general.copy()                            
+                                data['cuenta'] = documento_detalle.item.cuenta_venta_id
+                                data['contacto'] = documento.contacto_id        
+                                data['naturaleza'] = 'C'
+                                data['credito'] = documento_detalle.subtotal
+                                data['detalle'] = 'VENTA'
+                                movimiento_serializador = ConMovimientoSerializador(data=data)
+                                if movimiento_serializador.is_valid():
+                                    movimiento_serializador.save()
+                                else:
+                                    return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
 
                         documento_impuestos = GenDocumentoImpuesto.objects.filter(
                             documento_detalle__documento_id=id
