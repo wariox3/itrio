@@ -31,10 +31,21 @@ class HumAporteViewSet(viewsets.ModelViewSet):
         mes = serializer.validated_data.get('mes')    
         fecha_desde = date(anio, mes, 1)
         ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
-        fecha_hasta = date(anio, mes, 30)
-        fecha_hasta_periodo = date(anio, mes, ultimo_dia_mes)     
+        
+        # Ajustar fecha_hasta y fecha_hasta_periodo a 30 días, excepto para febrero
+        if mes == 2:  # Febrero
+            fecha_hasta = date(anio, mes, ultimo_dia_mes)
+        else:
+            fecha_hasta = date(anio, mes, 30)  # Truncar a 30 días
+        
+        fecha_hasta_periodo = fecha_hasta  # Usar la misma fecha para fecha_hasta_periodo
+        
         anio_salud = anio
         mes_salud = mes + 1
+        if mes_salud > 12:  # Si el mes es diciembre, el siguiente mes es enero del próximo año
+            mes_salud = 1
+            anio_salud += 1
+        
         serializer.save(
             fecha_desde=fecha_desde, 
             fecha_hasta=fecha_hasta, 
@@ -47,16 +58,27 @@ class HumAporteViewSet(viewsets.ModelViewSet):
         mes = serializer.validated_data.get('mes')    
         fecha_desde = date(anio, mes, 1)
         ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
-        fecha_hasta = date(anio, mes, 30)
-        fecha_hasta_periodo = date(anio, mes, ultimo_dia_mes)     
+        
+        # Ajustar fecha_hasta y fecha_hasta_periodo a 30 días, excepto para febrero
+        if mes == 2:  # Febrero
+            fecha_hasta = date(anio, mes, ultimo_dia_mes)
+        else:
+            fecha_hasta = date(anio, mes, 30)  # Truncar a 30 días
+        
+        fecha_hasta_periodo = fecha_hasta  # Usar la misma fecha para fecha_hasta_periodo
+        
         anio_salud = anio
         mes_salud = mes + 1
+        if mes_salud > 12:  # Si el mes es diciembre, el siguiente mes es enero del próximo año
+            mes_salud = 1
+            anio_salud += 1
+        
         serializer.save(
             fecha_desde=fecha_desde, 
             fecha_hasta=fecha_hasta, 
             fecha_hasta_periodo=fecha_hasta_periodo,
             mes_salud=mes_salud,
-            anio_salud=anio_salud) 
+            anio_salud=anio_salud)
         
     @action(detail=False, methods=["post"], url_path=r'cargar-contrato',)
     def cargar_contrato(self, request):
