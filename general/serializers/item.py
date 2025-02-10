@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 class GenItemSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_venta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
+    cuenta_compra = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenItem
         fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'existencia', 'disponible',
