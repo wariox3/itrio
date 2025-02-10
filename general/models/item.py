@@ -13,6 +13,7 @@ class GenItem(models.Model):
     existencia = models.FloatField(default=0)
     disponible = models.FloatField(default=0)
     cuenta_venta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='itemes_cuenta_venta_rel')
+    cuenta_compra = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='itemes_cuenta_compra_rel')
 
     class Meta:
         db_table = "gen_item"  
