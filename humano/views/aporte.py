@@ -119,6 +119,19 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             data['error_terminacion'] = error_terminacion 
                             diferencia = fecha_hasta - fecha_desde
                             dias = diferencia.days + 1
+
+                            # Verificar si el mes es febrero y ajustar los días
+                            if fecha_desde.month == 2 and fecha_hasta.month == 2:
+                                if fecha_hasta.day == 28:
+                                    dias += 2
+                                elif fecha_hasta.day == 29:
+                                    dias += 1
+
+                            if error_terminacion:
+                                dias = 0
+
+                            data['dias'] = dias
+
                             if error_terminacion:
                                 dias = 0
                             data['dias'] = dias
