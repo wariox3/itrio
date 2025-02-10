@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.impuesto import GenImpuesto
+from general.models.empresa import GenEmpresa
 import os
 
 class PredeterminadoView(APIView):
@@ -13,6 +14,9 @@ class PredeterminadoView(APIView):
         raw = request.data
         subdominio = request.tenant.schema_name
         os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures_demanda/con_cuenta.json --schema={subdominio}") 
+        empresa = GenEmpresa.objects.get(pk=1)
+        empresa.asistente_predeterminado = True
+        empresa.save()
         documento_tipo = GenDocumentoTipo.objects.get(pk=1)                
         documento_tipo.cuenta_cobrar_id = 124
         documento_tipo.save() 
