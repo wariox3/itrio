@@ -702,6 +702,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             ).annotate(
                                                 total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
                                             )
+                                            documento_impuestos = list(documento_impuestos)
                                             cantidad_items += 1
                                             arr_item.append({
                                                 "consecutivo": cantidad_items,
@@ -732,6 +733,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         ).annotate(                                            
                                             total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
                                         )
+                                        documento_impuestos = list(documento_impuestos)
                                         datos_factura['documento']['detalles'] = arr_item
                                         datos_factura['doc_cantidad_item'] = cantidad_items
                                         datos_factura['documento']['impuestos'] = documento_impuestos
