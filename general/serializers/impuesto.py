@@ -3,8 +3,7 @@ from general.models.impuesto import GenImpuesto
 from general.models.impuesto_tipo import GenImpuestoTipo
 from contabilidad.models.cuenta import ConCuenta
 
-class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):
-    impuesto_tipo = serializers.PrimaryKeyRelatedField(queryset=GenImpuestoTipo.objects.all(), default=None, allow_null=True)
+class GenImpuestoSerializador(serializers.HyperlinkedModelSerializer):    
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenImpuesto
