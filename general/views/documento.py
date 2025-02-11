@@ -32,8 +32,8 @@ from django.http import HttpResponse
 from django.db.models import Sum, F, Count
 from django.db.models.functions import TruncDay
 from django.utils import timezone
-from django.db.models.functions import Coalesce
-from django.db.models import Sum, Q, DecimalField
+from django.db.models.functions import Coalesce, Cast
+from django.db.models import Sum, Q, DecimalField, CharField
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
@@ -691,26 +691,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         datos_factura['documento']['medios_pago'] = arr_medio_pago
 
                                         arr_item = []
-                                        cantidad_items = 0
-                                        impuestos_agrupados = {}
+                                        cantidad_items = 0                                        
                                         documentoDetalles = GenDocumentoDetalle.objects.filter(documento=id)
-                                        for documentoDetalle in documentoDetalles:
-                                            arr_impuestos = []
-                                            documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=documentoDetalle.id, impuesto__impuesto_tipo_id=1)
-                                            for documentoImpuesto in documentoImpuestos:
-                                                impuesto_id = documentoImpuesto.impuesto_id
-                                                total = documentoImpuesto.total
-                                                arr_impuestos.append({
-                                                    "tipo_impuesto" : documentoImpuesto.impuesto_id,
-                                                    "total" : str(documentoImpuesto.total),
-                                                    "porcentual" : str(documentoImpuesto.porcentaje)
-                                                })
-
-                                                if impuesto_id in impuestos_agrupados:
-                                                    impuestos_agrupados[impuesto_id] += total
-                                                else:
-                                                    impuestos_agrupados[impuesto_id] = total
-
+                                        for documentoDetalle in documentoDetalles:                                                                                    
+                                            documento_impuestos = GenDocumentoImpuesto.objects.filter(
+                                                documento_detalle_id=documentoDetalle.id
+                                            ).values(
+                                                tipo_impuesto=F('impuesto_id'),
+                                                porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
+                                            ).annotate(
+                                                total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
+                                            )
                                             cantidad_items += 1
                                             arr_item.append({
                                                 "consecutivo": cantidad_items,
@@ -730,20 +721,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "total_impuestos" : str(documentoDetalle.impuesto),
                                                 "base" : str(documentoDetalle.base_impuesto),
                                                 "subtotal" : str(documentoDetalle.subtotal),
-                                                "impuestos" : arr_impuestos
+                                                "impuestos" : documento_impuestos
                                             })
-                                        datos_factura['documento']['cantidad_detalles'] = cantidad_items
-                                        arr_impuestos = []
-                                        for impuesto_id, total in impuestos_agrupados.items():
-                                            arr_impuestos.append({
-                                                "tipo_impuesto": impuesto_id,
-                                                "total": str(total),
-                                                "porcentual" : str(19.00)
-                                            })
-                                        
+                                        datos_factura['documento']['cantidad_detalles'] = cantidad_items                                        
+                                        documento_impuestos = GenDocumentoImpuesto.objects.filter(
+                                            documento_detalle__documento_id=id
+                                        ).values(
+                                            tipo_impuesto=F('impuesto_id'),
+                                            porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
+                                        ).annotate(                                            
+                                            total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
+                                        )
                                         datos_factura['documento']['detalles'] = arr_item
                                         datos_factura['doc_cantidad_item'] = cantidad_items
-                                        datos_factura['documento']['impuestos'] = arr_impuestos
+                                        datos_factura['documento']['impuestos'] = documento_impuestos
                                         wolframio = Wolframio()
                                         respuesta = wolframio.emitir(datos_factura)
                                         if respuesta['error'] == False: 
@@ -752,7 +743,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             documento.save()                                        
                                         else:
                                             return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                                        #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)
+                                        #return Response({'datos': datos_factura, 'documento_impuestos':documento_impuestos}, status=status.HTTP_200_OK)
                                     else:
                                         return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                                     
