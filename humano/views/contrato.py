@@ -115,77 +115,179 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
                     'estado_terminado' : False
                 }
 
+                if row[2]:
+                    fechaDesde = str(row[2])   
+                    fecha_valida = datetime.strptime(fechaDesde, "%Y%m%d").date()
+                    data['fecha_desde'] = fecha_valida
+
+                if row[3]:
+                    fechaHasta = str(row[3])
+                    fecha_valida = datetime.strptime(fechaHasta, "%Y%m%d").date()
+                    data['fecha_hasta'] = fecha_valida
+
+                # Validación 1: Fecha hasta no puede ser inferior a fecha desde
+                if data['fecha_hasta'] and data['fecha_desde'] and data['fecha_hasta'] < data['fecha_desde']:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'fecha_hasta': ['La fecha hasta no puede ser inferior a la fecha desde.']
+                        }
+                    }
+                    errores_datos.append(error_dato)
+                    continue
+
+                # Validación 2: Si contrato_tipo es 1, las fechas deben ser iguales
+                if data['contrato_tipo'] == 1 and data['fecha_desde'] != data['fecha_hasta']:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'fecha_desde': ['Para el tipo de contrato 1 indefinido, las fechas desde y hasta deben ser iguales.']
+                        }
+                    }
+                    errores_datos.append(error_dato)
+                    continue
 
                 if data['contacto']:
-                    contacto = GenContacto.objects.filter(codigo=data['contacto']).first()
+                    contacto = GenContacto.objects.filter(id=data['contacto']).first()
                     if contacto:
                         data['contacto'] = contacto.id
 
+                        contrato_activo = HumContrato.objects.filter(contacto_id=contacto.id, estado_terminado=False).exists()
+                        if contrato_activo:
+                            errores = True
+                            error_dato = {
+                                'fila': i,
+                                'errores': {
+                                    'contacto': ['El contacto ya tiene un contrato activo.']
+                                }
+                            }
+                            errores_datos.append(error_dato)
+                            continue
+
+
                 if data['contrato_tipo']:
-                    contratoTipo = HumContratoTipo.objects.filter(codigo=data['contrato_tipo']).first()
+                    contratoTipo = HumContratoTipo.objects.filter(id=data['contrato_tipo']).first()
                     if contratoTipo:
                         data['contrato_tipo'] = contratoTipo.id
 
                 if data['grupo']:
-                    grupo = HumGrupo.objects.filter(codigo=data['grupo']).first()
+                    grupo = HumGrupo.objects.filter(id=data['grupo']).first()
                     if grupo:
                         data['grupo'] = grupo.id
 
                 if data['cargo']:
-                    cargo = HumCargo.objects.filter(codigo=data['cargo']).first()
+                    cargo = HumCargo.objects.filter(id=data['cargo']).first()
                     if cargo:
                         data['cargo'] = cargo.id
 
                 if data['ciudad_contrato']:
-                    ciudadContrato = GenCiudad.objects.filter(codigo=data['ciudad_contrato']).first()
+                    ciudadContrato = GenCiudad.objects.filter(id=data['ciudad_contrato']).first()
                     if cargo:
                         data['ciudad_contrato'] = ciudadContrato.id
 
                 if data['ciudad_labora']:
-                    ciudadLabora = GenCiudad.objects.filter(codigo=data['ciudad_labora']).first()
+                    ciudadLabora = GenCiudad.objects.filter(id=data['ciudad_labora']).first()
                     if ciudadLabora:
                         data['ciudad_labora'] = ciudadLabora.id
 
                 if data['sucursal']:
-                    sucursal = HumSucursal.objects.filter(codigo=data['sucursal']).first()
+                    sucursal = HumSucursal.objects.filter(id=data['sucursal']).first()
                     if sucursal:
                         data['sucursal'] = sucursal.id
 
                 if data['riesgo']:
-                    riesgos = HumRiesgo.objects.filter(codigo=data['riesgo']).first()
+                    riesgos = HumRiesgo.objects.filter(id=data['riesgo']).first()
                     if riesgos:
                         data['riesgo'] = riesgos.id
 
                 if data['tipo_cotizante']:
-                    tipoCotizante = HumTipoCotizante.objects.filter(codigo=data['tipo_cotizante']).first()
+                    tipoCotizante = HumTipoCotizante.objects.filter(id=data['tipo_cotizante']).first()
                     if tipoCotizante:
                         data['tipo_cotizante'] = tipoCotizante.id
 
                 if data['subtipo_cotizante']:
-                    subtipoCotizante = HumSubtipoCotizante.objects.filter(codigo=data['subtipo_cotizante']).first()
+                    subtipoCotizante = HumSubtipoCotizante.objects.filter(id=data['subtipo_cotizante']).first()
                     if subtipoCotizante:
                         data['subtipo_cotizante'] = subtipoCotizante.id
 
                 if data['salud']:
-                    salud = HumSalud.objects.filter(codigo=data['salud']).first()
+                    salud = HumSalud.objects.filter(id=data['salud']).first()
                     if salud:
                         data['salud'] = salud.id
 
                 if data['pension']:
-                    pension = HumPension.objects.filter(codigo=data['pension']).first()
+                    pension = HumPension.objects.filter(id=data['pension']).first()
                     if pension:
                         data['pension'] = pension.id
 
-
                 if data['entidad_salud']:
-                    entidadSalud = HumEntidad.objects.filter(codigo=data['entidad_salud']).first()
+                    entidadSalud = HumEntidad.objects.filter(id=data['entidad_salud']).first()
                     if entidadSalud:
                         data['entidad_salud'] = entidadSalud.id
 
-                if data['entidad_pension']:
-                    entidadPension = HumEntidad.objects.filter(codigo=data['entidad_pension']).first()
+                        if not entidadSalud.salud:
+                            errores = True
+                            error_dato = {
+                                'fila': i,
+                                'errores': {
+                                    'entidad_salud': ['La entidad no está marcada como salud.']
+                                }
+                            }
+                            errores_datos.append(error_dato)
+                            continue
+
+
+                if data['entidad_salud']:
+                    entidadPension = HumEntidad.objects.filter(id=data['entidad_pension']).first()
                     if entidadPension:
                         data['entidad_pension'] = entidadPension.id
+
+                        if not entidadPension.pension:
+                            errores = True
+                            error_dato = {
+                                'fila': i,
+                                'errores': {
+                                    'entidad_pension': ['La entidad no está marcada como pension.']
+                                }
+                            }
+                            errores_datos.append(error_dato)
+                            continue
+
+
+                if data['entidad_cesantias']:
+                    entidadeCesantia = HumEntidad.objects.filter(id=data['entidad_cesantias']).first()
+                    if entidadeCesantia:
+                        data['entidad_cesantias'] = entidadeCesantia.id
+
+                        if not entidadeCesantia.cesantias:
+                            errores = True
+                            error_dato = {
+                                'fila': i,
+                                'errores': {
+                                    'entidad_cesantias': ['La entidad no está marcada como cesantias.']
+                                }
+                            }
+                            errores_datos.append(error_dato)
+                            continue
+                        
+
+                if data['entidad_caja']:
+                    entidadCaja = HumEntidad.objects.filter(id=data['entidad_caja']).first()
+                    if entidadCaja:
+                        data['entidad_caja'] = entidadCaja.id
+
+                        if not entidadCaja.caja:
+                            errores = True
+                            error_dato = {
+                                'fila': i,
+                                'errores': {
+                                    'entidad_caja': ['La entidad no está marcada como caja.']
+                                }
+                            }
+                            errores_datos.append(error_dato)
+                            continue
 
 
                 serializer = HumContratoSerializador(data=data)
@@ -201,9 +303,9 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
                     errores_datos.append(error_dato)    
 
             if not errores:
-                # for detalle in data_modelo:
-                #     GenContacto.objects.create(**detalle)
-                # gc.collect()
+                for detalle in data_modelo:
+                    HumContrato.objects.create(**detalle)
+                gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
                 gc.collect()                    
