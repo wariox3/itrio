@@ -2,6 +2,56 @@
   {
     "model": "general.GenBanco",
     "pk": 1,
-    "fields": {"nombre": "Bancolombia"}
+    "fields": {"nombre": "bancolombia"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 2,
+    "fields": {"nombre": "banco avvillas"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 3,
+    "fields": {"nombre": "davivienda"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 4,
+    "fields": {"nombre": "banco agrario"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 5,
+    "fields": {"nombre": "banco caja social"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 6,
+    "fields": {"nombre": "banco de occidente"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 7,
+    "fields": {"nombre": "colpatria"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 8,
+    "fields": {"nombre": "banco bbva"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 9,
+    "fields": {"nombre": "sudameris"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 10,
+    "fields": {"nombre": "banco itau"}
+  },
+  {
+    "model": "general.GenBanco",
+    "pk": 11,
+    "fields": {"nombre": "banco de bogota"}
   }
 ]
