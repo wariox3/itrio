@@ -5,7 +5,7 @@ class HumSucursalSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = HumSucursal
-        fields = ['id', 'nombre']
+        fields = ['id', 'codigo', 'nombre']
 
     
 
@@ -17,6 +17,7 @@ class HumSucursalListaAutocompletarSerializador(serializers.HyperlinkedModelSeri
     def to_representation(self, instance):
         return {
             'sucursal_id': instance.id,
+            'sucursal_codigo': instance.codigo,
             'sucursal_nombre': instance.nombre,
         }         
         
