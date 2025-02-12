@@ -5,6 +5,7 @@ from general.models.contacto import GenContacto
 from general.models.metodo_pago import GenMetodoPago
 from general.models.empresa import GenEmpresa
 from general.models.plazo_pago import GenPlazoPago
+from general.models.forma_pago import GenFormaPago
 from general.models.gen_asesor import GenAsesor
 from general.models.sede import GenSede
 from general.models.cuenta_banco import GenCuentaBanco
@@ -29,6 +30,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     empresa = serializers.PrimaryKeyRelatedField(queryset=GenEmpresa.objects.all(), default=1)    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)    
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), default=None, allow_null=True)
+    forma_pago = serializers.PrimaryKeyRelatedField(queryset=GenFormaPago.objects.all(), default=None, allow_null=True)
     asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), default=None, allow_null=True)
     sede = serializers.PrimaryKeyRelatedField(queryset=GenSede.objects.all(), default=None, allow_null=True)
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
@@ -142,7 +144,8 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)    
-    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True)    
+    plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True)
+    forma_pago = serializers.PrimaryKeyRelatedField(queryset=GenFormaPago.objects.all(), allow_null=True)    
     class Meta:
         model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
