@@ -46,7 +46,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'fecha_hasta', 
                   'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 'total_bruto', 'total', 
-                  'afectado', 'pendiente', 'contacto', 'documento_tipo', 'metodo_pago', 'empresa', 'base_impuesto', 
+                  'afectado', 'pendiente', 'contacto', 'documento_tipo', 'metodo_pago', 'forma_pago', 'empresa', 'base_impuesto', 
                   'estado_aprobado', 'estado_anulado', 'estado_contabilizado', 'comentario', 'soporte',  
                   'estado_electronico_enviado', 'estado_electronico', 'estado_electronico_notificado', 'estado_electronico_evento',
                   'estado_electronico_descartado',
@@ -78,6 +78,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         documento_tipo_nombre = ""
         if instance.documento_tipo:
             documento_tipo_nombre = instance.documento_tipo.nombre
+        forma_pago_nombre = ""
+        if instance.forma_pago:
+            forma_pago_nombre = instance.forma_pago.nombre
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -136,7 +139,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'comprobante_id': instance.comprobante_id,
             'comprobante_nombre': comprobante_nombre,
             'grupo_contabilidad_id': instance.grupo_contabilidad_id,
-            'grupo_contabilidad_nombre': grupo_contabilidad_nombre
+            'grupo_contabilidad_nombre': grupo_contabilidad_nombre,
+            'forma_pago_id': instance.forma_pago_id,
+            'forma_pago_nombre': forma_pago_nombre
 
         }
     
@@ -150,7 +155,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
         model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'total_bruto', 'total', 'afectado', 'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 'metodo_pago', 
-                  'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 
+                  'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'forma_pago'
                   'estado_electronico_enviado', 'estado_electronico_notificado', 'estado_electronico_evento', 'orden_compra', 
                   'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
 
@@ -188,7 +193,10 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             comprobante_nombre = instance.comprobante.nombre   
         grupo_contabilidad_nombre = ""
         if instance.grupo_contabilidad:
-            grupo_contabilidad_nombre = instance.grupo_contabilidad.nombre               
+            grupo_contabilidad_nombre = instance.grupo_contabilidad.nombre   
+        forma_pago_nombre = ""
+        if instance.forma_pago:
+            forma_pago_nombre = instance.forma_pago.nombre                        
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -246,7 +254,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'comprobante_id': instance.comprobante_id,
             'comprobante_nombre': comprobante_nombre,
             'grupo_contabilidad_id': instance.grupo_contabilidad_id,
-            'grupo_contabilidad_nombre': grupo_contabilidad_nombre      
+            'grupo_contabilidad_nombre': grupo_contabilidad_nombre,
+            'forma_pago_id': instance.forma_pago_id,
+            'forma_pago_nombre': forma_pago_nombre    
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
