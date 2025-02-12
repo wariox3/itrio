@@ -1,0 +1,7 @@
+[
+  {
+    "model": "general.GenFormaPago",
+    "pk": 1,
+    "fields": {"nombre": "Proveedores nacionales"}
+  }
+]

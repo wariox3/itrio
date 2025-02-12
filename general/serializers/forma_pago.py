@@ -1,11 +1,12 @@
-from general.models.forma_pago import FormaPago
+from general.models.forma_pago import GenFormaPago
+from contabilidad.models.cuenta import ConCuenta
 from rest_framework import serializers
 
 class GenFormaPagoSerializador(serializers.HyperlinkedModelSerializer):
+    cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     class Meta:
-        model = FormaPago
-        fields = ['id', 'nombre'
-            ]  
+        model = GenFormaPago
+        fields = ['id', 'nombre', 'cuenta']  
         
     def to_representation(self, instance):
         return {
@@ -15,7 +16,7 @@ class GenFormaPagoSerializador(serializers.HyperlinkedModelSerializer):
     
 class GenFormaPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = FormaPago 
+        model = GenFormaPago 
         
     def to_representation(self, instance):
         return {

@@ -2,9 +2,10 @@ from django.db import models
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.contacto import GenContacto
 from general.models.metodo_pago import GenMetodoPago
+from general.models.plazo_pago import GenPlazoPago
+from general.models.forma_pago import GenFormaPago
 from general.models.resolucion import GenResolucion
 from general.models.empresa import GenEmpresa
-from general.models.plazo_pago import GenPlazoPago
 from general.models.gen_asesor import GenAsesor
 from general.models.sede import GenSede
 from general.models.cuenta_banco import GenCuentaBanco
@@ -61,11 +62,13 @@ class GenDocumento(models.Model):
     referencia_prefijo = models.CharField(max_length=50, null=True)
     documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, related_name='documentos_documento_tipo_rel')
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')
-    metodo_pago = models.ForeignKey(GenMetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
+    
     resolucion = models.ForeignKey(GenResolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
     empresa = models.ForeignKey(GenEmpresa, on_delete=models.PROTECT, related_name='gen_documentos')
     documento_referencia = models.ForeignKey('self', null=True, on_delete=models.PROTECT, related_name='gen_documentos')
-    plazo_pago = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos')
+    metodo_pago = models.ForeignKey(GenMetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos_metodo_pago_rel')
+    plazo_pago = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos_plazo_pago_rel')
+    forma_pago = models.ForeignKey(GenFormaPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos_forma_pago_rel')
     asesor = models.ForeignKey(GenAsesor, null=True, on_delete=models.PROTECT,related_name='documentos_asesor_rel')
     sede = models.ForeignKey(GenSede, null=True, on_delete=models.PROTECT,related_name='documentos_sede_rel')
     usuario = models.ForeignKey(User, null=True, on_delete=models.PROTECT,related_name='documentos_usuario_rel')

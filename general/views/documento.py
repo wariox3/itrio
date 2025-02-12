@@ -335,7 +335,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 movimiento_serializador.save()
                             else:
                                 return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                        
+                            
+                        if documento.documento_tipo.pagar:
+                            data = data_general.copy()
+                            if documento.forma_pago:
+                                data['cuenta'] = documento.forma_pago.cuenta_id
+                            else:
+                                data['cuenta'] = documento.documento_tipo.cuenta_pagar_id                                                        
+                            data['contacto'] = documento.contacto_id        
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.total
+                            data['detalle'] = 'PROVEEDOR'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimiento_serializador.save()
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                                    
                         documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
                         for documento_detalle in documento_detalles:
                             if documento_detalle.documento_afectado:
@@ -365,6 +381,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             movimiento_serializador.save()
                                         else:
                                             return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
+                                    if documento.documento_tipo.compra:
+                                        data = data_general.copy()                            
+                                        data['cuenta'] = documento_detalle.item.cuenta_compra_id
+                                        data['contacto'] = documento.contacto_id        
+                                        data['naturaleza'] = 'D'
+                                        data['debito'] = documento_detalle.subtotal
+                                        data['detalle'] = 'ITEM COMPRA'
+                                        movimiento_serializador = ConMovimientoSerializador(data=data)
+                                        if movimiento_serializador.is_valid():
+                                            movimiento_serializador.save()
+                                        else:
+                                            return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                        
                                 if documento_detalle.tipo_registro == 'C':                                    
                                     data = data_general.copy()                            
                                     data['cuenta'] = documento_detalle.cuenta_id
@@ -384,16 +412,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             documento_detalle__documento_id=id
                         ).values(
                             'impuesto_id',
-                            'impuesto__cuenta_id'
-                        ).annotate(
-                            total=Coalesce(Sum('total'), 0, output_field=DecimalField()),
-                        )
+                            'impuesto__cuenta_id',
+                            'impuesto__compra',
+                            'impuesto__venta'
+                        ).annotate(total=Coalesce(Sum('total'), 0, output_field=DecimalField()),)
                         for documento_impuesto in documento_impuestos:
                             data = data_general.copy()                            
                             data['cuenta'] = documento_impuesto['impuesto__cuenta_id']
                             data['contacto'] = documento.contacto_id        
-                            data['naturaleza'] = 'C'
-                            data['credito'] = documento_impuesto['total']
+                            if documento_impuesto['impuesto__venta']:
+                                data['naturaleza'] = 'C'
+                                data['credito'] = documento_impuesto['total']
+                            if documento_impuesto['impuesto__compra']:
+                                data['naturaleza'] = 'D'
+                                data['debito'] = documento_impuesto['total']                                
                             data['detalle'] = 'IMPUESTO'
                             movimiento_serializador = ConMovimientoSerializador(data=data)
                             if movimiento_serializador.is_valid():
