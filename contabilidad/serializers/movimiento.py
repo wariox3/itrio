@@ -14,7 +14,8 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True, default=None)
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)        
     grupo = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), allow_null=True, default=None)
-
+    detalle = serializers.CharField(allow_null=True, allow_blank=True, required=False)
+    
     class Meta:
         model = ConMovimiento
         fields = ['id', 'numero', 'fecha', 'debito', 'credito', 'base', 'naturaleza', 'cuenta', 'comprobante', 'contacto', 'documento', 

@@ -43,7 +43,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 sheet = wb.active    
             except Exception as e:     
                 return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
-            
+            cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}
+            grupos_map = {g.codigo: g.id for g in ConGrupo.objects.all()}
+            contactos_map = {ct.numero_identificacion: ct.id for ct in GenContacto.objects.all()}
             data_modelo = []
             errores = False
             errores_datos = []
@@ -71,7 +73,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     fecha_valida = datetime.strptime(fecha, "%Y%m%d").date()
                     data['fecha'] = fecha_valida                 
 
-                if data['cuenta']:
+                '''if data['cuenta']:
                     cuenta = ConCuenta.objects.filter(codigo=data['cuenta']).first()
                     if cuenta:
                         data['cuenta'] = cuenta.id 
@@ -84,8 +86,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 if data['contacto']:
                     contacto = GenContacto.objects.filter(numero_identificacion=data['contacto']).first()
                     if contacto:
-                        data['contacto'] = contacto.id                        
+                        data['contacto'] = contacto.id'''
                 
+                data['cuenta'] = cuentas_map.get(data['cuenta'])
+                data['grupo'] = grupos_map.get(data['grupo'])
+                data['contacto'] = contactos_map.get(data['contacto'])
+
                 naturaleza = 'D'
                 if data['credito'] > 0:
                     naturaleza = 'C'
@@ -104,13 +110,20 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     errores_datos.append(error_dato)
 
             if not errores:
+                ConMovimiento.objects.bulk_create([ConMovimiento(**detalle) for detalle in data_modelo])
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+            else:                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)
+            
+            '''if not errores:
                 for detalle in data_modelo:
                     ConMovimiento.objects.create(**detalle)
+                    ConMovimiento.objects.bulk_create([ConMovimiento(**detalle) for detalle in data_modelo])
                 gc.collect()
-                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)            
             else:
                 gc.collect()                    
-                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                          
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)'''                                          
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
