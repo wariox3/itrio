@@ -93,6 +93,7 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         if instance.estado_terminado == False:
             if instance.contrato_tipo_id == 1:
                 fecha_hasta = None
+        tiempo_nombre = ''
         if instance.tiempo:
             tiempo_nombre = instance.tiempo.nombre
         return {
