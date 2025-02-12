@@ -62,7 +62,7 @@ router.register(r'configuracion', ConfiguracionViewSet)
 router.register(r'parametros', ParametrosViewSet)
 router.register(r'configuracion_usuario', ConfiguracionUsuarioViewSet)
 router.register(r'complemento', ComplementoViewSet)
-router.register(r'formapago', FormaPagoViewSet)
+router.register(r'forma_pago', FormaPagoViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
