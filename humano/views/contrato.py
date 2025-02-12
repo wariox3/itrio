@@ -14,6 +14,7 @@ from humano.models.entidad import HumEntidad
 from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
 from humano.models.contrato_tipo import HumContratoTipo
+from humano.models.tiempo import HumTiempo
 from humano.serializers.contrato import HumContratoSerializador
 from django.db.models.deletion import ProtectedError
 from datetime import datetime
@@ -94,24 +95,25 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
                     'contrato_tipo': row[1],
                     'fecha_desde': row[2],
                     'fecha_hasta': row[3],
-                    'salario': row[4],
-                    'auxilio_transporte': row[5],
-                    'salario_integral': row[6],
-                    'grupo': row[7],
-                    'cargo': row[8],
-                    'ciudad_contrato': row[9],
-                    'ciudad_labora': row[10],
-                    'sucursal': row[11],
-                    'riesgo': row[12],
-                    'tipo_cotizante': row[13],
-                    'subtipo_cotizante': row[14],
-                    'salud': row[15],
-                    'pension': row[16],
-                    'entidad_salud': row[17],
-                    'entidad_pension': row[18],
-                    'entidad_cesantias': row[19],
-                    'entidad_caja': row[20],
-                    'comentario': row[21],
+                    'tiempo': row[4],
+                    'salario': row[5],
+                    'auxilio_transporte': row[6],
+                    'salario_integral': row[7],
+                    'grupo': row[8],
+                    'cargo': row[9],
+                    'ciudad_contrato': row[10],
+                    'ciudad_labora': row[11],
+                    'sucursal': row[12],
+                    'riesgo': row[13],
+                    'tipo_cotizante': row[14],
+                    'subtipo_cotizante': row[15],
+                    'salud': row[16],
+                    'pension': row[17],
+                    'entidad_salud': row[18],
+                    'entidad_pension': row[19],
+                    'entidad_cesantias': row[20],
+                    'entidad_caja': row[21],
+                    'comentario': row[22],
                     'estado_terminado' : False
                 }
 
@@ -166,6 +168,10 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
                             errores_datos.append(error_dato)
                             continue
 
+                if data['tiempo']:
+                    tiempo = HumContratoTipo.objects.filter(id=data['tiempo']).first()
+                    if tiempo:
+                        data['tiempo'] = tiempo.id
 
                 if data['contrato_tipo']:
                     contratoTipo = HumContratoTipo.objects.filter(id=data['contrato_tipo']).first()
