@@ -12,6 +12,7 @@ from humano.models.cargo import HumCargo
 from humano.models.salud import HumSalud
 from humano.models.pension import HumPension
 from humano.models.entidad import HumEntidad
+from humano.models.tiempo import HumTiempo
 
 class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     contrato_tipo = serializers.PrimaryKeyRelatedField(queryset=HumContratoTipo.objects.all())
@@ -30,11 +31,12 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     entidad_pension = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)    
     entidad_caja = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
     entidad_cesantias = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
+    tiempo = serializers.PrimaryKeyRelatedField(queryset=HumTiempo.objects.all(), default=None, allow_null=True)
     class Meta:
         model = HumContrato
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'salario', 'auxilio_transporte', 'salario_integral', 'estado_terminado', 
                   'comentario', 'contrato_tipo', 'grupo', 'contacto', 'sucursal', 'riesgo', 'cargo', 'tipo_cotizante', 'subtipo_cotizante',
-                  'salud', 'pension', 'ciudad_contrato', 'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_cesantias']
+                  'salud', 'pension', 'ciudad_contrato', 'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_cesantias', 'tiempo']
 
     def to_representation(self, instance):
         contrato_tipo_nombre = ''
@@ -91,6 +93,8 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         if instance.estado_terminado == False:
             if instance.contrato_tipo_id == 1:
                 fecha_hasta = None
+        if instance.tiempo:
+            tiempo_nombre = instance.tiempo.nombre
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
@@ -135,7 +139,9 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'entidad_cesantias_id': instance.entidad_cesantias_id,
             'entidad_cesantias_nombre': entidad_cesantias_nombre,
             'entidad_caja_id': instance.entidad_caja_id,
-            'entidad_caja_nombre': entidad_caja_nombre
+            'entidad_caja_nombre': entidad_caja_nombre,
+            'tiempo_id' : instance.tiempo_id,
+            'tiempo_nombre' : tiempo_nombre
         } 
 
 

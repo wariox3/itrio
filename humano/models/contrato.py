@@ -11,6 +11,7 @@ from humano.models.pension import HumPension
 from humano.models.tipo_cotizante import HumTipoCotizante
 from humano.models.subtipo_cotizante import HumSubtipoCotizante
 from humano.models.entidad import HumEntidad
+from humano.models.tiempo import HumTiempo
 
 class HumContrato(models.Model):        
     fecha_desde = models.DateField()
@@ -39,6 +40,7 @@ class HumContrato(models.Model):
     entidad_pension = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_pension_rel')
     entidad_cesantias = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_cesantias_rel')
     entidad_caja = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_caja_rel')
+    tiempo = models.ForeignKey(HumTiempo, on_delete=models.PROTECT, null=True, related_name='contratos_tiempo_rel')
 
     class Meta:
         db_table = "hum_contrato"   

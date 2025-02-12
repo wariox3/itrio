@@ -1,0 +1,13 @@
+[
+    {
+      "model": "humano.HumTiempo",
+      "pk": 1,
+      "fields": {"nombre": "Tiempo completo"}
+    },
+    {
+      "model": "humano.HumTiempo",
+      "pk": 2,
+      "fields": {"nombre": "Medio tiempo"}
+    }
+  ]
+  

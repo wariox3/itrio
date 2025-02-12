@@ -233,6 +233,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 data['dias_transporte'] = dias
                                 data['dias_novedad'] = dias_novedad
                                 data['diurna'] = dias * configuracion['hum_factor']
+                                if contrato.tiempo_id == 2:
+                                    data['diurna'] = dias * (configuracion['hum_factor'] / 2)
                                 programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
                                 if programacion_detalle_serializador.is_valid():
                                     programacion_detalle_serializador.save()
@@ -424,7 +426,9 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                             # Variables generales
                             contrato = programacion_detalle.contrato
                             valor_dia_contrato = programacion_detalle.salario / 30
-                            valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']                                                      
+                            if contrato.tiempo_id == 2:
+                                valor_dia_contrato = (programacion_detalle.salario * 2) / 30
+                            valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']
                             data_general = {
                                 'devengado': 0,
                                 'deduccion': 0,
