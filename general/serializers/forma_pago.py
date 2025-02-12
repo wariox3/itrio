@@ -9,9 +9,17 @@ class GenFormaPagoSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'nombre', 'cuenta']  
         
     def to_representation(self, instance):
+        cuenta_codigo = ""
+        cuenta_nombre = ""
+        if instance.cuenta:
+            cuenta_codigo = instance.cuenta.codigo
+            cuenta_nombre = instance.cuenta.nombre
         return {
             'id': instance.id,            
-            'nombre': instance.nombre
+            'nombre': instance.nombre,
+            'cuenta_id': instance.cuenta_id,
+            'cuenta_codigo': cuenta_codigo,
+            'cuenta_nombre': cuenta_nombre
         }        
     
 class GenFormaPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
