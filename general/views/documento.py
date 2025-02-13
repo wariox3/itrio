@@ -744,7 +744,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         documentoDetalles = GenDocumentoDetalle.objects.filter(documento=id)
                                         for documentoDetalle in documentoDetalles:                                                                                    
                                             documento_impuestos = GenDocumentoImpuesto.objects.filter(
-                                                documento_detalle_id=documentoDetalle.id
+                                                documento_detalle_id=documentoDetalle.id,
+                                                impuesto__impuesto_tipo_id=1
                                             ).values(
                                                 tipo_impuesto=F('impuesto_id'),
                                                 porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
@@ -775,7 +776,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             })
                                         datos_factura['documento']['cantidad_detalles'] = cantidad_items                                        
                                         documento_impuestos = GenDocumentoImpuesto.objects.filter(
-                                            documento_detalle__documento_id=id
+                                            documento_detalle__documento_id=id,
+                                            impuesto__impuesto_tipo_id=1
                                         ).values(
                                             tipo_impuesto=F('impuesto_id'),
                                             porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
