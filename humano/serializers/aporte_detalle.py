@@ -140,5 +140,14 @@ class HumAporteDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
             'C_C': instance.cotizacion_caja,
             'C_SENA': instance.cotizacion_sena,
             'C_ICBF': instance.cotizacion_icbf,
-            'TOTAL': instance.cotizacion_total
+            'TOTAL': instance.cotizacion_total,
+            'FECHA_INICIO_INC_GEN': instance.fecha_inicio_incapacidad_general,
+            'FECHA_FIN_INC_GEN': instance.fecha_fin_incapacidad_general,
+            'FECHA_INICIO_LAB_GEN': instance.fecha_inicio_incapacidad_laboral,
+            'FECHA_FIN_LAB_GEN': instance.fecha_fin_incapacidad_laboral,
+            'FECHA_INICIO_LIC_MAT': instance.fecha_inicio_licencia_maternidad,
+            'FECHA_FIN_LIC_MAT': instance.fecha_fin_licencia_maternidad,
+            'FECHA_INICIO_VAC': instance.fecha_inicio_vacaciones,
+            'FECHA_FIN_VAC': instance.fecha_inicio_vacaciones
+
         }                
