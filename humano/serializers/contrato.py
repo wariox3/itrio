@@ -103,6 +103,7 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'fecha_ultimo_pago': instance.fecha_ultimo_pago,
             'fecha_ultimo_pago_prima': instance.fecha_ultimo_pago_prima,
             'fecha_ultimo_pago_cesantia': instance.fecha_ultimo_pago_cesantia,
+            'fecha_ultimo_pago_vacacion': instance.fecha_ultimo_pago_vacacion,
             'salario': instance.salario,
             'auxilio_transporte': instance.auxilio_transporte,
             'salario_integral': instance.salario_integral,
