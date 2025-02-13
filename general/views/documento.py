@@ -34,6 +34,7 @@ from django.db.models.functions import TruncDay
 from django.utils import timezone
 from django.db.models.functions import Coalesce, Cast
 from django.db.models import Sum, Q, DecimalField, CharField
+from django.db import transaction
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.excel import WorkbookEstilos
@@ -305,158 +306,174 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'contabilizar',)
+    @transaction.atomic
     def contabilizar(self, request):        
         raw = request.data
         id = raw.get('id')
-        if id:
-            try:
-                documento = GenDocumento.objects.get(pk=id)                            
-                if documento.estado_aprobado:                    
-                    try:
-                        periodo_id = documento.fecha_contable.strftime("%Y%m")
-                        periodo = ConPeriodo.objects.get(pk=periodo_id)                    
-                        data_general = {
-                            'documento': id,
-                            'periodo': periodo_id,
-                            'numero': documento.numero,
-                            'fecha': documento.fecha_contable,
-                            'comprobante': documento.documento_tipo.comprobante_id
-                        }
-                        
-                        if documento.documento_tipo.cobrar:
-                            data = data_general.copy()                            
-                            data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
-                            data['contacto'] = documento.contacto_id        
-                            data['naturaleza'] = 'D'
-                            data['debito'] = documento.total
-                            data['detalle'] = 'CLIENTE'
-                            movimiento_serializador = ConMovimientoSerializador(data=data)
-                            if movimiento_serializador.is_valid():
-                                movimiento_serializador.save()
-                            else:
-                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                            
-                        if documento.documento_tipo.pagar:
-                            data = data_general.copy()
-                            if documento.forma_pago:
-                                data['cuenta'] = documento.forma_pago.cuenta_id
-                            else:
-                                data['cuenta'] = documento.documento_tipo.cuenta_pagar_id                                                        
-                            data['contacto'] = documento.contacto_id        
-                            data['naturaleza'] = 'C'
-                            data['credito'] = documento.total
-                            data['detalle'] = 'PROVEEDOR'
-                            movimiento_serializador = ConMovimientoSerializador(data=data)
-                            if movimiento_serializador.is_valid():
-                                movimiento_serializador.save()
-                            else:
-                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                                                    
-                        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
-                        for documento_detalle in documento_detalles:
-                            if documento_detalle.documento_afectado:
-                                if documento_detalle.documento_afectado.documento_tipo.cobrar:
-                                    data = data_general.copy()                            
-                                    data['cuenta'] = documento_detalle.documento_afectado.documento_tipo.cuenta_cobrar_id
-                                    data['contacto'] = documento_detalle.documento.contacto_id        
-                                    data['naturaleza'] = 'C'
-                                    data['credito'] = documento_detalle.pago
-                                    data['detalle'] = 'CLIENTE'
-                                    movimiento_serializador = ConMovimientoSerializador(data=data)
-                                    if movimiento_serializador.is_valid():
-                                        movimiento_serializador.save()
-                                    else:
-                                        return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                            else:
-                                if documento_detalle.tipo_registro == 'I':                                                                
-                                    if documento.documento_tipo.venta:
-                                        data = data_general.copy()                            
-                                        data['cuenta'] = documento_detalle.item.cuenta_venta_id
-                                        data['contacto'] = documento.contacto_id        
-                                        data['naturaleza'] = 'C'
-                                        data['credito'] = documento_detalle.subtotal
-                                        data['detalle'] = 'VENTA'
-                                        movimiento_serializador = ConMovimientoSerializador(data=data)
-                                        if movimiento_serializador.is_valid():
-                                            movimiento_serializador.save()
-                                        else:
-                                            return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
-                                    if documento.documento_tipo.compra:
-                                        data = data_general.copy()                            
-                                        data['cuenta'] = documento_detalle.item.cuenta_compra_id
-                                        data['contacto'] = documento.contacto_id        
-                                        data['naturaleza'] = 'D'
-                                        data['debito'] = documento_detalle.subtotal
-                                        data['detalle'] = 'ITEM COMPRA'
-                                        movimiento_serializador = ConMovimientoSerializador(data=data)
-                                        if movimiento_serializador.is_valid():
-                                            movimiento_serializador.save()
-                                        else:
-                                            return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                        
-                                if documento_detalle.tipo_registro == 'C':                                    
-                                    data = data_general.copy()                            
-                                    data['cuenta'] = documento_detalle.cuenta_id
-                                    data['contacto'] = documento_detalle.contacto_id        
-                                    data['naturaleza'] = documento_detalle.naturaleza
-                                    if documento_detalle.naturaleza == 'D':
-                                        data['debito'] = documento_detalle.pago
-                                    if documento_detalle.naturaleza == 'C':
-                                        data['credito'] = documento_detalle.pago
-                                    movimiento_serializador = ConMovimientoSerializador(data=data)
-                                    if movimiento_serializador.is_valid():
-                                        movimiento_serializador.save()
-                                    else:
-                                        return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
-                        
-                        documento_impuestos = GenDocumentoImpuesto.objects.filter(
-                            documento_detalle__documento_id=id
-                        ).values(
-                            'impuesto_id',
-                            'impuesto__cuenta_id',
-                            'impuesto__compra',
-                            'impuesto__venta'
-                        ).annotate(total=Coalesce(Sum('total'), 0, output_field=DecimalField()),)
-                        for documento_impuesto in documento_impuestos:
-                            data = data_general.copy()                            
-                            data['cuenta'] = documento_impuesto['impuesto__cuenta_id']
-                            data['contacto'] = documento.contacto_id        
-                            if documento_impuesto['impuesto__venta']:
-                                data['naturaleza'] = 'C'
-                                data['credito'] = documento_impuesto['total']
-                            if documento_impuesto['impuesto__compra']:
-                                data['naturaleza'] = 'D'
-                                data['debito'] = documento_impuesto['total']                                
-                            data['detalle'] = 'IMPUESTO'
-                            movimiento_serializador = ConMovimientoSerializador(data=data)
-                            if movimiento_serializador.is_valid():
-                                movimiento_serializador.save()
-                            else:
-                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)   
-                                                     
-                        # Pago y Egreso
-                        if documento.documento_tipo_id in [4, 8]:
-                            data = data_general.copy()                            
-                            data['cuenta'] = documento.cuenta_banco.cuenta_id                            
-                            data['naturaleza'] = 'D'
-                            data['debito'] = documento.total
-                            data['detalle'] = 'CUENTA BANCO'
-                            movimiento_serializador = ConMovimientoSerializador(data=data)
-                            if movimiento_serializador.is_valid():
-                                movimiento_serializador.save()
-                            else:
-                                return Response({'validaciones': movimiento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
-                            
-                        documento.estado_contabilizado = True
-                        documento.save()
-                        return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)                    
-                    except ConPeriodo.DoesNotExist:
-                        return Response({'mensaje':f'El periodo contable {periodo_id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                       
-                else:
-                    return Response({'mensaje':'El documento debe estar aprobado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
-            except GenDocumento.DoesNotExist:
-                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
-        else:
+        if not id:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            documento = GenDocumento.objects.get(pk=id)                            
+        except GenDocumento.DoesNotExist:
+            return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                    
+        if not documento.estado_aprobado:   
+            return Response({'mensaje':'El documento debe estar aprobado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                         
+        try:
+            periodo_id = documento.fecha_contable.strftime("%Y%m")
+            periodo = ConPeriodo.objects.get(pk=periodo_id)        
+        except ConPeriodo.DoesNotExist:
+            return Response({'mensaje':f'El periodo contable {periodo_id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+
+        movimientos_validos = []    
+        data_general = {
+            'documento': id,
+            'periodo': periodo_id,
+            'numero': documento.numero,
+            'fecha': documento.fecha_contable,
+            'comprobante': documento.documento_tipo.comprobante_id
+        }
+                
+        if documento.documento_tipo.cobrar:
+            data = data_general.copy()                            
+            data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
+            data['contacto'] = documento.contacto_id        
+            data['naturaleza'] = 'D'
+            data['debito'] = documento.total
+            data['detalle'] = 'CLIENTE'
+            movimiento_serializador = ConMovimientoSerializador(data=data)
+            if movimiento_serializador.is_valid():                
+                movimientos_validos.append(movimiento_serializador)
+            else:
+                return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Cuenta por cobrar'}, status=status.HTTP_400_BAD_REQUEST)
+    
+        if documento.documento_tipo.pagar:
+            data = data_general.copy()
+            if documento.forma_pago:
+                data['cuenta'] = documento.forma_pago.cuenta_id
+            else:
+                data['cuenta'] = documento.documento_tipo.cuenta_pagar_id                                                        
+            data['contacto'] = documento.contacto_id        
+            data['naturaleza'] = 'C'
+            data['credito'] = documento.total
+            data['detalle'] = 'PROVEEDOR'
+            movimiento_serializador = ConMovimientoSerializador(data=data)
+            if movimiento_serializador.is_valid():
+                movimientos_validos.append(movimiento_serializador)
+            else:
+                return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)
+                                    
+        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
+        for documento_detalle in documento_detalles:
+            if documento_detalle.documento_afectado:
+                if documento_detalle.documento_afectado.documento_tipo.cobrar:
+                    data = data_general.copy()                            
+                    data['cuenta'] = documento_detalle.documento_afectado.documento_tipo.cuenta_cobrar_id
+                    data['contacto'] = documento_detalle.documento.contacto_id        
+                    data['naturaleza'] = 'C'
+                    data['credito'] = documento_detalle.pago
+                    data['detalle'] = 'CLIENTE'
+                    movimiento_serializador = ConMovimientoSerializador(data=data)
+                    if movimiento_serializador.is_valid():
+                        movimientos_validos.append(movimiento_serializador)
+                    else:
+                        return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Cuenta por cobrar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                if documento_detalle.tipo_registro == 'I':                                                                
+                    if documento.documento_tipo.venta:
+                        data = data_general.copy()                            
+                        data['cuenta'] = documento_detalle.item.cuenta_venta_id
+                        data['contacto'] = documento.contacto_id        
+                        data['naturaleza'] = 'C'
+                        data['credito'] = documento_detalle.subtotal
+                        data['detalle'] = 'VENTA'
+                        movimiento_serializador = ConMovimientoSerializador(data=data)
+                        if movimiento_serializador.is_valid():
+                            movimientos_validos.append(movimiento_serializador)
+                        else:
+                            return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Item cuenta de venta'}, status=status.HTTP_400_BAD_REQUEST) 
+                    if documento.documento_tipo.compra:
+                        data = data_general.copy()                            
+                        data['cuenta'] = documento_detalle.item.cuenta_compra_id
+                        data['contacto'] = documento.contacto_id        
+                        data['naturaleza'] = 'D'
+                        data['debito'] = documento_detalle.subtotal
+                        data['detalle'] = 'ITEM COMPRA'
+                        movimiento_serializador = ConMovimientoSerializador(data=data)
+                        if movimiento_serializador.is_valid():
+                            movimientos_validos.append(movimiento_serializador)
+                        else:
+                            return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Item cuenta compra'}, status=status.HTTP_400_BAD_REQUEST)  
+                                                                
+                if documento_detalle.tipo_registro == 'C':                                    
+                    data = data_general.copy()                            
+                    data['cuenta'] = documento_detalle.cuenta_id
+                    data['contacto'] = documento_detalle.contacto_id        
+                    data['naturaleza'] = documento_detalle.naturaleza
+                    if documento_detalle.naturaleza == 'D':
+                        data['debito'] = documento_detalle.pago
+                    if documento_detalle.naturaleza == 'C':
+                        data['credito'] = documento_detalle.pago
+                    movimiento_serializador = ConMovimientoSerializador(data=data)
+                    if movimiento_serializador.is_valid():
+                        movimientos_validos.append(movimiento_serializador)
+                    else:
+                        return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
+        
+        documento_impuestos = GenDocumentoImpuesto.objects.filter(
+            documento_detalle__documento_id=id
+        ).values(
+            'impuesto_id',
+            'impuesto__cuenta_id',
+            'impuesto__compra',
+            'impuesto__venta'
+        ).annotate(total=Coalesce(Sum('total'), 0, output_field=DecimalField()),)
+        for documento_impuesto in documento_impuestos:
+            data = data_general.copy()                            
+            data['cuenta'] = documento_impuesto['impuesto__cuenta_id']
+            data['contacto'] = documento.contacto_id        
+            if documento_impuesto['impuesto__venta']:
+                data['naturaleza'] = 'C'
+                data['credito'] = documento_impuesto['total']
+            if documento_impuesto['impuesto__compra']:
+                data['naturaleza'] = 'D'
+                data['debito'] = documento_impuesto['total']                                
+            data['detalle'] = 'IMPUESTO'
+            movimiento_serializador = ConMovimientoSerializador(data=data)
+            if movimiento_serializador.is_valid():
+                movimientos_validos.append(movimiento_serializador)
+            else:
+                return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Impuesto'}, status=status.HTTP_400_BAD_REQUEST)   
+                                        
+        # Pago y Egreso
+        if documento.documento_tipo_id in [4, 8]:
+            data = data_general.copy()                            
+            data['cuenta'] = documento.cuenta_banco.cuenta_id                            
+            data['naturaleza'] = 'D'
+            data['debito'] = documento.total
+            data['detalle'] = 'CUENTA BANCO'
+            movimiento_serializador = ConMovimientoSerializador(data=data)
+            if movimiento_serializador.is_valid():
+                movimientos_validos.append(movimiento_serializador)
+            else:
+                return Response({'validaciones': movimiento_serializador.errors, 
+                                    'mensaje': 'Pago / Egreso cuenta banco'}, status=status.HTTP_400_BAD_REQUEST) 
+        with transaction.atomic():
+            for serializador in movimientos_validos:
+                serializador.save()
+            documento.estado_contabilizado = True
+            documento.save()            
+        return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)                                                                                           
+            
 
     @action(detail=False, methods=["post"], url_path=r'descontabilizar',)
     def descontabilizar(self, request):        
