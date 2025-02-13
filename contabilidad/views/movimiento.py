@@ -72,21 +72,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     data['periodo'] = fecha[:6]
                     fecha_valida = datetime.strptime(fecha, "%Y%m%d").date()
                     data['fecha'] = fecha_valida                 
-
-                '''if data['cuenta']:
-                    cuenta = ConCuenta.objects.filter(codigo=data['cuenta']).first()
-                    if cuenta:
-                        data['cuenta'] = cuenta.id 
-
-                if data['grupo']:
-                    grupo = ConGrupo.objects.filter(codigo=data['grupo']).first()
-                    if grupo:
-                        data['grupo'] = grupo.id                         
-
-                if data['contacto']:
-                    contacto = GenContacto.objects.filter(numero_identificacion=data['contacto']).first()
-                    if contacto:
-                        data['contacto'] = contacto.id'''
                 
                 data['cuenta'] = cuentas_map.get(data['cuenta'])
                 data['grupo'] = grupos_map.get(data['grupo'])
@@ -113,17 +98,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 ConMovimiento.objects.bulk_create([ConMovimiento(**detalle) for detalle in data_modelo])
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:                    
-                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)
-            
-            '''if not errores:
-                for detalle in data_modelo:
-                    ConMovimiento.objects.create(**detalle)
-                    ConMovimiento.objects.bulk_create([ConMovimiento(**detalle) for detalle in data_modelo])
-                gc.collect()
-                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)            
-            else:
-                gc.collect()                    
-                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)'''                                          
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)        
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
@@ -243,8 +218,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
         filtros = request.data.get("filtros", [])
-
-        # Extraer las fechas desde los filtros
         fecha_desde = None
         fecha_hasta = None
         for filtro in filtros:
@@ -253,7 +226,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             if filtro["propiedad"] == "fecha_hasta__lte":
                 fecha_hasta = filtro["valor1"]
         
-        # Validar que las fechas estén presentes
         if not fecha_desde or not fecha_hasta:
             return Response(
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
