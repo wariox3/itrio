@@ -234,7 +234,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 data['dias_novedad'] = dias_novedad
                                 data['diurna'] = dias * configuracion['hum_factor']
                                 if contrato.tiempo_id == 2:
-                                    data['diurna'] = dias * (configuracion['hum_factor'] / 2)
+                                    data['diurna'] = round(dias * (configuracion['hum_factor'] / 2), 3)
                                 programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
                                 if programacion_detalle_serializador.is_valid():
                                     programacion_detalle_serializador.save()
