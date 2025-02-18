@@ -452,6 +452,7 @@ class GenDocumentoNominaSerializador(serializers.HyperlinkedModelSerializer):
             'estado_aprobado': instance.estado_aprobado,
             'estado_anulado': instance.estado_anulado,
             'estado_electronico': instance.estado_electronico,
+            'estado_contabilizado': instance.estado_contabilizado,
             'cue': instance.cue
         } 
 
