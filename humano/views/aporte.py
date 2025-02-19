@@ -90,11 +90,14 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 if aporte.estado_generado == False:
                     cantidad = 0                    
                     contratos = HumContrato.objects.filter(
-                            #grupo_id=programacion.grupo_id                        
-                            ).filter(
-                                Q(fecha_desde__lte=aporte.fecha_hasta_periodo)                            
-                            ).filter(
-                                Q(fecha_hasta__gte=aporte.fecha_desde) | Q(contrato_tipo_id=1))                    
+                            # grupo_id=programacion.grupo_id
+                        ).filter(
+                            Q(fecha_desde__lte=aporte.fecha_hasta_periodo)
+                        ).filter(
+                            Q(fecha_hasta__gte=aporte.fecha_desde) | Q(contrato_tipo_id=1)
+                        ).filter(
+                            sucursal_id=aporte.sucursal.id
+                        ) 
                     #sql_query = str(contratos.query)
                     #print(sql_query)
                     empleados = contratos.values("contacto_id").distinct().count()
