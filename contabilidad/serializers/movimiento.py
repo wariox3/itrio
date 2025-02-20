@@ -19,7 +19,7 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ConMovimiento
         fields = ['id', 'numero', 'fecha', 'debito', 'credito', 'base', 'naturaleza', 'cuenta', 'comprobante', 'contacto', 'documento', 
-                  'periodo', 'grupo', 'detalle']
+                  'periodo', 'grupo', 'detalle', 'cierre']
 
     def to_representation(self, instance):
         cuenta_codigo = ''
@@ -52,6 +52,7 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
             'base': instance.base ,
             'naturaleza': instance.naturaleza,
             'detalle': instance.detalle,
+            'cierre': instance.cierre,
             'cuenta_id': instance.cuenta_id,
             'cuenta_codigo': cuenta_codigo,
             'cuenta_nombre': cuenta_nombre,

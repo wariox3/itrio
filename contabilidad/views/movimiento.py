@@ -63,14 +63,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'grupo': row[7],
                     'contacto': row[8],
                     'detalle': row[9],
-                    'periodo': None,
+                    'periodo': row[10],
+                    'cierre': row[11],
                     'documento': None
                 }  
 
-                if row[1]:
-                    fecha = row[1]        
-                    data['periodo'] = fecha[:6]
-                    fecha_valida = datetime.strptime(fecha, "%Y%m%d").date()
+                if row[1]:       
+                    fecha_valida = datetime.strptime(row[1], "%Y%m%d").date()
                     data['fecha'] = fecha_valida                 
                 
                 data['cuenta'] = cuentas_map.get(data['cuenta'])
@@ -102,7 +101,11 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
-    def obtener_balance_prueba(self, fecha_desde, fecha_hasta):
+    def obtener_balance_prueba(self, fecha_desde, fecha_hasta, cierre = False):
+        parametro_cierre = ' AND m.cierre = false '
+        if cierre == True:
+            parametro_cierre = ''
+            
         query = f'''
             SELECT
                 c.id,
@@ -114,8 +117,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 c.nivel,
                 COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.debito ELSE 0 END), 0) AS debito_anterior,
                 COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.credito ELSE 0 END), 0) AS credito_anterior,
-                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' THEN m.debito ELSE 0 END), 0) AS debito,
-                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' THEN m.credito ELSE 0 END), 0) AS credito
+                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre} THEN m.debito ELSE 0 END), 0) AS debito,
+                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre} THEN m.credito ELSE 0 END), 0) AS credito
             FROM
                 con_cuenta c
             LEFT JOIN
@@ -220,39 +223,43 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         filtros = request.data.get("filtros", [])
         fecha_desde = None
         fecha_hasta = None
+        cierre = False
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde__gte":
+            if filtro["propiedad"] == "fecha_desde":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta__lte":
+            if filtro["propiedad"] == "fecha_hasta":
                 fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"]                
         
         if not fecha_desde or not fecha_hasta:
             return Response(
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta)
+        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
         return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=["post"], url_path=r'imprimir')
     def informe_balance_prueba_pdf(self, request):
         filtros = request.data.get("filtros", [])
-
-        # Validar y procesar filtros
         fecha_desde = None
         fecha_hasta = None
+        cierre = False
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde__gte":
+            if filtro["propiedad"] == "fecha_desde":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta__lte":
+            if filtro["propiedad"] == "fecha_hasta":
                 fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"] 
 
         if not fecha_desde or not fecha_hasta:
             return Response(
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta)
+        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
 
         # Crear PDF dinámicamente
         try:
@@ -328,11 +335,14 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         filtros = request.data.get("filtros", [])
         fecha_desde = None
         fecha_hasta = None
+        cierre = False
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde__gte":
+            if filtro["propiedad"] == "fecha_desde":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta__lte":
+            if filtro["propiedad"] == "fecha_hasta":
                 fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"] 
 
         if not fecha_desde or not fecha_hasta:
             return Response(
@@ -340,7 +350,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta)
+        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
 
         encabezados_personalizados = {
             "CUENTA": "codigo",
