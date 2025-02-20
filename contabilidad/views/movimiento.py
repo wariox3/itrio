@@ -223,7 +223,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         filtros = request.data.get("filtros", [])
         fecha_desde = None
         fecha_hasta = None
-        cierre = False
+        cierre = False        
         for filtro in filtros:
             if filtro["propiedad"] == "fecha_desde":
                 fecha_desde = filtro["valor1"]
