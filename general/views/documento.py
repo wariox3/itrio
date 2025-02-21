@@ -323,17 +323,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                          
         try:
             periodo_id = documento.fecha_contable.strftime("%Y%m")
-            periodo = ConPeriodo.objects.get(pk=periodo_id)        
+            periodo = ConPeriodo.objects.get(pk=periodo_id)
+            if periodo.estado_bloqueado == True:
+                return Response({'mensaje': f'El periodo {periodo_id} esta aprobado y no es posible contabilizar el documento', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         except ConPeriodo.DoesNotExist:
             return Response({'mensaje':f'El periodo contable {periodo_id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
         movimientos_validos = []    
+        if documento.documento_tipo_id == 13:
+            comprobante_id = documento.comprobante_id
+        else:
+            comprobante_id = documento.documento_tipo.comprobante_id
         data_general = {
             'documento': id,
             'periodo': periodo_id,
             'numero': documento.numero,
             'fecha': documento.fecha_contable,
-            'comprobante': documento.documento_tipo.comprobante_id
+            'comprobante': comprobante_id
         }
                 
         if documento.documento_tipo.cobrar:
@@ -418,15 +424,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     data['contacto'] = documento_detalle.contacto_id        
                     data['naturaleza'] = documento_detalle.naturaleza
                     if documento_detalle.naturaleza == 'D':
-                        data['debito'] = documento_detalle.pago
+                        data['debito'] = documento_detalle.precio
                     if documento_detalle.naturaleza == 'C':
-                        data['credito'] = documento_detalle.pago
+                        data['credito'] = documento_detalle.precio
                     movimiento_serializador = ConMovimientoSerializador(data=data)
                     if movimiento_serializador.is_valid():
                         movimientos_validos.append(movimiento_serializador)
                     else:
-                        return Response({'validaciones': movimiento_serializador.errors, 
-                                    'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
+                        return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
         
         documento_impuestos = GenDocumentoImpuesto.objects.filter(
             documento_detalle__documento_id=id
@@ -467,6 +472,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'validaciones': movimiento_serializador.errors, 
                                     'mensaje': 'Pago / Egreso cuenta banco'}, status=status.HTTP_400_BAD_REQUEST) 
+        
         with transaction.atomic():
             for serializador in movimientos_validos:
                 serializador.save()
@@ -474,7 +480,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             documento.save()            
         return Response({'estado_contabilizado': True}, status=status.HTTP_200_OK)                                                                                           
             
-
     @action(detail=False, methods=["post"], url_path=r'descontabilizar',)
     def descontabilizar(self, request):        
         raw = request.data
@@ -501,8 +506,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if id:
             try:
                 documento = GenDocumento.objects.get(pk=id)
-                if documento.estado_aprobado == True and documento.estado_anulado == False:              
-                    if documento.documento_tipo.documento_clase_id in (200, 400):                    
+                if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False:              
+                    # Pago, Egreso, Asiento
+                    if documento.documento_tipo.documento_clase_id in (200, 400, 601):                    
                         documento.estado_aprobado = False
                         if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
                             documento.pendiente = 0   
@@ -518,7 +524,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     else:
                        return Response({'mensaje':'El documento no permite desaprobacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
                 else:
-                    return Response({'mensaje':'El documento no esta aprobado o esta anulado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                
+                    return Response({'mensaje':'El documento debe estar aprobado, sin anular y sin contabilizar para permitir la accion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
