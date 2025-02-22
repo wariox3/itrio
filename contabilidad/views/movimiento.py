@@ -218,6 +218,66 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
 
+    def obtener_balance_prueba_tercero(self, fecha_desde, fecha_hasta, cierre = False):
+        parametro_cierre = ' AND m.cierre = false '
+        if cierre == True:
+            parametro_cierre = ''
+            
+        query = f'''
+            SELECT                
+                m.cuenta_id,    
+                c.codigo,
+                c.nombre,
+                m.contacto_id,
+                co.nombre_corto,
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_cuenta_id,
+                c.nivel,
+                MIN(m.id) as id,
+                COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.debito ELSE 0 END), 0) AS debito_anterior,
+                COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.credito ELSE 0 END), 0) AS credito_anterior,
+                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre} THEN m.debito ELSE 0 END), 0) AS debito,
+                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre} THEN m.credito ELSE 0 END), 0) AS credito
+            FROM
+                con_movimiento m
+            LEFT JOIN
+                con_cuenta c ON m.cuenta_id = c.id
+            LEFT JOIN
+                gen_contacto co ON m.contacto_id = co.id    
+            GROUP BY
+                m.cuenta_id, m.contacto_id, co.nombre_corto, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
+            ORDER BY
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_cuenta_id;
+        '''
+        resultados = ConMovimiento.objects.raw(query)
+        
+        # Procesar resultados
+        resultados_json = []        
+        for cuenta in resultados:
+            saldo_anterior = cuenta.debito_anterior - cuenta.credito_anterior
+            saldo_actual = saldo_anterior + (cuenta.debito - cuenta.credito)
+            resultados_json.append({
+                'tipo': 'movimiento',
+                'cuenta_id': cuenta.cuenta_id,
+                'codigo': cuenta.codigo,
+                'nombre': cuenta.nombre,
+                'contacto_id': cuenta.contacto_id,
+                'contacto_nombre': cuenta.nombre_corto,
+                'cuenta_clase_id': cuenta.cuenta_clase_id,
+                'cuenta_grupo_id': cuenta.cuenta_grupo_id,
+                'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
+                'nivel': cuenta.nivel,
+                'saldo_anterior': saldo_anterior,
+                'debito': cuenta.debito,
+                'credito': cuenta.credito,
+                'saldo_actual': saldo_actual
+            })                                        
+        #resultados_json.sort(key=lambda x: str(x['codigo']))
+        return resultados_json
+
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
         filtros = request.data.get("filtros", [])
@@ -240,6 +300,29 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
         return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
     
+    @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba-tercero',)
+    def informe_balance_prueba_tercero(self, request):    
+        filtros = request.data.get("filtros", [])
+        fecha_desde = None
+        fecha_hasta = None
+        cierre = False        
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta":
+                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"]                
+        
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        resultados_cuenta_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
+        resultados_tercero_json = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
+        return Response({'registros': resultados_tercero_json}, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=["post"], url_path=r'imprimir')
     def informe_balance_prueba_pdf(self, request):
         filtros = request.data.get("filtros", [])
