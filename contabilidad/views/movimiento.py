@@ -13,19 +13,11 @@ from io import BytesIO
 from django.db.models import F,Sum
 from io import BytesIO
 from django.http import HttpResponse
-from reportlab.lib.pagesizes import letter, landscape
-from reportlab.pdfgen import canvas
-from reportlab.platypus import Table, TableStyle
-from reportlab.lib import colors
 from utilidades.excel import WorkbookEstilos
-from datetime import datetime
 from openpyxl import Workbook
-from openpyxl.styles import Alignment, numbers, NamedStyle
-from openpyxl.utils import get_column_letter
+from general.formatos.balance_prueba import FormatoBalancePrueba
 import base64
 import openpyxl
-import json
-import gc
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ConMovimiento.objects.all()
@@ -312,6 +304,14 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
+        if pdf:
+            formato = FormatoBalancePrueba()
+            pdf = formato.generar_pdf(id, fecha_desde, fecha_hasta, resultados_json)
+            nombre_archivo = f"balance_prueba{fecha_desde}.pdf"
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+            return response
         if excel:
             wb = Workbook()
             ws = wb.active
