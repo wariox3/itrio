@@ -21,6 +21,20 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'numero', 'fecha', 'debito', 'credito', 'base', 'naturaleza', 'cuenta', 'comprobante', 'contacto', 'documento', 
                   'periodo', 'grupo', 'detalle', 'cierre']
 
+    def validate(self, data):
+        cuenta = data.get('cuenta')
+        base = data.get('base', 0)
+        if cuenta:
+            if cuenta.permite_movimiento is False:
+                raise serializers.ValidationError({"cuenta": "La cuenta no permite movimientos."})
+            if cuenta.exige_grupo and data.get('grupo') is None:
+                raise serializers.ValidationError({"grupo": "La cuenta exige grupo."})
+            if cuenta.exige_base and base == 0:
+                raise serializers.ValidationError({"base": "Si la cuenta exige base, la base no puede ser 0."})
+            if cuenta.exige_contacto and data.get('contacto') is None:
+                raise serializers.ValidationError({"contacto": "La cuenta exige contacto."})
+        return data
+
     def to_representation(self, instance):
         cuenta_codigo = ''
         cuenta_nombre = ''
