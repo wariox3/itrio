@@ -41,12 +41,15 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                 'grupo_id',
                 'contacto_id',
                 'base',
+                'documento_id',
                 'cuenta__codigo',
                 'cuenta__nombre',
                 'cuenta__permite_movimiento',
                 'cuenta__exige_grupo',
                 'cuenta__exige_contacto',
                 'cuenta__exige_base',
+                'documento__documento_tipo__nombre'
+                
             )
         for movimiento in movimientos:
             if movimiento['cuenta__permite_movimiento'] == False:
@@ -54,6 +57,8 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                     'comprobante_id': movimiento['comprobante_id'],
                     'numero': movimiento['numero'],
                     'cuenta_id': movimiento['cuenta_id'],
+                    'documento_id': movimiento['documento_id'],
+                    'documento_tipo_nombre': movimiento['documento__documento_tipo__nombre'],
                     'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} no permite movimientos y tiene movimientos en el periodo'
                 }) 
             if movimiento['cuenta__exige_grupo'] == True:
@@ -62,6 +67,8 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                         'comprobante_id': movimiento['comprobante_id'],
                         'numero': movimiento['numero'],
                         'cuenta_id': movimiento['cuenta_id'],
+                        'documento_id': movimiento['documento_id'],
+                        'documento_tipo_nombre': movimiento['documento__documento_tipo__nombre'],                        
                         'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} exige grupo y no tiene grupo'
                     })
             if movimiento['cuenta__exige_contacto'] == True:
@@ -70,6 +77,8 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                         'comprobante_id': movimiento['comprobante_id'],
                         'numero': movimiento['numero'],
                         'cuenta_id': movimiento['cuenta_id'],
+                        'documento_id': movimiento['documento_id'],
+                        'documento_tipo_nombre': movimiento['documento__documento_tipo__nombre'],                        
                         'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} exige contacto y no tiene contacto'
                     })
             if movimiento['cuenta__exige_base'] == True:
@@ -78,6 +87,8 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                         'comprobante_id': movimiento['comprobante_id'],
                         'numero': movimiento['numero'],
                         'cuenta_id': movimiento['cuenta_id'],
+                        'documento_id': movimiento['documento_id'],
+                        'documento_tipo_nombre': movimiento['documento__documento_tipo__nombre'],                        
                         'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} exige base y no tiene base'
                     })           
         return inconsistencias
