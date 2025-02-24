@@ -11,10 +11,6 @@ from contabilidad.serializers.movimiento import ConMovimientoSerializador
 from datetime import datetime
 from io import BytesIO
 from django.db.models import F,Sum
-import base64
-import openpyxl
-import json
-import gc
 from io import BytesIO
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter, landscape
@@ -22,9 +18,14 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib import colors
 from utilidades.excel import WorkbookEstilos
-from openpyxl import Workbook
 from datetime import datetime
-from openpyxl.styles import Alignment, numbers
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, numbers, NamedStyle
+from openpyxl.utils import get_column_letter
+import base64
+import openpyxl
+import json
+import gc
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = ConMovimiento.objects.all()
@@ -141,10 +142,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             saldo_anterior = cuenta.debito_anterior - cuenta.credito_anterior
             saldo_actual = saldo_anterior + (cuenta.debito - cuenta.credito)
             resultados_json.append({
-                'tipo': 'movimiento',
+                'tipo': 'AUXILIAR',
                 'id': cuenta.id,
                 'codigo': cuenta.codigo,
                 'nombre': cuenta.nombre,
+                'contacto_id': None,
+                'contacto_nombre': None,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
                 'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
@@ -159,10 +162,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             clase_id = cuenta.cuenta_clase_id
             if clase_id not in clases_dict:
                 clases_dict[clase_id] = {
-                    'tipo': 'clase',
+                    'tipo': 'CLASE',
                     'id': clase_id,
                     'codigo': str(clase_id),
                     'nombre': "",
+                    'contacto_id': None,
+                    'contacto_nombre': None,                    
                     'cuenta_clase_id': clase_id,
                     'nivel': 1,
                     'saldo_anterior': 0,
@@ -178,10 +183,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             grupo_id = cuenta.cuenta_grupo_id
             if grupo_id not in grupos_dict:
                 grupos_dict[grupo_id] = {
-                    'tipo': 'grupo',
+                    'tipo': 'GRUPO',
                     'id': grupo_id,
                     'codigo': str(grupo_id),
                     'nombre': "",
+                    'contacto_id': None,
+                    'contacto_nombre': None,                    
                     'cuenta_grupo_id': grupo_id,
                     'saldo_anterior': 0,
                     'debito': 0,
@@ -196,10 +203,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             cuenta_id = cuenta.cuenta_cuenta_id
             if cuenta_id not in cuentas_dict:
                 cuentas_dict[cuenta_id] = {
-                    'tipo': 'cuenta',
+                    'tipo': 'CUENTA',
                     'id': cuenta_id,
                     'codigo': str(cuenta_id),
                     'nombre': "",
+                    'contacto_id': None,
+                    'contacto_nombre': None,                    
                     'cuenta_cuenta_id': cuenta_id,
                     'saldo_anterior': 0,
                     'debito': 0,
@@ -260,7 +269,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             saldo_anterior = cuenta.debito_anterior - cuenta.credito_anterior
             saldo_actual = saldo_anterior + (cuenta.debito - cuenta.credito)
             resultados_json.append({
-                'tipo': 'movimiento',
+                'tipo': 'TERCERO',
                 'cuenta_id': cuenta.cuenta_id,
                 'codigo': cuenta.codigo,
                 'nombre': cuenta.nombre,
@@ -302,7 +311,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba-tercero',)
     def informe_balance_prueba_tercero(self, request):    
-        filtros = request.data.get("filtros", [])
+        raw = request.data
+        filtros = raw.get("filtros", [])
+        excel = raw.get('excel', False)
         fecha_desde = None
         fecha_hasta = None
         cierre = False        
@@ -319,9 +330,37 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        resultados_cuenta_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
-        resultados_tercero_json = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
-        return Response({'registros': resultados_tercero_json}, status=status.HTTP_200_OK)
+        resultados_cuenta = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
+        resultados = resultados_cuenta + resultados_tercero
+        resultados.sort(key=lambda x: str(x['codigo']))
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Balance de prueba tercero"
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.append(headers)
+            for registro in resultados:
+                ws.append([
+                    registro['tipo'],
+                    registro['codigo'],
+                    registro['nombre'],
+                    registro['contacto_nombre'],
+                    registro['saldo_anterior'],
+                    registro['debito'],
+                    registro['credito'],
+                    registro['saldo_actual']
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=balance_prueba_tercero.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'imprimir')
     def informe_balance_prueba_pdf(self, request):

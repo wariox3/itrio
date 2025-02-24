@@ -1,5 +1,5 @@
 from openpyxl import Workbook
-from openpyxl.styles import PatternFill, Alignment, Font
+from openpyxl.styles import PatternFill, Alignment, Font, numbers
 from openpyxl.utils import get_column_letter
 
 class WorkbookEstilos(Workbook):
@@ -10,17 +10,20 @@ class WorkbookEstilos(Workbook):
         self.alignment = Alignment(horizontal='left')
         self.fill = PatternFill(start_color="9CDFEB", end_color="9CDFEB", fill_type="solid")
 
-    def aplicar_estilos(self):
+    def aplicar_estilos(self, formato_numero=None):
         for sheet in self.wb.sheetnames:
             ws = self.wb[sheet]
             for row in ws.iter_rows():
                 for cell in row:
-                    cell.font = self.font
+                    cell.font = self.font                    
                     if cell.row == 1: 
                         cell.font = self.bold_font
                         cell.fill = self.fill
+                    else:
+                        if cell.column in formato_numero:
+                            cell.number_format = '#,##0.00'
                     if isinstance(cell.value, (int, float)):
-                        cell.alignment = Alignment(horizontal='right')                         
+                        cell.alignment = Alignment(horizontal='right')                                                                                                
                     if isinstance(cell.value, bool):
                         cell.value = "SI" if cell.value else "NO"
 
