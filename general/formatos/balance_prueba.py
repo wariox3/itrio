@@ -10,7 +10,7 @@ class FormatoBalancePrueba:
     def __init__(self):
         self.encabezado = FormatoEncabezado()
 
-    def generar_pdf(self, id, fecha_desde, fecha_hasta, resultados_json):
+    def generar_pdf(self, fecha_desde, fecha_hasta, resultados_json):
         buffer = BytesIO()
         pdf = canvas.Canvas(buffer, pagesize=letter)
         pdf.setTitle("Informe Balance de Prueba")

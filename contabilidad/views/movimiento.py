@@ -306,7 +306,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
         if pdf:
             formato = FormatoBalancePrueba()
-            pdf = formato.generar_pdf(id, fecha_desde, fecha_hasta, resultados_json)
+            pdf = formato.generar_pdf(fecha_desde, fecha_hasta, resultados_json)
             nombre_archivo = f"balance_prueba{fecha_desde}.pdf"
             response = HttpResponse(pdf, content_type='application/pdf')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
