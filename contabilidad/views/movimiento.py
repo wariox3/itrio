@@ -291,7 +291,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
-        filtros = request.data.get("filtros", [])
+        raw = request.data
+        filtros = raw.get("filtros", [])
+        excel = raw.get('excel', False)
+        pdf = raw.get('pdf', False)
         fecha_desde = None
         fecha_hasta = None
         cierre = False        
@@ -309,7 +312,32 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
-        return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Balance de prueba"
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.append(headers)
+            for registro in resultados_json:
+                ws.append([
+                    registro['tipo'],
+                    registro['codigo'],
+                    registro['nombre'],                    
+                    registro['saldo_anterior'],
+                    registro['debito'],
+                    registro['credito'],
+                    registro['saldo_actual']
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([4,5,6,7])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=balance_prueba.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba-tercero',)
     def informe_balance_prueba_tercero(self, request):    
@@ -363,162 +391,3 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return response
         else:
             return Response({'registros': resultados}, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=["post"], url_path=r'imprimir')
-    def informe_balance_prueba_pdf(self, request):
-        filtros = request.data.get("filtros", [])
-        fecha_desde = None
-        fecha_hasta = None
-        cierre = False
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
-                fecha_hasta = filtro["valor1"]
-            if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"] 
-
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
-
-        # Crear PDF dinámicamente
-        try:
-            buffer = BytesIO()
-            pdf = canvas.Canvas(buffer, pagesize=letter)
-            pdf.setTitle("Informe Balance de Prueba")
-
-            # Configuración general
-            line_height = 20
-            margin_top = 680
-            margin_left = 30
-            current_y = margin_top
-
-            # Función para dibujar encabezados
-            def draw_headers(pdf, current_y):
-                pdf.setFont("Helvetica-Bold", 9)
-                pdf.drawString(margin_left, current_y, "Código")
-                pdf.drawString(margin_left + 60, current_y, "Nombre")
-                pdf.drawString(margin_left + 260, current_y, "Anterior")
-                pdf.drawString(margin_left + 340, current_y, "Débito")
-                pdf.drawString(margin_left + 420, current_y, "Crédito")
-                pdf.drawString(margin_left + 500, current_y, "Actual")
-
-            # Título inicial
-            pdf.setFont("Helvetica-Bold", 9)
-            pdf.drawString(50, 750, "Balance de Prueba")
-            pdf.setFont("Helvetica", 8)
-            pdf.drawString(50, 730, f"Generado el: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-            pdf.drawString(50, 710, f"Periodo: {fecha_desde} a {fecha_hasta}")
-
-            # Dibujar encabezados iniciales
-            draw_headers(pdf, current_y)
-            current_y -= line_height
-
-            # Iterar resultados y generar contenido
-            pdf.setFont("Helvetica", 8)
-            for i, resultado in enumerate(resultados_json):
-                if current_y < 50:  # Crear nueva página si no hay suficiente espacio
-                    pdf.showPage()
-                    pdf.setFont("Helvetica-Bold", 9)
-                    pdf.drawString(50, 750, "Balance de Prueba")
-                    pdf.setFont("Helvetica", 8)
-                    pdf.drawString(50, 730, f"Generado el: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-                    pdf.drawString(50, 710, f"Periodo: {fecha_desde} a {fecha_hasta}")
-
-                    # Dibujar encabezados en la nueva página
-                    draw_headers(pdf, margin_top)
-                    current_y = margin_top - line_height
-
-                # Dibujar contenido de cada fila
-                pdf.setFont("Helvetica", 8)
-                pdf.drawString(margin_left, current_y, str(resultado['codigo']))
-                pdf.drawString(margin_left + 60, current_y, resultado['nombre'][:30])
-                pdf.drawRightString(margin_left + 305, current_y, f"{resultado['saldo_anterior']:,.2f}")
-                pdf.drawRightString(margin_left + 385, current_y, f"{resultado['debito']:,.2f}")
-                pdf.drawRightString(margin_left + 465, current_y, f"{resultado['credito']:,.2f}")
-                pdf.drawRightString(margin_left + 545, current_y, f"{resultado['saldo_actual']:,.2f}")
-                current_y -= line_height
-
-            # Finalizar el PDF
-            pdf.save()
-            buffer.seek(0)
-            response = HttpResponse(buffer, content_type='application/pdf')
-            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            response['Content-Disposition'] = 'attachment; filename="informe_balance_prueba.pdf"'
-            return response
-
-        except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    @action(detail=False, methods=["post"], url_path=r'excel')
-    def informe_balance_prueba_excel(self, request):
-        filtros = request.data.get("filtros", [])
-        fecha_desde = None
-        fecha_hasta = None
-        cierre = False
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
-                fecha_hasta = filtro["valor1"]
-            if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"] 
-
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
-
-        encabezados_personalizados = {
-            "CUENTA": "codigo",
-            "NOMBRE": "nombre",
-            "ANTERIOR": "saldo_anterior",
-            "DEBITO": "debito",
-            "CREDITO": "credito",
-            "ACTUAL": "saldo_actual"
-        }
-
-        # Crear el Excel
-        wb = Workbook()
-        ws = wb.active
-
-        # Agregar encabezados personalizados
-        ws.append(list(encabezados_personalizados.keys()))
-
-        # Agregar datos correspondientes a los encabezados
-        for row in resultados_json:
-            fila = []
-            for campo, key in encabezados_personalizados.items():
-                value = row.get(key, "")
-                if isinstance(value, datetime) and value.tzinfo is not None:
-                    value = value.replace(tzinfo=None)  # Eliminar la zona horaria
-                fila.append(value)
-            ws.append(fila)
-
-        columnas_numericas = ["ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
-        for col_header in columnas_numericas:
-            col_index = list(encabezados_personalizados.keys()).index(col_header) + 1
-            for cell in ws.iter_cols(min_col=col_index, max_col=col_index, min_row=2):
-                for celda in cell:
-                    celda.alignment = Alignment(horizontal="right")  # Alinear a la derecha
-                    celda.number_format = "#,##0.00"
-
-        # Aplicar estilos
-        estilos_excel = WorkbookEstilos(wb)
-        estilos_excel.aplicar_estilos()
-
-        # Crear el nombre del archivo con fechas
-        nombre_archivo = f"balance_prueba_{fecha_desde}_al_{fecha_hasta}.xlsx"
-
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-        response['Content-Disposition'] = f'attachment; filename={nombre_archivo}'
-        wb.save(response)
-        return response
