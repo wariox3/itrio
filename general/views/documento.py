@@ -439,18 +439,27 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             'impuesto_id',
             'impuesto__cuenta_id',
             'impuesto__compra',
-            'impuesto__venta'
+            'impuesto__venta',
+            'impuesto__operacion'
         ).annotate(total=Coalesce(Sum('total'), 0, output_field=DecimalField()),)
         for documento_impuesto in documento_impuestos:
             data = data_general.copy()                            
             data['cuenta'] = documento_impuesto['impuesto__cuenta_id']
             data['contacto'] = documento.contacto_id        
             if documento_impuesto['impuesto__venta']:
-                data['naturaleza'] = 'C'
-                data['credito'] = documento_impuesto['total']
+                if documento_impuesto['impuesto__operacion'] == 1:
+                    data['naturaleza'] = 'C'
+                    data['credito'] = documento_impuesto['total']
+                if documento_impuesto['impuesto__operacion'] == -1:
+                    data['naturaleza'] = 'D'
+                    data['debito'] = documento_impuesto['total']                    
             if documento_impuesto['impuesto__compra']:
-                data['naturaleza'] = 'D'
-                data['debito'] = documento_impuesto['total']                                
+                if documento_impuesto['impuesto__operacion'] == 1:
+                    data['naturaleza'] = 'D'
+                    data['debito'] = documento_impuesto['total']
+                if documento_impuesto['impuesto__operacion'] == -1:
+                    data['naturaleza'] = 'C'
+                    data['credito'] = documento_impuesto['total']
             data['detalle'] = 'IMPUESTO'
             movimiento_serializador = ConMovimientoSerializador(data=data)
             if movimiento_serializador.is_valid():
