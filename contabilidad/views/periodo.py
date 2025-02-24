@@ -19,10 +19,68 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                 'comprobante_id', 
                 'numero'
             ).annotate(
-            total_debito=Sum('debito'),
-            total_credito=Sum('credito')
+                total_debito=Sum('debito'),
+                total_credito=Sum('credito')
         )        
-        return None
+        inconsistencias = []
+        for movimiento in movimientos:
+            diferencia = movimiento['total_debito'] - movimiento['total_credito']
+            if diferencia > 1 or diferencia < -1:
+                inconsistencias.append({
+                    'comprobante_id': movimiento['comprobante_id'],
+                    'numero': movimiento['numero'],
+                    'cuenta_id': None,
+                    'inconsistencia': 'El total de debito y credito no coinciden'
+                })
+        movimientos = ConMovimiento.objects.filter(
+            periodo=id
+            ).values(
+                'comprobante_id',
+                'numero',
+                'cuenta_id',
+                'grupo_id',
+                'contacto_id',
+                'base',
+                'cuenta__codigo',
+                'cuenta__nombre',
+                'cuenta__permite_movimiento',
+                'cuenta__exige_grupo',
+                'cuenta__exige_contacto',
+                'cuenta__exige_base',
+            )
+        for movimiento in movimientos:
+            if movimiento['cuenta__permite_movimiento'] == False:
+                inconsistencias.append({
+                    'comprobante_id': movimiento['comprobante_id'],
+                    'numero': movimiento['numero'],
+                    'cuenta_id': movimiento['cuenta_id'],
+                    'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} no permite movimientos y tiene movimientos en el periodo'
+                }) 
+            if movimiento['cuenta__exige_grupo'] == True:
+                if movimiento['grupo_id'] is None:
+                    inconsistencias.append({
+                        'comprobante_id': movimiento['comprobante_id'],
+                        'numero': movimiento['numero'],
+                        'cuenta_id': movimiento['cuenta_id'],
+                        'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} exige grupo y no tiene grupo'
+                    })
+            if movimiento['cuenta__exige_contacto'] == True:
+                if movimiento['contacto_id'] is None:
+                    inconsistencias.append({
+                        'comprobante_id': movimiento['comprobante_id'],
+                        'numero': movimiento['numero'],
+                        'cuenta_id': movimiento['cuenta_id'],
+                        'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} exige contacto y no tiene contacto'
+                    })
+            if movimiento['cuenta__exige_base'] == True:
+                if movimiento['base'] is None or movimiento['base'] == 0:
+                    inconsistencias.append({
+                        'comprobante_id': movimiento['comprobante_id'],
+                        'numero': movimiento['numero'],
+                        'cuenta_id': movimiento['cuenta_id'],
+                        'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} exige base y no tiene base'
+                    })           
+        return inconsistencias
 
     @action(detail=False, methods=["get"], url_path=r'anio',)
     def anio(self, request):
@@ -113,8 +171,8 @@ class PeriodoViewSet(viewsets.ModelViewSet):
         if id:
             periodo = ConPeriodo.objects.get(pk=id)
             if periodo:            
-                self.analizar_inconsistencias(id)    
-                return Response({'mensaje': 'Inconsistencia'}, status=status.HTTP_200_OK)
+                inconsistencias = self.analizar_inconsistencias(id)    
+                return Response({'mensaje': 'Inconsistencia', 'inconsistencias': inconsistencias}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje': 'No existe el periodo'}, status=status.HTTP_400_BAD_REQUEST)                
         else:
