@@ -228,12 +228,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         return resultados_json
 
     def obtener_balance_prueba_tercero(self, fecha_desde, fecha_hasta, cierre = False):
-        parametro_cierre = ' AND m.cierre = false '
+        parametro_cierre = ' AND ma.cierre = false '
         if cierre == True:
             parametro_cierre = ''
             
         query = f'''
-            SELECT                
+            SELECT
+                MIN(m.id) AS id,
                 m.cuenta_id,    
                 c.codigo,
                 c.nombre,
@@ -242,18 +243,19 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 c.cuenta_clase_id,
                 c.cuenta_grupo_id,
                 c.cuenta_cuenta_id,
-                c.nivel,
-                MIN(m.id) as id,
-                COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.debito ELSE 0 END), 0) AS debito_anterior,
-                COALESCE(SUM(CASE WHEN m.fecha < '{fecha_desde}' THEN m.credito ELSE 0 END), 0) AS credito_anterior,
-                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre} THEN m.debito ELSE 0 END), 0) AS debito,
-                COALESCE(SUM(CASE WHEN m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre} THEN m.credito ELSE 0 END), 0) AS credito
+                c.nivel,   
+                COALESCE((SELECT SUM(debito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id and ma.fecha < '{fecha_desde}'), 0) AS debito_anterior,
+                COALESCE((SELECT SUM(credito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id and ma.fecha < '{fecha_desde}'), 0) AS credito_anterior,
+                COALESCE((SELECT SUM(debito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {parametro_cierre} and ma.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}'), 0) AS debito,
+                COALESCE((SELECT SUM(credito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {parametro_cierre} and ma.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}'), 0) AS credito
             FROM
                 con_movimiento m
             LEFT JOIN
                 con_cuenta c ON m.cuenta_id = c.id
             LEFT JOIN
-                gen_contacto co ON m.contacto_id = co.id    
+                gen_contacto co ON m.contacto_id = co.id  
+            WHERE 
+                m.fecha <= '{fecha_hasta}' and m.contacto_id is not null   
             GROUP BY
                 m.cuenta_id, m.contacto_id, co.nombre_corto, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
