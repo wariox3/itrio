@@ -386,7 +386,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     data['cuenta'] = documento_detalle.documento_afectado.documento_tipo.cuenta_cobrar_id
                     data['contacto'] = documento_detalle.documento.contacto_id        
                     data['naturaleza'] = 'C'
-                    data['credito'] = documento_detalle.pago
+                    data['credito'] = documento_detalle.precio
                     data['detalle'] = 'CLIENTE'
                     movimiento_serializador = ConMovimientoSerializador(data=data)
                     if movimiento_serializador.is_valid():

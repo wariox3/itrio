@@ -106,7 +106,7 @@ class FormatoEgreso:
             "cuenta__nombre",
             "cuenta__codigo",
             "naturaleza",
-            "pago",
+            "precio",
         )
 
         for detalle in documento_detalles:
@@ -115,7 +115,7 @@ class FormatoEgreso:
                 Paragraph(detalle["contacto__nombre_corto"] or "", cell_style),
                 Paragraph(f"{detalle['cuenta__codigo'] or ''} - {detalle['cuenta__nombre'] or ''}", cell_style),
                 detalle["naturaleza"] or "",
-                f"{detalle['pago']:.2f}" if detalle["pago"] else "",
+                f"{detalle['precio']:.2f}" if detalle["precio"] else "",
             ])
 
         # Anchos fijos para las columnas
