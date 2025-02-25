@@ -7,6 +7,8 @@ from contabilidad.models.grupo import ConGrupo
 from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
 from humano.models.novedad import HumNovedad
+from inventario.models.almacen import InvAlmacen
+
 from rest_framework import serializers
 
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
@@ -19,6 +21,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
     credito = serializers.PrimaryKeyRelatedField(queryset=HumCredito.objects.all(), default=None, allow_null=True)
     novedad = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), default=None, allow_null=True)
+    almacen = serializers.PrimaryKeyRelatedField(queryset=InvAlmacen.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = GenDocumentoDetalle
@@ -26,7 +29,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'operacion', 'pago_operado', 
-                  'devengado', 'deduccion', 'dias']
+                  'devengado', 'deduccion', 'dias', 'almacen']
 
     def to_representation(self, instance):
         item = instance.item
@@ -56,6 +59,9 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         concepto_nombre = ''
         if instance.concepto:
             concepto_nombre = instance.concepto.nombre
+        almacen_nombre = ""
+        if instance.almacen:
+            almacen_nombre = instance.almacen.nombre            
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,        
@@ -99,7 +105,9 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'concepto_nombre': concepto_nombre,
             'credito_id': instance.credito_id,
             'grupo_id': instance.grupo_id,
-            'grupo_nombre': grupo_nombre
+            'grupo_nombre': grupo_nombre,
+            'almacen_id': instance.almacen_id,
+            'almacen_nombre': almacen_nombre            
         }  
 
 class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):

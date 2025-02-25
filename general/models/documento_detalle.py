@@ -7,6 +7,7 @@ from contabilidad.models.grupo import ConGrupo
 from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
 from humano.models.novedad import HumNovedad
+from inventario.models.almacen import InvAlmacen
 
 class GenDocumentoDetalle(models.Model):    
     tipo_registro = models.CharField(max_length=1, default="I") # I=Item, C=Cuenta
@@ -43,6 +44,7 @@ class GenDocumentoDetalle(models.Model):
     concepto = models.ForeignKey(HumConcepto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_concepto_rel')
     credito = models.ForeignKey(HumCredito, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_credito_rel')
     novedad = models.ForeignKey(HumNovedad, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_novedad_rel')
+    almacen = models.ForeignKey(InvAlmacen, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_almacen_rel')
 
     class Meta:
         db_table = "gen_documento_detalle"
