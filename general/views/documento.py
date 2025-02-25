@@ -13,6 +13,7 @@ from humano.models.contrato import HumContrato
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.periodo import ConPeriodo
 from contabilidad.models.movimiento import ConMovimiento
+from inventario.models.existencia import InvExistencia
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
@@ -516,9 +517,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
 
-
-                                                                                                   
-            
     @action(detail=False, methods=["post"], url_path=r'descontabilizar',)
     def descontabilizar(self, request):        
         raw = request.data
