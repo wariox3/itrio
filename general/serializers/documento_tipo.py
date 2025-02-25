@@ -45,5 +45,15 @@ class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_pagar_codigo': cuenta_pagar_codigo,
             'cuenta_pagar_nombre' : cuenta_pagar_nombre
             
-        }        
+        } 
+
+class GenDocumentoTipoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = GenDocumentoTipo 
+        
+    def to_representation(self, instance):
+        return {
+            'documento_tipo_id': instance.id,            
+            'documento_tipo_nombre': instance.nombre
+        }            
         
