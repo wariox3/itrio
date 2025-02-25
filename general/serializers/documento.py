@@ -15,6 +15,7 @@ from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
+from inventario.models.almacen import InvAlmacen
 from seguridad.models import User
 
 class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):        
@@ -41,6 +42,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_banco = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBanco.objects.all(), default=None, allow_null=True)
     comprobante = serializers.PrimaryKeyRelatedField(queryset=ConComprobante.objects.all(), default=None, allow_null=True)
     grupo_contabilidad = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), default=None, allow_null=True)
+    almacen = serializers.PrimaryKeyRelatedField(queryset=InvAlmacen.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = GenDocumento
@@ -52,7 +54,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_electronico_descartado',
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
                   'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 
-                  'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
+                  'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
@@ -81,6 +83,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         forma_pago_nombre = ""
         if instance.forma_pago:
             forma_pago_nombre = instance.forma_pago.nombre
+        almacen_nombre = ""
+        if instance.almacen:
+            almacen_nombre = instance.almacen.nombre
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -141,7 +146,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'grupo_contabilidad_id': instance.grupo_contabilidad_id,
             'grupo_contabilidad_nombre': grupo_contabilidad_nombre,
             'forma_pago_id': instance.forma_pago_id,
-            'forma_pago_nombre': forma_pago_nombre
+            'forma_pago_nombre': forma_pago_nombre,
+            'almacen_id': instance.almacen_id,
+            'almacen_nombre': almacen_nombre
 
         }
     
@@ -151,13 +158,14 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     documento_referencia = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), allow_null=True)    
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True)
     forma_pago = serializers.PrimaryKeyRelatedField(queryset=GenFormaPago.objects.all(), allow_null=True)    
+    almacen = serializers.PrimaryKeyRelatedField(queryset=InvAlmacen.objects.all(), allow_null=True)    
     class Meta:
         model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'total_bruto', 'total', 'afectado', 'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 'metodo_pago', 
                   'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'forma_pago'
                   'estado_electronico_enviado', 'estado_electronico_notificado', 'estado_electronico_evento', 'orden_compra', 
-                  'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo']
+                  'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen']
 
     def to_representation(self, instance):
         contacto_numero_identificacion = ""
@@ -196,7 +204,10 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             grupo_contabilidad_nombre = instance.grupo_contabilidad.nombre   
         forma_pago_nombre = ""
         if instance.forma_pago:
-            forma_pago_nombre = instance.forma_pago.nombre                        
+            forma_pago_nombre = instance.forma_pago.nombre    
+        almacen_nombre = ""
+        if instance.almacen:
+            almacen_nombre = instance.almacen.nombre                                
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -256,7 +267,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'grupo_contabilidad_id': instance.grupo_contabilidad_id,
             'grupo_contabilidad_nombre': grupo_contabilidad_nombre,
             'forma_pago_id': instance.forma_pago_id,
-            'forma_pago_nombre': forma_pago_nombre    
+            'forma_pago_nombre': forma_pago_nombre,
+            'almacen_id': instance.almacen_id,
+            'almacen_nombre': almacen_nombre                
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    

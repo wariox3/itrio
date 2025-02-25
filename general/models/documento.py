@@ -15,6 +15,7 @@ from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
+from inventario.models.almacen import InvAlmacen
 from seguridad.models import User
 
 class GenDocumento(models.Model):    
@@ -61,8 +62,7 @@ class GenDocumento(models.Model):
     referencia_numero = models.IntegerField(null=True)
     referencia_prefijo = models.CharField(max_length=50, null=True)
     documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, related_name='documentos_documento_tipo_rel')
-    contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')
-    
+    contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')    
     resolucion = models.ForeignKey(GenResolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
     empresa = models.ForeignKey(GenEmpresa, on_delete=models.PROTECT, related_name='gen_documentos')
     documento_referencia = models.ForeignKey('self', null=True, on_delete=models.PROTECT, related_name='gen_documentos')
@@ -79,6 +79,7 @@ class GenDocumento(models.Model):
     cuenta_banco = models.ForeignKey(GenCuentaBanco, null=True, on_delete=models.PROTECT, related_name='documentos_cuenta_banco_rel')
     comprobante = models.ForeignKey(ConComprobante, null=True, on_delete=models.PROTECT, related_name='documentos_comprobante_rel')
     grupo_contabilidad = models.ForeignKey(ConGrupo, null=True, on_delete=models.PROTECT, related_name='documentos_grupo_contabilidad_rel')
+    almacen = models.ForeignKey(InvAlmacen, null=True, on_delete=models.PROTECT, related_name='documentos_almacen_rel')
 
     class Meta:
         db_table = "gen_documento"
