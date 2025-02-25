@@ -2044,7 +2044,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else :
             return Response({'mensaje': 'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
-
     @staticmethod
     def notificar(documento_id):
         try:
