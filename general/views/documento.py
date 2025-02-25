@@ -311,7 +311,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def contabilizar(self, request):        
         raw = request.data
         ids = raw.get('ids')
-        if not ids:
+        if ids:
             cantidad = 0
             for id in ids:
                 try:
