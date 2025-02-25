@@ -451,7 +451,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             'impuesto__venta',
             'impuesto__operacion',
             'documento_detalle__documento__documento_tipo_id'
-        ).annotate(total=Coalesce(Sum('total'), 0, output_field=DecimalField()),)
+        ).annotate(
+            total=Coalesce(Sum('total'), 0, output_field=DecimalField()),
+            base=Coalesce(Sum('base'), 0, output_field=DecimalField()),
+        )
         for documento_impuesto in documento_impuestos:
             data = data_general.copy()                            
             data['cuenta'] = documento_impuesto['impuesto__cuenta_id']
@@ -480,6 +483,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento_impuesto['impuesto__operacion'] == -1:
                     data['naturaleza'] = 'C'
                     data['credito'] = documento_impuesto['total']
+            data['base'] = documento_impuesto['base']
             data['detalle'] = 'IMPUESTO'
             movimiento_serializador = ConMovimientoSerializador(data=data)
             if movimiento_serializador.is_valid():
@@ -512,19 +516,24 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'descontabilizar',)
     def descontabilizar(self, request):        
         raw = request.data
-        id = raw.get('id')
-        if id:
-            try:
-                documento = GenDocumento.objects.get(pk=id)                            
-                if documento.estado_contabilizado:                    
-                    movimientos = ConMovimiento.objects.filter(documento_id=id).delete()
-                    documento.estado_contabilizado = False
-                    documento.save()
-                    return Response({'estado_contabilizado': False}, status=status.HTTP_200_OK) 
-                else:
-                    return Response({'mensaje':'El documento debe estar contabilizado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
-            except GenDocumento.DoesNotExist:
-                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        ids = raw.get('ids')
+        if ids:            
+            cantidad = 0
+            for id in ids:
+                try:
+                    documento = GenDocumento.objects.get(pk=id)                            
+                    if documento.estado_contabilizado:
+                        movimiento_validar_periodo = ConMovimiento.objects.filter(documento_id=id).first()
+                        if movimiento_validar_periodo:       
+                            periodo = ConPeriodo.objects.get(pk=movimiento_validar_periodo.periodo_id)
+                            if periodo.estado_bloqueado == False:
+                                movimientos = ConMovimiento.objects.filter(documento_id=id).delete()
+                                documento.estado_contabilizado = False
+                                documento.save()      
+                                cantidad += 1                                   
+                except GenDocumento.DoesNotExist:
+                    return Response({'mensaje':f'El documento id {id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                        
+            return Response({'mensaje': f'{cantidad} documentos descontabilizados'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
