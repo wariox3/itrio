@@ -20,7 +20,7 @@ class WorkbookEstilos(Workbook):
                         cell.font = self.bold_font
                         cell.fill = self.fill
                     else:
-                        if cell.column in formato_numero:
+                        if formato_numero is not None and cell.column in formato_numero:
                             cell.number_format = '#,##0.00'
                     if isinstance(cell.value, (int, float)):
                         cell.alignment = Alignment(horizontal='right')                                                                                                
@@ -39,3 +39,4 @@ class WorkbookEstilos(Workbook):
                 
                 adjusted_width = (max_length + 1)
                 ws.column_dimensions[column_letter].width = adjusted_width
+
