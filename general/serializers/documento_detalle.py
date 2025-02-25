@@ -61,7 +61,12 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             concepto_nombre = instance.concepto.nombre
         almacen_nombre = ""
         if instance.almacen:
-            almacen_nombre = instance.almacen.nombre            
+            almacen_nombre = instance.almacen.nombre,
+        documento_numero = ""
+        documento_fecha = None
+        if instance.documento:
+            documento_numero = instance.documento.numero
+            documento_fecha = instance.documento.fecha
         return {
             'id': instance.id,            
             'documento_id': instance.documento_id,        
@@ -107,7 +112,9 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'grupo_id': instance.grupo_id,
             'grupo_nombre': grupo_nombre,
             'almacen_id': instance.almacen_id,
-            'almacen_nombre': almacen_nombre            
+            'almacen_nombre': almacen_nombre,
+            'documento_numero': documento_numero,
+            'documento_fecha': documento_fecha      
         }  
 
 class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):
