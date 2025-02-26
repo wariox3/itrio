@@ -1729,7 +1729,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             errores = False
             errores_datos = []
             registros_importados = 0
-            if documento.documento_tipo_id in [8, 9]:
+            if documento.documento_tipo_id in [9, 10]:
                 for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                     if len(row) == 4:
                         data = {
