@@ -306,7 +306,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if documento_detalle.documento_afectado:
                             if documento.documento_tipo.documento_clase_id in (200,400):
                                 documento_afectado = documento_detalle.documento_afectado                        
-                                documento_afectado.afectado += documento_detalle.pago
+                                documento_afectado.afectado += documento_detalle.precio
                                 documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
                                 documento_afectado.save(update_fields=['afectado', 'pendiente'])     
                                 
@@ -348,7 +348,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if documento_detalle.documento_afectado:
                                     if documento.documento_tipo.documento_clase_id in (200,400):
                                         documento_afectado = documento_detalle.documento_afectado                        
-                                        documento_afectado.afectado -= documento_detalle.pago
+                                        documento_afectado.afectado -= documento_detalle.precio
                                         documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
                                         documento_afectado.save(update_fields=['afectado', 'pendiente'])
                                                                                                 
@@ -2217,11 +2217,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     .exclude(documento_afectado_id__isnull=True)
                     .values('documento_afectado_id')
                     .annotate(
-                        total_pago=Sum('pago'),
+                        total_precio=Sum('precio'),
                         pendiente=F('documento_afectado__pendiente')))                        
                 for entrada in resultado:
-                    if entrada['pendiente'] < entrada['total_pago']:
-                        return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
+                    if entrada['pendiente'] < entrada['total_precio']:
+                        return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_precio']}", 'codigo':1}                            
                 #result_list = list(resultado)
                 #print(result_list)
             
