@@ -84,11 +84,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             pagos = raw.get('pagos')
             if detalles is not None:
                 for detalle in detalles:                
-                    detalle['documento'] = documento.id
-                    detalle['operacion_inventario'] = documento_tipo.operacion_inventario
-                    detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
+                    detalle['documento'] = documento.id                    
+                    if detalle['tipo_registro'] == "I":
+                        detalle['operacion_inventario'] = documento_tipo.operacion_inventario
+                        detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
                     detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
-                    if detalleSerializador.is_valid():
+                    if detalleSerializador.is_valid():                        
                         documentoDetalle = detalleSerializador.save() 
                         impuestos = detalle.get('impuestos')
                         if impuestos is not None:
