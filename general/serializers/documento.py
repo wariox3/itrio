@@ -54,7 +54,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_electronico_descartado',
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
                   'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 
-                  'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen']
+                  'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen', 'evento_documento', 'evento_recepcion', 'evento_aceptacion']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
@@ -148,7 +148,10 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'forma_pago_id': instance.forma_pago_id,
             'forma_pago_nombre': forma_pago_nombre,
             'almacen_id': instance.almacen_id,
-            'almacen_nombre': almacen_nombre
+            'almacen_nombre': almacen_nombre,
+            'evento_documento': instance.evento_documento,
+            'evento_recepcion': instance.evento_documento,
+            'evento_aceptacion': instance.evento_aceptacion,
 
         }
     
@@ -307,6 +310,9 @@ class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):
             'empresa': instance.empresa_id,
             'resolucion': instance.resolucion_id,
             'comentario' : instance.comentario,
+            'evento_documento': instance.evento_documento,
+            'evento_recepcion': instance.evento_documento,
+            'evento_aceptacion': instance.evento_aceptacion,
         }    
     
 class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer):    
