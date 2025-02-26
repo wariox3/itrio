@@ -78,16 +78,16 @@
     "model": "general.GenDocumentoTipo",
     "pk": 9,
     "fields": {
-      "nombre": "ENTRADA",
-      "documento_clase": 500
+      "nombre": "ENTRADA ALMACEN",
+      "documento_clase": 500, "invenario": true, "operacion_inventario": 1
     }
   },
   {
     "model": "general.GenDocumentoTipo",
     "pk": 10,
     "fields": {
-      "nombre": "SALIDA",
-      "documento_clase": 501
+      "nombre": "SALIDA ALMACEN",
+      "documento_clase": 501, "invenario": true, "operacion_inventario": -1
     }
   },
   {

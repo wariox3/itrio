@@ -283,7 +283,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     consecutivo = documentoTipo.consecutivo
                 else: 
                     consecutivo = documento.numero
-                respuesta = self.validacion_aprobar(id, consecutivo)
+                respuesta = self.validacion_aprobar(documento, consecutivo)
                 if respuesta['error'] == False:                         
                     if documento.numero is None:
                         documento.numero = documentoTipo.consecutivo
@@ -298,11 +298,42 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             documento_afectado = documento_detalle.documento_afectado                        
                             documento_afectado.afectado += documento_detalle.pago
                             documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
-                            documento_afectado.save(update_fields=['afectado', 'pendiente'])
+                            documento_afectado.save(update_fields=['afectado', 'pendiente'])                            
                     documento.save()
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'desaprobar',)
+    def desaprobar(self, request):        
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)
+                if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False:              
+                    # Pago, Egreso, Asiento, 
+                    if documento.documento_tipo.documento_clase_id in (200,400,500,601):                    
+                        documento.estado_aprobado = False
+                        if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
+                            documento.pendiente = 0   
+                        if documento.documento_tipo.documento_clase_id in (200,400):
+                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
+                            for documento_detalle in documento_detalles:
+                                documento_afectado = documento_detalle.documento_afectado                        
+                                documento_afectado.afectado -= documento_detalle.pago
+                                documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                documento_afectado.save(update_fields=['afectado', 'pendiente'])
+                        documento.save()
+                        return Response({'estado_aprobado': False}, status=status.HTTP_200_OK)
+                    else:
+                       return Response({'mensaje':'El documento no permite desaprobacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
+                else:
+                    return Response({'mensaje':'El documento debe estar aprobado, sin anular y sin contabilizar para permitir la accion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -540,37 +571,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 except GenDocumento.DoesNotExist:
                     return Response({'mensaje':f'El documento id {id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                        
             return Response({'mensaje': f'{cantidad} documentos descontabilizados'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=["post"], url_path=r'desaprobar',)
-    def desaprobar(self, request):        
-        raw = request.data
-        id = raw.get('id')
-        if id:
-            try:
-                documento = GenDocumento.objects.get(pk=id)
-                if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False:              
-                    # Pago, Egreso, Asiento
-                    if documento.documento_tipo.documento_clase_id in (200, 400, 601):                    
-                        documento.estado_aprobado = False
-                        if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
-                            documento.pendiente = 0   
-                        if documento.documento_tipo.documento_clase_id in (200,400):
-                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
-                            for documento_detalle in documento_detalles:
-                                documento_afectado = documento_detalle.documento_afectado                        
-                                documento_afectado.afectado -= documento_detalle.pago
-                                documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
-                                documento_afectado.save(update_fields=['afectado', 'pendiente'])
-                        documento.save()
-                        return Response({'estado_aprobado': False}, status=status.HTTP_200_OK)
-                    else:
-                       return Response({'mensaje':'El documento no permite desaprobacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
-                else:
-                    return Response({'mensaje':'El documento debe estar aprobado, sin anular y sin contabilizar para permitir la accion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                
-            except GenDocumento.DoesNotExist:
-                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -2163,45 +2163,49 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return {'error':True, 'mensaje':'El documento no existe'}        
     
     @staticmethod
-    def validacion_aprobar(documento_id, consecutivo):
-        try:
-            documento = GenDocumento.objects.get(id=documento_id)
-            fecha = date.today()
-            if documento.estado_aprobado == False:
-                if documento.documento_tipo.documento_clase_id in (100,303):
-                    documento_detalle = GenDocumentoDetalle.objects.filter(documento=documento)
-                    if documento_detalle or documento.documento_tipo_id == 15:
-                        if documento.resolucion:
-                            if isinstance(documento.resolucion.fecha_hasta, date):
-                                if documento.resolucion.fecha_hasta <= fecha:
-                                    return {'error':True, 'mensaje':'La fecha de la resolucion esta vencida', 'codigo':1}
-                            if consecutivo < documento.resolucion.consecutivo_desde or consecutivo > documento.resolucion.consecutivo_hasta:
-                                return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
-                    else:
-                        return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1} 
+    def validacion_aprobar(documento: GenDocumento, consecutivo):
+        fecha = date.today()
+        if documento.estado_aprobado == False:
+            if documento.documento_tipo.documento_clase_id in (100,303):
+                documento_detalle = GenDocumentoDetalle.objects.filter(documento=documento)
+                if documento_detalle or documento.documento_tipo_id == 15:
+                    if documento.resolucion:
+                        if isinstance(documento.resolucion.fecha_hasta, date):
+                            if documento.resolucion.fecha_hasta <= fecha:
+                                return {'error':True, 'mensaje':'La fecha de la resolucion esta vencida', 'codigo':1}
+                        if consecutivo < documento.resolucion.consecutivo_desde or consecutivo > documento.resolucion.consecutivo_hasta:
+                            return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
+                else:
+                    return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1} 
 
-                if documento.documento_tipo.documento_clase_id == 200:
-                    resultado = (
-                        GenDocumentoDetalle.objects
-                        .filter(documento_id=documento_id)
-                        .exclude(documento_afectado_id__isnull=True)
-                        .values('documento_afectado_id')
-                        .annotate(
-                            total_pago=Sum('pago'),
-                            pendiente=F('documento_afectado__pendiente')))                        
-                    for entrada in resultado:
-                        if entrada['pendiente'] < entrada['total_pago']:
-                            return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
-                    #result_list = list(resultado)
-                    #print(result_list)
-                
-                if documento.documento_tipo.documento_clase_id == 702:
-                    if documento.contacto.nombre1 and documento.contacto.apellido1:
-                        pass
-                    else:                        
-                        return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
-                return {'error':False}                    
-            else:
-                return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}        
-        except GenDocumento.DoesNotExist:
-            return {'error':True, 'mensaje':'El documento no existe'}
+            if documento.documento_tipo.documento_clase_id == 200:
+                resultado = (
+                    GenDocumentoDetalle.objects
+                    .filter(documento_id=documento.id)
+                    .exclude(documento_afectado_id__isnull=True)
+                    .values('documento_afectado_id')
+                    .annotate(
+                        total_pago=Sum('pago'),
+                        pendiente=F('documento_afectado__pendiente')))                        
+                for entrada in resultado:
+                    if entrada['pendiente'] < entrada['total_pago']:
+                        return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_pago']}", 'codigo':1}                            
+                #result_list = list(resultado)
+                #print(result_list)
+            
+            if documento.documento_tipo.documento_clase_id == 702:
+                if documento.contacto.nombre1 and documento.contacto.apellido1:
+                    pass
+                else:                        
+                    return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
+            
+            if documento.inventario == True:
+                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+                for documento_detalle in documento_detalles:
+                    if documento_detalle.tipo_registro == 'I':
+                        if documento_detalle.item.inventario == True:
+                            pass                                                    
+            return {'error':False}                    
+        else:
+            return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}        
+
