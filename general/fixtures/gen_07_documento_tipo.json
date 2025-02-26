@@ -5,7 +5,7 @@
     "fields": {
       "nombre": "FACTURA ELECTRÓNICA DE VENTA",
       "documento_clase": 100, "comprobante": 4,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
     }
   },
   {
@@ -14,7 +14,7 @@
     "fields": {
       "nombre": "NOTA CRÉDITO DE VENTA",
       "documento_clase": 101, "comprobante": 5,
-      "venta": true, "cobrar" : true, "operacion": -1, "contabilidad": true
+      "venta": true, "cobrar" : true, "operacion": -1, "contabilidad": true, "inventario": true, "operacion_inventario": 1
     }
   },
   {
@@ -23,10 +23,7 @@
     "fields": {
       "nombre": "NOTA DÉBITO DE VENTA",
       "documento_clase": 102, "comprobante": 6,
-      "venta": true,
-      "cobrar" : true,
-      "operacion": 1,
-      "contabilidad": true
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
     }
   },
   {

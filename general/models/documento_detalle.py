@@ -12,6 +12,7 @@ from inventario.models.almacen import InvAlmacen
 class GenDocumentoDetalle(models.Model):    
     tipo_registro = models.CharField(max_length=1, default="I") # I=Item, C=Cuenta
     cantidad = models.FloatField(default=0)
+    cantidad_operada = models.FloatField(default=0)
     precio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pago = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     pago_operado = models.DecimalField(max_digits=20, decimal_places=6, default=0)

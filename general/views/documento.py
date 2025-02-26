@@ -80,11 +80,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             resolucion = documento_tipo.resolucion        
             documento = documentoSerializador.save(resolucion=resolucion)                        
             documentoRespuesta = documentoSerializador.data 
-            detalles = raw.get('detalles')
+            detalles = raw.get('detalles')            
             pagos = raw.get('pagos')
             if detalles is not None:
                 for detalle in detalles:                
                     detalle['documento'] = documento.id
+                    detalle['operacion_inventario'] = documento_tipo.operacion_inventario
+                    detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
                     detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
                     if detalleSerializador.is_valid():
                         documentoDetalle = detalleSerializador.save() 
@@ -165,6 +167,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
                             else:
                                 detalle['documento'] = documento.id
+                                if detalle['tipo_registro'] == "I":
+                                    item = GenItem.objects.get(pk=detalle['item'])
+                                    if item.inventario:
+                                        detalle['operacion_inventario'] = documento.documento_tipo.operacion_inventario
+                                        detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario
                                 detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
                             if detalleSerializador.is_valid():
                                 documentoDetalle = detalleSerializador.save() 
@@ -292,13 +299,24 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documento.estado_aprobado = True
                     if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
                         documento.pendiente = documento.total - documento.afectado    
-                    if documento.documento_tipo.documento_clase_id in (200,400):
-                        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
-                        for documento_detalle in documento_detalles:
-                            documento_afectado = documento_detalle.documento_afectado                        
-                            documento_afectado.afectado += documento_detalle.pago
-                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
-                            documento_afectado.save(update_fields=['afectado', 'pendiente'])                            
+                    
+                    documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
+                    for documento_detalle in documento_detalles:
+                        if documento_detalle.documento_afectado:
+                            if documento.documento_tipo.documento_clase_id in (200,400):
+                                documento_afectado = documento_detalle.documento_afectado                        
+                                documento_afectado.afectado += documento_detalle.pago
+                                documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                documento_afectado.save(update_fields=['afectado', 'pendiente'])     
+                                
+                        if documento_detalle.operacion_inventario != 0:
+                            existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
+                            if existencia:
+                                existencia.existencia += documento_detalle.cantidad_operada
+                                existencia.disponible += documento_detalle.cantidad_operada
+                                existencia.save(update_fields=['existencia', 'disponible'])
+                            else:
+                                existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)
                     documento.save()
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
@@ -317,19 +335,32 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento = GenDocumento.objects.get(pk=id)
                 if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False:              
                     # Pago, Egreso, Asiento, 
-                    if documento.documento_tipo.documento_clase_id in (200,400,500,601):                    
-                        documento.estado_aprobado = False
-                        if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
-                            documento.pendiente = 0   
-                        if documento.documento_tipo.documento_clase_id in (200,400):
-                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id).exclude(documento_afectado_id__isnull=True)
+                    if documento.documento_tipo.documento_clase_id in (200,400,500,501,601):                    
+                        respuesta = self.validacion_desaprobar(documento)
+                        if respuesta['error'] == False:
+                            documento.estado_aprobado = False
+                            if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
+                                documento.pendiente = 0                           
+
+                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
                             for documento_detalle in documento_detalles:
-                                documento_afectado = documento_detalle.documento_afectado                        
-                                documento_afectado.afectado -= documento_detalle.pago
-                                documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
-                                documento_afectado.save(update_fields=['afectado', 'pendiente'])
-                        documento.save()
-                        return Response({'estado_aprobado': False}, status=status.HTTP_200_OK)
+                                if documento_detalle.documento_afectado:
+                                    if documento.documento_tipo.documento_clase_id in (200,400):
+                                        documento_afectado = documento_detalle.documento_afectado                        
+                                        documento_afectado.afectado -= documento_detalle.pago
+                                        documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                        documento_afectado.save(update_fields=['afectado', 'pendiente'])
+                                                                                                
+                                if documento_detalle.operacion_inventario != 0:
+                                    existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
+                                    if existencia:
+                                        existencia.existencia -= documento_detalle.cantidad_operada
+                                        existencia.disponible -= documento_detalle.cantidad_operada
+                                        existencia.save(update_fields=['existencia', 'disponible'])
+                            documento.save()
+                            return Response({'estado_aprobado': False}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
                     else:
                        return Response({'mensaje':'El documento no permite desaprobacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
                 else:
@@ -2199,13 +2230,30 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 else:                        
                     return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
             
-            if documento.inventario == True:
-                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
-                for documento_detalle in documento_detalles:
-                    if documento_detalle.tipo_registro == 'I':
-                        if documento_detalle.item.inventario == True:
-                            pass                                                    
+            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+            for documento_detalle in documento_detalles:
+                if documento_detalle.operacion_inventario == -1:
+                    if documento_detalle.almacen:
+                        existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()
+                        disponible = existencia.disponible + documento_detalle.cantidad_operada
+                        if disponible < 0:
+                            return {'error':True, 'mensaje':f"La cantidad {documento_detalle.cantidad} es mayor a la disponible {existencia.disponible}", 'codigo':1}                            
+                    else:
+                        return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen', 'codigo':1}                        
             return {'error':False}                    
         else:
-            return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}        
+            return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}   
+
+    @staticmethod
+    def validacion_desaprobar(documento: GenDocumento):
+        fecha = date.today()                                 
+        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+        for documento_detalle in documento_detalles:
+            if documento_detalle.operacion_inventario == 1:
+                existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()
+                disponible = existencia.disponible - documento_detalle.cantidad_operada
+                if disponible < 0:
+                    return {'error':True, 'mensaje':f"La cantidad {documento_detalle.cantidad} dejaria la existencia en negativo {disponible}", 'codigo':1}                            
+        return {'error':False}                    
+             
 
