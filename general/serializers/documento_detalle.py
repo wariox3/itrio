@@ -12,7 +12,6 @@ from inventario.models.almacen import InvAlmacen
 from rest_framework import serializers
 
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
-    cantidad = serializers.FloatField(required=True)
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
     item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), default=None, allow_null=True)
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)
