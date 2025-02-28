@@ -486,6 +486,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['naturaleza'] = 'D'
                                 data['debito'] = documento_detalle.subtotal
                                 data['detalle'] = 'ITEM COMPRA'
+                                if documento_detalle.item.cuenta_compra:
+                                    if documento_detalle.item.cuenta_compra.exige_grupo:
+                                        data['grupo'] = documento_detalle.grupo_id
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
@@ -502,6 +505,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['debito'] = documento_detalle.precio
                             if documento_detalle.naturaleza == 'C':
                                 data['credito'] = documento_detalle.precio
+                            if documento_detalle.cuenta:
+                                if documento_detalle.cuenta.exige_grupo:
+                                    data['grupo'] = documento_detalle.grupo_id
                             movimiento_serializador = ConMovimientoSerializador(data=data)
                             if movimiento_serializador.is_valid():
                                 movimientos_validos.append(movimiento_serializador)
