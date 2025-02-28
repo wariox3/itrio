@@ -19,6 +19,7 @@ class GenDocumentoDetalle(models.Model):
     subtotal = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     descuento = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total_bruto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    base = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     base_impuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     impuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     impuesto_retencion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
