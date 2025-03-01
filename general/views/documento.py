@@ -1518,11 +1518,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             from
                 gen_documento d
             left join gen_documento_tipo dt on d.documento_tipo_id = dt.id
-            where d.estado_aprobado = true and (dt.venta = true or dt.compra = true)
+            where d.estado_aprobado = true and (dt.cobrar = true or dt.pagar = true)
         '''
         actualizados = 0
         documentos_actualizar = []
-        documentos_query = ConMovimiento.objects.raw(query)
+        documentos_query = GenDocumento.objects.raw(query)
         with transaction.atomic():
             for documento_query in documentos_query:
                 if documento_query.afectado != documento_query.afectado_detalle:
