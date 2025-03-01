@@ -2242,9 +2242,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento_detalle.operacion_inventario == -1:
                     if documento_detalle.almacen:
                         existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()
-                        disponible = existencia.disponible + documento_detalle.cantidad_operada
-                        if disponible < 0:
-                            return {'error':True, 'mensaje':f"La cantidad {documento_detalle.cantidad} es mayor a la disponible {existencia.disponible}", 'codigo':1}                            
+                        if existencia:
+                            disponible = existencia.disponible + documento_detalle.cantidad_operada
+                            if disponible < 0:
+                                return {'error':True, 'mensaje':f"La cantidad {documento_detalle.cantidad} es mayor a la disponible {existencia.disponible}", 'codigo':1}
+                        else:
+                            return {'error':True, 'mensaje':f"El item no tiene cantidades disponibles", 'codigo':1}
                     else:
                         return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen', 'codigo':1}                        
             return {'error':False}                    
