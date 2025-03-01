@@ -68,8 +68,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             documento_numero = instance.documento.numero
             documento_fecha = instance.documento.fecha
         return {
-            'id': instance.id,            
-            'documento_id': instance.documento_id,        
+            'id': instance.id,                                
             'tipo_registro': instance.tipo_registro,
             'item': instance.item_id,
             'item_nombre': item_nombre,
@@ -116,6 +115,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'grupo_nombre': grupo_nombre,
             'almacen_id': instance.almacen_id,
             'almacen_nombre': almacen_nombre,
+            'documento_id': instance.documento_id,
             'documento_numero': documento_numero,
             'documento_fecha': documento_fecha      
         }  
