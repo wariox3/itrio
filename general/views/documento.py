@@ -86,8 +86,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 for detalle in detalles:                
                     detalle['documento'] = documento.id                    
                     if detalle['tipo_registro'] == "I":
-                        detalle['operacion_inventario'] = documento_tipo.operacion_inventario
-                        detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
+                        item = GenItem.objects.get(pk=detalle['item'])
+                        if item:
+                            if item.inventario:
+                                detalle['operacion_inventario'] = documento_tipo.operacion_inventario
+                                detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
                     detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
                     if detalleSerializador.is_valid():                        
                         documentoDetalle = detalleSerializador.save() 
