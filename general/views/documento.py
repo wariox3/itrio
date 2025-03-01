@@ -1506,15 +1506,33 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["post"], url_path=r'proceso_corregir_pendiente')
     def proceso_corregir_pendiente(self, request):
-        #update gen_documento as d set cobrar = d.total from gen_documento_tipo as dt where d.documento_tipo_id = dt.id and dt.documento_clase_id in (100, 101, 102);
-        resultados = GenDocumento.objects.annotate(total_pago=Sum('detalles__pago'))
-        for documento in resultados:
-            total_pago = documento.total_pago if documento.total_pago is not None else Decimal('0.00')
-            documento.afectado = total_pago 
-            documento.pendiente = documento.total - documento.afectado           
-            documento.save()
-            #print(f"Documento: {documento.id}, Total Pago: {documento.total_pago}")
-        return Response({'mensaje':'Proceso finalizado con exito'}, status=status.HTTP_200_OK)
+        query = f'''
+            select
+                d.id,
+                d.afectado,
+                coalesce((
+                select SUM(precio) from gen_documento_detalle dd 
+                left join gen_documento d1 on dd.documento_id = d1.id
+                left join gen_documento_tipo dt1 on d1.documento_tipo_id = dt1.id
+                where dd.documento_afectado_id = d.id and d1.estado_aprobado = true and (dt1.documento_clase_id = 200 or dt1.documento_clase_id = 400)),0) as afectado_detalle
+            from
+                gen_documento d
+            left join gen_documento_tipo dt on d.documento_tipo_id = dt.id
+            where d.estado_aprobado = true and (dt.venta = true or dt.compra = true)
+        '''
+        actualizados = 0
+        documentos_actualizar = []
+        documentos_query = ConMovimiento.objects.raw(query)
+        with transaction.atomic():
+            for documento_query in documentos_query:
+                if documento_query.afectado != documento_query.afectado_detalle:
+                    documento = GenDocumento.objects.get(id=documento_query.id)            
+                    documento.afectado = documento_query.afectado_detalle
+                    documento.pendiente = documento.total - documento_query.afectado_detalle            
+                    documentos_actualizar.append(documento)
+                    actualizados += 1
+            GenDocumento.objects.bulk_update(documentos_actualizar, ['afectado', 'pendiente'])                
+        return Response({'mensaje':f'Se corrigieron {actualizados} documentos'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
     def resumen_cobrar(self, request):      
