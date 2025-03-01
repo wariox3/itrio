@@ -4,6 +4,7 @@ from django.db import connection
 from django.db import models
 import json
 import os
+import re
 
 
 class Command(BaseCommand):
@@ -35,6 +36,7 @@ class Command(BaseCommand):
                     data = json.load(file)                    
                     for item in data:
                         model_name = item.get('model')                    
+                        inicio = item.get('inicio', False)
                         pk = item.get('pk')                
                         fields = item.get('fields', {})                    
                         app_label, model_name = model_name.split('.')
@@ -55,6 +57,15 @@ class Command(BaseCommand):
                                 else:
                                     filtered_fields[key] = value
                         instance, created = Model.objects.update_or_create(pk=pk, defaults=filtered_fields)                    
+                        if inicio == True:
+                            modulo = model_name[:3].lower()
+                            tabla = model_name[3:]
+                            palabras_tabla = re.findall('[A-Z][^A-Z]*', tabla)  
+                            tabla_formateada = '_'.join(palabras_tabla).lower()
+                            modelo_nativo = f"{modulo}_{tabla_formateada}"
+                            cursor = connection.cursor()
+                            cursor.execute(f"SELECT setval(pg_get_serial_sequence('{modelo_nativo}', 'id'), (SELECT MAX(id) FROM {modelo_nativo}));")
+                            cursor.close()
                         if created:
                             creados += 1
                         else:

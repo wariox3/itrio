@@ -2,6 +2,7 @@
   {
     "model": "general.GenFormaPago",
     "pk": 1,
-    "fields": {"nombre": "Proveedores nacionales"}
+    "fields": {"nombre": "Proveedores nacionales"},
+    "inicio": true
   }
 ]

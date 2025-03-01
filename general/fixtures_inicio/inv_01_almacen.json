@@ -1,9 +1,10 @@
 [
     {
-        "model": "inventario.InvAlmacen",
+        "model": "inventario.InvAlmacen",        
         "pk": 1,
         "fields": {
             "nombre": "Principal", "codigo":"1"
-        }
+        },
+        "inicio": true
     }
 ]
