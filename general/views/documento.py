@@ -2258,7 +2258,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 else:                        
                     return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
             
-            '''documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
             for documento_detalle in documento_detalles:
                 if documento_detalle.operacion_inventario == -1:
                     if documento_detalle.almacen:
@@ -2270,8 +2270,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         else:
                             return {'error':True, 'mensaje':f"El item no tiene cantidades disponibles", 'codigo':1}
                     else:
-                        return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen', 'codigo':1}   
-            '''                     
+                        return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen', 'codigo':1}                                   
             return {'error':False}                    
         else:
             return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}   
