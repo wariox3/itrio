@@ -318,3 +318,27 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+    @action(detail=False, methods=["post"], url_path=r'parametros-iniciales',)
+    def parametros(self, request):
+        raw = request.data
+        id = raw.get('id')
+        fecha_ultimo_pago = raw.get('fecha_ultimo_pago')
+        fecha_ultimo_pago_vacacion = raw.get('fecha_ultimo_pago_vacacion')
+        fecha_ultimo_pago_prima = raw.get('fecha_ultimo_pago_prima')
+        fecha_ultimo_pago_cesantia = raw.get('fecha_ultimo_pago_cesantia')
+        if id and fecha_ultimo_pago and fecha_ultimo_pago_vacacion and fecha_ultimo_pago_cesantia and fecha_ultimo_pago_prima:
+            try:
+                contrato = HumContrato.objects.get(pk=id)
+                contrato.fecha_ultimo_pago = fecha_ultimo_pago
+                contrato.fecha_ultimo_pago_prima = fecha_ultimo_pago_prima
+                contrato.fecha_ultimo_pago_cesantia = fecha_ultimo_pago_cesantia
+                contrato.fecha_ultimo_pago_vacacion = fecha_ultimo_pago_vacacion
+                contrato.save()
+                return Response({'mensaje': 'Contrato actualizado'}, status=status.HTTP_200_OK)
+
+            except HumContrato.DoesNotExist:
+                return Response({'mensaje':'El contrato no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)      
