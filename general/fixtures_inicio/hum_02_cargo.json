@@ -1,0 +1,8 @@
+[
+  {
+    "model": "humano.HumCargo",
+    "pk": 1,
+    "fields": {"nombre": "General", "codigo":"1"},
+    "inicio": true
+  }
+]

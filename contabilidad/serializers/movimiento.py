@@ -23,6 +23,8 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
 
     def validate(self, data):
         cuenta = data.get('cuenta')
+        debito = data.get('debito')
+        credito = data.get('credito')
         base = data.get('base', 0)
         if cuenta:
             if cuenta.permite_movimiento is False:
@@ -33,6 +35,8 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
                 raise serializers.ValidationError({"base": "Si la cuenta exige base, la base no puede ser 0."})
             if cuenta.exige_contacto and data.get('contacto') is None:
                 raise serializers.ValidationError({"contacto": "La cuenta exige contacto."})
+        if debito == 0 and credito == 0:
+            raise serializers.ValidationError({"contacto": "Los debitos y creditos no pueden estar en cero"})
         return data
 
     def to_representation(self, instance):

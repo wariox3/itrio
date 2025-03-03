@@ -20,10 +20,13 @@ from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.formatos.programacion import FormatoProgramacion
 from general.formatos.nomina import FormatoNomina
-from django.db.models import Q
+from django.db.models import Q, DecimalField, Sum
+from django.db.models.functions import Coalesce
 from django.http import HttpResponse
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import timedelta
+from dateutil.relativedelta import relativedelta
+from django.db import transaction
 import calendar
 from django.template.loader import render_to_string
 from utilidades.zinc import Zinc
@@ -70,6 +73,23 @@ def datos_detalle(data_general, data, concepto):
         data['base_prestacion'] = data['pago']
         data_general['base_prestacion'] += data['pago']
     return data
+
+def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
+    salarios_minimos = base_cotizacion / salario_minimo
+    porcentaje = 0
+    if salarios_minimos >= 4 and salarios_minimos < 16:
+        porcentaje = 1        
+    if salarios_minimos >= 16 and salarios_minimos < 17:
+        porcentaje = 1.2
+    if salarios_minimos >= 17 and salarios_minimos < 18:
+        porcentaje = 1.4
+    if salarios_minimos >= 18 and salarios_minimos < 19:
+        porcentaje = 1.6
+    if salarios_minimos >= 19 and salarios_minimos < 20:
+        porcentaje = 1.8
+    if salarios_minimos >= 20:
+        porcentaje = 2            
+    return porcentaje
 
 class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
@@ -121,263 +141,281 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             if id:
                 programacion = HumProgramacion.objects.get(pk=id)                                
                 if programacion.estado_generado == False:
-                    cantidad = programacion.contratos
-                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte')[0]                
-                    # nomina
-                    if programacion.pago_tipo_id == 1:
-                        contratos = HumContrato.objects.filter(
-                                grupo_id=programacion.grupo_id                        
-                                ).filter(
-                                    Q(fecha_ultimo_pago__isnull=True) | Q(fecha_ultimo_pago__lt=programacion.fecha_hasta) | Q(fecha_desde=programacion.fecha_hasta_periodo) | Q(fecha_desde=programacion.fecha_hasta)
-                                ).filter(
-                                    fecha_desde__lte=programacion.fecha_hasta_periodo
-                                ).filter(
-                                    Q(fecha_hasta__gte=programacion.fecha_desde) | Q(estado_terminado=False))
-                        #print(contratos.query)                                             
-                        for contrato in contratos:
-                            contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
-                            if not contrato_validar:
-                                ingreso = False
-                                if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
-                                    ingreso = True                
-                                retiro = False
-                                if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.contrato_tipo_id != 1:
-                                    retiro = True
+                    with transaction.atomic():
+                        cantidad = programacion.contratos
+                        configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte')[0]                
+                        # nomina
+                        if programacion.pago_tipo_id == 1:
+                            contratos = HumContrato.objects.filter(
+                                    grupo_id=programacion.grupo_id                        
+                                    ).filter(
+                                        Q(fecha_ultimo_pago__isnull=True) | Q(fecha_ultimo_pago__lt=programacion.fecha_hasta) | Q(fecha_desde=programacion.fecha_hasta_periodo) | Q(fecha_desde=programacion.fecha_hasta)
+                                    ).filter(
+                                        fecha_desde__lte=programacion.fecha_hasta_periodo
+                                    ).filter(
+                                        Q(fecha_hasta__gte=programacion.fecha_desde) | Q(estado_terminado=False))
+                            #print(contratos.query)                                             
+                            for contrato in contratos:
+                                contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
+                                if not contrato_validar:
+                                    ingreso = False
+                                    if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
+                                        ingreso = True                
+                                    retiro = False
+                                    if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.contrato_tipo_id != 1:
+                                        retiro = True
+                                    data = {
+                                        'programacion': programacion.id,
+                                        'contrato': contrato.id,
+                                        'salario': contrato.salario,
+                                        'pago_horas': programacion.pago_horas,
+                                        'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
+                                        'pago_incapacidad': programacion.pago_incapacidad,
+                                        'pago_licencia': programacion.pago_licencia,
+                                        'pago_vacacion': programacion.pago_vacacion,
+                                        'descuento_salud': programacion.descuento_salud,
+                                        'descuento_pension': programacion.descuento_pension,
+                                        'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
+                                        'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
+                                        'descuento_credito': programacion.descuento_credito,
+                                        'descuento_embargo': programacion.descuento_embargo,
+                                        'adicional': programacion.adicional,
+                                        'ingreso': ingreso,
+                                        'retiro': retiro,
+                                        'error_terminacion': False,
+                                        'base_cotizacion_acumulado': 0,
+                                        'deduccion_fondo_pension_acumulado': 0
+                                    }
+                                    if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
+                                        data['descuento_pension'] = False
+                                        data['descuento_salud'] = False
+                                        data['pago_auxilio_transporte'] = False
+                            
+                                    if contrato.pension_id == 4:
+                                        data['descuento_pension'] = False
+                                    
+                                    fecha_desde = contrato.fecha_desde
+                                    if fecha_desde < programacion.fecha_desde:
+                                        fecha_desde = programacion.fecha_desde
+                                    data['fecha_desde'] = fecha_desde
 
-                                data = {
-                                    'programacion': programacion.id,
-                                    'contrato': contrato.id,
-                                    'salario': contrato.salario,
-                                    'pago_horas': programacion.pago_horas,
-                                    'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
-                                    'pago_incapacidad': programacion.pago_incapacidad,
-                                    'pago_licencia': programacion.pago_licencia,
-                                    'pago_vacacion': programacion.pago_vacacion,
-                                    'descuento_salud': programacion.descuento_salud,
-                                    'descuento_pension': programacion.descuento_pension,
-                                    'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
-                                    'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
-                                    'descuento_credito': programacion.descuento_credito,
-                                    'descuento_embargo': programacion.descuento_embargo,
-                                    'adicional': programacion.adicional,
-                                    'ingreso': ingreso,
-                                    'retiro': retiro,
-                                    'error_terminacion': False
-                                }
-                                if contrato.contrato_tipo_id == 5 or contrato.contrato_tipo_id == 6:
-                                    data['descuento_pension'] = False
-                                    data['descuento_salud'] = False
-                                    data['pago_auxilio_transporte'] = False
-                        
-                                if contrato.pension_id == 4:
-                                    data['descuento_pension'] = False
-                                
-                                fecha_desde = contrato.fecha_desde
-                                if fecha_desde < programacion.fecha_desde:
-                                    fecha_desde = programacion.fecha_desde
-                                data['fecha_desde'] = fecha_desde
+                                    error_terminacion = False    
+                                    fecha_hasta = contrato.fecha_hasta
+                                    if contrato.contrato_tipo_id == 1:
+                                        fecha_hasta = programacion.fecha_hasta
+                                    else:
+                                        if contrato.estado_terminado == False:
+                                            if contrato.fecha_hasta < programacion.fecha_desde:
+                                                fecha_hasta = programacion.fecha_desde
+                                                error_terminacion = True
+                                    if fecha_hasta > programacion.fecha_hasta:
+                                        fecha_hasta = programacion.fecha_hasta
+                                                
+                                    data['fecha_hasta'] = fecha_hasta  
+                                    data['error_terminacion'] = error_terminacion                         
+                                    dias_novedad = 0
+                                    novedades = HumNovedad.objects.filter(
+                                        contrato_id = contrato.id,
+                                        fecha_desde__lte=programacion.fecha_hasta, 
+                                        fecha_hasta__gte=programacion.fecha_desde                                
+                                        )
+                                    for novedad in novedades:
+                                        fecha_desde_novedad = fecha_desde
+                                        fecha_hasta_novedad = fecha_hasta
+                                        if novedad.fecha_desde > fecha_desde:
+                                            fecha_desde_novedad = novedad.fecha_desde                                
 
-                                error_terminacion = False    
-                                fecha_hasta = contrato.fecha_hasta
-                                if contrato.contrato_tipo_id == 1:
-                                    fecha_hasta = programacion.fecha_hasta
-                                else:
-                                    if contrato.estado_terminado == False:
-                                        if contrato.fecha_hasta < programacion.fecha_desde:
-                                            fecha_hasta = programacion.fecha_desde
-                                            error_terminacion = True
-                                if fecha_hasta > programacion.fecha_hasta:
-                                    fecha_hasta = programacion.fecha_hasta
-                                            
-                                data['fecha_hasta'] = fecha_hasta  
-                                data['error_terminacion'] = error_terminacion                         
-                                dias_novedad = 0
-                                novedades = HumNovedad.objects.filter(
-                                    contrato_id = contrato.id,
-                                    fecha_desde__lte=programacion.fecha_hasta, 
-                                    fecha_hasta__gte=programacion.fecha_desde                                
+                                        if novedad.fecha_hasta < fecha_hasta:
+                                            fecha_hasta_novedad = novedad.fecha_hasta  
+
+                                        diferencia = fecha_hasta_novedad - fecha_desde_novedad
+                                        dias_novedad += diferencia.days + 1
+
+
+                                    diferencia = fecha_hasta - fecha_desde
+                                    dias = diferencia.days + 1
+                                    dias = dias - dias_novedad
+                                    
+                                    if programacion.fecha_desde.month == 2 and programacion.fecha_hasta.month == 2:
+                                        if programacion.fecha_hasta.day == 28:
+                                            dias += 2
+                                        elif programacion.fecha_hasta.day == 29:
+                                            dias += 1
+                                    if dias < 0:
+                                        dias = 0
+                                    if error_terminacion:
+                                        dias = 0
+                                    data['dias'] = dias
+                                    data['dias_transporte'] = dias
+                                    data['dias_novedad'] = dias_novedad
+                                    data['diurna'] = dias * configuracion['hum_factor']
+                                    if contrato.tiempo_id == 2:
+                                        data['diurna'] = round(dias * (configuracion['hum_factor'] / 2), 3)
+                                    
+                                    fecha_desde_mes = programacion.fecha_desde.replace(day=1)
+                                    fecha_hasta_mes = (programacion.fecha_desde.replace(day=1) + relativedelta(months=1)) - relativedelta(days=1)                              
+                                    documento_detalle = GenDocumentoDetalle.objects.filter(
+                                        documento__fecha__gte=fecha_desde_mes,
+                                        documento__fecha__lte=fecha_hasta_mes,                                                                
+                                        documento__contrato_id=contrato.id,
+                                        documento__estado_aprobado=True
+                                    ).aggregate(
+                                        ibc=Coalesce(Sum('base_cotizacion'), 0, output_field=DecimalField())
                                     )
-                                for novedad in novedades:
-                                    fecha_desde_novedad = fecha_desde
-                                    fecha_hasta_novedad = fecha_hasta
-                                    if novedad.fecha_desde > fecha_desde:
-                                        fecha_desde_novedad = novedad.fecha_desde                                
+                                    data['base_cotizacion_acumulado'] = documento_detalle['ibc']
+                                    documento_detalle = GenDocumentoDetalle.objects.filter(
+                                        documento__fecha__gte=fecha_desde_mes,
+                                        documento__fecha__lte=fecha_hasta_mes,                                                                
+                                        documento__contrato_id=contrato.id,
+                                        documento__estado_aprobado=True,
+                                        concepto_id=20
+                                    ).aggregate(
+                                        pago=Coalesce(Sum('pago'), 0, output_field=DecimalField())
+                                    )                                
+                                    data['deduccion_fondo_pension_acumulado'] = documento_detalle['pago']
+                                    programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
+                                    if programacion_detalle_serializador.is_valid():
+                                        programacion_detalle_serializador.save()
+                                        cantidad += 1
+                                    else:
+                                        return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        # primas
+                        if programacion.pago_tipo_id == 2:
+                            contratos = HumContrato.objects.filter(
+                                    grupo_id=programacion.grupo_id                        
+                                    ).filter(
+                                        fecha_desde__lte=programacion.fecha_hasta_periodo
+                                    ).filter(
+                                        estado_terminado=False) 
+                            #print(contratos.query)
+                            for contrato in contratos:
+                                contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
+                                if not contrato_validar:
+                                    ingreso = False
+                                    if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
+                                        ingreso = True                
 
-                                    if novedad.fecha_hasta < fecha_hasta:
-                                        fecha_hasta_novedad = novedad.fecha_hasta  
-
-                                    diferencia = fecha_hasta_novedad - fecha_desde_novedad
-                                    dias_novedad += diferencia.days + 1
-
-
-                                diferencia = fecha_hasta - fecha_desde
-                                dias = diferencia.days + 1
-                                dias = dias - dias_novedad
-
-                                # Ajuste para febrero: sumar días adicionales según la fecha_hasta
-                                if (
-                                    programacion.fecha_desde.month == 2 
-                                    and programacion.fecha_hasta.month == 2  # Aseguramos que el periodo está en febrero
-                                ):
-                                    if programacion.fecha_hasta.day == 28:  # Febrero no bisiesto
-                                        dias += 2  # Sumamos 2 días para completar 30 días
-                                    elif programacion.fecha_hasta.day == 29:  # Febrero bisiesto
-                                        dias += 1  # Sumamos 1 día para completar 30 días
-
-                                if dias < 0:
-                                    dias = 0
-
-                                if error_terminacion:
-                                    dias = 0
-                                data['dias'] = dias
-                                data['dias_transporte'] = dias
-                                data['dias_novedad'] = dias_novedad
-                                data['diurna'] = dias * configuracion['hum_factor']
-                                if contrato.tiempo_id == 2:
-                                    data['diurna'] = round(dias * (configuracion['hum_factor'] / 2), 3)
-                                programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
-                                if programacion_detalle_serializador.is_valid():
-                                    programacion_detalle_serializador.save()
-                                    cantidad += 1
-                                else:
-                                    return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                    
-                    # primas
-                    if programacion.pago_tipo_id == 2:
-                        contratos = HumContrato.objects.filter(
-                                grupo_id=programacion.grupo_id                        
-                                ).filter(
-                                    fecha_desde__lte=programacion.fecha_hasta_periodo
-                                ).filter(
-                                    estado_terminado=False) 
-                        #print(contratos.query)
-                        for contrato in contratos:
-                            contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
-                            if not contrato_validar:
-                                ingreso = False
-                                if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
-                                    ingreso = True                
-
-                                data = {
-                                    'programacion': programacion.id,
-                                    'contrato': contrato.id,
-                                    'salario': contrato.salario,
-                                    'dias_transporte': 0,
-                                    'pago_horas': programacion.pago_horas,
-                                    'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
-                                    'pago_incapacidad': programacion.pago_incapacidad,
-                                    'pago_licencia': programacion.pago_licencia,
-                                    'pago_vacacion': programacion.pago_vacacion,
-                                    'descuento_salud': programacion.descuento_salud,
-                                    'descuento_pension': programacion.descuento_pension,
-                                    'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
-                                    'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
-                                    'descuento_credito': programacion.descuento_credito,
-                                    'descuento_embargo': programacion.descuento_embargo,
-                                    'adicional': programacion.adicional,
-                                    'ingreso': ingreso,
-                                    'retiro': False
-                                }                    
-                                
-                                fecha_desde = contrato.fecha_desde
-                                if fecha_desde < programacion.fecha_desde:
-                                    fecha_desde = programacion.fecha_desde
-                                data['fecha_desde'] = fecha_desde
+                                    data = {
+                                        'programacion': programacion.id,
+                                        'contrato': contrato.id,
+                                        'salario': contrato.salario,
+                                        'dias_transporte': 0,
+                                        'pago_horas': programacion.pago_horas,
+                                        'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
+                                        'pago_incapacidad': programacion.pago_incapacidad,
+                                        'pago_licencia': programacion.pago_licencia,
+                                        'pago_vacacion': programacion.pago_vacacion,
+                                        'descuento_salud': programacion.descuento_salud,
+                                        'descuento_pension': programacion.descuento_pension,
+                                        'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
+                                        'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
+                                        'descuento_credito': programacion.descuento_credito,
+                                        'descuento_embargo': programacion.descuento_embargo,
+                                        'adicional': programacion.adicional,
+                                        'ingreso': ingreso,
+                                        'retiro': False
+                                    }                    
                                     
-                                fecha_hasta = contrato.fecha_hasta
-                                if contrato.contrato_tipo_id == 1:
-                                    fecha_hasta = programacion.fecha_hasta
-                                if fecha_hasta > programacion.fecha_hasta:
-                                    fecha_hasta = programacion.fecha_hasta
-                                data['fecha_hasta'] = fecha_hasta                                
+                                    fecha_desde = contrato.fecha_desde
+                                    if fecha_desde < programacion.fecha_desde:
+                                        fecha_desde = programacion.fecha_desde
+                                    data['fecha_desde'] = fecha_desde
+                                        
+                                    fecha_hasta = contrato.fecha_hasta
+                                    if contrato.contrato_tipo_id == 1:
+                                        fecha_hasta = programacion.fecha_hasta
+                                    if fecha_hasta > programacion.fecha_hasta:
+                                        fecha_hasta = programacion.fecha_hasta
+                                    data['fecha_hasta'] = fecha_hasta                                
 
-                                dias = Utilidades.dias_prestacionales(data['fecha_desde'].strftime('%Y-%m-%d'),
-                                                                                  data['fecha_hasta'].strftime('%Y-%m-%d'))                                
-                                salario_promedio_primas = 0
-                                if contrato.auxilio_transporte:
-                                    salario_promedio_primas = contrato.salario + configuracion['hum_auxilio_transporte']
-                                else:
-                                    salario_promedio_primas = contrato.salario
+                                    dias = Utilidades.dias_prestacionales(data['fecha_desde'].strftime('%Y-%m-%d'),
+                                                                                    data['fecha_hasta'].strftime('%Y-%m-%d'))                                
+                                    salario_promedio_primas = 0
+                                    if contrato.auxilio_transporte:
+                                        salario_promedio_primas = contrato.salario + configuracion['hum_auxilio_transporte']
+                                    else:
+                                        salario_promedio_primas = contrato.salario
 
 
-                                data['dias'] = dias
-                                data['salario_promedio'] = salario_promedio_primas            
-                                programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
-                                if programacion_detalle_serializador.is_valid():
-                                    programacion_detalle_serializador.save()
-                                    cantidad += 1
-                                else:
-                                    return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
+                                    data['dias'] = dias
+                                    data['salario_promedio'] = salario_promedio_primas            
+                                    programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
+                                    if programacion_detalle_serializador.is_valid():
+                                        programacion_detalle_serializador.save()
+                                        cantidad += 1
+                                    else:
+                                        return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
 
-                    # cesantias
-                    if programacion.pago_tipo_id == 3:
-                        contratos = HumContrato.objects.filter(
-                                grupo_id=programacion.grupo_id                        
-                                ).filter(
-                                    fecha_desde__lte=programacion.fecha_hasta_periodo
-                                ).filter(
-                                    estado_terminado=False) 
-                        #print(contratos.query)
-                        for contrato in contratos:
-                            contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
-                            if not contrato_validar:
-                                ingreso = False
-                                if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
-                                    ingreso = True                
+                        # cesantias
+                        if programacion.pago_tipo_id == 3:
+                            contratos = HumContrato.objects.filter(
+                                    grupo_id=programacion.grupo_id                        
+                                    ).filter(
+                                        fecha_desde__lte=programacion.fecha_hasta_periodo
+                                    ).filter(
+                                        estado_terminado=False) 
+                            #print(contratos.query)
+                            for contrato in contratos:
+                                contrato_validar = HumProgramacionDetalle.objects.filter(programacion_id=programacion.id, contrato_id=contrato.id).exists()
+                                if not contrato_validar:
+                                    ingreso = False
+                                    if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
+                                        ingreso = True                
 
-                                data = {
-                                    'programacion': programacion.id,
-                                    'contrato': contrato.id,
-                                    'salario': contrato.salario,
-                                    'dias_transporte': 0,
-                                    'pago_horas': programacion.pago_horas,
-                                    'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
-                                    'pago_incapacidad': programacion.pago_incapacidad,
-                                    'pago_licencia': programacion.pago_licencia,
-                                    'pago_vacacion': programacion.pago_vacacion,
-                                    'descuento_salud': programacion.descuento_salud,
-                                    'descuento_pension': programacion.descuento_pension,
-                                    'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
-                                    'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
-                                    'descuento_credito': programacion.descuento_credito,
-                                    'descuento_embargo': programacion.descuento_embargo,
-                                    'adicional': programacion.adicional,
-                                    'ingreso': ingreso,
-                                    'retiro': False
-                                }                    
-                                
-                                fecha_desde = contrato.fecha_desde
-                                if fecha_desde < programacion.fecha_desde:
-                                    fecha_desde = programacion.fecha_desde
-                                data['fecha_desde'] = fecha_desde
+                                    data = {
+                                        'programacion': programacion.id,
+                                        'contrato': contrato.id,
+                                        'salario': contrato.salario,
+                                        'dias_transporte': 0,
+                                        'pago_horas': programacion.pago_horas,
+                                        'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
+                                        'pago_incapacidad': programacion.pago_incapacidad,
+                                        'pago_licencia': programacion.pago_licencia,
+                                        'pago_vacacion': programacion.pago_vacacion,
+                                        'descuento_salud': programacion.descuento_salud,
+                                        'descuento_pension': programacion.descuento_pension,
+                                        'descuento_fondo_solidaridad': programacion.descuento_fondo_solidaridad,
+                                        'descuento_retencion_fuente': programacion.descuento_retencion_fuente,                        
+                                        'descuento_credito': programacion.descuento_credito,
+                                        'descuento_embargo': programacion.descuento_embargo,
+                                        'adicional': programacion.adicional,
+                                        'ingreso': ingreso,
+                                        'retiro': False
+                                    }                    
                                     
-                                fecha_hasta = contrato.fecha_hasta
-                                if contrato.contrato_tipo_id == 1:
-                                    fecha_hasta = programacion.fecha_hasta
-                                if fecha_hasta > programacion.fecha_hasta:
-                                    fecha_hasta = programacion.fecha_hasta
-                                data['fecha_hasta'] = fecha_hasta                                
+                                    fecha_desde = contrato.fecha_desde
+                                    if fecha_desde < programacion.fecha_desde:
+                                        fecha_desde = programacion.fecha_desde
+                                    data['fecha_desde'] = fecha_desde
+                                        
+                                    fecha_hasta = contrato.fecha_hasta
+                                    if contrato.contrato_tipo_id == 1:
+                                        fecha_hasta = programacion.fecha_hasta
+                                    if fecha_hasta > programacion.fecha_hasta:
+                                        fecha_hasta = programacion.fecha_hasta
+                                    data['fecha_hasta'] = fecha_hasta                                
 
-                                dias = Utilidades.dias_prestacionales(data['fecha_desde'].strftime('%Y-%m-%d'),
-                                                                                  data['fecha_hasta'].strftime('%Y-%m-%d'))                                
-                                if contrato.auxilio_transporte:
-                                    salario_promedio_cesantias = contrato.salario + configuracion['hum_auxilio_transporte']
-                                else:
-                                    salario_promedio_cesantias = contrato.salario
+                                    dias = Utilidades.dias_prestacionales(data['fecha_desde'].strftime('%Y-%m-%d'),
+                                                                                    data['fecha_hasta'].strftime('%Y-%m-%d'))                                
+                                    if contrato.auxilio_transporte:
+                                        salario_promedio_cesantias = contrato.salario + configuracion['hum_auxilio_transporte']
+                                    else:
+                                        salario_promedio_cesantias = contrato.salario
 
 
-                                data['dias'] = dias
-                                data['salario_promedio'] = salario_promedio_cesantias            
-                                programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
-                                if programacion_detalle_serializador.is_valid():
-                                    programacion_detalle_serializador.save()
-                                    cantidad += 1
-                                else:
-                                    return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
+                                    data['dias'] = dias
+                                    data['salario_promedio'] = salario_promedio_cesantias            
+                                    programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
+                                    if programacion_detalle_serializador.is_valid():
+                                        programacion_detalle_serializador.save()
+                                        cantidad += 1
+                                    else:
+                                        return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
 
-                    programacion.contratos = cantidad
-                    programacion.save()
-                    return Response({'contratos': cantidad}, status=status.HTTP_200_OK)
+                        programacion.contratos = cantidad
+                        programacion.save()
+                        return Response({'contratos': cantidad}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'La programacion ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
             else:
@@ -393,125 +431,187 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             if id:
                 programacion = HumProgramacion.objects.get(pk=id)
                 if programacion.estado_generado == False and programacion.estado_aprobado == False:
-                    total_programacion = 0
-                    devengado_programacion = 0
-                    deduccion_programacion = 0
-                    conceptos_nomina = HumConceptoNomina.objects.all().order_by('id')
-                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo')[0]
-                    programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                                           
-                    for programacion_detalle in programacion_detalles:                                  
-                        documento_tipo = 14
-                        if programacion.pago_tipo_id == 2:
-                            documento_tipo = 20
-                        if programacion.pago_tipo_id == 3:
-                            documento_tipo = 21
-                        data = {
-                            'programacion_detalle': programacion_detalle.id,
-                            'documento_tipo': documento_tipo,
-                            'empresa': 1,
-                            'fecha': programacion_detalle.fecha_desde,
-                            'fecha_vence': programacion_detalle.fecha_desde,
-                            'fecha_contable': programacion_detalle.fecha_desde,
-                            'fecha_hasta': programacion_detalle.fecha_hasta,
-                            'contrato': programacion_detalle.contrato_id,
-                            'contacto': programacion_detalle.contrato.contacto_id,
-                            'grupo': programacion_detalle.contrato.grupo_id,
-                            'periodo': programacion.periodo_id,
-                            'salario': programacion_detalle.salario,
-                            'dias': programacion_detalle.dias                    
-                        }
-                        documento_serializador = GenDocumentoSerializador(data=data)
-                        if documento_serializador.is_valid():
-                            documento = documento_serializador.save()
-                            # Variables generales
-                            base_salario_minimo = (configuracion['hum_salario_minimo']/30) * programacion_detalle.dias
-                            contrato = programacion_detalle.contrato
-                            valor_dia_contrato = programacion_detalle.salario / 30
-                            # No quitar este codigo comentado Mario
-                            #if contrato.tiempo_id == 2:
-                            #    valor_dia_contrato = (programacion_detalle.salario * 2) / 30
-                            valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']
-                            data_general = {
-                                'devengado': 0,
-                                'deduccion': 0,
-                                'base_cotizacion': 0,
-                                'base_prestacion': 0,
-                                'base_licencia': 0
+                    with transaction.atomic():
+                        total_programacion = 0
+                        devengado_programacion = 0
+                        deduccion_programacion = 0
+                        conceptos_nomina = HumConceptoNomina.objects.all().order_by('id')
+                        configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo')[0]
+                        programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                                           
+                        for programacion_detalle in programacion_detalles:                                  
+                            documento_tipo = 14
+                            if programacion.pago_tipo_id == 2:
+                                documento_tipo = 20
+                            if programacion.pago_tipo_id == 3:
+                                documento_tipo = 21
+                            data = {
+                                'programacion_detalle': programacion_detalle.id,
+                                'documento_tipo': documento_tipo,
+                                'empresa': 1,
+                                'fecha': programacion_detalle.fecha_desde,
+                                'fecha_vence': programacion_detalle.fecha_desde,
+                                'fecha_contable': programacion_detalle.fecha_desde,
+                                'fecha_hasta': programacion_detalle.fecha_hasta,
+                                'contrato': programacion_detalle.contrato_id,
+                                'contacto': programacion_detalle.contrato.contacto_id,
+                                'grupo': programacion_detalle.contrato.grupo_id,
+                                'periodo': programacion.periodo_id,
+                                'salario': programacion_detalle.salario,
+                                'dias': programacion_detalle.dias                    
                             }
-                            # Nomina
-                            if programacion.pago_tipo_id == 1:
-                                horas = horas_programacion(programacion_detalle)
-                                # Horas y salarios
-                                if programacion_detalle.pago_horas:                                
-                                    for hora in horas:
-                                        if hora['cantidad'] > 0:
-                                            concepto_nomina = conceptos_nomina[hora['clave']] 
-                                            concepto = concepto_nomina.concepto                                                                    
-                                            valor_hora_detalle = (valor_hora_contrato * concepto.porcentaje) / 100                                                                                                                                                
-                                            valor_hora_detalle = Decimal(valor_hora_detalle).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
-                                            pago = round(valor_hora_detalle * hora['cantidad'])
-                                            data = {
-                                                'documento': documento.id,
-                                                'cantidad': hora['cantidad'],                   
-                                                'hora': valor_hora_detalle, 
-                                                'dias': programacion_detalle.dias,
-                                                'porcentaje': concepto.porcentaje,
-                                                'pago': pago,
-                                                'concepto': concepto_nomina.concepto_id
-                                            }
-                                            if hora['clave'] == 0:
-                                                data['dias'] = programacion_detalle.dias
+                            documento_serializador = GenDocumentoSerializador(data=data)
+                            if documento_serializador.is_valid():
+                                documento = documento_serializador.save()
+                                # Variables generales
+                                base_salario_minimo = (configuracion['hum_salario_minimo']/30) * programacion_detalle.dias
+                                contrato = programacion_detalle.contrato
+                                valor_dia_contrato = programacion_detalle.salario / 30
+                                # No quitar este codigo comentado Mario
+                                #if contrato.tiempo_id == 2:
+                                #    valor_dia_contrato = (programacion_detalle.salario * 2) / 30
+                                valor_hora_contrato = valor_dia_contrato / configuracion['hum_factor']
+                                data_general = {
+                                    'devengado': 0,
+                                    'deduccion': 0,
+                                    'base_cotizacion': 0,
+                                    'base_prestacion': 0,
+                                    'base_licencia': 0
+                                }
+                                # Nomina
+                                if programacion.pago_tipo_id == 1:
+                                    horas = horas_programacion(programacion_detalle)
+                                    # Horas y salarios
+                                    if programacion_detalle.pago_horas:                                
+                                        for hora in horas:
+                                            if hora['cantidad'] > 0:
+                                                concepto_nomina = conceptos_nomina[hora['clave']] 
+                                                concepto = concepto_nomina.concepto                                                                    
+                                                valor_hora_detalle = (valor_hora_contrato * concepto.porcentaje) / 100                                                                                                                                                
+                                                valor_hora_detalle = Decimal(valor_hora_detalle).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
+                                                pago = round(valor_hora_detalle * hora['cantidad'])
+                                                data = {
+                                                    'documento': documento.id,
+                                                    'cantidad': hora['cantidad'],                   
+                                                    'hora': valor_hora_detalle, 
+                                                    'dias': programacion_detalle.dias,
+                                                    'porcentaje': concepto.porcentaje,
+                                                    'pago': pago,
+                                                    'concepto': concepto_nomina.concepto_id
+                                                }
+                                                if hora['clave'] == 0:
+                                                    data['dias'] = programacion_detalle.dias
 
-                                            datos_detalle(data_general, data, concepto)
-                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                            if documento_detalle_serializador.is_valid():
-                                                documento_detalle_serializador.save()
-                                            else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                                datos_detalle(data_general, data, concepto)
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()
+                                                else:
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
 
-                                # Novedades
-                                if programacion_detalle.pago_incapacidad or programacion_detalle.pago_licencia or programacion_detalle.pago_vacacion:                                                            
-                                    novedades = HumNovedad.objects.filter(
-                                        contrato_id = contrato.id,
-                                        fecha_desde__lte=programacion.fecha_hasta, 
-                                        fecha_hasta__gte=programacion.fecha_desde                                
-                                        )
-                                    for novedad in novedades:
-                                        dia31 = 0
-                                        fecha_desde_novedad = programacion.fecha_desde
-                                        fecha_hasta_novedad = programacion.fecha_hasta
-                                        # Si la novedad es mayor o igual a la fecha y es una quincena con 31
-                                        if programacion.fecha_hasta_periodo.day == 31:
-                                            if novedad.fecha_hasta >= programacion.fecha_hasta_periodo:
-                                                dia31 = 1
-                                        if novedad.fecha_desde > programacion.fecha_desde:
-                                            fecha_desde_novedad = novedad.fecha_desde                                
+                                    # Novedades
+                                    if programacion_detalle.pago_incapacidad or programacion_detalle.pago_licencia or programacion_detalle.pago_vacacion:                                                            
+                                        novedades = HumNovedad.objects.filter(
+                                            contrato_id = contrato.id,
+                                            fecha_desde__lte=programacion.fecha_hasta, 
+                                            fecha_hasta__gte=programacion.fecha_desde                                
+                                            )
+                                        for novedad in novedades:
+                                            dia31 = 0
+                                            fecha_desde_novedad = programacion.fecha_desde
+                                            fecha_hasta_novedad = programacion.fecha_hasta
+                                            # Si la novedad es mayor o igual a la fecha y es una quincena con 31
+                                            if programacion.fecha_hasta_periodo.day == 31:
+                                                if novedad.fecha_hasta >= programacion.fecha_hasta_periodo:
+                                                    dia31 = 1
+                                            if novedad.fecha_desde > programacion.fecha_desde:
+                                                fecha_desde_novedad = novedad.fecha_desde                                
 
-                                        if novedad.fecha_hasta < programacion.fecha_hasta:
-                                            fecha_hasta_novedad = novedad.fecha_hasta  
+                                            if novedad.fecha_hasta < programacion.fecha_hasta:
+                                                fecha_hasta_novedad = novedad.fecha_hasta  
 
-                                        diferencia = fecha_hasta_novedad - fecha_desde_novedad
-                                        dias_novedad = diferencia.days + 1 
-                                        pago = 0
-                                        # Incapacidad
-                                        if novedad.novedad_tipo_id in [1, 2]:
-                                            if novedad.dias_empresa > 0:
-                                                fecha_desde_empresa = programacion.fecha_desde
-                                                if novedad.fecha_desde_empresa > programacion.fecha_desde:
-                                                    fecha_desde_empresa = novedad.fecha_desde_empresa                               
-                                                fecha_hasta_empresa = programacion.fecha_hasta
-                                                if novedad.fecha_hasta_empresa < programacion.fecha_hasta:
-                                                    fecha_hasta_empresa = novedad.fecha_hasta_empresa
-                                                diferencia = fecha_hasta_empresa - fecha_desde_empresa
-                                                dias_empresa = diferencia.days + 1
-                                                if dias_empresa > 0:                                                
+                                            diferencia = fecha_hasta_novedad - fecha_desde_novedad
+                                            dias_novedad = diferencia.days + 1 
+                                            pago = 0
+                                            # Incapacidad
+                                            if novedad.novedad_tipo_id in [1, 2]:
+                                                if novedad.dias_empresa > 0:
+                                                    fecha_desde_empresa = programacion.fecha_desde
+                                                    if novedad.fecha_desde_empresa > programacion.fecha_desde:
+                                                        fecha_desde_empresa = novedad.fecha_desde_empresa                               
+                                                    fecha_hasta_empresa = programacion.fecha_hasta
+                                                    if novedad.fecha_hasta_empresa < programacion.fecha_hasta:
+                                                        fecha_hasta_empresa = novedad.fecha_hasta_empresa
+                                                    diferencia = fecha_hasta_empresa - fecha_desde_empresa
+                                                    dias_empresa = diferencia.days + 1
+                                                    if dias_empresa > 0:                                                
+                                                        concepto = novedad.novedad_tipo.concepto
+                                                        horas = dias_empresa * configuracion['hum_factor']                                                                                                                                                
+                                                        pago = round(novedad.hora_empresa * horas)                                                                                 
+                                                        data = {
+                                                            'documento': documento.id,  
+                                                            'dias': dias_empresa,
+                                                            'hora': novedad.hora_empresa,
+                                                            'cantidad': horas,
+                                                            'pago': pago,
+                                                            'porcentaje': concepto.porcentaje,
+                                                            'concepto': novedad.novedad_tipo.concepto_id,
+                                                            'novedad': novedad.id
+                                                        }
+                                                        data = datos_detalle(data_general, data, concepto)
+                                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                        if documento_detalle_serializador.is_valid():
+                                                            documento_detalle_serializador.save()
+                                                        else:
+                                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                                
+                                                if novedad.dias_entidad > 0:
+                                                    fecha_desde_entidad = programacion.fecha_desde
+                                                    if novedad.fecha_desde_entidad > programacion.fecha_desde:
+                                                        fecha_desde_entidad = novedad.fecha_desde_entidad                               
+                                                    fecha_hasta_entidad = programacion.fecha_hasta
+                                                    if novedad.fecha_hasta_entidad < programacion.fecha_hasta:
+                                                        fecha_hasta_entidad = novedad.fecha_hasta_entidad
+                                                    diferencia = fecha_hasta_entidad - fecha_desde_entidad
+                                                    dias_entidad = diferencia.days + 1
+                                                    if dias_entidad > 0:                                                
+                                                        concepto = novedad.novedad_tipo.concepto2
+                                                        horas = dias_entidad * configuracion['hum_factor']                                                                                                                                                
+                                                        pago = round(novedad.hora_entidad * horas)                                                                                 
+                                                        data = {
+                                                            'documento': documento.id,  
+                                                            'dias': dias_entidad,
+                                                            'hora': novedad.hora_entidad,
+                                                            'cantidad': horas,
+                                                            'pago': pago,
+                                                            'porcentaje': concepto.porcentaje,
+                                                            'concepto': novedad.novedad_tipo.concepto2_id,
+                                                            'novedad': novedad.id
+                                                        }
+                                                        data = datos_detalle(data_general, data, concepto)
+                                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                        if documento_detalle_serializador.is_valid():
+                                                            documento_detalle_serializador.save()
+                                                        else:
+                                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
+                                            # Licencia
+                                            if novedad.novedad_tipo_id in [3, 4, 5, 6]:
+                                                if dias_novedad > 0:               
+                                                    hora = 0
+                                                    if novedad.novedad_tipo_id in [3]:
+                                                        hora = novedad.hora_entidad
+                                                    if novedad.novedad_tipo_id in [4, 5]:
+                                                        hora = novedad.hora_empresa
+                                                    if novedad.novedad_tipo_id in [6]:
+                                                        hora = round(valor_hora_contrato, 6)
                                                     concepto = novedad.novedad_tipo.concepto
-                                                    horas = dias_empresa * configuracion['hum_factor']                                                                                                                                                
-                                                    pago = round(novedad.hora_empresa * horas)                                                                                 
+                                                    horas = dias_novedad * configuracion['hum_factor']                                                                                                                                                
+                                                    pago = round(hora * horas)
+                                                    if novedad.novedad_tipo_id == 6:
+                                                        pago = 0
                                                     data = {
                                                         'documento': documento.id,  
-                                                        'dias': dias_empresa,
-                                                        'hora': novedad.hora_empresa,
+                                                        'dias': dias_novedad,
+                                                        'hora': hora,
                                                         'cantidad': horas,
                                                         'pago': pago,
                                                         'porcentaje': concepto.porcentaje,
@@ -523,59 +623,17 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
                                                     else:
-                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
-                                            
-                                            if novedad.dias_entidad > 0:
-                                                fecha_desde_entidad = programacion.fecha_desde
-                                                if novedad.fecha_desde_entidad > programacion.fecha_desde:
-                                                    fecha_desde_entidad = novedad.fecha_desde_entidad                               
-                                                fecha_hasta_entidad = programacion.fecha_hasta
-                                                if novedad.fecha_hasta_entidad < programacion.fecha_hasta:
-                                                    fecha_hasta_entidad = novedad.fecha_hasta_entidad
-                                                diferencia = fecha_hasta_entidad - fecha_desde_entidad
-                                                dias_entidad = diferencia.days + 1
-                                                if dias_entidad > 0:                                                
-                                                    concepto = novedad.novedad_tipo.concepto2
-                                                    horas = dias_entidad * configuracion['hum_factor']                                                                                                                                                
-                                                    pago = round(novedad.hora_entidad * horas)                                                                                 
-                                                    data = {
-                                                        'documento': documento.id,  
-                                                        'dias': dias_entidad,
-                                                        'hora': novedad.hora_entidad,
-                                                        'cantidad': horas,
-                                                        'pago': pago,
-                                                        'porcentaje': concepto.porcentaje,
-                                                        'concepto': novedad.novedad_tipo.concepto2_id,
-                                                        'novedad': novedad.id
-                                                    }
-                                                    data = datos_detalle(data_general, data, concepto)
-                                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                                    if documento_detalle_serializador.is_valid():
-                                                        documento_detalle_serializador.save()
-                                                    else:
-                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                
-                                        # Licencia
-                                        if novedad.novedad_tipo_id in [3, 4, 5, 6]:
-                                            if dias_novedad > 0:               
-                                                hora = 0
-                                                if novedad.novedad_tipo_id in [3]:
-                                                    hora = novedad.hora_entidad
-                                                if novedad.novedad_tipo_id in [4, 5]:
-                                                    hora = novedad.hora_empresa
-                                                if novedad.novedad_tipo_id in [6]:
-                                                    hora = round(valor_hora_contrato, 6)
+                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                            # Vacacion
+                                            if novedad.novedad_tipo_id == 7:
+                                                # Vacaciones disfrutadas
+                                                dias_novedad_pago = dias_novedad + dia31
                                                 concepto = novedad.novedad_tipo.concepto
-                                                horas = dias_novedad * configuracion['hum_factor']                                                                                                                                                
-                                                pago = round(hora * horas)
-                                                if novedad.novedad_tipo_id == 6:
-                                                    pago = 0
+                                                pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
                                                 data = {
                                                     'documento': documento.id,  
                                                     'dias': dias_novedad,
-                                                    'hora': hora,
-                                                    'cantidad': horas,
                                                     'pago': pago,
-                                                    'porcentaje': concepto.porcentaje,
                                                     'concepto': novedad.novedad_tipo.concepto_id,
                                                     'novedad': novedad.id
                                                 }
@@ -584,56 +642,58 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 if documento_detalle_serializador.is_valid():
                                                     documento_detalle_serializador.save()
                                                 else:
-                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                                        # Vacacion
-                                        if novedad.novedad_tipo_id == 7:
-                                            # Vacaciones disfrutadas
-                                            dias_novedad_pago = dias_novedad + dia31
-                                            concepto = novedad.novedad_tipo.concepto
-                                            pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
-                                            data = {
-                                                'documento': documento.id,  
-                                                'dias': dias_novedad,
-                                                'pago': pago,
-                                                'concepto': novedad.novedad_tipo.concepto_id,
-                                                'novedad': novedad.id
-                                            }
-                                            data = datos_detalle(data_general, data, concepto)
-                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                            if documento_detalle_serializador.is_valid():
-                                                documento_detalle_serializador.save()
-                                            else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
 
-                                            # Vacaciones en dinero
-                                            concepto = novedad.novedad_tipo.concepto2
-                                            pago = round(dias_novedad_pago * novedad.pago_dia_dinero)                                    
-                                            data = {
-                                                'documento': documento.id,  
-                                                'dias': dias_novedad,
-                                                'pago': pago,
-                                                'concepto': novedad.novedad_tipo.concepto2_id,
-                                                'novedad': novedad.id
-                                            }
-                                            data = datos_detalle(data_general, data, concepto)
-                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                            if documento_detalle_serializador.is_valid():
-                                                documento_detalle_serializador.save()
-                                            else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                           
-                                                           
-                                # Auxilio transporte
-                                if programacion_detalle.pago_auxilio_transporte:
-                                    if contrato.auxilio_transporte:
-                                        dia_auxilio_transporte = configuracion['hum_auxilio_transporte'] / 30
-                                        concepto_nomina = conceptos_nomina[11]
+                                                # Vacaciones en dinero
+                                                concepto = novedad.novedad_tipo.concepto2
+                                                pago = round(dias_novedad_pago * novedad.pago_dia_dinero)                                    
+                                                data = {
+                                                    'documento': documento.id,  
+                                                    'dias': dias_novedad,
+                                                    'pago': pago,
+                                                    'concepto': novedad.novedad_tipo.concepto2_id,
+                                                    'novedad': novedad.id
+                                                }
+                                                data = datos_detalle(data_general, data, concepto)
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()
+                                                else:
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                           
+                                                            
+                                    # Auxilio transporte
+                                    if programacion_detalle.pago_auxilio_transporte:
+                                        if contrato.auxilio_transporte:
+                                            dia_auxilio_transporte = configuracion['hum_auxilio_transporte'] / 30
+                                            concepto_nomina = conceptos_nomina[11]
+                                            concepto = concepto_nomina.concepto
+                                            pago = round(dia_auxilio_transporte * programacion_detalle.dias_transporte)                                    
+                                            if pago > 0:
+                                                data = {
+                                                    'documento': documento.id,                                                                                    
+                                                    'pago': pago,
+                                                    'dias': programacion_detalle.dias_transporte,
+                                                    'concepto': concepto.id
+                                                }
+                                                datos_detalle(data_general, data, concepto)
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()
+                                                else:
+                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                                                
+                                # Prima
+                                if programacion.pago_tipo_id == 2:
+                                    if programacion.pago_prima:
+                                        prima = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360
+                                        concepto_nomina = conceptos_nomina[12]
                                         concepto = concepto_nomina.concepto
-                                        pago = round(dia_auxilio_transporte * programacion_detalle.dias_transporte)                                    
+                                        pago = round(prima)                                    
                                         if pago > 0:
                                             data = {
                                                 'documento': documento.id,                                                                                    
                                                 'pago': pago,
-                                                'dias': programacion_detalle.dias_transporte,
+                                                'dias': programacion_detalle.dias,
                                                 'concepto': concepto.id
                                             }
                                             datos_detalle(data_general, data, concepto)
@@ -641,175 +701,128 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
                                             else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                                                            
-                            # Prima
-                            if programacion.pago_tipo_id == 2:
-                                if programacion.pago_prima:
-                                    prima = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360
-                                    concepto_nomina = conceptos_nomina[12]
-                                    concepto = concepto_nomina.concepto
-                                    pago = round(prima)                                    
-                                    if pago > 0:
-                                        data = {
-                                            'documento': documento.id,                                                                                    
-                                            'pago': pago,
-                                            'dias': programacion_detalle.dias,
-                                            'concepto': concepto.id
-                                        }
-                                        datos_detalle(data_general, data, concepto)
-                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                        if documento_detalle_serializador.is_valid():
-                                            documento_detalle_serializador.save()
-                                        else:
-                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                
-                            
-                            # Cesantias
-                            if programacion.pago_tipo_id == 3:
-                                # Cesantia                                
-                                cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360                                
-                                if programacion.pago_cesantia:
-                                    concepto_cesantias = conceptos_nomina[13].concepto                                
-                                    pago = round(cesantia)                                    
-                                    if pago > 0:
-                                        data = {
-                                            'documento': documento.id,                                                                                    
-                                            'pago': pago,
-                                            'dias': programacion_detalle.dias,
-                                            'concepto': concepto_cesantias.id
-                                        }
-                                        datos_detalle(data_general, data, concepto_cesantias)
-                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                        if documento_detalle_serializador.is_valid():
-                                            documento_detalle_serializador.save()
-                                        else:
-                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                                    
-                                # Interes
-                                if programacion.pago_interes:
-                                    concepto_interes = conceptos_nomina[14].concepto                                      
-                                    porcentaje_interes = ((programacion_detalle.dias * 12) / 360) / 100
-                                    insteres = cesantia * porcentaje_interes
-                                    pago = round(insteres)                                    
-                                    if pago > 0:
-                                        data = {
-                                            'documento': documento.id,                                                                                    
-                                            'pago': pago,
-                                            'dias': programacion_detalle.dias,
-                                            'concepto': concepto_interes.id
-                                        }
-                                        datos_detalle(data_general, data, concepto_interes)
-                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                        if documento_detalle_serializador.is_valid():
-                                            documento_detalle_serializador.save()
-                                        else:
-                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                  
-
-                            # Adicionales
-                            if programacion_detalle.adicional:
-                                filtro_base = HumAdicional.objects.filter(
-                                    inactivo=False, 
-                                    inactivo_periodo=False,
-                                    contrato_id=programacion_detalle.contrato_id
-                                )
-                                if programacion.pago_tipo_id == 1:
-                                    adicionales = filtro_base.filter(Q(permanente=True) | Q(programacion_id=programacion.id))
-                                else:
-                                    adicionales = filtro_base.filter(Q(programacion_id=programacion.id))
-
-                                for adicional in adicionales:                        
-                                    concepto = adicional.concepto
-                                    if adicional.aplica_dia_laborado:                                                                
-                                        valor_adicional_dia = adicional.valor / programacion.dias;                        
-                                        valor_adicional = valor_adicional_dia * programacion_detalle.dias
-                                    else:
-                                        valor_adicional = adicional.valor
-                                    data = {
-                                        'documento': documento.id,                                                                                                                
-                                        'pago': round(valor_adicional),
-                                        'concepto': adicional.concepto_id,
-                                        'detalle': adicional.detalle
-                                    }
-                                    data = datos_detalle(data_general, data, concepto)
-                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                    if documento_detalle_serializador.is_valid():
-                                        documento_detalle_serializador.save()
-                                    else:
-                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
-
-                            #creditos
-                            if programacion_detalle.descuento_credito:
-                                creditos = HumCredito.objects.filter(
-                                        inactivo = False, 
-                                        inactivo_periodo = False,
-                                        pagado = False,
-                                        contrato_id = programacion_detalle.contrato_id
-                                    )
-                                if programacion.pago_tipo_id == 2:
-                                    creditos = creditos.filter(aplica_prima=True)
+                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                
+                                
+                                # Cesantias
                                 if programacion.pago_tipo_id == 3:
-                                    creditos = creditos.filter(aplica_cesantia=True)
-                                for credito in creditos: 
-                                    if credito.saldo > 0:                       
-                                        concepto = credito.concepto
-                                        if credito.saldo >= credito.cuota:
-                                            pago = credito.cuota
+                                    # Cesantia                                
+                                    cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360                                
+                                    if programacion.pago_cesantia:
+                                        concepto_cesantias = conceptos_nomina[13].concepto                                
+                                        pago = round(cesantia)                                    
+                                        if pago > 0:
+                                            data = {
+                                                'documento': documento.id,                                                                                    
+                                                'pago': pago,
+                                                'dias': programacion_detalle.dias,
+                                                'concepto': concepto_cesantias.id
+                                            }
+                                            datos_detalle(data_general, data, concepto_cesantias)
+                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                            if documento_detalle_serializador.is_valid():
+                                                documento_detalle_serializador.save()
+                                            else:
+                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                        
+                                    # Interes
+                                    if programacion.pago_interes:
+                                        concepto_interes = conceptos_nomina[14].concepto                                      
+                                        porcentaje_interes = ((programacion_detalle.dias * 12) / 360) / 100
+                                        insteres = cesantia * porcentaje_interes
+                                        pago = round(insteres)                                    
+                                        if pago > 0:
+                                            data = {
+                                                'documento': documento.id,                                                                                    
+                                                'pago': pago,
+                                                'dias': programacion_detalle.dias,
+                                                'concepto': concepto_interes.id
+                                            }
+                                            datos_detalle(data_general, data, concepto_interes)
+                                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                            if documento_detalle_serializador.is_valid():
+                                                documento_detalle_serializador.save()
+                                            else:
+                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                  
+
+                                # Adicionales
+                                if programacion_detalle.adicional:
+                                    filtro_base = HumAdicional.objects.filter(
+                                        inactivo=False, 
+                                        inactivo_periodo=False,
+                                        contrato_id=programacion_detalle.contrato_id
+                                    )
+                                    if programacion.pago_tipo_id == 1:
+                                        adicionales = filtro_base.filter(Q(permanente=True) | Q(programacion_id=programacion.id))
+                                    else:
+                                        adicionales = filtro_base.filter(Q(programacion_id=programacion.id))
+
+                                    for adicional in adicionales:                        
+                                        concepto = adicional.concepto
+                                        if adicional.aplica_dia_laborado:                                                                
+                                            valor_adicional_dia = adicional.valor / programacion.dias;                        
+                                            valor_adicional = valor_adicional_dia * programacion_detalle.dias
                                         else:
-                                            pago = credito.saldo;                                                                                                
+                                            valor_adicional = adicional.valor
                                         data = {
                                             'documento': documento.id,                                                                                                                
-                                            'pago': round(pago),
-                                            'concepto': credito.concepto_id,
-                                            'credito': credito.id
+                                            'pago': round(valor_adicional),
+                                            'concepto': adicional.concepto_id,
+                                            'detalle': adicional.detalle
                                         }
                                         data = datos_detalle(data_general, data, concepto)
                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                         if documento_detalle_serializador.is_valid():
                                             documento_detalle_serializador.save()
                                         else:
-                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
 
-                            # Salud
-                            if programacion_detalle.descuento_salud:
-                                salud = contrato.salud
-                                if salud:
-                                    if salud.porcentaje_empleado > 0:                                                                                
-                                        concepto = salud.concepto     
-                                        base = data_general['base_cotizacion'] - data_general['base_licencia']
-                                        if contrato.tiempo_id == 2:
-                                            if base < base_salario_minimo:
-                                                base = base_salario_minimo
-                                        if base > 0:                                  
-                                            pago = round((base * salud.porcentaje_empleado) / 100)
+                                #creditos
+                                if programacion_detalle.descuento_credito:
+                                    creditos = HumCredito.objects.filter(
+                                            inactivo = False, 
+                                            inactivo_periodo = False,
+                                            pagado = False,
+                                            contrato_id = programacion_detalle.contrato_id
+                                        )
+                                    if programacion.pago_tipo_id == 2:
+                                        creditos = creditos.filter(aplica_prima=True)
+                                    if programacion.pago_tipo_id == 3:
+                                        creditos = creditos.filter(aplica_cesantia=True)
+                                    for credito in creditos: 
+                                        if credito.saldo > 0:                       
+                                            concepto = credito.concepto
+                                            if credito.saldo >= credito.cuota:
+                                                pago = credito.cuota
+                                            else:
+                                                pago = credito.saldo;                                                                                                
                                             data = {
-                                                'documento': documento.id,                                            
-                                                'porcentaje': salud.porcentaje_empleado,
-                                                'pago': pago,
-                                                'concepto': concepto.id
+                                                'documento': documento.id,                                                                                                                
+                                                'pago': round(pago),
+                                                'concepto': credito.concepto_id,
+                                                'credito': credito.id
                                             }
-                                            datos_detalle(data_general, data, concepto)
+                                            data = datos_detalle(data_general, data, concepto)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
                                             else:
                                                 return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-                            # Pension
-                            if programacion_detalle.descuento_pension:
-                                pension = contrato.pension
-                                if pension:
-                                    if pension.porcentaje_empleado > 0:  
-                                        if data_general['base_cotizacion'] > 0:
-                                            concepto = pension.concepto  
-                                            base = data_general['base_cotizacion'] 
+                                # Salud
+                                if programacion_detalle.descuento_salud:
+                                    salud = contrato.salud
+                                    if salud:
+                                        if salud.porcentaje_empleado > 0:                                                                                
+                                            concepto = salud.concepto     
+                                            base = data_general['base_cotizacion'] - data_general['base_licencia']
                                             if contrato.tiempo_id == 2:
                                                 if base < base_salario_minimo:
-                                                    base = base_salario_minimo 
-                                            if base > 0:
-                                                pago = round((base * pension.porcentaje_empleado) / 100)                                        
+                                                    base = base_salario_minimo
+                                            if base > 0:                                  
+                                                pago = round((base * salud.porcentaje_empleado) / 100)
                                                 data = {
                                                     'documento': documento.id,                                            
-                                                    'porcentaje': pension.porcentaje_empleado,
+                                                    'porcentaje': salud.porcentaje_empleado,
                                                     'pago': pago,
                                                     'concepto': concepto.id
                                                 }
@@ -820,34 +833,87 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 else:
                                                     return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-                            total = data_general['devengado'] - data_general['deduccion']
-                            devengado = data_general['devengado']
-                            deduccion = data_general['deduccion']
-                            documento.base_cotizacion = data_general['base_cotizacion']
-                            documento.base_prestacion = data_general['base_prestacion']
-                            documento.devengado = devengado
-                            documento.deduccion = deduccion
-                            documento.total = total
-                            documento.save()
+                                # Pension
+                                if programacion_detalle.descuento_pension:
+                                    pension = contrato.pension
+                                    if pension:
+                                        if pension.porcentaje_empleado > 0:  
+                                            if data_general['base_cotizacion'] > 0:
+                                                concepto = pension.concepto  
+                                                base = data_general['base_cotizacion'] 
+                                                if contrato.tiempo_id == 2:
+                                                    if base < base_salario_minimo:
+                                                        base = base_salario_minimo 
+                                                if base > 0:
+                                                    pago = round((base * pension.porcentaje_empleado) / 100)                                        
+                                                    data = {
+                                                        'documento': documento.id,                                            
+                                                        'porcentaje': pension.porcentaje_empleado,
+                                                        'pago': pago,
+                                                        'concepto': concepto.id
+                                                    }
+                                                    datos_detalle(data_general, data, concepto)
+                                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                    if documento_detalle_serializador.is_valid():
+                                                        documento_detalle_serializador.save()
+                                                    else:
+                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-                            programacion_detalle.devengado = devengado
-                            programacion_detalle.deduccion = deduccion
-                            programacion_detalle.total = total
-                            programacion_detalle.save()
-                            total_programacion += total
-                            devengado_programacion += devengado
-                            deduccion_programacion += deduccion
+                                # Fondo solidaridad
+                                if programacion_detalle.descuento_fondo_solidaridad:
+                                    pension = contrato.pension
+                                    if pension:
+                                        tope_fondo = configuracion['hum_salario_minimo'] * 4
+                                        base_cotizacion_total = data_general['base_cotizacion'] + programacion_detalle.base_cotizacion_acumulado
+                                        if base_cotizacion_total >= tope_fondo:    
+                                            porcentaje_fondo = calcular_porcentaje_fondo(configuracion['hum_salario_minimo'], base_cotizacion_total)                                      
+                                            if porcentaje_fondo > 0:
+                                                if base_cotizacion_total > configuracion['hum_salario_minimo'] * 25:
+                                                    base_cotizacion_total = configuracion['hum_salario_minimo'] * 25                                            
+                                                concepto = HumConcepto.objects.get(pk=20)                                              
+                                                pago = round((base_cotizacion_total * porcentaje_fondo) / 100) 
+                                                pago = pago - programacion_detalle.deduccion_fondo_pension_acumulado
+                                                if pago > 0:
+                                                    data = {
+                                                        'documento': documento.id,                                            
+                                                        'porcentaje': porcentaje_fondo,
+                                                        'pago': pago,
+                                                        'concepto': concepto.id
+                                                    }
+                                                    datos_detalle(data_general, data, concepto)
+                                                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                    if documento_detalle_serializador.is_valid():
+                                                        documento_detalle_serializador.save()
+                                                    else:
+                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-                        else:
-                            return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+                                total = data_general['devengado'] - data_general['deduccion']
+                                devengado = data_general['devengado']
+                                deduccion = data_general['deduccion']
+                                documento.base_cotizacion = data_general['base_cotizacion']
+                                documento.base_prestacion = data_general['base_prestacion']
+                                documento.devengado = devengado
+                                documento.deduccion = deduccion
+                                documento.total = total
+                                documento.save()
 
+                                programacion_detalle.devengado = devengado
+                                programacion_detalle.deduccion = deduccion
+                                programacion_detalle.total = total
+                                programacion_detalle.save()
+                                total_programacion += total
+                                devengado_programacion += devengado
+                                deduccion_programacion += deduccion
 
-                    programacion.estado_generado = True  
-                    programacion.total = total_programacion
-                    programacion.devengado = devengado_programacion
-                    programacion.deduccion = deduccion_programacion
-                    programacion.save()
-                    return Response({'total': total_programacion, 'devengado': devengado_programacion, 'deduccion': deduccion_programacion}, status=status.HTTP_200_OK)
+                            else:
+                                return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
+
+                        programacion.estado_generado = True  
+                        programacion.total = total_programacion
+                        programacion.devengado = devengado_programacion
+                        programacion.deduccion = deduccion_programacion
+                        programacion.save()
+                        return Response({'total': total_programacion, 'devengado': devengado_programacion, 'deduccion': deduccion_programacion}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'La programacion ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
             else:
