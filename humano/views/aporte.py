@@ -8,6 +8,7 @@ from humano.models.aporte_entidad import HumAporteEntidad
 from humano.models.contrato import HumContrato
 from general.models.empresa import GenEmpresa
 from general.models.documento_detalle import GenDocumentoDetalle
+from general.models.configuracion import GenConfiguracion
 from humano.serializers.aporte import HumAporteSerializador
 from humano.serializers.aporte_contrato import HumAporteContratoSerializador
 from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
@@ -20,6 +21,24 @@ from django.http import HttpResponse
 import calendar
 import io
 from datetime import datetime
+from decimal import Decimal
+
+def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
+    salarios_minimos = base_cotizacion / salario_minimo
+    porcentaje = 0
+    if salarios_minimos >= 4 and salarios_minimos < 16:
+        porcentaje = 1        
+    if salarios_minimos >= 16 and salarios_minimos < 17:
+        porcentaje = 1.2
+    if salarios_minimos >= 17 and salarios_minimos < 18:
+        porcentaje = 1.4
+    if salarios_minimos >= 18 and salarios_minimos < 19:
+        porcentaje = 1.6
+    if salarios_minimos >= 19 and salarios_minimos < 20:
+        porcentaje = 1.8
+    if salarios_minimos >= 20:
+        porcentaje = 2            
+    return Decimal(porcentaje)
 
 class HumAporteViewSet(viewsets.ModelViewSet):
     queryset = HumAporte.objects.all()
@@ -195,6 +214,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
             if id:
                 aporte = HumAporte.objects.get(pk=id)
                 if aporte.estado_generado == False and aporte.estado_aprobado == False:
+                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo')[0]
                     base_cotizacion_total = 0
                     aporte_cotizacion_pension = 0
                     aporte_cotizacion_solidaridad_solidaridad = 0
@@ -397,20 +417,32 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         tarifa_caja = 4
                         tarifa_sena = 0
                         tarifa_icbf = 0
+
+                        cotizacion_solidaridad_solidaridad = 0
+                        cotizacion_solidaridad_subsistencia = 0
+                        tope_fondo = configuracion['hum_salario_minimo'] * 4
+                        if base_cotizacion_pension >= tope_fondo:
+                            porcentaje_fondo = calcular_porcentaje_fondo(configuracion['hum_salario_minimo'], base_cotizacion_pension)
+                            porcentaje_fondo_solidaridad = Decimal('0.5')
+                            porcentaje_fondo_subsistencia = porcentaje_fondo - porcentaje_fondo_solidaridad
+                            cotizacion_solidaridad_solidaridad = base_cotizacion_pension * porcentaje_fondo_solidaridad / 100
+                            cotizacion_solidaridad_subsistencia = base_cotizacion_pension * porcentaje_fondo_subsistencia / 100
+
                         cotizacion_pension = Utilidades.redondear_cien(base_cotizacion_pension * tarifa_pension / 100)
-                        cotizacion_solidaridad_solidaridad = Utilidades.redondear_cien(0)
-                        cotizacion_solidaridad_subsistencia = Utilidades.redondear_cien(0)
+                        cotizacion_solidaridad_solidaridad = Utilidades.redondear_cien(cotizacion_solidaridad_solidaridad)
+                        cotizacion_solidaridad_subsistencia = Utilidades.redondear_cien(cotizacion_solidaridad_subsistencia)
                         cotizacion_voluntario_pension_afiliado = Utilidades.redondear_cien(0)
                         cotizacion_voluntario_pension_aportante = Utilidades.redondear_cien(0)
                         cotizacion_salud = Utilidades.redondear_cien(base_cotizacion_salud * tarifa_salud / 100)
                         cotizacion_riesgos = Utilidades.redondear_cien(base_cotizacion_riesgos * tarifa_riesgos / 100)                    
                         cotizacion_caja = Utilidades.redondear_cien(base_cotizacion_caja * tarifa_caja / 100)
                         cotizacion_sena = Utilidades.redondear_cien(0)
-                        cotizacion_icbf = Utilidades.redondear_cien(0)
-                        cotizacion_total = cotizacion_pension + cotizacion_salud + cotizacion_riesgos + cotizacion_caja
+                        cotizacion_icbf = Utilidades.redondear_cien(0)                        
+                        cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia
+                        cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja
                         aporte_cotizacion_pension += cotizacion_pension
-                        aporte_cotizacion_solidaridad_solidaridad += 0
-                        aporte_cotizacion_solidaridad_subsistencia += 0
+                        aporte_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
+                        aporte_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
                         aporte_cotizacion_voluntario_pension_afiliado += 0
                         aporte_cotizacion_voluntario_pension_aportante += 0
                         aporte_cotizacion_salud += cotizacion_salud
