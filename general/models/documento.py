@@ -13,6 +13,7 @@ from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
+from humano.models.aporte import HumAporte
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
 from inventario.models.almacen import InvAlmacen
@@ -73,6 +74,7 @@ class GenDocumento(models.Model):
     sede = models.ForeignKey(GenSede, null=True, on_delete=models.PROTECT,related_name='documentos_sede_rel')
     usuario = models.ForeignKey(User, null=True, on_delete=models.PROTECT,related_name='documentos_usuario_rel')
     programacion_detalle = models.ForeignKey(HumProgramacionDetalle, null=True, on_delete=models.PROTECT,related_name='documentos_programacion_detalle_rel')
+    aporte = models.ForeignKey(HumAporte, null=True, on_delete=models.PROTECT,related_name='documentos_aporte_rel')
     contrato = models.ForeignKey(HumContrato, null=True, on_delete=models.PROTECT,related_name='documentos_contrato_rel')
     grupo = models.ForeignKey(HumGrupo, null=True, on_delete=models.PROTECT,related_name='documentos_grupo_rel')
     periodo = models.ForeignKey(HumPeriodo, on_delete=models.PROTECT, null=True, related_name='documentos_periodo_rel')

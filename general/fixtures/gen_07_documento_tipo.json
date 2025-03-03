@@ -186,5 +186,15 @@
       "pagar": true, "operacion": 1,
       "contabilidad": true
     }
+  },  
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 22,
+    "fields": {
+      "nombre": "SEGURIDAD SOCIAL",
+      "documento_clase": 703, "comprobante": 11,
+      "pagar": true, "operacion": 1,
+      "contabilidad": true
+    }
   }
 ]

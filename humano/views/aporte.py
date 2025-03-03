@@ -7,12 +7,16 @@ from humano.models.aporte_detalle import HumAporteDetalle
 from humano.models.aporte_entidad import HumAporteEntidad
 from humano.models.contrato import HumContrato
 from general.models.empresa import GenEmpresa
+from general.models.documento import GenDocumento
+from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.configuracion import GenConfiguracion
+from general.models.contacto import GenContacto
 from humano.serializers.aporte import HumAporteSerializador
 from humano.serializers.aporte_contrato import HumAporteContratoSerializador
 from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
 from humano.serializers.aporte_entidad import HumAporteEntidadSerializador
+from general.serializers.documento import GenDocumentoSerializador
 from datetime import date
 from django.db.models import Sum, Q, DecimalField
 from django.db.models.functions import Coalesce
@@ -22,6 +26,7 @@ import calendar
 import io
 from datetime import datetime
 from decimal import Decimal
+from django.db import transaction
 
 def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
     salarios_minimos = base_cotizacion / salario_minimo
@@ -488,12 +493,12 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         if aporte_detalle_serializador.is_valid():
                             aporte_detalle = aporte_detalle_serializador.save()  
                             if aporte_contrato.entidad_pension_id in aporte_entidad_pension:                                
-                                aporte_entidad_pension[aporte_contrato.entidad_pension_id]['total'] += aporte_detalle.cotizacion_pension                                
+                                aporte_entidad_pension[aporte_contrato.entidad_pension_id]['total'] += aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia                                
                             else:                                
                                 aporte_entidad_pension[aporte_contrato.entidad_pension_id] = {
                                     'tipo': 'PENSION',
                                     'entidad_id': aporte_contrato.entidad_pension_id,
-                                    'total': aporte_detalle.cotizacion_pension
+                                    'total': aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia
                                 }                                                          
                             if aporte_contrato.entidad_salud_id in aporte_entidad_salud:                                
                                 aporte_entidad_salud[aporte_contrato.entidad_salud_id]['total'] += aporte_detalle.cotizacion_salud                                
@@ -593,6 +598,55 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumAporte.DoesNotExist:
             return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+
+    @action(detail=False, methods=["post"], url_path=r'aprobar',)
+    def aprobar(self, request):             
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                aporte = HumAporte.objects.get(pk=id)
+                if aporte.estado_generado == True and aporte.estado_aprobado == False:                                      
+                    aporte_entidades = HumAporteEntidad.objects.filter(aporte_id=id)  
+                    respuesta = self.validacion_aprobar(aporte_entidades)                  
+                    if respuesta['error'] == False:
+                        with transaction.atomic():
+                            documento_tipo = GenDocumentoTipo.objects.get(pk=14)                               
+                            for aporte_entidad in aporte_entidades:
+                                if aporte_entidad.cotizacion > 0:
+                                    contacto = GenContacto.objects.filter(numero_identificacion=aporte_entidad.entidad.numero_identificacion).first()                                                                                                                            
+                                    data = {                                
+                                        'aporte': id,
+                                        'documento_tipo': 22,
+                                        'numero': documento_tipo.consecutivo,
+                                        'contacto': contacto.id,
+                                        'empresa': 1,
+                                        'estado_aprobado': True,
+                                        'fecha': aporte.fecha_desde,
+                                        'fecha_vence': aporte.fecha_desde,
+                                        'fecha_contable': aporte.fecha_desde,
+                                        'fecha_hasta': aporte.fecha_hasta,
+                                        'total': aporte_entidad.cotizacion,
+                                        'pendiente': aporte_entidad.cotizacion
+                                    }
+                                    documento_tipo.consecutivo += 1
+                                    documento_serializador = GenDocumentoSerializador(data=data)
+                                    if documento_serializador.is_valid():
+                                        documento = documento_serializador.save()                                                                                                              
+                                    else:
+                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                               
+                            documento_tipo.save
+                            aporte.estado_aprobado = True
+                            aporte.save()
+                            return Response({'mensaje': 'Aporte aprobado'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+                else:
+                    return Response({'mensaje':'La programacion ya esta aprobada o no esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumAporte.DoesNotExist:
+            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
 
     @action(detail=False, methods=["post"], url_path=r'plano-operador',)
     def plano_operador(self, request):             
@@ -887,4 +941,12 @@ class HumAporteViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumAporte.DoesNotExist:
-            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                           
+            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+
+    @staticmethod
+    def validacion_aprobar(aporte_entidades: HumAporteEntidad):
+        for aporte_entidad in aporte_entidades:
+            contacto = GenContacto.objects.filter(numero_identificacion=aporte_entidad.entidad.numero_identificacion).first()
+            if contacto == None:
+                return {'error':True, 'mensaje':f"No se puede aprobar el documento porque la entidad {aporte_entidad.tipo} {aporte_entidad.entidad.nombre} con identificacion {aporte_entidad.entidad.numero_identificacion} no existe en contactos", 'codigo':1}                            
+        return {'error':False}                   

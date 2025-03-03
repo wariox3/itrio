@@ -13,6 +13,7 @@ from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
+from humano.models.aporte import HumAporte
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
 from inventario.models.almacen import InvAlmacen
@@ -36,6 +37,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     sede = serializers.PrimaryKeyRelatedField(queryset=GenSede.objects.all(), default=None, allow_null=True)
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
     programacion_detalle = serializers.PrimaryKeyRelatedField(queryset=HumProgramacionDetalle.objects.all(), default=None, allow_null=True)
+    aporte = serializers.PrimaryKeyRelatedField(queryset=HumAporte.objects.all(), default=None, allow_null=True)
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all(), default=None, allow_null=True)
     grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all(), default=None, allow_null=True)
     periodo = serializers.PrimaryKeyRelatedField(queryset=HumPeriodo.objects.all(), default=None, allow_null=True)
@@ -52,7 +54,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_aprobado', 'estado_anulado', 'estado_contabilizado', 'comentario', 'soporte',  
                   'estado_electronico_enviado', 'estado_electronico', 'estado_electronico_notificado', 'estado_electronico_evento',
                   'estado_electronico_descartado',
-                  'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle',
+                  'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle', 'aporte',
                   'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 
                   'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen', 'evento_documento', 'evento_recepcion', 'evento_aceptacion']
 
