@@ -304,7 +304,11 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
                                     fecha_inicio_incapacidad_general = documento_detalle['novedad__fecha_desde']
+                                    if fecha_inicio_incapacidad_general < aporte.fecha_desde:
+                                        fecha_inicio_incapacidad_general < aporte.fecha_desde
                                     fecha_fin_incapacidad_general = documento_detalle['novedad__fecha_hasta']
+                                    if fecha_fin_incapacidad_general > aporte.fecha_hasta:
+                                        fecha_fin_incapacidad_general = aporte.fecha_hasta
 
                                 # Incapacidad laboral
                                 if documento_detalle['novedad__novedad_tipo_id'] == 2:
@@ -312,22 +316,33 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0  
                                     fecha_inicio_incapacidad_laboral = documento_detalle['novedad__fecha_desde']
-                                    fecha_fin_incapacidad_laboral = documento_detalle['novedad__fecha_hasta']                                                                      
-
+                                    if fecha_inicio_incapacidad_laboral < aporte.fecha_desde:
+                                        fecha_inicio_incapacidad_laboral = aporte.fecha_desde                                    
+                                    fecha_fin_incapacidad_laboral = documento_detalle['novedad__fecha_hasta'] 
+                                    if fecha_fin_incapacidad_laboral > aporte.fecha_hasta:                                                                     
+                                        fecha_fin_incapacidad_laboral = aporte.fecha_hasta
                                 # Licencia maternidad o paternidad
                                 if documento_detalle['novedad__novedad_tipo_id'] == 3:
                                     licencia_maternidad = True                                    
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
                                     fecha_inicio_licencia_maternidad = documento_detalle['novedad__fecha_desde']
-                                    fecha_fin_licencia_maternidad = documento_detalle['novedad__fecha_hasta']                                    
+                                    if fecha_inicio_licencia_maternidad < aporte.fecha_desde:
+                                        fecha_inicio_licencia_maternidad = aporte.fecha_desde
+                                    fecha_fin_licencia_maternidad = documento_detalle['novedad__fecha_hasta']   
+                                    if fecha_fin_licencia_maternidad > aporte.fecha_hasta:   
+                                        fecha_fin_licencia_maternidad = aporte.fecha_hasta            
 
                                 # Licencia remunerada                                                     
                                 if documento_detalle['novedad__novedad_tipo_id'] == 5:
                                     licencia_remunerada = True                                    
                                     tarifa_riesgos = 0
                                     fecha_inicio_vacaciones = documento_detalle['novedad__fecha_desde']
-                                    fecha_fin_vacaciones = documento_detalle['novedad__fecha_hasta']                                    
+                                    if fecha_inicio_vacaciones < aporte.fecha_desde:
+                                        fecha_inicio_vacaciones = aporte.fecha_desde
+                                    fecha_fin_vacaciones = documento_detalle['novedad__fecha_hasta'] 
+                                    if fecha_fin_vacaciones > aporte.fecha_hasta:   
+                                        fecha_fin_vacaciones = aporte.fecha_hasta               
 
                                                                     
                                 horas_novedad = dias_novedad * 8   
