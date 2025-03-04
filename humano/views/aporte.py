@@ -563,6 +563,94 @@ class HumAporteViewSet(viewsets.ModelViewSet):
         except HumAporte.DoesNotExist:
             return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
 
+
+    @action(detail=False, methods=["post"], url_path=r'generar-entidad',)
+    def generar_entidad(self, request):
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                aporte = HumAporte.objects.get(pk=id)
+                if aporte.estado_generado == True and aporte.estado_aprobado == False:
+                    aporte_entidades = HumAporteEntidad.objects.filter(aporte_id=id).delete()
+                    aporte_entidad_pension = {}
+                    aporte_entidad_salud = {}
+                    aporte_entidad_caja = {}
+                    aporte_entidad_riesgos = {}
+                    aporte_entidad_riesgos[aporte.entidad_riesgo_id] = {
+                        'tipo': 'RIESGO',
+                        'entidad_id': aporte.entidad_riesgo_id,
+                        'total': 0
+                    }                    
+                    aporte_entidad_sena = {}
+                    aporte_entidad_sena[aporte.entidad_sena_id] = {
+                        'tipo': 'SENA',
+                        'entidad_id': aporte.entidad_sena_id,
+                        'total': 0
+                    }                     
+                    aporte_entidad_icbf = {}
+                    aporte_entidad_icbf[aporte.entidad_icbf_id] = {
+                        'tipo': 'ICBF',
+                        'entidad_id': aporte.entidad_icbf_id,
+                        'total': 0
+                    }          
+                    aporte_detalles = HumAporteDetalle.objects.filter(aporte_contrato__aporte_id=id)
+                    for aporte_detalle in aporte_detalles:
+                        if aporte_detalle.aporte_contrato.entidad_pension_id in aporte_entidad_pension:                                
+                            aporte_entidad_pension[aporte_detalle.aporte_contrato.entidad_pension_id]['total'] += aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia                                
+                        else:                                
+                            aporte_entidad_pension[aporte_detalle.aporte_contrato.entidad_pension_id] = {
+                                'tipo': 'PENSION',
+                                'entidad_id': aporte_detalle.aporte_contrato.entidad_pension_id,
+                                'total': aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia
+                            }                                                          
+                        if aporte_detalle.aporte_contrato.entidad_salud_id in aporte_entidad_salud:                                
+                            aporte_entidad_salud[aporte_detalle.aporte_contrato.entidad_salud_id]['total'] += aporte_detalle.cotizacion_salud                                
+                        else:                                
+                            aporte_entidad_salud[aporte_detalle.aporte_contrato.entidad_salud_id] = {
+                                'tipo': 'SALUD',
+                                'entidad_id': aporte_detalle.aporte_contrato.entidad_salud_id,
+                                'total': aporte_detalle.cotizacion_salud
+                            }   
+                        if aporte_detalle.aporte_contrato.entidad_caja_id in aporte_entidad_caja:                                
+                            aporte_entidad_caja[aporte_detalle.aporte_contrato.entidad_caja_id]['total'] += aporte_detalle.cotizacion_caja                                
+                        else:                                
+                            aporte_entidad_caja[aporte_detalle.aporte_contrato.entidad_caja_id] = {
+                                'tipo': 'CAJA',
+                                'entidad_id': aporte_detalle.aporte_contrato.entidad_caja_id,
+                                'total': aporte_detalle.cotizacion_caja
+                            }            
+                        aporte_entidad_riesgos[aporte.entidad_riesgo_id]['total'] += aporte_detalle.cotizacion_riesgos
+                        aporte_entidad_sena[aporte.entidad_sena_id]['total'] += aporte_detalle.cotizacion_sena
+                        aporte_entidad_icbf[aporte.entidad_icbf_id]['total'] += aporte_detalle.cotizacion_icbf 
+
+                    aporte_entidades = {}
+                    aporte_entidades.update(aporte_entidad_pension)
+                    aporte_entidades.update(aporte_entidad_salud)
+                    aporte_entidades.update(aporte_entidad_caja)
+                    aporte_entidades.update(aporte_entidad_riesgos)
+                    aporte_entidades.update(aporte_entidad_sena)
+                    aporte_entidades.update(aporte_entidad_icbf)
+                    for entidad_id, data in aporte_entidades.items():
+                        aporte_data = {
+                            'aporte': aporte.id,
+                            'tipo': data['tipo'],
+                            'entidad': data['entidad_id'],
+                            'cotizacion': data['total']
+                        }                        
+                        aporte_entidad_serializador = HumAporteEntidadSerializador(data=aporte_data)
+                        if aporte_entidad_serializador.is_valid():
+                            aporte_entidad_serializador.save()
+                        else:
+                            return Response({'validaciones': aporte_entidad_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                        
+                    return Response({'total': 0}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'El aporte debe estar generado y sin aprobar', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumAporte.DoesNotExist:
+            return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+
     @action(detail=False, methods=["post"], url_path=r'desgenerar',)
     def desgenerar(self, request):             
         try:
