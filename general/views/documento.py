@@ -504,6 +504,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             data['cuenta'] = documento_detalle.cuenta_id
                             data['contacto'] = documento_detalle.contacto_id        
                             data['naturaleza'] = documento_detalle.naturaleza
+                            data['base'] = documento_detalle.base
                             if documento_detalle.naturaleza == 'D':
                                 data['debito'] = documento_detalle.precio
                             if documento_detalle.naturaleza == 'C':
@@ -511,6 +512,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             if documento_detalle.cuenta:
                                 if documento_detalle.cuenta.exige_grupo:
                                     data['grupo'] = documento_detalle.grupo_id
+                            
                             movimiento_serializador = ConMovimientoSerializador(data=data)
                             if movimiento_serializador.is_valid():
                                 movimientos_validos.append(movimiento_serializador)
