@@ -714,7 +714,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     respuesta = self.validacion_aprobar(aporte_entidades)                  
                     if respuesta['error'] == False:
                         with transaction.atomic():
-                            documento_tipo = GenDocumentoTipo.objects.get(pk=14)                               
+                            documento_tipo = GenDocumentoTipo.objects.get(pk=22)                               
                             for aporte_entidad in aporte_entidades:
                                 if aporte_entidad.cotizacion > 0:
                                     contacto = GenContacto.objects.filter(numero_identificacion=aporte_entidad.entidad.numero_identificacion).first()                                                                                                                            
