@@ -13,6 +13,7 @@ from io import BytesIO
 from django.db.models import F,Sum
 from io import BytesIO
 from django.http import HttpResponse
+from django.db import transaction
 from utilidades.excel import WorkbookEstilos
 from openpyxl import Workbook
 from general.formatos.balance_prueba import FormatoBalancePrueba
@@ -87,7 +88,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     errores_datos.append(error_dato)
 
             if not errores:
-                ConMovimiento.objects.bulk_create([ConMovimiento(**detalle) for detalle in data_modelo])
+                with transaction.atomic():
+                    batch_size = 1000  # Define el tamaño del lote
+                    for i in range(0, len(data_modelo), batch_size):
+                        batch = data_modelo[i:i + batch_size]
+                        ConMovimiento.objects.bulk_create([ConMovimiento(**detalle) for detalle in batch])
+                #ConMovimiento.objects.bulk_create([ConMovimiento(**detalle) for detalle in data_modelo])
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:                    
                 return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)        
