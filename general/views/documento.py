@@ -438,9 +438,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documento.documento_tipo.pagar:
                         data = data_general.copy()
                         if documento.forma_pago:
-                            data['cuenta'] = documento.forma_pago.cuenta_id
-                        else:
-                            data['cuenta'] = documento.documento_tipo.cuenta_pagar_id                                                        
+                            data['cuenta'] = documento.forma_pago.cuenta_id                                                  
                         data['contacto'] = documento.contacto_id        
                         data['naturaleza'] = 'C'
                         data['credito'] = documento.total
@@ -457,7 +455,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if documento_detalle.documento_afectado:
                             if documento_detalle.documento_afectado.documento_tipo.cobrar:
                                 data = data_general.copy()                            
-                                data['cuenta'] = documento_detalle.documento_afectado.documento_tipo.cuenta_cobrar_id
+                                if documento_detalle.documento_afectado.documento_tipo:
+                                    data['cuenta'] = documento_detalle.documento_afectado.documento_tipo.cuenta_cobrar_id
                                 data['contacto'] = documento_detalle.documento.contacto_id        
                                 data['naturaleza'] = 'C'
                                 data['credito'] = documento_detalle.precio
@@ -468,6 +467,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
                                                 'mensaje': 'Cuenta por cobrar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)
+                                
+                            if documento_detalle.documento_afectado.documento_tipo.pagar:
+                                data = data_general.copy()                            
+                                if documento_detalle.documento_afectado.forma_pago:
+                                    data['cuenta'] = documento_detalle.documento_afectado.forma_pago.cuenta_id
+                                data['contacto'] = documento_detalle.documento.contacto_id        
+                                data['naturaleza'] = 'D'
+                                data['debito'] = documento_detalle.precio
+                                data['detalle'] = 'PROVEEDOR'
+                                movimiento_serializador = ConMovimientoSerializador(data=data)
+                                if movimiento_serializador.is_valid():
+                                    movimientos_validos.append(movimiento_serializador)
+                                else:
+                                    return Response({'validaciones': movimiento_serializador.errors, 
+                                                'mensaje': 'Cuenta por cobrar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                
+                                
                         else:
                             if documento_detalle.tipo_registro == 'I':                                                                
                                 if documento.documento_tipo.venta:
@@ -580,17 +595,32 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                     
                     # Pago y Egreso
                     if documento.documento_tipo_id in [4, 8]:
-                        data = data_general.copy()                            
-                        data['cuenta'] = documento.cuenta_banco.cuenta_id                            
-                        data['naturaleza'] = 'D'
-                        data['debito'] = documento.total
-                        data['detalle'] = 'CUENTA BANCO'
-                        movimiento_serializador = ConMovimientoSerializador(data=data)
-                        if movimiento_serializador.is_valid():
-                            movimientos_validos.append(movimiento_serializador)
-                        else:
-                            return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Pago / Egreso cuenta banco'}, status=status.HTTP_400_BAD_REQUEST) 
+                        if documento.documento_tipo_id == 4:
+                            data = data_general.copy()                            
+                            data['cuenta'] = documento.cuenta_banco.cuenta_id                            
+                            data['naturaleza'] = 'D'
+                            data['debito'] = documento.total
+                            data['detalle'] = 'CUENTA BANCO'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Pago / Egreso cuenta banco'}, status=status.HTTP_400_BAD_REQUEST) 
+                            
+                        if documento.documento_tipo_id == 8:
+                            data = data_general.copy()                            
+                            data['cuenta'] = documento.cuenta_banco.cuenta_id                            
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.total
+                            data['detalle'] = 'CUENTA BANCO'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Pago / Egreso cuenta banco'}, status=status.HTTP_400_BAD_REQUEST) 
+
                     
                 with transaction.atomic():
                     for serializador in movimientos_validos:
