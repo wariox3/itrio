@@ -1,0 +1,8 @@
+[
+  {
+    "model": "general.GenSede",
+    "pk": 1,
+    "fields": {"nombre": "Principal"},
+    "inicio": true
+  }
+]
