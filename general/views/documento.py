@@ -481,6 +481,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         data['naturaleza'] = 'D'
                                         data['debito'] = documento_detalle.subtotal
                                     data['detalle'] = 'VENTA'
+                                    if documento_detalle.item.cuenta_venta:
+                                        if documento_detalle.item.cuenta_venta.exige_grupo:
+                                            if documento.sede:
+                                                data['grupo'] = documento.sede.grupo_id
                                     movimiento_serializador = ConMovimientoSerializador(data=data)
                                     if movimiento_serializador.is_valid():
                                         movimientos_validos.append(movimiento_serializador)
