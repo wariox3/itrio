@@ -16,6 +16,7 @@ from humano.models.periodo import HumPeriodo
 from humano.models.aporte import HumAporte
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
+from contabilidad.models.cuenta import ConCuenta
 from inventario.models.almacen import InvAlmacen
 from seguridad.models import User
 
@@ -81,6 +82,7 @@ class GenDocumento(models.Model):
     cuenta_banco = models.ForeignKey(GenCuentaBanco, null=True, on_delete=models.PROTECT, related_name='documentos_cuenta_banco_rel')
     comprobante = models.ForeignKey(ConComprobante, null=True, on_delete=models.PROTECT, related_name='documentos_comprobante_rel')
     grupo_contabilidad = models.ForeignKey(ConGrupo, null=True, on_delete=models.PROTECT, related_name='documentos_grupo_contabilidad_rel')
+    cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='documentos_cuenta_rel')
     almacen = models.ForeignKey(InvAlmacen, null=True, on_delete=models.PROTECT, related_name='documentos_almacen_rel')
 
     class Meta:

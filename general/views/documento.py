@@ -289,21 +289,25 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             try:
                 documento = GenDocumento.objects.get(pk=id)
                 consecutivo = 0
-                documentoTipo = GenDocumentoTipo.objects.get(id=documento.documento_tipo_id)
+                documento_tipo = GenDocumentoTipo.objects.get(id=documento.documento_tipo_id)
                 if documento.numero is None:
-                    consecutivo = documentoTipo.consecutivo
+                    consecutivo = documento_tipo.consecutivo
                 else: 
                     consecutivo = documento.numero
                 respuesta = self.validacion_aprobar(documento, consecutivo)
                 if respuesta['error'] == False:                         
                     if documento.numero is None:
-                        documento.numero = documentoTipo.consecutivo
-                        documentoTipo.consecutivo += 1
-                        documentoTipo.save()                
+                        documento.numero = documento_tipo.consecutivo
+                        documento_tipo.consecutivo += 1
+                        documento_tipo.save()                
                     documento.estado_aprobado = True
                     if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
                         documento.pendiente = documento.total - documento.afectado    
                     
+                    if documento.documento_tipo_id in [5,11]:
+                        if documento.forma_pago:
+                            documento.cuenta_id = documento.forma_pago.cuenta_id
+
                     documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
                     for documento_detalle in documento_detalles:
                         if documento_detalle.documento_afectado:
@@ -418,7 +422,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             
                     if documento.documento_tipo.cobrar:
                         data = data_general.copy()                            
-                        data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
+                        data['cuenta'] = documento.cuenta_id
                         data['contacto'] = documento.contacto_id        
                         if documento.documento_tipo_id in [1,3]:
                             data['naturaleza'] = 'D'
@@ -437,8 +441,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                     if documento.documento_tipo.pagar:
                         data = data_general.copy()
-                        if documento.forma_pago:
-                            data['cuenta'] = documento.forma_pago.cuenta_id                                                  
+                        data['cuenta'] = documento.cuenta_id                                                  
                         data['contacto'] = documento.contacto_id        
                         data['naturaleza'] = 'C'
                         data['credito'] = documento.total
@@ -455,8 +458,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if documento_detalle.documento_afectado:
                             if documento_detalle.documento_afectado.documento_tipo.cobrar:
                                 data = data_general.copy()                            
-                                if documento_detalle.documento_afectado.documento_tipo:
-                                    data['cuenta'] = documento_detalle.documento_afectado.documento_tipo.cuenta_cobrar_id
+                                data['cuenta'] = documento_detalle.documento_afectado.cuenta_id
                                 data['contacto'] = documento_detalle.documento.contacto_id        
                                 data['naturaleza'] = 'C'
                                 data['credito'] = documento_detalle.precio
@@ -470,8 +472,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 
                             if documento_detalle.documento_afectado.documento_tipo.pagar:
                                 data = data_general.copy()                            
-                                if documento_detalle.documento_afectado.forma_pago:
-                                    data['cuenta'] = documento_detalle.documento_afectado.forma_pago.cuenta_id
+                                data['cuenta'] = documento_detalle.documento_afectado.cuenta_id
                                 data['contacto'] = documento_detalle.documento.contacto_id        
                                 data['naturaleza'] = 'D'
                                 data['debito'] = documento_detalle.precio
@@ -481,7 +482,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Cuenta por cobrar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                
+                                                'mensaje': 'Cuenta por pagar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                
                                 
                         else:
                             if documento_detalle.tipo_registro == 'I':                                                                

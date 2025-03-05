@@ -16,6 +16,7 @@ from humano.models.periodo import HumPeriodo
 from humano.models.aporte import HumAporte
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
+from contabilidad.models.cuenta import ConCuenta
 from inventario.models.almacen import InvAlmacen
 from seguridad.models import User
 
@@ -44,6 +45,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_banco = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBanco.objects.all(), default=None, allow_null=True)
     comprobante = serializers.PrimaryKeyRelatedField(queryset=ConComprobante.objects.all(), default=None, allow_null=True)
     grupo_contabilidad = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), default=None, allow_null=True)
+    cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     almacen = serializers.PrimaryKeyRelatedField(queryset=InvAlmacen.objects.all(), default=None, allow_null=True)
 
     class Meta:
@@ -56,7 +58,8 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_electronico_descartado',
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle', 'aporte',
                   'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 
-                  'comprobante', 'grupo_contabilidad', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen', 'evento_documento', 'evento_recepcion', 'evento_aceptacion']
+                  'comprobante', 'grupo_contabilidad', 'cuenta', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen', 
+                  'evento_documento', 'evento_recepcion', 'evento_aceptacion']
 
     def to_representation(self, instance):        
         contacto_nombre_corto = ""
@@ -154,6 +157,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'evento_documento': instance.evento_documento,
             'evento_recepcion': instance.evento_documento,
             'evento_aceptacion': instance.evento_aceptacion,
+            'cuenta_id':instance.cuenta_id
 
         }
     
