@@ -21,6 +21,7 @@ from .views.periodo import HumPeriodoViewSet
 from .views.entidad import HumEntidadViewSet
 from .views.aporte import HumAporteViewSet
 from .views.aporte_contrato import HumAporteContratoViewSet
+from .views.concepto_cuenta import HumConceptoCuentaViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -46,6 +47,7 @@ router.register(r'periodo', HumPeriodoViewSet)
 router.register(r'entidad', HumEntidadViewSet)
 router.register(r'aporte', HumAporteViewSet)
 router.register(r'aporte_contrato', HumAporteContratoViewSet)
+router.register(r'concepto_cuenta', HumConceptoCuentaViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
