@@ -1,0 +1,23 @@
+[
+    {
+      "model": "humano.HumTipoCosto",
+      "pk": 1,
+      "fields": {"nombre": "Administrativo"}
+    },
+    {
+      "model": "humano.HumTipoCosto",
+      "pk": 2,
+      "fields": {"nombre": "Administrativo operativo"}
+    },
+    {
+      "model": "humano.HumTipoCosto",
+      "pk": 3,
+      "fields": {"nombre": "Comercial"}
+    },
+    {
+      "model": "humano.HumTipoCosto",
+      "pk": 4,
+      "fields": {"nombre": "Operativo"}
+    }
+  ]
+  

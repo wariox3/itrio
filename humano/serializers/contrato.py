@@ -13,6 +13,7 @@ from humano.models.salud import HumSalud
 from humano.models.pension import HumPension
 from humano.models.entidad import HumEntidad
 from humano.models.tiempo import HumTiempo
+from humano.models.tipo_costo import HumTipoCosto
 
 class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     contrato_tipo = serializers.PrimaryKeyRelatedField(queryset=HumContratoTipo.objects.all())
@@ -32,11 +33,14 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     entidad_caja = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
     entidad_cesantias = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
     tiempo = serializers.PrimaryKeyRelatedField(queryset=HumTiempo.objects.all(), default=None, allow_null=True)
+    tipo_costo = serializers.PrimaryKeyRelatedField(queryset=HumTipoCosto.objects.all(), default=None, allow_null=True)
+    
     class Meta:
         model = HumContrato
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'salario', 'auxilio_transporte', 'salario_integral', 'estado_terminado', 
                   'comentario', 'contrato_tipo', 'grupo', 'contacto', 'sucursal', 'riesgo', 'cargo', 'tipo_cotizante', 'subtipo_cotizante',
-                  'salud', 'pension', 'ciudad_contrato', 'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_cesantias', 'tiempo']
+                  'salud', 'pension', 'ciudad_contrato', 'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_cesantias', 
+                  'tiempo', 'tipo_costo']
 
     def to_representation(self, instance):
         contrato_tipo_nombre = ''
@@ -96,6 +100,9 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         tiempo_nombre = ''
         if instance.tiempo:
             tiempo_nombre = instance.tiempo.nombre
+        tipo_costo_nombre = ''
+        if instance.tipo_costo:
+            tipo_costo_nombre = instance.tipo_costo.nombre            
         return {
             'id': instance.id,
             'fecha_desde': instance.fecha_desde,
@@ -143,7 +150,9 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'entidad_caja_id': instance.entidad_caja_id,
             'entidad_caja_nombre': entidad_caja_nombre,
             'tiempo_id' : instance.tiempo_id,
-            'tiempo_nombre' : tiempo_nombre
+            'tiempo_nombre' : tiempo_nombre,
+            'tipo_costo_id': instance.tipo_costo_id,
+            'tipo_costo_nombre': tipo_costo_nombre
         } 
 
 
