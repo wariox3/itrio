@@ -459,7 +459,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             if documento_detalle.documento_afectado.documento_tipo.cobrar:
                                 data = data_general.copy()                            
                                 data['cuenta'] = documento_detalle.documento_afectado.cuenta_id
-                                data['contacto'] = documento_detalle.documento.contacto_id        
+                                data['contacto'] = documento_detalle.contacto_id        
                                 data['naturaleza'] = 'C'
                                 data['credito'] = documento_detalle.precio
                                 data['detalle'] = 'CLIENTE'
@@ -473,7 +473,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             if documento_detalle.documento_afectado.documento_tipo.pagar:
                                 data = data_general.copy()                            
                                 data['cuenta'] = documento_detalle.documento_afectado.cuenta_id
-                                data['contacto'] = documento_detalle.documento.contacto_id        
+                                data['contacto'] = documento_detalle.contacto_id        
                                 data['naturaleza'] = 'D'
                                 data['debito'] = documento_detalle.precio
                                 data['detalle'] = 'PROVEEDOR'
