@@ -92,7 +92,7 @@
     "pk": 11,
     "fields": {
       "nombre": "DOCUMENTO SOPORTE",
-      "documento_clase": 303,
+      "documento_clase": 303, "comprobante": 15,
       "compra": true, "pagar": true, "electronico" : true, "operacion": 1, "contabilidad": true
     }
   },

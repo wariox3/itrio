@@ -102,5 +102,13 @@
       "nombre":"DEPRECIACION", 
       "codigo":"DEP"
     }
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 15,
+    "fields": {
+      "nombre":"DOCUMENTO SOPORTE", 
+      "codigo":"SOP"
+    }
   }    
 ]
