@@ -511,6 +511,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 
                                                 'mensaje': 'Item cuenta de venta'}, status=status.HTTP_400_BAD_REQUEST) 
+                                    
                                 if documento.documento_tipo.compra:
                                     data = data_general.copy()                            
                                     data['cuenta'] = documento_detalle.item.cuenta_compra_id
@@ -548,6 +549,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
                     
+                            if documento_detalle.tipo_registro == 'N':
+                                data = data_general.copy()                                                            
+                                data['cuenta'] = documento_detalle.cuenta_id
+                                data['contacto'] = documento_detalle.contacto_id        
+                                data['naturaleza'] = documento_detalle.naturaleza
+                                data['base'] = documento_detalle.base
+                                if documento_detalle.naturaleza == 'D':
+                                    data['debito'] = documento_detalle.precio
+                                if documento_detalle.naturaleza == 'C':
+                                    data['credito'] = documento_detalle.precio
+                                if documento_detalle.cuenta:
+                                    if documento_detalle.cuenta.exige_grupo:
+                                        data['grupo'] = documento_detalle.grupo_id
+                                
+                                movimiento_serializador = ConMovimientoSerializador(data=data)
+                                if movimiento_serializador.is_valid():
+                                    movimientos_validos.append(movimiento_serializador)
+                                else:
+                                    return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
+
                     documento_impuestos = GenDocumentoImpuesto.objects.filter(
                         documento_detalle__documento_id=id
                     ).values(

@@ -52,6 +52,7 @@ def horas_programacion(programacion_detalle):
     return respuesta_horas
 
 def datos_detalle(data_general, data, concepto):
+    data['tipo_registro'] = "N"
     data['operacion'] = concepto.operacion
     data['pago_operado'] = data['pago'] * concepto.operacion
     if concepto.operacion == 1:
