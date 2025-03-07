@@ -554,27 +554,32 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
                     
                             if documento_detalle.tipo_registro == 'N':
-                                data = data_general.copy()   
-                                tipo_costo_id = documento.contrato.tipo_costo_id
-                                concepto_cuenta = HumConceptoCuenta.objects.filter(concepto_id=documento_detalle.concepto_id, tipo_costo_id=tipo_costo_id).first()                                                       
-                                if concepto_cuenta:
-                                    data['cuenta'] = concepto_cuenta.cuenta_id
-                                data['contacto'] = documento_detalle.contacto_id        
-                                data['naturaleza'] = documento_detalle.naturaleza
-                                data['base'] = documento_detalle.base
-                                if documento_detalle.naturaleza == 'D':
-                                    data['debito'] = documento_detalle.precio
-                                if documento_detalle.naturaleza == 'C':
-                                    data['credito'] = documento_detalle.precio
-                                if documento_detalle.cuenta:
-                                    if documento_detalle.cuenta.exige_grupo:
-                                        data['grupo'] = documento_detalle.grupo_id
-                                
-                                movimiento_serializador = ConMovimientoSerializador(data=data)
-                                if movimiento_serializador.is_valid():
-                                    movimientos_validos.append(movimiento_serializador)
-                                else:
-                                    return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
+                                if documento_detalle.operacion != 0:
+                                    data = data_general.copy()   
+                                    tipo_costo_id = documento.contrato.tipo_costo_id
+                                    concepto_cuenta = HumConceptoCuenta.objects.filter(concepto_id=documento_detalle.concepto_id, tipo_costo_id=tipo_costo_id).first()                                                       
+                                    if concepto_cuenta:
+                                        data['cuenta'] = concepto_cuenta.cuenta_id                                                                        
+                                        if concepto_cuenta.cuenta.exige_grupo:
+                                            data['grupo'] = documento.contrato.grupo_id                                                                        
+                                    data['contacto'] = documento_detalle.contacto_id        
+                                    data['naturaleza'] = documento_detalle.naturaleza
+                                    data['base'] = documento_detalle.base                                    
+                                    data['detalle'] = documento_detalle.concepto.nombre
+                                    if documento_detalle.concepto.concepto_tipo_id in [5,6]:                                        
+                                        data['detalle'] = f'{documento.contacto.numero_identificacion}-{documento.contacto.nombre_corto}'
+                                    if documento_detalle.operacion == 1:
+                                        data['naturaleza'] = 'D'
+                                        data['debito'] = documento_detalle.pago
+                                    if documento_detalle.operacion == -1:
+                                        data['naturaleza'] = 'C'                                    
+                                        data['credito'] = documento_detalle.pago
+                                    
+                                    movimiento_serializador = ConMovimientoSerializador(data=data)
+                                    if movimiento_serializador.is_valid():
+                                        movimientos_validos.append(movimiento_serializador)
+                                    else:
+                                        return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Documento detalle {documento_detalle.id} nomina'}, status=status.HTTP_400_BAD_REQUEST) 
 
                     documento_impuestos = GenDocumentoImpuesto.objects.filter(
                         documento_detalle__documento_id=id

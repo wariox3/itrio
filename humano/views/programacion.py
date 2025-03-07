@@ -13,6 +13,7 @@ from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.configuracion import GenConfiguracion
+from general.models.contacto import GenContacto
 from humano.serializers.programacion import HumProgramacionSerializador
 from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador
 from humano.serializers.programacion_detalle import  HumProgramacionDetalleImportarHorasSerializador
@@ -501,7 +502,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 data['dias'] = programacion_detalle.dias
                                                 data['porcentaje'] = concepto.porcentaje
                                                 data['pago'] = pago
-                                                data['concepto'] = concepto_nomina.concepto_id 
+                                                data['concepto'] = concepto_nomina.concepto_id                                                 
                                                 if hora['clave'] == 0:
                                                     data['dias'] = programacion_detalle.dias
 
@@ -806,6 +807,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 data['porcentaje'] = salud.porcentaje_empleado
                                                 data['pago'] = pago
                                                 data['concepto'] = concepto.id
+                                                contacto = GenContacto.objects.filter(numero_identificacion=programacion_detalle.contrato.entidad_salud.numero_identificacion).first()
+                                                if contacto:
+                                                    data['contacto'] = contacto.id
+                                                else:
+                                                    data['contacto'] = None
                                                 datos_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
@@ -830,6 +836,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     data['porcentaje'] = pension.porcentaje_empleado
                                                     data['pago'] = pago
                                                     data['concepto'] = concepto.id
+                                                    contacto = GenContacto.objects.filter(numero_identificacion=programacion_detalle.contrato.entidad_pension.numero_identificacion).first()
+                                                    if contacto:
+                                                        data['contacto'] = contacto.id
+                                                    else:
+                                                        data['contacto'] = None                                                    
                                                     datos_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
@@ -856,6 +867,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     data['porcentaje'] = porcentaje_fondo
                                                     data['pago'] = pago
                                                     data['concepto'] = concepto.id
+                                                    contacto = GenContacto.objects.filter(numero_identificacion=programacion_detalle.contrato.entidad_pension.numero_identificacion).first()
+                                                    if contacto:
+                                                        data['contacto'] = contacto.id
+                                                    else:
+                                                        data['contacto'] = None                                                     
                                                     datos_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():

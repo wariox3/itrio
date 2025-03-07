@@ -57,7 +57,9 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_electronico_enviado', 'estado_electronico', 'estado_electronico_notificado', 'estado_electronico_evento',
                   'estado_electronico_descartado',
                   'orden_compra', 'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle', 'aporte',
-                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'periodo', 'cuenta_banco', 
+                  'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 
+                  'provision_cesantia', 'provision_interes', 'provision_prima', 'provision_vacacion',
+                  'periodo', 'cuenta_banco', 
                   'comprobante', 'grupo_contabilidad', 'cuenta', 'dias', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen', 
                   'evento_documento', 'evento_recepcion', 'evento_aceptacion']
 
@@ -157,7 +159,11 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'evento_documento': instance.evento_documento,
             'evento_recepcion': instance.evento_documento,
             'evento_aceptacion': instance.evento_aceptacion,
-            'cuenta_id':instance.cuenta_id
+            'cuenta_id':instance.cuenta_id,
+            'provision_cesantia': instance.provision_cesantia,
+            'provision_interes': instance.provision_interes,
+            'provision_prima': instance.provision_prima,
+            'provision_vacacion': instance.provision_vacacion
 
         }
     
