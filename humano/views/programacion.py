@@ -51,8 +51,7 @@ def horas_programacion(programacion_detalle):
     ]
     return respuesta_horas
 
-def datos_detalle(data_general, data, concepto):
-    data['tipo_registro'] = "N"
+def datos_detalle(data_general, data, concepto):    
     data['operacion'] = concepto.operacion
     data['pago_operado'] = data['pago'] * concepto.operacion
     if concepto.operacion == 1:
@@ -478,6 +477,12 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     'base_prestacion': 0,
                                     'base_licencia': 0
                                 }
+                                data_general_detalle = {
+                                    'tipo_registro': 'N',
+                                    'documento': documento.id,
+                                    'contacto': programacion_detalle.contrato.contacto_id                                    
+                                }
+
                                 # Nomina
                                 if programacion.pago_tipo_id == 1:
                                     horas = horas_programacion(programacion_detalle)
@@ -490,15 +495,13 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 valor_hora_detalle = (valor_hora_contrato * concepto.porcentaje) / 100                                                                                                                                                
                                                 valor_hora_detalle = Decimal(valor_hora_detalle).quantize(Decimal('0.000001'), rounding=ROUND_HALF_UP)
                                                 pago = round(valor_hora_detalle * hora['cantidad'])
-                                                data = {
-                                                    'documento': documento.id,
-                                                    'cantidad': hora['cantidad'],                   
-                                                    'hora': valor_hora_detalle, 
-                                                    'dias': programacion_detalle.dias,
-                                                    'porcentaje': concepto.porcentaje,
-                                                    'pago': pago,
-                                                    'concepto': concepto_nomina.concepto_id
-                                                }
+                                                data = data_general_detalle.copy() 
+                                                data['cantidad'] = hora['cantidad']
+                                                data['hora'] = valor_hora_detalle
+                                                data['dias'] = programacion_detalle.dias
+                                                data['porcentaje'] = concepto.porcentaje
+                                                data['pago'] = pago
+                                                data['concepto'] = concepto_nomina.concepto_id 
                                                 if hora['clave'] == 0:
                                                     data['dias'] = programacion_detalle.dias
 
@@ -548,16 +551,14 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         concepto = novedad.novedad_tipo.concepto
                                                         horas = dias_empresa * configuracion['hum_factor']                                                                                                                                                
                                                         pago = round(novedad.hora_empresa * horas)                                                                                 
-                                                        data = {
-                                                            'documento': documento.id,  
-                                                            'dias': dias_empresa,
-                                                            'hora': novedad.hora_empresa,
-                                                            'cantidad': horas,
-                                                            'pago': pago,
-                                                            'porcentaje': concepto.porcentaje,
-                                                            'concepto': novedad.novedad_tipo.concepto_id,
-                                                            'novedad': novedad.id
-                                                        }
+                                                        data = data_general_detalle.copy()
+                                                        data['dias'] = dias_empresa
+                                                        data['hora'] = novedad.hora_empresa
+                                                        data['cantidad'] = horas
+                                                        data['pago'] = pago
+                                                        data['porcentaje'] = concepto.porcentaje
+                                                        data['concepto'] = novedad.novedad_tipo.concepto_id
+                                                        data['novedad'] = novedad.id
                                                         data = datos_detalle(data_general, data, concepto)
                                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                         if documento_detalle_serializador.is_valid():
@@ -578,16 +579,14 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         concepto = novedad.novedad_tipo.concepto2
                                                         horas = dias_entidad * configuracion['hum_factor']                                                                                                                                                
                                                         pago = round(novedad.hora_entidad * horas)                                                                                 
-                                                        data = {
-                                                            'documento': documento.id,  
-                                                            'dias': dias_entidad,
-                                                            'hora': novedad.hora_entidad,
-                                                            'cantidad': horas,
-                                                            'pago': pago,
-                                                            'porcentaje': concepto.porcentaje,
-                                                            'concepto': novedad.novedad_tipo.concepto2_id,
-                                                            'novedad': novedad.id
-                                                        }
+                                                        data = data_general_detalle.copy()
+                                                        data['dias'] = dias_entidad
+                                                        data['hora'] = novedad.hora_entidad
+                                                        data['cantidad'] = horas
+                                                        data['pago'] = pago
+                                                        data['porcentaje'] = concepto.porcentaje
+                                                        data['concepto'] = novedad.novedad_tipo.concepto2_id
+                                                        data['novedad'] = novedad.id
                                                         data = datos_detalle(data_general, data, concepto)
                                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                         if documento_detalle_serializador.is_valid():
@@ -609,16 +608,14 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     pago = round(hora * horas)
                                                     if novedad.novedad_tipo_id == 6:
                                                         pago = 0
-                                                    data = {
-                                                        'documento': documento.id,  
-                                                        'dias': dias_novedad,
-                                                        'hora': hora,
-                                                        'cantidad': horas,
-                                                        'pago': pago,
-                                                        'porcentaje': concepto.porcentaje,
-                                                        'concepto': novedad.novedad_tipo.concepto_id,
-                                                        'novedad': novedad.id
-                                                    }
+                                                    data = data_general_detalle.copy()
+                                                    data['dias'] = dias_novedad
+                                                    data['hora'] = hora
+                                                    data['cantidad'] = horas
+                                                    data['pago'] = pago
+                                                    data['porcentaje'] = concepto.porcentaje
+                                                    data['concepto'] = novedad.novedad_tipo.concepto_id
+                                                    data['novedad'] = novedad.id
                                                     data = datos_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
@@ -631,13 +628,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 dias_novedad_pago = dias_novedad + dia31
                                                 concepto = novedad.novedad_tipo.concepto
                                                 pago = round(dias_novedad_pago * novedad.pago_dia_disfrute)                                    
-                                                data = {
-                                                    'documento': documento.id,  
-                                                    'dias': dias_novedad,
-                                                    'pago': pago,
-                                                    'concepto': novedad.novedad_tipo.concepto_id,
-                                                    'novedad': novedad.id
-                                                }
+                                                data = data_general_detalle.copy()
+                                                data['dias'] = dias_novedad
+                                                data['pago'] = pago
+                                                data['concepto'] = novedad.novedad_tipo.concepto_id
+                                                data['novedad'] = novedad.id
                                                 data = datos_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
@@ -648,13 +643,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 # Vacaciones en dinero
                                                 concepto = novedad.novedad_tipo.concepto2
                                                 pago = round(dias_novedad_pago * novedad.pago_dia_dinero)                                    
-                                                data = {
-                                                    'documento': documento.id,  
-                                                    'dias': dias_novedad,
-                                                    'pago': pago,
-                                                    'concepto': novedad.novedad_tipo.concepto2_id,
-                                                    'novedad': novedad.id
-                                                }
+                                                data = data_general_detalle.copy()
+                                                data['dias'] = dias_novedad
+                                                data['pago'] = pago
+                                                data['concepto'] = novedad.novedad_tipo.concepto2_id
+                                                data['novedad'] = novedad.id
                                                 data = datos_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
@@ -670,12 +663,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             concepto = concepto_nomina.concepto
                                             pago = round(dia_auxilio_transporte * programacion_detalle.dias_transporte)                                    
                                             if pago > 0:
-                                                data = {
-                                                    'documento': documento.id,                                                                                    
-                                                    'pago': pago,
-                                                    'dias': programacion_detalle.dias_transporte,
-                                                    'concepto': concepto.id
-                                                }
+                                                data = data_general_detalle.copy()
+                                                data['pago'] = pago
+                                                data['dias'] = programacion_detalle.dias_transporte
+                                                data['concepto'] = concepto.id
                                                 datos_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
@@ -691,12 +682,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         concepto = concepto_nomina.concepto
                                         pago = round(prima)                                    
                                         if pago > 0:
-                                            data = {
-                                                'documento': documento.id,                                                                                    
-                                                'pago': pago,
-                                                'dias': programacion_detalle.dias,
-                                                'concepto': concepto.id
-                                            }
+                                            data = data_general_detalle.copy()
+                                            data['pago'] = pago
+                                            data['dias'] = programacion_detalle.dias
+                                            data['concepto'] = concepto.id
                                             datos_detalle(data_general, data, concepto)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
@@ -712,12 +701,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         concepto_cesantias = conceptos_nomina[13].concepto                                
                                         pago = round(cesantia)                                    
                                         if pago > 0:
-                                            data = {
-                                                'documento': documento.id,                                                                                    
-                                                'pago': pago,
-                                                'dias': programacion_detalle.dias,
-                                                'concepto': concepto_cesantias.id
-                                            }
+                                            data = data_general_detalle.copy()
+                                            data['pago'] = pago
+                                            data['dias'] = programacion_detalle.dias
+                                            data['concepto'] = concepto_cesantias.id
                                             datos_detalle(data_general, data, concepto_cesantias)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
@@ -732,12 +719,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         insteres = cesantia * porcentaje_interes
                                         pago = round(insteres)                                    
                                         if pago > 0:
-                                            data = {
-                                                'documento': documento.id,                                                                                    
-                                                'pago': pago,
-                                                'dias': programacion_detalle.dias,
-                                                'concepto': concepto_interes.id
-                                            }
+                                            data = data_general_detalle.copy()
+                                            data['pago'] = pago
+                                            data['dias'] = programacion_detalle.dias
+                                            data['concepto'] = concepto_interes.id
                                             datos_detalle(data_general, data, concepto_interes)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
@@ -764,12 +749,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             valor_adicional = valor_adicional_dia * programacion_detalle.dias
                                         else:
                                             valor_adicional = adicional.valor
-                                        data = {
-                                            'documento': documento.id,                                                                                                                
-                                            'pago': round(valor_adicional),
-                                            'concepto': adicional.concepto_id,
-                                            'detalle': adicional.detalle
-                                        }
+                                        data = data_general_detalle.copy()
+                                        data['pago'] = round(valor_adicional)
+                                        data['concepto'] = adicional.concepto_id
+                                        data['detalle'] = adicional.detalle
                                         data = datos_detalle(data_general, data, concepto)
                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                         if documento_detalle_serializador.is_valid():
@@ -796,12 +779,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 pago = credito.cuota
                                             else:
                                                 pago = credito.saldo;                                                                                                
-                                            data = {
-                                                'documento': documento.id,                                                                                                                
-                                                'pago': round(pago),
-                                                'concepto': credito.concepto_id,
-                                                'credito': credito.id
-                                            }
+                                            data = data_general_detalle.copy()
+                                            data['pago'] = round(pago)
+                                            data['concepto'] = credito.concepto_id
+                                            data['credito'] = credito.id
                                             data = datos_detalle(data_general, data, concepto)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
@@ -821,12 +802,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     base = base_salario_minimo
                                             if base > 0:                                  
                                                 pago = round((base * salud.porcentaje_empleado) / 100)
-                                                data = {
-                                                    'documento': documento.id,                                            
-                                                    'porcentaje': salud.porcentaje_empleado,
-                                                    'pago': pago,
-                                                    'concepto': concepto.id
-                                                }
+                                                data = data_general_detalle.copy()
+                                                data['porcentaje'] = salud.porcentaje_empleado
+                                                data['pago'] = pago
+                                                data['concepto'] = concepto.id
                                                 datos_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
@@ -847,12 +826,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         base = base_salario_minimo 
                                                 if base > 0:
                                                     pago = round((base * pension.porcentaje_empleado) / 100)                                        
-                                                    data = {
-                                                        'documento': documento.id,                                            
-                                                        'porcentaje': pension.porcentaje_empleado,
-                                                        'pago': pago,
-                                                        'concepto': concepto.id
-                                                    }
+                                                    data = data_general_detalle.copy()
+                                                    data['porcentaje'] = pension.porcentaje_empleado
+                                                    data['pago'] = pago
+                                                    data['concepto'] = concepto.id
                                                     datos_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
@@ -875,12 +852,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 pago = round((base_cotizacion_total * porcentaje_fondo) / 100) 
                                                 pago = pago - programacion_detalle.deduccion_fondo_pension_acumulado
                                                 if pago > 0:
-                                                    data = {
-                                                        'documento': documento.id,                                            
-                                                        'porcentaje': porcentaje_fondo,
-                                                        'pago': pago,
-                                                        'concepto': concepto.id
-                                                    }
+                                                    data = data_general_detalle.copy()
+                                                    data['porcentaje'] = porcentaje_fondo
+                                                    data['pago'] = pago
+                                                    data['concepto'] = concepto.id
                                                     datos_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():

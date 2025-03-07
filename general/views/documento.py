@@ -10,6 +10,7 @@ from general.models.empresa import GenEmpresa
 from general.models.contacto import GenContacto
 from general.models.configuracion import GenConfiguracion
 from humano.models.contrato import HumContrato
+from humano.models.concepto_cuenta import HumConceptoCuenta
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.periodo import ConPeriodo
 from contabilidad.models.movimiento import ConMovimiento
@@ -443,9 +444,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                     if documento.documento_tipo.pagar:
                         data = data_general.copy()
-                        data['cuenta'] = documento.forma_pago.cuenta_id   
-                        #Se actualiza la cuenta en el documento para cuando se haga el egreso quede a esta cuenta
-                        documento.cuenta_id = documento.forma_pago.cuenta_id                                               
+                        #Se actualiza la cuenta en el documento para cuando se haga el egreso quede a esta cuenta                        
+                        data['cuenta'] = documento.documento_tipo.cuenta_pagar_id
+                        documento.cuenta_id = documento.documento_tipo.cuenta_pagar_id                         
+                        if documento.forma_pago:
+                            data['cuenta'] = documento.forma_pago.cuenta_id                                                   
+                            documento.cuenta_id = documento.forma_pago.cuenta_id                      
                         data['contacto'] = documento.contacto_id        
                         data['naturaleza'] = 'C'
                         data['credito'] = documento.total
@@ -550,8 +554,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
                     
                             if documento_detalle.tipo_registro == 'N':
-                                data = data_general.copy()                                                            
-                                data['cuenta'] = documento_detalle.cuenta_id
+                                data = data_general.copy()   
+                                tipo_costo_id = documento.contrato.tipo_costo_id
+                                concepto_cuenta = HumConceptoCuenta.objects.filter(concepto_id=documento_detalle.concepto_id, tipo_costo_id=tipo_costo_id).first()                                                       
+                                if concepto_cuenta:
+                                    data['cuenta'] = concepto_cuenta.cuenta_id
                                 data['contacto'] = documento_detalle.contacto_id        
                                 data['naturaleza'] = documento_detalle.naturaleza
                                 data['base'] = documento_detalle.base
