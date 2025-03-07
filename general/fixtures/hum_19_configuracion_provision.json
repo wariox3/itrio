@@ -1,0 +1,23 @@
+[
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 1,
+      "fields": {"tipo": "CESANTIA", "orden": 1, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 2,
+      "fields": {"tipo": "INTERES", "orden": 2, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 3,
+      "fields": {"tipo": "PRIMA", "orden": 3, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 4,
+      "fields": {"tipo": "VACACION", "orden": 4, "tipo_costo": 1}
+    }            
+  ]
+  

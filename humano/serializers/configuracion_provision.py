@@ -4,9 +4,9 @@ from humano.models.tipo_costo import HumTipoCosto
 from contabilidad.models.cuenta import ConCuenta
 
 class HumConfiguracionProvisionSerializador(serializers.HyperlinkedModelSerializer):
-    tipo_costo = serializers.PrimaryKeyRelatedField(queryset=HumTipoCosto.objects.all())
-    cuenta_debito = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all())
-    cuenta_credito = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all())
+    tipo_costo = serializers.PrimaryKeyRelatedField(queryset=HumTipoCosto.objects.all(), default=None, allow_null=True)
+    cuenta_debito = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
+    cuenta_credito = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
 
     class Meta:
         model = HumConfiguracionProvision
