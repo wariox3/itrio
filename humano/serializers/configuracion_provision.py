@@ -10,7 +10,7 @@ class HumConfiguracionProvisionSerializador(serializers.HyperlinkedModelSerializ
 
     class Meta:
         model = HumConfiguracionProvision
-        fields = ['id', 'nombre', 'cuenta_credito', 'cuenta_debito']    
+        fields = ['id', 'nombre', 'cuenta_credito', 'cuenta_debito', 'tipo_costo']    
 
     def to_representation(self, instance):       
         tipo_costo_nombre = ""
