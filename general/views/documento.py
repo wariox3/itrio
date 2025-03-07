@@ -421,8 +421,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     }
                             
                     if documento.documento_tipo.cobrar:
-                        data = data_general.copy()                            
-                        data['cuenta'] = documento.cuenta_id
+                        data = data_general.copy()                                                                        
+                        data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
+                        #Se actualiza la cuenta en el documento para cuando se haga el recibo/pago quede a esta cuenta
+                        documento.cuenta_id = documento.documento_tipo.cuenta_cobrar_id
                         data['contacto'] = documento.contacto_id        
                         if documento.documento_tipo_id in [1,3]:
                             data['naturaleza'] = 'D'
@@ -441,7 +443,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                     if documento.documento_tipo.pagar:
                         data = data_general.copy()
-                        data['cuenta'] = documento.cuenta_id                                                  
+                        data['cuenta'] = documento.forma_pago.cuenta_id   
+                        #Se actualiza la cuenta en el documento para cuando se haga el egreso quede a esta cuenta
+                        documento.cuenta_id = documento.forma_pago.cuenta_id                                               
                         data['contacto'] = documento.contacto_id        
                         data['naturaleza'] = 'C'
                         data['credito'] = documento.total
