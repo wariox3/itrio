@@ -823,7 +823,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                 data = {
                                                     'documento': documento.id,  
                                                     'tipo_registro': 'S', 
+                                                    'detalle': 'PENSION',
                                                     'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'contrato': aporte_contrato_contacto.contrato.id,
                                                     'pago': aporte_contrato_contacto.cotizacion_pension_total
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -869,8 +871,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                             if aporte_contrato_contacto.cotizacion_salud > 0:
                                                 data = {
                                                     'documento': documento.id,  
-                                                    'tipo_registro': 'S', 
-                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'tipo_registro': 'S',
+                                                    'detalle': 'SALUD', 
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,
+                                                    'contrato': aporte_contrato_contacto.contrato.id,                                        
                                                     'pago': aporte_contrato_contacto.cotizacion_salud
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -917,7 +921,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                 data = {
                                                     'documento': documento.id,  
                                                     'tipo_registro': 'S', 
-                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'detalle': 'CAJA',
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id, 
+                                                    'contrato': aporte_contrato_contacto.contrato.id,                                       
                                                     'pago': aporte_contrato_contacto.cotizacion_caja
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -964,7 +970,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                 data = {
                                                     'documento': documento.id,
                                                     'tipo_registro': 'S',   
-                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'detalle': 'RIESGO',
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,
+                                                    'contrato': aporte_contrato_contacto.contrato.id,                                        
                                                     'pago': aporte_contrato_contacto.cotizacion_riesgos
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -1010,8 +1018,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                             if aporte_contrato_contacto.cotizacion_sena > 0:
                                                 data = {
                                                     'documento': documento.id,  
-                                                    'tipo_registro': 'S', 
-                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'tipo_registro': 'S',
+                                                    'detalle': 'SENA', 
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,
+                                                    'contrato': aporte_contrato_contacto.contrato.id,                                        
                                                     'pago': aporte_contrato_contacto.cotizacion_sena
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -1057,8 +1067,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                             if aporte_contrato_contacto.cotizacion_icbf > 0:
                                                 data = {
                                                     'documento': documento.id,
-                                                    'tipo_registro': 'S',   
-                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'tipo_registro': 'S',  
+                                                    'detalle': 'ICBF', 
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id, 
+                                                    'contrato': aporte_contrato_contacto.contrato.id,                                       
                                                     'pago': aporte_contrato_contacto.cotizacion_icbf
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)

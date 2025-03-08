@@ -1,0 +1,34 @@
+[
+    {
+      "model": "humano.HumConfiguracionAporte",
+      "pk": 1,
+      "fields": {"tipo": "PENSION", "orden": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionAporte",
+      "pk": 2,
+      "fields": {"tipo": "SALUD", "orden": 2}
+    },
+    {
+      "model": "humano.HumConfiguracionAporte",
+      "pk": 3,
+      "fields": {"tipo": "CAJA", "orden": 3}
+    },
+    {
+      "model": "humano.HumConfiguracionAporte",
+      "pk": 4,
+      "fields": {"tipo": "RIESGO", "orden": 4}
+    },
+    {
+      "model": "humano.HumConfiguracionAporte",
+      "pk": 5,
+      "fields": {"tipo": "SENA", "orden": 5}
+    },
+    {
+      "model": "humano.HumConfiguracionAporte",
+      "pk": 6,
+      "fields": {"tipo": "ICBF", "orden": 6}
+    }
+           
+  ]
+  

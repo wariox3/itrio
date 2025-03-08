@@ -413,8 +413,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documento.documento_tipo_id == 13:
                         comprobante_id = documento.comprobante_id
                     else:
-                        comprobante_id = documento.documento_tipo.comprobante_id
-                    tipo_costo_id = documento.contrato.tipo_costo_id
+                        comprobante_id = documento.documento_tipo.comprobante_id                    
                     data_general = {
                         'documento': id,
                         'periodo': periodo_id,
@@ -445,23 +444,25 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 'mensaje': 'Cuenta por cobrar'}, status=status.HTTP_400_BAD_REQUEST)
                 
                     if documento.documento_tipo.pagar:
-                        data = data_general.copy()
-                        #Se actualiza la cuenta en el documento para cuando se haga el egreso quede a esta cuenta                        
-                        data['cuenta'] = documento.documento_tipo.cuenta_pagar_id
-                        documento.cuenta_id = documento.documento_tipo.cuenta_pagar_id                         
-                        if documento.forma_pago:
-                            data['cuenta'] = documento.forma_pago.cuenta_id                                                   
-                            documento.cuenta_id = documento.forma_pago.cuenta_id                      
-                        data['contacto'] = documento.contacto_id        
-                        data['naturaleza'] = 'C'
-                        data['credito'] = documento.total
-                        data['detalle'] = 'PROVEEDOR'
-                        movimiento_serializador = ConMovimientoSerializador(data=data)
-                        if movimiento_serializador.is_valid():
-                            movimientos_validos.append(movimiento_serializador)
-                        else:
-                            return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)
+                        # Excluir seguridad social porque se genera una cxp por cada detalle
+                        if documento.documento_tipo_id != 22:
+                            data = data_general.copy()
+                            #Se actualiza la cuenta en el documento para cuando se haga el egreso quede a esta cuenta                        
+                            data['cuenta'] = documento.documento_tipo.cuenta_pagar_id
+                            documento.cuenta_id = documento.documento_tipo.cuenta_pagar_id                         
+                            if documento.forma_pago:
+                                data['cuenta'] = documento.forma_pago.cuenta_id                                                   
+                                documento.cuenta_id = documento.forma_pago.cuenta_id                      
+                            data['contacto'] = documento.contacto_id        
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.total
+                            data['detalle'] = 'PROVEEDOR'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)
                                                 
                     documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
                     for documento_detalle in documento_detalles:
@@ -555,6 +556,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
                     
                             if documento_detalle.tipo_registro == 'N':
+                                tipo_costo_id = documento.contrato.tipo_costo_id
                                 if documento_detalle.operacion != 0:
                                     data = data_general.copy()                                       
                                     concepto_cuenta = HumConceptoCuenta.objects.filter(concepto_id=documento_detalle.concepto_id, tipo_costo_id=tipo_costo_id).first()                                                       
@@ -581,40 +583,43 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Documento detalle {documento_detalle.id} nomina'}, status=status.HTTP_400_BAD_REQUEST) 
 
-                            '''if documento_detalle.tipo_registro == 'S':                                
+                            if documento_detalle.tipo_registro == 'S':                                
+                                tipo_costo_id = documento_detalle.contrato.tipo_costo_id
                                 data = data_general.copy()
-                                configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='PENSION', tipo_costo_id=tipo_costo_id).first()                                                       
+                                clase = documento_detalle.detalle
+                                configuracion_provision = HumConfiguracionProvision.objects.filter(tipo=clase, tipo_costo_id=tipo_costo_id).first()                                                       
                                 if configuracion_provision:
                                     data['cuenta'] = configuracion_provision.cuenta_debito_id                                                                        
                                     if configuracion_provision.cuenta_debito:
                                         if configuracion_provision.cuenta_debito.exige_grupo:
-                                            data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                                            data['grupo'] = documento_detalle.contrato.grupo_id                                                                                                                                                          
                                 data['contacto'] = documento.contacto_id
                                 data['naturaleza'] = 'D'
                                 data['debito'] = documento_detalle.pago
-                                data['detalle'] = 'SS PENSION COSTO'
+                                data['detalle'] = f'SS {clase} COSTO'
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
-                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)                                
+                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST) 
+                                                               
                                 data = data_general.copy()
                                 if configuracion_provision:
                                     data['cuenta'] = configuracion_provision.cuenta_credito_id                                                                        
                                     if configuracion_provision.cuenta_credito:
                                         if configuracion_provision.cuenta_credito.exige_grupo:
-                                            data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                                            data['grupo'] = documento_detalle.contrato.grupo_id                                                                                                                                                          
                                 data['contacto'] = documento.contacto_id
                                 data['naturaleza'] = 'C'
                                 data['credito'] = documento_detalle.pago
-                                data['detalle'] = 'SS PENSION CXP'
+                                data['detalle'] = f'SS {clase} CXP'
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
-                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)'''                                                             
+                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)                                                             
 
                     documento_impuestos = GenDocumentoImpuesto.objects.filter(
                         documento_detalle__documento_id=id

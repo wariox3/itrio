@@ -7,6 +7,7 @@ from contabilidad.models.grupo import ConGrupo
 from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
 from humano.models.novedad import HumNovedad
+from humano.models.contrato import HumContrato
 from inventario.models.almacen import InvAlmacen
 
 from rest_framework import serializers
@@ -21,6 +22,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
     credito = serializers.PrimaryKeyRelatedField(queryset=HumCredito.objects.all(), default=None, allow_null=True)
     novedad = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), default=None, allow_null=True)
+    contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all(), default=None, allow_null=True)
     almacen = serializers.PrimaryKeyRelatedField(queryset=InvAlmacen.objects.all(), default=None, allow_null=True)
 
     class Meta:
@@ -29,7 +31,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 'operacion', 'operacion_inventario', 'pago_operado', 
-                  'devengado', 'deduccion', 'dias', 'almacen']
+                  'devengado', 'deduccion', 'dias', 'almacen', 'contrato']
 
     def to_representation(self, instance):
         item = instance.item

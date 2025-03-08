@@ -18,6 +18,36 @@
       "model": "humano.HumConfiguracionProvision",
       "pk": 4,
       "fields": {"tipo": "VACACION", "orden": 4, "tipo_costo": 1}
-    }            
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 5,
+      "fields": {"tipo": "PENSION", "orden": 5, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 6,
+      "fields": {"tipo": "SALUD", "orden": 6, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 7,
+      "fields": {"tipo": "CAJA", "orden": 7, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 8,
+      "fields": {"tipo": "RIESGO", "orden": 8, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 9,
+      "fields": {"tipo": "SENA", "orden": 9, "tipo_costo": 1}
+    },
+    {
+      "model": "humano.HumConfiguracionProvision",
+      "pk": 10,
+      "fields": {"tipo": "ICBF", "orden": 10, "tipo_costo": 1}
+    }             
   ]
   
