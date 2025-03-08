@@ -29,6 +29,7 @@ class GenDocumentoDetalle(models.Model):
     dias = models.BigIntegerField(default=0)
     base_cotizacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     base_prestacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    base_prestacion_vacacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     porcentaje = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     porcentaje_descuento = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     devengado = models.DecimalField(max_digits=20, decimal_places=6, default=0)

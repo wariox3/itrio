@@ -47,6 +47,7 @@ class GenDocumento(models.Model):
     provision_vacacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     base_cotizacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     base_prestacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    base_prestacion_vacacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     evento_documento = models.CharField(max_length=2, default='PE')
     evento_recepcion = models.CharField(max_length=2, default='PE')
     evento_aceptacion = models.CharField(max_length=2, default='PE')

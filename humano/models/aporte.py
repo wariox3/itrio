@@ -16,6 +16,7 @@ class HumAporte(models.Model):
     lineas = models.IntegerField(default=0)
     base_cotizacion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     cotizacion_pension = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    cotizacion_pension_total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     cotizacion_voluntario_pension_afiliado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     cotizacion_voluntario_pension_aportante = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     cotizacion_solidaridad_solidaridad = models.DecimalField(max_digits=20, decimal_places=6, default=0)

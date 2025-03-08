@@ -15,7 +15,7 @@ class HumAporteSerializador(serializers.HyperlinkedModelSerializer):
         model = HumAporte
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_hasta_periodo', 'anio', 'mes', 'anio_salud', 'mes_salud', 'sucursal',
                   'presentacion', 'estado_generado', 'estado_aprobado', 'entidad_riesgo', 'entidad_sena', 'entidad_icbf',
-                  'cotizacion_pension', 'cotizacion_voluntario_pension_afiliado',
+                  'cotizacion_pension', 'cotizacion_pension_total', 'cotizacion_voluntario_pension_afiliado',
                   'cotizacion_voluntario_pension_aportante', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia',
                   'cotizacion_salud', 'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total',
                   'contratos', 'empleados', 'lineas']      

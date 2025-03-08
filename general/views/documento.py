@@ -11,6 +11,7 @@ from general.models.contacto import GenContacto
 from general.models.configuracion import GenConfiguracion
 from humano.models.contrato import HumContrato
 from humano.models.concepto_cuenta import HumConceptoCuenta
+from humano.models.configuracion_provision import HumConfiguracionProvision
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.periodo import ConPeriodo
 from contabilidad.models.movimiento import ConMovimiento
@@ -413,6 +414,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         comprobante_id = documento.comprobante_id
                     else:
                         comprobante_id = documento.documento_tipo.comprobante_id
+                    tipo_costo_id = documento.contrato.tipo_costo_id
                     data_general = {
                         'documento': id,
                         'periodo': periodo_id,
@@ -490,8 +492,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Cuenta por pagar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                
-                                
+                                                'mensaje': 'Cuenta por pagar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                                                
                         else:
                             if documento_detalle.tipo_registro == 'I':                                                                
                                 if documento.documento_tipo.venta:
@@ -555,8 +556,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     
                             if documento_detalle.tipo_registro == 'N':
                                 if documento_detalle.operacion != 0:
-                                    data = data_general.copy()   
-                                    tipo_costo_id = documento.contrato.tipo_costo_id
+                                    data = data_general.copy()                                       
                                     concepto_cuenta = HumConceptoCuenta.objects.filter(concepto_id=documento_detalle.concepto_id, tipo_costo_id=tipo_costo_id).first()                                                       
                                     if concepto_cuenta:
                                         data['cuenta'] = concepto_cuenta.cuenta_id                                                                        
@@ -580,6 +580,41 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         movimientos_validos.append(movimiento_serializador)
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Documento detalle {documento_detalle.id} nomina'}, status=status.HTTP_400_BAD_REQUEST) 
+
+                            '''if documento_detalle.tipo_registro == 'S':                                
+                                data = data_general.copy()
+                                configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='PENSION', tipo_costo_id=tipo_costo_id).first()                                                       
+                                if configuracion_provision:
+                                    data['cuenta'] = configuracion_provision.cuenta_debito_id                                                                        
+                                    if configuracion_provision.cuenta_debito:
+                                        if configuracion_provision.cuenta_debito.exige_grupo:
+                                            data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                                data['contacto'] = documento.contacto_id
+                                data['naturaleza'] = 'D'
+                                data['debito'] = documento_detalle.pago
+                                data['detalle'] = 'SS PENSION COSTO'
+                                movimiento_serializador = ConMovimientoSerializador(data=data)
+                                if movimiento_serializador.is_valid():
+                                    movimientos_validos.append(movimiento_serializador)
+                                else:
+                                    return Response({'validaciones': movimiento_serializador.errors, 
+                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)                                
+                                data = data_general.copy()
+                                if configuracion_provision:
+                                    data['cuenta'] = configuracion_provision.cuenta_credito_id                                                                        
+                                    if configuracion_provision.cuenta_credito:
+                                        if configuracion_provision.cuenta_credito.exige_grupo:
+                                            data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                                data['contacto'] = documento.contacto_id
+                                data['naturaleza'] = 'C'
+                                data['credito'] = documento_detalle.pago
+                                data['detalle'] = 'SS PENSION CXP'
+                                movimiento_serializador = ConMovimientoSerializador(data=data)
+                                if movimiento_serializador.is_valid():
+                                    movimientos_validos.append(movimiento_serializador)
+                                else:
+                                    return Response({'validaciones': movimiento_serializador.errors, 
+                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)'''                                                             
 
                     documento_impuestos = GenDocumentoImpuesto.objects.filter(
                         documento_detalle__documento_id=id
@@ -659,7 +694,151 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 return Response({'validaciones': movimiento_serializador.errors, 
                                                     'mensaje': 'Pago / Egreso cuenta banco'}, status=status.HTTP_400_BAD_REQUEST) 
 
-                    
+                    # Nomina - Provisiones
+                    if documento.documento_tipo_id == 14:
+                        if documento.provision_cesantia > 0:
+                            data = data_general.copy()
+                            configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='CESANTIA', tipo_costo_id=tipo_costo_id).first()                                                       
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_debito_id                                                                        
+                                if configuracion_provision.cuenta_debito:
+                                    if configuracion_provision.cuenta_debito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'D'
+                            data['debito'] = documento.provision_cesantia
+                            data['detalle'] = 'PROVISION CESANTIA DEB'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision cesantia'}, status=status.HTTP_400_BAD_REQUEST)
+                            
+                            data = data_general.copy()
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_credito_id                                                                        
+                                if configuracion_provision.cuenta_credito:
+                                    if configuracion_provision.cuenta_credito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.provision_cesantia
+                            data['detalle'] = 'PROVISION CESANTIA CRE'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision cesantia'}, status=status.HTTP_400_BAD_REQUEST)                             
+                            
+                        if documento.provision_interes > 0:
+                            data = data_general.copy()
+                            configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='INTERES', tipo_costo_id=tipo_costo_id).first()                                                       
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_debito_id                                                                        
+                                if configuracion_provision.cuenta_debito:
+                                    if configuracion_provision.cuenta_debito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'D'
+                            data['debito'] = documento.provision_interes
+                            data['detalle'] = 'PROVISION INTERES DEB'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision interes'}, status=status.HTTP_400_BAD_REQUEST)                            
+                            data = data_general.copy()
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_credito_id                                                                        
+                                if configuracion_provision.cuenta_credito:
+                                    if configuracion_provision.cuenta_credito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.provision_interes
+                            data['detalle'] = 'PROVISION INTERES CRE'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision interes'}, status=status.HTTP_400_BAD_REQUEST)
+                            
+                        if documento.provision_prima > 0:
+                            data = data_general.copy()
+                            configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='PRIMA', tipo_costo_id=tipo_costo_id).first()                                                       
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_debito_id                                                                        
+                                if configuracion_provision.cuenta_debito:
+                                    if configuracion_provision.cuenta_debito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'D'
+                            data['debito'] = documento.provision_prima
+                            data['detalle'] = 'PROVISION PRIMA DEB'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision prima'}, status=status.HTTP_400_BAD_REQUEST) 
+                            
+                            data = data_general.copy()
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_credito_id                                                                        
+                                if configuracion_provision.cuenta_credito:
+                                    if configuracion_provision.cuenta_credito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.provision_prima
+                            data['detalle'] = 'PROVISION PRIMA CRE'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision prima'}, status=status.HTTP_400_BAD_REQUEST)
+
+                        if documento.provision_vacacion > 0:
+                            data = data_general.copy()
+                            configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='VACACION', tipo_costo_id=tipo_costo_id).first()                                                       
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_debito_id                                                                        
+                                if configuracion_provision.cuenta_debito:
+                                    if configuracion_provision.cuenta_debito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'D'
+                            data['debito'] = documento.provision_vacacion
+                            data['detalle'] = 'PROVISION VACACION DEB'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision vacacion'}, status=status.HTTP_400_BAD_REQUEST)      
+
+                            data = data_general.copy()
+                            if configuracion_provision:
+                                data['cuenta'] = configuracion_provision.cuenta_credito_id                                                                        
+                                if configuracion_provision.cuenta_credito:
+                                    if configuracion_provision.cuenta_credito.exige_grupo:
+                                        data['grupo'] = documento.contrato.grupo_id                                                                                                                                                          
+                            data['contacto'] = documento.contacto_id
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.provision_vacacion
+                            data['detalle'] = 'PROVISION VACACION CRE'
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'Provision vacacion'}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                             
+                
                 with transaction.atomic():
                     for serializador in movimientos_validos:
                         serializador.save()

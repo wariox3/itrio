@@ -28,7 +28,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'documento', 'documento_afectado', 'item', 'cuenta', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
-                  'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'operacion', 'operacion_inventario', 'pago_operado', 
+                  'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 'operacion', 'operacion_inventario', 'pago_operado', 
                   'devengado', 'deduccion', 'dias', 'almacen']
 
     def to_representation(self, instance):
@@ -99,6 +99,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'operacion_inventario': instance.operacion_inventario,
             'base_cotizacion': instance.base_cotizacion,
             'base_prestacion': instance.base_prestacion,
+            'base_prestacion_vacacion': instance.base_prestacion_vacacion,
             'documento_afectado_id': instance.documento_afectado_id,
             'documento_afectado_documento_tipo_nombre': documento_afectado_documento_tipo_nombre,
             'documento_afectado_numero': documento_afectado_numero,

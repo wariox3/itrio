@@ -73,6 +73,9 @@ def datos_detalle(data_general, data, concepto):
     if concepto.ingreso_base_prestacion:
         data['base_prestacion'] = data['pago']
         data_general['base_prestacion'] += data['pago']
+    if concepto.ingreso_base_prestacion_vacacion:        
+        data['base_prestacion_vacacion'] = data['pago']
+        data_general['base_prestacion_vacacion'] += data['pago']        
     return data
 
 def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
@@ -476,6 +479,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     'deduccion': 0,
                                     'base_cotizacion': 0,
                                     'base_prestacion': 0,
+                                    'base_prestacion_vacacion': 0,
                                     'base_licencia': 0
                                 }
                                 data_general_detalle = {
@@ -881,9 +885,18 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                                 total = data_general['devengado'] - data_general['deduccion']
                                 devengado = data_general['devengado']
-                                deduccion = data_general['deduccion']
+                                deduccion = data_general['deduccion']                                
+                                provision_cesantia = data_general['base_prestacion'] * 0.0833
+                                provision_interes = provision_cesantia * 0.12
+                                provision_prima = data_general['base_prestacion'] * 0.0833
+                                provision_vacacion = data_general['base_prestacion_vacacion'] * 0.0417
+                                documento.provision_cesantia = provision_cesantia
+                                documento.provision_interes = provision_interes
+                                documento.provision_prima = provision_prima
+                                documento.provision_vacacion = provision_vacacion
                                 documento.base_cotizacion = data_general['base_cotizacion']
                                 documento.base_prestacion = data_general['base_prestacion']
+                                documento.base_prestacion_vacacion = data_general['base_prestacion_vacacion']
                                 documento.devengado = devengado
                                 documento.deduccion = deduccion
                                 documento.total = total

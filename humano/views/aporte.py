@@ -6,6 +6,7 @@ from humano.models.aporte_contrato import HumAporteContrato
 from humano.models.aporte_detalle import HumAporteDetalle
 from humano.models.aporte_entidad import HumAporteEntidad
 from humano.models.contrato import HumContrato
+from humano.models.entidad import HumEntidad
 from general.models.empresa import GenEmpresa
 from general.models.documento import GenDocumento
 from general.models.documento_tipo import GenDocumentoTipo
@@ -17,6 +18,7 @@ from humano.serializers.aporte_contrato import HumAporteContratoSerializador
 from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
 from humano.serializers.aporte_entidad import HumAporteEntidadSerializador
 from general.serializers.documento import GenDocumentoSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from datetime import date
 from django.db.models import Sum, Q, DecimalField
 from django.db.models.functions import Coalesce
@@ -114,8 +116,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 if aporte.estado_generado == False:
                     cantidad = 0                    
                     contratos = HumContrato.objects.filter(
-                            # grupo_id=programacion.grupo_id
-                        ).filter(
                             Q(fecha_desde__lte=aporte.fecha_hasta_periodo)
                         ).filter(
                             Q(fecha_hasta__gte=aporte.fecha_desde) | Q(contrato_tipo_id=1)
@@ -140,6 +140,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 'entidad_salud': contrato.entidad_salud_id,
                                 'entidad_pension': contrato.entidad_pension_id,
                                 'entidad_caja': contrato.entidad_caja_id,
+                                'entidad_riesgo': aporte.entidad_riesgo_id,
+                                'entidad_sena': aporte.entidad_sena_id,
+                                'entidad_icbf': aporte.entidad_icbf_id,
                                 'riesgo': contrato.riesgo_id,
                                 'contrato': contrato.id,
                                 'salario': contrato.salario,
@@ -175,16 +178,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     dias += 2
                                 elif fecha_hasta.day == 29:
                                     dias += 1
-
-                            if error_terminacion:
-                                dias = 0
-
-                            data['dias'] = dias
-
                             if error_terminacion:
                                 dias = 0
                             data['dias'] = dias
-
+                            if error_terminacion:
+                                dias = 0
+                            data['dias'] = dias
+                            # Calcular el IBC
                             documento_detalle = GenDocumentoDetalle.objects.filter(
                                 documento__fecha__gte=fecha_desde,
                                 documento__fecha__lte=fecha_hasta,                                                                
@@ -192,8 +192,28 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             ).aggregate(
                                 ibc=Coalesce(Sum('base_cotizacion'), 0, output_field=DecimalField())
                             )
-                            ibc = documento_detalle['ibc']
-                            data['base_cotizacion'] = ibc
+                            data['base_cotizacion'] = documento_detalle['ibc']
+                            # Calcular pension pagada por el empleado
+                            documento_detalle = GenDocumentoDetalle.objects.filter(
+                                documento__fecha__gte=fecha_desde,
+                                documento__fecha__lte=fecha_hasta,                                                                
+                                documento__contrato_id=contrato.id                                
+                            ).filter(
+                                Q(concepto_id=15) | Q(concepto_id=20)
+                            ).aggregate(
+                                total_pension=Coalesce(Sum('pago'), 0, output_field=DecimalField())
+                            )                            
+                            data['pension_empleado'] = documento_detalle['total_pension']
+                            # Calcular salud empleado
+                            documento_detalle = GenDocumentoDetalle.objects.filter(
+                                documento__fecha__gte=fecha_desde,
+                                documento__fecha__lte=fecha_hasta,                                                                
+                                documento__contrato_id=contrato.id,
+                                concepto_id=14                              
+                            ).aggregate(
+                                total_salud=Coalesce(Sum('pago'), 0, output_field=DecimalField())
+                            )                            
+                            data['salud_empleado'] = documento_detalle['total_salud']                            
                             aporte_contrato_serializador = HumAporteContratoSerializador(data=data)
                             if aporte_contrato_serializador.is_valid():
                                 aporte_contrato_serializador.save()
@@ -226,6 +246,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte_cotizacion_solidaridad_subsistencia = 0
                     aporte_cotizacion_voluntario_pension_afiliado = 0
                     aporte_cotizacion_voluntario_pension_aportante = 0
+                    aporte_cotizacion_pension_total = 0
                     aporte_cotizacion_salud = 0
                     aporte_cotizacion_riesgos = 0
                     aporte_cotizacion_caja = 0
@@ -258,7 +279,20 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     for aporte_contrato in aporte_contratos:                              
                         base_cotizacion = 0
                         dias_contrato = aporte_contrato.dias
-                        dias_novedad_contrato = 0
+                        dias_novedad_contrato = 0                        
+                        # Variables para aporte_contrato
+                        aporte_contrato_cotizacion_pension = 0
+                        aporte_contrato_cotizacion_solidaridad_solidaridad = 0
+                        aporte_contrato_cotizacion_solidaridad_subsistencia = 0
+                        aporte_contrato_cotizacion_voluntario_pension_afiliado = 0
+                        aporte_contrato_cotizacion_voluntario_pension_aportante = 0
+                        aporte_contrato_cotizacion_pension_total = 0
+                        aporte_contrato_cotizacion_salud = 0
+                        aporte_contrato_cotizacion_riesgos = 0
+                        aporte_contrato_cotizacion_caja = 0
+                        aporte_contrato_cotizacion_sena = 0
+                        aporte_contrato_cotizacion_icbf = 0
+                        aporte_contrato_cotizacion_total = 0
                         documento_detalles = GenDocumentoDetalle.objects.filter(
                             documento__fecha__gte=aporte.fecha_desde,
                             documento__fecha__lte=aporte.fecha_hasta,                                                                
@@ -321,6 +355,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     fecha_fin_incapacidad_laboral = documento_detalle['novedad__fecha_hasta'] 
                                     if fecha_fin_incapacidad_laboral > aporte.fecha_hasta:                                                                     
                                         fecha_fin_incapacidad_laboral = aporte.fecha_hasta
+                                
                                 # Licencia maternidad o paternidad
                                 if documento_detalle['novedad__novedad_tipo_id'] == 3:
                                     licencia_maternidad = True                                    
@@ -343,7 +378,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     fecha_fin_vacaciones = documento_detalle['novedad__fecha_hasta'] 
                                     if fecha_fin_vacaciones > aporte.fecha_hasta:   
                                         fecha_fin_vacaciones = aporte.fecha_hasta               
-
                                                                     
                                 horas_novedad = dias_novedad * 8   
                                 base_cotizacion_pension = base_cotizacion_novedad
@@ -361,18 +395,20 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 cotizacion_caja = Utilidades.redondear_cien(base_cotizacion_caja * tarifa_caja / 100)
                                 cotizacion_sena = Utilidades.redondear_cien(0)
                                 cotizacion_icbf = Utilidades.redondear_cien(0)
-                                cotizacion_total = cotizacion_pension + cotizacion_salud + cotizacion_riesgos + cotizacion_caja
-                                aporte_cotizacion_pension += cotizacion_pension
-                                aporte_cotizacion_solidaridad_solidaridad += 0
-                                aporte_cotizacion_solidaridad_subsistencia += 0
-                                aporte_cotizacion_voluntario_pension_afiliado += 0
-                                aporte_cotizacion_voluntario_pension_aportante += 0
-                                aporte_cotizacion_salud += cotizacion_salud
-                                aporte_cotizacion_riesgos += cotizacion_riesgos
-                                aporte_cotizacion_caja += cotizacion_caja   
-                                aporte_cotizacion_sena += aporte_cotizacion_sena
-                                aporte_cotizacion_icbf += aporte_cotizacion_icbf
-                                aporte_cotizacion_total += cotizacion_total                            
+                                cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
+                                cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf                                                                
+                                aporte_contrato_cotizacion_pension += cotizacion_pension
+                                aporte_contrato_cotizacion_pension_total += cotizacion_pension+cotizacion_solidaridad_solidaridad+cotizacion_solidaridad_subsistencia+cotizacion_voluntario_pension_afiliado+cotizacion_voluntario_pension_aportante
+                                aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
+                                aporte_contrato_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
+                                aporte_contrato_cotizacion_voluntario_pension_afiliado += cotizacion_voluntario_pension_afiliado
+                                aporte_contrato_cotizacion_voluntario_pension_aportante += cotizacion_voluntario_pension_aportante                                
+                                aporte_contrato_cotizacion_salud += cotizacion_salud
+                                aporte_contrato_cotizacion_riesgos += cotizacion_riesgos
+                                aporte_contrato_cotizacion_caja += cotizacion_caja   
+                                aporte_contrato_cotizacion_sena += aporte_cotizacion_sena
+                                aporte_contrato_cotizacion_icbf += aporte_cotizacion_icbf
+                                aporte_contrato_cotizacion_total += cotizacion_total                            
                                 data = {
                                     'aporte_contrato': aporte_contrato.id,
                                     'ingreso': aporte_contrato.ingreso,
@@ -425,6 +461,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             else:
                                 base_cotizacion += documento_detalle['base_cotizacion']  
                                 base_cotizacion_total += base_cotizacion                                                                                                      
+                        
+                        # Liquidar los dias restantes fuera de novedades
                         dias_contrato -= dias_novedad_contrato
                         horas = dias_contrato * 8   
                         base_cotizacion_pension = base_cotizacion
@@ -458,19 +496,20 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         cotizacion_caja = Utilidades.redondear_cien(base_cotizacion_caja * tarifa_caja / 100)
                         cotizacion_sena = Utilidades.redondear_cien(0)
                         cotizacion_icbf = Utilidades.redondear_cien(0)                        
-                        cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia
-                        cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja
-                        aporte_cotizacion_pension += cotizacion_pension
-                        aporte_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
-                        aporte_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
-                        aporte_cotizacion_voluntario_pension_afiliado += 0
-                        aporte_cotizacion_voluntario_pension_aportante += 0
-                        aporte_cotizacion_salud += cotizacion_salud
-                        aporte_cotizacion_riesgos += cotizacion_riesgos
-                        aporte_cotizacion_caja += cotizacion_caja   
-                        aporte_cotizacion_sena += aporte_cotizacion_sena
-                        aporte_cotizacion_icbf += aporte_cotizacion_icbf
-                        aporte_cotizacion_total += cotizacion_total
+                        cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
+                        cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf
+                        aporte_contrato_cotizacion_pension += cotizacion_pension
+                        aporte_contrato_cotizacion_pension_total += cotizacion_pension_total
+                        aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
+                        aporte_contrato_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
+                        aporte_contrato_cotizacion_voluntario_pension_afiliado += cotizacion_voluntario_pension_afiliado
+                        aporte_contrato_cotizacion_voluntario_pension_aportante += cotizacion_voluntario_pension_aportante
+                        aporte_contrato_cotizacion_salud += cotizacion_salud
+                        aporte_contrato_cotizacion_riesgos += cotizacion_riesgos
+                        aporte_contrato_cotizacion_caja += cotizacion_caja   
+                        aporte_contrato_cotizacion_sena += aporte_cotizacion_sena
+                        aporte_contrato_cotizacion_icbf += aporte_cotizacion_icbf
+                        aporte_contrato_cotizacion_total += cotizacion_total
                         lineas += 1
                         data = {
                             'aporte_contrato': aporte_contrato.id,
@@ -536,8 +575,40 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             aporte_entidad_icbf[aporte.entidad_icbf_id]['total'] += aporte_detalle.cotizacion_icbf                                                                                                                                         
                         else:
                             return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        pension_empresa = aporte_contrato_cotizacion_pension_total - aporte_contrato.pension_empleado
+                        salud_empresa = aporte_contrato_cotizacion_salud - aporte_contrato.salud_empleado                        
+                        aporte_contrato.pension_empresa = pension_empresa
+                        aporte_contrato.salud_empresa = salud_empresa                        
+                        aporte_contrato.cotizacion_pension = aporte_contrato_cotizacion_pension
+                        aporte_contrato.cotizacion_pension_total = aporte_contrato_cotizacion_pension_total
+                        aporte_contrato.cotizacion_solidaridad_solidaridad = aporte_contrato_cotizacion_solidaridad_solidaridad
+                        aporte_contrato.cotizacion_solidaridad_subsistencia = aporte_contrato_cotizacion_solidaridad_subsistencia
+                        aporte_contrato.cotizacion_voluntario_pension_afiliado = aporte_contrato_cotizacion_voluntario_pension_afiliado
+                        aporte_contrato.cotizacion_voluntario_pension_aportante = aporte_contrato_cotizacion_voluntario_pension_aportante
+                        aporte_contrato.cotizacion_salud = aporte_contrato_cotizacion_salud
+                        aporte_contrato.cotizacion_riesgos = aporte_contrato_cotizacion_riesgos
+                        aporte_contrato.cotizacion_caja = aporte_contrato_cotizacion_caja
+                        aporte_contrato.cotizacion_sena = aporte_contrato_cotizacion_sena
+                        aporte_contrato.cotizacion_icbf = aporte_contrato_cotizacion_icbf
+                        aporte_contrato.cotizacion_total = aporte_contrato_cotizacion_total                         
+                        aporte_contrato.save()
+                        aporte_cotizacion_pension += aporte_contrato_cotizacion_pension
+                        aporte_cotizacion_pension_total += aporte_contrato_cotizacion_pension_total
+                        aporte_cotizacion_solidaridad_solidaridad += aporte_contrato_cotizacion_solidaridad_solidaridad
+                        aporte_cotizacion_solidaridad_subsistencia += aporte_contrato_cotizacion_solidaridad_subsistencia
+                        aporte_cotizacion_voluntario_pension_afiliado += aporte_contrato_cotizacion_voluntario_pension_afiliado
+                        aporte_cotizacion_voluntario_pension_aportante += aporte_contrato_cotizacion_voluntario_pension_aportante
+                        aporte_cotizacion_salud += aporte_contrato_cotizacion_salud
+                        aporte_cotizacion_riesgos += aporte_contrato_cotizacion_riesgos
+                        aporte_cotizacion_caja += aporte_contrato_cotizacion_caja   
+                        aporte_cotizacion_sena += aporte_contrato_cotizacion_sena
+                        aporte_cotizacion_icbf += aporte_contrato_cotizacion_icbf
+                        aporte_cotizacion_total += aporte_contrato_cotizacion_total        
+                    
                     aporte.estado_generado = True                                        
                     aporte.cotizacion_pension = aporte_cotizacion_pension
+                    aporte.cotizacion_pension_total = aporte_cotizacion_pension_total
                     aporte.cotizacion_solidaridad_solidaridad = aporte_cotizacion_solidaridad_solidaridad
                     aporte.cotizacion_solidaridad_subsistencia = aporte_cotizacion_solidaridad_subsistencia
                     aporte.cotizacion_voluntario_pension_afiliado = aporte_cotizacion_voluntario_pension_afiliado
@@ -577,7 +648,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumAporte.DoesNotExist:
             return Response({'mensaje':'El aporte no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
-
 
     @action(detail=False, methods=["post"], url_path=r'generar-entidad',)
     def generar_entidad(self, request):
@@ -713,11 +783,20 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte_entidades = HumAporteEntidad.objects.filter(aporte_id=id)  
                     respuesta = self.validacion_aprobar(aporte_entidades)                  
                     if respuesta['error'] == False:
-                        with transaction.atomic():
-                            documento_tipo = GenDocumentoTipo.objects.get(pk=22)                               
-                            for aporte_entidad in aporte_entidades:
-                                if aporte_entidad.cotizacion > 0:
-                                    contacto = GenContacto.objects.filter(numero_identificacion=aporte_entidad.entidad.numero_identificacion).first()                                                                                                                            
+                        with transaction.atomic():                            
+                            documento_tipo = GenDocumentoTipo.objects.get(pk=22)                                                           
+                            # Pension
+                            aporte_contratos = HumAporteContrato.objects.filter(
+                                aporte_id=id
+                            ).values(
+                                'entidad_pension_id'
+                            ).annotate(
+                                cotizacion_pension_total=Coalesce(Sum('cotizacion_pension_total'), 0, output_field=DecimalField())
+                            )
+                            for aporte_contrato in aporte_contratos:
+                                if aporte_contrato['cotizacion_pension_total'] > 0:
+                                    entidad = HumEntidad.objects.get(pk=aporte_contrato['entidad_pension_id'])
+                                    contacto = GenContacto.objects.filter(numero_identificacion=entidad.numero_identificacion).first()
                                     data = {                                
                                         'aporte': id,
                                         'documento_tipo': 22,
@@ -729,15 +808,265 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         'fecha_vence': aporte.fecha_desde,
                                         'fecha_contable': aporte.fecha_desde,
                                         'fecha_hasta': aporte.fecha_hasta,
-                                        'total': aporte_entidad.cotizacion,
-                                        'pendiente': aporte_entidad.cotizacion
-                                    }
+                                        'total': aporte_contrato['cotizacion_pension_total'],
+                                        'pendiente':aporte_contrato['cotizacion_pension_total']
+                                    }                                
                                     documento_tipo.consecutivo += 1
                                     documento_serializador = GenDocumentoSerializador(data=data)
                                     if documento_serializador.is_valid():
-                                        documento = documento_serializador.save()                                                                                                              
+                                        documento = documento_serializador.save()                                     
+                                        aporte_contratos_contacto = HumAporteContrato.objects.filter(
+                                            aporte_id=id,
+                                            entidad_pension_id=aporte_contrato['entidad_pension_id'])
+                                        for aporte_contrato_contacto in aporte_contratos_contacto:
+                                            if aporte_contrato_contacto.cotizacion_pension_total > 0:
+                                                data = {
+                                                    'documento': documento.id,  
+                                                    'tipo_registro': 'S', 
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'pago': aporte_contrato_contacto.cotizacion_pension_total
+                                                }
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()                                                                                                                                                                                                                                              
                                     else:
-                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                               
+                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                            
+                            # Salud
+                            aporte_contratos = HumAporteContrato.objects.filter(
+                                aporte_id=id
+                            ).values(
+                                'entidad_salud_id'
+                            ).annotate(
+                                cotizacion_salud=Coalesce(Sum('cotizacion_salud'), 0, output_field=DecimalField())
+                            )
+                            for aporte_contrato in aporte_contratos:
+                                if aporte_contrato['cotizacion_salud'] > 0:
+                                    entidad = HumEntidad.objects.get(pk=aporte_contrato['entidad_salud_id'])
+                                    contacto = GenContacto.objects.filter(numero_identificacion=entidad.numero_identificacion).first()
+                                    data = {                                
+                                        'aporte': id,
+                                        'documento_tipo': 22,
+                                        'numero': documento_tipo.consecutivo,
+                                        'contacto': contacto.id,
+                                        'empresa': 1,
+                                        'estado_aprobado': True,
+                                        'fecha': aporte.fecha_desde,
+                                        'fecha_vence': aporte.fecha_desde,
+                                        'fecha_contable': aporte.fecha_desde,
+                                        'fecha_hasta': aporte.fecha_hasta,
+                                        'total': aporte_contrato['cotizacion_salud'],
+                                        'pendiente':aporte_contrato['cotizacion_salud']
+                                    }                                
+                                    documento_tipo.consecutivo += 1
+                                    documento_serializador = GenDocumentoSerializador(data=data)
+                                    if documento_serializador.is_valid():
+                                        documento = documento_serializador.save()                                     
+                                        aporte_contratos_contacto = HumAporteContrato.objects.filter(
+                                            aporte_id=id,
+                                            entidad_salud_id=aporte_contrato['entidad_salud_id'])
+                                        for aporte_contrato_contacto in aporte_contratos_contacto:
+                                            if aporte_contrato_contacto.cotizacion_salud > 0:
+                                                data = {
+                                                    'documento': documento.id,  
+                                                    'tipo_registro': 'S', 
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'pago': aporte_contrato_contacto.cotizacion_salud
+                                                }
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()                                                                                                                                                                                                                                              
+                                    else:
+                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
+                            
+                            # Caja
+                            aporte_contratos = HumAporteContrato.objects.filter(
+                                aporte_id=id
+                            ).values(
+                                'entidad_caja_id'
+                            ).annotate(
+                                cotizacion_caja=Coalesce(Sum('cotizacion_caja'), 0, output_field=DecimalField())
+                            )
+                            for aporte_contrato in aporte_contratos:
+                                if aporte_contrato['cotizacion_caja'] > 0:
+                                    entidad = HumEntidad.objects.get(pk=aporte_contrato['entidad_caja_id'])
+                                    contacto = GenContacto.objects.filter(numero_identificacion=entidad.numero_identificacion).first()
+                                    data = {                                
+                                        'aporte': id,
+                                        'documento_tipo': 22,
+                                        'numero': documento_tipo.consecutivo,
+                                        'contacto': contacto.id,
+                                        'empresa': 1,
+                                        'estado_aprobado': True,
+                                        'fecha': aporte.fecha_desde,
+                                        'fecha_vence': aporte.fecha_desde,
+                                        'fecha_contable': aporte.fecha_desde,
+                                        'fecha_hasta': aporte.fecha_hasta,
+                                        'total': aporte_contrato['cotizacion_caja'],
+                                        'pendiente':aporte_contrato['cotizacion_caja']
+                                    }                                
+                                    documento_tipo.consecutivo += 1
+                                    documento_serializador = GenDocumentoSerializador(data=data)
+                                    if documento_serializador.is_valid():
+                                        documento = documento_serializador.save()                                     
+                                        aporte_contratos_contacto = HumAporteContrato.objects.filter(
+                                            aporte_id=id,
+                                            entidad_caja_id=aporte_contrato['entidad_caja_id'])
+                                        for aporte_contrato_contacto in aporte_contratos_contacto:
+                                            if aporte_contrato_contacto.cotizacion_caja > 0:
+                                                data = {
+                                                    'documento': documento.id,  
+                                                    'tipo_registro': 'S', 
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'pago': aporte_contrato_contacto.cotizacion_caja
+                                                }
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()                                                                                                                                                                                                                                              
+                                    else:
+                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
+                            
+                            # Riesgo
+                            aporte_contratos = HumAporteContrato.objects.filter(
+                                aporte_id=id
+                            ).values(
+                                'entidad_riesgo_id'
+                            ).annotate(
+                                cotizacion_riesgos=Coalesce(Sum('cotizacion_riesgos'), 0, output_field=DecimalField())
+                            )
+                            for aporte_contrato in aporte_contratos:
+                                if aporte_contrato['cotizacion_riesgos'] > 0:
+                                    entidad = HumEntidad.objects.get(pk=aporte_contrato['entidad_riesgo_id'])
+                                    contacto = GenContacto.objects.filter(numero_identificacion=entidad.numero_identificacion).first()
+                                    data = {                                
+                                        'aporte': id,
+                                        'documento_tipo': 22,
+                                        'numero': documento_tipo.consecutivo,
+                                        'contacto': contacto.id,
+                                        'empresa': 1,
+                                        'estado_aprobado': True,
+                                        'fecha': aporte.fecha_desde,
+                                        'fecha_vence': aporte.fecha_desde,
+                                        'fecha_contable': aporte.fecha_desde,
+                                        'fecha_hasta': aporte.fecha_hasta,
+                                        'total': aporte_contrato['cotizacion_riesgos'],
+                                        'pendiente':aporte_contrato['cotizacion_riesgos']
+                                    }                                
+                                    documento_tipo.consecutivo += 1
+                                    documento_serializador = GenDocumentoSerializador(data=data)
+                                    if documento_serializador.is_valid():
+                                        if aporte_contrato_contacto.cotizacion_riesgos > 0:
+                                            documento = documento_serializador.save()                                     
+                                            aporte_contratos_contacto = HumAporteContrato.objects.filter(
+                                                aporte_id=id,
+                                                entidad_riesgo_id=aporte_contrato['entidad_riesgo_id'])
+                                            for aporte_contrato_contacto in aporte_contratos_contacto:
+                                                data = {
+                                                    'documento': documento.id,
+                                                    'tipo_registro': 'S',   
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'pago': aporte_contrato_contacto.cotizacion_riesgos
+                                                }
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()                                                                                                                                                                                                                                              
+                                    else:
+                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+                            # Sena
+                            aporte_contratos = HumAporteContrato.objects.filter(
+                                aporte_id=id
+                            ).values(
+                                'entidad_sena_id'
+                            ).annotate(
+                                cotizacion_sena=Coalesce(Sum('cotizacion_sena'), 0, output_field=DecimalField())
+                            )
+                            for aporte_contrato in aporte_contratos:
+                                if aporte_contrato['cotizacion_sena'] > 0:
+                                    entidad = HumEntidad.objects.get(pk=aporte_contrato['entidad_sena_id'])
+                                    contacto = GenContacto.objects.filter(numero_identificacion=entidad.numero_identificacion).first()
+                                    data = {                                
+                                        'aporte': id,
+                                        'documento_tipo': 22,
+                                        'numero': documento_tipo.consecutivo,
+                                        'contacto': contacto.id,
+                                        'empresa': 1,
+                                        'estado_aprobado': True,
+                                        'fecha': aporte.fecha_desde,
+                                        'fecha_vence': aporte.fecha_desde,
+                                        'fecha_contable': aporte.fecha_desde,
+                                        'fecha_hasta': aporte.fecha_hasta,
+                                        'total': aporte_contrato['cotizacion_sena'],
+                                        'pendiente':aporte_contrato['cotizacion_sena']
+                                    }                                
+                                    documento_tipo.consecutivo += 1
+                                    documento_serializador = GenDocumentoSerializador(data=data)
+                                    if documento_serializador.is_valid():
+                                        documento = documento_serializador.save()                                     
+                                        aporte_contratos_contacto = HumAporteContrato.objects.filter(
+                                            aporte_id=id,
+                                            entidad_sena_id=aporte_contrato['entidad_sena_id'])
+                                        for aporte_contrato_contacto in aporte_contratos_contacto:
+                                            if aporte_contrato_contacto.cotizacion_sena > 0:
+                                                data = {
+                                                    'documento': documento.id,  
+                                                    'tipo_registro': 'S', 
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'pago': aporte_contrato_contacto.cotizacion_sena
+                                                }
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()                                                                                                                                                                                                                                              
+                                    else:
+                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+                            # Icbf
+                            aporte_contratos = HumAporteContrato.objects.filter(
+                                aporte_id=id
+                            ).values(
+                                'entidad_icbf_id'
+                            ).annotate(
+                                cotizacion_icbf=Coalesce(Sum('cotizacion_icbf'), 0, output_field=DecimalField())
+                            )
+                            for aporte_contrato in aporte_contratos:
+                                if aporte_contrato['cotizacion_icbf'] > 0:
+                                    entidad = HumEntidad.objects.get(pk=aporte_contrato['entidad_icbf_id'])
+                                    contacto = GenContacto.objects.filter(numero_identificacion=entidad.numero_identificacion).first()
+                                    data = {                                
+                                        'aporte': id,
+                                        'documento_tipo': 22,
+                                        'numero': documento_tipo.consecutivo,
+                                        'contacto': contacto.id,
+                                        'empresa': 1,
+                                        'estado_aprobado': True,
+                                        'fecha': aporte.fecha_desde,
+                                        'fecha_vence': aporte.fecha_desde,
+                                        'fecha_contable': aporte.fecha_desde,
+                                        'fecha_hasta': aporte.fecha_hasta,
+                                        'total': aporte_contrato['cotizacion_icbf'],
+                                        'pendiente':aporte_contrato['cotizacion_icbf']
+                                    }                                
+                                    documento_tipo.consecutivo += 1
+                                    documento_serializador = GenDocumentoSerializador(data=data)
+                                    if documento_serializador.is_valid():
+                                        documento = documento_serializador.save()                                     
+                                        aporte_contratos_contacto = HumAporteContrato.objects.filter(
+                                            aporte_id=id,
+                                            entidad_icbf_id=aporte_contrato['entidad_icbf_id'])
+                                        for aporte_contrato_contacto in aporte_contratos_contacto:
+                                            if aporte_contrato_contacto.cotizacion_icbf > 0:
+                                                data = {
+                                                    'documento': documento.id,
+                                                    'tipo_registro': 'S',   
+                                                    'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
+                                                    'pago': aporte_contrato_contacto.cotizacion_icbf
+                                                }
+                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                if documento_detalle_serializador.is_valid():
+                                                    documento_detalle_serializador.save()                                                                                                                                                                                                                                              
+                                    else:
+                                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
                             documento_tipo.save
                             aporte.estado_aprobado = True
                             aporte.save()
@@ -750,6 +1079,29 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except HumAporte.DoesNotExist:
             return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+
+    @action(detail=False, methods=["post"], url_path=r'desaprobar',)
+    def desaprobar(self, request):             
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                aporte = HumAporte.objects.get(pk=id)
+                if aporte.estado_aprobado == True:                                       
+                    with transaction.atomic():
+                        documentos = GenDocumento.objects.filter(aporte_id=id)
+                        for documento in documentos:                    
+                            documento_detalle = GenDocumentoDetalle.objects.filter(documento_id=documento.id).delete()
+                            documento.delete()  
+                        aporte.estado_aprobado = False
+                        aporte.save()                        
+                        return Response({'mensaje': 'Aporte desaprobado'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'El aporte no esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumAporte.DoesNotExist:
+            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
 
     @action(detail=False, methods=["post"], url_path=r'plano-operador',)
     def plano_operador(self, request):             

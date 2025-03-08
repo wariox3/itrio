@@ -13,12 +13,21 @@ class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
     entidad_salud = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
     entidad_pension = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
     entidad_caja = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    entidad_riesgo = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    entidad_sena = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
+    entidad_icbf = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all())
     riesgo = serializers.PrimaryKeyRelatedField(queryset=HumRiesgo.objects.all())
 
     class Meta:
         model = HumAporteContrato
-        fields = ['id', 'fecha_desde', 'fecha_hasta', 'dias', 'salario','base_cotizacion', 'aporte', 'contrato', 'ingreso', 'retiro', 'error_terminacion',
-                  'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'riesgo']        
+        fields = ['id', 'fecha_desde', 'fecha_hasta', 'dias', 'salario',
+                  'base_cotizacion', 'pension_empleado', 'salud_empleado', 'pension_empresa', 'salud_empresa',
+                  'aporte', 'contrato', 'ingreso', 'retiro', 'error_terminacion',
+                  'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_riesgo', 
+                  'entidad_sena', 'entidad_icbf', 'riesgo', 'cotizacion_pension', 'cotizacion_voluntario_pension_afiliado',
+                  'cotizacion_voluntario_pension_aportante', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia',
+                  'cotizacion_pension_total',
+                  'cotizacion_salud', 'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total']        
 
     def to_representation(self, instance):    
         contrato_contacto_id = ''        
