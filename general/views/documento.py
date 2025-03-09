@@ -382,7 +382,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'contabilizar',)
-    @transaction.atomic
     def contabilizar(self, request):        
         raw = request.data
         ids = raw.get('ids')
@@ -1786,6 +1785,32 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             GenDocumento.objects.bulk_update(documentos_actualizar, ['afectado', 'pendiente'])                
         return Response({'mensaje':f'Se corrigieron {actualizados} documentos'}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=["post"], url_path=r'proceso_corregir_provision')
+    def proceso_corregir_provision(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                documento = GenDocumento.objects.get(id=id)
+                if documento.documento_tipo_id == 14:
+                    with transaction.atomic():
+                        provision_cesantia = documento.base_prestacion * Decimal(0.0833)
+                        provision_interes = provision_cesantia * Decimal(0.12)
+                        provision_prima = documento.base_prestacion * Decimal(0.0833)
+                        provision_vacacion = documento.base_prestacion_vacacion * Decimal(0.0417)
+                        documento.provision_cesantia = round(provision_cesantia)
+                        documento.provision_interes = round(provision_interes)
+                        documento.provision_prima = round(provision_prima)
+                        documento.provision_vacacion = round(provision_vacacion)
+                        documento.save()
+                    return Response({'mensaje':f'Se corrigieron las provisiones'}, status=status.HTTP_200_OK)                
+                else:
+                    return Response({'mensaje': 'Solo se pueden corregir documentos nomina', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                   
     @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
     def resumen_cobrar(self, request):      
         fecha_actual = timezone.now().date()

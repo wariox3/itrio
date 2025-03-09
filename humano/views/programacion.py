@@ -890,10 +890,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 provision_interes = provision_cesantia * 0.12
                                 provision_prima = data_general['base_prestacion'] * 0.0833
                                 provision_vacacion = data_general['base_prestacion_vacacion'] * 0.0417
-                                documento.provision_cesantia = provision_cesantia
-                                documento.provision_interes = provision_interes
-                                documento.provision_prima = provision_prima
-                                documento.provision_vacacion = provision_vacacion
+                                documento.provision_cesantia = round(provision_cesantia)
+                                documento.provision_interes = round(provision_interes)
+                                documento.provision_prima = round(provision_prima)
+                                documento.provision_vacacion = round(provision_vacacion)
                                 documento.base_cotizacion = data_general['base_cotizacion']
                                 documento.base_prestacion = data_general['base_prestacion']
                                 documento.base_prestacion_vacacion = data_general['base_prestacion_vacacion']
