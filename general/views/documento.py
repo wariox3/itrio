@@ -690,6 +690,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
                     # Nomina - Provisiones
                     if documento.documento_tipo_id == 14:
+                        tipo_costo_id = documento.contrato.tipo_costo_id
                         if documento.provision_cesantia > 0:
                             data = data_general.copy()
                             configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='CESANTIA', tipo_costo_id=tipo_costo_id).first()                                                       
@@ -726,7 +727,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 return Response({'validaciones': movimiento_serializador.errors, 
                                                     'mensaje': 'Provision cesantia'}, status=status.HTTP_400_BAD_REQUEST)                             
                             
-                        if documento.provision_interes > 0:
+                        if documento.provision_interes > 0:                            
                             data = data_general.copy()
                             configuracion_provision = HumConfiguracionProvision.objects.filter(tipo='INTERES', tipo_costo_id=tipo_costo_id).first()                                                       
                             if configuracion_provision:
