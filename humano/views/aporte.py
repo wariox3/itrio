@@ -203,7 +203,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             ).aggregate(
                                 total_pension=Coalesce(Sum('pago'), 0, output_field=DecimalField())
                             )                            
-                            data['pension_empleado'] = documento_detalle['total_pension']
+                            data['cotizacion_pension_empleado'] = documento_detalle['total_pension']
                             # Calcular salud empleado
                             documento_detalle = GenDocumentoDetalle.objects.filter(
                                 documento__fecha__gte=fecha_desde,
@@ -213,7 +213,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             ).aggregate(
                                 total_salud=Coalesce(Sum('pago'), 0, output_field=DecimalField())
                             )                            
-                            data['salud_empleado'] = documento_detalle['total_salud']                            
+                            data['cotizacion_salud_empleado'] = documento_detalle['total_salud']                            
                             aporte_contrato_serializador = HumAporteContratoSerializador(data=data)
                             if aporte_contrato_serializador.is_valid():
                                 aporte_contrato_serializador.save()
@@ -242,12 +242,16 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo')[0]
                     base_cotizacion_total = 0
                     aporte_cotizacion_pension = 0
+                    aporte_cotizacion_pension_total = 0
+                    aporte_cotizacion_pension_empresa = 0
+                    aporte_cotizacion_pension_empleado = 0
                     aporte_cotizacion_solidaridad_solidaridad = 0
                     aporte_cotizacion_solidaridad_subsistencia = 0
                     aporte_cotizacion_voluntario_pension_afiliado = 0
-                    aporte_cotizacion_voluntario_pension_aportante = 0
-                    aporte_cotizacion_pension_total = 0
+                    aporte_cotizacion_voluntario_pension_aportante = 0                    
                     aporte_cotizacion_salud = 0
+                    aporte_cotizacion_salud_empresa = 0
+                    aporte_cotizacion_salud_empleado= 0
                     aporte_cotizacion_riesgos = 0
                     aporte_cotizacion_caja = 0
                     aporte_cotizacion_sena = 0
@@ -282,11 +286,11 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         dias_novedad_contrato = 0                        
                         # Variables para aporte_contrato
                         aporte_contrato_cotizacion_pension = 0
+                        aporte_contrato_cotizacion_pension_total = 0
                         aporte_contrato_cotizacion_solidaridad_solidaridad = 0
                         aporte_contrato_cotizacion_solidaridad_subsistencia = 0
                         aporte_contrato_cotizacion_voluntario_pension_afiliado = 0
-                        aporte_contrato_cotizacion_voluntario_pension_aportante = 0
-                        aporte_contrato_cotizacion_pension_total = 0
+                        aporte_contrato_cotizacion_voluntario_pension_aportante = 0                        
                         aporte_contrato_cotizacion_salud = 0
                         aporte_contrato_cotizacion_riesgos = 0
                         aporte_contrato_cotizacion_caja = 0
@@ -396,9 +400,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 cotizacion_sena = Utilidades.redondear_cien(0)
                                 cotizacion_icbf = Utilidades.redondear_cien(0)
                                 cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
-                                cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf                                                                
+                                cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf                                                                                                
+                                # Total aportes por contrato
                                 aporte_contrato_cotizacion_pension += cotizacion_pension
-                                aporte_contrato_cotizacion_pension_total += cotizacion_pension+cotizacion_solidaridad_solidaridad+cotizacion_solidaridad_subsistencia+cotizacion_voluntario_pension_afiliado+cotizacion_voluntario_pension_aportante
+                                aporte_contrato_cotizacion_pension_total += cotizacion_pension_total
                                 aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
                                 aporte_contrato_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
                                 aporte_contrato_cotizacion_voluntario_pension_afiliado += cotizacion_voluntario_pension_afiliado
@@ -498,6 +503,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         cotizacion_icbf = Utilidades.redondear_cien(0)                        
                         cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
                         cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf
+                        
                         aporte_contrato_cotizacion_pension += cotizacion_pension
                         aporte_contrato_cotizacion_pension_total += cotizacion_pension_total
                         aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
@@ -576,10 +582,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         else:
                             return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                         
-                        pension_empresa = aporte_contrato_cotizacion_pension_total - aporte_contrato.pension_empleado
-                        salud_empresa = aporte_contrato_cotizacion_salud - aporte_contrato.salud_empleado                        
-                        aporte_contrato.pension_empresa = pension_empresa
-                        aporte_contrato.salud_empresa = salud_empresa                        
+                        cotizacion_pension_empresa = aporte_contrato_cotizacion_pension_total - aporte_contrato.cotizacion_pension_empleado
+                        cotizacion_salud_empresa = aporte_contrato_cotizacion_salud - aporte_contrato.cotizacion_salud_empleado                        
+                        aporte_contrato.cotizacion_pension_empresa = cotizacion_pension_empresa
+                        aporte_contrato.cotizacion_salud_empresa = cotizacion_salud_empresa                        
                         aporte_contrato.cotizacion_pension = aporte_contrato_cotizacion_pension
                         aporte_contrato.cotizacion_pension_total = aporte_contrato_cotizacion_pension_total
                         aporte_contrato.cotizacion_solidaridad_solidaridad = aporte_contrato_cotizacion_solidaridad_solidaridad
@@ -595,11 +601,15 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         aporte_contrato.save()
                         aporte_cotizacion_pension += aporte_contrato_cotizacion_pension
                         aporte_cotizacion_pension_total += aporte_contrato_cotizacion_pension_total
+                        aporte_cotizacion_pension_empresa += cotizacion_pension_empresa     
+                        aporte_cotizacion_pension_empleado += aporte_contrato.cotizacion_pension_empleado                   
                         aporte_cotizacion_solidaridad_solidaridad += aporte_contrato_cotizacion_solidaridad_solidaridad
                         aporte_cotizacion_solidaridad_subsistencia += aporte_contrato_cotizacion_solidaridad_subsistencia
                         aporte_cotizacion_voluntario_pension_afiliado += aporte_contrato_cotizacion_voluntario_pension_afiliado
                         aporte_cotizacion_voluntario_pension_aportante += aporte_contrato_cotizacion_voluntario_pension_aportante
                         aporte_cotizacion_salud += aporte_contrato_cotizacion_salud
+                        aporte_cotizacion_salud_empresa += cotizacion_salud_empresa
+                        aporte_cotizacion_salud_empleado += aporte_contrato.cotizacion_salud_empleado
                         aporte_cotizacion_riesgos += aporte_contrato_cotizacion_riesgos
                         aporte_cotizacion_caja += aporte_contrato_cotizacion_caja   
                         aporte_cotizacion_sena += aporte_contrato_cotizacion_sena
@@ -609,11 +619,15 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte.estado_generado = True                                        
                     aporte.cotizacion_pension = aporte_cotizacion_pension
                     aporte.cotizacion_pension_total = aporte_cotizacion_pension_total
+                    aporte.cotizacion_pension_empresa = aporte_cotizacion_pension_empresa
+                    aporte.cotizacion_pension_empleado = aporte_cotizacion_pension_empleado
                     aporte.cotizacion_solidaridad_solidaridad = aporte_cotizacion_solidaridad_solidaridad
                     aporte.cotizacion_solidaridad_subsistencia = aporte_cotizacion_solidaridad_subsistencia
                     aporte.cotizacion_voluntario_pension_afiliado = aporte_cotizacion_voluntario_pension_afiliado
                     aporte.cotizacion_voluntario_pension_aportante = aporte_cotizacion_voluntario_pension_aportante
                     aporte.cotizacion_salud = aporte_cotizacion_salud
+                    aporte.cotizacion_salud_empresa = aporte_cotizacion_salud_empresa
+                    aporte.cotizacion_salud_empleado = aporte_cotizacion_salud_empleado
                     aporte.cotizacion_riesgos = aporte_cotizacion_riesgos
                     aporte.cotizacion_caja = aporte_cotizacion_caja
                     aporte.cotizacion_sena = aporte_cotizacion_sena
@@ -791,7 +805,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             ).values(
                                 'entidad_pension_id'
                             ).annotate(
-                                cotizacion_pension_total=Coalesce(Sum('cotizacion_pension_total'), 0, output_field=DecimalField())
+                                cotizacion_pension_total=Coalesce(Sum('cotizacion_pension_total'), 0, output_field=DecimalField()),
+                                cotizacion_pension_empresa=Coalesce(Sum('cotizacion_pension_empresa'), 0, output_field=DecimalField())
                             )
                             for aporte_contrato in aporte_contratos:
                                 if aporte_contrato['cotizacion_pension_total'] > 0:
@@ -803,11 +818,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         'numero': documento_tipo.consecutivo,
                                         'contacto': contacto.id,
                                         'empresa': 1,
+                                        'orden_compra': 'PENSION',
                                         'estado_aprobado': True,
                                         'fecha': aporte.fecha_desde,
                                         'fecha_vence': aporte.fecha_desde,
                                         'fecha_contable': aporte.fecha_desde,
                                         'fecha_hasta': aporte.fecha_hasta,
+                                        'subtotal': aporte_contrato['cotizacion_pension_empresa'],
                                         'total': aporte_contrato['cotizacion_pension_total'],
                                         'pendiente':aporte_contrato['cotizacion_pension_total']
                                     }                                
@@ -826,6 +843,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                     'detalle': 'PENSION',
                                                     'contacto':aporte_contrato_contacto.contrato.contacto.id,                                        
                                                     'contrato': aporte_contrato_contacto.contrato.id,
+                                                    'precio': aporte_contrato_contacto.cotizacion_pension_empresa,
                                                     'pago': aporte_contrato_contacto.cotizacion_pension_total
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -840,7 +858,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             ).values(
                                 'entidad_salud_id'
                             ).annotate(
-                                cotizacion_salud=Coalesce(Sum('cotizacion_salud'), 0, output_field=DecimalField())
+                                cotizacion_salud=Coalesce(Sum('cotizacion_salud'), 0, output_field=DecimalField()),
+                                cotizacion_salud_empresa=Coalesce(Sum('cotizacion_salud_empresa'), 0, output_field=DecimalField()),
                             )
                             for aporte_contrato in aporte_contratos:
                                 if aporte_contrato['cotizacion_salud'] > 0:
@@ -852,11 +871,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         'numero': documento_tipo.consecutivo,
                                         'contacto': contacto.id,
                                         'empresa': 1,
+                                        'orden_compra': 'SALUD',
                                         'estado_aprobado': True,
                                         'fecha': aporte.fecha_desde,
                                         'fecha_vence': aporte.fecha_desde,
                                         'fecha_contable': aporte.fecha_desde,
                                         'fecha_hasta': aporte.fecha_hasta,
+                                        'subtotal': aporte_contrato['cotizacion_salud_empresa'],
                                         'total': aporte_contrato['cotizacion_salud'],
                                         'pendiente':aporte_contrato['cotizacion_salud']
                                     }                                
@@ -875,6 +896,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                     'detalle': 'SALUD', 
                                                     'contacto':aporte_contrato_contacto.contrato.contacto.id,
                                                     'contrato': aporte_contrato_contacto.contrato.id,                                        
+                                                    'precio': aporte_contrato_contacto.cotizacion_salud_empresa,
                                                     'pago': aporte_contrato_contacto.cotizacion_salud
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -901,11 +923,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         'numero': documento_tipo.consecutivo,
                                         'contacto': contacto.id,
                                         'empresa': 1,
+                                        'orden_compra': 'CAJA',
                                         'estado_aprobado': True,
                                         'fecha': aporte.fecha_desde,
                                         'fecha_vence': aporte.fecha_desde,
                                         'fecha_contable': aporte.fecha_desde,
                                         'fecha_hasta': aporte.fecha_hasta,
+                                        'subtotal': aporte_contrato['cotizacion_caja'],
                                         'total': aporte_contrato['cotizacion_caja'],
                                         'pendiente':aporte_contrato['cotizacion_caja']
                                     }                                
@@ -924,6 +948,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                     'detalle': 'CAJA',
                                                     'contacto':aporte_contrato_contacto.contrato.contacto.id, 
                                                     'contrato': aporte_contrato_contacto.contrato.id,                                       
+                                                    'precio': aporte_contrato_contacto.cotizacion_caja,
                                                     'pago': aporte_contrato_contacto.cotizacion_caja
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -950,11 +975,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         'numero': documento_tipo.consecutivo,
                                         'contacto': contacto.id,
                                         'empresa': 1,
+                                        'orden_compra': 'RIESGO',
                                         'estado_aprobado': True,
                                         'fecha': aporte.fecha_desde,
                                         'fecha_vence': aporte.fecha_desde,
                                         'fecha_contable': aporte.fecha_desde,
                                         'fecha_hasta': aporte.fecha_hasta,
+                                        'subtotal': aporte_contrato['cotizacion_riesgos'],
                                         'total': aporte_contrato['cotizacion_riesgos'],
                                         'pendiente':aporte_contrato['cotizacion_riesgos']
                                     }                                
@@ -973,6 +1000,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                     'detalle': 'RIESGO',
                                                     'contacto':aporte_contrato_contacto.contrato.contacto.id,
                                                     'contrato': aporte_contrato_contacto.contrato.id,                                        
+                                                    'precio': aporte_contrato_contacto.cotizacion_riesgos,
                                                     'pago': aporte_contrato_contacto.cotizacion_riesgos
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -999,11 +1027,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         'numero': documento_tipo.consecutivo,
                                         'contacto': contacto.id,
                                         'empresa': 1,
+                                        'orden_compra': 'SENA',
                                         'estado_aprobado': True,
                                         'fecha': aporte.fecha_desde,
                                         'fecha_vence': aporte.fecha_desde,
                                         'fecha_contable': aporte.fecha_desde,
                                         'fecha_hasta': aporte.fecha_hasta,
+                                        'subtotal': aporte_contrato['cotizacion_sena'],
                                         'total': aporte_contrato['cotizacion_sena'],
                                         'pendiente':aporte_contrato['cotizacion_sena']
                                     }                                
@@ -1022,6 +1052,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                     'detalle': 'SENA', 
                                                     'contacto':aporte_contrato_contacto.contrato.contacto.id,
                                                     'contrato': aporte_contrato_contacto.contrato.id,                                        
+                                                    'precio': aporte_contrato_contacto.cotizacion_sena,
                                                     'pago': aporte_contrato_contacto.cotizacion_sena
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
@@ -1048,11 +1079,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         'numero': documento_tipo.consecutivo,
                                         'contacto': contacto.id,
                                         'empresa': 1,
+                                        'orden_compra': 'ICBF',
                                         'estado_aprobado': True,
                                         'fecha': aporte.fecha_desde,
                                         'fecha_vence': aporte.fecha_desde,
                                         'fecha_contable': aporte.fecha_desde,
                                         'fecha_hasta': aporte.fecha_hasta,
+                                        'subtotal': aporte_contrato['cotizacion_icbf'],
                                         'total': aporte_contrato['cotizacion_icbf'],
                                         'pendiente':aporte_contrato['cotizacion_icbf']
                                     }                                
@@ -1071,6 +1104,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                                     'detalle': 'ICBF', 
                                                     'contacto':aporte_contrato_contacto.contrato.contacto.id, 
                                                     'contrato': aporte_contrato_contacto.contrato.id,                                       
+                                                    'precio': aporte_contrato_contacto.cotizacion_icbf,
                                                     'pago': aporte_contrato_contacto.cotizacion_icbf
                                                 }
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)

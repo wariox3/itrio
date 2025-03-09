@@ -12,6 +12,7 @@ from general.models.configuracion import GenConfiguracion
 from humano.models.contrato import HumContrato
 from humano.models.concepto_cuenta import HumConceptoCuenta
 from humano.models.configuracion_provision import HumConfiguracionProvision
+from humano.models.configuracion_aporte import HumConfiguracionAporte
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.periodo import ConPeriodo
 from contabilidad.models.movimiento import ConMovimiento
@@ -444,25 +445,31 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 'mensaje': 'Cuenta por cobrar'}, status=status.HTTP_400_BAD_REQUEST)
                 
                     if documento.documento_tipo.pagar:
-                        # Excluir seguridad social porque se genera una cxp por cada detalle
-                        if documento.documento_tipo_id != 22:
-                            data = data_general.copy()
-                            #Se actualiza la cuenta en el documento para cuando se haga el egreso quede a esta cuenta                        
-                            data['cuenta'] = documento.documento_tipo.cuenta_pagar_id
-                            documento.cuenta_id = documento.documento_tipo.cuenta_pagar_id                         
-                            if documento.forma_pago:
-                                data['cuenta'] = documento.forma_pago.cuenta_id                                                   
-                                documento.cuenta_id = documento.forma_pago.cuenta_id                      
-                            data['contacto'] = documento.contacto_id        
-                            data['naturaleza'] = 'C'
-                            data['credito'] = documento.total
-                            data['detalle'] = 'PROVEEDOR'
-                            movimiento_serializador = ConMovimientoSerializador(data=data)
-                            if movimiento_serializador.is_valid():
-                                movimientos_validos.append(movimiento_serializador)
-                            else:
-                                return Response({'validaciones': movimiento_serializador.errors, 
-                                                    'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)
+                        data = data_general.copy()
+                        #Se actualiza la cuenta en el documento para cuando se haga el egreso quede a esta cuenta                                                
+                        data['cuenta'] = documento.documento_tipo.cuenta_pagar_id
+                        documento.cuenta_id = documento.documento_tipo.cuenta_pagar_id                         
+                        if documento.forma_pago:
+                            data['cuenta'] = documento.forma_pago.cuenta_id                                                   
+                            documento.cuenta_id = documento.forma_pago.cuenta_id 
+                        if documento.documento_tipo_id == 22:
+                            clase = documento.orden_compra
+                            configuracion_aporte = HumConfiguracionAporte.objects.filter(tipo=clase).first()
+                            if configuracion_aporte:
+                                data['cuenta'] = configuracion_aporte.cuenta_id                                                   
+                                documento.cuenta_id = configuracion_aporte.cuenta_id
+                        data['contacto'] = documento.contacto_id        
+                        data['naturaleza'] = 'C'
+                        data['credito'] = documento.total
+                        if documento.documento_tipo_id == 22:
+                            data['credito'] = documento.subtotal
+                        data['detalle'] = 'PROVEEDOR'
+                        movimiento_serializador = ConMovimientoSerializador(data=data)
+                        if movimiento_serializador.is_valid():
+                            movimientos_validos.append(movimiento_serializador)
+                        else:
+                            return Response({'validaciones': movimiento_serializador.errors, 
+                                                'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)
                                                 
                     documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
                     for documento_detalle in documento_detalles:
@@ -595,31 +602,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             data['grupo'] = documento_detalle.contrato.grupo_id                                                                                                                                                          
                                 data['contacto'] = documento.contacto_id
                                 data['naturaleza'] = 'D'
-                                data['debito'] = documento_detalle.pago
+                                data['debito'] = documento_detalle.precio
                                 data['detalle'] = f'SS {clase} COSTO'
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
-                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST) 
-                                                               
-                                data = data_general.copy()
-                                if configuracion_provision:
-                                    data['cuenta'] = configuracion_provision.cuenta_credito_id                                                                        
-                                    if configuracion_provision.cuenta_credito:
-                                        if configuracion_provision.cuenta_credito.exige_grupo:
-                                            data['grupo'] = documento_detalle.contrato.grupo_id                                                                                                                                                          
-                                data['contacto'] = documento.contacto_id
-                                data['naturaleza'] = 'C'
-                                data['credito'] = documento_detalle.pago
-                                data['detalle'] = f'SS {clase} CXP'
-                                movimiento_serializador = ConMovimientoSerializador(data=data)
-                                if movimiento_serializador.is_valid():
-                                    movimientos_validos.append(movimiento_serializador)
-                                else:
-                                    return Response({'validaciones': movimiento_serializador.errors, 
-                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)                                                             
+                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                             
 
                     documento_impuestos = GenDocumentoImpuesto.objects.filter(
                         documento_detalle__documento_id=id
