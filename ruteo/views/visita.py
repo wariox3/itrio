@@ -20,11 +20,13 @@ from django.db.models import Sum, F, Count
 from django.db.models.functions import Coalesce
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from io import BytesIO
+from decimal import Decimal
 import re
 import gc
 import base64
 import openpyxl
 import numpy as np
+
 
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
@@ -376,7 +378,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             for filtro in filtros:
                 visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
                     
-        visitas = visitas.values('id', 'latitud', 'longitud')  
+        visitas = visitas.values('id', 'latitud', 'longitud', 'tiempo_servicio')  
         #visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
         if visitas.exists():
             cantidad_visitas = len(visitas)                   
@@ -411,6 +413,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
 
             for idx, visita_idx in enumerate(orden):
                 visita_id = visitas[visita_idx]['id']
+                tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
                 distancia = 0                
                 if idx == 0:
                     # Primera visita: distancia desde el punto inicial
@@ -419,8 +422,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     # Visitas posteriores: distancia desde la visita anterior
                     anterior_idx = orden[idx - 1]
                     distancia = matriz[anterior_idx + 1][visita_idx + 1]
-                tiempo_trayecto = distancia * 1
-                RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia_proxima=distancia)
+                tiempo_trayecto = Decimal(distancia * 0.8)
+                tiempo = tiempo_servicio+tiempo_trayecto            
+                RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)
 
             return Response({'mensaje':'visitas ordenadas', 'orden': orden}, status=status.HTTP_200_OK)
         else:
@@ -586,7 +590,10 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         visitas = visitas.aggregate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0),
-            tiempo_servicio=Coalesce(Sum('tiempo_servicio'), 0)
+            tiempo=Coalesce(Sum('tiempo'), Decimal(0.0)),
+            tiempo_servicio=Coalesce(Sum('tiempo_servicio'), Decimal(0.0)),
+            tiempo_trayecto=Coalesce(Sum('tiempo_trayecto'), Decimal(0.0))
+            
         )    
         errores = errores.aggregate(
             cantidad=Count('id'))        

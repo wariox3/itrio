@@ -12,7 +12,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RutVisita
         fields = ['id', 'guia', 'numero', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
-                  'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo_servicio', 'tiempo_trayecto',
+                  'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
                   'latitud', 'longitud', 'estado_decodificado', 
                   'estado_decodificado_alerta', 'orden', 'distancia',
                   'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados', 'estado_entregado']
@@ -36,6 +36,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'destinatario_correo': instance.destinatario_correo,
             'peso': instance.peso,
             'volumen': instance.volumen,
+            'tiempo': instance.tiempo,
             'tiempo_servicio': instance.tiempo_servicio,
             'tiempo_trayecto': instance.tiempo_trayecto,
             'estado_decodificado': instance.estado_decodificado,
