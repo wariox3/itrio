@@ -203,7 +203,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     for detalle in data_modelo:
                         RutVisita.objects.create(**detalle)
                     gc.collect()
-                    return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)
+                    self.ubicar(request)
+                    self.ordenar(request)
+                    return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)                
                 else:
                     gc.collect()                    
                     return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
@@ -372,63 +374,64 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):      
         raw = request.data
-        filtros = raw.get('filtros')
-        visitas = RutVisita.objects.filter(estado_decodificado=True)
+        visitas_franja = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('franja_codigo').annotate(cantidad=Count('id'))  
+        filtros = raw.get('filtros')        
         if filtros:
             for filtro in filtros:
-                visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
-                    
-        visitas = visitas.values('id', 'latitud', 'longitud', 'tiempo_servicio')  
-        #visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
-        if visitas.exists():
-            cantidad_visitas = len(visitas)                   
-            punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
-            matriz = construir_matriz_distancias(visitas, punto_inicial)                    
-            manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
-            routing = pywrapcp.RoutingModel(manager)
-            
-            # Función de costo
-            def distancia_callback(from_index, to_index):
-                from_node = manager.IndexToNode(from_index)
-                to_node = manager.IndexToNode(to_index)
-                return int(matriz[from_node][to_node] * 1000)
-            
-            transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
-            routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
-            search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-            search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-            
-            solution = routing.SolveWithParameters(search_parameters)            
-            if not solution:
-                return None
+                visitas_franja = visitas_franja.filter(**{filtro['propiedad']: filtro['valor1']})
+        for visita_franja in visitas_franja:                        
+            print(visita_franja['franja_codigo'])
+            visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud', 'tiempo_servicio')
+            if visita_franja['franja_codigo']:
+                visitas = visitas.filter(franja_codigo=visita_franja['franja_codigo'])
+            else:
+                visitas = visitas.filter(franja_codigo=None)     
+            if visitas.exists():
+                cantidad_visitas = len(visitas)                   
+                punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
+                matriz = construir_matriz_distancias(visitas, punto_inicial)                    
+                manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
+                routing = pywrapcp.RoutingModel(manager)
+                
+                # Función de costo
+                def distancia_callback(from_index, to_index):
+                    from_node = manager.IndexToNode(from_index)
+                    to_node = manager.IndexToNode(to_index)
+                    return int(matriz[from_node][to_node] * 1000)
+                
+                transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
+                routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
+                search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+                search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+                
+                solution = routing.SolveWithParameters(search_parameters)            
+                if not solution:
+                    return None
 
-            # Extraer el orden óptimo
-            index = routing.Start(0)
-            orden = []
-            while not routing.IsEnd(index):
-                node = manager.IndexToNode(index)
-                if node != 0:  # Ignorar el punto de partida
-                    orden.append(node - 1)  # Ajustar índice
-                index = solution.Value(routing.NextVar(index))
+                # Extraer el orden óptimo
+                index = routing.Start(0)
+                orden = []
+                while not routing.IsEnd(index):
+                    node = manager.IndexToNode(index)
+                    if node != 0:  # Ignorar el punto de partida
+                        orden.append(node - 1)  # Ajustar índice
+                    index = solution.Value(routing.NextVar(index))
 
-            for idx, visita_idx in enumerate(orden):
-                visita_id = visitas[visita_idx]['id']
-                tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
-                distancia = 0                
-                if idx == 0:
-                    # Primera visita: distancia desde el punto inicial
-                    distancia = matriz[0][visita_idx + 1]
-                else:
-                    # Visitas posteriores: distancia desde la visita anterior
-                    anterior_idx = orden[idx - 1]
-                    distancia = matriz[anterior_idx + 1][visita_idx + 1]
-                tiempo_trayecto = Decimal(distancia * 0.8)
-                tiempo = tiempo_servicio+tiempo_trayecto            
-                RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)
-
-            return Response({'mensaje':'visitas ordenadas', 'orden': orden}, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK)  
+                for idx, visita_idx in enumerate(orden):
+                    visita_id = visitas[visita_idx]['id']
+                    tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
+                    distancia = 0                
+                    if idx == 0:
+                        # Primera visita: distancia desde el punto inicial
+                        distancia = matriz[0][visita_idx + 1]
+                    else:
+                        # Visitas posteriores: distancia desde la visita anterior
+                        anterior_idx = orden[idx - 1]
+                        distancia = matriz[anterior_idx + 1][visita_idx + 1]
+                    tiempo_trayecto = Decimal(distancia * 0.8)
+                    tiempo = tiempo_servicio+tiempo_trayecto            
+                    RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)                
+        return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK) 
 
     @action(detail=False, methods=["post"], url_path=r'ordenar-google',)
     def ordenar_google(self, request):        
