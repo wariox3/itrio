@@ -34,7 +34,7 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
             vehiculo_capacidad = instance.vehiculo.capacidad
             vehiculo_tiempo = instance.vehiculo.tiempo
             vehiculo_franja_id = instance.vehiculo.franja_id
-            vehiculo_franja_codigo = instance.vehiculo.franja.codigo        
+            vehiculo_franja_codigo = instance.vehiculo.franja_codigo        
 
         return {
             'id': instance.id,  
