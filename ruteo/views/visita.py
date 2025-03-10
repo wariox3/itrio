@@ -490,19 +490,24 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             vehiculo_indice = 0
             vehiculo = flota[vehiculo_indice].vehiculo            
             peso_total = 0
-            tiempo_total = 0  
+            tiempo_total = 0 
+            tiempo_servicio_total = 0
+            tiempo_trayecto_total = 0 
             crear_despacho = True
             for visita in visitas:
-                if peso_total + visita.peso > vehiculo.capacidad or tiempo_total + visita.tiempo_servicio > vehiculo.tiempo:
+                if peso_total + visita.peso > vehiculo.capacidad or tiempo_total + visita.tiempo > vehiculo.tiempo:
                     asignado = False
                     peso_total = 0
+                    tiempo_total = 0 
+                    tiempo_servicio_total = 0
+                    tiempo_trayecto_total = 0                     
                     while vehiculo_indice + 1 <= cantidad_vehiculos and asignado == False:                         
                         vehiculo_indice += 1                        
                         if vehiculo_indice >= cantidad_vehiculos:
                             asignado = True
                         else: 
                             vehiculo = flota[vehiculo_indice].vehiculo
-                            if peso_total + visita.peso <= vehiculo.capacidad or tiempo_total + visita.tiempo_servicio <= vehiculo.tiempo:                             
+                            if peso_total + visita.peso <= vehiculo.capacidad or tiempo_total + visita.tiempo <= vehiculo.tiempo:                             
                                 crear_despacho = True
                                 asignado = True
                     if vehiculo_indice >= cantidad_vehiculos:
@@ -514,18 +519,24 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     despacho.vehiculo = vehiculo
                     despacho.peso = despacho.peso + visita.peso
                     despacho.volumen = despacho.volumen + visita.volumen
-                    despacho.tiempo = despacho.tiempo + visita.tiempo_servicio
+                    despacho.tiempo = despacho.tiempo + visita.tiempo
+                    despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
+                    despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
                     despacho.visitas = despacho.visitas + 1
                     despacho.save()
                     crear_despacho = False
                 else:
                     despacho.peso = despacho.peso + visita.peso
                     despacho.volumen = despacho.volumen + visita.volumen
-                    despacho.tiempo = despacho.tiempo + visita.tiempo_servicio
+                    despacho.tiempo = despacho.tiempo + visita.tiempo
+                    despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
+                    despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
                     despacho.visitas = despacho.visitas + 1
                     despacho.save()        
                 peso_total += visita.peso
-                tiempo_total += visita.tiempo_servicio
+                tiempo_total += visita.tiempo
+                tiempo_servicio_total += visita.tiempo_servicio
+                tiempo_trayecto_total += visita.tiempo_trayecto
                 visita.estado_despacho = True
                 visita.despacho = despacho
                 visita.save()
@@ -611,7 +622,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
         visitas = visitas.values('franja_codigo').annotate(
             cantidad=Count('id'), 
-            peso=Coalesce(Sum('peso'), 0.0))    
+            peso=Coalesce(Sum('peso'), 0.0),
+            tiempo=Coalesce(Sum('tiempo'), Decimal(0.0)),
+            tiempo_servicio=Coalesce(Sum('tiempo_servicio'), Decimal(0.0)),
+            tiempo_trayecto=Coalesce(Sum('tiempo_trayecto'), Decimal(0.0)),
+            )    
         return Response({'resumen': visitas}, status=status.HTTP_200_OK) 
 
     @action(detail=False, methods=["post"], url_path=r'seleccionar-direccion-alternativa',)
