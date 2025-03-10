@@ -505,7 +505,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     if vehiculo_indice >= cantidad_vehiculos:
                         break                                            
 
-                if crear_despacho:
+                '''if crear_despacho:
                     despacho = RutDespacho()
                     despacho.fecha = timezone.now()
                     despacho.vehiculo = vehiculo
@@ -522,7 +522,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 peso_total += visita.peso
                 visita.estado_despacho = True
                 visita.despacho = despacho
-                visita.save()
+                visita.save()'''
             return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)

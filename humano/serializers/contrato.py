@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
+from contabilidad.models.grupo import ConGrupo
 from humano.models.contrato import HumContrato
 from humano.models.contrato_tipo import HumContratoTipo
 from humano.models.grupo import HumGrupo
@@ -34,18 +35,22 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     entidad_cesantias = serializers.PrimaryKeyRelatedField(queryset=HumEntidad.objects.all(), default=None, allow_null=True)
     tiempo = serializers.PrimaryKeyRelatedField(queryset=HumTiempo.objects.all(), default=None, allow_null=True)
     tipo_costo = serializers.PrimaryKeyRelatedField(queryset=HumTipoCosto.objects.all(), default=None, allow_null=True)
+    grupo_contabilidad = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), default=None, allow_null=True)
     
     class Meta:
         model = HumContrato
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'salario', 'auxilio_transporte', 'salario_integral', 'estado_terminado', 
                   'comentario', 'contrato_tipo', 'grupo', 'contacto', 'sucursal', 'riesgo', 'cargo', 'tipo_cotizante', 'subtipo_cotizante',
                   'salud', 'pension', 'ciudad_contrato', 'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_cesantias', 
-                  'tiempo', 'tipo_costo']
+                  'tiempo', 'tipo_costo', 'grupo_contabilidad']
 
-    def to_representation(self, instance):
+    def to_representation(self, instance):        
         contrato_tipo_nombre = ''
         if instance.contrato_tipo:
             contrato_tipo_nombre = instance.contrato_tipo.nombre
+        grupo_contabilidad_nombre = ''
+        if instance.grupo_contabilidad:
+            grupo_contabilidad_nombre = instance.grupo_contabilidad.nombre             
         grupo_nombre = ''
         if instance.grupo:
             grupo_nombre = instance.grupo.nombre        
@@ -152,7 +157,9 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'tiempo_id' : instance.tiempo_id,
             'tiempo_nombre' : tiempo_nombre,
             'tipo_costo_id': instance.tipo_costo_id,
-            'tipo_costo_nombre': tipo_costo_nombre
+            'tipo_costo_nombre': tipo_costo_nombre,
+            'grupo_contabilidad_id': instance.grupo_contabilidad_id,
+            'grupo_contabilidad_nombre': grupo_contabilidad_nombre
         } 
 
 

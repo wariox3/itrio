@@ -1,6 +1,7 @@
 from django.db import models
 from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
+from contabilidad.models.grupo import ConGrupo
 from humano.models.contrato_tipo import HumContratoTipo
 from humano.models.grupo import HumGrupo
 from humano.models.sucursal import HumSucursal
@@ -44,6 +45,7 @@ class HumContrato(models.Model):
     entidad_caja = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True, related_name='contratos_entidad_caja_rel')
     tiempo = models.ForeignKey(HumTiempo, on_delete=models.PROTECT, null=True, related_name='contratos_tiempo_rel')
     tipo_costo = models.ForeignKey(HumTipoCosto, on_delete=models.PROTECT, null=True, related_name='contratos_tipo_costo_rel')
+    grupo_contabilidad = models.ForeignKey(ConGrupo, on_delete=models.PROTECT, null=True, related_name='contratos_grupo_contabilidad_rel')
 
     class Meta:
         db_table = "hum_contrato"   
