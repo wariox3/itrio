@@ -379,33 +379,24 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         visitas = visitas.values('id', 'latitud', 'longitud')  
         #visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
         if visitas.exists():
-            cantidad_visitas = len(visitas)   
-            punto_inicial = (6.200479, -75.586350)     
+            cantidad_visitas = len(visitas)                   
             punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
-
-            matriz = construir_matriz_distancias(visitas, punto_inicial)
-            n = len(visitas)
-            
-            # Crear el gestor de datos
-            manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)  # 1 vehículo, nodo inicial en 0
+            matriz = construir_matriz_distancias(visitas, punto_inicial)                    
+            manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
             routing = pywrapcp.RoutingModel(manager)
             
             # Función de costo
             def distancia_callback(from_index, to_index):
                 from_node = manager.IndexToNode(from_index)
                 to_node = manager.IndexToNode(to_index)
-                return int(matriz[from_node][to_node] * 1000)  # Multiplicado por 1000 para evitar decimales
+                return int(matriz[from_node][to_node] * 1000)
             
             transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
-            routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
-            
-            # Parámetros de búsqueda
+            routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
             search_parameters = pywrapcp.DefaultRoutingSearchParameters()
             search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
             
-            # Resolver
-            solution = routing.SolveWithParameters(search_parameters)
-            
+            solution = routing.SolveWithParameters(search_parameters)            
             if not solution:
                 return None
 
@@ -418,10 +409,18 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     orden.append(node - 1)  # Ajustar índice
                 index = solution.Value(routing.NextVar(index))
 
-            # Actualizar la base de datos con el orden calculado
             for idx, visita_idx in enumerate(orden):
                 visita_id = visitas[visita_idx]['id']
-                RutVisita.objects.filter(id=visita_id).update(orden=idx + 1)
+                distancia = 0                
+                if idx == 0:
+                    # Primera visita: distancia desde el punto inicial
+                    distancia = matriz[0][visita_idx + 1]
+                else:
+                    # Visitas posteriores: distancia desde la visita anterior
+                    anterior_idx = orden[idx - 1]
+                    distancia = matriz[anterior_idx + 1][visita_idx + 1]
+                tiempo_trayecto = distancia * 1
+                RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia_proxima=distancia)
 
             return Response({'mensaje':'visitas ordenadas', 'orden': orden}, status=status.HTTP_200_OK)
         else:
@@ -490,7 +489,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             tiempo_total = 0  
             crear_despacho = True
             for visita in visitas:
-                if peso_total + visita.peso > vehiculo.capacidad:
+                if peso_total + visita.peso > vehiculo.capacidad or tiempo_total + visita.tiempo_servicio > vehiculo.tiempo:
                     asignado = False
                     peso_total = 0
                     while vehiculo_indice + 1 <= cantidad_vehiculos and asignado == False:                         
@@ -499,30 +498,33 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             asignado = True
                         else: 
                             vehiculo = flota[vehiculo_indice].vehiculo
-                            if peso_total + visita.peso <= vehiculo.capacidad:                             
+                            if peso_total + visita.peso <= vehiculo.capacidad or tiempo_total + visita.tiempo_servicio <= vehiculo.tiempo:                             
                                 crear_despacho = True
                                 asignado = True
                     if vehiculo_indice >= cantidad_vehiculos:
                         break                                            
 
-                '''if crear_despacho:
+                if crear_despacho:
                     despacho = RutDespacho()
                     despacho.fecha = timezone.now()
                     despacho.vehiculo = vehiculo
                     despacho.peso = despacho.peso + visita.peso
                     despacho.volumen = despacho.volumen + visita.volumen
+                    despacho.tiempo = despacho.tiempo + visita.tiempo_servicio
                     despacho.visitas = despacho.visitas + 1
                     despacho.save()
                     crear_despacho = False
                 else:
                     despacho.peso = despacho.peso + visita.peso
                     despacho.volumen = despacho.volumen + visita.volumen
+                    despacho.tiempo = despacho.tiempo + visita.tiempo_servicio
                     despacho.visitas = despacho.visitas + 1
                     despacho.save()        
                 peso_total += visita.peso
+                tiempo_total += visita.tiempo_servicio
                 visita.estado_despacho = True
                 visita.despacho = despacho
-                visita.save()'''
+                visita.save()
             return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
         else:
             return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)
