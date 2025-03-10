@@ -503,8 +503,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 crear_despacho = True
                                 asignado = True
                     if vehiculo_indice >= cantidad_vehiculos:
-                        break
-                
+                        break                                            
+
                 if crear_despacho:
                     despacho = RutDespacho()
                     despacho.fecha = timezone.now()
@@ -583,7 +583,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 alertas = alertas.filter(**{filtro['propiedad']: filtro['valor1']})
         visitas = visitas.aggregate(
             cantidad=Count('id'), 
-            peso=Coalesce(Sum('peso'), 0.0))    
+            peso=Coalesce(Sum('peso'), 0.0),
+            tiempo_servicio=Coalesce(Sum('tiempo_servicio'), 0)
+        )    
         errores = errores.aggregate(
             cantidad=Count('id'))        
         alertas = alertas.aggregate(
