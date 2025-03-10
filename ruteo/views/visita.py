@@ -486,7 +486,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             cantidad_vehiculos = len(flota)
             vehiculo_indice = 0
             vehiculo = flota[vehiculo_indice].vehiculo            
-            peso_total = 0  
+            peso_total = 0
+            tiempo_total = 0  
             crear_despacho = True
             for visita in visitas:
                 if peso_total + visita.peso > vehiculo.capacidad:

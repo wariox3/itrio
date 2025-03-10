@@ -6,7 +6,7 @@ class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):
     franja = serializers.PrimaryKeyRelatedField(queryset=RutFranja.objects.all(), default=None, allow_null=True)
     class Meta:
         model = RutVehiculo
-        fields = ['id', 'placa', 'capacidad', 'estado_activo', 'estado_asignado', 'franja']
+        fields = ['id', 'placa', 'capacidad', 'tiempo', 'estado_activo', 'estado_asignado', 'franja']
 
     def to_representation(self, instance):        
         franja_nombre = ''
@@ -18,6 +18,7 @@ class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):
             'id': instance.id, 
             'placa': instance.placa,
             'capacidad': instance.capacidad,
+            'tiempo': instance.tiempo,
             'estado_activo': instance.estado_activo,
             'estado_asignado': instance.estado_asignado,
             'franja_id': instance.franja_id,
