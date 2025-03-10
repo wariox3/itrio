@@ -1,14 +1,12 @@
 from rest_framework import serializers
 from ruteo.models.visita import RutVisita
 from ruteo.models.despacho import RutDespacho
-from ruteo.models.franja import RutFranja
 from general.models.ciudad import GenCiudad
 
 class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):    
     destinatario_correo = serializers.CharField(allow_null=True)
     documento = serializers.CharField(allow_null=True)
-    despacho = serializers.PrimaryKeyRelatedField(queryset=RutDespacho.objects.all(), default=None, allow_null=True)
-    franja = serializers.PrimaryKeyRelatedField(queryset=RutFranja.objects.all(), default=None, allow_null=True)    
+    despacho = serializers.PrimaryKeyRelatedField(queryset=RutDespacho.objects.all(), default=None, allow_null=True)    
     ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all(), default=None, allow_null=True)
     
     class Meta:
@@ -16,17 +14,12 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'guia', 'numero', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
                   'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo_servicio', 'latitud', 'longitud', 'estado_decodificado', 
                   'estado_decodificado_alerta', 'orden', 'distancia_proxima',
-                  'ciudad', 'despacho', 'franja', 'resultados', 'estado_entregado']
+                  'ciudad', 'despacho', 'franja_codigo', 'resultados', 'estado_entregado']
 
     def to_representation(self, instance): 
         ciudad_nombre = ''
         if instance.ciudad:
-            ciudad_nombre = instance.ciudad.nombre
-        franja_nombre = ''
-        franja_codigo = ''
-        if instance.franja:
-            franja_nombre = instance.franja.nombre
-            franja_codigo = instance.franja.codigo       
+            ciudad_nombre = instance.ciudad.nombre       
         return {
             'id': instance.id,  
             'guia': instance.guia,
@@ -51,9 +44,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'longitud': instance.longitud,
             'orden': instance.orden,
             'distancia_proxima': instance.distancia_proxima,
-            'franja_id': instance.franja_id,
-            'franja_codigo': franja_codigo,
-            'franja_nombre': franja_nombre,
+            'franja_codigo': instance.franja_codigo,
             'despacho_id': instance.despacho_id,
             'resultados': instance.resultados
         }
@@ -65,12 +56,7 @@ class RutVisitaExcelSerializador(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance): 
         ciudad_nombre = ''
         if instance.ciudad:
-            ciudad_nombre = instance.ciudad.nombre
-        franja_nombre = ''
-        franja_codigo = ''
-        if instance.franja:
-            franja_nombre = instance.franja.nombre
-            franja_codigo = instance.franja.codigo       
+            ciudad_nombre = instance.ciudad.nombre     
         return {
             'id': instance.id,  
             'guia': instance.guia,
@@ -92,9 +78,7 @@ class RutVisitaExcelSerializador(serializers.HyperlinkedModelSerializer):
             'latitud': instance.latitud,
             'longitud': instance.longitud,
             'orden': instance.orden,
-            'distancia_proxima': instance.distancia_proxima,
-            'franja_id': instance.franja_id,
-            'franja_codigo': franja_codigo,
-            'franja_nombre': franja_nombre
+            'distancia_proxima': instance.distancia_proxima,            
+            'franja_codigo': instance.franja_codigo
         }    
     

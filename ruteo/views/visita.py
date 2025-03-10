@@ -9,9 +9,6 @@ from ruteo.models.flota import RutFlota
 from general.models.ciudad import GenCiudad
 from contenedor.models import CtnDireccion
 from ruteo.serializers.visita import RutVisitaSerializador
-import base64
-from io import BytesIO
-import openpyxl
 from datetime import datetime
 from django.utils import timezone
 from utilidades.zinc import Zinc
@@ -22,9 +19,13 @@ from math import radians, cos, sin, asin, sqrt, atan2
 from django.db.models import Sum, F, Count
 from django.db.models.functions import Coalesce
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
+from io import BytesIO
 import re
 import gc
+import base64
+import openpyxl
 import numpy as np
+
 
 def calcular_distancia(lat1, lon1, lat2, lon2):
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
@@ -534,9 +535,10 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         for visita in visitas:
             respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
             if respuesta['encontrado']:
-                visita.franja_id = respuesta['franja']['id']
+                visita.franja_codigo = respuesta['franja']['codigo']
                 visita.estado_franja = True
             else:
+                visita.franja_codigo = None
                 visita.estado_franja = False
             visita.save()  
             cantidad += 1      
@@ -593,7 +595,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if filtros:
             for filtro in filtros:
                 visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
-        visitas = visitas.values('franja_id','franja__nombre', 'franja__color').annotate(
+        visitas = visitas.values('franja_codigo').annotate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0))    
         return Response({'resumen': visitas}, status=status.HTTP_200_OK) 

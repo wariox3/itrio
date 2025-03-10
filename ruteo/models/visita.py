@@ -26,8 +26,8 @@ class RutVisita(models.Model):
     orden = models.IntegerField(default=0)
     distancia_proxima = models.DecimalField(max_digits=9, decimal_places=6, null=True, default=0)
     resultados = models.JSONField(null=True, blank=True)
-    despacho = models.ForeignKey(RutDespacho, null=True, on_delete=models.PROTECT, related_name='visitas_despacho_rel')
-    franja = models.ForeignKey(RutFranja, null=True, on_delete=models.PROTECT, related_name='visitas_franja_rel')
+    franja_codigo = models.CharField(max_length=20, null=True)
+    despacho = models.ForeignKey(RutDespacho, null=True, on_delete=models.PROTECT, related_name='visitas_despacho_rel')    
     ciudad = models.ForeignKey(GenCiudad, null=True, on_delete=models.PROTECT, default=1, related_name='visitas_ciudad_rel')
 
     class Meta:
