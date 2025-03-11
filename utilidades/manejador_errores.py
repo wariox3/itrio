@@ -11,7 +11,8 @@ class WebServiceHandler(logging.Handler):
 
     def emit(self, record):         
         if config('ENV') in ['prod', 'test']:
-            traza = self.format(record)   
+            pass
+            '''traza = self.format(record)   
             fuente = record.name     
             if fuente == 'django.request':
                 ruta = ''
@@ -39,5 +40,5 @@ class WebServiceHandler(logging.Handler):
                 }      
                 json_data = json.dumps(datos)
                 headers = {'Content-Type': 'application/json'}
-                requests.post(self.url, data=json_data, headers=headers)
+                requests.post(self.url, data=json_data, headers=headers)'''
                 

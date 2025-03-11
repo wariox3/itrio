@@ -32112,6 +32112,7 @@
             "exige_contacto": true,
             "exige_grupo": false,
             "permite_movimiento": true
-        }
+        },
+        "inicio": true
     }
 ]
