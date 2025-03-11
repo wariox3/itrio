@@ -86,6 +86,11 @@
   },  
   {
     "model": "general.GenDocumentoClase",
+    "pk": 602,
+    "fields": {"nombre": "Depreciacion", "codigo_dian": "01", "grupo":6}
+  },   
+  {
+    "model": "general.GenDocumentoClase",
     "pk": 701,
     "fields": {"nombre": "Nomina", "codigo_dian": "01", "grupo":7}
   },

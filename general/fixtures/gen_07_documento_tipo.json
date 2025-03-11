@@ -196,5 +196,14 @@
       "pagar": true, "operacion": 1,
       "contabilidad": true
     }
+  },  
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 23,
+    "fields": {
+      "nombre": "DEPRECIACION",
+      "documento_clase": 602, "comprobante": 14,
+      "operacion": 0, "contabilidad": true
+    }
   }
 ]
