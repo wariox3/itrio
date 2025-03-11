@@ -428,7 +428,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         # Visitas posteriores: distancia desde la visita anterior
                         anterior_idx = orden[idx - 1]
                         distancia = matriz[anterior_idx + 1][visita_idx + 1]
-                    tiempo_trayecto = Decimal(distancia * 0.4)
+                    tiempo_trayecto = Decimal(distancia * 1.6)
                     tiempo = tiempo_servicio+tiempo_trayecto            
                     RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)                
         return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK) 
