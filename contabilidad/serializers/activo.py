@@ -48,7 +48,9 @@ class ConActivoSerializador(serializers.HyperlinkedModelSerializer):
             'activo_grupo_nombre': instance.activo_grupo.nombre if instance.activo_grupo else "",
             'grupo_nombre':instance.grupo.nombre if instance.grupo else "",
             'metodo_depreciacion_nombre':instance.metodo_depreciacion.nombre if instance.metodo_depreciacion else "",
+            'cuenta_gasto_codigo':instance.cuenta_gasto.codigo if instance.cuenta_gasto else "",
             'cuenta_gasto_nombre':instance.cuenta_gasto.nombre if instance.cuenta_gasto else "",
+            'cuenta_depreciacion_codigo':instance.cuenta_depreciacion.codigo if instance.cuenta_depreciacion else "",
             'cuenta_depreciacion_nombre':instance.cuenta_depreciacion.nombre if instance.cuenta_depreciacion else ""
         }     
 
