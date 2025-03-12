@@ -16,14 +16,41 @@ class ConActivoSerializador(serializers.HyperlinkedModelSerializer):
         model = ConActivo
         fields = '__all__'
 
-    def to_representation(self, instance):
+    '''def to_representation(self, instance):
         representation = super().to_representation(instance)    
-        representation['activo_grupo_nombre'] = instance.activo_grupo.nombre if instance.activo_grupo else ""        
-        representation['grupo_nombre'] = instance.grupo.nombre if instance.grupo else ""        
-        representation['metodo_depreciacion_nombre'] = instance.metodo_depreciacion.nombre if instance.metodo_depreciacion else "" 
-        representation['cuenta_gasto_nombre'] = instance.cuenta_gasto.nombre if instance.cuenta_gasto else ""        
-        representation['cuenta_depreciacion_nombre'] = instance.cuenta_depreciacion.nombre if instance.cuenta_depreciacion else ""        
-        return representation 
+        representation[''] =         
+        representation[''] =         
+        representation[''] =  
+        representation[''] =         
+        representation[''] =         
+        return representation '''
+    
+    def to_representation(self, instance):
+
+        return {
+            'id': instance.id,
+            'codigo':instance.codigo,
+            'nombre':instance.nombre,
+            'marca':instance.marca,
+            'serie':instance.serie,
+            'modelo':instance.modelo,
+            'fecha_compra':instance.fecha_compra,
+            'fecha_activacion':instance.fecha_activacion,
+            'fecha_baja':instance.fecha_baja,
+            'duracion':instance.duracion,
+            'valor_compra':instance.valor_compra,
+            'depreciacion_inicial':instance.depreciacion_inicial,
+            'activo_grupo':instance.activo_grupo_id,
+            'metodo_depreciacion':instance.metodo_depreciacion_id,
+            'cuenta_gasto':instance.cuenta_gasto_id,
+            'cuenta_depreciacion':instance.cuenta_depreciacion_id,
+            'grupo':instance.grupo_id,
+            'activo_grupo_nombre': instance.activo_grupo.nombre if instance.activo_grupo else "",
+            'grupo_nombre':instance.grupo.nombre if instance.grupo else "",
+            'metodo_depreciacion_nombre':instance.metodo_depreciacion.nombre if instance.metodo_depreciacion else "",
+            'cuenta_gasto_nombre':instance.cuenta_gasto.nombre if instance.cuenta_gasto else "",
+            'cuenta_depreciacion_nombre':instance.cuenta_depreciacion.nombre if instance.cuenta_depreciacion else ""
+        }     
 
 
 class ConActivoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
