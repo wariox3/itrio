@@ -238,20 +238,21 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                                     diferencia = fecha_hasta - fecha_desde
                                     dias = diferencia.days + 1
-                                    dias = dias - dias_novedad
-                                    
+                                    dias = dias - dias_novedad                                    
+                                    dias_febrero = 0
                                     if programacion.fecha_desde.month == 2 and programacion.fecha_hasta.month == 2:
-                                        if dias == programacion.dias_reales:
+                                        if dias + dias_novedad == programacion.dias_reales:
                                             if programacion.fecha_hasta.day == 28:
-                                                dias += 2
+                                                dias_febrero += 2
                                             elif programacion.fecha_hasta.day == 29:
-                                                dias += 1
+                                                dias_febrero += 1
+                                    dias += dias_febrero
                                     if dias < 0:
                                         dias = 0
                                     if error_terminacion:
                                         dias = 0
                                     data['dias'] = dias
-                                    data['dias_transporte'] = dias
+                                    data['dias_transporte'] = dias - dias_febrero
                                     data['dias_novedad'] = dias_novedad
                                     data['diurna'] = dias * configuracion['hum_factor']
                                     if contrato.tiempo_id == 2:
