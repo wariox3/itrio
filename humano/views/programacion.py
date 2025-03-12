@@ -241,10 +241,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     dias = dias - dias_novedad
                                     
                                     if programacion.fecha_desde.month == 2 and programacion.fecha_hasta.month == 2:
-                                        if programacion.fecha_hasta.day == 28:
-                                            dias += 2
-                                        elif programacion.fecha_hasta.day == 29:
-                                            dias += 1
+                                        if dias == programacion.dias:
+                                            if programacion.fecha_hasta.day == 28:
+                                                dias += 2
+                                            elif programacion.fecha_hasta.day == 29:
+                                                dias += 1
                                     if dias < 0:
                                         dias = 0
                                     if error_terminacion:
