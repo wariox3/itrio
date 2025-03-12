@@ -9,6 +9,7 @@ class HumProgramacion(models.Model):
     fecha_hasta_periodo = models.DateField()
     nombre = models.CharField(max_length=100, null=True)
     dias = models.IntegerField(default=0)
+    dias_reales = models.IntegerField(default=0)
     contratos = models.IntegerField(default=0)
     devengado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     deduccion = models.DecimalField(max_digits=20, decimal_places=6, default=0)

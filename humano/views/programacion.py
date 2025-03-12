@@ -109,10 +109,10 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             ultimo_dia = calendar.monthrange(fecha_hasta.year, fecha_hasta.month)[1]       
             if ultimo_dia == 31:
                 fecha_hasta_periodo = fecha_hasta + timedelta(days=1)        
-        #diferencia = fecha_hasta - fecha_desde        
-        #dias = diferencia.days + 1         
+        diferencia = fecha_hasta - fecha_desde        
+        dias_reales = diferencia.days + 1         
         dias = Utilidades.dias_prestacionales(fecha_desde.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d"))         
-        serializer.save(dias=dias, fecha_hasta_periodo=fecha_hasta_periodo)
+        serializer.save(dias=dias, dias_reales=dias_reales, fecha_hasta_periodo=fecha_hasta_periodo)
 
     def perform_update(self, serializer):
         fecha_desde = serializer.validated_data.get('fecha_desde')
@@ -241,7 +241,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     dias = dias - dias_novedad
                                     
                                     if programacion.fecha_desde.month == 2 and programacion.fecha_hasta.month == 2:
-                                        if dias == programacion.dias:
+                                        if dias == programacion.dias_reales:
                                             if programacion.fecha_hasta.day == 28:
                                                 dias += 2
                                             elif programacion.fecha_hasta.day == 29:
