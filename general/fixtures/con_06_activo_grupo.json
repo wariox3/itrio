@@ -1,0 +1,26 @@
+[
+  {
+    "model": "contabilidad.ConActivoGrupo",
+    "pk": 1,
+    "fields": {
+      "nombre":"TERRENOS"}
+  },
+  {
+    "model": "contabilidad.ConActivoGrupo",
+    "pk": 2,
+    "fields": {
+      "nombre":"EQUIPO DE OFICINA"}
+  },
+  {
+    "model": "contabilidad.ConActivoGrupo",
+    "pk": 3,
+    "fields": {
+      "nombre":"EQUPO DE COMPUTO Y COMUNICACION"}
+  },
+  {
+    "model": "contabilidad.ConActivoGrupo",
+    "pk": 4,
+    "fields": {
+      "nombre":"VEHICULOS"}
+  }      
+]

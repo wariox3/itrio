@@ -1,0 +1,8 @@
+[
+  {
+    "model": "contabilidad.ConMetodoDepreciacion",
+    "pk": 1,
+    "fields": {
+      "nombre":"LINEA RECTA"}
+  }     
+]

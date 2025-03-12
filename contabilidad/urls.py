@@ -8,6 +8,7 @@ from .views.cuenta_subcuenta import CuentaSubcuentaViewSet
 from .views.comprobante import ComprobanteViewSet
 from .views.grupo import GrupoViewSet
 from .views.periodo import PeriodoViewSet
+from .views.activo import ActivoViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -20,6 +21,7 @@ router.register(r'cuenta_subcuenta', CuentaSubcuentaViewSet)
 router.register(r'comprobante', ComprobanteViewSet)
 router.register(r'grupo', GrupoViewSet)
 router.register(r'periodo', PeriodoViewSet)
+router.register(r'activo', ActivoViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
