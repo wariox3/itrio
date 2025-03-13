@@ -4,6 +4,7 @@ from general.models.item import GenItem
 from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.grupo import ConGrupo
+from contabilidad.models.activo import ConActivo
 from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
 from humano.models.novedad import HumNovedad
@@ -44,6 +45,7 @@ class GenDocumentoDetalle(models.Model):
     documento_afectado = models.ForeignKey(GenDocumento, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_documento_afectado_rel')
     item = models.ForeignKey(GenItem, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_item_rel')
     cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_cuenta_rel')
+    activo = models.ForeignKey(ConActivo, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_activo_rel')
     grupo = models.ForeignKey(ConGrupo, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_grupo_rel')
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_contacto_rel')
     concepto = models.ForeignKey(HumConcepto, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_concepto_rel')

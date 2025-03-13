@@ -4,6 +4,7 @@ from general.models.item import GenItem
 from general.models.contacto import GenContacto
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.grupo import ConGrupo
+from contabilidad.models.activo import ConActivo
 from humano.models.concepto import HumConcepto
 from humano.models.credito import HumCredito
 from humano.models.novedad import HumNovedad
@@ -17,6 +18,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), default=None, allow_null=True)
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
+    activo = serializers.PrimaryKeyRelatedField(queryset=ConActivo.objects.all(), default=None, allow_null=True)
     grupo = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), default=None, allow_null=True)
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), default=None, allow_null=True)
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
@@ -27,7 +29,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = GenDocumentoDetalle
-        fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'documento', 'documento_afectado', 'item', 'cuenta', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
+        fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'documento', 'documento_afectado', 'item', 'cuenta', 'activo', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 'operacion', 'operacion_inventario', 'pago_operado', 
@@ -52,6 +54,11 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         if instance.cuenta:
             cuenta_codigo = instance.cuenta.codigo
             cuenta_nombre = instance.cuenta.nombre
+        activo_codigo = ""
+        activo_nombre = ''
+        if instance.activo:
+            activo_codigo = instance.activo.codigo
+            activo_nombre = instance.activo.nombre
         grupo_nombre = ""
         if instance.grupo:
             grupo_nombre = instance.grupo.nombre
@@ -120,7 +127,10 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'almacen_nombre': almacen_nombre,
             'documento_id': instance.documento_id,
             'documento_numero': documento_numero,
-            'documento_fecha': documento_fecha      
+            'documento_fecha': documento_fecha,
+            'activo_id': instance.activo_id,
+            'activo_codigo': activo_codigo,           
+            'activo_nombre': activo_nombre
         }  
 
 class GenDocumentoDetalleInformeSerializador(serializers.HyperlinkedModelSerializer):

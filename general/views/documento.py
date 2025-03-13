@@ -329,6 +329,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 existencia.save(update_fields=['existencia', 'disponible'])
                             else:
                                 existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)
+
+                        if documento_detalle.tipo_registro == 'D':
+                            activo = ConActivo.objects.get(id=documento_detalle.activo_id)
+                            if activo:
+                                depreciacion_acumulada = activo.depreciacion_acumulada + documento_detalle.precio
+                                depreciacion_saldo = activo.depreciacion_saldo - documento_detalle.precio
+                                activo.depreciacion_acumulada = depreciacion_acumulada
+                                activo.depreciacion_saldo = depreciacion_saldo
+                                activo.save()
                     documento.save()
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
@@ -502,6 +511,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     return Response({'validaciones': movimiento_serializador.errors, 
                                                 'mensaje': 'Cuenta por pagar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                                                
                         else:
+                            # Item
                             if documento_detalle.tipo_registro == 'I':                                                                
                                 if documento.documento_tipo.venta:
                                     data = data_general.copy()                            
@@ -541,7 +551,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 
                                                 'mensaje': 'Item cuenta compra'}, status=status.HTTP_400_BAD_REQUEST)  
-                                                                            
+
+                            # Cuenta                                                                            
                             if documento_detalle.tipo_registro == 'C':                                    
                                 data = data_general.copy()                            
                                 data['cuenta'] = documento_detalle.cuenta_id
@@ -562,6 +573,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Detalle {documento_detalle.id}'}, status=status.HTTP_400_BAD_REQUEST) 
                     
+                            # Nomina
                             if documento_detalle.tipo_registro == 'N':
                                 tipo_costo_id = documento.contrato.tipo_costo_id
                                 if documento_detalle.operacion != 0:
@@ -589,7 +601,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         movimientos_validos.append(movimiento_serializador)
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Documento detalle {documento_detalle.id} nomina'}, status=status.HTTP_400_BAD_REQUEST) 
-
+                            
+                            # Seguridad social
                             if documento_detalle.tipo_registro == 'S':                                
                                 tipo_costo_id = documento_detalle.contrato.tipo_costo_id
                                 data = data_general.copy()
@@ -610,6 +623,40 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
                                                         'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                             
+
+                            # Depreciacion
+                            if documento_detalle.tipo_registro == 'D':                                    
+                                data = data_general.copy()                            
+                                data['cuenta'] = documento_detalle.activo.cuenta_depreciacion_id
+                                data['contacto'] = documento_detalle.contacto_id                                        
+                                data['base'] = documento_detalle.base
+                                data['naturaleza'] = 'D'
+                                data['debito'] = documento_detalle.precio                                
+                                if documento_detalle.activo.cuenta_depreciacion:
+                                    if documento_detalle.activo.cuenta_depreciacion.exige_grupo:
+                                        data['grupo'] = documento_detalle.grupo_id    
+                                data['detalle'] = 'Depreciacion acumulada'                         
+                                movimiento_serializador = ConMovimientoSerializador(data=data)
+                                if movimiento_serializador.is_valid():
+                                    movimientos_validos.append(movimiento_serializador)
+                                else:
+                                    return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Detalle {documento_detalle.id}'}, status=status.HTTP_400_BAD_REQUEST) 
+
+                                data = data_general.copy()                            
+                                data['cuenta'] = documento_detalle.activo.cuenta_gasto_id
+                                data['contacto'] = documento_detalle.contacto_id                                        
+                                data['base'] = documento_detalle.base
+                                data['naturaleza'] = 'C'
+                                data['credito'] = documento_detalle.precio                                
+                                if documento_detalle.activo.cuenta_gasto:
+                                    if documento_detalle.activo.cuenta_gasto.exige_grupo:
+                                        data['grupo'] = documento_detalle.grupo_id   
+                                data['detalle'] = 'Gasto depreciacion'                                                                     
+                                movimiento_serializador = ConMovimientoSerializador(data=data)
+                                if movimiento_serializador.is_valid():
+                                    movimientos_validos.append(movimiento_serializador)
+                                else:
+                                    return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Detalle {documento_detalle.id}'}, status=status.HTTP_400_BAD_REQUEST) 
 
                     documento_impuestos = GenDocumentoImpuesto.objects.filter(
                         documento_detalle__documento_id=id
@@ -2315,20 +2362,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     depreciacion_acumulada = activo.depreciacion_acumulada + depreciar;
                     saldo = activo.depreciacion_saldo - depreciar
                     data = {
-                        'tipo_registro': 'N',
+                        'tipo_registro': 'D',
                         'documento': documento.id,
-                        'contacto': documento.contacto_id 
+                        'contacto': documento.contacto_id,
+                        'activo': activo.id,
+                        'precio': depreciar,
+                        'dias': dias
                     }
-                    
-                    #$arMovimientoActivoDetalle->setMovimientoActivoRel($arMovimiento);
-                    #$arMovimientoActivoDetalle->setActivoRel($em->getReference(FinActivo::class, $arActivo['codigoActivoPk']));
-                    #$arMovimientoActivoDetalle->setVrValor($vrDepreciar);
-                    #$arMovimientoActivoDetalle->setVrActivo($arActivo['vrActivo']);
-                    #$arMovimientoActivoDetalle->setVrDepreciacion($arActivo['vrDepreciacion']);
-                    #$arMovimientoActivoDetalle->setVrDepreciacionActual($vrDepreciacionActual);
-                    #$arMovimientoActivoDetalle->setVrDepreciacionSaldo($vrSaldo);
-                    #$arMovimientoActivoDetalle->setDias($dias);
-                    
+                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                    if documento_detalle_serializador.is_valid():
+                        documento_detalle_serializador.save()
+                    else:
+                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                                                  
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
