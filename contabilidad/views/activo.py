@@ -15,14 +15,23 @@ class ActivoViewSet(viewsets.ModelViewSet):
     serializer_class = ConActivoSerializador
     permission_classes = [permissions.IsAuthenticated]
 
-    def create(self, request, *args, **kwargs):
-        raw = request.data        
+    def calcular_depreciacion_periodo(self, valor_compra, duracion):
+        if duracion > 0:
+            return valor_compra / duracion
+        return 0
+
+    def perform_create(self, serializer):
+        raw = self.request.data
         valor_compra = raw.get('valor_compra')
         duracion = raw.get('duracion')
-        depreciacion_periodo = 0
-        if duracion > 0:
-            depreciacion_periodo = valor_compra / duracion
-        
-        return super().create(request, *args, **kwargs)           
+        depreciacion_periodo = self.calcular_depreciacion_periodo(valor_compra, duracion)
+        serializer.save(depreciacion_periodo=depreciacion_periodo)
+
+    def perform_update(self, serializer):
+        raw = self.request.data
+        valor_compra = raw.get('valor_compra')
+        duracion = raw.get('duracion')
+        depreciacion_periodo = self.calcular_depreciacion_periodo(valor_compra, duracion)
+        serializer.save(depreciacion_periodo=depreciacion_periodo)          
         
     
