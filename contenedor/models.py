@@ -84,6 +84,7 @@ class Contenedor(TenantMixin):
     usuarios = models.IntegerField(default=1) 
     reddoc = models.BooleanField(default = False)
     ruteo = models.BooleanField(default = False)
+    cortesia = models.BooleanField(default = False)
     plan = models.ForeignKey(CtnPlan, on_delete=models.CASCADE, null=True)         
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True
@@ -116,6 +117,7 @@ class CtnConsumo(models.Model):
     vr_plan = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_usuario_adicional = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    cortesia = models.BooleanField(default = False)
     plan = models.ForeignKey(CtnPlan, on_delete=models.CASCADE, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 

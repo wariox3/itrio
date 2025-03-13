@@ -50,34 +50,38 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-pedido',)
     def generar_pedido(self, request):
         raw = request.data
-        fechaDesde = raw.get('fechaDesde')
-        fechaHasta = raw.get('fechaHasta')
+        fecha_desde = raw.get('fechaDesde')
+        fecha_hasta = raw.get('fechaHasta')
         usuario_id = raw.get('usuario_id')
-        if fechaDesde and fechaHasta:
-            query = Q(fecha__gte=fechaDesde) & Q(fecha__lte=fechaHasta) & Q(usuario__cortesia=False)            
+        if fecha_desde and fecha_hasta:                        
+            consumos = CtnConsumo.objects.values('usuario_id'
+                ).filter(
+                    fecha__gte=fecha_desde,
+                    fecha__lte=fecha_hasta,
+                    cortesia=False
+                ).annotate(
+                    vr_total=Sum('vr_total'))
             if usuario_id:
-                query &= Q(usuario_id=usuario_id)
-            consumosUsuarios = CtnConsumo.objects.values('usuario_id').filter(query).annotate(vr_total=Sum('vr_total'))
-            if usuario_id:
-                query &= Q(usuario_id=usuario_id)           
+                consumos.filter(usuario_id=usuario_id)
             facturas = []
-            for consumoUsuario in consumosUsuarios:
-                total = round(consumoUsuario['vr_total'])
-                usuario = User.objects.get(pk=consumoUsuario['usuario_id'])
+            for consumo in consumos:
+                total = round(consumo['vr_total'])
+                usuario = User.objects.get(pk=consumo['usuario_id'])
                 if usuario.vr_saldo <= 0:
-                    movimiento = CtnMovimiento(
-                        tipo = "PEDIDO",
-                        fecha = timezone.now(),
-                        fecha_vence = datetime.now().date() + timedelta(days=3),
-                        vr_total = total,
-                        vr_saldo = total,
-                        usuario_id = consumoUsuario['usuario_id'],
-                        socio_id=usuario.socio_id
-                    )
-                    facturas.append(movimiento)                
-                    usuario.vr_saldo += total
-                    usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
-                    usuario.save()
+                    if usuario.cortesia == False:
+                        movimiento = CtnMovimiento(
+                            tipo = "PEDIDO",
+                            fecha = timezone.now(),
+                            fecha_vence = datetime.now().date() + timedelta(days=3),
+                            vr_total = total,
+                            vr_saldo = total,
+                            usuario_id = consumo['usuario_id'],
+                            socio_id=usuario.socio_id
+                        )
+                        facturas.append(movimiento)                
+                        usuario.vr_saldo += total
+                        usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
+                        usuario.save()
             CtnMovimiento.objects.bulk_create(facturas)
             return Response({'proceso':True}, status=status.HTTP_200_OK)  
         else:

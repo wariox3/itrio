@@ -17,33 +17,32 @@ class ConsumoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar',)
     def generar(self, request):
         raw = request.data
-        fechaParametro = raw.get('fecha')
-        if fechaParametro:            
-            fecha_obj = datetime.strptime(fechaParametro, '%Y-%m-%d').date()            
+        fecha_parametro = raw.get('fecha')
+        if fecha_parametro:            
+            fecha_obj = datetime.strptime(fecha_parametro, '%Y-%m-%d').date()            
             anio, mes = fecha_obj.year, fecha_obj.month            
             cantidad_dias = calendar.monthrange(anio, mes)[1]
-
-            if not CtnConsumoPeriodo.objects.filter(fecha=fechaParametro).exists():
-                usuariosContenedors = UsuarioContenedor.objects.all().filter(rol='propietario', contenedor__reddoc = True)
+            if not CtnConsumoPeriodo.objects.filter(fecha=fecha_parametro).exists():
+                usuarios_contenedores = UsuarioContenedor.objects.filter(rol='propietario', contenedor__reddoc=True)
                 consumos = []
-                for usuarioContenedor in usuariosContenedors:            
-                    vrPlan = usuarioContenedor.contenedor.plan.precio
+                for usuario_contenedor in usuarios_contenedores:            
+                    vrPlan = usuario_contenedor.contenedor.plan.precio
                     vrPlanDia = vrPlan / cantidad_dias
-                    consumo = CtnConsumo(
-                        #fecha = timezone.now().date(), 
-                        fecha=fechaParametro,
-                        contenedor_id=usuarioContenedor.contenedor_id,
-                        contenedor=usuarioContenedor.contenedor.nombre,
-                        subdominio=usuarioContenedor.contenedor.schema_name,
-                        usuarios=usuarioContenedor.contenedor.usuarios,
-                        plan=usuarioContenedor.contenedor.plan,
-                        usuario=usuarioContenedor.usuario,
+                    consumo = CtnConsumo(                        
+                        fecha=fecha_parametro,
+                        contenedor_id=usuario_contenedor.contenedor_id,
+                        contenedor=usuario_contenedor.contenedor.nombre,
+                        subdominio=usuario_contenedor.contenedor.schema_name,
+                        usuarios=usuario_contenedor.contenedor.usuarios,
+                        plan=usuario_contenedor.contenedor.plan,
+                        usuario=usuario_contenedor.usuario,
                         vr_plan=vrPlanDia,
                         vr_usuario_adicional=0,
-                        vr_total=vrPlanDia)
+                        vr_total=vrPlanDia,
+                        cortesia=usuario_contenedor.contenedor.cortesia)
                     consumos.append(consumo)
                 CtnConsumo.objects.bulk_create(consumos)
-                consumo_periodo = CtnConsumoPeriodo(fecha=fechaParametro)
+                consumo_periodo = CtnConsumoPeriodo(fecha=fecha_parametro)
                 consumo_periodo.save()
                 return Response({'proceso':True}, status=status.HTTP_200_OK)
             else: 

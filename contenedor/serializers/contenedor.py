@@ -36,6 +36,7 @@ class ContenedorSerializador(serializers.ModelSerializer):
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}",
             'reddoc': instance.reddoc,
             'ruteo': instance.ruteo,
+            'cortesia': instance.cortesia,
             'usuario_id': instance.usuario_id,
             'acceso_restringido': acceso_restringido
         } 
