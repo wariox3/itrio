@@ -16,6 +16,7 @@ from humano.models.configuracion_aporte import HumConfiguracionAporte
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.periodo import ConPeriodo
 from contabilidad.models.movimiento import ConMovimiento
+from contabilidad.models.activo import ConActivo
 from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
@@ -559,7 +560,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
-                                    return Response({'validaciones': movimiento_serializador.errors, 'mensaje': 'Detalle cuenta'}, status=status.HTTP_400_BAD_REQUEST) 
+                                    return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Detalle {documento_detalle.id}'}, status=status.HTTP_400_BAD_REQUEST) 
                     
                             if documento_detalle.tipo_registro == 'N':
                                 tipo_costo_id = documento.contrato.tipo_costo_id
@@ -2264,9 +2265,70 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         id = raw.get('id')            
         if id:
             try:
-                id = GenDocumento.objects.get(pk=id)
+                documento = GenDocumento.objects.get(pk=id)
             except GenDocumentoTipo.DoesNotExist:
                 return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
+            fecha = documento.fecha
+            fecha_desde = fecha.replace(day=1)
+            ultimo_dia = calendar.monthrange(fecha.year, fecha.month)[1]
+            fecha_hasta = datetime(fecha.year, fecha.month, ultimo_dia)            
+            fecha_desde_texto = fecha_desde.strftime('%Y-%m-%d')
+            fecha_hasta_texto = fecha_hasta.strftime('%Y-%m-%d')            
+            activos = ConActivo.objects.filter(
+                Q(fecha_baja__gte=fecha_desde) | Q(fecha_baja__isnull=True),
+                fecha_activacion__lte=fecha_hasta)
+            for activo in activos:
+                if activo.depreciacion_saldo > 0:
+                    dias = 30
+                    depreciar = activo.depreciacion_periodo
+                    '''if activo.fecha_activacion >= fecha_desde and activo.fecha_activacion <= fecha_hasta:
+                        $intervalo = $arActivo['fechaActivacion']->diff($fechaHasta);
+                        $dias = $intervalo->days + 1;
+
+                        // Verificar si la fecha de activación es en febrero
+                        $mesActivacion = (int)$arActivo['fechaActivacion']->format('m');
+                        $diaActivacion = (int)$arActivo['fechaActivacion']->format('d');
+
+                        if ($mesActivacion === 2) { // Si es febrero
+                            if ($diaActivacion === 28) { // Si es 28 de febrero
+                                $dias += 2; // Sumar 2 días para llegar a 30 días contables
+                            } elseif ($diaActivacion === 29) { // Si es 29 de febrero
+                                $dias += 1; // Sumar 1 día para llegar a 30 días contables
+                            }
+                        }'''
+                    if activo.fecha_baja:
+                        if activo.fecha_baja >= fecha_desde and activo.fecha_baja <= fecha_hasta:                        
+                            diferencia = fecha_hasta - activo.fecha_baja
+                            dias -= diferencia.days                        
+                    
+                    if dias > 30:
+                        dias = 30
+                    
+                    if dias != 30:
+                        depreciacion_dia = activo.depreciacion_periodo / 30
+                        depreciar = depreciacion_dia * dias
+                    
+
+                    if activo.depreciacion_saldo < depreciar:
+                        depreciar = activo.depreciacion_saldo
+                    
+                    depreciacion_acumulada = activo.depreciacion_acumulada + depreciar;
+                    saldo = activo.depreciacion_saldo - depreciar
+                    data = {
+                        'tipo_registro': 'N',
+                        'documento': documento.id,
+                        'contacto': documento.contacto_id 
+                    }
+                    
+                    #$arMovimientoActivoDetalle->setMovimientoActivoRel($arMovimiento);
+                    #$arMovimientoActivoDetalle->setActivoRel($em->getReference(FinActivo::class, $arActivo['codigoActivoPk']));
+                    #$arMovimientoActivoDetalle->setVrValor($vrDepreciar);
+                    #$arMovimientoActivoDetalle->setVrActivo($arActivo['vrActivo']);
+                    #$arMovimientoActivoDetalle->setVrDepreciacion($arActivo['vrDepreciacion']);
+                    #$arMovimientoActivoDetalle->setVrDepreciacionActual($vrDepreciacionActual);
+                    #$arMovimientoActivoDetalle->setVrDepreciacionSaldo($vrSaldo);
+                    #$arMovimientoActivoDetalle->setDias($dias);
+                    
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)

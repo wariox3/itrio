@@ -27,13 +27,13 @@ class ActivoViewSet(viewsets.ModelViewSet):
         valor_compra = raw.get('valor_compra')
         duracion = raw.get('duracion')
         depreciacion_periodo = self.calcular_depreciacion_periodo(valor_compra, duracion)
-        serializer.save(depreciacion_periodo=depreciacion_periodo)
+        serializer.save(depreciacion_periodo=depreciacion_periodo, depreciacion_saldo=valor_compra)
 
     def perform_update(self, serializer):
         raw = self.request.data
         valor_compra = raw.get('valor_compra')
         duracion = raw.get('duracion')
         depreciacion_periodo = self.calcular_depreciacion_periodo(valor_compra, duracion)
-        serializer.save(depreciacion_periodo=depreciacion_periodo)          
+        serializer.save(depreciacion_periodo=depreciacion_periodo, depreciacion_saldo=valor_compra)          
         
     

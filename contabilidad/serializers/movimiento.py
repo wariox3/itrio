@@ -21,22 +21,22 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'numero', 'fecha', 'debito', 'credito', 'base', 'naturaleza', 'cuenta', 'comprobante', 'contacto', 'documento', 
                   'periodo', 'grupo', 'detalle', 'cierre']
 
-    def validate(self, data):
+    def validate(self, data):        
         cuenta = data.get('cuenta')
         debito = data.get('debito')
         credito = data.get('credito')
         base = data.get('base', 0)
         if cuenta:
             if cuenta.permite_movimiento is False:
-                raise serializers.ValidationError({"cuenta": "La cuenta no permite movimientos."})
+                raise serializers.ValidationError({"cuenta": f"La cuenta no permite movimientos."})
             if cuenta.exige_grupo and data.get('grupo') is None:
-                raise serializers.ValidationError({"grupo": "La cuenta exige grupo."})
+                raise serializers.ValidationError({"grupo": f"La cuenta exige grupo."})
             if cuenta.exige_base and base == 0:
-                raise serializers.ValidationError({"base": "Si la cuenta exige base, la base no puede ser 0."})
+                raise serializers.ValidationError({"base": f"La cuenta exige base, la base no puede ser 0."})
             if cuenta.exige_contacto and data.get('contacto') is None:
-                raise serializers.ValidationError({"contacto": "La cuenta exige contacto."})
+                raise serializers.ValidationError({"contacto": f"La cuenta exige contacto."})
         if debito == 0 and credito == 0:
-            raise serializers.ValidationError({"contacto": "Los debitos y creditos no pueden estar en cero"})
+            raise serializers.ValidationError({"Debito y credito": f"Los debitos y creditos no pueden estar en cero"})
         return data
 
     def to_representation(self, instance):
