@@ -205,5 +205,14 @@
       "documento_clase": 602, "comprobante": 14,
       "operacion": 0, "contabilidad": true
     }
-  }
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 24,
+    "fields": {
+      "nombre": "FACTURA POS",
+      "documento_clase": 100, "comprobante": 16,
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
+    }
+  }  
 ]

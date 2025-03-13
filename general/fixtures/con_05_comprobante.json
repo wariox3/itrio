@@ -110,5 +110,12 @@
       "nombre":"DOCUMENTO SOPORTE", 
       "codigo":"SOP"
     }
-  }    
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 16,
+    "fields": {
+      "nombre":"VENTA POS", 
+      "codigo":"POS"}
+  }      
 ]

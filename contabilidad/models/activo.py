@@ -16,6 +16,7 @@ class ConActivo(models.Model):
     duracion = models.IntegerField(null=True,) 
     valor_compra = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     depreciacion_inicial = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    depreciacion_periodo = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     activo_grupo = models.ForeignKey(ConActivoGrupo, on_delete=models.PROTECT, related_name='activos_activo_grupo_rel')
     metodo_depreciacion = models.ForeignKey(ConMetodoDepreciacion, on_delete=models.PROTECT, related_name='activos_metodo_depreciacion_rel')
     cuenta_gasto = models.ForeignKey(ConCuenta, on_delete=models.PROTECT, related_name='activos_cuenta_gasto_rel')

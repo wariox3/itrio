@@ -252,7 +252,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     if error_terminacion:
                                         dias = 0
                                     data['dias'] = dias
-                                    data['dias_transporte'] = dias - dias_febrero
+                                    data['dias_transporte'] = dias
                                     data['dias_novedad'] = dias_novedad
                                     data['diurna'] = dias * configuracion['hum_factor']
                                     if contrato.tiempo_id == 2:

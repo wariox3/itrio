@@ -1,0 +1,8 @@
+[
+  {
+    "model": "contabilidad.ConGrupo",
+    "pk": 1,
+    "fields": {"nombre": "General"},
+    "inicio": true
+  }
+]
