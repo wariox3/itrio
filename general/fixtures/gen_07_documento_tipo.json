@@ -211,7 +211,7 @@
     "pk": 24,
     "fields": {
       "nombre": "FACTURA POS",
-      "documento_clase": 100, "comprobante": 16,
+      "documento_clase": 105, "comprobante": 16,
       "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
     }
   }  

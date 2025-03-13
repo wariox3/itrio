@@ -26,6 +26,11 @@
   },
   {
     "model": "general.GenDocumentoClase",
+    "pk": 105,
+    "fields": {"nombre": "Factura POS", "codigo_dian": "01", "grupo":1}
+  },  
+  {
+    "model": "general.GenDocumentoClase",
     "pk": 200,
     "fields": {"nombre": "Pago", "codigo_dian": "01", "grupo":2}
   },   
