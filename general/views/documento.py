@@ -2258,7 +2258,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["post"], url_path=r'cargar_activo')
+    @action(detail=False, methods=["post"], url_path=r'cargar-activo')
     def cargar_activo(self, request):      
         raw = request.data
         id = raw.get('id')            
