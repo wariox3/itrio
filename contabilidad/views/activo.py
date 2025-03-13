@@ -16,6 +16,8 @@ class ActivoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def calcular_depreciacion_periodo(self, valor_compra, duracion):
+        valor_compra = float(valor_compra)
+        duracion = int(duracion)
         if duracion > 0:
             return valor_compra / duracion
         return 0

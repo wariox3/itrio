@@ -2258,6 +2258,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=["post"], url_path=r'cargar_activo')
+    def cargar_activo(self, request):      
+        raw = request.data
+        id = raw.get('id')            
+        if id:
+            try:
+                id = GenDocumento.objects.get(pk=id)
+            except GenDocumentoTipo.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
+            return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'plano-banco',)
     def plano_banco(self, request):        
         raw = request.data
