@@ -50,7 +50,7 @@ class ActivoViewSet(viewsets.ModelViewSet):
                 sheet = wb.active    
             except Exception as e:     
                 return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
-            
+            cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}
             data_modelo = []
             errores = False
             errores_datos = []
@@ -61,134 +61,41 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     'nombre':row[1],
                     'marca': row[2],
                     'serie': row[3],
-                    'modelo': row[4],
-                    'fecha_compra': row[5],
-                    'fecha_activacion': row[6],
-                    'fecha_baja': row[7],
+                    'modelo': row[4],                                        
                     'duracion': row[8],
                     'valor_compra': row[9],
                     'depreciacion_inicial': row[10],
                     'activo_grupo': row[11],
-                    'cuenta_depreciacion': int(row[12]),
-                    'cuenta_gasto': int(row[13]),
+                    'cuenta_depreciacion': str(row[12]),
+                    'cuenta_gasto': str(row[13]),
                     'grupo': row[14],
                     'metodo_depreciacion': row[15],
                 }  
 
-                if not data['codigo']:
-                    errores = True
-                    error_dato = {
-                        'fila': i,
-                        'errores': {
-                            'fecha_compra': ['Debe digitar un código']
-                        }
-                    }
-                    errores_datos.append(error_dato)  
-                    continue
+                data['cuenta_gasto'] = cuentas_map.get(data['cuenta_gasto'])
+                data['cuenta_depreciacion'] = cuentas_map.get(data['cuenta_depreciacion'])
 
-                if not data['nombre']:
-                    errores = True  
-                    error_dato = {
-                        'fila': i,
-                        'errores': {
-                            'fecha_compra': ['Debe digitar un nombre']
-                        }
-                    }
-                    errores_datos.append(error_dato)  
-                    continue  
-
-                if not data['fecha_compra']:
-                    errores = True    
-                    error_dato = {
-                        'fila': i,
-                        'errores': {
-                            'fecha_compra': ['Debe ingresar la fecha de compra']
-                        }
-                    }
-                    errores_datos.append(error_dato)  
-                    continue  
-
-                if not data['fecha_activacion']:
-                    errores = True   
-                    error_dato = {
-                        'fila': i,
-                        'errores': {
-                            'fecha_activacion': ['Debe ingresar la fecha de activación']
-                        }
-                    }
-                    errores_datos.append(error_dato)  
-                    continue  
-
-                if row[5]:
-                    fechaDesde = str(row[5])   
-                    fecha_valida = datetime.strptime(fechaDesde, "%Y%m%d").date()
+                if row[5]:                        
+                    fecha_valida = datetime.strptime(row[5], "%Y%m%d").date()
                     data['fecha_compra'] = fecha_valida
+                if row[6]:                        
+                    fecha_valida = datetime.strptime(row[6], "%Y%m%d").date()
+                    data['fecha_activacion'] = fecha_valida 
+                if row[7]:                        
+                    fecha_valida = datetime.strptime(row[7], "%Y%m%d").date()
+                    data['fecha_baja'] = fecha_valida                     
 
-                if row[6]:
-                    fechaHasta = str(row[6])
-                    fecha_valida = datetime.strptime(fechaHasta, "%Y%m%d").date()
-                    data['fecha_activacion'] = fecha_valida
-
-                if not data['duracion']:
-                    errores = True    
-                    error_dato = {
-                        'fila': i,
-                        'errores': {
-                            'duracion': ['Debe digitar la duración.']
-                        }
-                    }
-                    errores_datos.append(error_dato)  
-                    continue  
-
-                if not data['valor_compra']:
-                    errores = True    
-                    error_dato = {
-                        'fila': i,
-                        'errores': {
-                            'valor_compra': ['Debe digitar el valor de la compra.']
-                        }
-                    }
-                    errores_datos.append(error_dato)  
-                    continue  
-
-                if not data['depreciacion_inicial']:
-                    errores = True
-                    error_dato = {
-                        'fila': i,
-                        'errores': {
-                            'depreciacion_inicial': ['Debe digitar el valor de la depreciación inicial.']
-                        }
-                    }
-                    errores_datos.append(error_dato)  
-                    continue  
-
-                if data['cuenta_depreciacion']:
-                    cuentaDepreciacion = ConCuenta.objects.filter(codigo=data['cuenta_depreciacion']).first()
-                    if cuentaDepreciacion:
-                        data['cuenta_depreciacion'] = cuentaDepreciacion.id
-
-
-                if data['cuenta_gasto']:
-                    cuentaGasto = ConCuenta.objects.filter(codigo=data['cuenta_gasto']).first()
-                    if cuentaGasto:
-                        data['cuenta_depreciacion'] = cuentaGasto.id
-
-                # Calcular la depreciación por período
                 valor_compra = float(data['valor_compra'])
                 duracion = int(data['duracion'])
                 if duracion > 0:
-                    depreciacion_periodo = valor_compra / duracion
-                    # Redondear a 6 decimales
+                    depreciacion_periodo = valor_compra / duracion                    
                     depreciacion_periodo = round(depreciacion_periodo, 6)
                     data['depreciacion_periodo'] = depreciacion_periodo
                     data['depreciacion_saldo'] = valor_compra
-
-
+                
                 serializer = ConActivoSerializador(data=data)
                 if serializer.is_valid():
                     validated_data = serializer.validated_data
-                    validated_data['depreciacion_periodo'] = depreciacion_periodo
-                    validated_data['depreciacion_saldo'] = valor_compra
                     data_modelo.append(serializer.validated_data)
                     registros_importados += 1
                 else:

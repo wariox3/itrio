@@ -9,7 +9,7 @@ class ConActivo(models.Model):
     nombre = models.CharField(max_length=100)
     marca = models.CharField(max_length=100, null=True)
     serie = models.CharField(max_length=100, null=True)
-    modelo = models.IntegerField(null=True) 
+    modelo = models.CharField(max_length=100, null=True) 
     fecha_compra = models.DateField()
     fecha_activacion = models.DateField()
     fecha_baja = models.DateField(null=True)
