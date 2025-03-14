@@ -2371,7 +2371,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'contacto': documento.contacto_id,
                         'activo': activo.id,
                         'precio': depreciar,
-                        'dias': dias
+                        'dias': dias,
+                        'grupo': documento.grupo_id
                     }
                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                     if documento_detalle_serializador.is_valid():
