@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.item import GenItem
 from general.models.item_impuesto import GenItemImpuesto
+from contabilidad.models.cuenta import ConCuenta
 from general.serializers.item import GenItemSerializador, GenItemExcelSerializador
 from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenItemImpuestoDetalleSerializador
 from rest_framework.decorators import action
@@ -147,49 +148,39 @@ class ItemViewSet(viewsets.ModelViewSet):
                 wb = openpyxl.load_workbook(archivo)
                 sheet = wb.active    
             except Exception as e:     
-                return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+                return Response({'mensaje': 'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)  
             
+            cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}
             data_modelo = []
             errores = False
             errores_datos = []
             registros_importados = 0
+            
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
                 data = {
-                    'nombre':row[0],
+                    'nombre': row[0],
                     'codigo': row[1],
-                    'refrencia': row[2],
+                    'referencia': row[2],
                     'costo': row[3],
                     'precio': row[4],
                     'inventario': row[5],
                     'producto': row[6],
                     'servicio': row[7],
-                    'cuenta_venta': row[8],
-                    'cuenta_compra': row[9],
+                    'cuenta_venta': str(row[8]),
+                    'cuenta_compra': str(row[9]),
                     'negativo': row[10],
-                    'venta': row[12],
-                    'impuesto_venta' : row[13]
-                }  
+                    'venta': row[11],
+                    'impuesto_venta': row[12],
+                    'impuesto_compra': row[13],
+                }
 
-                if not data['nombre']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar un nombre'})
-                    errores = True
-
-                if not data['codigo']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar un código'})
-                    errores = True    
-
-                if not data['precio']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar el precio'})
-                    errores = True    
-
-                if not data['costo']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar el costo'})
-                    errores = True                        
-
-
+                data['cuenta_venta'] = cuentas_map.get(data['cuenta_venta'])
+                data['cuenta_compra'] = cuentas_map.get(data['cuenta_compra'])  
+                    
                 serializer = GenItemSerializador(data=data)
                 if serializer.is_valid():
-                    data_modelo.append(serializer.validated_data)
+                    validated_data = serializer.validated_data
+                    data_modelo.append((validated_data, data['impuesto_venta'], data['impuesto_compra']))
                 else:
                     errores = True
                     error_dato = {
@@ -199,22 +190,30 @@ class ItemViewSet(viewsets.ModelViewSet):
                     errores_datos.append(error_dato)    
 
             if not errores:
-                for detalle in data_modelo:
-                    item = GenItem.objects.create(**detalle)  # Se guarda el item
+                for detalle, impuesto_venta, impuesto_compra in data_modelo:
+                    item = GenItem.objects.create(**detalle)
                     
-                    # impuesto_venta = detalle['impuesto_venta']
-                    # if impuesto_venta:
-                    #     datos_impuesto_item = {"item": item.id, "impuesto": impuesto_venta}
-                    #     item_impuesto_serializer = GenItemImpuestoSerializador(data=datos_impuesto_item)
-                    #     if item_impuesto_serializer.is_valid():
-                    #         item_impuesto_serializer.save()
+                    # Procesar impuesto_venta
+                    if impuesto_venta:
+                        datos_impuesto_venta = {"item": item.id, "impuesto": impuesto_venta}
+                        item_impuesto_venta_serializer = GenItemImpuestoSerializador(data=datos_impuesto_venta)
+                        if item_impuesto_venta_serializer.is_valid():
+                            item_impuesto_venta_serializer.save()
 
-                    registros_importados += 1  # Contar los registros guardados correctamente
+                    # Procesar impuesto_compra
+                    if impuesto_compra:
+                        datos_impuesto_compra = {"item": item.id, "impuesto": impuesto_compra}
+                        item_impuesto_compra_serializer = GenItemImpuestoSerializador(data=datos_impuesto_compra)
+                        if item_impuesto_compra_serializer.is_valid():
+                            item_impuesto_compra_serializer.save()
+
+                    registros_importados += 1
 
                 gc.collect()
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
                 gc.collect()                    
-                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                return Response({'mensaje': 'Errores de validacion', 'codigo': 1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje': 'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+    
