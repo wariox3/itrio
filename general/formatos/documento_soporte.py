@@ -252,7 +252,7 @@ class FormatoDocumentoSoporte():
             p.setFont("Helvetica-Bold", 8)
             p.drawString(250, 90, "PROVEEDOR TECNOLÓGICO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(370, 90, "SOFTGIC S.A.S")
+            p.drawString(370, 90, "KIAI S.A.S")
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 80, "FECHA VALIDACIÓN: ")
