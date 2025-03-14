@@ -2,10 +2,6 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.activo import ConActivo
-from contabilidad.models.activo_grupo import ConActivoGrupo
-from contabilidad.models.grupo import ConGrupo
-from contabilidad.models.cuenta import ConCuenta
-from contabilidad.models.metodo_depreciacion import ConMetodoDepreciacion
 from contabilidad.serializers.activo import ConActivoSerializador
 from django.db.models import ProtectedError
 from datetime import datetime
@@ -71,11 +67,11 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     'duracion': row[8],
                     'valor_compra': row[9],
                     'depreciacion_inicial': row[10],
-                    'activo_grupo_id': row[11],
-                    'cuenta_depreciacion_id': row[12],
-                    'cuenta_gasto_id': row[13],
-                    'grupo_id': row[14],
-                    'metodo_depreciacion_id': row[15],
+                    'activo_grupo': row[11],
+                    'cuenta_depreciacion': row[12],
+                    'cuenta_gasto': row[13],
+                    'grupo': row[14],
+                    'metodo_depreciacion': row[15],
                 }  
 
                 if not data['codigo']:
@@ -94,12 +90,12 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     errores_datos.append({'fila': i, 'Mensaje': 'Debe ingresar la fecha de activación'})
                     errores = True   
 
-                if row[6]:
-                    fechaDesde = str(row[6])   
+                if row[5]:
+                    fechaDesde = str(row[5])   
                     fecha_valida = datetime.strptime(fechaDesde, "%Y%m%d").date()
                     data['fecha_compra'] = fecha_valida
 
-                if row[7]:
+                if row[6]:
                     fechaHasta = str(row[6])
                     fecha_valida = datetime.strptime(fechaHasta, "%Y%m%d").date()
                     data['fecha_activacion'] = fecha_valida
@@ -116,44 +112,23 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar el valor de la depreciación inicial'})
                     errores = True                        
 
-                if data['activo_grupo_id']:
-                    activoGrupo = ConActivoGrupo.objects.filter(id=data['activo_grupo_id']).first()
-                    if activoGrupo:
-                        data['activo_grupo_id'] = activoGrupo.id
-
-                if data['metodo_depreciacion_id']:
-                    metodo = ConMetodoDepreciacion.objects.filter(id=data['metodo_depreciacion_id']).first()
-                    if metodo:
-                        data['metodo_depreciacion_id'] = metodo.id
-
-                if data['grupo_id']:
-                    grupo = ConGrupo.objects.filter(id=data['grupo_id']).first()
-                    if metodo:
-                        data['grupo_id'] = grupo.id
-
-                if data['cuenta_depreciacion_id']:
-                    cuentaDepreciacion = ConCuenta.objects.filter(id=data['cuenta_depreciacion_id']).first()
-                    if metodo:
-                        data['cuenta_depreciacion_id'] = cuentaDepreciacion.id
-
-                if data['cuenta_gasto_id']:
-                    cuentaDepreciacion = ConCuenta.objects.filter(id=data['cuenta_gasto_id']).first()
-                    if metodo:
-                        data['cuenta_gasto_id'] = cuentaDepreciacion.id
-
-            # Calcular la depreciación por período
+                # Calcular la depreciación por período
                 valor_compra = float(data['valor_compra'])
                 duracion = int(data['duracion'])
                 if duracion > 0:
                     depreciacion_periodo = valor_compra / duracion
+                    # Redondear a 6 decimales
+                    depreciacion_periodo = round(depreciacion_periodo, 6)
                     data['depreciacion_periodo'] = depreciacion_periodo
                     data['depreciacion_saldo'] = valor_compra
 
-                data_modelo.append(data)
+
                 serializer = ConActivoSerializador(data=data)
                 if serializer.is_valid():
+                    validated_data = serializer.validated_data
+                    validated_data['depreciacion_periodo'] = depreciacion_periodo
+                    validated_data['depreciacion_saldo'] = valor_compra
                     data_modelo.append(serializer.validated_data)
-                    registros_importados += 1
                 else:
                     errores = True
                     error_dato = {
@@ -172,3 +147,4 @@ class ActivoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        

@@ -14,16 +14,9 @@ class ConActivoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ConActivo
-        fields = '__all__'
-
-    '''def to_representation(self, instance):
-        representation = super().to_representation(instance)    
-        representation[''] =         
-        representation[''] =         
-        representation[''] =  
-        representation[''] =         
-        representation[''] =         
-        return representation '''
+        fields = ['id', 'codigo', 'nombre', 'marca', 'serie', 'modelo', 'fecha_compra', 
+                  'fecha_activacion', 'fecha_baja', 'duracion', 'valor_compra', 'depreciacion_inicial', 'activo_grupo', 'metodo_depreciacion', 'cuenta_gasto', 'cuenta_depreciacion',
+                  'grupo']
     
     def to_representation(self, instance):
 
@@ -40,7 +33,7 @@ class ConActivoSerializador(serializers.HyperlinkedModelSerializer):
             'duracion':instance.duracion,
             'valor_compra':instance.valor_compra,
             'depreciacion_inicial':instance.depreciacion_inicial,
-            'activo_grupo':instance.activo_grupo_id,
+            'activo_grupo_id':instance.activo_grupo_id,
             'metodo_depreciacion':instance.metodo_depreciacion_id,
             'cuenta_gasto':instance.cuenta_gasto_id,
             'cuenta_depreciacion':instance.cuenta_depreciacion_id,
