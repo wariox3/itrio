@@ -35,6 +35,7 @@ class ConActivoSerializador(serializers.HyperlinkedModelSerializer):
             'duracion':instance.duracion,
             'valor_compra':instance.valor_compra,
             'depreciacion_inicial':instance.depreciacion_inicial,
+            'depreciacion_periodo':instance.depreciacion_periodo,
             'depreciacion_saldo':instance.depreciacion_saldo,
             'activo_grupo_id':instance.activo_grupo_id,
             'metodo_depreciacion':instance.metodo_depreciacion_id,
