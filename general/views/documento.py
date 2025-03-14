@@ -1887,36 +1887,28 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
     def resumen_cobrar(self, request):      
         fecha_actual = timezone.now().date()
-        resumen = GenDocumento.objects.filter(
-            documento_tipo_id=1, estado_aprobado=True
-            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vigente = GenDocumento.objects.filter(
-            documento_tipo_id=1, estado_aprobado=True, fecha_vence__gte=fecha_actual
-            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vencido = GenDocumento.objects.filter(
-            documento_tipo_id=1, estado_aprobado=True, fecha_vence__lt=fecha_actual
-            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
-        resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
-        resumen_vencido['saldo_pendiente'] = resumen_vencido['saldo_pendiente'] or 0
-        return Response({'resumen': resumen, 'resumen_vigente': resumen_vigente, 'resumen_vencido': resumen_vencido}, status=status.HTTP_200_OK)
+        resumen = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0
+                                                ).aggregate(
+                                                    cantidad=Count('id'), 
+                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))
+        resumen_vencido = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__lt=fecha_actual
+                                                ).aggregate(
+                                                    cantidad=Count('id'), 
+                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))                
+        return Response({'resumen': resumen, 'vencido': resumen_vencido}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'resumen-pagar',)
     def resumen_pagar(self, request):      
         fecha_actual = timezone.now().date()
-        resumen = GenDocumento.objects.filter(
-            documento_tipo_id=5, estado_aprobado=True
-            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vigente = GenDocumento.objects.filter(
-            documento_tipo_id=5, estado_aprobado=True, fecha_vence__gte=fecha_actual
-            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen_vencido = GenDocumento.objects.filter(
-            documento_tipo_id=5, estado_aprobado=True, fecha_vence__lt=fecha_actual
-            ).aggregate(cantidad=Count('id'), saldo_pendiente=Sum('pendiente'))
-        resumen['saldo_pendiente'] = resumen['saldo_pendiente'] or 0
-        resumen_vigente['saldo_pendiente'] = resumen_vigente['saldo_pendiente'] or 0
-        resumen_vencido['saldo_pendiente'] = resumen_vencido['saldo_pendiente'] or 0
-        return Response({'resumen': resumen, 'resumen_vigente': resumen_vigente, 'resumen_vencido': resumen_vencido}, status=status.HTTP_200_OK)
+        resumen = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0
+                                                ).aggregate(
+                                                    cantidad=Count('id'), 
+                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))
+        resumen_vencido = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__lt=fecha_actual
+                                                ).aggregate(
+                                                    cantidad=Count('id'), 
+                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))                
+        return Response({'resumen': resumen, 'vencido': resumen_vencido}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'resumen-venta-dia',)
     def resumen_venta_dia(self, request):      
