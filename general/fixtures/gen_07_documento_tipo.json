@@ -41,7 +41,7 @@
     "fields": {
       "nombre": "COMPRA",
       "documento_clase": 300, "comprobante": 7,
-      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
     }
   },
   {
@@ -50,7 +50,7 @@
     "fields": {
       "nombre": "NOTA CREDITO COMPRA",
       "documento_clase": 301,  "comprobante": 8,
-      "compra": true, "pagar": true, "electronico" : false, "operacion": -1, "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : false, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true
     }
   },
   {
@@ -59,7 +59,7 @@
     "fields": {
       "nombre": "NOTA DEBITO COMPRA",
       "documento_clase": 302, "comprobante": 9,
-      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
     }
   },
   {
@@ -93,7 +93,7 @@
     "fields": {
       "nombre": "DOCUMENTO SOPORTE",
       "documento_clase": 303, "comprobante": 15,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": 1, "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : true, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
     }
   },
   {
@@ -102,7 +102,7 @@
     "fields": {
       "nombre": "NOTA AJUSTE",
       "documento_clase": 304,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": -1, "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : true, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true
     }
   },
   {

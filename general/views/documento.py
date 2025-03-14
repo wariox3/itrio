@@ -329,6 +329,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 existencia.save(update_fields=['existencia', 'disponible'])
                             else:
                                 existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)
+                            item = GenItem.objects.get(id=documento_detalle.item_id)
+                            item.existencia += documento_detalle.cantidad_operada
+                            item.disponible += documento_detalle.cantidad_operada
+                            item.save(update_fields=['existencia', 'disponible'])
 
                         if documento_detalle.tipo_registro == 'D':
                             activo = ConActivo.objects.get(id=documento_detalle.activo_id)
@@ -354,9 +358,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if id:
             try:
                 documento = GenDocumento.objects.get(pk=id)
-                if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False:              
-                    # Pago, Egreso, Asiento, 
-                    if documento.documento_tipo.documento_clase_id in (200,400,500,501,601):                    
+                if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False and documento.estado_electronico_enviado == False:                                  
+                    if documento.documento_tipo.documento_clase_id in (100, 200,300,400,500,501,601,):                    
                         respuesta = self.validacion_desaprobar(documento)
                         if respuesta['error'] == False:
                             documento.estado_aprobado = False
@@ -378,6 +381,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         existencia.existencia -= documento_detalle.cantidad_operada
                                         existencia.disponible -= documento_detalle.cantidad_operada
                                         existencia.save(update_fields=['existencia', 'disponible'])
+                                    item = GenItem.objects.get(id=documento_detalle.item_id)
+                                    item.existencia -= documento_detalle.cantidad_operada
+                                    item.disponible -= documento_detalle.cantidad_operada
+                                    item.save(update_fields=['existencia', 'disponible'])                                        
                             documento.save()
                             return Response({'estado_aprobado': False}, status=status.HTTP_200_OK)
                         else:
@@ -385,7 +392,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     else:
                        return Response({'mensaje':'El documento no permite desaprobacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
                 else:
-                    return Response({'mensaje':'El documento debe estar aprobado, sin anular y sin contabilizar para permitir la accion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                
+                    return Response({'mensaje':'El documento debe estar aprobado, sin anular, sin contabilizar, sin emitir electricamente para permitir la accion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -925,49 +932,66 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento.estado_anulado == False and documento.estado_aprobado == True:    
                     if documento.estado_electronico_enviado == False:
                         if documento.afectado <= 0:
-                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)                                          
-                            for documento_detalle in documento_detalles:                                               
-                                if documento_detalle.documento_afectado_id:                                    
-                                    documento_afectado = GenDocumento.objects.get(pk=documento_detalle.documento_afectado_id)
-                                    if documento.documento_tipo.documento_clase_id in (200,400):                                                                    
-                                        documento_afectado.afectado -= documento_detalle.pago
-                                        documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
-                                        documento_afectado.save(update_fields=['afectado', 'pendiente'])                                                                    
-                                documento_detalle.cantidad = 0
-                                documento_detalle.precio = 0
-                                documento_detalle.porcentaje_descuento = 0
-                                documento_detalle.descuento = 0
-                                documento_detalle.subtotal = 0
-                                documento_detalle.impuesto = 0
-                                documento_detalle.impuesto_operado = 0
-                                documento_detalle.impuesto_retencion = 0
-                                documento_detalle.base_impuesto = 0
-                                documento_detalle.total = 0
-                                documento_detalle.total_bruto = 0
-                                documento_detalle.pago = 0
-                                documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 
-                                                                      'impuesto', 'impuesto_operado', 'impuesto_retencion', 'base_impuesto', 
-                                                                      'total', 'total_bruto', 'pago'])
-                                documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
-                                for documento_impuesto in documento_impuestos:
-                                    documento_impuesto.base = 0
-                                    documento_impuesto.total = 0 
-                                    documento_impuesto.total_operado = 0 
-                                    documento_impuesto.save(update_fields=['base','total', 'total_operado'])
+                            respuesta = self.validacion_anular(documento)
+                            if respuesta['error'] == False:
+                                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)                                          
+                                for documento_detalle in documento_detalles:                                               
+                                    if documento_detalle.documento_afectado_id:                                    
+                                        documento_afectado = GenDocumento.objects.get(pk=documento_detalle.documento_afectado_id)
+                                        if documento.documento_tipo.documento_clase_id in (200,400):                                                                    
+                                            documento_afectado.afectado -= documento_detalle.pago
+                                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                            documento_afectado.save(update_fields=['afectado', 'pendiente'])                                                                    
 
+                                    if documento_detalle.operacion_inventario != 0:
+                                        existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
+                                        if existencia:
+                                            existencia.existencia -= documento_detalle.cantidad_operada
+                                            existencia.disponible -= documento_detalle.cantidad_operada
+                                            existencia.save(update_fields=['existencia', 'disponible'])   
+                                        item = GenItem.objects.get(id=documento_detalle.item_id)
+                                        item.existencia -= documento_detalle.cantidad_operada
+                                        item.disponible -= documento_detalle.cantidad_operada
+                                        item.save(update_fields=['existencia', 'disponible'])                                                                               
 
-                            documento.estado_anulado = True  
-                            documento.subtotal = 0
-                            documento.total = 0
-                            documento.total_bruto = 0
-                            documento.base_impuesto = 0
-                            documento.descuento = 0
-                            documento.impuesto = 0
-                            documento.impuesto_operado = 0
-                            documento.impuesto_retencion = 0
-                            documento.pendiente = 0
-                            documento.save(update_fields=['estado_anulado', 'subtotal', 'total', 'total_bruto', 'pendiente', 'base_impuesto', 'descuento', 'impuesto', 'impuesto_operado', 'impuesto_retencion'])
-                            return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
+                                    documento_detalle.cantidad = 0
+                                    documento_detalle.cantidad_operada = 0
+                                    documento_detalle.operacion_inventario = 0
+                                    documento_detalle.precio = 0
+                                    documento_detalle.porcentaje_descuento = 0
+                                    documento_detalle.descuento = 0
+                                    documento_detalle.subtotal = 0
+                                    documento_detalle.impuesto = 0
+                                    documento_detalle.impuesto_operado = 0
+                                    documento_detalle.impuesto_retencion = 0
+                                    documento_detalle.base_impuesto = 0
+                                    documento_detalle.total = 0
+                                    documento_detalle.total_bruto = 0
+                                    documento_detalle.pago = 0
+                                    documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 
+                                                                        'impuesto', 'impuesto_operado', 'impuesto_retencion', 'base_impuesto', 
+                                                                        'total', 'total_bruto', 'pago'])
+                                    documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
+                                    for documento_impuesto in documento_impuestos:
+                                        documento_impuesto.base = 0
+                                        documento_impuesto.total = 0 
+                                        documento_impuesto.total_operado = 0 
+                                        documento_impuesto.save(update_fields=['base','total', 'total_operado'])
+
+                                documento.estado_anulado = True  
+                                documento.subtotal = 0
+                                documento.total = 0
+                                documento.total_bruto = 0
+                                documento.base_impuesto = 0
+                                documento.descuento = 0
+                                documento.impuesto = 0
+                                documento.impuesto_operado = 0
+                                documento.impuesto_retencion = 0
+                                documento.pendiente = 0
+                                documento.save(update_fields=['estado_anulado', 'subtotal', 'total', 'total_bruto', 'pendiente', 'base_impuesto', 'descuento', 'impuesto', 'impuesto_operado', 'impuesto_retencion'])
+                                return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
+                            else:
+                                return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                         else:
                             return Response({'mensaje':'El documento esta afectado, no se puede anular', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
                     else:
@@ -2651,7 +2675,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if existencia:
                             disponible = existencia.disponible + documento_detalle.cantidad_operada
                             if disponible < 0:
-                                return {'error':True, 'mensaje':f"La cantidad {documento_detalle.cantidad} es mayor a la disponible {existencia.disponible}", 'codigo':1}
+                                return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}
                         else:
                             return {'error':True, 'mensaje':f"El item no tiene cantidades disponibles", 'codigo':1}
                     else:
@@ -2669,7 +2693,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()
                 disponible = existencia.disponible - documento_detalle.cantidad_operada
                 if disponible < 0:
-                    return {'error':True, 'mensaje':f"La cantidad {documento_detalle.cantidad} dejaria la existencia en negativo {disponible}", 'codigo':1}                            
-        return {'error':False}                    
+                    return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} dejaria el item en existencia negativa {disponible}", 'codigo':1}
+        return {'error':False}  
+
+    @staticmethod
+    def validacion_anular(documento: GenDocumento):
+        fecha = date.today()                                 
+        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+        for documento_detalle in documento_detalles:
+            if documento_detalle.operacion_inventario == 1:
+                existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()
+                disponible = existencia.disponible - documento_detalle.cantidad_operada
+                if disponible < 0:
+                    return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} dejaria el item en existencia negativa {disponible}", 'codigo':1}
+        return {'error':False}                  
              
 

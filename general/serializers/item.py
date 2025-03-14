@@ -9,7 +9,7 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
         model = GenItem
         fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'negativo',
                   'existencia', 'remision', 'disponible',
-                  'cuenta_venta', 'cuenta_compra']
+                  'cuenta_venta', 'cuenta_compra', 'favorito', 'venta', 'inactivo']
 
     def to_representation(self, instance):
         cuenta_venta_nombre = ''
@@ -33,6 +33,9 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
             'servicio': instance.servicio,
             'inventario': instance.inventario,
             'negativo': instance.negativo,
+            'favorito': instance.favorito,
+            'venta': instance.venta,
+            'inactivo': instance.inactivo,
             'existencia': instance.existencia,
             'remision': instance.remision,
             'disponible': instance.disponible,
