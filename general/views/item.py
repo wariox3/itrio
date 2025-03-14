@@ -9,6 +9,10 @@ from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenIt
 from rest_framework.decorators import action
 from openpyxl import Workbook
 from django.http import HttpResponse
+from io import BytesIO
+import base64
+import openpyxl
+import gc
 
 class ItemViewSet(viewsets.ModelViewSet):
     queryset = GenItem.objects.all()
@@ -132,3 +136,85 @@ class ItemViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
         
+    @action(detail=False, methods=["post"], url_path=r'importar',)
+    def importar(self, request):
+        raw = request.data        
+        archivo_base64 = raw.get('archivo_base64')
+        if archivo_base64:
+            try:
+                archivo_data = base64.b64decode(archivo_base64)
+                archivo = BytesIO(archivo_data)
+                wb = openpyxl.load_workbook(archivo)
+                sheet = wb.active    
+            except Exception as e:     
+                return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+            
+            data_modelo = []
+            errores = False
+            errores_datos = []
+            registros_importados = 0
+            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                data = {
+                    'nombre':row[0],
+                    'codigo': row[1],
+                    'refrencia': row[2],
+                    'costo': row[3],
+                    'precio': row[4],
+                    'inventario': row[5],
+                    'producto': row[6],
+                    'servicio': row[7],
+                    'cuenta_venta': row[8],
+                    'cuenta_compra': row[9],
+                    'negativo': row[10],
+                    'venta': row[12],
+                    'impuesto_venta' : row[13]
+                }  
+
+                if not data['nombre']:
+                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar un nombre'})
+                    errores = True
+
+                if not data['codigo']:
+                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar un código'})
+                    errores = True    
+
+                if not data['precio']:
+                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar el precio'})
+                    errores = True    
+
+                if not data['costo']:
+                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar el costo'})
+                    errores = True                        
+
+
+                serializer = GenItemSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)    
+
+            if not errores:
+                for detalle in data_modelo:
+                    item = GenItem.objects.create(**detalle)  # Se guarda el item
+                    
+                    # impuesto_venta = detalle['impuesto_venta']
+                    # if impuesto_venta:
+                    #     datos_impuesto_item = {"item": item.id, "impuesto": impuesto_venta}
+                    #     item_impuesto_serializer = GenItemImpuestoSerializador(data=datos_impuesto_item)
+                    #     if item_impuesto_serializer.is_valid():
+                    #         item_impuesto_serializer.save()
+
+                    registros_importados += 1  # Contar los registros guardados correctamente
+
+                gc.collect()
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+            else:
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)

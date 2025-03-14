@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.activo import ConActivo
+from contabilidad.models.cuenta import ConCuenta
 from contabilidad.serializers.activo import ConActivoSerializador
 from django.db.models import ProtectedError
 from datetime import datetime
@@ -68,27 +69,55 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     'valor_compra': row[9],
                     'depreciacion_inicial': row[10],
                     'activo_grupo': row[11],
-                    'cuenta_depreciacion': row[12],
-                    'cuenta_gasto': row[13],
+                    'cuenta_depreciacion': int(row[12]),
+                    'cuenta_gasto': int(row[13]),
                     'grupo': row[14],
                     'metodo_depreciacion': row[15],
                 }  
 
                 if not data['codigo']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar un código'})
                     errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'fecha_compra': ['Debe digitar un código']
+                        }
+                    }
+                    errores_datos.append(error_dato)  
+                    continue
 
                 if not data['nombre']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar un nombre'})
-                    errores = True    
+                    errores = True  
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'fecha_compra': ['Debe digitar un nombre']
+                        }
+                    }
+                    errores_datos.append(error_dato)  
+                    continue  
 
                 if not data['fecha_compra']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe ingresar la fecha de compra'})
                     errores = True    
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'fecha_compra': ['Debe ingresar la fecha de compra']
+                        }
+                    }
+                    errores_datos.append(error_dato)  
+                    continue  
 
                 if not data['fecha_activacion']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe ingresar la fecha de activación'})
                     errores = True   
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'fecha_activacion': ['Debe ingresar la fecha de activación']
+                        }
+                    }
+                    errores_datos.append(error_dato)  
+                    continue  
 
                 if row[5]:
                     fechaDesde = str(row[5])   
@@ -101,16 +130,48 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     data['fecha_activacion'] = fecha_valida
 
                 if not data['duracion']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar la duración'})
                     errores = True    
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'duracion': ['Debe digitar la duración.']
+                        }
+                    }
+                    errores_datos.append(error_dato)  
+                    continue  
 
                 if not data['valor_compra']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar el valor de la compra'})
                     errores = True    
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'valor_compra': ['Debe digitar el valor de la compra.']
+                        }
+                    }
+                    errores_datos.append(error_dato)  
+                    continue  
 
                 if not data['depreciacion_inicial']:
-                    errores_datos.append({'fila': i, 'Mensaje': 'Debe digitar el valor de la depreciación inicial'})
-                    errores = True                        
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': {
+                            'depreciacion_inicial': ['Debe digitar el valor de la depreciación inicial.']
+                        }
+                    }
+                    errores_datos.append(error_dato)  
+                    continue  
+
+                if data['cuenta_depreciacion']:
+                    cuentaDepreciacion = ConCuenta.objects.filter(codigo=data['cuenta_depreciacion']).first()
+                    if cuentaDepreciacion:
+                        data['cuenta_depreciacion'] = cuentaDepreciacion.id
+
+
+                if data['cuenta_gasto']:
+                    cuentaGasto = ConCuenta.objects.filter(codigo=data['cuenta_gasto']).first()
+                    if cuentaGasto:
+                        data['cuenta_depreciacion'] = cuentaGasto.id
 
                 # Calcular la depreciación por período
                 valor_compra = float(data['valor_compra'])
@@ -129,6 +190,7 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     validated_data['depreciacion_periodo'] = depreciacion_periodo
                     validated_data['depreciacion_saldo'] = valor_compra
                     data_modelo.append(serializer.validated_data)
+                    registros_importados += 1
                 else:
                     errores = True
                     error_dato = {
