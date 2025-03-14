@@ -11,6 +11,7 @@ import base64
 import openpyxl
 import gc
 import os
+from decimal import Decimal
 
 class ActivoViewSet(viewsets.ModelViewSet):
     queryset = ConActivo.objects.all()
@@ -18,25 +19,25 @@ class ActivoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def calcular_depreciacion_periodo(self, valor_compra, duracion):
-        valor_compra = float(valor_compra)
-        duracion = int(duracion)
         if duracion > 0:
             return valor_compra / duracion
         return 0
 
     def perform_create(self, serializer):
         raw = self.request.data
-        valor_compra = raw.get('valor_compra')
-        duracion = raw.get('duracion')
+        valor_compra = Decimal(raw.get('valor_compra'))
+        duracion = int(raw.get('duracion'))
+        depreciacion_inicial = Decimal(raw.get('depreciacion_inicial'))
         depreciacion_periodo = self.calcular_depreciacion_periodo(valor_compra, duracion)
-        serializer.save(depreciacion_periodo=depreciacion_periodo, depreciacion_saldo=valor_compra)
+        depreciacion_saldo = valor_compra - depreciacion_inicial
+        serializer.save(depreciacion_periodo=depreciacion_periodo, depreciacion_saldo=depreciacion_saldo)
 
     def perform_update(self, serializer):
         raw = self.request.data
-        valor_compra = raw.get('valor_compra')
-        duracion = raw.get('duracion')
+        valor_compra = Decimal(raw.get('valor_compra'))
+        duracion = int(raw.get('duracion'))
         depreciacion_periodo = self.calcular_depreciacion_periodo(valor_compra, duracion)
-        serializer.save(depreciacion_periodo=depreciacion_periodo, depreciacion_saldo=valor_compra)          
+        serializer.save(depreciacion_periodo=depreciacion_periodo, depreciacion_saldo=valor_compra)
         
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):
@@ -85,13 +86,12 @@ class ActivoViewSet(viewsets.ModelViewSet):
                     fecha_valida = datetime.strptime(row[7], "%Y%m%d").date()
                     data['fecha_baja'] = fecha_valida                     
 
-                valor_compra = float(data['valor_compra'])
+                valor_compra = Decimal(data['valor_compra'])
+                depreciacion_inicial = Decimal(data['depreciacion_inicial'])
                 duracion = int(data['duracion'])
-                if duracion > 0:
-                    depreciacion_periodo = valor_compra / duracion                    
-                    depreciacion_periodo = round(depreciacion_periodo, 6)
-                    data['depreciacion_periodo'] = depreciacion_periodo
-                    data['depreciacion_saldo'] = valor_compra
+                if duracion > 0:                    
+                    data['depreciacion_periodo'] = round(valor_compra / duracion, 6)
+                data['depreciacion_saldo'] = valor_compra - depreciacion_inicial
                 
                 serializer = ConActivoSerializador(data=data)
                 if serializer.is_valid():
