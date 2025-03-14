@@ -2338,6 +2338,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             activos = ConActivo.objects.filter(
                 Q(fecha_baja__gte=fecha_desde) | Q(fecha_baja__isnull=True),
                 fecha_activacion__lte=fecha_hasta)
+            total = 0
             for activo in activos:
                 if activo.depreciacion_saldo > 0:
                     dias = 30
@@ -2361,7 +2362,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         depreciar = round(depreciacion_dia * dias)
                     if activo.depreciacion_saldo < depreciar:
                         depreciar = activo.depreciacion_saldo
-                    
+                    total += depreciar
                     depreciacion_acumulada = activo.depreciacion_acumulada + depreciar
                     saldo = activo.depreciacion_saldo - depreciar
                     data = {
@@ -2377,6 +2378,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento_detalle_serializador.save()
                     else:
                         return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                                                  
+            documento.total = total
+            documento.save()
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
