@@ -15,13 +15,13 @@ class InvExistenciaViewSet(viewsets.ModelViewSet):
         detalles = raw.get('detalles')
         if detalles: 
             for detalle in detalles:
-                existencia = InvExistencia.objects.filter(almacen_id=detalle['almacen_id'], item_id=detalle['item_id']).first()
+                existencia = InvExistencia.objects.filter(almacen_id=detalle['almacen'], item_id=detalle['item']).first()
                 if existencia:
                     saldo = existencia.disponible - detalle['cantidad']
                     if saldo < 0:
-                        return Response({'mensaje':f'El disponible {existencia.disponible} del item {detalle["item_id"]} es insuficiente para descontar {detalle["cantidad"]}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje':f'El disponible {existencia.disponible} del item {detalle["item"]} es insuficiente para descontar {detalle["cantidad"]}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'mensaje':f'El disponible 0 del item {detalle["item_id"]} es insuficiente', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje':f'El disponible 0 del item {detalle["item"]} es insuficiente', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'validar': True}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
