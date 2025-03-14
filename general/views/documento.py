@@ -2318,9 +2318,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             fecha = documento.fecha
             fecha_desde = fecha.replace(day=1)
             ultimo_dia = calendar.monthrange(fecha.year, fecha.month)[1]
-            fecha_hasta = datetime(fecha.year, fecha.month, ultimo_dia)            
-            fecha_desde_texto = fecha_desde.strftime('%Y-%m-%d')
-            fecha_hasta_texto = fecha_hasta.strftime('%Y-%m-%d')            
+            fecha_hasta = datetime(fecha.year, fecha.month, ultimo_dia).date()                       
             activos = ConActivo.objects.filter(
                 Q(fecha_baja__gte=fecha_desde) | Q(fecha_baja__isnull=True),
                 fecha_activacion__lte=fecha_hasta)
@@ -2328,38 +2326,27 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if activo.depreciacion_saldo > 0:
                     dias = 30
                     depreciar = activo.depreciacion_periodo
-                    '''if activo.fecha_activacion >= fecha_desde and activo.fecha_activacion <= fecha_hasta:
-                        $intervalo = $arActivo['fechaActivacion']->diff($fechaHasta);
-                        $dias = $intervalo->days + 1;
-
-                        // Verificar si la fecha de activación es en febrero
-                        $mesActivacion = (int)$arActivo['fechaActivacion']->format('m');
-                        $diaActivacion = (int)$arActivo['fechaActivacion']->format('d');
-
-                        if ($mesActivacion === 2) { // Si es febrero
-                            if ($diaActivacion === 28) { // Si es 28 de febrero
-                                $dias += 2; // Sumar 2 días para llegar a 30 días contables
-                            } elseif ($diaActivacion === 29) { // Si es 29 de febrero
-                                $dias += 1; // Sumar 1 día para llegar a 30 días contables
-                            }
-                        }'''
+                    if activo.fecha_activacion >= fecha_desde and activo.fecha_activacion <= fecha_hasta:
+                        diferencia = fecha_hasta - activo.fecha_activacion
+                        dias = diferencia.days                        
+                        if fecha.month == 2:                        
+                            if ultimo_dia == 28:
+                                dias += 2
+                            if ultimo_dia == 29:
+                                dias += 1
                     if activo.fecha_baja:
                         if activo.fecha_baja >= fecha_desde and activo.fecha_baja <= fecha_hasta:                        
                             diferencia = fecha_hasta - activo.fecha_baja
-                            dias -= diferencia.days                        
-                    
+                            dias -= (diferencia.days + 1)
                     if dias > 30:
-                        dias = 30
-                    
+                        dias = 30                    
                     if dias != 30:
                         depreciacion_dia = activo.depreciacion_periodo / 30
-                        depreciar = depreciacion_dia * dias
-                    
-
+                        depreciar = round(depreciacion_dia * dias)
                     if activo.depreciacion_saldo < depreciar:
                         depreciar = activo.depreciacion_saldo
                     
-                    depreciacion_acumulada = activo.depreciacion_acumulada + depreciar;
+                    depreciacion_acumulada = activo.depreciacion_acumulada + depreciar
                     saldo = activo.depreciacion_saldo - depreciar
                     data = {
                         'tipo_registro': 'D',
