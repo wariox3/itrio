@@ -126,9 +126,9 @@ class ItemViewSet(viewsets.ModelViewSet):
         if id:            
             movimientos = GenDocumentoDetalle.objects.filter(item_id=id).first()
             if movimientos:
-                return Response({'validacion': False}, status=status.HTTP_200_OK)
+                return Response({'uso': True}, status=status.HTTP_200_OK)
             else:
-                return Response({'validacion': True}, status=status.HTTP_200_OK)            
+                return Response({'uso': False}, status=status.HTTP_200_OK)            
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
         
