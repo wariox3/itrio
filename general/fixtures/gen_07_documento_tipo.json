@@ -102,7 +102,7 @@
     "fields": {
       "nombre": "NOTA AJUSTE",
       "documento_clase": 304,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : true, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true, "comprobante": 17
     }
   },
   {

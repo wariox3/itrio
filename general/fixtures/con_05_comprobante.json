@@ -117,5 +117,12 @@
     "fields": {
       "nombre":"VENTA POS", 
       "codigo":"POS"}
-  }      
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 17,
+    "fields": {
+      "nombre":"NOTA DE AJUSTE", 
+      "codigo":"NAJ"}
+  }    
 ]
