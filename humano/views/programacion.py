@@ -1029,6 +1029,55 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
         except HumProgramacion.DoesNotExist:
             return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
 
+    @action(detail=False, methods=["post"], url_path=r'desaprobar',)
+    def desaprobar(self, request):             
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                programacion = HumProgramacion.objects.get(pk=id)
+                if programacion.estado_aprobado == True:                                                                                                                
+                    documentos = GenDocumento.objects.filter(programacion_detalle__programacion_id=id)
+                    #Validar
+                    for documento in documentos:
+                        if documento.afectado > 0:
+                            return Response({'mensaje':f'El documento {documento.id} ya tiene un egreso, no se puede desaprobar la programacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+                        if documento.estado_contabilizado:
+                            return Response({'mensaje':f'El documento {documento.id} ya esta contabilizado, no se puede desaprobar la programacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+                    for documento in documentos:
+                        documento.estado_aprobado = False
+                        documento.pendiente = documento.total 
+                        documento.save()                        
+
+                        # Desafectar creditos
+                        documentos_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+                        for documento_detalle in documentos_detalles:
+                            if documento_detalle.credito:
+                                credito = documento_detalle.credito
+                                credito.abono -= documento_detalle.pago
+                                credito.saldo += documento_detalle.pago
+                                credito.cuota_actual -= 1
+                                credito.save()
+
+                        # Desafectar contratos
+                        contrato = documento.contrato
+                        if programacion.pago_tipo_id == 1:
+                            contrato.fecha_ultimo_pago = programacion.fecha_desde
+                        if programacion.pago_tipo_id == 2:
+                            contrato.fecha_ultimo_pago_prima = programacion.fecha_desde
+                        if programacion.pago_tipo_id == 3:
+                            contrato.fecha_ultimo_pago_cesantia = programacion.fecha_desde
+                        contrato.save()                        
+                    programacion.estado_aprobado = False
+                    programacion.save()
+                    return Response({'mensaje': 'Programacion desaprobada'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'La programacion no esta aprobada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumProgramacion.DoesNotExist:
+            return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
         raw = request.data
