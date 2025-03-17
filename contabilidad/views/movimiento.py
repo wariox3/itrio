@@ -53,7 +53,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'base': row[4] if row[4] is not None else 0, 
                     'naturaleza': None,
                     'comprobante': row[5],
-                    'cuenta': row[6],
+                    'cuenta': str(row[6]),
                     'grupo': row[7],
                     'contacto': row[8],
                     'detalle': row[9],
