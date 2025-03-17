@@ -100,7 +100,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
-    def obtener_balance_prueba(self, fecha_desde, fecha_hasta, cierre = False):
+    def obtener_saldo_cuenta(self, fecha_desde, fecha_hasta, cierre = False):
         parametro_cierre = ' AND m.cierre = false '
         if cierre == True:
             parametro_cierre = ''
@@ -287,6 +287,112 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         #resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
 
+    def obtener_movimiento(self, fecha_desde, fecha_hasta, cierre = False):
+        parametro_cierre = ' AND m.cierre = false '
+        if cierre == True:
+            parametro_cierre = ''
+            
+        query = f'''            
+            SELECT
+                m.id,
+                m.debito,
+                m.credito,
+                c.codigo,
+                c.nombre,
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_cuenta_id,
+                c.nivel
+            FROM
+                con_movimiento m
+            LEFT JOIN
+                con_cuenta c ON m.cuenta_id = c.id
+            WHERE
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}   
+            ORDER BY
+                m.fecha ASC;
+        '''
+        resultados = ConMovimiento.objects.raw(query)   
+        resultados_json = []
+        for movimiento in resultados:            
+            resultados_json.append({
+                'tipo': 'MOVIMIENTO',
+                'id': movimiento.id,
+                'codigo': movimiento.codigo,
+                'nombre': movimiento.nombre,
+                'contacto_id': None,
+                'contacto_nombre': None,
+                'cuenta_clase_id': movimiento.cuenta_clase_id,
+                'cuenta_grupo_id': movimiento.cuenta_grupo_id,
+                'cuenta_cuenta_id': movimiento.cuenta_cuenta_id,
+                'nivel': movimiento.nivel,
+                'saldo_anterior': 0,
+                'debito': movimiento.debito,
+                'credito': movimiento.credito,
+                'saldo_actual': 0
+            })         
+        return resultados_json
+
+    def obtener_movimiento_detallado(self, fecha_desde, fecha_hasta, cierre = False):
+        parametro_cierre = ' AND m.cierre = false '
+        if cierre == True:
+            parametro_cierre = ''
+            
+        query = f'''            
+            SELECT
+                m.id,
+                m.numero,
+                m.fecha,                
+                m.debito,
+                m.credito,
+                m.detalle, 
+                m.cuenta_id,
+                m.contacto_id,                               
+                m.comprobante_id,
+                c.codigo as cuenta_codigo,
+                c.nombre as cuenta_nombre,
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_cuenta_id,
+                c.nivel as cuenta_nivel,
+                cp.nombre as comprobante_nombre,
+                co.nombre_corto as contacto_nombre_corto
+            FROM
+                con_movimiento m
+            LEFT JOIN
+                con_cuenta c ON m.cuenta_id = c.id
+            LEFT JOIN
+                con_comprobante cp ON m.comprobante_id = cp.id                
+            LEFT JOIN
+                gen_contacto co ON m.contacto_id = co.id
+            WHERE
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}   
+            ORDER BY
+                m.fecha ASC;
+        '''
+        resultados = ConMovimiento.objects.raw(query)   
+        resultados_json = []
+        for movimiento in resultados:            
+            resultados_json.append({
+                'id': movimiento.id,
+                'numero': movimiento.numero,
+                'fecha': movimiento.fecha,
+                'detalle': movimiento.detalle,
+                'debito': movimiento.debito,
+                'credito': movimiento.credito,
+                'base': movimiento.base,                
+                'cuenta_codigo': movimiento.cuenta_codigo,
+                'cuenta_nombre': movimiento.cuenta_nombre,
+                'cuenta_clase_id': movimiento.cuenta_clase_id,
+                'cuenta_grupo_id': movimiento.cuenta_grupo_id,
+                'cuenta_cuenta_id': movimiento.cuenta_cuenta_id,
+                'cuenta_nivel': movimiento.cuenta_nivel,
+                'contacto_id': movimiento.contacto_id,
+                'contacto_nombre_corto': movimiento.contacto_nombre_corto,  
+                'comprobante_nombre': movimiento.comprobante_nombre              
+            })         
+        return resultados_json
+
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
         raw = request.data
@@ -309,7 +415,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        resultados_json = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
+        resultados_json = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
         if pdf:
             formato = FormatoBalancePrueba()
             pdf = formato.generar_pdf(fecha_desde, fecha_hasta, resultados_json)
@@ -366,7 +472,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        resultados_cuenta = self.obtener_balance_prueba(fecha_desde, fecha_hasta, cierre)
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
         resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
         resultados = resultados_cuenta + resultados_tercero
         resultados.sort(key=lambda x: str(x['codigo']))
@@ -397,3 +503,223 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return response
         else:
             return Response({'registros': resultados}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], url_path=r'informe-auxiliar-cuenta',)
+    def informe_auxiliar_cuenta(self, request):    
+        raw = request.data
+        filtros = raw.get("filtros", [])
+        excel = raw.get('excel', False)
+        pdf = raw.get('pdf', False)
+        fecha_desde = None
+        fecha_hasta = None
+        cierre = False        
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta":
+                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"]                
+        
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )               
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
+        movimientos = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre)
+        resultados_json = resultados_cuenta + movimientos
+        resultados_json.sort(key=lambda x: str(x['codigo']))
+
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Auxiliar cuenta"
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.append(headers)
+            for registro in resultados_json:
+                ws.append([
+                    registro['tipo'],
+                    registro['codigo'],
+                    registro['nombre'],                    
+                    registro['saldo_anterior'],
+                    registro['debito'],
+                    registro['credito'],
+                    registro['saldo_actual']
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([4,5,6,7])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=auxiliar_cuenta.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
+        
+    @action(detail=False, methods=["post"], url_path=r'informe-auxiliar-tercero',)
+    def informe_auxiliar_tercero(self, request):    
+        raw = request.data
+        filtros = raw.get("filtros", [])
+        excel = raw.get('excel', False)
+        pdf = raw.get('pdf', False)
+        fecha_desde = None
+        fecha_hasta = None
+        cierre = False        
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta":
+                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"]                
+        
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )               
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)        
+        resultados_json = resultados_cuenta + resultados_tercero
+        resultados_json.sort(key=lambda x: str(x['codigo']))
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Auxiliar tercero"
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.append(headers)
+            for registro in resultados_json:
+                ws.append([
+                    registro['tipo'],
+                    registro['codigo'],
+                    registro['nombre'],
+                    registro['contacto_nombre'],
+                    registro['saldo_anterior'],
+                    registro['debito'],
+                    registro['credito'],
+                    registro['saldo_actual']
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=auxiliar_tercero.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK) 
+
+    @action(detail=False, methods=["post"], url_path=r'informe-auxiliar-general',)
+    def informe_auxiliar_general(self, request):    
+        raw = request.data
+        filtros = raw.get("filtros", [])
+        excel = raw.get('excel', False)
+        pdf = raw.get('pdf', False)
+        fecha_desde = None
+        fecha_hasta = None
+        cierre = False        
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta":
+                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"]                
+        
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )               
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
+        resultados_movimiento = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre)
+        resultados_json = resultados_cuenta + resultados_tercero + resultados_movimiento
+        resultados_json.sort(key=lambda x: str(x['codigo']))
+
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Auxiliar general"
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.append(headers)
+            for registro in resultados_json:
+                ws.append([
+                    registro['tipo'],
+                    registro['codigo'],
+                    registro['nombre'],
+                    registro['contacto_nombre'],
+                    registro['saldo_anterior'],
+                    registro['debito'],
+                    registro['credito'],
+                    registro['saldo_actual']
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=auxiliar_general.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK) 
+
+    @action(detail=False, methods=["post"], url_path=r'informe-base',)
+    def informe_base(self, request):    
+        raw = request.data
+        filtros = raw.get("filtros", [])
+        excel = raw.get('excel', False)
+        pdf = raw.get('pdf', False)
+        fecha_desde = None
+        fecha_hasta = None
+        cierre = False        
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta":
+                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"]                
+        
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )               
+        resultados_movimiento = self.obtener_movimiento_detallado(fecha_desde, fecha_hasta, cierre)
+        resultados_json = resultados_movimiento
+        resultados_json.sort(key=lambda x: str(x['cuenta_codigo']))
+
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Base"
+            headers = ["CUENTA", "NOMBRE CUENTA", "CONTACTO", "NUMERO", "COMPROBANTE", "FECHA", "DETALLE", "DEBITO", "CREDITO", "BASE"]
+            ws.append(headers)
+            for registro in resultados_json:
+                ws.append([
+                    registro['cuenta_codigo'],
+                    registro['cuenta_nombre'],
+                    registro['contacto_nombre_corto'],
+                    registro['numero'],
+                    registro['comprobante_nombre'],
+                    registro['fecha'],
+                    registro['detalle'],
+                    registro['debito'],
+                    registro['credito'],
+                    registro['base'],
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=base.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)                      
