@@ -75,7 +75,8 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                             data = {
                                 'id':1,
                                 'empresa':1,
-                                'formato_factura':'F'
+                                'formato_factura':'F',
+                                'pos_documento_tipo':24
                                 }
                             configuracionSerializador = GenConfiguracionSerializador(data=data)                                                
                             if configuracionSerializador.is_valid():
