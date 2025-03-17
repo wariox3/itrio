@@ -307,7 +307,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documento.estado_aprobado = True
                     if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303):
                         documento.pendiente = documento.total - documento.afectado    
-                    
+                    # Compra, Documento soporte
                     if documento.documento_tipo_id in [5,11]:
                         if documento.forma_pago:
                             documento.cuenta_id = documento.forma_pago.cuenta_id
@@ -2208,58 +2208,62 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         raw = request.data
         anio = int(raw.get('anio'))
         mes = int(raw.get('mes'))
-        if anio and mes:                    
-            fecha_desde = date(anio, mes, 1)            
-            ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
-            fecha_hasta = date(anio, mes, ultimo_dia_mes)
-            nominas_mes = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
-                                                      fecha__lte=fecha_hasta, 
-                                                      documento_tipo_id=14,
-                                                      documento_referencia_id = None,
-                                                      estado_aprobado = True)\
-                                            .values('contacto_id', 'contrato_id')\
-                                            .annotate(
-                                                base_cotizacion=Sum('base_cotizacion'),
-                                                base_prestacion=Sum('base_prestacion'),
-                                                deduccion=Sum('deduccion'),
-                                                devengado=Sum('devengado'),
-                                                total=Sum('total'))           
-            for nomina_mes in nominas_mes:
-                contrato = HumContrato.objects.get(pk=nomina_mes['contrato_id'])
-                data = {
-                    'empresa': 1,
-                    'documento_tipo': 15,
-                    'fecha': fecha_desde,
-                    'fecha_contable': fecha_desde,                    
-                    'fecha_hasta': fecha_hasta,
-                    'contacto': nomina_mes['contacto_id'],
-                    'contrato': nomina_mes['contrato_id'],
-                    'grupo': contrato.grupo_id,
-                    'salario': contrato.salario,
-                    'base_cotizacion': nomina_mes['base_cotizacion'],
-                    'base_prestacion': nomina_mes['base_prestacion'],
-                    'deduccion': nomina_mes['deduccion'],
-                    'devengado': nomina_mes['devengado'],
-                    'total': nomina_mes['total']
-                }
-                documento_serializador = GenDocumentoSerializador(data=data)
-                if documento_serializador.is_valid():
-                    documento = documento_serializador.save()
-                    nominas = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
-                                                          fecha__lte=fecha_hasta, 
-                                                          documento_tipo_id=14,
-                                                          contacto_id = nomina_mes['contacto_id'],
-                                                          contrato_id = nomina_mes['contrato_id'],
-                                                          documento_referencia_id = None,
-                                                          estado_aprobado = True) 
-                    for nomina in nominas:
-                        nomina.documento_referencia = documento
-                        nomina.save() 
-
-                else:
-                    return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST) 
+        if anio and mes:
+            with transaction.atomic():                    
+                documento_tipo = GenDocumentoTipo.objects.get(id=15)
+                fecha_desde = date(anio, mes, 1)            
+                ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
+                fecha_hasta = date(anio, mes, ultimo_dia_mes)
+                nominas_mes = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
+                                                        fecha__lte=fecha_hasta, 
+                                                        documento_tipo_id=14,
+                                                        documento_referencia_id = None,
+                                                        estado_aprobado = True)\
+                                                .values('contacto_id', 'contrato_id')\
+                                                .annotate(
+                                                    base_cotizacion=Sum('base_cotizacion'),
+                                                    base_prestacion=Sum('base_prestacion'),
+                                                    deduccion=Sum('deduccion'),
+                                                    devengado=Sum('devengado'),
+                                                    total=Sum('total'))           
+                for nomina_mes in nominas_mes:
+                    contrato = HumContrato.objects.get(pk=nomina_mes['contrato_id'])
+                    data = {
+                        'empresa': 1,
+                        'numero': documento_tipo.consecutivo,
+                        'documento_tipo': 15,
+                        'fecha': fecha_desde,
+                        'fecha_contable': fecha_desde,                    
+                        'fecha_hasta': fecha_hasta,
+                        'contacto': nomina_mes['contacto_id'],
+                        'contrato': nomina_mes['contrato_id'],
+                        'grupo': contrato.grupo_id,
+                        'salario': contrato.salario,
+                        'base_cotizacion': nomina_mes['base_cotizacion'],
+                        'base_prestacion': nomina_mes['base_prestacion'],
+                        'deduccion': nomina_mes['deduccion'],
+                        'devengado': nomina_mes['devengado'],
+                        'total': nomina_mes['total'],
+                        'estado_aprobado': True
+                    }
+                    documento_tipo.consecutivo += 1
+                    documento_tipo.save()
+                    documento_serializador = GenDocumentoSerializador(data=data)
+                    if documento_serializador.is_valid():
+                        documento = documento_serializador.save()
+                        nominas = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
+                                                            fecha__lte=fecha_hasta, 
+                                                            documento_tipo_id=14,
+                                                            contacto_id = nomina_mes['contacto_id'],
+                                                            contrato_id = nomina_mes['contrato_id'],
+                                                            documento_referencia_id = None,
+                                                            estado_aprobado = True) 
+                        for nomina in nominas:
+                            nomina.documento_referencia = documento
+                            nomina.save() 
+                    else:
+                        return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                 
             return Response({'resumen': 1}, status=status.HTTP_200_OK)
-
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)           
 
