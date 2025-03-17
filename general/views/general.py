@@ -45,7 +45,7 @@ class ListaView(APIView):
 
             desplazar = raw.get('desplazar', 0)
             limite = raw.get('limite', 50)    
-            cantidadLimite = raw.get('cantidad_limite', 5000)    
+            cantidadLimite = raw.get('cantidad_limite', 30000)    
             filtros = raw.get('filtros')
             ordenamientos = raw.get('ordenamientos')
             items = modelo.objects.all()            
