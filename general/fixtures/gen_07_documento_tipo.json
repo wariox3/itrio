@@ -146,7 +146,7 @@
     "fields": {
       "nombre": "CUENTA COBRO",
       "documento_clase": 104,
-      "venta": true, "cobrar" : true, "operacion": 1
+      "venta": true, "cobrar" : true, "operacion": 1, "comprobante": 18
     }
   },
   {

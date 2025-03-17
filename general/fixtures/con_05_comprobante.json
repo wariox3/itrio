@@ -124,5 +124,12 @@
     "fields": {
       "nombre":"NOTA DE AJUSTE", 
       "codigo":"NAJ"}
-  }    
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 18,
+    "fields": {
+      "nombre":"CUENTA DE COBRO", 
+      "codigo":"CDC"}
+  }        
 ]
