@@ -393,6 +393,55 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             })         
         return resultados_json
 
+    def obtener_movimiento_certificado_retencion(self, fecha_desde, fecha_hasta, cierre = False):
+        parametro_cierre = ' AND m.cierre = false '
+        if cierre == True:
+            parametro_cierre = ''
+            
+        query = f'''
+            select
+            	MIN(m.id) AS id,
+                m.cuenta_id,
+            	m.contacto_id,            	
+                c.codigo as cuenta_codigo,
+                c.nombre as cuenta_nombre,                              
+                co.numero_identificacion  as contacto_numero_identificacion,
+                co.nombre_corto as contacto_nombre_corto,
+                SUM(m.debito) as debito,
+                SUM(m.credito) as credito,
+                SUM(m.base) as base
+            FROM
+                con_movimiento m
+            LEFT JOIN
+                con_cuenta c ON m.cuenta_id = c.id               
+            LEFT JOIN
+                gen_contacto co ON m.contacto_id = co.id
+            WHERE
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' and m.cuenta_id = 7 {parametro_cierre}
+        	group by 
+        		m.cuenta_id,
+        		m.contacto_id,
+        		c.codigo,
+        		c.nombre,
+        		co.numero_identificacion,
+        		co.nombre_corto            
+        '''
+        resultados = ConMovimiento.objects.raw(query)   
+        resultados_json = []
+        for movimiento in resultados:            
+            resultados_json.append({
+                'debito': movimiento.debito,
+                'credito': movimiento.credito,
+                'base': movimiento.base,                
+                'cuenta_codigo': movimiento.cuenta_codigo,
+                'cuenta_nombre': movimiento.cuenta_nombre,
+                'contacto_id': movimiento.contacto_id,
+                'contacto_numero_identificacion': movimiento.contacto_numero_identificacion,  
+                'contacto_nombre_corto': movimiento.contacto_nombre_corto,  
+                
+            })         
+        return resultados_json
+
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
         raw = request.data
@@ -722,4 +771,56 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             wb.save(response)
             return response
         else:
-            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)                      
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)  
+
+    @action(detail=False, methods=["post"], url_path=r'informe-certificado-retencion',)
+    def informe_certificado_retencion(self, request):    
+        raw = request.data
+        filtros = raw.get("filtros", [])
+        excel = raw.get('excel', False)
+        pdf = raw.get('pdf', False)
+        fecha_desde = None
+        fecha_hasta = None
+        cierre = False        
+        for filtro in filtros:
+            if filtro["propiedad"] == "fecha_desde":
+                fecha_desde = filtro["valor1"]
+            if filtro["propiedad"] == "fecha_hasta":
+                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "cierre":
+                cierre = filtro["valor1"]                
+        
+        if not fecha_desde or not fecha_hasta:
+            return Response(
+                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )               
+        resultados_movimiento = self.obtener_movimiento_certificado_retencion(fecha_desde, fecha_hasta, cierre)
+        resultados_json = resultados_movimiento
+
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Certificado retencion"
+            headers = ["NIT", "CONTACTO", "CUENTA", "NOMBRE CUENTA", "DEBITO", "CREDITO", "BASE"]
+            ws.append(headers)
+            for registro in resultados_json:
+                ws.append([
+                    registro['contacto_numero_identificacion'],
+                    registro['contacto_nombre_corto'],
+                    registro['cuenta_codigo'],
+                    registro['cuenta_nombre'],                                        
+                    registro['debito'],
+                    registro['credito'],
+                    registro['base'],
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=certificado_retencion.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)                            
