@@ -8,6 +8,7 @@ from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento_pago import GenDocumentoPago
 from general.models.empresa import GenEmpresa
 from general.models.contacto import GenContacto
+from general.models.resolucion import GenResolucion
 from general.models.configuracion import GenConfiguracion
 from humano.models.contrato import HumContrato
 from humano.models.concepto_cuenta import HumConceptoCuenta
@@ -161,12 +162,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         raw = request.data        
         saltar_aprobado = raw.get('saltar_aprobado', False)
+        resolucion_actualizar = raw.get('resolucion')
         try:
             documento = GenDocumento.objects.get(pk=pk)        
             if documento.estado_aprobado == False or saltar_aprobado == True:
                 documentoSerializador = GenDocumentoSerializador(documento, data=raw, partial=True)
                 if documentoSerializador.is_valid():
                     documentoSerializador.save()
+                    if resolucion_actualizar:
+                        resolucion = GenResolucion.objects.get(pk=resolucion_actualizar)
+                        documento = documentoSerializador.save(resolucion=resolucion)    
                     detalles = raw.get('detalles')
                     if detalles is not None:
                         for detalle in detalles:                
