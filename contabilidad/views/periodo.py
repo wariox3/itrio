@@ -13,8 +13,7 @@ class PeriodoViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def analizar_inconsistencias(id):
-        movimientos = ConMovimiento.objects.filter(
-            periodo=id
+        movimientos = ConMovimiento.objects.filter(periodo=id
             ).values(
                 'comprobante_id', 
                 'numero'

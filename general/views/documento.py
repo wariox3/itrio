@@ -637,8 +637,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['cuenta'] = documento_detalle.activo.cuenta_depreciacion_id
                                 data['contacto'] = documento_detalle.contacto_id                                        
                                 data['base'] = documento_detalle.base
-                                data['naturaleza'] = 'D'
-                                data['debito'] = documento_detalle.precio                                
+                                data['naturaleza'] = 'C'
+                                data['credito'] = documento_detalle.precio                                
                                 if documento_detalle.activo.cuenta_depreciacion:
                                     if documento_detalle.activo.cuenta_depreciacion.exige_grupo:
                                         data['grupo'] = documento_detalle.grupo_id    
@@ -653,8 +653,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['cuenta'] = documento_detalle.activo.cuenta_gasto_id
                                 data['contacto'] = documento_detalle.contacto_id                                        
                                 data['base'] = documento_detalle.base
-                                data['naturaleza'] = 'C'
-                                data['credito'] = documento_detalle.precio                                
+                                data['naturaleza'] = 'D'
+                                data['debito'] = documento_detalle.precio                                
                                 if documento_detalle.activo.cuenta_gasto:
                                     if documento_detalle.activo.cuenta_gasto.exige_grupo:
                                         data['grupo'] = documento_detalle.grupo_id   
