@@ -7,6 +7,7 @@ from general.models.empresa import GenEmpresa
 from general.models.plazo_pago import GenPlazoPago
 from general.models.forma_pago import GenFormaPago
 from general.models.gen_asesor import GenAsesor
+from general.models.resolucion import GenResolucion
 from general.models.sede import GenSede
 from general.models.cuenta_banco import GenCuentaBanco
 from humano.models.programacion_detalle import HumProgramacionDetalle
@@ -175,13 +176,14 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     plazo_pago = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True)
     forma_pago = serializers.PrimaryKeyRelatedField(queryset=GenFormaPago.objects.all(), allow_null=True)    
     almacen = serializers.PrimaryKeyRelatedField(queryset=InvAlmacen.objects.all(), allow_null=True)    
+    resolucion = serializers.PrimaryKeyRelatedField(queryset=GenResolucion.objects.all(), allow_null=True)   
     class Meta:
         model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'total_bruto', 'total', 'afectado', 'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 'metodo_pago', 
                   'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'forma_pago'
                   'estado_electronico_enviado', 'estado_electronico_notificado', 'estado_electronico_evento', 'orden_compra', 
-                  'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen']
+                  'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen', 'resolucion']
 
     def to_representation(self, instance):
         contacto_numero_identificacion = ""
@@ -223,7 +225,10 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             forma_pago_nombre = instance.forma_pago.nombre    
         almacen_nombre = ""
         if instance.almacen:
-            almacen_nombre = instance.almacen.nombre                                
+            almacen_nombre = instance.almacen.nombre          
+        resolucion_numero = ""
+        if instance.resolucion:
+            resolucion_numero = instance.resolucion.numero    
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -285,7 +290,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'forma_pago_id': instance.forma_pago_id,
             'forma_pago_nombre': forma_pago_nombre,
             'almacen_id': instance.almacen_id,
-            'almacen_nombre': almacen_nombre                
+            'almacen_nombre': almacen_nombre,
+            'resolucion_id' : instance.resolucion_id,
+            'resolucion_numero' : resolucion_numero                
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
