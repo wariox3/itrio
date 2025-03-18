@@ -47,8 +47,7 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                 'cuenta__exige_grupo',
                 'cuenta__exige_contacto',
                 'cuenta__exige_base',
-                'documento__documento_tipo__nombre'
-                
+                'documento__documento_tipo__nombre'                
             )
         for movimiento in movimientos:
             if movimiento['cuenta__permite_movimiento'] == False:
@@ -122,9 +121,15 @@ class PeriodoViewSet(viewsets.ModelViewSet):
             periodo = ConPeriodo.objects.get(pk=id)
             if periodo:
                 if not periodo.estado_bloqueado:
-                    periodo.estado_bloqueado = True
-                    periodo.save()
-                    return Response({'mensaje': 'Periodo bloqueado'}, status=status.HTTP_200_OK)
+                    inconsistencias = self.analizar_inconsistencias(periodo.id)    
+                    if not inconsistencias:
+                        periodo.estado_inconsistencia = False
+                        periodo.estado_bloqueado = True                        
+                        return Response({'mensaje': 'Periodo bloqueado'}, status=status.HTTP_200_OK)                        
+                    else:
+                        periodo.estado_inconsistencia = True
+                        periodo.save()
+                        return Response({'mensaje': 'No se puede bloquear el periodo porque tiene inconsistencias'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje': 'El periodo ya estaba bloqueado previamente'}, status=status.HTTP_400_BAD_REQUEST)    
             else:
@@ -177,13 +182,21 @@ class PeriodoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'inconsistencia',)
     def inconsistencia(self, request):
         raw = request.data        
-        id = raw.get('id')
-        if id:
-            periodo = ConPeriodo.objects.get(pk=id)
-            if periodo:            
-                inconsistencias = self.analizar_inconsistencias(id)    
-                return Response({'mensaje': 'Inconsistencia', 'inconsistencias': inconsistencias}, status=status.HTTP_200_OK)
-            else:
-                return Response({'mensaje': 'No existe el periodo'}, status=status.HTTP_400_BAD_REQUEST)                
+        anio = raw.get('anio')
+        mes = raw.get('mes')
+        if anio:
+            inconsistencias_proceso = []
+            periodos = ConPeriodo.objects.filter(anio=anio)
+            if mes:
+                periodos.filter(mes=mes)
+            for periodo in periodos:                            
+                inconsistencias = self.analizar_inconsistencias(periodo.id)    
+                if inconsistencias:
+                    inconsistencias_proceso += inconsistencias
+                    periodo.estado_inconsistencia = True
+                else:
+                    periodo.estado_inconsistencia = False
+                periodo.save()
+            return Response({'inconsistencia': inconsistencias_proceso}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                  

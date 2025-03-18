@@ -5,7 +5,7 @@ class ConPeriodoSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = ConPeriodo
-        fields = ['id', 'anio', 'mes', 'estado_bloqueado', 'estado_cerrado']
+        fields = ['id', 'anio', 'mes', 'estado_bloqueado', 'estado_cerrado', 'estado_inconsistencia']
 
     def to_representation(self, instance):
         return {
@@ -13,6 +13,7 @@ class ConPeriodoSerializador(serializers.HyperlinkedModelSerializer):
             'anio': instance.anio,
             'mes': instance.mes,
             'estado_bloqueado': instance.estado_bloqueado,
-            'estado_cerrado': instance.estado_cerrado
+            'estado_cerrado': instance.estado_cerrado,
+            'estado_inconsistencia': instance.estado_inconsistencia,
         }        
         
