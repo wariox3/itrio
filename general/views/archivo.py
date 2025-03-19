@@ -27,27 +27,34 @@ class ArchivoViewSet(viewsets.ModelViewSet):
         archivo_base64 = raw.get('archivo_base64')
         nombre_archivo = raw.get('nombre_archivo')
         documento_id = raw.get('documento_id')     
-        if archivo_base64 and nombre_archivo and documento_id:
+        codigo = raw.get('codigo', None)
+        modelo = raw.get('modelo', None)
+        if archivo_base64 and nombre_archivo and (documento_id or (codigo and modelo)):            
             try:
-                documento = GenDocumento.objects.get(pk=documento_id)
-                try:                        
-                    tenant = request.tenant.schema_name
-                    objeto_base64 = Utilidades.separar_base64(archivo_base64)
-                    backblaze = Backblaze()
-                    id, tamano, tipo, uuid = backblaze.subir(objeto_base64['base64_raw'], tenant, nombre_archivo)
-                    archivo = GenArchivo()
-                    archivo.almacenamiento_id = id
-                    archivo.documento = documento
-                    archivo.nombre = nombre_archivo
-                    archivo.tipo = tipo
-                    archivo.tamano = tamano
-                    archivo.uuid = uuid
-                    archivo.save()
-                    return Response({'id': str(archivo.id)}, status=status.HTTP_200_OK)                                         
-                except ValueError as e:
-                    return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                   
+                documento = None
+                if documento_id:
+                    documento = GenDocumento.objects.get(pk=documento_id)
             except GenDocumento.DoesNotExist:
-                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                        
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
+                
+            try:                        
+                tenant = request.tenant.schema_name
+                objeto_base64 = Utilidades.separar_base64(archivo_base64)
+                backblaze = Backblaze()
+                id, tamano, tipo, uuid = backblaze.subir(objeto_base64['base64_raw'], tenant, nombre_archivo)
+                archivo = GenArchivo()
+                archivo.almacenamiento_id = id
+                archivo.documento = documento
+                archivo.nombre = nombre_archivo
+                archivo.tipo = tipo
+                archivo.tamano = tamano
+                archivo.uuid = uuid
+                archivo.codigo = codigo
+                archivo.modelo = modelo
+                archivo.save()
+                return Response({'id': str(archivo.id)}, status=status.HTTP_200_OK)                                         
+            except ValueError as e:
+                return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                          
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         
