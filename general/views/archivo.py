@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from general.models.archivo import GenArchivo
 from general.models.documento import GenDocumento
+from general.models.item import GenItem
 from general.serializers.archivo import GenArchivoSerializador
 from utilidades.utilidades import Utilidades
 from utilidades.backblaze import Backblaze
