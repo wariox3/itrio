@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from ruteo.models.despacho import RutDespacho
 from ruteo.models.visita import RutVisita
 from vertical.models.entrega import VerEntrega
+from seguridad.models import User
 from ruteo.serializers.despacho import RutDespachoSerializador
 from django.http import HttpResponse
 from openpyxl import Workbook
@@ -33,22 +34,29 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                 with transaction.atomic():               
                     despacho = RutDespacho.objects.get(pk=id)  
                     if despacho.estado_aprobado == False:
-                        despacho.estado_aprobado = True                
-                        despacho.save() 
-                        entrega = VerEntrega()
-                        entrega.desapcho_id = despacho.id
-                        entrega.fecha = despacho.fecha
-                        entrega.peso = despacho.peso
-                        entrega.volumen = despacho.volumen
-                        entrega.tiempo_servicio = despacho.tiempo_servicio
-                        entrega.tiempo_trayecto = despacho.tiempo_trayecto
-                        entrega.tiempo = despacho.tiempo
-                        entrega.visitas = despacho.visitas
-                        entrega.visitas_entregadas = despacho.visitas_entregadas
-                        entrega.contenedor_id = request.tenant.id
-                        entrega.usuario_id = "1"
-                        entrega.save()
-                        return Response({'mensaje': 'Se aprobo el despacho'}, status=status.HTTP_200_OK)                
+                        if despacho.vehiculo.usuario_app:
+                            usuario = User.objects.filter(username=despacho.vehiculo.usuario_app).first()
+                            if usuario:
+                                despacho.estado_aprobado = True                
+                                despacho.save() 
+                                entrega = VerEntrega()
+                                entrega.desapcho_id = despacho.id
+                                entrega.fecha = despacho.fecha
+                                entrega.peso = despacho.peso
+                                entrega.volumen = despacho.volumen
+                                entrega.tiempo_servicio = despacho.tiempo_servicio
+                                entrega.tiempo_trayecto = despacho.tiempo_trayecto
+                                entrega.tiempo = despacho.tiempo
+                                entrega.visitas = despacho.visitas
+                                entrega.visitas_entregadas = despacho.visitas_entregadas
+                                entrega.contenedor_id = request.tenant.id
+                                entrega.usuario_id = usuario.id
+                                entrega.save()
+                                return Response({'mensaje': 'Se aprobo el despacho'}, status=status.HTTP_200_OK)                
+                            else:
+                                return Response({'mensaje':'El usuario de la app no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                    
+                        else:
+                            return Response({'mensaje':'El vehiculo no tiene usuario de la app', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                    
                     else:
                         return Response({'mensaje':'El despacho ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
             except RutDespacho.DoesNotExist:
