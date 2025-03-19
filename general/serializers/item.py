@@ -1,6 +1,7 @@
 from general.models.item import GenItem
 from contabilidad.models.cuenta import ConCuenta
 from rest_framework import serializers
+from decouple import config
 
 class GenItemSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_venta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
@@ -9,7 +10,7 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
         model = GenItem
         fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'negativo',
                   'existencia', 'remision', 'disponible',
-                  'cuenta_venta', 'cuenta_compra', 'favorito', 'venta', 'inactivo']
+                  'cuenta_venta', 'cuenta_compra', 'favorito', 'venta', 'inactivo', 'imagen']
 
     def to_representation(self, instance):
         cuenta_venta_nombre = ''
@@ -44,7 +45,8 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_venta_nombre': cuenta_venta_nombre,
             'cuenta_compra_id': instance.cuenta_compra_id,
             'cuenta_compra_codigo': cuenta_compra_codigo,
-            'cuenta_compra_nombre': cuenta_compra_nombre            
+            'cuenta_compra_nombre': cuenta_compra_nombre,            
+            'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen}" if instance.imagen else None          
         } 
     
 class GenItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):

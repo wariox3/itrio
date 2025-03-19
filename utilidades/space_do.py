@@ -41,7 +41,7 @@ class SpaceDo():
                     ACL='public-read',
                     ContentType=metadata)
             
-    def putB64(self, pathDestino, b64, contentType):
+    def putB64(self, path_destino, b64, contentType):
         imagen_bytes = base64.b64decode(b64)
         imagen_temporal = BytesIO(imagen_bytes)
         imagen_temporal.seek(0)
@@ -49,7 +49,7 @@ class SpaceDo():
             'ACL': 'public-read',
             'ContentType': contentType
             }
-        self.client.upload_fileobj(imagen_temporal, config('DO_BUCKET'), pathDestino, ExtraArgs=extra_args)    
+        self.client.upload_fileobj(imagen_temporal, config('DO_BUCKET'), path_destino, ExtraArgs=extra_args)    
 
     def eliminar(self, pathDestino):
         self.client.delete_object(Bucket=config('DO_BUCKET'), Key=pathDestino)

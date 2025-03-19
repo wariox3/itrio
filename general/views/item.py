@@ -10,6 +10,8 @@ from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenIt
 from rest_framework.decorators import action
 from openpyxl import Workbook
 from django.http import HttpResponse
+from utilidades.utilidades import Utilidades
+from utilidades.space_do import SpaceDo
 from io import BytesIO
 import base64
 import openpyxl
@@ -216,4 +218,28 @@ class ItemViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'Errores de validacion', 'codigo': 1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje': 'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'cargar-imagen',)
+    def cargar_imagen(self, request):
+        raw = request.data
+        id = raw.get('id')
+        base64 = raw.get('base64')        
+        if id and base64:
+            try:                            
+                item = GenItem.objects.get(pk=id)
+            except GenItem.DoesNotExist:
+                return Response({'mensaje':'El item no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+            
+            try:                                        
+                objeto_base64 = Utilidades.separar_base64(base64)
+                ruta_destino = f"itrio/imagen/{request.tenant.id}/item/{id}.{objeto_base64['extension']}"
+                spaceDo = SpaceDo()
+                spaceDo.putB64(ruta_destino, objeto_base64['base64_raw'], objeto_base64['content_type']) 
+                item.imagen = ruta_destino
+                item.save()
+                return Response({'mensaje': 'Imagen cargada'}, status=status.HTTP_200_OK)                      
+            except ValueError as e:
+                return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)             
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
     
