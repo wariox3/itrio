@@ -31,6 +31,7 @@ SHARED_APPS = (
     'django_tenants',
     'contenedor',
     'seguridad',
+    'vertical'
 )
 
 TENANT_APPS = (
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
     "corsheaders",
     'contenedor',
     'seguridad',
+    'vertical',
     'general',
     'contabilidad',
     'cartera',
