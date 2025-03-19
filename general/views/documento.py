@@ -480,8 +480,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['cuenta'] = configuracion_aporte.cuenta_id                                                   
                                 documento.cuenta_id = configuracion_aporte.cuenta_id
                         data['contacto'] = documento.contacto_id        
-                        data['naturaleza'] = 'C'
-                        data['credito'] = documento.total
+                        if documento.documento_tipo_id in [6, 12]:
+                            data['naturaleza'] = 'D'
+                            data['debito'] = documento.total
+                        else:
+                            data['naturaleza'] = 'C'
+                            data['credito'] = documento.total
                         if documento.documento_tipo_id == 22:
                             data['credito'] = documento.subtotal
                         data['detalle'] = 'PROVEEDOR'
@@ -550,9 +554,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if documento.documento_tipo.compra:
                                     data = data_general.copy()                            
                                     data['cuenta'] = documento_detalle.item.cuenta_compra_id
-                                    data['contacto'] = documento.contacto_id        
-                                    data['naturaleza'] = 'D'
-                                    data['debito'] = documento_detalle.subtotal
+                                    data['contacto'] = documento.contacto_id     
+                                    if documento.documento_tipo_id in [6, 12]:
+                                        data['naturaleza'] = 'C'
+                                        data['credito'] = documento_detalle.subtotal
+                                    else:
+                                        data['naturaleza'] = 'D'
+                                        data['debito'] = documento_detalle.subtotal   
                                     data['detalle'] = 'ITEM COMPRA'
                                     if documento_detalle.item.cuenta_compra:
                                         if documento_detalle.item.cuenta_compra.exige_grupo:
@@ -678,6 +686,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'impuesto__compra',
                         'impuesto__venta',
                         'impuesto__operacion',
+                        'impuesto__nombre',
+                        'documento_detalle_id',
                         'documento_detalle__documento__documento_tipo_id'
                     ).annotate(
                         total=Coalesce(Sum('total'), 0, output_field=DecimalField()),
@@ -706,11 +716,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         
                         if documento_impuesto['impuesto__compra']:
                             if documento_impuesto['impuesto__operacion'] == 1:
-                                data['naturaleza'] = 'D'
-                                data['debito'] = documento_impuesto['total']
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [6,12]:
+                                    data['naturaleza'] = 'C'
+                                    data['credito'] = documento_impuesto['total']
+                                else:
+                                    data['naturaleza'] = 'D'
+                                    data['debito'] = documento_impuesto['total']
                             if documento_impuesto['impuesto__operacion'] == -1:
-                                data['naturaleza'] = 'C'
-                                data['credito'] = documento_impuesto['total']
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [6,12]:
+                                    data['naturaleza'] = 'D'
+                                    data['debito'] = documento_impuesto['total']
+                                else:
+                                    data['naturaleza'] = 'C'
+                                    data['credito'] = documento_impuesto['total']
                         data['base'] = documento_impuesto['base']
                         data['detalle'] = 'IMPUESTO'
                         movimiento_serializador = ConMovimientoSerializador(data=data)
@@ -718,7 +736,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             movimientos_validos.append(movimiento_serializador)
                         else:
                             return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Impuesto'}, status=status.HTTP_400_BAD_REQUEST)   
+                                                'mensaje': f'En el detalle Id {documento_impuesto["documento_detalle_id"]}, el impuesto {documento_impuesto["impuesto__nombre"]} no tiene cuenta'}, status=status.HTTP_400_BAD_REQUEST)   
                                                     
                     # Pago y Egreso
                     if documento.documento_tipo_id in [4, 8]:
