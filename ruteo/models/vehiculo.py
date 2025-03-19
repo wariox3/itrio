@@ -11,6 +11,7 @@ class RutVehiculo(models.Model):
     estado_asignado = models.BooleanField(default = False)    
     franja_id = models.IntegerField(null=True)
     franja_codigo = models.CharField(max_length=20, null=True)
-    
+    usuario_app = models.CharField(max_length=255, null=True)
+
     class Meta:
         db_table = "rut_vehiculo"

@@ -3,11 +3,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from ruteo.models.despacho import RutDespacho
 from ruteo.models.visita import RutVisita
+from vertical.models.entrega import VerEntrega
 from ruteo.serializers.despacho import RutDespachoSerializador
 from django.http import HttpResponse
 from openpyxl import Workbook
 from utilidades.excel import WorkbookEstilos
 from datetime import datetime
+from django.db import transaction
 
 class RutDespachoViewSet(viewsets.ModelViewSet):
     queryset = RutDespacho.objects.all()
@@ -28,13 +30,27 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
         id = raw.get('id')
         if id:
             try:                
-                despacho = RutDespacho.objects.get(pk=id)  
-                if despacho.estado_aprobado == False:
-                    despacho.estado_aprobado = True                
-                    despacho.save()               
-                    return Response({'mensaje': 'Se aprobo el despacho'}, status=status.HTTP_200_OK)                
-                else:
-                    return Response({'mensaje':'El despacho ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
+                with transaction.atomic():               
+                    despacho = RutDespacho.objects.get(pk=id)  
+                    if despacho.estado_aprobado == False:
+                        despacho.estado_aprobado = True                
+                        despacho.save() 
+                        entrega = VerEntrega()
+                        entrega.desapcho_id = despacho.id
+                        entrega.fecha = despacho.fecha
+                        entrega.peso = despacho.peso
+                        entrega.volumen = despacho.volumen
+                        entrega.tiempo_servicio = despacho.tiempo_servicio
+                        entrega.tiempo_trayecto = despacho.tiempo_trayecto
+                        entrega.tiempo = despacho.tiempo
+                        entrega.visitas = despacho.visitas
+                        entrega.visitas_entregadas = despacho.visitas_entregadas
+                        entrega.contenedor_id = request.tenant.id
+                        entrega.usuario_id = "1"
+                        entrega.save()
+                        return Response({'mensaje': 'Se aprobo el despacho'}, status=status.HTTP_200_OK)                
+                    else:
+                        return Response({'mensaje':'El despacho ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
             except RutDespacho.DoesNotExist:
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:

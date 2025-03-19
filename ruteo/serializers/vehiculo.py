@@ -4,7 +4,7 @@ from ruteo.models.vehiculo import RutVehiculo
 class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):        
     class Meta:
         model = RutVehiculo
-        fields = ['id', 'placa', 'capacidad', 'tiempo', 'estado_activo', 'estado_asignado', 'franja_id', 'franja_codigo']
+        fields = ['id', 'placa', 'capacidad', 'tiempo', 'estado_activo', 'estado_asignado', 'franja_id', 'franja_codigo', 'usuario_app']
 
     def to_representation(self, instance):        
         return {
@@ -15,6 +15,7 @@ class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_activo': instance.estado_activo,
             'estado_asignado': instance.estado_asignado,
             'franja_id': instance.franja_id,            
-            'franja_codigo': instance.franja_codigo,            
+            'franja_codigo': instance.franja_codigo, 
+            'usuario_app': instance.usuario_app           
         }
     
