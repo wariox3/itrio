@@ -517,12 +517,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data = data_general.copy()                            
                                 data['cuenta'] = documento_detalle.documento_afectado.cuenta_id
                                 data['contacto'] = documento_detalle.contacto_id        
-                                data['naturaleza'] = 'D'
-                                data['debito'] = documento_detalle.precio
+                                if documento.documento_tipo_id in [6, 12]:
+                                    data['naturaleza'] = 'D'
+                                    data['debito'] = documento_detalle.precio
+                                else:
+                                    data['naturaleza'] = 'C'
+                                    data['credito'] = documento_detalle.precio
                                 data['detalle'] = 'PROVEEDOR'
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
+                                    documento_detalle.cuenta_id = data['cuenta']
+                                    documento_detalle.naturaleza = data['naturaleza']
+                                    documento_detalle.save()
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
                                                 'mensaje': 'Cuenta por pagar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                                                
