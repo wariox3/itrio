@@ -229,6 +229,9 @@ class FormatoFacturaPOS():
             qr_y = y - qr_size
             renderPDF.draw(qr_code_drawing, p, qr_x, qr_y)
             y -= qr_size + 4 * mm
+            y = dibujar_campo_centrado(p, "Proveedor tecnológico KIAI S.A.S", POS_SIZE[0] / 2, y, font_name="Courier-Bold", font_size=8)
+            y = dibujar_campo_centrado(p, "Nit: 901337751 - 9", POS_SIZE[0] / 2, y, font_name="Courier-Bold", font_size=8)
+
 
         p.showPage()
         p.save()
@@ -302,7 +305,7 @@ class FormatoFacturaPOS():
 
         # QR
         if documento['qr']:
-            altura_total += 32 * mm + 4 * mm  # Tamaño del QR + espacio adicional
+            altura_total += 26 * mm + 4 * mm  # Tamaño del QR + espacio adicional
 
         return altura_total
 
