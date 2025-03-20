@@ -28,13 +28,13 @@ class FormatoFacturaPOS():
         'contacto__ciudad__nombre', 
         'empresa__tipo_persona__nombre', 'empresa__numero_identificacion', 'empresa__digito_verificacion', 'empresa__direccion', 'empresa__telefono',
         'empresa__nombre_corto', 'empresa__imagen', 'empresa__ciudad__nombre', 'documento_tipo__nombre', 'resolucion__prefijo',
-        'resolucion__consecutivo_desde', 'resolucion__consecutivo_hasta', 'resolucion__numero', 'resolucion__fecha_hasta',
+        'resolucion__consecutivo_desde', 'resolucion__consecutivo_hasta', 'resolucion__numero', 'resolucion__fecha_hasta', 'resolucion__fecha_desde',
         'documento_referencia__numero', 'documento_tipo__documento_clase_id', 'plazo_pago__nombre'
         ).first()
 
         estilo_item = ParagraphStyle(
         name='ItemStyle',
-        fontName='Helvetica',
+        fontName='Courier',
         fontSize=7,
         leading=7,  # Espacio entre líneas
         spaceAfter=4,  # Espacio después del párrafo
@@ -52,9 +52,6 @@ class FormatoFacturaPOS():
             alignment=2,  # 0=Izquierda, 1=Centro, 2=Derecha
         )
 
-        # Configuración de estilos
-        estilo_normal = ParagraphStyle(name='Normal', fontName='Courier', fontSize=7, leading=8)
-        estilo_negrita = ParagraphStyle(name='Negrita', fontName='Courier-Bold', fontSize=7, leading=8)
         #Emisor
         numero_identificacion = ""
         if documento['empresa__numero_identificacion']:
@@ -151,7 +148,25 @@ class FormatoFacturaPOS():
         y -= 4 * mm
 
         dibujar_linea(p, x, y, POS_SIZE[0] - x, y, punteada=True, grosor=0.5)
-        y -= 12 * mm
+        y -= 8 * mm
+
+        resolucion_numero = documento.get('resolucion__numero')
+        resolucion_prefijo = documento.get('resolucion__prefijo')
+        resolucion_desde = documento.get('resolucion__consecutivo_desde')
+        resolucion_hasta = documento.get('resolucion__consecutivo_hasta')
+        resolucion_fecha_desde = documento.get('resolucion__fecha_desde')
+
+        if resolucion_numero:
+            y = dibujar_campo_izquierda(p, f"Resolución: {resolucion_numero} {resolucion_fecha_desde}", x, y, font_size=7)
+            y = dibujar_campo_izquierda(p, f"Prefijo: {resolucion_prefijo} del No. {resolucion_desde} al {resolucion_hasta}", x, y, font_size=7)
+            y -= 4 * mm
+        
+
+        if documento['cue']:
+            cue_paragraph = Paragraph(f"Cufe: {documento['cue']}", estilo_item)
+            cue_paragraph.wrapOn(p, 60 * mm, 20 * mm)  # Ajustar ancho y alto máximo
+            cue_paragraph.drawOn(p, x, y - cue_paragraph.height + 4 * mm)
+            y -= cue_paragraph.height + 8 * mm  # Ajustar y basado en la altura real del párrafo
 
         # QR (si es necesario)
         if documento['qr']:
@@ -160,7 +175,7 @@ class FormatoFacturaPOS():
             qr_x = (POS_SIZE[0] - qr_size - 30) / 2  # Centrar horizontalmente
             qr_y = y - qr_size  # Posicionar verticalmente
             renderPDF.draw(qr_code_drawing, p, qr_x, qr_y)
-            y -= qr_size + 6 * mm 
+            y -= qr_size + 6 * mm  # Ajustar y para lo siguiente en el documento
 
         # Pie de página
         # p.setFont("Helvetica", 6)
@@ -176,7 +191,7 @@ class FormatoFacturaPOS():
         buffer.close()
         return pdf_bytes
 
-def dibujar_campo_centrado(canvas, texto, x, y, font_name="Helvetica", font_size=8, leading=4):
+def dibujar_campo_centrado(canvas, texto, x, y, font_name="Courier", font_size=8, leading=4):
     """
     Dibuja un texto centrado en la coordenada x y ajusta la coordenada y.
     """
@@ -185,7 +200,7 @@ def dibujar_campo_centrado(canvas, texto, x, y, font_name="Helvetica", font_size
     y -= leading * mm 
     return y
 
-def dibujar_campo_izquierda(canvas, texto, x, y, font_name="Helvetica", font_size=8, leading=4):
+def dibujar_campo_izquierda(canvas, texto, x, y, font_name="Courier", font_size=8, leading=4):
     """
     Dibuja un texto alineado a la izquierda en la coordenada x y ajusta la coordenada y.
     """

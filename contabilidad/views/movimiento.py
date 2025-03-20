@@ -146,6 +146,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'nombre': cuenta.nombre,
                 'contacto_id': None,
                 'contacto_nombre': None,
+                'contacto_numero_identificacion': None,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
                 'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
@@ -166,6 +167,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'nombre': "",
                     'contacto_id': None,
                     'contacto_nombre': None,                    
+                    'contacto_numero_identificacion': None,    
                     'cuenta_clase_id': clase_id,
                     'nivel': 1,
                     'saldo_anterior': 0,
@@ -187,6 +189,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'nombre': "",
                     'contacto_id': None,
                     'contacto_nombre': None,                    
+                    'contacto_numero_identificacion': None,      
                     'cuenta_grupo_id': grupo_id,
                     'saldo_anterior': 0,
                     'debito': 0,
@@ -207,6 +210,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'nombre': "",
                     'contacto_id': None,
                     'contacto_nombre': None,                    
+                    'contacto_numero_identificacion': None,    
                     'cuenta_cuenta_id': cuenta_id,
                     'saldo_anterior': 0,
                     'debito': 0,
@@ -238,6 +242,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 c.nombre,
                 m.contacto_id,
                 co.nombre_corto,
+                co.numero_identificacion,
                 c.cuenta_clase_id,
                 c.cuenta_grupo_id,
                 c.cuenta_cuenta_id,
@@ -255,7 +260,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             WHERE 
                 m.fecha <= '{fecha_hasta}' and m.contacto_id is not null   
             GROUP BY
-                m.cuenta_id, m.contacto_id, co.nombre_corto, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
+                m.cuenta_id, m.contacto_id, co.nombre_corto, co.numero_identificacion ,c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
                 c.cuenta_clase_id,
                 c.cuenta_grupo_id,
@@ -275,6 +280,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'nombre': cuenta.nombre,
                 'contacto_id': cuenta.contacto_id,
                 'contacto_nombre': cuenta.nombre_corto,
+                'contacto_numero_identificacion': cuenta.numero_identificacion,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
                 'cuenta_cuenta_id': cuenta.cuenta_cuenta_id,
@@ -322,6 +328,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'nombre': movimiento.nombre,
                 'contacto_id': None,
                 'contacto_nombre': None,
+                'contacto_numero_identificacion': None,
                 'cuenta_clase_id': movimiento.cuenta_clase_id,
                 'cuenta_grupo_id': movimiento.cuenta_grupo_id,
                 'cuenta_cuenta_id': movimiento.cuenta_cuenta_id,
