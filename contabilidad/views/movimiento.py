@@ -145,7 +145,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'codigo': cuenta.codigo,
                 'nombre': cuenta.nombre,
                 'contacto_id': None,
-                'contacto_nombre': None,
+                'contacto_nombre_corto': None,
                 'contacto_numero_identificacion': None,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
@@ -154,7 +154,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'saldo_anterior': saldo_anterior,
                 'debito': cuenta.debito,
                 'credito': cuenta.credito,
-                'saldo_actual': saldo_actual
+                'saldo_actual': saldo_actual,
+                'comprobante_id': None,
+                'comprobante_nombre': None
             })
             
             # Agrupación en clases, grupos y cuentas
@@ -166,14 +168,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'codigo': str(clase_id),
                     'nombre': "",
                     'contacto_id': None,
-                    'contacto_nombre': None,                    
+                    'contacto_nombre_corto': None,                    
                     'contacto_numero_identificacion': None,    
                     'cuenta_clase_id': clase_id,
                     'nivel': 1,
                     'saldo_anterior': 0,
                     'debito': 0,
                     'credito': 0,
-                    'saldo_actual': 0
+                    'saldo_actual': 0,
+                    'comprobante_id': None,
+                    'comprobante_nombre': None
                 }
             clases_dict[clase_id]['saldo_anterior'] += saldo_anterior
             clases_dict[clase_id]['debito'] += cuenta.debito
@@ -188,13 +192,15 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'codigo': str(grupo_id),
                     'nombre': "",
                     'contacto_id': None,
-                    'contacto_nombre': None,                    
+                    'contacto_nombre_corto': None,                    
                     'contacto_numero_identificacion': None,      
                     'cuenta_grupo_id': grupo_id,
                     'saldo_anterior': 0,
                     'debito': 0,
                     'credito': 0,
-                    'saldo_actual': 0
+                    'saldo_actual': 0,
+                    'comprobante_id': None,
+                    'comprobante_nombre': None
                 }
             grupos_dict[grupo_id]['saldo_anterior'] += saldo_anterior
             grupos_dict[grupo_id]['debito'] += cuenta.debito
@@ -209,13 +215,15 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'codigo': str(cuenta_id),
                     'nombre': "",
                     'contacto_id': None,
-                    'contacto_nombre': None,                    
+                    'contacto_nombre_corto': None,                    
                     'contacto_numero_identificacion': None,    
                     'cuenta_cuenta_id': cuenta_id,
                     'saldo_anterior': 0,
                     'debito': 0,
                     'credito': 0,
-                    'saldo_actual': 0
+                    'saldo_actual': 0,
+                    'comprobante_id': None,
+                    'comprobante_nombre': None
                 }
             cuentas_dict[cuenta_id]['saldo_anterior'] += saldo_anterior
             cuentas_dict[cuenta_id]['debito'] += cuenta.debito
@@ -279,7 +287,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'codigo': cuenta.codigo,
                 'nombre': cuenta.nombre,
                 'contacto_id': cuenta.contacto_id,
-                'contacto_nombre': cuenta.nombre_corto,
+                'contacto_nombre_corto': cuenta.nombre_corto,
                 'contacto_numero_identificacion': cuenta.numero_identificacion,
                 'cuenta_clase_id': cuenta.cuenta_clase_id,
                 'cuenta_grupo_id': cuenta.cuenta_grupo_id,
@@ -288,7 +296,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'saldo_anterior': saldo_anterior,
                 'debito': cuenta.debito,
                 'credito': cuenta.credito,
-                'saldo_actual': saldo_actual
+                'saldo_actual': saldo_actual,
+                'comprobante_id': None,
+                'comprobante_nombre': None
             })                                        
         #resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
@@ -303,16 +313,25 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 m.id,
                 m.debito,
                 m.credito,
+                m.comprobante_id,
+                m.contacto_id,
                 c.codigo,
                 c.nombre,
                 c.cuenta_clase_id,
                 c.cuenta_grupo_id,
                 c.cuenta_cuenta_id,
-                c.nivel
+                c.nivel,
+                co.nombre AS comprobante_nombre,
+                con.numero_identificacion AS contacto_numero_identificacion,
+                con.nombre_corto AS contacto_nombre_corto
             FROM
                 con_movimiento m
             LEFT JOIN
                 con_cuenta c ON m.cuenta_id = c.id
+            LEFT JOIN
+                con_comprobante co ON m.comprobante_id = co.id
+            LEFT JOIN
+                gen_contacto con ON m.contacto_id = con.id
             WHERE
         		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}   
             ORDER BY
@@ -326,9 +345,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'id': movimiento.id,
                 'codigo': movimiento.codigo,
                 'nombre': movimiento.nombre,
-                'contacto_id': None,
-                'contacto_nombre': None,
-                'contacto_numero_identificacion': None,
+                'contacto_id': movimiento.contacto_id,
+                'contacto_nombre_corto': movimiento.contacto_nombre_corto,
+                'contacto_numero_identificacion': movimiento.contacto_numero_identificacion,
                 'cuenta_clase_id': movimiento.cuenta_clase_id,
                 'cuenta_grupo_id': movimiento.cuenta_grupo_id,
                 'cuenta_cuenta_id': movimiento.cuenta_cuenta_id,
@@ -336,7 +355,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'saldo_anterior': 0,
                 'debito': movimiento.debito,
                 'credito': movimiento.credito,
-                'saldo_actual': 0
+                'saldo_actual': 0,
+                'comprobante_id': movimiento.comprobante_id,
+                'comprobante_nombre': movimiento.comprobante_nombre,
             })         
         return resultados_json
 
