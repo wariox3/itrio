@@ -12,6 +12,7 @@ class RutDespacho(models.Model):
     visitas_entregadas = models.FloatField(default=0)
     estado_aprobado = models.BooleanField(default = False)
     estado_terminado = models.BooleanField(default = False)
+    entrega_id = models.IntegerField(null=True)
     vehiculo = models.ForeignKey(RutVehiculo, null=True, on_delete=models.PROTECT, related_name='despachos_vehiculo_rel')
 
     class Meta:

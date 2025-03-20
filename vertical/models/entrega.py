@@ -10,8 +10,9 @@ class VerEntrega(models.Model):
     visitas = models.FloatField(default=0)    
     visitas_entregadas = models.FloatField(default=0)
     despacho_id = models.IntegerField(default=0)
-    contenedor_id = models.IntegerField() 
-    usuario_id = models.IntegerField()
+    contenedor_id = models.IntegerField()     
+    schema_name = models.CharField(max_length=100, null=True)
+    usuario_id = models.IntegerField(null=True)
 
     class Meta:
         db_table = "ver_entrega"

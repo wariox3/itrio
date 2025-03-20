@@ -7,7 +7,7 @@ class VerEntregaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = VerEntrega
         fields = ['id', 'fecha', 'peso', 'volumen', 'tiempo_servicio', 'tiempo_trayecto', 'tiempo', 'visitas', 'visitas_entregadas', 
-                  'despacho_id', 'contenedor_id', 'usuario_id']
+                  'despacho_id', 'contenedor_id', 'usuario_id', 'schema_name']
 
 
     def to_representation(self, instance):
@@ -24,6 +24,7 @@ class VerEntregaSerializador(serializers.HyperlinkedModelSerializer):
             'visitas_entregadas': instance.visitas_entregadas,
             'despacho_id': instance.despacho_id,
             'contenedor_id':instance.contenedor_id,
+            'schema_name': instance.schema_name,
             'usuario_id':instance.usuario_id
         }             
         
