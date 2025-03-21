@@ -480,10 +480,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = None
         cierre = False        
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
+            if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
-                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "fecha":
+                fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]                
         
@@ -537,10 +537,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = None
         cierre = False        
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
+            if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
-                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "fecha":
+                fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]                
         
@@ -591,10 +591,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = None
         cierre = False        
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
+            if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
-                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "fecha":
+                fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]                
         
@@ -645,10 +645,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = None
         cierre = False        
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
+            if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
-                fecha_hasta = filtro["valor1"]
+            if filtro["propiedad"] == "fecha":
+                fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]                
         
