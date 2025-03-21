@@ -174,7 +174,6 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_id': instance.cuenta_id,
             'cuenta_codigo': cuenta_codigo,
             'cuenta_nombre': cuenta_nombre
-
         }
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
@@ -236,7 +235,12 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             almacen_nombre = instance.almacen.nombre          
         resolucion_numero = ""
         if instance.resolucion:
-            resolucion_numero = instance.resolucion.numero    
+            resolucion_numero = instance.resolucion.numero
+        cuenta_nombre = ""
+        cuenta_codigo = ""
+        if instance.cuenta:
+            cuenta_nombre = instance.cuenta.nombre
+            cuenta_codigo = instance.cuenta.codigo              
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -300,7 +304,10 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'almacen_id': instance.almacen_id,
             'almacen_nombre': almacen_nombre,
             'resolucion_id' : instance.resolucion_id,
-            'resolucion_numero' : resolucion_numero                
+            'resolucion_numero' : resolucion_numero,
+            'cuenta_id': instance.cuenta_id,
+            'cuenta_codigo': cuenta_codigo,
+            'cuenta_nombre': cuenta_nombre                
         }
 
 class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
