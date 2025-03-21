@@ -7,7 +7,7 @@ class ContenedorSerializador(serializers.ModelSerializer):
     plan = serializers.PrimaryKeyRelatedField(queryset=CtnPlan.objects.all())
     class Meta:
         model = Contenedor
-        fields = ['id', 'schema_name']
+        fields = ['id', 'schema_name', 'plan']
     
     def to_representation(self, instance):
         region = config('DO_REGION')

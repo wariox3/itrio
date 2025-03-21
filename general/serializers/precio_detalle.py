@@ -8,7 +8,7 @@ class GenPrecioDetalleSerializador(serializers.HyperlinkedModelSerializer):
     item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), allow_null=True)
     class Meta:
         model = GenPrecioDetalle
-        fields = ['precio', 'vr_precio']
+        fields = ['precio', 'vr_precio', 'item']
 
     def to_representation(self, instance):
         return {
