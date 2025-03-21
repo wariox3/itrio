@@ -100,11 +100,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
-    def obtener_saldo_cuenta(self, fecha_desde, fecha_hasta, cierre = False):
+    def obtener_saldo_cuenta(self, fecha_desde, fecha_hasta, cierre = False, cuenta = ''):
         parametro_cierre = ' AND m.cierre = false '
         if cierre == True:
             parametro_cierre = ''
-            
+        filtro_cuenta = ''
+        if cuenta:
+            filtro_cuenta = f"AND c.codigo = '{cuenta}'"           
         query = f'''
             SELECT
                 c.id,
@@ -122,6 +124,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 con_cuenta c
             LEFT JOIN
                 con_movimiento m ON m.cuenta_id = c.id
+            WHERE
+                1=1
+                {filtro_cuenta}
             GROUP BY
                 c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
@@ -313,13 +318,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         #resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
 
-    def obtener_movimiento(self, fecha_desde, fecha_hasta, cierre = False, comprobante = None):
+    def obtener_movimiento(self, fecha_desde, fecha_hasta, cierre = False, comprobante = None, cuenta = None):
         parametro_cierre = ' AND m.cierre = false '
         if cierre == True:
             parametro_cierre = ''
         filtro_comprobante = ''
         if comprobante:
-            filtro_comprobante = f" AND m.comprobante_id = {comprobante}"
+            filtro_comprobante = f" AND m.comprobante_id = {comprobante}"   
+        filtro_cuenta = ''     
+        if cuenta:
+            filtro_cuenta = f"AND c.codigo = '{cuenta}'"           
         query = f'''            
             SELECT
                 m.id,
@@ -347,7 +355,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             LEFT JOIN
                 gen_contacto con ON m.contacto_id = con.id
             WHERE
-        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}  {filtro_comprobante}
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}  {filtro_comprobante} {filtro_cuenta}
             ORDER BY
                 m.fecha ASC;
         '''
@@ -607,6 +615,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_desde = None
         fecha_hasta = None
         cierre = False        
+        comprobante = None
+        cuenta = None
         for filtro in filtros:
             if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
@@ -614,16 +624,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]
-            if filtro["propiedad"] == "comprobante_id":
-                comprobante = filtro["valor1"]                       
+            if filtro["propiedad"] == "codigo":
+                cuenta = filtro["valor1"]                       
         
         if not fecha_desde or not fecha_hasta:
             return Response(
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
                 status=status.HTTP_400_BAD_REQUEST
             )               
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
-        movimientos = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante)
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta)
+        movimientos = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante, cuenta)
         resultados_json = resultados_cuenta + movimientos
         resultados_json.sort(key=lambda x: str(x['codigo']))
 
@@ -684,13 +694,14 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             wb = Workbook()
             ws = wb.active
             ws.title = "Auxiliar tercero"
-            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "IDENTIFICACIÓN" ,"CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
                     registro['tipo'],
                     registro['codigo'],
                     registro['nombre'],
+                    registro['contacto_numero_identificacion'],
                     registro['contacto_nombre_corto'],
                     registro['saldo_anterior'],
                     registro['debito'],
@@ -781,9 +792,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = None
         cierre = False        
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
+            if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
+            if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor1"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]                
@@ -837,9 +848,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = None
         cierre = False        
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_desde":
+            if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha_hasta":
+            if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor1"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]                
