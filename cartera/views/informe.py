@@ -103,7 +103,7 @@ class InformeView(APIView):
                 ])    
             
             estilos_excel = WorkbookEstilos(wb)
-            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            #estilos_excel.aplicar_estilos([5,6,7,8])                                
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename=cuenta_cobrar_corte.xlsx'

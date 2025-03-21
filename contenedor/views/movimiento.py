@@ -170,28 +170,31 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         if estado == 'APPROVED':       
             if referencia:
                 try:
-                    factura = CtnMovimiento.objects.get(id=referencia)          
-                    if valor <= factura.vr_saldo:
-                        recibo = CtnMovimiento(
-                            tipo = "RECIBO",
-                            fecha = timezone.now(),
-                            fecha_vence = timezone.now().date(),
-                            contenedor_movimiento_id=referencia,
-                            vr_total = valor,
-                            vr_saldo = 0                                         
-                        )
-                        recibo.save()
-                        valor = Decimal(valor)                
+                    pedido = CtnMovimiento.objects.get(id=referencia) 
+                    if pedido:         
+                        if valor <= pedido.vr_saldo:                            
+                            recibo = CtnMovimiento(
+                                tipo = "RECIBO",
+                                fecha = timezone.now(),
+                                fecha_vence = timezone.now().date(),
+                                contenedor_movimiento_id=referencia,
+                                vr_total = valor,
+                                vr_saldo = 0,
+                                socio_id = pedido.socio_id
+                            )
+                            recibo.save()
+                            valor = Decimal(valor)                
+                            pedido.vr_afectado = pedido.vr_afectado + valor
+                            pedido.vr_saldo =  pedido.vr_saldo - valor
+                            pedido.save()
+                            evento_pago.estado_aplicado = True
+                            evento_pago.save()
+                            usuario = User.objects.get(pk=pedido.usuario_id)
+                            if usuario:
+                                usuario.vr_saldo -= valor
+                                usuario.save()
+                            
 
-                        factura.vr_afectado = factura.vr_afectado + valor
-                        factura.vr_saldo =  factura.vr_saldo - valor
-                        factura.save()
-                        evento_pago.estado_aplicado = True
-                        evento_pago.save()
-                        usuario = User.objects.get(pk=factura.usuario_id)
-                        if usuario:
-                            usuario.vr_saldo -= valor
-                            usuario.save()
                 except Exception as e:
                     pass
         return Response(status=status.HTTP_200_OK)
