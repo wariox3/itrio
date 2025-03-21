@@ -156,7 +156,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'credito': cuenta.credito,
                 'saldo_actual': saldo_actual,
                 'comprobante_id': None,
-                'comprobante_nombre': None
+                'comprobante_nombre': None,
+                'numero': None,
+                'fecha': None,  
             })
             
             # Agrupación en clases, grupos y cuentas
@@ -177,7 +179,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'credito': 0,
                     'saldo_actual': 0,
                     'comprobante_id': None,
-                    'comprobante_nombre': None
+                    'comprobante_nombre': None,
+                    'numero': None,
+                    'fecha': None,  
                 }
             clases_dict[clase_id]['saldo_anterior'] += saldo_anterior
             clases_dict[clase_id]['debito'] += cuenta.debito
@@ -193,14 +197,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'nombre': "",
                     'contacto_id': None,
                     'contacto_nombre_corto': None,                    
-                    'contacto_numero_identificacion': None,      
+                    'contacto_numero_identificacion': None,                
                     'cuenta_grupo_id': grupo_id,
                     'saldo_anterior': 0,
                     'debito': 0,
                     'credito': 0,
                     'saldo_actual': 0,
                     'comprobante_id': None,
-                    'comprobante_nombre': None
+                    'comprobante_nombre': None,
+                    'numero': None,
+                    'fecha': None,  
                 }
             grupos_dict[grupo_id]['saldo_anterior'] += saldo_anterior
             grupos_dict[grupo_id]['debito'] += cuenta.debito
@@ -223,7 +229,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'credito': 0,
                     'saldo_actual': 0,
                     'comprobante_id': None,
-                    'comprobante_nombre': None
+                    'comprobante_nombre': None,
+                    'numero': None,
+                    'fecha': None,  
                 }
             cuentas_dict[cuenta_id]['saldo_anterior'] += saldo_anterior
             cuentas_dict[cuenta_id]['debito'] += cuenta.debito
@@ -298,7 +306,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'credito': cuenta.credito,
                 'saldo_actual': saldo_actual,
                 'comprobante_id': None,
-                'comprobante_nombre': None
+                'comprobante_nombre': None,
+                'numero': None,
+                'fecha': None,    
             })                                        
         #resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
@@ -315,6 +325,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 m.credito,
                 m.comprobante_id,
                 m.contacto_id,
+                m.numero,
+                m.fecha,
                 c.codigo,
                 c.nombre,
                 c.cuenta_clase_id,
@@ -358,6 +370,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'saldo_actual': 0,
                 'comprobante_id': movimiento.comprobante_id,
                 'comprobante_nombre': movimiento.comprobante_nombre,
+                'numero': movimiento.numero,
+                'fecha': movimiento.fecha,  
             })         
         return resultados_json
 
