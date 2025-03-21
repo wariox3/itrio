@@ -96,6 +96,11 @@
   },   
   {
     "model": "general.GenDocumentoClase",
+    "pk": 603,
+    "fields": {"nombre": "Cierre", "codigo_dian": "01", "grupo":6}
+  },  
+  {
+    "model": "general.GenDocumentoClase",
     "pk": 701,
     "fields": {"nombre": "Nomina", "codigo_dian": "01", "grupo":7}
   },

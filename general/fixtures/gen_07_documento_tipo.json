@@ -202,8 +202,7 @@
     "pk": 23,
     "fields": {
       "nombre": "DEPRECIACION",
-      "documento_clase": 602, "comprobante": 14,
-      "operacion": 0, "contabilidad": true
+      "documento_clase": 602, "comprobante": 14, "contabilidad": true
     }
   },
   {
@@ -214,5 +213,13 @@
       "documento_clase": 105, "comprobante": 16,
       "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
     }
-  }  
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 25,
+    "fields": {
+      "nombre": "CIERRE CONTABLE",
+      "documento_clase": 603, "comprobante": 19, "contabilidad": true
+    }
+  }    
 ]
