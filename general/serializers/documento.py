@@ -94,6 +94,11 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
         almacen_nombre = ""
         if instance.almacen:
             almacen_nombre = instance.almacen.nombre
+        cuenta_nombre = ""
+        cuenta_codigo = ""
+        if instance.cuenta:
+            cuenta_nombre = instance.cuenta.nombre
+            cuenta_codigo = instance.cuenta.codigo
         return {
             'id': instance.id,            
             'numero' : instance.numero,
@@ -165,7 +170,10 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'provision_cesantia': instance.provision_cesantia,
             'provision_interes': instance.provision_interes,
             'provision_prima': instance.provision_prima,
-            'provision_vacacion': instance.provision_vacacion
+            'provision_vacacion': instance.provision_vacacion,
+            'cuenta_id': instance.cuenta_id,
+            'cuenta_codigo': cuenta_codigo,
+            'cuenta_nombre': cuenta_nombre
 
         }
     
