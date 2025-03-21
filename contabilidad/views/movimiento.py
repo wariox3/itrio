@@ -313,11 +313,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         #resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
 
-    def obtener_movimiento(self, fecha_desde, fecha_hasta, cierre = False):
+    def obtener_movimiento(self, fecha_desde, fecha_hasta, cierre = False, comprobante = None):
         parametro_cierre = ' AND m.cierre = false '
         if cierre == True:
             parametro_cierre = ''
-            
+        filtro_comprobante = ''
+        if comprobante:
+            filtro_comprobante = f" AND m.comprobante_id = {comprobante}"
         query = f'''            
             SELECT
                 m.id,
@@ -345,7 +347,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             LEFT JOIN
                 gen_contacto con ON m.contacto_id = con.id
             WHERE
-        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}   
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}  {filtro_comprobante}
             ORDER BY
                 m.fecha ASC;
         '''
@@ -571,13 +573,14 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             wb = Workbook()
             ws = wb.active
             ws.title = "Balance de prueba tercero"
-            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "IDENTIFICACIÓN" ,"CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
             ws.append(headers)
             for registro in resultados:
                 ws.append([
                     registro['tipo'],
                     registro['codigo'],
                     registro['nombre'],
+                    registro['contacto_numero_identificacion'],
                     registro['contacto_nombre_corto'],
                     registro['saldo_anterior'],
                     registro['debito'],
@@ -610,7 +613,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                
+                cierre = filtro["valor1"]
+            if filtro["propiedad"] == "comprobante_id":
+                comprobante = filtro["valor1"]                       
         
         if not fecha_desde or not fecha_hasta:
             return Response(
@@ -618,7 +623,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )               
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
-        movimientos = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre)
+        movimientos = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante)
         resultados_json = resultados_cuenta + movimientos
         resultados_json.sort(key=lambda x: str(x['codigo']))
 
@@ -712,13 +717,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_desde = None
         fecha_hasta = None
         cierre = False        
+        comprobante = None
         for filtro in filtros:
             if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
             if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                    
+                cierre = filtro["valor1"]          
+            if filtro["propiedad"] == "comprobante_id":
+                comprobante = filtro["valor1"]             
         
         if not fecha_desde or not fecha_hasta:
             return Response(
@@ -727,7 +735,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             )               
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
         resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
-        resultados_movimiento = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre)
+        resultados_movimiento = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante)
         resultados_json = resultados_cuenta + resultados_tercero + resultados_movimiento
         resultados_json.sort(key=lambda x: str(x['codigo']))
 
