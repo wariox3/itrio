@@ -718,7 +718,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                
+                cierre = filtro["valor1"]                    
         
         if not fecha_desde or not fecha_hasta:
             return Response(
@@ -735,14 +735,18 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             wb = Workbook()
             ws = wb.active
             ws.title = "Auxiliar general"
-            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "IDENTIFICACIÓN" ,"CONTACTO", "COMPROBANTE", "NUMERO", "FECHA","ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
                     registro['tipo'],
                     registro['codigo'],
                     registro['nombre'],
-                    registro['contacto_nombre'],
+                    registro['contacto_numero_identificacion'],
+                    registro['contacto_nombre_corto'],
+                    registro['comprobante_nombre'],
+                    registro['numero'],
+                    registro['fecha'],
                     registro['saldo_anterior'],
                     registro['debito'],
                     registro['credito'],
