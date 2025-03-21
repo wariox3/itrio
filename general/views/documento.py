@@ -2427,6 +2427,36 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'cargar-resultado')
+    def cargar_resultado(self, request):      
+        raw = request.data
+        id = raw.get('id') 
+        cuenta_desde_id = raw.get('cuenta_desde_id')
+        cuenta_hasta_id = raw.get('cuenta_hasta_id')                   
+        if id and cuenta_desde_id and cuenta_hasta_id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)
+            except GenDocumentoTipo.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
+            return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
+
+    @action(detail=False, methods=["post"], url_path=r'cargar-tributario')
+    def cargar_tributario(self, request):      
+        raw = request.data
+        id = raw.get('id')  
+        cuenta_desde_id = raw.get('cuenta_desde_id')
+        cuenta_hasta_id = raw.get('cuenta_hasta_id')
+        if id and cuenta_desde_id and cuenta_hasta_id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)
+            except GenDocumentoTipo.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
+            return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'plano-banco',)
     def plano_banco(self, request):        
