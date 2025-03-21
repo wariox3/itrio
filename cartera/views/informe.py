@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from general.models.documento import GenDocumento
 from rest_framework.permissions import IsAuthenticated
+from openpyxl import Workbook
+from django.http import HttpResponse
+from utilidades.excel import WorkbookEstilos
 
 class InformeView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -39,6 +42,7 @@ class InformeView(APIView):
         documentos = GenDocumento.objects.raw(query)        
         resultados_json = []
         for documento in documentos:
+            pendiente = documento.total - documento.abono
             resultados_json.append({
                 'id': documento.id,
                 'numero': documento.numero,
@@ -51,9 +55,9 @@ class InformeView(APIView):
                 'documento_tipo_nombre': documento.documento_tipo_nombre,
                 'contacto_numero_identificacion': documento.contacto_numero_identificacion,
                 'contacto_numero_nombre_corto': documento.contacto_numero_nombre_corto,
-                'abono': documento.abono,                
-            })            
-        resultados_json.sort(key=lambda x: str(x['codigo']))
+                'abono': documento.abono,
+                'pendiente': pendiente               
+            })                    
         return resultados_json
 
     def post(self, request):    
@@ -63,16 +67,44 @@ class InformeView(APIView):
         pdf = raw.get('pdf', False)        
         fecha_hasta = None
         for filtro in filtros:
-            if filtro["propiedad"] == "fecha_hasta":
-                fecha_hasta = filtro["valor1"]              
+            if filtro["propiedad"] == "fecha":
+                fecha_hasta = filtro["valor1"]            
         
         if not fecha_hasta:
             return Response(
                 {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
-        resultados_movimiento = self.obtener_pendiente_corte(fecha_hasta)
-        resultados_json = resultados_movimiento
-        resultados_json.sort(key=lambda x: str(x['cuenta_codigo']))
-        return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
+        resultados_documento = self.obtener_pendiente_corte(fecha_hasta)
+        if excel:
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "Auxiliar general"
+            headers = ["ID", "DOCUMENTO", "NUMERO", "FECHA", "VENCE", "NIT", "CONTACTO", "SUBTOTAL", "IMPUESTO", "TOTAL", "ABONO", "PENDIENTE"]
+            ws.append(headers)
+            for registro in resultados_documento:
+                ws.append([
+                    registro['id'],
+                    registro['documento_tipo_nombre'],
+                    registro['numero'],
+                    registro['fecha'],
+                    registro['fecha_vence'],
+                    registro['contacto_numero_identificacion'],
+                    registro['contacto_numero_nombre_corto'],
+                    registro['subtotal'],
+                    registro['impuesto'],
+                    registro['total'],
+                    registro['abono'],
+                    registro['pendiente'],
+                ])    
+            
+            estilos_excel = WorkbookEstilos(wb)
+            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=cuenta_cobrar_corte.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_documento}, status=status.HTTP_200_OK) 
     
     def get(self, request):
         numero = 123  
