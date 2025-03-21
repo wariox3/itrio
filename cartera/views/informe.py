@@ -12,6 +12,7 @@ class InformeView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def obtener_pendiente_corte(self, fecha_hasta, numero):            
+        filtro_numero = ""
         if numero:
             filtro_numero = f" AND d.numero = {numero}"
         query = f'''
