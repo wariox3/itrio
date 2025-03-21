@@ -11,7 +11,9 @@ from utilidades.excel import WorkbookEstilos
 class InformeView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def obtener_pendiente_corte(self, fecha_hasta):            
+    def obtener_pendiente_corte(self, fecha_hasta, numero):            
+        if numero:
+            filtro_numero = f" AND d.numero = {numero}"
         query = f'''
             SELECT
                 d.id,
@@ -24,7 +26,7 @@ class InformeView(APIView):
                 d.total,
                 dt.nombre as documento_tipo_nombre,
                 c.numero_identificacion as contacto_numero_identificacion,
-                c.nombre_corto as contacto_numero_nombre_corto,
+                c.nombre_corto as contacto_nombre_corto,
                 COALESCE(
                 	(SELECT SUM(dd.precio) 
                 		FROM gen_documento_detalle dd 
@@ -37,7 +39,7 @@ class InformeView(APIView):
             	gen_documento_tipo dt on d.documento_tipo_id = dt.id 
            	left join 
            		gen_contacto c on d.contacto_id = c.id 
-           	where dt.cobrar = true and d.fecha <= '{fecha_hasta}';
+           	where dt.cobrar = true and d.fecha <= '{fecha_hasta}' {filtro_numero};
         '''
         documentos = GenDocumento.objects.raw(query)        
         resultados_json = []
@@ -54,7 +56,7 @@ class InformeView(APIView):
                 'total': documento.total,
                 'documento_tipo_nombre': documento.documento_tipo_nombre,
                 'contacto_numero_identificacion': documento.contacto_numero_identificacion,
-                'contacto_numero_nombre_corto': documento.contacto_numero_nombre_corto,
+                'contacto_nombre_corto': documento.contacto_nombre_corto,
                 'abono': documento.abono,
                 'pendiente': pendiente               
             })                    
@@ -66,14 +68,17 @@ class InformeView(APIView):
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)        
         fecha_hasta = None
+        numero = None
         for filtro in filtros:
             if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor1"]            
+            if filtro["propiedad"] == "numero":
+                numero = filtro["valor1"]                
         
         if not fecha_hasta:
             return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
-        resultados_documento = self.obtener_pendiente_corte(fecha_hasta)
+                {"error": "Los filtros 'fecha' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
+        resultados_documento = self.obtener_pendiente_corte(fecha_hasta, numero)
         if excel:
             wb = Workbook()
             ws = wb.active
@@ -88,7 +93,7 @@ class InformeView(APIView):
                     registro['fecha'],
                     registro['fecha_vence'],
                     registro['contacto_numero_identificacion'],
-                    registro['contacto_numero_nombre_corto'],
+                    registro['contacto_nombre_corto'],
                     registro['subtotal'],
                     registro['impuesto'],
                     registro['total'],
