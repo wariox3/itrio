@@ -3,15 +3,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from general.models.documento import GenDocumento
+from general.models.documento_detalle import GenDocumentoDetalle
 from rest_framework.permissions import IsAuthenticated
 from openpyxl import Workbook
 from django.http import HttpResponse
 from utilidades.excel import WorkbookEstilos
+from django.db.models import Sum, F, Value, Subquery, OuterRef, Count, Q
+from django.db.models.functions import Coalesce
+from decimal import Decimal
 
 class InformeView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def obtener_pendiente_corte(self, fecha_hasta, numero):            
+    def prueba(self, fecha_hasta, numero):            
         filtro_numero = ""
         if numero:
             filtro_numero = f" AND d.numero = {numero}"
@@ -29,11 +33,7 @@ class InformeView(APIView):
                 c.numero_identificacion as contacto_numero_identificacion,
                 c.nombre_corto as contacto_nombre_corto,
                 COALESCE(
-                	(SELECT SUM(dd.precio) 
-                		FROM gen_documento_detalle dd 
-                		left join gen_documento ddd on dd.documento_id=ddd.id
-                		WHERE dd.documento_afectado_id = d.id AND ddd.fecha <= '{fecha_hasta}')
-                ,0) AS abono
+                	(SELECT SUM(dd.precio) FROM gen_documento_detalle dd left join gen_documento ddd on dd.documento_id=ddd.id WHERE dd.documento_afectado_id = d.id AND ddd.fecha <= '{fecha_hasta}'),0) AS abono
             FROM
                 gen_documento d
             left join
@@ -62,10 +62,43 @@ class InformeView(APIView):
                 'pendiente': pendiente               
             })                    
         return resultados_json
+    
+    def obtener_pendiente_corte(self, fecha_hasta, filtros, cantidad_limite):
+        documentos = GenDocumento.objects.filter(            
+            documento_tipo__cobrar=True,
+            fecha__lte=fecha_hasta
+            ).annotate(                
+                abono=Coalesce(Sum(
+                        'documentos_detalles_documento_afectado_rel__precio',
+                        filter=Q(documentos_detalles_documento_afectado_rel__documento__fecha__lte=fecha_hasta)
+                    ), Decimal(0)),
+                saldo=F('total') - Coalesce(Sum(
+                    'documentos_detalles_documento_afectado_rel__precio',
+                    filter=Q(documentos_detalles_documento_afectado_rel__documento__fecha__lte=fecha_hasta)
+                ), Decimal(0))
+            ).filter(
+                saldo__gt=0
+            ).values('id', 'numero', 'fecha', 'fecha_vence', 'documento_tipo_id', 'subtotal', 'impuesto', 'total', 
+                     'documento_tipo__nombre', 'contacto__numero_identificacion', 'contacto__nombre_corto',
+                     'abono', 'saldo')
+        if filtros:
+            for filtro in filtros:                    
+                if filtro['propiedad'] != 'fecha':
+                    operador = filtro.get('operador', None)                
+                    if operador:                        
+                        if operador == 'range':
+                            documentos = documentos.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                        else:
+                            documentos = documentos.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+                    else:
+                        documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})   
+        cantidad_documentos = documentos[:cantidad_limite].count()                                 
+        return {'registros': list(documentos), "cantidad_registros": cantidad_documentos}
 
     def post(self, request):    
         raw = request.data
         filtros = raw.get("filtros", [])
+        cantidad_limite = raw.get('cantidad_limite', 30000)
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)        
         fecha_hasta = None
@@ -79,38 +112,38 @@ class InformeView(APIView):
         if not fecha_hasta:
             return Response(
                 {"error": "Los filtros 'fecha' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
-        resultados_documento = self.obtener_pendiente_corte(fecha_hasta, numero)
+        resultados = self.obtener_pendiente_corte(fecha_hasta, filtros, cantidad_limite)
         if excel:
             wb = Workbook()
             ws = wb.active
             ws.title = "Auxiliar general"
             headers = ["ID", "DOCUMENTO", "NUMERO", "FECHA", "VENCE", "NIT", "CONTACTO", "SUBTOTAL", "IMPUESTO", "TOTAL", "ABONO", "PENDIENTE"]
             ws.append(headers)
-            for registro in resultados_documento:
+            for registro in resultados['registros']:
                 ws.append([
                     registro['id'],
-                    registro['documento_tipo_nombre'],
+                    registro['documento_tipo__nombre'],
                     registro['numero'],
                     registro['fecha'],
                     registro['fecha_vence'],
-                    registro['contacto_numero_identificacion'],
-                    registro['contacto_nombre_corto'],
+                    registro['contacto__numero_identificacion'],
+                    registro['contacto__nombre_corto'],
                     registro['subtotal'],
                     registro['impuesto'],
                     registro['total'],
                     registro['abono'],
-                    registro['pendiente'],
+                    registro['saldo'],
                 ])    
             
             estilos_excel = WorkbookEstilos(wb)
-            #estilos_excel.aplicar_estilos([5,6,7,8])                                
+            estilos_excel.aplicar_estilos([8,9,10,11,12])                                
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename=cuenta_cobrar_corte.xlsx'
             wb.save(response)
             return response
         else:
-            return Response({'registros': resultados_documento}, status=status.HTTP_200_OK) 
+            return Response(resultados, status=status.HTTP_200_OK) 
     
     def get(self, request):
         numero = 123  

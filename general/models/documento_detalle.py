@@ -41,7 +41,7 @@ class GenDocumentoDetalle(models.Model):
     operacion_inventario = models.BigIntegerField(default=0)
     detalle = models.CharField(max_length=150, null=True)
     numero = models.IntegerField(null=True)
-    documento = models.ForeignKey(GenDocumento, on_delete=models.PROTECT, related_name='detalles')
+    documento = models.ForeignKey(GenDocumento, on_delete=models.PROTECT, related_name='documentos_detalles_documento_rel')
     documento_afectado = models.ForeignKey(GenDocumento, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_documento_afectado_rel')
     item = models.ForeignKey(GenItem, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_item_rel')
     cuenta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='documentos_detalles_cuenta_rel')
