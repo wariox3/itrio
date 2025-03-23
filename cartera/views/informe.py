@@ -63,7 +63,7 @@ class InformeView(APIView):
             })                    
         return resultados_json
     
-    def obtener_pendiente_corte(self, fecha_hasta, filtros, cantidad_limite):
+    def obtener_pendiente_corte(self, fecha_hasta, filtros, cantidad_limite, desplazar, limite):
         documentos = GenDocumento.objects.filter(            
             documento_tipo__cobrar=True,
             fecha__lte=fecha_hasta
@@ -93,12 +93,15 @@ class InformeView(APIView):
                     else:
                         documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})   
         cantidad_documentos = documentos[:cantidad_limite].count()                                 
+        documentos = documentos[desplazar:limite+desplazar]
         return {'registros': list(documentos), "cantidad_registros": cantidad_documentos}
 
     def post(self, request):    
         raw = request.data
         filtros = raw.get("filtros", [])
         cantidad_limite = raw.get('cantidad_limite', 30000)
+        desplazar = raw.get('desplazar', 0)
+        limite = raw.get('limite', 50)
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)        
         fecha_hasta = None
@@ -112,7 +115,7 @@ class InformeView(APIView):
         if not fecha_hasta:
             return Response(
                 {"error": "Los filtros 'fecha' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
-        resultados = self.obtener_pendiente_corte(fecha_hasta, filtros, cantidad_limite)
+        resultados = self.obtener_pendiente_corte(fecha_hasta, filtros, cantidad_limite, desplazar, limite)
         if excel:
             wb = Workbook()
             ws = wb.active
