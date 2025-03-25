@@ -311,7 +311,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento_tipo.consecutivo += 1
                         documento_tipo.save()                
                     documento.estado_aprobado = True
-                    if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,304):
+                    if documento.documento_tipo.documento_clase_id in (100,101,102,104,300,301,302,303,304):
                         documento.pendiente = documento.total - documento.afectado    
                     # Compra, Documento soporte
                     if documento.documento_tipo_id in [5,11]:
