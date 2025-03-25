@@ -14,54 +14,6 @@ from decimal import Decimal
 
 class InformeView(APIView):
     permission_classes = (IsAuthenticated,)
-
-    def prueba(self, fecha_hasta, numero):            
-        filtro_numero = ""
-        if numero:
-            filtro_numero = f" AND d.numero = {numero}"
-        query = f'''
-            SELECT
-                d.id,
-                d.numero,
-                d.fecha,
-                d.fecha_vence,
-                d.documento_tipo_id,
-                d.subtotal,
-                d.impuesto,
-                d.total,
-                dt.nombre as documento_tipo_nombre,
-                c.numero_identificacion as contacto_numero_identificacion,
-                c.nombre_corto as contacto_nombre_corto,
-                COALESCE(
-                	(SELECT SUM(dd.precio) FROM gen_documento_detalle dd left join gen_documento ddd on dd.documento_id=ddd.id WHERE dd.documento_afectado_id = d.id AND ddd.fecha <= '{fecha_hasta}'),0) AS abono
-            FROM
-                gen_documento d
-            left join
-            	gen_documento_tipo dt on d.documento_tipo_id = dt.id 
-           	left join 
-           		gen_contacto c on d.contacto_id = c.id 
-           	where dt.cobrar = true and d.fecha <= '{fecha_hasta}' {filtro_numero};
-        '''
-        documentos = GenDocumento.objects.raw(query)        
-        resultados_json = []
-        for documento in documentos:
-            pendiente = documento.total - documento.abono
-            resultados_json.append({
-                'id': documento.id,
-                'numero': documento.numero,
-                'fecha': documento.fecha,
-                'fecha_vence': documento.fecha_vence,
-                'documento_tipo_id': documento.documento_tipo_id,
-                'subtotal': documento.subtotal,
-                'impuesto': documento.impuesto,
-                'total': documento.total,
-                'documento_tipo_nombre': documento.documento_tipo_nombre,
-                'contacto_numero_identificacion': documento.contacto_numero_identificacion,
-                'contacto_nombre_corto': documento.contacto_nombre_corto,
-                'abono': documento.abono,
-                'pendiente': pendiente               
-            })                    
-        return resultados_json
     
     def obtener_pendiente_corte(self, fecha_hasta, filtros, cantidad_limite, desplazar, limite):
         documentos = GenDocumento.objects.filter(            
@@ -147,8 +99,3 @@ class InformeView(APIView):
             return response
         else:
             return Response(resultados, status=status.HTTP_200_OK) 
-    
-    def get(self, request):
-        numero = 123  
-        return Response("Esta es la respuesta" + numero)
-
