@@ -60,7 +60,6 @@ class InformeView(APIView):
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)        
         fecha_hasta = None
-        numero = None
         for filtro in filtros:
             if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor1"]            
@@ -69,7 +68,7 @@ class InformeView(APIView):
         
         if not fecha_hasta:
             return Response(
-                {"error": "Los filtros 'fecha' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
+                {"mensaje": "Los filtros 'fecha' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
         resultados = self.obtener_pendiente_corte(fecha_hasta, filtros, cantidad_limite, desplazar, limite)
         if excel:
             wb = Workbook()
