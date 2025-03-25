@@ -2428,8 +2428,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         
-    @action(detail=False, methods=["post"], url_path=r'cargar-resultado')
-    def cargar_resultado(self, request):      
+    @action(detail=False, methods=["post"], url_path=r'cargar-cierre')
+    def cargar_cierre(self, request):      
         raw = request.data
         id = raw.get('id') 
         #cuenta_desde_id = raw.get('cuenta_desde_id')
@@ -2442,7 +2442,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             
             movimientos = ConMovimiento.objects.filter(
                     cuenta__cuenta_clase_id__gte=4,
-                    cuenta__cuenta_clase_id__lte=5   
+                    cuenta__cuenta_clase_id__lte=5  
                 ).values(
                     'cuenta_id',
                     'contacto_id'
@@ -2457,7 +2457,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'tipo_registro': 'C',
                         'documento': documento.id,
                         'cuenta': movimiento['cuenta_id'],
-                        'contacto': movimiento['contacto_id']
+                        'contacto': movimiento['contacto_id'],
+                        'grupo': documento.grupo_id
                     }
                     if saldo_final < 0:
                         data['naturaleza'] = 'D'
@@ -2475,13 +2476,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'tipo_registro': 'C',
                         'documento': documento.id,
                         'cuenta': documento.cuenta_id,
-                        'contacto': documento.contacto_id
+                        'contacto': documento.contacto_id,
+                        'grupo': documento.grupo_id
                     }
                     if saldo_final < 0:
-                        data['naturaleza'] = 'D'
+                        data['naturaleza'] = 'C'
                         data['precio'] = saldo_final * -1
                     else:
-                        data['naturaleza'] = 'C'
+                        data['naturaleza'] = 'D'
                         data['precio'] = saldo_final
                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                     if documento_detalle_serializador.is_valid():
@@ -2492,21 +2494,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
-
-    @action(detail=False, methods=["post"], url_path=r'cargar-tributario')
-    def cargar_tributario(self, request):      
-        raw = request.data
-        id = raw.get('id')  
-        cuenta_desde_id = raw.get('cuenta_desde_id')
-        cuenta_hasta_id = raw.get('cuenta_hasta_id')
-        if id and cuenta_desde_id and cuenta_hasta_id:
-            try:
-                documento = GenDocumento.objects.get(pk=id)
-            except GenDocumentoTipo.DoesNotExist:
-                return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
-            return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'plano-banco',)
     def plano_banco(self, request):        
