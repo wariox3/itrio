@@ -250,11 +250,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
 
-    def obtener_balance_prueba_tercero(self, fecha_desde, fecha_hasta, cierre = False):
+    def obtener_balance_prueba_tercero(self, fecha_desde, fecha_hasta, cierre = False, numero_identificacion = '', nombre_corto = ''):
         parametro_cierre = ' AND ma.cierre = false '
         if cierre == True:
             parametro_cierre = ''
-            
+        filtro_identificacion = ''
+        if numero_identificacion:
+            filtro_identificacion = f" AND co.numero_identificacion = '{numero_identificacion}'"                
+        filtro_nombre_corto = ''
+        if nombre_corto:
+                filtro_nombre_corto = f" AND co.nombre_corto LIKE '%%{nombre_corto}%%'"
         query = f'''
             SELECT
                 MIN(m.id) AS id,
@@ -279,7 +284,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             LEFT JOIN
                 gen_contacto co ON m.contacto_id = co.id  
             WHERE 
-                m.fecha <= '{fecha_hasta}' and m.contacto_id is not null   
+                m.fecha <= '{fecha_hasta}' and m.contacto_id is not null {filtro_identificacion} {filtro_nombre_corto}
             GROUP BY
                 m.cuenta_id, m.contacto_id, co.nombre_corto, co.numero_identificacion ,c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
@@ -560,13 +565,19 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_desde = None
         fecha_hasta = None
         cierre = False        
+        numero_identificacion = None 
+        nombre_corto = None
         for filtro in filtros:
             if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
             if filtro["propiedad"] == "fecha":
                 fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                
+                cierre = filtro["valor1"]      
+            if filtro["propiedad"] == "contacto__numero_identificacion":
+                numero_identificacion = filtro["valor1"]      
+            if filtro["propiedad"] == "contacto__nombre_corto":
+                nombre_corto = filtro["valor1"]      
         
         if not fecha_desde or not fecha_hasta:
             return Response(
@@ -574,7 +585,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
-        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre ,numero_identificacion, nombre_corto)
         resultados = resultados_cuenta + resultados_tercero
         resultados.sort(key=lambda x: str(x['codigo']))
         if excel:
@@ -672,7 +683,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = None
         fecha_hasta = None
-        cierre = False        
+        cierre = False       
+        numero_identificacion = None 
+        nombre_corto = None
         for filtro in filtros:
             if filtro["propiedad"] == "fecha":
                 fecha_desde = filtro["valor1"]
@@ -680,6 +693,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 fecha_hasta = filtro["valor2"]
             if filtro["propiedad"] == "cierre":
                 cierre = filtro["valor1"]                
+            if filtro["propiedad"] == "contacto__numero_identificacion":
+                numero_identificacion = filtro["valor1"]      
+            if filtro["propiedad"] == "contacto__nombre_corto":
+                nombre_corto = filtro["valor1"]      
         
         if not fecha_desde or not fecha_hasta:
             return Response(
@@ -687,7 +704,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )               
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
-        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)        
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre, numero_identificacion, nombre_corto)        
         resultados_json = resultados_cuenta + resultados_tercero
         resultados_json.sort(key=lambda x: str(x['codigo']))
         if excel:
