@@ -520,12 +520,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data = data_general.copy()                            
                                 data['cuenta'] = documento_detalle.documento_afectado.cuenta_id
                                 data['contacto'] = documento_detalle.contacto_id        
-                                if documento.documento_tipo_id in [6, 12]:
-                                    data['naturaleza'] = 'D'
-                                    data['debito'] = documento_detalle.precio
-                                else:
+                                if documento_detalle.documento_afectado.documento_tipo_id in [6, 12]:
                                     data['naturaleza'] = 'C'
                                     data['credito'] = documento_detalle.precio
+                                else:
+                                    data['naturaleza'] = 'D'
+                                    data['debito'] = documento_detalle.precio
                                 data['detalle'] = 'PROVEEDOR'
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
