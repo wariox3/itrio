@@ -2441,47 +2441,53 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
             
             movimientos = ConMovimiento.objects.filter(
-                    cuenta__cuenta_clase_id__range=(4, 5)
+                    cuenta__cuenta_clase_id__gte=4,
+                    cuenta__cuenta_clase_id__lte=5   
                 ).values(
-                    'cuenta_id'
+                    'cuenta_id',
+                    'contacto_id'
                 ).annotate(
                     debito=Sum('debito'),
-                    credito=Sum('credito'),
-                    saldo=F('debito') - F('credito')                 
-                ).order_by('cuenta_id')   
+                    credito=Sum('credito')                
+                ).order_by('cuenta_id', 'contacto_id')   
             for movimiento in movimientos:
-                data = {
-                    'documento': documento.id,
-                    'cuenta': movimiento['cuenta_id']
-                }
-                if movimiento['saldo'] < 0:
-                    data['tipo_registro'] = 'D'
-                    data['precio'] = movimiento['saldo'] * -1
-                else:
-                    data['tipo_registro'] = 'C'
-                    data['precio'] = movimiento['saldo']
-                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                if documento_detalle_serializador.is_valid():
-                    documento_detalle_serializador.save()
-                else:
-                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                
-                data = {
-                    'documento': documento.id,
-                    'cuenta': documento.cuenta_id,
-                    'contacto': documento.contacto_id
-                }
-                if movimiento['saldo'] < 0:
-                    data['tipo_registro'] = 'D'
-                    data['precio'] = movimiento['saldo'] * -1
-                else:
-                    data['tipo_registro'] = 'C'
-                    data['precio'] = movimiento['saldo']
-                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                if documento_detalle_serializador.is_valid():
-                    documento_detalle_serializador.save()
-                else:
-                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                
+                saldo_final = movimiento['debito'] - movimiento['credito']
+                if saldo_final < 0 or saldo_final > 0:
+                    data = {
+                        'tipo_registro': 'C',
+                        'documento': documento.id,
+                        'cuenta': movimiento['cuenta_id'],
+                        'contacto': movimiento['contacto_id']
+                    }
+                    if saldo_final < 0:
+                        data['naturaleza'] = 'D'
+                        data['precio'] = saldo_final * -1
+                    else:
+                        data['naturaleza'] = 'C'
+                        data['precio'] = saldo_final
+                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                    if documento_detalle_serializador.is_valid():
+                        documento_detalle_serializador.save()
+                    else:
+                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                    
+                    data = {
+                        'tipo_registro': 'C',
+                        'documento': documento.id,
+                        'cuenta': documento.cuenta_id,
+                        'contacto': documento.contacto_id
+                    }
+                    if saldo_final < 0:
+                        data['naturaleza'] = 'D'
+                        data['precio'] = saldo_final * -1
+                    else:
+                        data['naturaleza'] = 'C'
+                        data['precio'] = saldo_final
+                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                    if documento_detalle_serializador.is_valid():
+                        documento_detalle_serializador.save()
+                    else:
+                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                
                                      
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:

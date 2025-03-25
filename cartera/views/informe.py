@@ -27,11 +27,14 @@ class InformeView(APIView):
                 saldo=F('total') - Coalesce(Sum(
                     'documentos_detalles_documento_afectado_rel__precio',
                     filter=Q(documentos_detalles_documento_afectado_rel__documento__fecha__lte=fecha_hasta)
-                ), Decimal(0))
+                ), Decimal(0)),
+                documento_tipo_nombre=F('documento_tipo__nombre'),
+                contacto_numero_identificacion=F('contacto__numero_identificacion'),
+                contacto_nombre_corto=F('contacto__nombre_corto')
             ).filter(
                 saldo__gt=0
             ).values('id', 'numero', 'fecha', 'fecha_vence', 'documento_tipo_id', 'subtotal', 'impuesto', 'total', 
-                     'documento_tipo__nombre', 'contacto__numero_identificacion', 'contacto__nombre_corto',
+                     'documento_tipo_nombre', 'contacto_numero_identificacion', 'contacto_nombre_corto',
                      'abono', 'saldo')
         if filtros:
             for filtro in filtros:                    
