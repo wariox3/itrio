@@ -800,14 +800,16 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita = RutVisita.objects.get(pk=id)                            
             except RutVisita.DoesNotExist:
                 return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
-            if visita.estado_entregado == False:
+            if visita.estado_entregado == False:                
                 visita.estado_entregado = True
                 visita.fecha_entrega = timezone.now()
                 visita.save()
+                visita.despacho.visitas_entregadas += 1
+                visita.despacho.save()
                 if imagenes:
                     tenant = request.tenant.schema_name
                     for imagen in imagenes:                                                
-                        objeto_base64 = Utilidades.separar_base64(imagen)
+                        objeto_base64 = Utilidades.separar_base64(imagen['base64'])
                         nombre_archivo = f'{id}.{objeto_base64["extension"]}'
                         respuesta = ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'], nombre_archivo, id, "RutVisita", tenant)                        
                 return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)

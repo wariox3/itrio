@@ -8,12 +8,11 @@ import json
 class ArchivoServicio():
 
     @staticmethod
-    def cargar_modelo(archivo_base64, nombre_archivo, codigo, modelo, tenant):        
-        if archivo_base64 and nombre_archivo and codigo and modelo:                                            
-            try:                        
-                objeto_base64 = Utilidades.separar_base64(archivo_base64)
+    def cargar_modelo(base64, nombre_archivo, codigo, modelo, tenant):        
+        if base64 and nombre_archivo and codigo and modelo:                                            
+            try:                                        
                 backblaze = Backblaze()
-                id, tamano, tipo, uuid = backblaze.subir(objeto_base64['base64_raw'], tenant, nombre_archivo)
+                id, tamano, tipo, uuid = backblaze.subir(base64, tenant, nombre_archivo)
                 archivo = GenArchivo()
                 archivo.archivo_tipo_id = 2
                 archivo.almacenamiento_id = id
