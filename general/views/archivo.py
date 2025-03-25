@@ -22,6 +22,7 @@ class ArchivoViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    # Refactorizar este método para usar archivo_servicio.py
     @action(detail=False, methods=["post"], url_path=r'cargar',)
     def cargar(self, request):
         raw = request.data        
@@ -44,6 +45,7 @@ class ArchivoViewSet(viewsets.ModelViewSet):
                 backblaze = Backblaze()
                 id, tamano, tipo, uuid = backblaze.subir(objeto_base64['base64_raw'], tenant, nombre_archivo)
                 archivo = GenArchivo()
+                archivo.archivo_tipo_id = 1
                 archivo.almacenamiento_id = id
                 archivo.documento = documento
                 archivo.nombre = nombre_archivo
@@ -58,7 +60,8 @@ class ArchivoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                          
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+      
     @action(detail=False, methods=["post"], url_path=r'descargar',)
     def descargar(self, request):
         raw = request.data        

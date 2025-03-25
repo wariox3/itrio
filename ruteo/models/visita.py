@@ -6,7 +6,8 @@ from general.models.ciudad import GenCiudad
 class RutVisita(models.Model):
     numero = models.IntegerField(null=True)
     guia = models.IntegerField(null=True)
-    fecha = models.DateTimeField(null=True)    
+    fecha = models.DateTimeField(null=True)  
+    fecha_entrega = models.DateTimeField(null=True)  
     documento = models.CharField(max_length=30, null=True)
     destinatario = models.CharField(max_length=150, default='Destinatario')
     destinatario_direccion = models.CharField(max_length=150, default='')

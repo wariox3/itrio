@@ -14,6 +14,8 @@ from django.utils import timezone
 from utilidades.zinc import Zinc
 from utilidades.holmio import Holmio
 from utilidades.google import Google
+from servicios.archivo_servicio import ArchivoServicio
+from utilidades.utilidades import Utilidades
 from shapely.geometry import Point, Polygon
 from math import radians, cos, sin, asin, sqrt, atan2
 from django.db.models import Sum, F, Count
@@ -786,4 +788,32 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             except RutVisita.DoesNotExist:
                 return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                                    
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'entrega',)
+    def entrega(self, request):             
+        raw = request.data
+        id = raw.get('id')
+        imagenes = raw.get('imagenes')
+        if id:
+            try:
+                visita = RutVisita.objects.get(pk=id)                            
+            except RutVisita.DoesNotExist:
+                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            if visita.estado_entregado == False:
+                visita.estado_entregado = True
+                visita.fecha_entrega = timezone.now()
+                visita.save()
+                if imagenes:
+                    tenant = request.tenant.schema_name
+                    for imagen in imagenes:                                                
+                        objeto_base64 = Utilidades.separar_base64(imagen)
+                        nombre_archivo = f'{id}.{objeto_base64["extension"]}'
+                        respuesta = ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'], nombre_archivo, id, "RutVisita", tenant)                        
+                return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            
+        
