@@ -274,7 +274,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documentoEliminar = GenDocumento.objects.get(pk=documento)  
                     if documentoEliminar:
                         if documentoEliminar.estado_aprobado == False or documentoEliminar.documento_tipo_id in (18,19):
-                            if not documentoEliminar.detalles.exists():
+                            if not documentoEliminar.documentos_detalles_documento_rel.exists():
                                 if documentoEliminar.documento_tipo_id == 15:
                                     nominas = GenDocumento.objects.filter(documento_referencia_id=documentoEliminar.id)
                                     nominas.update(documento_referencia_id=None)                                
@@ -365,7 +365,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             try:
                 documento = GenDocumento.objects.get(pk=id)
                 if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False and documento.estado_electronico_enviado == False:                                  
-                    if documento.documento_tipo.documento_clase_id in (100, 200,300,400,500,501,601,):                    
+                    if documento.documento_tipo.documento_clase_id in (100, 200,300,400,500,501,601,603):                    
                         respuesta = self.validacion_desaprobar(documento)
                         if respuesta['error'] == False:
                             documento.estado_aprobado = False
@@ -424,6 +424,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                 try:
                     periodo_id = documento.fecha_contable.strftime("%Y%m")
+                    if documento.documento_tipo_id == 25:
+                        periodo_id = documento.fecha.strftime("%Y") + '13'
                     periodo = ConPeriodo.objects.get(pk=periodo_id)
                     if periodo.estado_bloqueado == True:
                         return Response({'mensaje': f'El periodo {periodo_id} esta aprobado y no es posible contabilizar el documento', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
@@ -587,14 +589,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['contacto'] = documento_detalle.contacto_id        
                                 data['naturaleza'] = documento_detalle.naturaleza
                                 data['base'] = documento_detalle.base
+                                data['detalle'] = documento_detalle.detalle
                                 if documento_detalle.naturaleza == 'D':
                                     data['debito'] = documento_detalle.precio
                                 if documento_detalle.naturaleza == 'C':
                                     data['credito'] = documento_detalle.precio
                                 if documento_detalle.cuenta:
                                     if documento_detalle.cuenta.exige_grupo:
-                                        data['grupo'] = documento_detalle.grupo_id
-                                
+                                        data['grupo'] = documento_detalle.grupo_id 
+                                if documento.documento_tipo_id == 25:
+                                    data['cierre'] = True
+
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
@@ -2432,24 +2437,28 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def cargar_cierre(self, request):      
         raw = request.data
         id = raw.get('id') 
-        #cuenta_desde_id = raw.get('cuenta_desde_id')
-        #cuenta_hasta_id = raw.get('cuenta_hasta_id')                   
-        if id:
+        cuenta_desde_codigo = raw.get('cuenta_desde_codigo')
+        cuenta_hasta_codigo = raw.get('cuenta_hasta_codigo') 
+        cuenta_cierre_id = raw.get('cuenta_cierre_id')                  
+        if id and cuenta_desde_codigo and cuenta_hasta_codigo and cuenta_cierre_id:
             try:
                 documento = GenDocumento.objects.get(pk=id)
             except GenDocumentoTipo.DoesNotExist:
                 return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
-            
+            try:
+                cuenta = ConCuenta.objects.get(pk=cuenta_cierre_id)
+            except ConCuenta.DoesNotExist:
+                return Response({'mensaje': 'La cuenta no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)             
             movimientos = ConMovimiento.objects.filter(
-                    cuenta__cuenta_clase_id__gte=4,
-                    cuenta__cuenta_clase_id__lte=5  
+                    cuenta__codigo__gte=cuenta_desde_codigo,
+                    cuenta__codigo__lte=cuenta_hasta_codigo  
                 ).values(
                     'cuenta_id',
                     'contacto_id'
                 ).annotate(
                     debito=Sum('debito'),
                     credito=Sum('credito')                
-                ).order_by('cuenta_id', 'contacto_id')   
+                ).order_by('cuenta_id', 'contacto_id')              
             for movimiento in movimientos:
                 saldo_final = movimiento['debito'] - movimiento['credito']
                 if saldo_final < 0 or saldo_final > 0:
@@ -2458,7 +2467,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'documento': documento.id,
                         'cuenta': movimiento['cuenta_id'],
                         'contacto': movimiento['contacto_id'],
-                        'grupo': documento.grupo_id
+                        'grupo': documento.grupo_contabilidad_id,
+                        'detalle': 'CIERRE AÑO'
                     }
                     if saldo_final < 0:
                         data['naturaleza'] = 'D'
@@ -2475,9 +2485,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     data = {
                         'tipo_registro': 'C',
                         'documento': documento.id,
-                        'cuenta': documento.cuenta_id,
+                        'cuenta': cuenta_cierre_id,
                         'contacto': documento.contacto_id,
-                        'grupo': documento.grupo_id
+                        'grupo': documento.grupo_contabilidad_id,
+                        'detalle': 'CIERRE AÑO'
                     }
                     if saldo_final < 0:
                         data['naturaleza'] = 'C'

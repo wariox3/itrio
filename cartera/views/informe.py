@@ -80,12 +80,12 @@ class InformeView(APIView):
             for registro in resultados['registros']:
                 ws.append([
                     registro['id'],
-                    registro['documento_tipo__nombre'],
+                    registro['documento_tipo_nombre'],
                     registro['numero'],
                     registro['fecha'],
                     registro['fecha_vence'],
-                    registro['contacto__numero_identificacion'],
-                    registro['contacto__nombre_corto'],
+                    registro['contacto_numero_identificacion'],
+                    registro['contacto_nombre_corto'],
                     registro['subtotal'],
                     registro['impuesto'],
                     registro['total'],
