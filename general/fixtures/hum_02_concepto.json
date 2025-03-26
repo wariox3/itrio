@@ -230,7 +230,7 @@
         "fields": {
             "nombre": "Auxilio de transporte", 
             "porcentaje": 0,
-            "ingreso_base_prestacion": false,
+            "ingreso_base_prestacion": true,
             "ingreso_base_prestacion_vacacion": false,
             "ingreso_base_cotizacion":false,
             "adicional":false,
