@@ -740,8 +740,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 # Adicionales
                                 if programacion_detalle.adicional:
                                     filtro_base = HumAdicional.objects.filter(
-                                        inactivo=False, 
-                                        inactivo_periodo=False,
+                                        inactivo=False,                                         
                                         contrato_id=programacion_detalle.contrato_id
                                     )
                                     if programacion.pago_tipo_id == 1:
@@ -771,7 +770,6 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 if programacion_detalle.descuento_credito:
                                     creditos = HumCredito.objects.filter(
                                             inactivo = False, 
-                                            inactivo_periodo = False,
                                             pagado = False,
                                             contrato_id = programacion_detalle.contrato_id
                                         )

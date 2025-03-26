@@ -8,7 +8,6 @@ class HumAdicional(models.Model):
     horas = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     aplica_dia_laborado = models.BooleanField(default = False)
     inactivo = models.BooleanField(default = False)
-    inactivo_periodo = models.BooleanField(default = False)
     permanente = models.BooleanField(default = False)
     detalle = models.CharField(max_length=150, null=True)
     programacion = models.ForeignKey(HumProgramacion, on_delete=models.PROTECT, null=True, related_name='adicionales_programacion_rel')

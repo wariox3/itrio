@@ -12,7 +12,6 @@ class HumCredito(models.Model):
     cuota_actual = models.IntegerField(default=0)
     validar_cuotas = models.BooleanField(default = True)
     inactivo = models.BooleanField(default = False)    
-    inactivo_periodo = models.BooleanField(default = False)
     pagado = models.BooleanField(default = False)
     aplica_prima = models.BooleanField(default = False)    
     aplica_cesantia = models.BooleanField(default = False)
