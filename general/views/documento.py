@@ -671,7 +671,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['credito'] = documento_detalle.precio                                
                                 if documento_detalle.activo.cuenta_depreciacion:
                                     if documento_detalle.activo.cuenta_depreciacion.exige_grupo:
-                                        data['grupo'] = documento.grupo_id    
+                                        data['grupo'] = documento.grupo_contabilidad_id    
                                 data['detalle'] = 'Depreciacion acumulada'                         
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
@@ -687,7 +687,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 data['debito'] = documento_detalle.precio                                
                                 if documento_detalle.activo.cuenta_gasto:
                                     if documento_detalle.activo.cuenta_gasto.exige_grupo:
-                                        data['grupo'] = documento.grupo_id   
+                                        data['grupo'] = documento.grupo_contabilidad_id   
                                 data['detalle'] = 'Gasto depreciacion'                                                                     
                                 movimiento_serializador = ConMovimientoSerializador(data=data)
                                 if movimiento_serializador.is_valid():
