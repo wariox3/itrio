@@ -453,7 +453,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         #Se actualiza la cuenta en el documento para cuando se haga el recibo/pago quede a esta cuenta
                         documento.cuenta_id = documento.documento_tipo.cuenta_cobrar_id
                         data['contacto'] = documento.contacto_id        
-                        if documento.documento_tipo_id in [1,3]:
+                        if documento.documento_tipo_id in [1,3, 17]:
                             data['naturaleza'] = 'D'
                             data['debito'] = documento.total
                         else: 
@@ -543,7 +543,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     data = data_general.copy()                            
                                     data['cuenta'] = documento_detalle.item.cuenta_venta_id
                                     data['contacto'] = documento.contacto_id                                
-                                    if documento.documento_tipo_id in [1,3]:
+                                    if documento.documento_tipo_id in [1,3, 17]:
                                         data['naturaleza'] = 'C'
                                         data['credito'] = documento_detalle.subtotal
                                     else:
