@@ -453,7 +453,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         #Se actualiza la cuenta en el documento para cuando se haga el recibo/pago quede a esta cuenta
                         documento.cuenta_id = documento.documento_tipo.cuenta_cobrar_id
                         data['contacto'] = documento.contacto_id        
-                        if documento.documento_tipo_id in [1,3, 17]:
+                        if documento.documento_tipo_id in [1,3, 17, 24]:
                             data['naturaleza'] = 'D'
                             data['debito'] = documento.total
                         else: 
@@ -547,7 +547,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     data = data_general.copy()                            
                                     data['cuenta'] = documento_detalle.item.cuenta_venta_id
                                     data['contacto'] = documento.contacto_id                                
-                                    if documento.documento_tipo_id in [1,3, 17]:
+                                    if documento.documento_tipo_id in [1,3, 17, 24]:
                                         data['naturaleza'] = 'C'
                                         data['credito'] = documento_detalle.subtotal
                                     else:
@@ -716,7 +716,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         data['contacto'] = documento.contacto_id        
                         if documento_impuesto['impuesto__venta']:
                             if documento_impuesto['impuesto__operacion'] == 1:
-                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3]:
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3,24]:
                                     data['naturaleza'] = 'C'
                                     data['credito'] = documento_impuesto['total']
                                 else:
@@ -724,7 +724,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     data['debito'] = documento_impuesto['total']
 
                             if documento_impuesto['impuesto__operacion'] == -1:
-                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3]:
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3, 24]:
                                     data['naturaleza'] = 'D'
                                     data['debito'] = documento_impuesto['total']                    
                                 else:
