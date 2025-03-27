@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.periodo import ConPeriodo
 from contabilidad.models.movimiento import ConMovimiento
+from general.models.documento import GenDocumento
 from contabilidad.serializers.periodo import ConPeriodoSerializador
 from django.db.models import Sum
 
@@ -12,8 +13,8 @@ class PeriodoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]  
 
     @staticmethod
-    def analizar_inconsistencias(id):
-        movimientos = ConMovimiento.objects.filter(periodo=id
+    def analizar_inconsistencias(periodo):
+        movimientos = ConMovimiento.objects.filter(periodo=periodo.id
             ).values(
                 'comprobante_id', 
                 'numero'
@@ -32,7 +33,7 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                     'inconsistencia': 'El total de debito y credito no coinciden'
                 })
         movimientos = ConMovimiento.objects.filter(
-            periodo=id
+            periodo=periodo.id
             ).values(
                 'comprobante_id',
                 'numero',
@@ -89,6 +90,19 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                         'documento_tipo_nombre': movimiento['documento__documento_tipo__nombre'],                        
                         'inconsistencia': f'La cuenta {movimiento["cuenta__codigo"]} exige base y no tiene base'
                     })           
+        
+        documentos = GenDocumento.objects.filter(
+            documento_tipo__contabilidad=True,
+            fecha__year=periodo.anio,
+            fecha__month=periodo.mes,
+            estado_contabilizado=False).first()
+        if documentos:
+            inconsistencias.append({
+                    'comprobante_id': None,
+                    'numero': None,
+                    'cuenta_id': None,
+                    'inconsistencia': 'Existen documentos sin contabilizar en el periodo'
+                })
         return inconsistencias
 
     @action(detail=False, methods=["get"], url_path=r'anio',)
@@ -127,7 +141,7 @@ class PeriodoViewSet(viewsets.ModelViewSet):
             periodo = ConPeriodo.objects.get(pk=id)
             if periodo:
                 if not periodo.estado_bloqueado:
-                    inconsistencias = self.analizar_inconsistencias(periodo.id)    
+                    inconsistencias = self.analizar_inconsistencias(periodo)    
                     if not inconsistencias:
                         periodo.estado_inconsistencia = False
                         periodo.estado_bloqueado = True     
@@ -197,7 +211,7 @@ class PeriodoViewSet(viewsets.ModelViewSet):
             if mes:
                 periodos.filter(mes=mes)
             for periodo in periodos:                            
-                inconsistencias = self.analizar_inconsistencias(periodo.id)    
+                inconsistencias = self.analizar_inconsistencias(periodo)    
                 if inconsistencias:
                     inconsistencias_proceso += inconsistencias
                     periodo.estado_inconsistencia = True
