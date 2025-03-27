@@ -102,14 +102,20 @@ class PeriodoViewSet(viewsets.ModelViewSet):
         anio = raw.get('anio')
         if anio:
             periodo = ConPeriodo.objects.filter(anio=anio).first()
-            if periodo is None:
-                for i in range(1, 14):
-                    codigo = f"{anio}{str(i).zfill(2)}"
-                    ConPeriodo.objects.create(id=codigo, anio=anio, mes=i)
-                return Response({'mensaje': 'Se generan los periodos del año'}, status=status.HTTP_200_OK)
-            else:
-                return Response({'mensaje': 'Ya existen periodos con este año'}, status=status.HTTP_400_BAD_REQUEST)
-                
+            if periodo:
+                return Response({'mensaje': 'Ya existen periodos con este año'}, status=status.HTTP_400_BAD_REQUEST)            
+            periodo_posterior = ConPeriodo.objects.filter(anio__gt=anio).first()
+            if periodo_posterior:
+                return Response({'mensaje': 'Ya existen periodos posteriores a este año'}, status=status.HTTP_400_BAD_REQUEST)            
+            periodo_salto = ConPeriodo.objects.order_by('id').last()
+            if periodo_salto:
+                if anio - periodo_salto.anio > 1:
+                    return Response({'mensaje': 'No se puede saltar mas de un año'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            for i in range(1, 14):
+                codigo = f"{anio}{str(i).zfill(2)}"
+                ConPeriodo.objects.create(id=codigo, anio=anio, mes=i)
+            return Response({'mensaje': 'Se generan los periodos del año'}, status=status.HTTP_200_OK)                                                
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
@@ -124,7 +130,8 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                     inconsistencias = self.analizar_inconsistencias(periodo.id)    
                     if not inconsistencias:
                         periodo.estado_inconsistencia = False
-                        periodo.estado_bloqueado = True                        
+                        periodo.estado_bloqueado = True     
+                        periodo.save()                   
                         return Response({'mensaje': 'Periodo bloqueado'}, status=status.HTTP_200_OK)                        
                     else:
                         periodo.estado_inconsistencia = True
