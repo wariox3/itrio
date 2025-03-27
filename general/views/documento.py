@@ -428,7 +428,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         periodo_id = documento.fecha.strftime("%Y") + '13'
                     periodo = ConPeriodo.objects.get(pk=periodo_id)
                     if periodo.estado_bloqueado == True:
-                        return Response({'mensaje': f'El periodo {periodo_id} esta aprobado y no es posible contabilizar el documento', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje': f'El periodo {periodo_id} esta bloqueado y no es posible contabilizar el documento', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
                 except ConPeriodo.DoesNotExist:
                     return Response({'mensaje':f'El periodo contable {periodo_id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
                 
@@ -955,7 +955,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             movimientos = ConMovimiento.objects.filter(documento_id=id).delete()
                             documento.estado_contabilizado = False
                             documento.save()      
-                            cantidad += 1                                                                                                 
+                            cantidad += 1   
+                        else:
+                            return Response({'mensaje':f'El periodo esta bloqueado y no se puede descontabilizar el documento', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                                                 
                 except GenDocumento.DoesNotExist:
                     return Response({'mensaje':f'El documento id {id} no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                        
             return Response({'mensaje': f'{cantidad} documentos descontabilizados'}, status=status.HTTP_200_OK)
