@@ -304,6 +304,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         ).values(
                             'novedad_id', 
                             'novedad__novedad_tipo_id',
+                            'concepto_id',
                             'novedad__fecha_desde',
                             'novedad__fecha_hasta'
                         ).annotate(
@@ -312,157 +313,189 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         )
                         for documento_detalle in documento_detalles:
                             if documento_detalle['novedad_id']:
-                                lineas += 1
-                                licencia_remunerada = False
-                                licencia_maternidad = False
-                                incapacidad_general = False
-                                dias_incapacidad_laboral = 0
-                                base_cotizacion_novedad = documento_detalle['base_cotizacion']
-                                dias_novedad = documento_detalle['dias']
-                                dias_novedad_contrato += dias_novedad
-                                base_cotizacion_total += base_cotizacion_novedad
-                                tarifa_pension = 16
-                                tarifa_salud = 4
-                                tarifa_riesgos = aporte_contrato.riesgo.porcentaje
-                                tarifa_caja = 4
-                                tarifa_sena = 0
-                                tarifa_icbf = 0   
-                                fecha_inicio_incapacidad_general = None
-                                fecha_fin_incapacidad_general = None
-                                fecha_inicio_licencia_maternidad = None
-                                fecha_fin_licencia_maternidad = None
-                                fecha_inicio_vacaciones = None
-                                fecha_fin_vacaciones = None
-                                fecha_inicio_incapacidad_laboral = None
-                                fecha_fin_incapacidad_laboral = None
+                                # Para que no tenga en cuenta las vacaciones en dinero
+                                if documento_detalle['concepto_id'] != 30:
+                                    lineas += 1
+                                    licencia_remunerada = False
+                                    suspension_temporal_contrato = False
+                                    licencia_maternidad = False
+                                    incapacidad_general = False
+                                    vacaciones = False
+                                    dias_incapacidad_laboral = 0
+                                    base_cotizacion_novedad = documento_detalle['base_cotizacion']
+                                    dias_novedad = documento_detalle['dias']
+                                    dias_novedad_contrato += dias_novedad
+                                    base_cotizacion_total += base_cotizacion_novedad
+                                    tarifa_pension = 16
+                                    tarifa_salud = 4
+                                    tarifa_riesgos = aporte_contrato.riesgo.porcentaje
+                                    tarifa_caja = 4
+                                    tarifa_sena = 0
+                                    tarifa_icbf = 0   
+                                    fecha_inicio_incapacidad_general = None
+                                    fecha_fin_incapacidad_general = None
+                                    fecha_inicio_licencia_maternidad = None
+                                    fecha_fin_licencia_maternidad = None
+                                    fecha_inicio_vacaciones = None
+                                    fecha_fin_vacaciones = None
+                                    fecha_inicio_incapacidad_laboral = None
+                                    fecha_fin_incapacidad_laboral = None
+                                    fecha_inicio_suspension_temporal_contrato = None
+                                    fecha_fin_suspension_temporal_contrato = None
 
-                                # Incapacidad general
-                                if documento_detalle['novedad__novedad_tipo_id'] == 1:
-                                    incapacidad_general = True
-                                    tarifa_riesgos = 0
-                                    tarifa_caja = 0
-                                    fecha_inicio_incapacidad_general = documento_detalle['novedad__fecha_desde']
-                                    if fecha_inicio_incapacidad_general < aporte.fecha_desde:
-                                        fecha_inicio_incapacidad_general < aporte.fecha_desde
-                                    fecha_fin_incapacidad_general = documento_detalle['novedad__fecha_hasta']
-                                    if fecha_fin_incapacidad_general > aporte.fecha_hasta:
-                                        fecha_fin_incapacidad_general = aporte.fecha_hasta
+                                    # Incapacidad general
+                                    if documento_detalle['novedad__novedad_tipo_id'] == 1:
+                                        incapacidad_general = True
+                                        tarifa_riesgos = 0
+                                        tarifa_caja = 0
+                                        fecha_inicio_incapacidad_general = documento_detalle['novedad__fecha_desde']
+                                        if fecha_inicio_incapacidad_general < aporte.fecha_desde:
+                                            fecha_inicio_incapacidad_general < aporte.fecha_desde
+                                        fecha_fin_incapacidad_general = documento_detalle['novedad__fecha_hasta']
+                                        if fecha_fin_incapacidad_general > aporte.fecha_hasta:
+                                            fecha_fin_incapacidad_general = aporte.fecha_hasta
 
-                                # Incapacidad laboral
-                                if documento_detalle['novedad__novedad_tipo_id'] == 2:
-                                    dias_incapacidad_laboral = dias_novedad
-                                    tarifa_riesgos = 0
-                                    tarifa_caja = 0  
-                                    fecha_inicio_incapacidad_laboral = documento_detalle['novedad__fecha_desde']
-                                    if fecha_inicio_incapacidad_laboral < aporte.fecha_desde:
-                                        fecha_inicio_incapacidad_laboral = aporte.fecha_desde                                    
-                                    fecha_fin_incapacidad_laboral = documento_detalle['novedad__fecha_hasta'] 
-                                    if fecha_fin_incapacidad_laboral > aporte.fecha_hasta:                                                                     
-                                        fecha_fin_incapacidad_laboral = aporte.fecha_hasta
-                                
-                                # Licencia maternidad o paternidad
-                                if documento_detalle['novedad__novedad_tipo_id'] == 3:
-                                    licencia_maternidad = True                                    
-                                    tarifa_riesgos = 0
-                                    tarifa_caja = 0
-                                    fecha_inicio_licencia_maternidad = documento_detalle['novedad__fecha_desde']
-                                    if fecha_inicio_licencia_maternidad < aporte.fecha_desde:
-                                        fecha_inicio_licencia_maternidad = aporte.fecha_desde
-                                    fecha_fin_licencia_maternidad = documento_detalle['novedad__fecha_hasta']   
-                                    if fecha_fin_licencia_maternidad > aporte.fecha_hasta:   
-                                        fecha_fin_licencia_maternidad = aporte.fecha_hasta            
+                                    # Incapacidad laboral
+                                    if documento_detalle['novedad__novedad_tipo_id'] == 2:
+                                        dias_incapacidad_laboral = dias_novedad
+                                        tarifa_riesgos = 0
+                                        tarifa_caja = 0  
+                                        fecha_inicio_incapacidad_laboral = documento_detalle['novedad__fecha_desde']
+                                        if fecha_inicio_incapacidad_laboral < aporte.fecha_desde:
+                                            fecha_inicio_incapacidad_laboral = aporte.fecha_desde                                    
+                                        fecha_fin_incapacidad_laboral = documento_detalle['novedad__fecha_hasta'] 
+                                        if fecha_fin_incapacidad_laboral > aporte.fecha_hasta:                                                                     
+                                            fecha_fin_incapacidad_laboral = aporte.fecha_hasta
+                                    
+                                    # Licencia maternidad o paternidad
+                                    if documento_detalle['novedad__novedad_tipo_id'] == 3:
+                                        licencia_maternidad = True                                    
+                                        tarifa_riesgos = 0
+                                        tarifa_caja = 0
+                                        fecha_inicio_licencia_maternidad = documento_detalle['novedad__fecha_desde']
+                                        if fecha_inicio_licencia_maternidad < aporte.fecha_desde:
+                                            fecha_inicio_licencia_maternidad = aporte.fecha_desde
+                                        fecha_fin_licencia_maternidad = documento_detalle['novedad__fecha_hasta']   
+                                        if fecha_fin_licencia_maternidad > aporte.fecha_hasta:   
+                                            fecha_fin_licencia_maternidad = aporte.fecha_hasta            
 
-                                # Licencia remunerada                                                     
-                                if documento_detalle['novedad__novedad_tipo_id'] == 5:
-                                    licencia_remunerada = True                                    
-                                    tarifa_riesgos = 0
-                                    fecha_inicio_vacaciones = documento_detalle['novedad__fecha_desde']
-                                    if fecha_inicio_vacaciones < aporte.fecha_desde:
-                                        fecha_inicio_vacaciones = aporte.fecha_desde
-                                    fecha_fin_vacaciones = documento_detalle['novedad__fecha_hasta'] 
-                                    if fecha_fin_vacaciones > aporte.fecha_hasta:   
-                                        fecha_fin_vacaciones = aporte.fecha_hasta               
-                                                                    
-                                horas_novedad = dias_novedad * 8   
-                                base_cotizacion_pension = base_cotizacion_novedad
-                                base_cotizacion_salud = base_cotizacion_novedad
-                                base_cotizacion_riesgos = base_cotizacion_novedad
-                                base_cotizacion_caja = base_cotizacion_novedad
-                                
-                                cotizacion_pension = Utilidades.redondear_cien(base_cotizacion_pension * tarifa_pension / 100)
-                                cotizacion_solidaridad_solidaridad = Utilidades.redondear_cien(0)
-                                cotizacion_solidaridad_subsistencia = Utilidades.redondear_cien(0)
-                                cotizacion_voluntario_pension_afiliado = Utilidades.redondear_cien(0)
-                                cotizacion_voluntario_pension_aportante = Utilidades.redondear_cien(0)
-                                cotizacion_salud = Utilidades.redondear_cien(base_cotizacion_salud * tarifa_salud / 100)
-                                cotizacion_riesgos = Utilidades.redondear_cien(base_cotizacion_riesgos * tarifa_riesgos / 100)                    
-                                cotizacion_caja = Utilidades.redondear_cien(base_cotizacion_caja * tarifa_caja / 100)
-                                cotizacion_sena = Utilidades.redondear_cien(0)
-                                cotizacion_icbf = Utilidades.redondear_cien(0)
-                                cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
-                                cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf                                                                                                
-                                # Total aportes por contrato
-                                aporte_contrato_cotizacion_pension += cotizacion_pension
-                                aporte_contrato_cotizacion_pension_total += cotizacion_pension_total
-                                aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
-                                aporte_contrato_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
-                                aporte_contrato_cotizacion_voluntario_pension_afiliado += cotizacion_voluntario_pension_afiliado
-                                aporte_contrato_cotizacion_voluntario_pension_aportante += cotizacion_voluntario_pension_aportante                                
-                                aporte_contrato_cotizacion_salud += cotizacion_salud
-                                aporte_contrato_cotizacion_riesgos += cotizacion_riesgos
-                                aporte_contrato_cotizacion_caja += cotizacion_caja   
-                                aporte_contrato_cotizacion_sena += aporte_cotizacion_sena
-                                aporte_contrato_cotizacion_icbf += aporte_cotizacion_icbf
-                                aporte_contrato_cotizacion_total += cotizacion_total                            
-                                data = {
-                                    'aporte_contrato': aporte_contrato.id,
-                                    'ingreso': aporte_contrato.ingreso,
-                                    'retiro': aporte_contrato.retiro,
-                                    'salario_integral': aporte_contrato.contrato.salario_integral,
-                                    'licencia_remunerada': licencia_remunerada,     
-                                    'licencia_maternidad': licencia_maternidad, 
-                                    'incapacidad_general': incapacidad_general, 
-                                    'dias_incapacidad_laboral': dias_incapacidad_laboral,                   
-                                    'horas': horas_novedad,
-                                    'dias_pension': dias_novedad,
-                                    'dias_salud': dias_novedad,
-                                    'dias_riesgos': dias_novedad,
-                                    'dias_caja': dias_novedad,
-                                    'base_cotizacion_pension': base_cotizacion_pension,
-                                    'base_cotizacion_salud': base_cotizacion_salud,
-                                    'base_cotizacion_riesgos': base_cotizacion_riesgos,
-                                    'base_cotizacion_caja': base_cotizacion_caja,
-                                    'tarifa_pension': tarifa_pension,
-                                    'tarifa_salud': tarifa_salud,
-                                    'tarifa_riesgos': tarifa_riesgos,
-                                    'tarifa_caja': tarifa_caja,
-                                    'tarifa_sena': tarifa_sena,
-                                    'tarifa_icbf': tarifa_icbf,
-                                    'cotizacion_pension': cotizacion_pension,
-                                    'cotizacion_solidaridad_solidaridad': cotizacion_solidaridad_solidaridad,
-                                    'cotizacion_solidaridad_subsistencia': cotizacion_solidaridad_subsistencia,
-                                    'cotizacion_voluntario_pension_afiliado': cotizacion_voluntario_pension_afiliado,
-                                    'cotizacion_voluntario_pension_aportante': cotizacion_voluntario_pension_aportante,
-                                    'cotizacion_salud': cotizacion_salud,
-                                    'cotizacion_riesgos': cotizacion_riesgos,
-                                    'cotizacion_caja': cotizacion_caja,
-                                    'cotizacion_sena': cotizacion_sena,
-                                    'cotizacion_icbf': cotizacion_icbf,
-                                    'cotizacion_total': cotizacion_total,
-                                    'fecha_inicio_incapacidad_general': fecha_inicio_incapacidad_general,
-                                    'fecha_fin_incapacidad_general': fecha_fin_incapacidad_general,
-                                    'fecha_inicio_licencia_maternidad': fecha_inicio_licencia_maternidad,
-                                    'fecha_fin_licencia_maternidad': fecha_fin_licencia_maternidad,
-                                    'fecha_inicio_vacaciones': fecha_inicio_vacaciones,
-                                    'fecha_fin_vacaciones': fecha_fin_vacaciones, 
-                                    'fecha_inicio_incapacidad_laboral': fecha_inicio_incapacidad_laboral,
-                                    'fecha_fin_incapacidad_laboral': fecha_fin_incapacidad_laboral
-                                }
-                                aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
-                                if aporte_detalle_serializador.is_valid():
-                                    aporte_detalle_serializador.save()                            
-                                else:
-                                    return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)    
+                                    # Licencia remunerada                                                     
+                                    if documento_detalle['novedad__novedad_tipo_id'] == 5:
+                                        licencia_remunerada = True                                    
+                                        tarifa_riesgos = 0
+                                        fecha_inicio_vacaciones = documento_detalle['novedad__fecha_desde']
+                                        if fecha_inicio_vacaciones < aporte.fecha_desde:
+                                            fecha_inicio_vacaciones = aporte.fecha_desde
+                                        fecha_fin_vacaciones = documento_detalle['novedad__fecha_hasta'] 
+                                        if fecha_fin_vacaciones > aporte.fecha_hasta:   
+                                            fecha_fin_vacaciones = aporte.fecha_hasta               
+
+                                    # Licencia no remunerada
+                                    if documento_detalle['novedad__novedad_tipo_id'] == 6:
+                                        suspension_temporal_contrato = True                                    
+                                        tarifa_riesgos = 0
+                                        fecha_inicio_suspension_temporal_contrato = documento_detalle['novedad__fecha_desde']
+                                        if fecha_inicio_suspension_temporal_contrato < aporte.fecha_desde:
+                                            fecha_inicio_suspension_temporal_contrato = aporte.fecha_desde
+                                        fecha_fin_suspension_temporal_contrato = documento_detalle['novedad__fecha_hasta'] 
+                                        if fecha_fin_suspension_temporal_contrato > aporte.fecha_hasta:   
+                                            fecha_fin_suspension_temporal_contrato = aporte.fecha_hasta 
+
+                                    # Vacaciones                                                     
+                                    if documento_detalle['novedad__novedad_tipo_id'] == 7:
+                                        vacaciones = True                                    
+                                        tarifa_riesgos = 0
+                                        fecha_inicio_vacaciones = documento_detalle['novedad__fecha_desde']
+                                        if fecha_inicio_vacaciones < aporte.fecha_desde:
+                                            fecha_inicio_vacaciones = aporte.fecha_desde
+                                        fecha_fin_vacaciones = documento_detalle['novedad__fecha_hasta'] 
+                                        if fecha_fin_vacaciones > aporte.fecha_hasta:   
+                                            fecha_fin_vacaciones = aporte.fecha_hasta  
+
+                                    horas_novedad = dias_novedad * 8   
+                                    base_cotizacion_pension = base_cotizacion_novedad
+                                    base_cotizacion_salud = base_cotizacion_novedad
+                                    base_cotizacion_riesgos = base_cotizacion_novedad
+                                    base_cotizacion_caja = base_cotizacion_novedad
+                                    
+                                    cotizacion_pension = Utilidades.redondear_cien(base_cotizacion_pension * tarifa_pension / 100)
+                                    cotizacion_solidaridad_solidaridad = Utilidades.redondear_cien(0)
+                                    cotizacion_solidaridad_subsistencia = Utilidades.redondear_cien(0)
+                                    cotizacion_voluntario_pension_afiliado = Utilidades.redondear_cien(0)
+                                    cotizacion_voluntario_pension_aportante = Utilidades.redondear_cien(0)
+                                    cotizacion_salud = Utilidades.redondear_cien(base_cotizacion_salud * tarifa_salud / 100)
+                                    cotizacion_riesgos = Utilidades.redondear_cien(base_cotizacion_riesgos * tarifa_riesgos / 100)                    
+                                    cotizacion_caja = Utilidades.redondear_cien(base_cotizacion_caja * tarifa_caja / 100)
+                                    cotizacion_sena = Utilidades.redondear_cien(0)
+                                    cotizacion_icbf = Utilidades.redondear_cien(0)
+                                    cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
+                                    cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf                                                                                                
+                                    # Total aportes por contrato
+                                    aporte_contrato_cotizacion_pension += cotizacion_pension
+                                    aporte_contrato_cotizacion_pension_total += cotizacion_pension_total
+                                    aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
+                                    aporte_contrato_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
+                                    aporte_contrato_cotizacion_voluntario_pension_afiliado += cotizacion_voluntario_pension_afiliado
+                                    aporte_contrato_cotizacion_voluntario_pension_aportante += cotizacion_voluntario_pension_aportante                                
+                                    aporte_contrato_cotizacion_salud += cotizacion_salud
+                                    aporte_contrato_cotizacion_riesgos += cotizacion_riesgos
+                                    aporte_contrato_cotizacion_caja += cotizacion_caja   
+                                    aporte_contrato_cotizacion_sena += aporte_cotizacion_sena
+                                    aporte_contrato_cotizacion_icbf += aporte_cotizacion_icbf
+                                    aporte_contrato_cotizacion_total += cotizacion_total                            
+                                    data = {
+                                        'aporte_contrato': aporte_contrato.id,
+                                        'ingreso': aporte_contrato.ingreso,
+                                        'retiro': aporte_contrato.retiro,
+                                        'salario_integral': aporte_contrato.contrato.salario_integral,
+                                        'licencia_remunerada': licencia_remunerada,     
+                                        'licencia_maternidad': licencia_maternidad, 
+                                        'suspension_temporal_contrato': suspension_temporal_contrato,
+                                        'incapacidad_general': incapacidad_general, 
+                                        'vacaciones': vacaciones,
+                                        'dias_incapacidad_laboral': dias_incapacidad_laboral,                   
+                                        'horas': horas_novedad,
+                                        'dias_pension': dias_novedad,
+                                        'dias_salud': dias_novedad,
+                                        'dias_riesgos': dias_novedad,
+                                        'dias_caja': dias_novedad,
+                                        'base_cotizacion_pension': base_cotizacion_pension,
+                                        'base_cotizacion_salud': base_cotizacion_salud,
+                                        'base_cotizacion_riesgos': base_cotizacion_riesgos,
+                                        'base_cotizacion_caja': base_cotizacion_caja,
+                                        'tarifa_pension': tarifa_pension,
+                                        'tarifa_salud': tarifa_salud,
+                                        'tarifa_riesgos': tarifa_riesgos,
+                                        'tarifa_caja': tarifa_caja,
+                                        'tarifa_sena': tarifa_sena,
+                                        'tarifa_icbf': tarifa_icbf,
+                                        'cotizacion_pension': cotizacion_pension,
+                                        'cotizacion_solidaridad_solidaridad': cotizacion_solidaridad_solidaridad,
+                                        'cotizacion_solidaridad_subsistencia': cotizacion_solidaridad_subsistencia,
+                                        'cotizacion_voluntario_pension_afiliado': cotizacion_voluntario_pension_afiliado,
+                                        'cotizacion_voluntario_pension_aportante': cotizacion_voluntario_pension_aportante,
+                                        'cotizacion_salud': cotizacion_salud,
+                                        'cotizacion_riesgos': cotizacion_riesgos,
+                                        'cotizacion_caja': cotizacion_caja,
+                                        'cotizacion_sena': cotizacion_sena,
+                                        'cotizacion_icbf': cotizacion_icbf,
+                                        'cotizacion_total': cotizacion_total,
+                                        'fecha_inicio_incapacidad_general': fecha_inicio_incapacidad_general,
+                                        'fecha_fin_incapacidad_general': fecha_fin_incapacidad_general,
+                                        'fecha_inicio_licencia_maternidad': fecha_inicio_licencia_maternidad,
+                                        'fecha_fin_licencia_maternidad': fecha_fin_licencia_maternidad,
+                                        'fecha_inicio_vacaciones': fecha_inicio_vacaciones,
+                                        'fecha_fin_vacaciones': fecha_fin_vacaciones, 
+                                        'fecha_inicio_incapacidad_laboral': fecha_inicio_incapacidad_laboral,
+                                        'fecha_fin_incapacidad_laboral': fecha_fin_incapacidad_laboral,
+                                        'fecha_inicio_suspension_temporal_contrato': fecha_inicio_suspension_temporal_contrato,
+                                        'fecha_fin_suspension_temporal_contrato': fecha_fin_suspension_temporal_contrato
+                                    }
+                                    aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
+                                    if aporte_detalle_serializador.is_valid():
+                                        aporte_detalle_serializador.save()                            
+                                    else:
+                                        return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)    
                             else:
                                 base_cotizacion += documento_detalle['base_cotizacion']  
                                 base_cotizacion_total += base_cotizacion                                                                                                      
