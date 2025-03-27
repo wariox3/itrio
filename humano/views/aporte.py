@@ -393,6 +393,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 if documento_detalle['novedad__novedad_tipo_id'] == 6:
                                     suspension_temporal_contrato = True                                    
                                     tarifa_riesgos = 0
+                                    tarifa_caja = 0
                                     fecha_inicio_suspension_temporal_contrato = documento_detalle['novedad__fecha_desde']
                                     if fecha_inicio_suspension_temporal_contrato < aporte.fecha_desde:
                                         fecha_inicio_suspension_temporal_contrato = aporte.fecha_desde
