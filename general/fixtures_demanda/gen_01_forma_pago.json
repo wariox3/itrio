@@ -1,0 +1,8 @@
+[
+  {
+    "model": "general.GenFormaPago",
+    "pk": 1,
+    "fields": {"cuenta_pagar": 24},
+    "inicio": true
+  }
+]
