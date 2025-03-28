@@ -3,6 +3,7 @@ from ruteo.models.vehiculo import RutVehiculo
 
 class RutDespacho(models.Model):
     fecha = models.DateTimeField(null=True)
+    fecha_ubicacion = models.DateTimeField(null=True)
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)
     tiempo_servicio = models.DecimalField(max_digits=9, decimal_places=6, default=0)
@@ -13,6 +14,8 @@ class RutDespacho(models.Model):
     estado_aprobado = models.BooleanField(default = False)
     estado_terminado = models.BooleanField(default = False)
     entrega_id = models.IntegerField(null=True)
+    latitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
+    longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)    
     vehiculo = models.ForeignKey(RutVehiculo, null=True, on_delete=models.PROTECT, related_name='despachos_vehiculo_rel')
 
     class Meta:
