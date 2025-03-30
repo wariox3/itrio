@@ -169,6 +169,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if documento.estado_aprobado == False or saltar_aprobado == True:
                 documentoSerializador = GenDocumentoSerializador(documento, data=raw, partial=True)
                 if documentoSerializador.is_valid():
+                    documentoSerializador.validated_data['fecha_contable'] = documentoSerializador.validated_data['fecha']
                     documentoSerializador.save()
                     if resolucion_actualizar:
                         resolucion = GenResolucion.objects.get(pk=resolucion_actualizar)
