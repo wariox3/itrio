@@ -365,7 +365,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             try:
                 documento = GenDocumento.objects.get(pk=id)
                 if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False and documento.estado_electronico_enviado == False:                                  
-                    if documento.documento_tipo.documento_clase_id in (100, 200,300,400,500,501,601,603):                    
+                    if documento.documento_tipo.documento_clase_id in (100, 200,300, 303,400,500,501,601,603):                    
                         respuesta = self.validacion_desaprobar(documento)
                         if respuesta['error'] == False:
                             documento.estado_aprobado = False
