@@ -48,6 +48,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                         entrega.schema_name = request.tenant.schema_name
                         entrega.save()                   
                         despacho.estado_aprobado = True
+                        despacho.fecha_salida = datetime.now()
                         despacho.entrega_id = entrega.id             
                         despacho.save()                             
                         return Response({'mensaje': 'Se aprobo el despacho'}, status=status.HTTP_200_OK)                
