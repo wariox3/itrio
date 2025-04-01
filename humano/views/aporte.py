@@ -349,7 +349,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                     tarifa_caja = 0
                                     fecha_inicio_incapacidad_general = documento_detalle['novedad__fecha_desde']
                                     if fecha_inicio_incapacidad_general < aporte.fecha_desde:
-                                        fecha_inicio_incapacidad_general < aporte.fecha_desde
+                                        fecha_inicio_incapacidad_general = aporte.fecha_desde
                                     fecha_fin_incapacidad_general = documento_detalle['novedad__fecha_hasta']
                                     if fecha_fin_incapacidad_general > aporte.fecha_hasta:
                                         fecha_fin_incapacidad_general = aporte.fecha_hasta
