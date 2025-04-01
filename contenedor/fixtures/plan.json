@@ -4,13 +4,8 @@
     "pk": 1,
     "fields": {
       "nombre": "Impulso", 
-      "limite_usuarios":1, 
-      "usuarios_base":1, 
-      "limite_ingresos":10000000,
-      "precio":16900,
-      "precio_usuario_adicional":0,
-      "limite_electronicos":5,
-      "plan_tipo_id" : "F"
+      "limite_usuarios":1, "usuarios_base":1, "limite_ingresos":10000000, "precio":16900, "precio_usuario_adicional":0, "limite_electronicos":5,
+      "plan_tipo_id" : "F", "orden":1
     }
   },
   {
@@ -18,13 +13,8 @@
     "pk": 2,
     "fields": {
       "nombre": "Impulso",
-      "limite_usuarios":1, 
-      "usuarios_base":1, 
-      "limite_ingresos":10000000,
-      "precio":22900,
-      "precio_usuario_adicional":0,
-      "limite_electronicos":5,
-      "plan_tipo_id" : "E"
+      "limite_usuarios":1, "usuarios_base":1, "limite_ingresos":10000000, "precio":22900, "precio_usuario_adicional":0, "limite_electronicos":5,
+      "plan_tipo_id" : "E", "orden":5
     }
   },
   {
@@ -32,13 +22,8 @@
     "pk": 3,
     "fields": {
       "nombre": "Crecimiento",
-      "limite_usuarios":0, 
-      "usuarios_base":2, 
-      "limite_ingresos":50000000,
-      "precio":49900,
-      "precio_usuario_adicional":24950,
-      "limite_electronicos":100,
-      "plan_tipo_id" : "F"
+      "limite_usuarios":0, "usuarios_base":2, "limite_ingresos":50000000, "precio":49900, "precio_usuario_adicional":24950, "limite_electronicos":100,
+      "plan_tipo_id" : "F", "orden":2
     }
   },
   {
@@ -46,13 +31,8 @@
     "pk": 4,
     "fields": {
       "nombre": "Crecimiento",
-      "limite_usuarios":0, 
-      "usuarios_base":2, 
-      "limite_ingresos":50000000,
-      "precio":74900,
-      "precio_usuario_adicional":37450,
-      "limite_electronicos":100,
-      "plan_tipo_id" : "E"
+      "limite_usuarios":0, "usuarios_base":2, "limite_ingresos":50000000, "precio":74900, "precio_usuario_adicional":37450, "limite_electronicos":100,
+      "plan_tipo_id" : "E", "orden":6
     }
   },
   {
@@ -60,13 +40,8 @@
     "pk": 5,
     "fields": {
       "nombre": "Expansión",
-      "limite_usuarios":0, 
-      "usuarios_base":3, 
-      "limite_ingresos":200000000,
-      "precio":95900,
-      "precio_usuario_adicional":31967,
-      "limite_electronicos":500,
-      "plan_tipo_id" : "F"
+      "limite_usuarios":0, "usuarios_base":3, "limite_ingresos":200000000, "precio":95900, "precio_usuario_adicional":31967, "limite_electronicos":500,
+      "plan_tipo_id" : "F", "orden":3
     }
   },
   {
@@ -74,13 +49,8 @@
     "pk": 6,
     "fields": {
       "nombre": "Expansión",
-      "limite_usuarios":0, 
-      "usuarios_base":3, 
-      "limite_ingresos":200000000,
-      "precio":149000,
-      "precio_usuario_adicional":49667,
-      "limite_electronicos":500,
-      "plan_tipo_id" : "E"
+      "limite_usuarios":0, "usuarios_base":3, "limite_ingresos":200000000, "precio":149000, "precio_usuario_adicional":49667, "limite_electronicos":500,
+      "plan_tipo_id" : "E", "orden":7
     }
   },
   {
@@ -88,13 +58,8 @@
     "pk": 7,
     "fields": {
       "nombre": "Éxito",
-      "limite_usuarios":0, 
-      "usuarios_base":8, 
-      "limite_ingresos":500000000,
-      "precio":172900,
-      "precio_usuario_adicional":21613,
-      "limite_electronicos":0,
-      "plan_tipo_id" : "F"
+      "limite_usuarios":0, "usuarios_base":8, "limite_ingresos":500000000, "precio":172900, "precio_usuario_adicional":21613, "limite_electronicos":0,
+      "plan_tipo_id" : "F", "orden":4
     }
   },
   {
@@ -102,13 +67,17 @@
     "pk": 8,
     "fields": {
       "nombre": "Éxito",
-      "limite_usuarios":0, 
-      "usuarios_base":8, 
-      "limite_ingresos":500000000,
-      "precio":229900,
-      "precio_usuario_adicional":28738,
-      "limite_electronicos":0,
-      "plan_tipo_id" : "E"
+      "limite_usuarios":0, "usuarios_base":8, "limite_ingresos":500000000, "precio":229900, "precio_usuario_adicional":28738, "limite_electronicos":0,
+      "plan_tipo_id" : "E", "orden":8
+    }
+  },
+  {
+    "model": "contenedor.CtnPlan",
+    "pk": 9,
+    "fields": {
+      "nombre": "Personalizado",
+      "limite_usuarios":0, "usuarios_base":0, "limite_ingresos":0, "precio":0, "precio_usuario_adicional":0, "limite_electronicos":0,
+      "plan_tipo_id" : "P", "orden":0
     }
   }
 ]

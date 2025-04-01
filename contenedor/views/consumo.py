@@ -23,10 +23,13 @@ class ConsumoViewSet(viewsets.ModelViewSet):
             anio, mes = fecha_obj.year, fecha_obj.month            
             cantidad_dias = calendar.monthrange(anio, mes)[1]
             if not CtnConsumoPeriodo.objects.filter(fecha=fecha_parametro).exists():
-                usuarios_contenedores = UsuarioContenedor.objects.filter(rol='propietario', contenedor__reddoc=True)
+                usuarios_contenedores = UsuarioContenedor.objects.filter(rol='propietario')
                 consumos = []
-                for usuario_contenedor in usuarios_contenedores:            
-                    vrPlan = usuario_contenedor.contenedor.plan.precio
+                for usuario_contenedor in usuarios_contenedores:      
+                    if usuario_contenedor.contenedor.plan_id == 9:
+                        vrPlan = usuario_contenedor.contenedor.precio
+                    else:
+                        vrPlan = usuario_contenedor.contenedor.plan.precio
                     vrPlanDia = vrPlan / cantidad_dias
                     consumo = CtnConsumo(                        
                         fecha=fecha_parametro,

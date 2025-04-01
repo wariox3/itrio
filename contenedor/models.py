@@ -71,6 +71,7 @@ class CtnPlan(models.Model):
     precio_usuario_adicional = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     limite_electronicos = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     plan_tipo_id = models.CharField(max_length=1, null=True) 
+    orden = models.IntegerField(default=0)
 
     class Meta:
         db_table = "cnt_plan"
@@ -85,6 +86,7 @@ class Contenedor(TenantMixin):
     reddoc = models.BooleanField(default = False)
     ruteo = models.BooleanField(default = False)
     cortesia = models.BooleanField(default = False)
+    precio = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     plan = models.ForeignKey(CtnPlan, on_delete=models.CASCADE, null=True)         
     # default true, schema will be automatically created and synced when it is saved
     auto_create_schema = True

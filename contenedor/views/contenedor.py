@@ -52,7 +52,8 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                              plan_id=plan_id, usuarios=1, 
                              reddoc=reddoc, 
                              ruteo=ruteo,
-                             cortesia=False)  
+                             cortesia=False,
+                             precio=0)  
                 os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures/ --schema={subdominio}")
                 os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures_inicio/ --schema={subdominio}")                           
                 contenedor = Contenedor.objects.filter(**{'schema_name':subdominio}).first()                        
