@@ -37,7 +37,7 @@ class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RutDespacho
         fields = ['id', 'fecha', 'fecha_salida', 'fecha_ubicacion', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
-                  'visitas', 'visitas_entregadas', 'vehiculo', 'entrega_id', 'estado_aprobado', 'estado_terminado']
+                  'visitas', 'visitas_entregadas', 'vehiculo', 'entrega_id', 'estado_aprobado', 'estado_terminado', 'latitud', 'longitud']
 
     def to_representation(self, instance):      
         vehiculo_placa = ""
@@ -80,5 +80,7 @@ class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):
             'estado_terminado': instance.estado_terminado, 
             'tiempo_trafico': tiempo_trafico,
             'estado': estado,
+            'latitud' : instance.latitud,
+            'longitud' : instance.longitud
         }    
     
