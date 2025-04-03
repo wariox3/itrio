@@ -35,7 +35,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                     despacho = RutDespacho.objects.get(pk=id)  
                     if despacho.estado_aprobado == False: 
                         entrega = VerEntrega()
-                        entrega.desapcho_id = despacho.id
+                        entrega.despacho_id = despacho.id
                         entrega.fecha = despacho.fecha
                         entrega.peso = despacho.peso
                         entrega.volumen = despacho.volumen
