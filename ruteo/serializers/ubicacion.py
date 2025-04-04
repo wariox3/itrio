@@ -9,12 +9,14 @@ class RutUbicacionSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = RutUbicacion
-        fields = ['id', 'fecha', 'latitud', 'longitud', 'despacho', 'visita']
+        fields = ['id', 'fecha', 'latitud', 'longitud', 'despacho', 'visita', 'usuario_id', 'detenido']
 
     def to_representation(self, instance):      
         return {
             'id': instance.id,  
             'fecha': instance.fecha,
             'latitud': instance.latitud,
-            'longitud': instance.longitud
+            'longitud': instance.longitud,
+            'usuario_id': instance.usuario_id,
+            'detenido': instance.detenido
         }
