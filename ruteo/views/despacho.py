@@ -118,4 +118,12 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
             except RutDespacho.DoesNotExist:
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+
+    @action(detail=False, methods=["post"], url_path=r'tablero-trafico',)
+    def tablero_trafico(self, request): 
+        despachos = RutDespacho.objects.filter(
+                        estado_aprobado=True, estado_terminado=False                                               
+                    )           
+        return Response({'mensaje': 'Se aprobo el despacho'}, status=status.HTTP_200_OK)  
+               

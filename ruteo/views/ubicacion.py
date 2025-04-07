@@ -20,7 +20,7 @@ class RutUbicacionViewSet(viewsets.ModelViewSet):
         longitud = serializer.validated_data.get('longitud')
         despacho = serializer.validated_data.get('despacho')
         
-        if despacho:           
+        '''if despacho:           
             ultima_ubicacion = RutUbicacion.objects.filter(despacho=despacho).order_by('-fecha').first()            
             if ultima_ubicacion:            
                 
@@ -36,7 +36,7 @@ class RutUbicacionViewSet(viewsets.ModelViewSet):
                     despacho.latitud = latitud
                     despacho.longitud = longitud
                     despacho.save()                    
-                    return Response({'creado':True}, status=status.HTTP_200_OK)                
+                    return Response({'creado':True}, status=status.HTTP_200_OK)'''                
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)       
