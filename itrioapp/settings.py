@@ -201,6 +201,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://138.197.140.230",
     "http://reddocapi.online",
     "http://reddoc.online",
+    "http://app.reddoc.online",
     "http://reddoc.co",
     "https://reddoc.com.co",
     "https://reddocapi.co",
