@@ -540,7 +540,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documento_detalle.save()
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Cuenta por pagar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                                                
+                                                'mensaje': f'Detalle {documento_detalle.id}: cuenta por pagar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)                                                                
                         else:
                             # Item
                             if documento_detalle.tipo_registro == 'I':                                                                
