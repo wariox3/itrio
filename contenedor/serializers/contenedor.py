@@ -16,10 +16,24 @@ class ContenedorSerializador(serializers.ModelSerializer):
         plan_usuarios_base = None
         plan_limite_usuarios = None
         plan_nombre = None
+        plan_venta = False
+        plan_compra = False
+        plan_cartera = False
+        plan_tesoreria = False
+        plan_inventario = False
+        plan_humano = False
+        plan_contabilidad = False
         if plan:
             plan_usuarios_base = plan.usuarios_base
             plan_limite_usuarios = plan.limite_usuarios
             plan_nombre = plan.nombre
+            plan_venta = plan.venta
+            plan_compra = plan.compra
+            plan_cartera = plan.cartera
+            plan_tesoreria = plan.tesoreria
+            plan_inventario = plan.inventario
+            plan_humano = plan.humano
+            plan_contabilidad = plan.contabilidad            
         acceso_restringido = False
         if instance.usuario:
             usuario = instance.usuario
@@ -33,6 +47,13 @@ class ContenedorSerializador(serializers.ModelSerializer):
             'plan_usuarios_base': plan_usuarios_base,
             'plan_limite_usuarios': plan_limite_usuarios,
             'plan_nombre':  plan_nombre,
+            'plan_venta': plan_venta,
+            'plan_compra': plan_compra,
+            'plan_tesoreria': plan_tesoreria,
+            'plan_cartera': plan_cartera,
+            'plan_inventario': plan_inventario,
+            'plan_humano': plan_humano,
+            'plan_contabilidad': plan_contabilidad,
             'imagen': f"https://{bucket}.{region}.digitaloceanspaces.com/{instance.imagen}",
             'reddoc': instance.reddoc,
             'ruteo': instance.ruteo,
