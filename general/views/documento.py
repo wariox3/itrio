@@ -519,7 +519,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
                                     return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Cuenta por cobrar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)
+                                                'mensaje': f'Detalle {documento_detalle.id}: cuenta por cobrar documento referencia'}, status=status.HTTP_400_BAD_REQUEST)
                                 
                             if documento_detalle.documento_afectado.documento_tipo.pagar:
                                 data = data_general.copy()                            
