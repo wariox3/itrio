@@ -5,7 +5,7 @@
     "fields": {
       "nombre": "Impulso", 
       "limite_usuarios":1, "usuarios_base":1, "limite_ingresos":10000000, "precio":16900, "precio_usuario_adicional":0, "limite_electronicos":5,
-      "plan_tipo_id" : "F", "orden":1
+      "plan_tipo_id" : "F", "orden":1, "venta":true
     }
   },
   {
@@ -14,7 +14,7 @@
     "fields": {
       "nombre": "Impulso",
       "limite_usuarios":1, "usuarios_base":1, "limite_ingresos":10000000, "precio":22900, "precio_usuario_adicional":0, "limite_electronicos":5,
-      "plan_tipo_id" : "E", "orden":5
+      "plan_tipo_id" : "E", "orden":5, "venta":true, "cartera":true, "compra":true, "tesoreria":true
     }
   },
   {
@@ -23,7 +23,7 @@
     "fields": {
       "nombre": "Crecimiento",
       "limite_usuarios":0, "usuarios_base":2, "limite_ingresos":50000000, "precio":49900, "precio_usuario_adicional":24950, "limite_electronicos":100,
-      "plan_tipo_id" : "F", "orden":2
+      "plan_tipo_id" : "F", "orden":2, "venta":true
     }
   },
   {
@@ -32,7 +32,7 @@
     "fields": {
       "nombre": "Crecimiento",
       "limite_usuarios":0, "usuarios_base":2, "limite_ingresos":50000000, "precio":74900, "precio_usuario_adicional":37450, "limite_electronicos":100,
-      "plan_tipo_id" : "E", "orden":6
+      "plan_tipo_id" : "E", "orden":6, "venta":true, "cartera":true, "compra":true, "tesoreria":true, "contabilidad":true, "inventario":true
     }
   },
   {
@@ -41,7 +41,7 @@
     "fields": {
       "nombre": "Expansión",
       "limite_usuarios":0, "usuarios_base":3, "limite_ingresos":200000000, "precio":95900, "precio_usuario_adicional":31967, "limite_electronicos":500,
-      "plan_tipo_id" : "F", "orden":3
+      "plan_tipo_id" : "F", "orden":3, "venta":true
     }
   },
   {
@@ -50,7 +50,7 @@
     "fields": {
       "nombre": "Expansión",
       "limite_usuarios":0, "usuarios_base":3, "limite_ingresos":200000000, "precio":149000, "precio_usuario_adicional":49667, "limite_electronicos":500,
-      "plan_tipo_id" : "E", "orden":7
+      "plan_tipo_id" : "E", "orden":7, "venta":true, "cartera":true, "compra":true, "tesoreria":true, "contabilidad":true, "inventario":true, "humano":true
     }
   },
   {
@@ -59,7 +59,7 @@
     "fields": {
       "nombre": "Éxito",
       "limite_usuarios":0, "usuarios_base":8, "limite_ingresos":500000000, "precio":172900, "precio_usuario_adicional":21613, "limite_electronicos":0,
-      "plan_tipo_id" : "F", "orden":4
+      "plan_tipo_id" : "F", "orden":4, "venta":true
     }
   },
   {
@@ -68,16 +68,34 @@
     "fields": {
       "nombre": "Éxito",
       "limite_usuarios":0, "usuarios_base":8, "limite_ingresos":500000000, "precio":229900, "precio_usuario_adicional":28738, "limite_electronicos":0,
-      "plan_tipo_id" : "E", "orden":8
+      "plan_tipo_id" : "E", "orden":8, "venta":true, "cartera":true, "compra":true, "tesoreria":true, "contabilidad":true, "inventario":true, "humano":true
     }
   },
   {
     "model": "contenedor.CtnPlan",
     "pk": 9,
     "fields": {
-      "nombre": "Personalizado",
+      "nombre": "Personalizado 1",
       "limite_usuarios":0, "usuarios_base":0, "limite_ingresos":0, "precio":0, "precio_usuario_adicional":0, "limite_electronicos":0,
-      "plan_tipo_id" : "P", "orden":0
+      "plan_tipo_id" : "P", "orden":0, "venta":true, "cartera":true, "compra":true, "tesoreria":true
+    }
+  },
+  {
+    "model": "contenedor.CtnPlan",
+    "pk": 10,
+    "fields": {
+      "nombre": "Personalizado 2",
+      "limite_usuarios":0, "usuarios_base":0, "limite_ingresos":0, "precio":0, "precio_usuario_adicional":0, "limite_electronicos":0,
+      "plan_tipo_id" : "P", "orden":0, "venta":true, "cartera":true, "compra":true, "tesoreria":true, "contabilidad":true, "inventario":true
+    }
+  },
+  {
+    "model": "contenedor.CtnPlan",
+    "pk": 11,
+    "fields": {
+      "nombre": "Personalizado 3",
+      "limite_usuarios":0, "usuarios_base":0, "limite_ingresos":0, "precio":0, "precio_usuario_adicional":0, "limite_electronicos":0,
+      "plan_tipo_id" : "P", "orden":0, "venta":true, "cartera":true, "compra":true, "tesoreria":true, "contabilidad":true, "inventario":true, "humano":true
     }
   }
 ]
