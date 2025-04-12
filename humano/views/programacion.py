@@ -93,7 +93,7 @@ def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
         porcentaje = 1.8
     if salarios_minimos >= 20:
         porcentaje = 2            
-    return porcentaje
+    return Decimal(porcentaje)
 
 class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
