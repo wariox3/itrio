@@ -80,20 +80,20 @@ def datos_detalle(data_general, data, concepto):
 
 def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
     salarios_minimos = base_cotizacion / salario_minimo
-    porcentaje = 0
-    if salarios_minimos >= 4 and salarios_minimos < 16:
-        porcentaje = 1        
-    if salarios_minimos >= 16 and salarios_minimos < 17:
-        porcentaje = 1.2
-    if salarios_minimos >= 17 and salarios_minimos < 18:
-        porcentaje = 1.4
-    if salarios_minimos >= 18 and salarios_minimos < 19:
-        porcentaje = 1.6
-    if salarios_minimos >= 19 and salarios_minimos < 20:
-        porcentaje = 1.8
-    if salarios_minimos >= 20:
-        porcentaje = 2            
-    return Decimal(porcentaje)
+    porcentaje = Decimal(0)
+    if salarios_minimos >= Decimal(4) and salarios_minimos < Decimal(16):
+        porcentaje = Decimal(1)        
+    if salarios_minimos >= Decimal(16) and salarios_minimos < Decimal(17):
+        porcentaje = Decimal('1.2')
+    if salarios_minimos >= Decimal(17) and salarios_minimos < Decimal(18):
+        porcentaje = Decimal('1.4')
+    if salarios_minimos >= Decimal(18) and salarios_minimos < Decimal(19):
+        porcentaje = Decimal('1.6')
+    if salarios_minimos >= Decimal(19) and salarios_minimos < Decimal(20):
+        porcentaje = Decimal('1.8')
+    if salarios_minimos >= Decimal(20):
+        porcentaje = Decimal(2)                
+    return porcentaje
 
 class HumProgramacionViewSet(viewsets.ModelViewSet):
     queryset = HumProgramacion.objects.all()
