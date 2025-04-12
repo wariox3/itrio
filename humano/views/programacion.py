@@ -859,7 +859,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         tope_fondo = configuracion['hum_salario_minimo'] * 4
                                         base_cotizacion_total = data_general['base_cotizacion'] + programacion_detalle.base_cotizacion_acumulado
                                         if base_cotizacion_total >= tope_fondo:    
-                                            porcentaje_fondo = calcular_porcentaje_fondo(configuracion['hum_salario_minimo'], base_cotizacion_total)                                      
+                                            porcentaje_fondo = calcular_porcentaje_fondo(configuracion['hum_salario_minimo'], base_cotizacion_total)
                                             if porcentaje_fondo > 0:
                                                 if base_cotizacion_total > configuracion['hum_salario_minimo'] * 25:
                                                     round(base_cotizacion_total = configuracion['hum_salario_minimo'] * 25)                                            
@@ -881,7 +881,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
                                                     else:
-                                                        return Response({'mensaje': f'Validaciones en fondo solidaridad detalle {programacion_detalle.id}', 'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                                        return Response({'mensaje': f'Validaciones en fondo solidaridad detalle {programacion_detalle.id} {porcentaje_fondo}', 'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
                                 total = data_general['devengado'] - data_general['deduccion']
                                 devengado = data_general['devengado']
