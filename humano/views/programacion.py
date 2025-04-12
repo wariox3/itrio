@@ -850,7 +850,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
                                                     else:
-                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                                        return Response({'mensaje': f'Validaciones en pension detalle {programacion_detalle.id}', 'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
                                 # Fondo solidaridad
                                 if programacion_detalle.descuento_fondo_solidaridad:
@@ -881,7 +881,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
                                                     else:
-                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                                        return Response({'mensaje': f'Validaciones en fondo solidaridad detalle {programacion_detalle.id}', 'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
                                 total = data_general['devengado'] - data_general['deduccion']
                                 devengado = data_general['devengado']
