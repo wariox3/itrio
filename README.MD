@@ -23,8 +23,10 @@ DO_CLAVE_ACCESO="xyz"
 DO_CLAVE_SECRETA="xyz"
 DO_REGION="xyz"
 DO_BUCKET="xyz"
-CF_TURNSTILE_SITE_KEY=''
-CF_TURNSTILE_SECRET_KEY=''
+#Agregar los secret key de cloudflare para cada proyecto
+CF_TURNSTILE_SECRET_KEY_REDDOC='xyz'
+CF_TURNSTILE_SECRET_KEY_RUTEO='xyz'
+CF_TURNSTILE_SECRET_KEY_POS='xyz'
 #GoogleKey
 GOOGLE_MAPS_API_KEY=""
 #Pasarela de pago
