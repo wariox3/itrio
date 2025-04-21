@@ -13,7 +13,7 @@ class Login(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         try:
             turnstile_token = request.data.get('cf_turnstile_response', '')
-            proyecto = request.data.get('proyecto', 'REDDOC').upper()  # Aseguramos mayúsculas
+            proyecto = request.data.get('proyecto', 'REDDOC').upper()
             
             # Validar proyecto
             proyectos_validos = ['REDDOC', 'RUTEO', 'POS']
@@ -27,7 +27,11 @@ class Login(TokenObtainPairView):
             # Obtener secret key para el proyecto
             turnstile_secret_key = config(f'CF_TURNSTILE_SECRET_KEY_{proyecto}', default='')
             
-            if turnstile_secret_key:
+            # Verificar entorno
+            env = config('ENV', default='prod').lower()
+            
+            # Solo validar Turnstile en producción (no en dev ni test)
+            if env not in ['dev', 'test'] and turnstile_secret_key:
                 client_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
                 try:
                     CloudflareTurnstile.verify_token(turnstile_token, turnstile_secret_key, client_ip)
@@ -38,7 +42,7 @@ class Login(TokenObtainPairView):
                         'codigo': 8 
                     }, status=status.HTTP_400_BAD_REQUEST)
 
-            # Autenticación de usuario
+            # Resto de la lógica de autenticación...
             username = request.data.get('username', '').strip()
             password = request.data.get('password', '').strip()
             
@@ -56,7 +60,6 @@ class Login(TokenObtainPairView):
                     'codigo': 7
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
-            # Generar tokens
             login_serializer = self.serializer_class(data=request.data)
             login_serializer.is_valid(raise_exception=True)
             user_serializer = UserSerializer(user)
