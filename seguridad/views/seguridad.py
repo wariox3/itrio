@@ -1,51 +1,75 @@
 from rest_framework import status
-from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
-from seguridad.serializers import CustomTokenObtainPairSerializer, UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import authenticate
-from .turnstile import CloudflareTurnstile
 from decouple import config
-    
+from seguridad.serializers import CustomTokenObtainPairSerializer, UserSerializer
+from .turnstile import CloudflareTurnstile
+
 class Login(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
-        turnstile_token = request.data.get('cf_turnstile_response', '')
-        
-        turnstile_secret_key = config('CF_TURNSTILE_SECRET_KEY', default='')
-        if turnstile_secret_key:
-            client_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
-            turnstile_valid = CloudflareTurnstile.verify_token(turnstile_token, client_ip)
+        try:
+            turnstile_token = request.data.get('cf_turnstile_response', '')
+            proyecto = request.data.get('proyecto', 'REDDOC').upper()  # Aseguramos mayúsculas
             
-            if not turnstile_valid:
+            # Validar proyecto
+            proyectos_validos = ['REDDOC', 'RUTEO', 'POS']
+            if proyecto not in proyectos_validos:
                 return Response({
-                    'error': 'Error en la verificación de Turnstile',
-                    'codigo': 8 
+                    'error': 'Proyecto no válido',
+                    'codigo': 9,
+                    'proyectos_validos': proyectos_validos
                 }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Obtener secret key para el proyecto
+            turnstile_secret_key = config(f'CF_TURNSTILE_SECRET_KEY_{proyecto}', default='')
+            
+            if turnstile_secret_key:
+                client_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+                try:
+                    CloudflareTurnstile.verify_token(turnstile_token, turnstile_secret_key, client_ip)
+                except ValidationError as e:
+                    return Response({
+                        'error': 'Error en la verificación de Turnstile',
+                        'detalle': str(e.detail),
+                        'codigo': 8 
+                    }, status=status.HTTP_400_BAD_REQUEST)
 
-        # Autenticación normal
-        username = request.data.get('username', '')
-        password = request.data.get('password', '')
-        user = authenticate(username=username, password=password)
-
-        if user is not None:
-            login_serializer = self.serializer_class(data=request.data)
-            if login_serializer.is_valid():
-                user_serializer = UserSerializer(user)
+            # Autenticación de usuario
+            username = request.data.get('username', '').strip()
+            password = request.data.get('password', '').strip()
+            
+            if not username or not password:
                 return Response({
-                    'token': login_serializer.validated_data.get('access'),
-                    'refresh-token': login_serializer.validated_data.get('refresh'),
-                    'user': user_serializer.data
-                }, status=status.HTTP_200_OK)
+                    'error': 'Usuario y contraseña son requeridos',
+                    'codigo': 10
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+            user = authenticate(username=username, password=password)
+            
+            if user is None:
+                return Response({
+                    'error': 'Credenciales inválidas',
+                    'codigo': 7
+                }, status=status.HTTP_400_BAD_REQUEST)
+                
+            # Generar tokens
+            login_serializer = self.serializer_class(data=request.data)
+            login_serializer.is_valid(raise_exception=True)
+            user_serializer = UserSerializer(user)
             
             return Response({
-                'error': 'Contraseña o nombre de usuario incorrectos',
-                'codigo': 7
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'token': login_serializer.validated_data.get('access'),
+                'refresh-token': login_serializer.validated_data.get('refresh'),
+                'user': user_serializer.data
+            }, status=status.HTTP_200_OK)
             
-        return Response({
-            'mensaje': 'Contraseña o nombre de usuario incorrectos',
-            'codigo': 7
-        }, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({
+                'error': 'Error interno del servidor',
+                'detalle': str(e),
+                'codigo': 500
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

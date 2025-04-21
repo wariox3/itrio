@@ -6,16 +6,31 @@ class CloudflareTurnstile:
     VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
     
     @classmethod
-    def verify_token(cls, token, ip_address=None):
-        # Obtenemos la clave secreta desde .env usando python-decouple
-        secret_key = config('CF_TURNSTILE_SECRET_KEY', default='')
+    def verify_token(cls, token, secret_key, ip_address=None):
+        """Verifica un token de Turnstile con Cloudflare.
         
-        # Si no hay clave configurada, consideramos la verificación como exitosa
+        Args:
+            token (str): Token de respuesta de Turnstile
+            secret_key (str): Clave secreta del sitio
+            ip_address (str, optional): Dirección IP del usuario. Defaults to None.
+        
+        Returns:
+            bool: True si la verificación fue exitosa
+        
+        Raises:
+            ValidationError: Si hay errores en la verificación
+        """
+        if not token:
+            raise ValidationError({
+                'cf_turnstile_response': "Token de Turnstile no proporcionado"
+            })
+            
         if not secret_key:
-            return True 
+            # Si no hay secret key configurada, considerar como válido (para desarrollo)
+            return True
             
         data = {
-            'secret': secret_key,  # Usamos la variable obtenida de .env
+            'secret': secret_key,
             'response': token
         }
         
@@ -24,16 +39,18 @@ class CloudflareTurnstile:
             
         try:
             response = requests.post(cls.VERIFY_URL, data=data, timeout=5)
+            response.raise_for_status()  # Lanza excepción para códigos HTTP 4xx/5xx
             result = response.json()
             
             if not result.get('success'):
                 error_codes = result.get('error-codes', ['unknown'])
                 raise ValidationError({
-                    'cf_turnstile_response': f"Error en verificación Turnstile: {', '.join(error_codes)}"
+                    'cf_turnstile_response': f"Error en verificación Turnstile: {', '.join(error_codes)}",
+                    'error_codes': error_codes
                 })
                 
             return True
         except requests.RequestException as e:
             raise ValidationError({
-                'cf_turnstile_response': "Error al conectar con el servicio de verificación"
+                'cf_turnstile_response': f"Error al conectar con el servicio de verificación: {str(e)}"
             })
