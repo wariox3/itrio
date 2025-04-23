@@ -5,7 +5,7 @@
     "fields": {
       "nombre": "FACTURA ELECTRÓNICA DE VENTA",
       "documento_clase": 100, "comprobante": 4,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true
     }
   },
   {
@@ -14,7 +14,7 @@
     "fields": {
       "nombre": "NOTA CRÉDITO DE VENTA",
       "documento_clase": 101, "comprobante": 5,
-      "venta": true, "cobrar" : true, "operacion": -1, "contabilidad": true, "inventario": true, "operacion_inventario": 1
+      "venta": true, "cobrar" : true, "operacion": -1, "contabilidad": true, "inventario": true, "operacion_inventario": 1, "electronico" : true
     }
   },
   {
@@ -23,7 +23,7 @@
     "fields": {
       "nombre": "NOTA DÉBITO DE VENTA",
       "documento_clase": 102, "comprobante": 6,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true
     }
   },
   {
@@ -41,7 +41,7 @@
     "fields": {
       "nombre": "COMPRA",
       "documento_clase": 300, "comprobante": 7,
-      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
+      "compra": true, "pagar": true, "electronico" : true, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
     }
   },
   {
@@ -50,7 +50,7 @@
     "fields": {
       "nombre": "NOTA CREDITO COMPRA",
       "documento_clase": 301,  "comprobante": 8,
-      "compra": true, "pagar": true, "electronico" : false, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true
+      "compra": true, "pagar": true, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true
     }
   },
   {
@@ -59,7 +59,7 @@
     "fields": {
       "nombre": "NOTA DEBITO COMPRA",
       "documento_clase": 302, "comprobante": 9,
-      "compra": true, "pagar": true, "electronico" : false, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
+      "compra": true, "pagar": true, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
     }
   },
   {
@@ -128,7 +128,7 @@
     "pk": 15,
     "fields": {
       "nombre": "NOMINA ELECTRONICA",
-      "documento_clase": 702
+      "documento_clase": 702, "electronico" : true
     }
   },
   {
@@ -211,7 +211,7 @@
     "fields": {
       "nombre": "FACTURA POS",
       "documento_clase": 105, "comprobante": 16,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true
     }
   },
   {
