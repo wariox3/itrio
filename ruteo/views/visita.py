@@ -841,7 +841,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita = RutVisita.objects.get(pk=id)                            
             except RutVisita.DoesNotExist:
                 return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
-            if visita.estado_entregado == False:                
+            if visita.estado_entregado == False and visita.estado_despacho == True:                
                 despacho = RutDespacho.objects.get(pk=visita.despacho_id)                
                 despacho.visitas_liberadas += 1
                 despacho.save()  
@@ -850,7 +850,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita.save()                        
                 return Response({'mensaje': f'Se libero con exito'}, status=status.HTTP_200_OK)
             else:
-                return Response({'mensaje':'La visita ya fue entregada y no se puede liberar', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+                return Response({'mensaje':'La visita ya fue entregada o no esta despachada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
             

@@ -1,0 +1,8 @@
+[
+    {
+      "model": "ruteo.RutNovedadTipo",
+      "pk": 1,
+      "fields": {"nombre": "Direccion errada"}
+    }         
+  ]
+  
