@@ -817,5 +817,41 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'consulta-documento',)
+    def consulta_documento(self, request):             
+        raw = request.data
+        despacho_id = raw.get('despacho_id')    
+        numero = raw.get('numero')
+        if despacho_id and numero:
+            visita = RutVisita.objects.filter(despacho_id=despacho_id, numero=numero).first()                                            
+            if visita:
+                return Response({'id': visita.id}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':f'La visita con numero {numero} no existe en este despacho', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                              
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+
+    @action(detail=False, methods=["post"], url_path=r'liberar',)
+    def liberar(self, request):             
+        raw = request.data
+        id = raw.get('id')        
+        if id:
+            try:
+                visita = RutVisita.objects.get(pk=id)                            
+            except RutVisita.DoesNotExist:
+                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
+            if visita.estado_entregado == False:                
+                despacho = RutDespacho.objects.get(pk=visita.despacho_id)                
+                despacho.visitas_liberadas += 1
+                despacho.save()  
+                visita.estado_despacho = False 
+                visita.despacho = None           
+                visita.save()                        
+                return Response({'mensaje': f'Se libero con exito'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':'La visita ya fue entregada y no se puede liberar', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
             
         

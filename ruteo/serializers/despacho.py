@@ -8,7 +8,7 @@ class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RutDespacho
         fields = ['id', 'fecha', 'fecha_salida', 'fecha_ubicacion', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
-                  'visitas', 'visitas_entregadas', 'vehiculo', 'entrega_id', 'estado_aprobado', 'estado_terminado']
+                  'visitas', 'visitas_entregadas', 'visitas_liberadas', 'vehiculo', 'entrega_id', 'estado_aprobado', 'estado_terminado']
 
     def to_representation(self, instance):      
         vehiculo_placa = ""
@@ -26,6 +26,7 @@ class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):
             'tiempo_trayecto': instance.tiempo_trayecto,
             'visitas': instance.visitas,
             'visitas_entregadas': instance.visitas_entregadas,
+            'visitas_liberadas': instance.visitas_liberadas,
             'vehiculo_id': instance.vehiculo_id,
             'vehiculo_placa': vehiculo_placa,
             'entrega_id': instance.entrega_id,
@@ -37,7 +38,7 @@ class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RutDespacho
         fields = ['id', 'fecha', 'fecha_salida', 'fecha_ubicacion', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
-                  'visitas', 'visitas_entregadas', 'vehiculo', 'entrega_id', 'estado_aprobado', 'estado_terminado', 'latitud', 'longitud']
+                  'visitas', 'visitas_entregadas', 'visitas_liberadas', 'vehiculo', 'entrega_id', 'estado_aprobado', 'estado_terminado', 'latitud', 'longitud']
 
     def to_representation(self, instance):      
         vehiculo_placa = ""
@@ -72,6 +73,7 @@ class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):
             'tiempo_trayecto': instance.tiempo_trayecto,
             'visitas': instance.visitas,
             'visitas_entregadas': instance.visitas_entregadas,
+            'visitas_liberadas': instance.visitas_liberadas,
             'visitas_entregadas_esperadas': visitas_entregadas_esperadas,
             'vehiculo_id': instance.vehiculo_id,
             'vehiculo_placa': vehiculo_placa,

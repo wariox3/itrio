@@ -12,6 +12,7 @@ class RutDespacho(models.Model):
     tiempo = models.DecimalField(max_digits=9, decimal_places=6, default=0)    
     visitas = models.FloatField(default=0)    
     visitas_entregadas = models.FloatField(default=0)
+    visitas_liberadas = models.FloatField(default=0)
     estado_aprobado = models.BooleanField(default = False)
     estado_terminado = models.BooleanField(default = False)
     entrega_id = models.IntegerField(null=True)
