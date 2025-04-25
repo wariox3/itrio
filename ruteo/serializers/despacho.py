@@ -1,10 +1,13 @@
 from rest_framework import serializers
 from ruteo.models.despacho import RutDespacho
+from ruteo.models.vehiculo import RutVehiculo
 from datetime import datetime
 from django.utils.timezone import now
 from decimal import Decimal
 
 class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):    
+    vehiculo = serializers.PrimaryKeyRelatedField(queryset=RutVehiculo.objects.all()) 
+    
     class Meta:
         model = RutDespacho
         fields = ['id', 'fecha', 'fecha_salida', 'fecha_ubicacion', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
