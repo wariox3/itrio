@@ -58,7 +58,9 @@ class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):
         if instance.visitas > 0:            
             tiempo_promedio_visita = Decimal(instance.tiempo) / Decimal(instance.visitas)
         tiempo_entrega = Decimal(instance.visitas_entregadas) * tiempo_promedio_visita        
-        visitas_entregadas_esperadas = round(tiempo_trafico / tiempo_promedio_visita)
+        visitas_entregadas_esperadas = 0
+        if tiempo_promedio_visita > 0:
+            visitas_entregadas_esperadas = round(tiempo_trafico / tiempo_promedio_visita)
         if visitas_entregadas_esperadas > instance.visitas:
             visitas_entregadas_esperadas = instance.visitas
         estado = 'tiempo'
