@@ -99,7 +99,8 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                         visita.estado_despacho = False
                         visita.despacho = None
                         visita.save()
-                    despacho.estado_anulado = True                                    
+                    despacho.estado_anulado = True
+                    despacho.estado_terminado = True                                    
                     despacho.save()               
                     return Response({'mensaje': 'Se anulo el despacho'}, status=status.HTTP_200_OK)                                                              
                 else:
@@ -108,6 +109,40 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], url_path=r'visita-adicionar',)
+    def visita_adicionar(self, request):             
+        raw = request.data
+        id = raw.get('id')
+        visita_id = raw.get('visita_id')
+        if id and visita_id:
+            try:                
+                despacho = RutDespacho.objects.get(pk=id)  
+                if despacho.estado_terminado == False:
+                    visita = RutVisita.objects.get(pk=visita_id)
+                    if visita:
+                        if visita.estado_despacho == False:
+                            visita.despacho = despacho
+                            visita.estado_despacho = True
+                            visita.save()                            
+                            despacho.peso = despacho.peso + visita.peso
+                            despacho.volumen = despacho.volumen + visita.volumen
+                            despacho.tiempo = despacho.tiempo + visita.tiempo
+                            despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
+                            despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
+                            despacho.visitas = despacho.visitas + 1                                   
+                            despacho.save()               
+                            return Response({'mensaje': 'Se adiciono la visita'}, status=status.HTTP_200_OK)  
+                        else:
+                            return Response({'mensaje':'La visita esta en otro despacho', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'mensaje':'La visita no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje':'El despacho esta terminado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
+            except RutDespacho.DoesNotExist:
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'plano-semantica',)
     def plano_semantica(self, request):             
