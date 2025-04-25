@@ -15,6 +15,7 @@ class RutDespacho(models.Model):
     visitas_liberadas = models.FloatField(default=0)
     estado_aprobado = models.BooleanField(default = False)
     estado_terminado = models.BooleanField(default = False)
+    estado_anulado = models.BooleanField(default = False)
     entrega_id = models.IntegerField(null=True)
     latitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)    

@@ -83,6 +83,32 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
 
+    @action(detail=False, methods=["post"], url_path=r'anular',)
+    def anular(self, request):             
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:                
+                despacho = RutDespacho.objects.get(pk=id)  
+                if despacho.estado_aprobado == True and despacho.estado_anulado == False and despacho.estado_terminado == False:
+                    visitas = RutVisita.objects.filter(despacho_id=id, estado_entregado=True).first()
+                    if visitas:
+                        return Response({'mensaje':'El despacho tiene visitas entregadas', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                    visitas = RutVisita.objects.filter(despacho_id=id)
+                    for visita in visitas:
+                        visita.estado_despacho = False
+                        visita.despacho = None
+                        visita.save()
+                    despacho.estado_anulado = True                                    
+                    despacho.save()               
+                    return Response({'mensaje': 'Se anulo el despacho'}, status=status.HTTP_200_OK)                                                              
+                else:
+                    return Response({'mensaje':'El despacho debe estar aprobado, sin terminar y sin anular', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
+            except RutDespacho.DoesNotExist:
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
     @action(detail=False, methods=["post"], url_path=r'plano-semantica',)
     def plano_semantica(self, request):             
         raw = request.data
