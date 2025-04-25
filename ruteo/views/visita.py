@@ -844,6 +844,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             if visita.estado_entregado == False and visita.estado_despacho == True:                
                 despacho = RutDespacho.objects.get(pk=visita.despacho_id)                
                 despacho.visitas_liberadas += 1
+                despacho.peso = despacho.peso - visita.peso
+                despacho.volumen = despacho.volumen - visita.volumen
+                despacho.tiempo = despacho.tiempo - visita.tiempo
+                despacho.tiempo_servicio = despacho.tiempo_servicio - visita.tiempo_servicio
+                despacho.tiempo_trayecto = despacho.tiempo_trayecto - visita.tiempo_trayecto
+                despacho.visitas = despacho.visitas - 1                  
                 despacho.save()  
                 visita.estado_despacho = False 
                 visita.despacho = None           
