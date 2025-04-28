@@ -13,19 +13,6 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
     queryset = RutNovedad.objects.all()
     serializer_class = RutNovedadSerializador
     permission_classes = [permissions.IsAuthenticated]  
-
-    def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        with transaction.atomic():
-            novedad = serializer.save()
-            visita = novedad.visita
-            visita.estado_novedad = True
-            visita.save(update_fields=['estado_novedad'])
-            
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
       
     @action(detail=False, methods=["post"], url_path=r'solucionar',)
     def solucionar(self, request):             
@@ -57,12 +44,20 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
         
     @action(detail=False, methods=["post"], url_path=r'nuevo',)
     def nuevo(self, request):             
-        raw = request.data
-        imagenes = raw.get('imagenes')
-        
-        if imagenes:
-            tenant = request.tenant.schema_name
-            for imagen in imagenes:                                                
-                objeto_base64 = Utilidades.separar_base64(imagen['base64'])
-                nombre_archivo = f'{id}.{objeto_base64["extension"]}'
-                respuesta = ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'], nombre_archivo, id, "RutNovedad", tenant)     
+        data = request.data
+        imagenes = data.pop('imagenes', None)        
+        serializer = RutNovedadSerializador(data=data)
+        if serializer.is_valid():
+            instance = serializer.save()
+            visita = instance.visita
+            visita.estado_novedad = True
+            visita.save(update_fields=['estado_novedad'])            
+            if imagenes:
+                tenant = request.tenant.schema_name
+                for imagen in imagenes:                                                
+                    objeto_base64 = Utilidades.separar_base64(imagen['base64'])
+                    nombre_archivo = f'{instance.id}.{objeto_base64["extension"]}'
+                    respuesta = ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'], nombre_archivo, instance.id, "RutNovedad", tenant) 
+            return Response({'mensaje': 'Se crea la nueva novedad'}, status=status.HTTP_200_OK)                
+        else:
+            return Response({'mensaje':'Errores de validacion', 'errores_validador': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
