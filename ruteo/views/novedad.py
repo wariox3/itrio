@@ -6,6 +6,8 @@ from ruteo.models.visita import RutVisita
 from ruteo.serializers.novedad import RutNovedadSerializador
 from django.db import transaction
 from django.utils import timezone
+from utilidades.utilidades import Utilidades
+from servicios.archivo_servicio import ArchivoServicio
 
 class RutNovedadViewSet(viewsets.ModelViewSet):
     queryset = RutNovedad.objects.all()
@@ -52,3 +54,15 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La novedad ya esta solucionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+        
+    @action(detail=False, methods=["post"], url_path=r'nuevo',)
+    def nuevo(self, request):             
+        raw = request.data
+        imagenes = raw.get('imagenes')
+        
+        if imagenes:
+            tenant = request.tenant.schema_name
+            for imagen in imagenes:                                                
+                objeto_base64 = Utilidades.separar_base64(imagen['base64'])
+                nombre_archivo = f'{id}.{objeto_base64["extension"]}'
+                respuesta = ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'], nombre_archivo, id, "RutNovedad", tenant)     
