@@ -63,15 +63,15 @@ class ListaView(APIView):
                     else:
                         items = items.filter(**{filtro['propiedad']: filtro['valor1']})
             if exclusiones:
-                for filtro in filtros:                    
-                    operador = filtro.get('operador', None)
+                for exclusion in exclusiones:                    
+                    operador = exclusion.get('operador', None)
                     if operador:
                         if operador == 'range':
-                            items = items.exclude(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                            items = items.exclude(**{exclusion['propiedad']+'__'+operador: (exclusion['valor1'], exclusion['valor2'])})
                         else:
-                            items = items.exclude(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+                            items = items.exclude(**{exclusion['propiedad']+'__'+operador: exclusion['valor1']})
                     else:
-                        items = items.exclude(**{filtro['propiedad']: filtro['valor1']})      
+                        items = items.exclude(**{exclusion['propiedad']: exclusion['valor1']})      
             #print(items.query)                        
             itemsCantidad = items[:cantidadLimite].count()
             if ordenamientos:
