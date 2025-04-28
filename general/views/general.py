@@ -49,9 +49,9 @@ class ListaView(APIView):
                 limite = 30000    
             cantidadLimite = raw.get('cantidad_limite', 30000)    
             filtros = raw.get('filtros')
+            exclusiones = raw.get('exclusiones')
             ordenamientos = raw.get('ordenamientos')
             items = modelo.objects.all()            
-            #print(items.query)
             if filtros:
                 for filtro in filtros:                    
                     operador = filtro.get('operador', None)
@@ -62,6 +62,16 @@ class ListaView(APIView):
                             items = items.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
                     else:
                         items = items.filter(**{filtro['propiedad']: filtro['valor1']})
+            if exclusiones:
+                for filtro in filtros:                    
+                    operador = filtro.get('operador', None)
+                    if operador:
+                        if operador == 'range':
+                            items = items.exclude(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                        else:
+                            items = items.exclude(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+                    else:
+                        items = items.exclude(**{filtro['propiedad']: filtro['valor1']})      
             #print(items.query)                        
             itemsCantidad = items[:cantidadLimite].count()
             if ordenamientos:
