@@ -27,6 +27,7 @@ class RutVisita(models.Model):
     estado_despacho = models.BooleanField(default = False)
     estado_entregado = models.BooleanField(default = False)
     estado_novedad = models.BooleanField(default = False)
+    estado_devolucion = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)
     distancia = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     resultados = models.JSONField(null=True, blank=True)
