@@ -1252,15 +1252,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             datos_factura['documento']['detalles'] = arr_item
                                             datos_factura['doc_cantidad_item'] = cantidad_items
                                             datos_factura['documento']['impuestos'] = documento_impuestos
-                                            '''wolframio = Wolframio()
+                                            wolframio = Wolframio()
                                             respuesta = wolframio.emitir(datos_factura)
                                             if respuesta['error'] == False: 
                                                 documento.estado_electronico_enviado = True
                                                 documento.electronico_id = respuesta['id']
                                                 documento.save()                                        
                                             else:
-                                                return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)'''
-                                            return Response({'datos': datos_factura, 'documento_impuestos':documento_impuestos}, status=status.HTTP_200_OK)
+                                                return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                                            #return Response({'datos': datos_factura, 'documento_impuestos':documento_impuestos}, status=status.HTTP_200_OK)
                                         else:
                                             return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                                         
