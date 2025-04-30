@@ -1244,9 +1244,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 impuesto__impuesto_tipo_id=1
                                             ).values(
                                                 tipo_impuesto=F('impuesto__impuesto_tipo_id'),
-                                                porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
+                                                porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())                                                                                                
                                             ).annotate(                                            
-                                                total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
+                                                total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField()),
+                                                base=Cast(Coalesce(Sum('base'), 0, output_field=DecimalField()), output_field=CharField())
                                             )
                                             documento_impuestos = list(documento_impuestos)
                                             datos_factura['documento']['detalles'] = arr_item
