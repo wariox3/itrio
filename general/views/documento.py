@@ -460,8 +460,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         else: 
                             data['naturaleza'] = 'C'
                             data['credito'] = documento.total
-
                         data['detalle'] = 'CLIENTE'
+                        if documento.documento_tipo.cuenta_cobrar:
+                            if documento.documento_tipo.cuenta_cobrar.exige_grupo:
+                                if documento.sede:
+                                    data['grupo'] = documento.sede.grupo_id                        
                         movimiento_serializador = ConMovimientoSerializador(data=data)
                         if movimiento_serializador.is_valid():                
                             movimientos_validos.append(movimiento_serializador)
