@@ -1211,7 +1211,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                     documento_detalle_id=documentoDetalle.id,
                                                     impuesto__impuesto_tipo_id=1
                                                 ).values(
-                                                    tipo_impuesto=F('impuesto_id'),
+                                                    tipo_impuesto=F('impuesto__impuesto_tipo_id'),
                                                     porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
                                                 ).annotate(
                                                     total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
@@ -1243,7 +1243,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 documento_detalle__documento_id=id,
                                                 impuesto__impuesto_tipo_id=1
                                             ).values(
-                                                tipo_impuesto=F('impuesto_id'),
+                                                tipo_impuesto=F('impuesto__impuesto_tipo_id'),
                                                 porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
                                             ).annotate(                                            
                                                 total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
@@ -1252,15 +1252,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             datos_factura['documento']['detalles'] = arr_item
                                             datos_factura['doc_cantidad_item'] = cantidad_items
                                             datos_factura['documento']['impuestos'] = documento_impuestos
-                                            wolframio = Wolframio()
+                                            '''wolframio = Wolframio()
                                             respuesta = wolframio.emitir(datos_factura)
                                             if respuesta['error'] == False: 
                                                 documento.estado_electronico_enviado = True
                                                 documento.electronico_id = respuesta['id']
                                                 documento.save()                                        
                                             else:
-                                                return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                                            #return Response({'datos': datos_factura, 'documento_impuestos':documento_impuestos}, status=status.HTTP_200_OK)
+                                                return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)'''
+                                            return Response({'datos': datos_factura, 'documento_impuestos':documento_impuestos}, status=status.HTTP_200_OK)
                                         else:
                                             return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                                         
