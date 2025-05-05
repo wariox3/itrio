@@ -26,7 +26,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                 usuarios_contenedores = UsuarioContenedor.objects.filter(rol='propietario')
                 consumos = []
                 for usuario_contenedor in usuarios_contenedores:      
-                    if usuario_contenedor.contenedor.plan_id == 9:
+                    if usuario_contenedor.contenedor.plan_id >= 9 and usuario_contenedor.contenedor.plan_id <= 11:
                         vrPlan = usuario_contenedor.contenedor.precio
                     else:
                         vrPlan = usuario_contenedor.contenedor.plan.precio
