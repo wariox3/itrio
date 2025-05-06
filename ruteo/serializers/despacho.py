@@ -15,8 +15,11 @@ class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):      
         vehiculo_placa = ""
+        vehiculo_capacidad = None
         if instance.vehiculo:
             vehiculo_placa = instance.vehiculo.placa
+            vehiculo_capacidad = instance.vehiculo.capacidad
+
         return {
             'id': instance.id,  
             'fecha': instance.fecha,
@@ -32,6 +35,7 @@ class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):
             'visitas_liberadas': instance.visitas_liberadas,
             'vehiculo_id': instance.vehiculo_id,
             'vehiculo_placa': vehiculo_placa,
+            'vehiculo_capacidad': vehiculo_capacidad,
             'entrega_id': instance.entrega_id,
             'estado_aprobado': instance.estado_aprobado,
             'estado_terminado': instance.estado_terminado
