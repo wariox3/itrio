@@ -14,6 +14,7 @@ class HumAporteDetalleSerializador(serializers.HyperlinkedModelSerializer):
                   'horas', 'dias_pension',  'dias_salud', 'dias_riesgos', 'dias_caja', 
                   'fecha_inicio_incapacidad_general', 'fecha_fin_incapacidad_general',
                   'fecha_inicio_licencia_maternidad', 'fecha_fin_licencia_maternidad',
+                  'fecha_inicio_suspension_temporal_contrato', 'fecha_fin_suspension_temporal_contrato', 
                   'fecha_inicio_vacaciones', 'fecha_fin_vacaciones',
                   'fecha_inicio_incapacidad_laboral', 'fecha_fin_incapacidad_laboral',
                   'base_cotizacion_pension', 'base_cotizacion_salud', 'base_cotizacion_riesgos', 'base_cotizacion_caja',
