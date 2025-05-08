@@ -488,8 +488,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if flota.exists():
             visitas = RutVisita.objects.filter(estado_despacho=False, estado_devolucion=False, estado_novedad=False)
             if filtros:
-                for filtro in filtros:
-                    visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
+                for filtro in filtros:                    
+                    operador = filtro.get('operador', None)
+                    if operador == 'range':
+                        visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                    else:
+                        visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+
             visitas = visitas.order_by('orden')                                        
             cantidad_vehiculos = len(flota)
             vehiculo_indice = 0
