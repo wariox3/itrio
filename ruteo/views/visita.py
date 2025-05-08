@@ -599,10 +599,18 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         errores = RutVisita.objects.filter(estado_decodificado=False)
         alertas = RutVisita.objects.filter(estado_decodificado_alerta=True)
         if filtros:
-            for filtro in filtros:
-                visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
-                errores = errores.filter(**{filtro['propiedad']: filtro['valor1']})
-                alertas = alertas.filter(**{filtro['propiedad']: filtro['valor1']})
+            for filtro in filtros:                    
+                operador = filtro.get('operador', None)
+                if operador == 'range':
+                    visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                    errores = errores.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                    alertas = alertas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                else:
+                    visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+                    errores = errores.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+                    alertas = alertas.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+
+
         visitas = visitas.aggregate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0),
