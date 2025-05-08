@@ -483,13 +483,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'rutear',)
     def rutear(self, request):
         raw = request.data
-        filtros = raw.get('filtros')
+        franja_id = raw.get('franja_id')
         flota = RutFlota.objects.all()        
         if flota.exists():
-            visitas = RutVisita.objects.all()
-            if filtros:
-                for filtro in filtros:
-                    visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
+            visitas = RutVisita.objects.filter(estado_despacho=False, estado_devolucion=False, estado_novedad=False)
+            if franja_id:
+                visitas.filter(**{franja_id: franja_id})             
             visitas = visitas.order_by('orden')                                        
             cantidad_vehiculos = len(flota)
             vehiculo_indice = 0
@@ -849,7 +848,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 despacho.tiempo = despacho.tiempo - visita.tiempo
                 despacho.tiempo_servicio = despacho.tiempo_servicio - visita.tiempo_servicio
                 despacho.tiempo_trayecto = despacho.tiempo_trayecto - visita.tiempo_trayecto
-                despacho.visitas = despacho.visitas - 1                  
+                despacho.visitas = despacho.visitas - 1    
+                if visita.estado_novedad:
+                    despacho.visitas_novedad = despacho.visitas_novedad - 1              
                 despacho.save()  
                 visita.estado_despacho = False 
                 visita.despacho = None           

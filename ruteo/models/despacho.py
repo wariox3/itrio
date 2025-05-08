@@ -13,6 +13,7 @@ class RutDespacho(models.Model):
     visitas = models.FloatField(default=0)    
     visitas_entregadas = models.FloatField(default=0)
     visitas_liberadas = models.FloatField(default=0)
+    visitas_novedad = models.FloatField(default=0)
     estado_aprobado = models.BooleanField(default = False)
     estado_terminado = models.BooleanField(default = False)
     estado_anulado = models.BooleanField(default = False)
