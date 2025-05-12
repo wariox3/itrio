@@ -720,7 +720,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         data['contacto'] = documento.contacto_id        
                         if documento_impuesto['impuesto__venta']:
                             if documento_impuesto['impuesto__operacion'] == 1:
-                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3,24]:
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3,17,24]:
                                     data['naturaleza'] = 'C'
                                     data['credito'] = documento_impuesto['total']
                                 else:
@@ -728,7 +728,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     data['debito'] = documento_impuesto['total']
 
                             if documento_impuesto['impuesto__operacion'] == -1:
-                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3, 24]:
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3,17,24]:
                                     data['naturaleza'] = 'D'
                                     data['debito'] = documento_impuesto['total']                    
                                 else:
