@@ -1996,7 +1996,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 sheet = wb.active    
             except Exception as e:     
                 return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
-            
+            cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}
             data_modelo = []
             errores = False
             errores_datos = []
@@ -2012,6 +2012,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     pendiente = row[4]
                 fecha = row[1].date()
                 fecha_vence = row[2].date()
+                cuenta_codigo = str(row[5])
+                cuenta_id = cuentas_map.get(cuenta_codigo)
                 data = {
                     'numero': row[0],                    
                     'fecha':fecha,
@@ -2019,22 +2021,37 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     'fecha_vence':fecha_vence,
                     'contacto':row[3],
                     'total':row[4],
+                    'cuenta':cuenta_id,
                     'pendiente': pendiente,
                     'documento_tipo': documento_tipo_id,
                     'estado_aprobado': True,
                     'empresa': 1
-                }                                   
-                serializer = GenDocumentoSerializador(data=data)
-                if serializer.is_valid():
-                    data_modelo.append(serializer.validated_data)
-                    registros_importados += 1
+                }         
+                if cuenta_codigo:   
+                    if not cuenta_id:
+                        errores = True
+                        errores_datos.append({
+                            'fila': i,
+                            'errores': {'cuenta': [f'Cuenta "{cuenta_codigo}" no encontrada.']}
+                        })                       
                 else:
                     errores = True
-                    error_dato = {
+                    errores_datos.append({
                         'fila': i,
-                        'errores': serializer.errors
-                    }                                    
-                    errores_datos.append(error_dato)                    
+                        'errores': {'cuenta': [f'La cuenta es requerida']}
+                    })                       
+                if errores == False:
+                    serializer = GenDocumentoSerializador(data=data)
+                    if serializer.is_valid():
+                        data_modelo.append(serializer.validated_data)
+                        registros_importados += 1
+                    else:
+                        errores = True
+                        error_dato = {
+                            'fila': i,
+                            'errores': serializer.errors
+                        }                                    
+                        errores_datos.append(error_dato)                    
             if not errores:
                 for detalle in data_modelo:
                     GenDocumento.objects.create(**detalle)
