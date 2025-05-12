@@ -596,7 +596,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             if documento_detalle.tipo_registro == 'C':                                    
                                 data = data_general.copy()                            
                                 data['cuenta'] = documento_detalle.cuenta_id
-                                data['contacto'] = documento_detalle.contacto_id        
+                                if documento_detalle.cuenta:
+                                    if documento_detalle.cuenta.exige_contacto:
+                                        data['contacto'] = documento_detalle.contacto_id
+                                    else:
+                                        data['contacto'] = None
                                 data['naturaleza'] = documento_detalle.naturaleza
                                 data['base'] = documento_detalle.base
                                 data['detalle'] = documento_detalle.detalle
