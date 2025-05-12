@@ -179,6 +179,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         for detalle in detalles:                
                             if detalle.get('id'):
                                 documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle['id'])
+                                detalle['operacion_inventario'] = documento.documento_tipo.operacion_inventario
+                                detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario                                
                                 detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
                             else:
                                 detalle['documento'] = documento.id
@@ -2814,7 +2816,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     pass
                 else:                        
                     return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
-            
+            # Validar inventario
             documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
             for documento_detalle in documento_detalles:
                 if documento_detalle.operacion_inventario == -1:
