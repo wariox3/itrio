@@ -44,7 +44,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                         nombre_archivo = f'{instance.id}.{objeto_base64["extension"]}'
                         ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'],nombre_archivo,instance.id,"RutNovedad",tenant)
 
-            return Response({'id': visita_id}, status=status.HTTP_200_OK)
+            return Response({'id': instance.id}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Errores de validación', 'errores_validador': serializer.errors},status=status.HTTP_400_BAD_REQUEST)
 
