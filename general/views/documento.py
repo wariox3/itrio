@@ -307,7 +307,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     consecutivo = documento_tipo.consecutivo
                 else: 
                     consecutivo = documento.numero
-                respuesta = self.validacion_aprobar(documento, consecutivo)
+                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
+                respuesta = self.validacion_aprobar(documento, documento_detalles, consecutivo)
                 if respuesta['error'] == False:                         
                     if documento.numero is None:
                         documento.numero = documento_tipo.consecutivo
@@ -315,13 +316,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento_tipo.save()                
                     documento.estado_aprobado = True
                     if documento.documento_tipo.documento_clase_id in (100,101,102,104,105,300,301,302,303,304):
-                        documento.pendiente = documento.total - documento.afectado    
+                        documento.pendiente = documento.total - documento.afectado  
+                          
                     # Compra, Documento soporte
                     if documento.documento_tipo_id in [5,11]:
                         if documento.forma_pago:
                             documento.cuenta_id = documento.forma_pago.cuenta_id
 
-                    documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=id)
+                    # Procesar detalles
                     for documento_detalle in documento_detalles:
                         if documento_detalle.documento_afectado:
                             if documento.documento_tipo.documento_clase_id in (200,400):
@@ -351,6 +353,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 activo.depreciacion_acumulada = depreciacion_acumulada
                                 activo.depreciacion_saldo = depreciacion_saldo
                                 activo.save()
+                    
                     documento.save()
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                 else:
@@ -2785,12 +2788,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return {'error':True, 'mensaje':'El documento no existe'}        
     
     @staticmethod
-    def validacion_aprobar(documento: GenDocumento, consecutivo):
+    def validacion_aprobar(documento: GenDocumento, documento_detalles: GenDocumentoDetalle, consecutivo):
         fecha = date.today()
         if documento.estado_aprobado == False:
+            # Factura o documento soporte
             if documento.documento_tipo.documento_clase_id in (100,303):
-                documento_detalle = GenDocumentoDetalle.objects.filter(documento=documento)
-                if documento_detalle or documento.documento_tipo_id == 15:
+                # Si tiene detalles o es nomina electronica
+                if documento_detalles or documento.documento_tipo_id == 15:
                     if documento.resolucion:
                         if isinstance(documento.resolucion.fecha_hasta, date):
                             if documento.resolucion.fecha_hasta <= fecha:
@@ -2799,7 +2803,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             return {'error':True, 'mensaje':f'El consecutivo {consecutivo} no corresponde con la resolucion desde {documento.resolucion.consecutivo_desde} hasta {documento.resolucion.consecutivo_hasta}', 'codigo':1}
                 else:
                     return {'error':True, 'mensaje':'El documento no tiene detalles', 'codigo':1} 
-
+            
+            # Pago
             if documento.documento_tipo.documento_clase_id == 200:
                 resultado = (
                     GenDocumentoDetalle.objects
@@ -2809,19 +2814,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     .annotate(
                         total_precio=Sum('precio'),
                         pendiente=F('documento_afectado__pendiente')))                        
-                for entrada in resultado:
-                    if entrada['pendiente'] < entrada['total_precio']:
-                        return {'error':True, 'mensaje':f"El documento {entrada['documento_afectado_id']} tiene saldo pendiente {entrada['pendiente']} y se va afectar {entrada['total_precio']}", 'codigo':1}                            
-                #result_list = list(resultado)
-                #print(result_list)
-            
+                for registro in resultado:
+                    if registro['pendiente'] < registro['total_precio']:
+                        return {'error':True, 'mensaje':f"El documento {registro['documento_afectado_id']} tiene saldo pendiente {registro['pendiente']} y se va afectar {registro['total_precio']}", 'codigo':1}
+                    
+            # Nomina
             if documento.documento_tipo.documento_clase_id == 702:
                 if documento.contacto.nombre1 and documento.contacto.apellido1:
                     pass
                 else:                        
                     return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
+                
             # Validar inventario
-            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
             for documento_detalle in documento_detalles:
                 if documento_detalle.operacion_inventario == -1:
                     if documento_detalle.almacen:
@@ -2834,6 +2838,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             return {'error':True, 'mensaje':f"El item no tiene cantidades disponibles", 'codigo':1}
                     else:
                         return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen', 'codigo':1}                                   
+            
+            # Notas credito
+            if documento.documento_referencia:
+                if documento.documento_referencia.pendiente < documento.total:
+                    return {'error':True, 'mensaje':f"El documento referencia tiene saldo pendiente {documento.documento_referencia.pendiente} y se va afectar {documento.total}", 'codigo':1}
+
             return {'error':False}                    
         else:
             return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}   

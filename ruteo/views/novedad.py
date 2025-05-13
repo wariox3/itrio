@@ -24,8 +24,10 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                 visita = RutVisita.objects.get(pk=visita_id)
             except RutVisita.DoesNotExist:
                 return Response({'mensaje': 'La visita no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+            
             if visita.estado_novedad:
                 return Response({'mensaje': 'La visita ya tiene una novedad activa', 'codigo': 3}, status=status.HTTP_400_BAD_REQUEST)
+            
             with transaction.atomic():
                 instance = serializer.save()
                 visita.estado_novedad = True
@@ -41,7 +43,8 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                         objeto_base64 = Utilidades.separar_base64(imagen['base64'])
                         nombre_archivo = f'{instance.id}.{objeto_base64["extension"]}'
                         ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'],nombre_archivo,instance.id,"RutNovedad",tenant)
-            return Response({'mensaje': 'Se crea la nueva novedad'}, status=status.HTTP_200_OK)
+
+            return Response({'id': visita_id}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Errores de validación', 'errores_validador': serializer.errors},status=status.HTTP_400_BAD_REQUEST)
 
