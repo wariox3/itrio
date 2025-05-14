@@ -1191,6 +1191,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                     "tipo_operacion" : str(10),
                                                     "moneda" : "COP",
                                                     "orden_compra": documento.orden_compra,
+                                                    "remision": documento.remision,
                                                     "resolucion" : str(documento.resolucion.numero),
                                                     "forma_pago" : forma_pago,
                                                     "cantidad_detalles" :1,
