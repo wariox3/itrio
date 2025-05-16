@@ -374,6 +374,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             documento_referencia.save(update_fields=['afectado', 'pendiente'])  
 
                         documento.save()
+                        if documento.documento_tipo.electronico:
+                            configuracion = GenConfiguracion.objects.filter(pk=1).values('gen_emitir_automaticamente')[0] 
+                            if configuracion['gen_emitir_automaticamente']:
+                                self.emitir(id)
+
                         return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
                     else:
                         return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
