@@ -15,8 +15,7 @@ class Login(TokenObtainPairView):
             turnstile_token = request.data.get('cf_turnstile_response', '')
             proyecto = request.data.get('proyecto', 'REDDOC').upper()
             
-            # Validar proyecto
-            proyectos_validos = ['REDDOC', 'RUTEO', 'POS']
+            proyectos_validos = ['REDDOC', 'RUTEO', 'POS', 'RUTEOAPP']
             if proyecto not in proyectos_validos:
                 return Response({
                     'error': 'Proyecto no válido',
@@ -31,7 +30,7 @@ class Login(TokenObtainPairView):
             env = config('ENV', default='prod').lower()
             
             # Solo validar Turnstile en producción (no en dev ni test)
-            if env not in ['dev', 'test'] and turnstile_secret_key:
+            if env not in ['dev', 'test'] and turnstile_secret_key and proyecto != 'RUTEOAPP':
                 client_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
                 try:
                     CloudflareTurnstile.verify_token(turnstile_token, turnstile_secret_key, client_ip)
