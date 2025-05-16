@@ -13,7 +13,7 @@ class GenConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenConfiguracion
         fields = ['id', 'empresa', 'informacion_factura', 'informacion_factura_superior', 
-            'gen_uvt',
+            'gen_uvt', 'gen_emitir_automaticamente',
             'hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte', 'hum_entidad_riesgo',
             'pos_documento_tipo'
         ]      

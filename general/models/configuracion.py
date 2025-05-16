@@ -8,6 +8,7 @@ class GenConfiguracion(models.Model):
     informacion_factura = models.TextField(null=True)
     informacion_factura_superior = models.TextField(null=True)
     gen_uvt = models.DecimalField(max_digits=20, decimal_places=6, default=49799)
+    gen_emitir_automaticamente = models.BooleanField(default = False)
     hum_factor = models.DecimalField(max_digits=6, decimal_places=3, default=7.666)
     hum_salario_minimo = models.DecimalField(max_digits=20, decimal_places=6, default=1423500)
     hum_auxilio_transporte = models.DecimalField(max_digits=20, decimal_places=6, default=200000)

@@ -1151,554 +1151,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
     
     @action(detail=False, methods=["post"], url_path=r'emitir',)
-    def emitir(self, request):
+    def emitir_action(self, request):
         try:
             raw = request.data
             id = raw.get('documento_id')
             if id:
-                documento = GenDocumento.objects.get(pk=id)
-                if documento.estado_aprobado == True:
-                    empresa = GenEmpresa.objects.get(pk=1)
-                    if empresa.rededoc_id:
-                        if documento.estado_electronico_enviado == False: 
-                            if documento.numero: 
-                                if documento.documento_tipo.electronico:
-                                    # Factura y Documento soporte
-                                    if documento.documento_tipo_id in [1,2,3,11,12,24]:
-                                        if documento.resolucion: 
-                                            #Las facturas y documento soporte toman prefijo de la resolucion
-                                            prefijo = documento.resolucion.prefijo
-                                            documento_referencia_id = None
-                                            forma_pago = 2
-                                            if documento.plazo_pago_id == 1:
-                                                forma_pago = 1                                            
-                                            if documento.documento_tipo.documento_clase_id == 101:
-                                                prefijo = "NC"
-                                            if documento.documento_tipo.documento_clase_id == 102:
-                                                prefijo = "ND" 
-                                            if documento.documento_tipo.documento_clase_id == 304:
-                                                prefijo = "DSAJ"
-                                            correo = documento.contacto.correo_facturacion_electronica if documento.contacto.correo_facturacion_electronica else documento.contacto.correo
-                                            responsable = 0
-                                            if documento.contacto.regimen_id in (1, 5):
-                                                responsable = 1
-                                            datos_factura = {
-                                                "cuentaId": empresa.rededoc_id,
-                                                "documentoClaseId" : documento.documento_tipo_id,
-                                                "documentoClienteId": documento.id,
-                                                "documento" : {
-                                                    "ambiente" : 1,
-                                                    "prefijo" : prefijo,
-                                                    "numero" : documento.numero,
-                                                    "fecha" : str(documento.fecha),
-                                                    "hora" : str("12:00:00-05:00"),
-                                                    "fecha_vence" : str(documento.fecha_vence),
-                                                    "tipo_operacion" : str(10),
-                                                    "moneda" : "COP",
-                                                    "orden_compra": documento.orden_compra,
-                                                    "remision": documento.remision,
-                                                    "resolucion" : str(documento.resolucion.numero),
-                                                    "forma_pago" : forma_pago,
-                                                    "cantidad_detalles" :1,
-                                                    "subtotal" : "{0:.2f}".format(documento.subtotal),
-                                                    "subtotal_mas_impuestos" : "{0:.2f}".format(documento.subtotal + documento.impuesto),
-                                                    "base" : "{0:.2f}".format(documento.base_impuesto),
-                                                    "total_impuestos" : "{0:.2f}".format(documento.impuesto),
-                                                    "total_descuentos" : "{0:.2f}".format(documento.descuento),
-                                                    "total_cargos" : "{0:.2f}".format(0),
-                                                    "total_anticipos" : "{0:.2f}".format(0),
-                                                    "total_documento" : "{0:.2f}".format(documento.total_bruto),
-                                                    "total_iva" : "{0:.2f}".format(0),
-                                                    "total_consumo" : "{0:.2f}".format(0),
-                                                    "total_ica" : "{0:.2f}".format(0),
-                                                    "documento_referencia": documento_referencia_id,
-                                                    "adquiriente" : {
-                                                        "identificacion" : documento.contacto.identificacion.codigo,
-                                                        "numero_identificacion" : documento.contacto.numero_identificacion,
-                                                        "digito_verificacion" : documento.contacto.digito_verificacion,
-                                                        "razon_social" : documento.contacto.nombre_corto,
-                                                        "pais" : "CO",
-                                                        "ciudad" : documento.contacto.ciudad.nombre,
-                                                        "departamento" : documento.contacto.ciudad.estado.nombre,
-                                                        "direccion" : documento.contacto.direccion,
-                                                        "obligaciones" : "0-99",
-                                                        "nombres" : documento.contacto.nombre1,
-                                                        "apellidos" : documento.contacto.apellido1,
-                                                        "correo" : correo,
-                                                        "telefono" : documento.contacto.telefono,
-                                                        "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
-                                                        "regimen_tributario" : documento.contacto.regimen.codigo_interface,
-                                                        "codigo_postal" : documento.contacto.ciudad.codigo_postal,
-                                                        "responsable" : responsable,
-                                                        "nacional" : 1
-                                                    },
-                                                }
-                                            }
-                                            arr_medio_pago = []
-
-                                            arr_medio_pago.append({
-                                                "medio_pago": 31,
-                                                "descripcion": "",
-                                            })
-
-                                            datos_factura['documento']['medios_pago'] = arr_medio_pago
-
-                                            arr_item = []
-                                            cantidad_items = 0                                        
-                                            documentoDetalles = GenDocumentoDetalle.objects.filter(documento=id)
-                                            for documentoDetalle in documentoDetalles:                                                                                    
-                                                documento_impuestos = GenDocumentoImpuesto.objects.filter(
-                                                    documento_detalle_id=documentoDetalle.id,
-                                                    impuesto__impuesto_tipo_id=1
-                                                ).values(
-                                                    tipo_impuesto=F('impuesto__impuesto_tipo_id'),
-                                                    porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
-                                                ).annotate(
-                                                    total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
-                                                )
-                                                documento_impuestos = list(documento_impuestos)
-                                                cantidad_items += 1
-                                                arr_item.append({
-                                                    "consecutivo": cantidad_items,
-                                                    "codigo": documentoDetalle.item_id,
-                                                    "descripcion" : documentoDetalle.item.nombre,
-                                                    "marca" : "",
-                                                    "modelo" : "",
-                                                    "observacion" : "",
-                                                    "cantidad" : str(documentoDetalle.cantidad),
-                                                    "cantidad_empque": str(documentoDetalle.cantidad),
-                                                    "obserquio" : str(0),
-                                                    "precio_unitario" : "{0:.2f}".format(documentoDetalle.precio),
-                                                    "precio_referencia" : "{0:.2f}".format(documentoDetalle.precio),
-                                                    "valor" : "{0:.2f}".format(documentoDetalle.precio),
-                                                    "total_descuentos" : "{0:.2f}".format(documentoDetalle.descuento),
-                                                    "total_cargos" : "{0:.2f}".format(0),
-                                                    "total_impuestos" : "{0:.2f}".format(documentoDetalle.impuesto),
-                                                    "base" : "{0:.2f}".format(documentoDetalle.base_impuesto),
-                                                    "subtotal" : "{0:.2f}".format(documentoDetalle.subtotal),
-                                                    "impuestos" : documento_impuestos
-                                                })
-                                            datos_factura['documento']['cantidad_detalles'] = cantidad_items                                        
-                                            documento_impuestos = GenDocumentoImpuesto.objects.filter(
-                                                documento_detalle__documento_id=id,
-                                                impuesto__impuesto_tipo_id=1
-                                            ).values(
-                                                tipo_impuesto=F('impuesto__impuesto_tipo_id'),
-                                                porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())                                                                                                
-                                            ).annotate(                                            
-                                                total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField()),
-                                                base=Cast(Coalesce(Sum('base'), 0, output_field=DecimalField()), output_field=CharField())
-                                            )
-                                            documento_impuestos = list(documento_impuestos)
-                                            datos_factura['documento']['detalles'] = arr_item
-                                            datos_factura['doc_cantidad_item'] = cantidad_items
-                                            datos_factura['documento']['impuestos'] = documento_impuestos
-                                            wolframio = Wolframio()
-                                            respuesta = wolframio.emitir(datos_factura)
-                                            if respuesta['error'] == False: 
-                                                documento.estado_electronico_enviado = True
-                                                documento.electronico_id = respuesta['id']
-                                                documento.save()                                        
-                                            else:
-                                                return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                                            #return Response({'datos': datos_factura, 'documento_impuestos':documento_impuestos}, status=status.HTTP_200_OK)
-                                        else:
-                                            return Response({'mensaje': 'La factura no cuenta con una resolución asociada', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                                        
-                                    # Compra
-                                    if documento.documento_tipo_id == 5:                                    
-                                        if documento.referencia_prefijo and documento.referencia_numero and documento.referencia_cue:
-                                            datos_compra = {
-                                                "cuentaId": empresa.rededoc_id,
-                                                "documentoClaseId" : documento.documento_tipo_id,
-                                                "documentoClienteId": documento.id,
-                                                "documento" : {                                                
-                                                    "prefijo" : documento.referencia_prefijo,
-                                                    "numero" : documento.referencia_numero,
-                                                    "cue" : documento.referencia_cue,
-                                                    "fecha" : str(documento.fecha),
-                                                    "hora" : str("12:00:00-05:00"),
-                                                    "fecha_vence" : str(documento.fecha_vence),                                                                                                
-                                                    "total_documento" : str(documento.total_bruto), 
-                                                    "proveedor" : {                                                        
-                                                        "identificacion" : documento.contacto.identificacion.codigo,
-                                                        "numero_identificacion" : documento.contacto.numero_identificacion,
-                                                        "digito_verificacion" : documento.contacto.digito_verificacion,
-                                                        "razon_social" : documento.contacto.nombre_corto,   
-                                                        "correo" : documento.contacto.correo,                                                     
-                                                    }
-                                                }
-                                            }
-                                                                                                        
-                                            wolframio = Wolframio()
-                                            respuesta = wolframio.emitir(datos_compra)
-                                            if respuesta['error'] == False: 
-                                                documento.estado_electronico_enviado = True
-                                                documento.estado_electronico = True
-                                                documento.electronico_id = respuesta['id']
-                                                documento.save()                                        
-                                            else:
-                                                return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                                            #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)
-                                        else:
-                                            return Response({'mensaje': 'Los documentos de compra deben tener prefijo, numero y cue', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-
-                                    # Nomina    
-                                    if documento.documento_tipo_id == 15:                                
-                                        respuesta = self.validacion_nomina_emitir(documento)
-                                        if respuesta['error'] == False:
-                                            prefijo = "NE"                                
-                                            datos = {
-                                                "cuentaId": empresa.rededoc_id,
-                                                "documentoClaseId" : documento.documento_tipo_id,
-                                                "documentoClienteId": documento.id,
-                                                "documento" : {
-                                                    "ambiente" : 1,
-                                                    "prefijo" : prefijo,
-                                                    "numero" : documento.numero,
-                                                    "fecha" : str(documento.fecha),
-                                                    "hora" : str("12:00:00-05:00"),
-                                                    "devengado":str(documento.devengado),
-                                                    "deduccion":str(documento.deduccion),
-                                                    "total_documento" : str(documento.total),                                                                                                                                                                                                    
-                                                    "fecha_desde":str(documento.fecha),
-                                                    "fecha_hasta":str(documento.fecha_hasta),                                                                                                                    
-                                                    "empleado" : {
-                                                        "codigo": documento.contacto_id,
-                                                        "identificacion" : documento.contacto.identificacion.codigo,
-                                                        "numero_identificacion" : documento.contacto.numero_identificacion,
-                                                        "digito_verificacion" : documento.contacto.digito_verificacion,
-                                                        "razon_social" : documento.contacto.nombre_corto,
-                                                        "pais" : "CO",
-                                                        "ciudad" : documento.contacto.ciudad.nombre,
-                                                        "ciudad_codigo_postal" : documento.contacto.ciudad.codigo_postal,
-                                                        "departamento" : documento.contacto.ciudad.estado.codigo,
-                                                        "direccion" : documento.contacto.direccion,                                                
-                                                        "nombre1" : documento.contacto.nombre1,
-                                                        "nombre2" : documento.contacto.nombre2,
-                                                        "apellido1" : documento.contacto.apellido1,
-                                                        "apellido2" : documento.contacto.apellido2,
-                                                        "correo" : documento.contacto.correo,
-                                                        "telefono" : documento.contacto.telefono,
-                                                        "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
-                                                        "regimen_tributario" : documento.contacto.regimen.codigo_interface,                                                
-                                                        "cuenta":documento.contacto.numero_cuenta,
-                                                        "banco":documento.contacto.banco.nombre, 
-                                                        "responsable" : 1,
-                                                        "nacional" : 1
-                                                    },
-                                                    "contrato" : {
-                                                        "fecha_desde":str(documento.contrato.fecha_desde),
-                                                        "salario":str(documento.salario),
-                                                        "salario_intergral":documento.contrato.salario_integral,
-                                                        "tipo_cotizante":documento.contrato.tipo_cotizante.codigo,
-                                                        "subtipo_cotizante":documento.contrato.subtipo_cotizante.codigo,
-                                                        "contrato_tipo":documento.contrato.contrato_tipo_id,                                            
-                                                        "ciudad_labora" : documento.contrato.ciudad_labora.nombre,
-                                                        "ciudad_labora_codigo_postal" : documento.contrato.ciudad_labora.codigo,
-                                                        "estado_labora_codigo_postal":documento.contrato.ciudad_labora.estado.codigo,
-                                                    },
-                                                }
-                                            }           
-                                            
-                                            detalle = {
-                                                'valido': True,
-                                                'Devengados': {
-                                                    'Basico': {
-                                                        'DiasTrabajados': 0,
-                                                        'SueldoTrabajado': 0
-                                                    },
-                                                    "Transporte": {
-                                                        "AuxilioTransporte": 0,
-                                                        "ViaticoManuAlojS": 0,
-                                                        "ViaticoManuAlojNS": 0
-                                                    },
-                                                    "OtrosConceptos": [],
-                                                    "Bonificaciones": [],
-                                                    "Auxilios": [],
-                                                    "HorasExtras": {
-                                                        "HED": [],
-                                                        "HEN": [],
-                                                        "HRN": [],
-                                                        "HEDDF": [],
-                                                        "HRDDF": [],
-                                                        "HENDF": [],
-                                                        "HRNDF": [],
-                                                    },
-                                                    "Compensaciones": [],
-                                                    "HuelgasLegales": [],
-                                                    "BonoEPCTVs": [],
-                                                    "Comisiones": [],
-                                                    "PagosTerceros": [],
-                                                    "Anticipos": [],
-                                                    "Vacaciones": {
-                                                        "VacacionesComunes": [],
-                                                        "VacacionesCompensadas": []
-                                                    },
-                                                    "Primas": {
-                                                        'Cantidad':0,
-                                                        'Pago':0,
-                                                        'PagoNS':0
-                                                    },
-                                                    "Cesantias": {
-                                                        "Pago": 0,
-                                                        "Porcentaje": 0,
-                                                        "PagoIntereses": 0
-                                                    },
-                                                    "Incapacidades": [],
-                                                    "Licencias": {
-                                                        "LicenciaMP": [],
-                                                        "LicenciaR": [],
-                                                        "LicenciaNR": [],
-                                                    },
-                                                    'Dotacion': 0,
-                                                    'ApoyoSost': 0,
-                                                    'Teletrabajo': 0,
-                                                    'BonifRetiro': 0,
-                                                    'Indemnizacion': 0,
-                                                    'Reintegro': 0,
-                                                },
-                                                'Deducciones': {
-                                                    "Salud": {
-                                                        "Porcentaje": 0,
-                                                        "Deduccion": 0
-                                                    },
-                                                    "FondoPension": {
-                                                        "Porcentaje": 0,
-                                                        "Deduccion": 0
-                                                    },
-                                                    "FondoSP": {
-                                                        "Porcentaje": 0,
-                                                        "DeduccionSP": 0,
-                                                        "PorcentajeSub": 0,
-                                                        "DeduccionSub": 0
-                                                    },
-                                                    "Sindicatos": [],
-                                                    "Sanciones": [],
-                                                    "Libranzas": [],
-                                                    "PagosTerceros": [],
-                                                    "Anticipos": [],
-                                                    "OtrasDeducciones": [],
-                                                    'PensionVoluntaria': 0,
-                                                    'RetencionFuente': 0,
-                                                    'AFC': 0,
-                                                    'Cooperativa': 0,
-                                                    'EmbargoFiscal': 0,
-                                                    'PlanComplementarios': 0,
-                                                    'Educacion': 0,
-                                                    'Reintegro': 0,
-                                                    'Deuda': 0,
-                                                }
-                                            }
-                                            datos['documento']['detalle'] = detalle
-                                            documento_detalles = GenDocumentoDetalle.objects.filter(
-                                                documento__documento_referencia_id=id
-                                            ).values(
-                                                'id', 'operacion', 'porcentaje', 'dias', 'cantidad', 'pago','concepto_id', 'concepto__nombre', 'concepto__concepto_tipo_id'
-                                            )
-                                            print(documento_detalles.query)
-                                            for documento_detalle in documento_detalles:                                        
-                                                fecha = documento.fecha
-                                                fecha_desde_extra = fecha.strftime('%Y-%m-%d') + "T11:00:00"
-                                                fecha_hasta_extra = fecha.strftime('%Y-%m-%d') + "T12:00:00"                                        
-                                                if documento_detalle['operacion'] == 1:
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 1:
-                                                        dias_basico = documento_detalle['dias'] if documento_detalle['dias'] != 0 else 1
-                                                        detalle['Devengados']['Basico']['DiasTrabajados'] += dias_basico
-                                                        detalle['Devengados']['Basico']['SueldoTrabajado'] += documento_detalle['pago']                                                
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 7:
-                                                        detalle['Devengados']['Transporte']['AuxilioTransporte'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 3:                                                                                                                                            
-                                                        detalle['Devengados']['OtrosConceptos'].append({
-                                                                'DescripcionConcepto': documento_detalle['concepto__nombre'],
-                                                                'ConceptoS': documento_detalle['pago'],
-                                                                'ConceptoNS': 0
-                                                                })
-                                                        
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 4:                                                                                                                                            
-                                                        detalle['Devengados']['OtrosConceptos'].append({
-                                                                'DescripcionConcepto': documento_detalle['concepto__nombre'],
-                                                                'ConceptoS': 0,
-                                                                'ConceptoNS': documento_detalle['pago']
-                                                                })
-                                                    
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 2:
-                                                        # No se pueden cambiar los porcentajes
-                                                        if documento_detalle['concepto_id'] in [5,3]:
-                                                            detalle['Devengados']['HorasExtras']['HED'].append({
-                                                                "Id":0,
-                                                                "HoraInicio":fecha_desde_extra,
-                                                                "HoraFin":fecha_hasta_extra,
-                                                                "Cantidad":documento_detalle['cantidad'],
-                                                                "Porcentaje":25,
-                                                                "Pago":documento_detalle['pago']
-                                                                })                                                    
-                                                        if documento_detalle['concepto_id'] in [6,4]:
-                                                            detalle['Devengados']['HorasExtras']['HEN'].append({
-                                                                "Id":0,
-                                                                "HoraInicio":fecha_desde_extra,
-                                                                "HoraFin":fecha_hasta_extra,
-                                                                "Cantidad":documento_detalle['cantidad'],
-                                                                "Porcentaje":75,
-                                                                "Pago":documento_detalle['pago']
-                                                                }) 
-                                                        if documento_detalle['concepto_id'] in [9,2]:
-                                                            detalle['Devengados']['HorasExtras']['HRN'].append({
-                                                                "Id":0,
-                                                                "HoraInicio":fecha_desde_extra,
-                                                                "HoraFin":fecha_hasta_extra,
-                                                                "Cantidad":documento_detalle['cantidad'],
-                                                                "Porcentaje":35,
-                                                                "Pago":documento_detalle['pago']
-                                                                }) 
-                                                        if documento_detalle['concepto_id'] in [7]:
-                                                            detalle['Devengados']['HorasExtras']['HEDDF'].append({
-                                                                "Id":0,
-                                                                "HoraInicio":fecha_desde_extra,
-                                                                "HoraFin":fecha_hasta_extra,
-                                                                "Cantidad":documento_detalle['cantidad'],
-                                                                "Porcentaje":100,
-                                                                "Pago":documento_detalle['pago']
-                                                                }) 
-                                                        if documento_detalle['concepto_id'] in [10]:
-                                                            detalle['Devengados']['HorasExtras']['HRDDF'].append({
-                                                                "Id":0,
-                                                                "HoraInicio":fecha_desde_extra,
-                                                                "HoraFin":fecha_hasta_extra,
-                                                                "Cantidad":documento_detalle['cantidad'],
-                                                                "Porcentaje":75,
-                                                                "Pago":documento_detalle['pago']
-                                                                }) 
-                                                        if documento_detalle['concepto_id'] in [8]:
-                                                            detalle['Devengados']['HorasExtras']['HENDF'].append({
-                                                                "Id":0,
-                                                                "HoraInicio":fecha_desde_extra,
-                                                                "HoraFin":fecha_hasta_extra,
-                                                                "Cantidad":documento_detalle['cantidad'],
-                                                                "Porcentaje":150,
-                                                                "Pago":documento_detalle['pago']
-                                                                }) 
-                                                        if documento_detalle['concepto_id'] in [11]:
-                                                            detalle['Devengados']['HorasExtras']['HRNDF'].append({
-                                                                "Id":0,
-                                                                "HoraInicio":fecha_desde_extra,
-                                                                "HoraFin":fecha_hasta_extra,
-                                                                "Cantidad":documento_detalle['cantidad'],
-                                                                "Porcentaje":110,
-                                                                "Pago":documento_detalle['pago']
-                                                                })                                                                                                                                                                                                                                                                                                 
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 18:
-                                                        detalle['Devengados']['Vacaciones']['VacacionesComunes'].append({
-                                                                'FechaInicio': None,
-                                                                'FechaFin': None,
-                                                                'Cantidad': documento_detalle['dias'],
-                                                                'Pago': documento_detalle['pago']
-                                                                })
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 19:
-                                                        detalle['Devengados']['Vacaciones']['VacacionesCompensadas'].append({
-                                                                'Cantidad': 0,
-                                                                'Pago': documento_detalle['pago']
-                                                        })
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] in [20,21]:
-                                                        detalle['Devengados']['Primas']['PagoNS'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] in [22,23]:
-                                                        detalle['Devengados']['Cesantias']['Pago'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] in [24,25]:
-                                                        detalle['Devengados']['Cesantias']['PagoIntereses'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 12:
-                                                        detalle['Devengados']['Incapacidades'].append({
-                                                            'FechaInicio': None,
-                                                            'FechaFin': None,
-                                                            'Cantidad':documento_detalle['dias'],
-                                                            'Tipo':1,
-                                                            'Pago':documento_detalle['pago']
-                                                        })
-                                                    
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 13:
-                                                        detalle['Devengados']['Incapacidades'].append({
-                                                            'FechaInicio': None,
-                                                            'FechaFin': None,
-                                                            'Cantidad':documento_detalle['dias'],
-                                                            'Tipo':3,
-                                                            'Pago':documento_detalle['pago']
-                                                        })  
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 14:
-                                                        detalle['Devengados']['Licencias']['LicenciaMP'].append({
-                                                            "FechaInicio":None,
-                                                            "FechaFin":None,
-                                                            "Cantidad":0,
-                                                            "Pago":documento_detalle['pago']
-                                                        })
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] in [15,16]:
-                                                        detalle['Devengados']['Licencias']['LicenciaR'].append({
-                                                            "FechaInicio":None,
-                                                            "FechaFin":None,
-                                                            "Cantidad":0,
-                                                            "Pago":documento_detalle['pago']
-                                                        })
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] in [17]:
-                                                        detalle['Devengados']['Licencias']['LicenciaNR'].append({
-                                                            "FechaInicio":None,
-                                                            "FechaFin":None,
-                                                            "Cantidad":0,
-                                                            "Pago":documento_detalle['pago']
-                                                        })                                                
-                                                        
-                                                if documento_detalle['operacion'] == -1:        
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 5:
-                                                        detalle['Deducciones']['Salud']['Porcentaje'] = documento_detalle['porcentaje']
-                                                        detalle['Deducciones']['Salud']['Deduccion'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 6:
-                                                        detalle['Deducciones']['FondoPension']['Porcentaje'] = documento_detalle['porcentaje']
-                                                        detalle['Deducciones']['FondoPension']['Deduccion'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 8:                                                                                                                                            
-                                                        detalle['Deducciones']['Deuda'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 9:
-                                                        detalle['Deducciones']['FondoSP']['Porcentaje'] = documento_detalle['porcentaje']
-                                                        detalle['Deducciones']['FondoSP']['DeduccionSP'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 10:
-                                                        detalle['Deducciones']['RetencionFuente'] += documento_detalle['pago']
-
-                                                    if documento_detalle['concepto__concepto_tipo_id'] == 11:                                                                                                                                            
-                                                        detalle['Deducciones']['OtrasDeducciones'].append(documento_detalle['pago'])
-
-                                            datos = transformar_decimal(datos)
-                                            wolframio = Wolframio()
-                                            respuesta = wolframio.emitir(datos)
-                                            if respuesta['error'] == False: 
-                                                documento.estado_electronico_enviado = True
-                                                documento.electronico_id = respuesta['id']
-                                                documento.save()                                        
-                                            else:
-                                                return Response({'mensaje': respuesta['mensaje'], 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                                        else:
-                                            return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                
-                                    return Response({'mensaje': 'Documento emitido correctamente'}, status=status.HTTP_200_OK)
-                                else:
-                                    return Response({'mensaje': 'El tipo de documento no esta habilitado para enviar a la DIAN', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
-                            else:
-                                return Response({'mensaje': 'La factura no cuenta con un número', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-                        else:
-                            return Response({'mensaje': "El documento ya fue enviado", 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                        
-                    else:  
-                        return Response({'mensaje': 'La empresa no se encuentra activada para emitir documentos electronicos', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                respuesta = self.emitir(id)
+                if respuesta['error'] == False:
+                    return Response({'mensaje': 'Documento emitido correctamente'}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'mensaje': 'El documento no se puede emitir ya que no está aprobado', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje': respuesta['mensaje'], 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                    
             else:
                 return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                
         except GenDocumento.DoesNotExist:
@@ -2791,6 +2253,554 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else :
             return Response({'mensaje': 'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
+    def emitir(self, id):
+        documento = GenDocumento.objects.get(pk=id)
+        if documento.estado_aprobado == True:
+            empresa = GenEmpresa.objects.get(pk=1)
+            if empresa.rededoc_id:
+                if documento.estado_electronico_enviado == False: 
+                    if documento.numero: 
+                        if documento.documento_tipo.electronico:
+                            if documento.contacto:
+                                # Factura y Documento soporte
+                                if documento.documento_tipo_id in [1,2,3,11,12,24]:
+                                    if documento.resolucion: 
+                                        #Las facturas y documento soporte toman prefijo de la resolucion
+                                        prefijo = documento.resolucion.prefijo
+                                        documento_referencia_id = None
+                                        forma_pago = 2
+                                        if documento.plazo_pago_id == 1:
+                                            forma_pago = 1                                            
+                                        if documento.documento_tipo.documento_clase_id == 101:
+                                            prefijo = "NC"
+                                        if documento.documento_tipo.documento_clase_id == 102:
+                                            prefijo = "ND" 
+                                        if documento.documento_tipo.documento_clase_id == 304:
+                                            prefijo = "DSAJ"
+                                        correo = documento.contacto.correo_facturacion_electronica if documento.contacto.correo_facturacion_electronica else documento.contacto.correo
+                                        responsable = 0
+                                        if documento.contacto.regimen_id in (1, 5):
+                                            responsable = 1
+                                        datos_factura = {
+                                            "cuentaId": empresa.rededoc_id,
+                                            "documentoClaseId" : documento.documento_tipo_id,
+                                            "documentoClienteId": documento.id,
+                                            "documento" : {
+                                                "ambiente" : 1,
+                                                "prefijo" : prefijo,
+                                                "numero" : documento.numero,
+                                                "fecha" : str(documento.fecha),
+                                                "hora" : str("12:00:00-05:00"),
+                                                "fecha_vence" : str(documento.fecha_vence),
+                                                "tipo_operacion" : str(10),
+                                                "moneda" : "COP",
+                                                "orden_compra": documento.orden_compra,
+                                                "remision": documento.remision,
+                                                "resolucion" : str(documento.resolucion.numero),
+                                                "forma_pago" : forma_pago,
+                                                "cantidad_detalles" :1,
+                                                "subtotal" : "{0:.2f}".format(documento.subtotal),
+                                                "subtotal_mas_impuestos" : "{0:.2f}".format(documento.subtotal + documento.impuesto),
+                                                "base" : "{0:.2f}".format(documento.base_impuesto),
+                                                "total_impuestos" : "{0:.2f}".format(documento.impuesto),
+                                                "total_descuentos" : "{0:.2f}".format(documento.descuento),
+                                                "total_cargos" : "{0:.2f}".format(0),
+                                                "total_anticipos" : "{0:.2f}".format(0),
+                                                "total_documento" : "{0:.2f}".format(documento.total_bruto),
+                                                "total_iva" : "{0:.2f}".format(0),
+                                                "total_consumo" : "{0:.2f}".format(0),
+                                                "total_ica" : "{0:.2f}".format(0),
+                                                "documento_referencia": documento_referencia_id,
+                                                "adquiriente" : {
+                                                    "identificacion" : documento.contacto.identificacion.codigo,
+                                                    "numero_identificacion" : documento.contacto.numero_identificacion,
+                                                    "digito_verificacion" : documento.contacto.digito_verificacion,
+                                                    "razon_social" : documento.contacto.nombre_corto,
+                                                    "pais" : "CO",
+                                                    "ciudad" : documento.contacto.ciudad.nombre,
+                                                    "departamento" : documento.contacto.ciudad.estado.nombre,
+                                                    "direccion" : documento.contacto.direccion,
+                                                    "obligaciones" : "0-99",
+                                                    "nombres" : documento.contacto.nombre1,
+                                                    "apellidos" : documento.contacto.apellido1,
+                                                    "correo" : correo,
+                                                    "telefono" : documento.contacto.telefono,
+                                                    "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
+                                                    "regimen_tributario" : documento.contacto.regimen.codigo_interface,
+                                                    "codigo_postal" : documento.contacto.ciudad.codigo_postal,
+                                                    "responsable" : responsable,
+                                                    "nacional" : 1
+                                                },
+                                            }
+                                        }
+                                        arr_medio_pago = []
+
+                                        arr_medio_pago.append({
+                                            "medio_pago": 31,
+                                            "descripcion": "",
+                                        })
+
+                                        datos_factura['documento']['medios_pago'] = arr_medio_pago
+
+                                        arr_item = []
+                                        cantidad_items = 0                                        
+                                        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=id)
+                                        for documentoDetalle in documentoDetalles:                                                                                    
+                                            documento_impuestos = GenDocumentoImpuesto.objects.filter(
+                                                documento_detalle_id=documentoDetalle.id,
+                                                impuesto__impuesto_tipo_id=1
+                                            ).values(
+                                                tipo_impuesto=F('impuesto__impuesto_tipo_id'),
+                                                porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())
+                                            ).annotate(
+                                                total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField())
+                                            )
+                                            documento_impuestos = list(documento_impuestos)
+                                            cantidad_items += 1
+                                            arr_item.append({
+                                                "consecutivo": cantidad_items,
+                                                "codigo": documentoDetalle.item_id,
+                                                "descripcion" : documentoDetalle.item.nombre,
+                                                "marca" : "",
+                                                "modelo" : "",
+                                                "observacion" : "",
+                                                "cantidad" : str(documentoDetalle.cantidad),
+                                                "cantidad_empque": str(documentoDetalle.cantidad),
+                                                "obserquio" : str(0),
+                                                "precio_unitario" : "{0:.2f}".format(documentoDetalle.precio),
+                                                "precio_referencia" : "{0:.2f}".format(documentoDetalle.precio),
+                                                "valor" : "{0:.2f}".format(documentoDetalle.precio),
+                                                "total_descuentos" : "{0:.2f}".format(documentoDetalle.descuento),
+                                                "total_cargos" : "{0:.2f}".format(0),
+                                                "total_impuestos" : "{0:.2f}".format(documentoDetalle.impuesto),
+                                                "base" : "{0:.2f}".format(documentoDetalle.base_impuesto),
+                                                "subtotal" : "{0:.2f}".format(documentoDetalle.subtotal),
+                                                "impuestos" : documento_impuestos
+                                            })
+                                        datos_factura['documento']['cantidad_detalles'] = cantidad_items                                        
+                                        documento_impuestos = GenDocumentoImpuesto.objects.filter(
+                                            documento_detalle__documento_id=id,
+                                            impuesto__impuesto_tipo_id=1
+                                        ).values(
+                                            tipo_impuesto=F('impuesto__impuesto_tipo_id'),
+                                            porcentual=Cast(F('impuesto__porcentaje'), output_field=CharField())                                                                                                
+                                        ).annotate(                                            
+                                            total=Cast(Coalesce(Sum('total'), 0, output_field=DecimalField()), output_field=CharField()),
+                                            base=Cast(Coalesce(Sum('base'), 0, output_field=DecimalField()), output_field=CharField())
+                                        )
+                                        documento_impuestos = list(documento_impuestos)
+                                        datos_factura['documento']['detalles'] = arr_item
+                                        datos_factura['doc_cantidad_item'] = cantidad_items
+                                        datos_factura['documento']['impuestos'] = documento_impuestos
+                                        wolframio = Wolframio()
+                                        respuesta = wolframio.emitir(datos_factura)
+                                        if respuesta['error'] == False: 
+                                            documento.estado_electronico_enviado = True
+                                            documento.electronico_id = respuesta['id']
+                                            documento.save()                                        
+                                        else:               
+                                            return {'error':True, 'mensaje':respuesta['mensaje']}
+                                        #return Response({'datos': datos_factura, 'documento_impuestos':documento_impuestos}, status=status.HTTP_200_OK)
+                                    else:
+                                        return {'error':True, 'mensaje':'La factura no cuenta con una resolución asociada'}                                    
+                                    
+                                # Compra
+                                if documento.documento_tipo_id == 5:                                    
+                                    if documento.referencia_prefijo and documento.referencia_numero and documento.referencia_cue:
+                                        datos_compra = {
+                                            "cuentaId": empresa.rededoc_id,
+                                            "documentoClaseId" : documento.documento_tipo_id,
+                                            "documentoClienteId": documento.id,
+                                            "documento" : {                                                
+                                                "prefijo" : documento.referencia_prefijo,
+                                                "numero" : documento.referencia_numero,
+                                                "cue" : documento.referencia_cue,
+                                                "fecha" : str(documento.fecha),
+                                                "hora" : str("12:00:00-05:00"),
+                                                "fecha_vence" : str(documento.fecha_vence),                                                                                                
+                                                "total_documento" : str(documento.total_bruto), 
+                                                "proveedor" : {                                                        
+                                                    "identificacion" : documento.contacto.identificacion.codigo,
+                                                    "numero_identificacion" : documento.contacto.numero_identificacion,
+                                                    "digito_verificacion" : documento.contacto.digito_verificacion,
+                                                    "razon_social" : documento.contacto.nombre_corto,   
+                                                    "correo" : documento.contacto.correo,                                                     
+                                                }
+                                            }
+                                        }
+                                                                                                    
+                                        wolframio = Wolframio()
+                                        respuesta = wolframio.emitir(datos_compra)
+                                        if respuesta['error'] == False: 
+                                            documento.estado_electronico_enviado = True
+                                            documento.estado_electronico = True
+                                            documento.electronico_id = respuesta['id']
+                                            documento.save()                                        
+                                        else:                                        
+                                            return {'error':True, 'mensaje':respuesta['mensaje']}
+                                        #return Response({'datos': datos_factura}, status=status.HTTP_200_OK)
+                                    else:                                    
+                                        return {'error':True, 'mensaje':'Los documentos de compra deben tener prefijo, numero y cue'}
+
+                                # Nomina    
+                                if documento.documento_tipo_id == 15:                                
+                                    respuesta = DocumentoViewSet.validacion_nomina_emitir(documento)
+                                    if respuesta['error'] == False:
+                                        prefijo = "NE"                                
+                                        datos = {
+                                            "cuentaId": empresa.rededoc_id,
+                                            "documentoClaseId" : documento.documento_tipo_id,
+                                            "documentoClienteId": documento.id,
+                                            "documento" : {
+                                                "ambiente" : 1,
+                                                "prefijo" : prefijo,
+                                                "numero" : documento.numero,
+                                                "fecha" : str(documento.fecha),
+                                                "hora" : str("12:00:00-05:00"),
+                                                "devengado":str(documento.devengado),
+                                                "deduccion":str(documento.deduccion),
+                                                "total_documento" : str(documento.total),                                                                                                                                                                                                    
+                                                "fecha_desde":str(documento.fecha),
+                                                "fecha_hasta":str(documento.fecha_hasta),                                                                                                                    
+                                                "empleado" : {
+                                                    "codigo": documento.contacto_id,
+                                                    "identificacion" : documento.contacto.identificacion.codigo,
+                                                    "numero_identificacion" : documento.contacto.numero_identificacion,
+                                                    "digito_verificacion" : documento.contacto.digito_verificacion,
+                                                    "razon_social" : documento.contacto.nombre_corto,
+                                                    "pais" : "CO",
+                                                    "ciudad" : documento.contacto.ciudad.nombre,
+                                                    "ciudad_codigo_postal" : documento.contacto.ciudad.codigo_postal,
+                                                    "departamento" : documento.contacto.ciudad.estado.codigo,
+                                                    "direccion" : documento.contacto.direccion,                                                
+                                                    "nombre1" : documento.contacto.nombre1,
+                                                    "nombre2" : documento.contacto.nombre2,
+                                                    "apellido1" : documento.contacto.apellido1,
+                                                    "apellido2" : documento.contacto.apellido2,
+                                                    "correo" : documento.contacto.correo,
+                                                    "telefono" : documento.contacto.telefono,
+                                                    "tipo_organizacion_juridica" : documento.contacto.tipo_persona.id,
+                                                    "regimen_tributario" : documento.contacto.regimen.codigo_interface,                                                
+                                                    "cuenta":documento.contacto.numero_cuenta,
+                                                    "banco":documento.contacto.banco.nombre, 
+                                                    "responsable" : 1,
+                                                    "nacional" : 1
+                                                },
+                                                "contrato" : {
+                                                    "fecha_desde":str(documento.contrato.fecha_desde),
+                                                    "salario":str(documento.salario),
+                                                    "salario_intergral":documento.contrato.salario_integral,
+                                                    "tipo_cotizante":documento.contrato.tipo_cotizante.codigo,
+                                                    "subtipo_cotizante":documento.contrato.subtipo_cotizante.codigo,
+                                                    "contrato_tipo":documento.contrato.contrato_tipo_id,                                            
+                                                    "ciudad_labora" : documento.contrato.ciudad_labora.nombre,
+                                                    "ciudad_labora_codigo_postal" : documento.contrato.ciudad_labora.codigo,
+                                                    "estado_labora_codigo_postal":documento.contrato.ciudad_labora.estado.codigo,
+                                                },
+                                            }
+                                        }           
+                                        
+                                        detalle = {
+                                            'valido': True,
+                                            'Devengados': {
+                                                'Basico': {
+                                                    'DiasTrabajados': 0,
+                                                    'SueldoTrabajado': 0
+                                                },
+                                                "Transporte": {
+                                                    "AuxilioTransporte": 0,
+                                                    "ViaticoManuAlojS": 0,
+                                                    "ViaticoManuAlojNS": 0
+                                                },
+                                                "OtrosConceptos": [],
+                                                "Bonificaciones": [],
+                                                "Auxilios": [],
+                                                "HorasExtras": {
+                                                    "HED": [],
+                                                    "HEN": [],
+                                                    "HRN": [],
+                                                    "HEDDF": [],
+                                                    "HRDDF": [],
+                                                    "HENDF": [],
+                                                    "HRNDF": [],
+                                                },
+                                                "Compensaciones": [],
+                                                "HuelgasLegales": [],
+                                                "BonoEPCTVs": [],
+                                                "Comisiones": [],
+                                                "PagosTerceros": [],
+                                                "Anticipos": [],
+                                                "Vacaciones": {
+                                                    "VacacionesComunes": [],
+                                                    "VacacionesCompensadas": []
+                                                },
+                                                "Primas": {
+                                                    'Cantidad':0,
+                                                    'Pago':0,
+                                                    'PagoNS':0
+                                                },
+                                                "Cesantias": {
+                                                    "Pago": 0,
+                                                    "Porcentaje": 0,
+                                                    "PagoIntereses": 0
+                                                },
+                                                "Incapacidades": [],
+                                                "Licencias": {
+                                                    "LicenciaMP": [],
+                                                    "LicenciaR": [],
+                                                    "LicenciaNR": [],
+                                                },
+                                                'Dotacion': 0,
+                                                'ApoyoSost': 0,
+                                                'Teletrabajo': 0,
+                                                'BonifRetiro': 0,
+                                                'Indemnizacion': 0,
+                                                'Reintegro': 0,
+                                            },
+                                            'Deducciones': {
+                                                "Salud": {
+                                                    "Porcentaje": 0,
+                                                    "Deduccion": 0
+                                                },
+                                                "FondoPension": {
+                                                    "Porcentaje": 0,
+                                                    "Deduccion": 0
+                                                },
+                                                "FondoSP": {
+                                                    "Porcentaje": 0,
+                                                    "DeduccionSP": 0,
+                                                    "PorcentajeSub": 0,
+                                                    "DeduccionSub": 0
+                                                },
+                                                "Sindicatos": [],
+                                                "Sanciones": [],
+                                                "Libranzas": [],
+                                                "PagosTerceros": [],
+                                                "Anticipos": [],
+                                                "OtrasDeducciones": [],
+                                                'PensionVoluntaria': 0,
+                                                'RetencionFuente': 0,
+                                                'AFC': 0,
+                                                'Cooperativa': 0,
+                                                'EmbargoFiscal': 0,
+                                                'PlanComplementarios': 0,
+                                                'Educacion': 0,
+                                                'Reintegro': 0,
+                                                'Deuda': 0,
+                                            }
+                                        }
+                                        datos['documento']['detalle'] = detalle
+                                        documento_detalles = GenDocumentoDetalle.objects.filter(
+                                            documento__documento_referencia_id=id
+                                        ).values(
+                                            'id', 'operacion', 'porcentaje', 'dias', 'cantidad', 'pago','concepto_id', 'concepto__nombre', 'concepto__concepto_tipo_id'
+                                        )
+                                        print(documento_detalles.query)
+                                        for documento_detalle in documento_detalles:                                        
+                                            fecha = documento.fecha
+                                            fecha_desde_extra = fecha.strftime('%Y-%m-%d') + "T11:00:00"
+                                            fecha_hasta_extra = fecha.strftime('%Y-%m-%d') + "T12:00:00"                                        
+                                            if documento_detalle['operacion'] == 1:
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 1:
+                                                    dias_basico = documento_detalle['dias'] if documento_detalle['dias'] != 0 else 1
+                                                    detalle['Devengados']['Basico']['DiasTrabajados'] += dias_basico
+                                                    detalle['Devengados']['Basico']['SueldoTrabajado'] += documento_detalle['pago']                                                
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 7:
+                                                    detalle['Devengados']['Transporte']['AuxilioTransporte'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 3:                                                                                                                                            
+                                                    detalle['Devengados']['OtrosConceptos'].append({
+                                                            'DescripcionConcepto': documento_detalle['concepto__nombre'],
+                                                            'ConceptoS': documento_detalle['pago'],
+                                                            'ConceptoNS': 0
+                                                            })
+                                                    
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 4:                                                                                                                                            
+                                                    detalle['Devengados']['OtrosConceptos'].append({
+                                                            'DescripcionConcepto': documento_detalle['concepto__nombre'],
+                                                            'ConceptoS': 0,
+                                                            'ConceptoNS': documento_detalle['pago']
+                                                            })
+                                                
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 2:
+                                                    # No se pueden cambiar los porcentajes
+                                                    if documento_detalle['concepto_id'] in [5,3]:
+                                                        detalle['Devengados']['HorasExtras']['HED'].append({
+                                                            "Id":0,
+                                                            "HoraInicio":fecha_desde_extra,
+                                                            "HoraFin":fecha_hasta_extra,
+                                                            "Cantidad":documento_detalle['cantidad'],
+                                                            "Porcentaje":25,
+                                                            "Pago":documento_detalle['pago']
+                                                            })                                                    
+                                                    if documento_detalle['concepto_id'] in [6,4]:
+                                                        detalle['Devengados']['HorasExtras']['HEN'].append({
+                                                            "Id":0,
+                                                            "HoraInicio":fecha_desde_extra,
+                                                            "HoraFin":fecha_hasta_extra,
+                                                            "Cantidad":documento_detalle['cantidad'],
+                                                            "Porcentaje":75,
+                                                            "Pago":documento_detalle['pago']
+                                                            }) 
+                                                    if documento_detalle['concepto_id'] in [9,2]:
+                                                        detalle['Devengados']['HorasExtras']['HRN'].append({
+                                                            "Id":0,
+                                                            "HoraInicio":fecha_desde_extra,
+                                                            "HoraFin":fecha_hasta_extra,
+                                                            "Cantidad":documento_detalle['cantidad'],
+                                                            "Porcentaje":35,
+                                                            "Pago":documento_detalle['pago']
+                                                            }) 
+                                                    if documento_detalle['concepto_id'] in [7]:
+                                                        detalle['Devengados']['HorasExtras']['HEDDF'].append({
+                                                            "Id":0,
+                                                            "HoraInicio":fecha_desde_extra,
+                                                            "HoraFin":fecha_hasta_extra,
+                                                            "Cantidad":documento_detalle['cantidad'],
+                                                            "Porcentaje":100,
+                                                            "Pago":documento_detalle['pago']
+                                                            }) 
+                                                    if documento_detalle['concepto_id'] in [10]:
+                                                        detalle['Devengados']['HorasExtras']['HRDDF'].append({
+                                                            "Id":0,
+                                                            "HoraInicio":fecha_desde_extra,
+                                                            "HoraFin":fecha_hasta_extra,
+                                                            "Cantidad":documento_detalle['cantidad'],
+                                                            "Porcentaje":75,
+                                                            "Pago":documento_detalle['pago']
+                                                            }) 
+                                                    if documento_detalle['concepto_id'] in [8]:
+                                                        detalle['Devengados']['HorasExtras']['HENDF'].append({
+                                                            "Id":0,
+                                                            "HoraInicio":fecha_desde_extra,
+                                                            "HoraFin":fecha_hasta_extra,
+                                                            "Cantidad":documento_detalle['cantidad'],
+                                                            "Porcentaje":150,
+                                                            "Pago":documento_detalle['pago']
+                                                            }) 
+                                                    if documento_detalle['concepto_id'] in [11]:
+                                                        detalle['Devengados']['HorasExtras']['HRNDF'].append({
+                                                            "Id":0,
+                                                            "HoraInicio":fecha_desde_extra,
+                                                            "HoraFin":fecha_hasta_extra,
+                                                            "Cantidad":documento_detalle['cantidad'],
+                                                            "Porcentaje":110,
+                                                            "Pago":documento_detalle['pago']
+                                                            })                                                                                                                                                                                                                                                                                                 
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 18:
+                                                    detalle['Devengados']['Vacaciones']['VacacionesComunes'].append({
+                                                            'FechaInicio': None,
+                                                            'FechaFin': None,
+                                                            'Cantidad': documento_detalle['dias'],
+                                                            'Pago': documento_detalle['pago']
+                                                            })
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 19:
+                                                    detalle['Devengados']['Vacaciones']['VacacionesCompensadas'].append({
+                                                            'Cantidad': 0,
+                                                            'Pago': documento_detalle['pago']
+                                                    })
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] in [20,21]:
+                                                    detalle['Devengados']['Primas']['PagoNS'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] in [22,23]:
+                                                    detalle['Devengados']['Cesantias']['Pago'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] in [24,25]:
+                                                    detalle['Devengados']['Cesantias']['PagoIntereses'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 12:
+                                                    detalle['Devengados']['Incapacidades'].append({
+                                                        'FechaInicio': None,
+                                                        'FechaFin': None,
+                                                        'Cantidad':documento_detalle['dias'],
+                                                        'Tipo':1,
+                                                        'Pago':documento_detalle['pago']
+                                                    })
+                                                
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 13:
+                                                    detalle['Devengados']['Incapacidades'].append({
+                                                        'FechaInicio': None,
+                                                        'FechaFin': None,
+                                                        'Cantidad':documento_detalle['dias'],
+                                                        'Tipo':3,
+                                                        'Pago':documento_detalle['pago']
+                                                    })  
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 14:
+                                                    detalle['Devengados']['Licencias']['LicenciaMP'].append({
+                                                        "FechaInicio":None,
+                                                        "FechaFin":None,
+                                                        "Cantidad":0,
+                                                        "Pago":documento_detalle['pago']
+                                                    })
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] in [15,16]:
+                                                    detalle['Devengados']['Licencias']['LicenciaR'].append({
+                                                        "FechaInicio":None,
+                                                        "FechaFin":None,
+                                                        "Cantidad":0,
+                                                        "Pago":documento_detalle['pago']
+                                                    })
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] in [17]:
+                                                    detalle['Devengados']['Licencias']['LicenciaNR'].append({
+                                                        "FechaInicio":None,
+                                                        "FechaFin":None,
+                                                        "Cantidad":0,
+                                                        "Pago":documento_detalle['pago']
+                                                    })                                                
+                                                    
+                                            if documento_detalle['operacion'] == -1:        
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 5:
+                                                    detalle['Deducciones']['Salud']['Porcentaje'] = documento_detalle['porcentaje']
+                                                    detalle['Deducciones']['Salud']['Deduccion'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 6:
+                                                    detalle['Deducciones']['FondoPension']['Porcentaje'] = documento_detalle['porcentaje']
+                                                    detalle['Deducciones']['FondoPension']['Deduccion'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 8:                                                                                                                                            
+                                                    detalle['Deducciones']['Deuda'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 9:
+                                                    detalle['Deducciones']['FondoSP']['Porcentaje'] = documento_detalle['porcentaje']
+                                                    detalle['Deducciones']['FondoSP']['DeduccionSP'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 10:
+                                                    detalle['Deducciones']['RetencionFuente'] += documento_detalle['pago']
+
+                                                if documento_detalle['concepto__concepto_tipo_id'] == 11:                                                                                                                                            
+                                                    detalle['Deducciones']['OtrasDeducciones'].append(documento_detalle['pago'])
+
+                                        datos = transformar_decimal(datos)
+                                        wolframio = Wolframio()
+                                        respuesta = wolframio.emitir(datos)
+                                        if respuesta['error'] == False: 
+                                            documento.estado_electronico_enviado = True
+                                            documento.electronico_id = respuesta['id']
+                                            documento.save()                                        
+                                        else:                                        
+                                            return {'error':True, 'mensaje':respuesta['mensaje']}
+                                    else:                                   
+                                        return {'error':True, 'mensaje':respuesta['mensaje']}
+                                return {'error':False}
+                            else:                                
+                                return {'error':True, 'mensaje':'El documento no tiene contacto'}
+                        else:                                
+                            return {'error':True, 'mensaje':'El tipo de documento no esta habilitado para enviar a la DIAN'}
+                    else:                        
+                        return {'error':True, 'mensaje':'La factura no cuenta con un número'}
+                else:                                            
+                    return {'error':True, 'mensaje':'El documento ya fue enviado'}
+            else:                  
+                return {'error':True, 'mensaje':'La empresa no se encuentra activada para emitir documentos electronicos'}
+        else:
+            return {'error':True, 'mensaje':'El documento no se puede emitir ya que no está aprobado'}
+            
     @staticmethod
     def notificar(documento_id):
         try:
