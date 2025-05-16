@@ -126,6 +126,20 @@ class Wolframio():
             datos = respuesta['datos']
             return {'error':True, 'mensaje':f"Ocurrio un error en el servicio wolframio: {datos['mensaje']}"}    
 
+    def contacto_consulta_nit(self, datos):
+        url = "/api/contacto/consultanit"
+        respuesta = self.consumirPost(datos, url)    
+        datos = respuesta['datos']
+        if respuesta['status'] == 200:
+            return {'error':False, 'datos': datos}
+        elif respuesta['status'] == 404:
+            return {'error':True, 'mensaje': f"No existe la ruta del servicio wolframio"}
+        elif respuesta['status'] == 500:
+            detalle = datos.get('detail', "")
+            return {'error':True, 'mensaje': f"Ocurrio un error grave en el servicio de wolframio notifique su proveedor del software y ayude a mejorar nuestro producto {detalle}"}
+        else:
+            return {'error':True, 'mensaje': f"Wolframio: {datos['mensaje']}"} 
+
     def consumirPost(self, data, url):
         if config('ENV') == "prod":
             url_base = "http://rededoc.co" + url

@@ -8,6 +8,7 @@ from general.models.tipo_persona import GenTipoPersona
 from general.serializers.contacto import GenContactoSerializador, GenContactoExcelSerializador
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from utilidades.wolframio import Wolframio
 from openpyxl import Workbook
 from django.http import HttpResponse
 from io import BytesIO
@@ -147,6 +148,27 @@ class ContactoViewSet(viewsets.ModelViewSet):
             else:
                 gc.collect()                    
                 return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'consulta-dian',)
+    def consulta_dian_action(self, request):
+        raw = request.data        
+        nit = raw.get('nit') 
+        identificacion_id = raw.get('identificacion_id') 
+        if nit and identificacion_id:
+            if identificacion_id in [3,6]:
+                identificacion = GenIdentificacion.objects.get(pk=identificacion_id)
+                datos = {'nit':nit, 'identificacion': identificacion.codigo}
+                wolframio = Wolframio()
+                respuesta = wolframio.contacto_consulta_nit(datos)
+                if respuesta['error'] == False: 
+                    return Response(respuesta['datos'], status=status.HTTP_200_OK)                          
+                else:               
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'Solo se pueden autocompletar NIT o Cedula', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+            
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
