@@ -2834,7 +2834,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def validacion_aprobar(documento: GenDocumento, documento_detalles: GenDocumentoDetalle, consecutivo):
         fecha = date.today()
         if documento.estado_aprobado == False:
-            if documento.total > 0:
+            if documento.total >= 0:
                 # Factura o documento soporte
                 if documento.documento_tipo.documento_clase_id in (100,303):
                     # Si tiene detalles o es nomina electronica
