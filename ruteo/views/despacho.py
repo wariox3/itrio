@@ -121,36 +121,35 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                 despacho = RutDespacho.objects.get(pk=id)  
                 if despacho.estado_terminado == False:
                     visita = RutVisita.objects.get(pk=visita_id)
-                    if visita:
-                        if visita.estado_despacho == True: 
-                            if trafico == False:
-                                return Response({'mensaje':'La visita esta en otro despacho', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-                            else:
-                                despacho_origen = RutDespacho.objects.get(pk=visita.despacho_id)
-                                despacho_origen.peso = despacho_origen.peso - visita.peso
-                                despacho_origen.volumen = despacho_origen.volumen - visita.volumen
-                                despacho_origen.tiempo = despacho_origen.tiempo - visita.tiempo
-                                despacho_origen.tiempo_servicio = despacho_origen.tiempo_servicio - visita.tiempo_servicio
-                                despacho_origen.tiempo_trayecto = despacho_origen.tiempo_trayecto - visita.tiempo_trayecto
-                                despacho_origen.visitas = despacho_origen.visitas - 1                                   
-                                despacho_origen.save()                                
-                        visita.despacho = despacho
-                        visita.estado_despacho = True
-                        visita.save()                            
-                        despacho.peso = despacho.peso + visita.peso
-                        despacho.volumen = despacho.volumen + visita.volumen
-                        despacho.tiempo = despacho.tiempo + visita.tiempo
-                        despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
-                        despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
-                        despacho.visitas = despacho.visitas + 1                                   
-                        despacho.save()               
-                        return Response({'mensaje': 'Se adiciono la visita'}, status=status.HTTP_200_OK)                              
-                    else:
-                        return Response({'mensaje':'La visita no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                    if visita.estado_despacho == True: 
+                        if trafico == False:
+                            return Response({'mensaje':'La visita esta en otro despacho', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                        else:
+                            despacho_origen = RutDespacho.objects.get(pk=visita.despacho_id)
+                            despacho_origen.peso = despacho_origen.peso - visita.peso
+                            despacho_origen.volumen = despacho_origen.volumen - visita.volumen
+                            despacho_origen.tiempo = despacho_origen.tiempo - visita.tiempo
+                            despacho_origen.tiempo_servicio = despacho_origen.tiempo_servicio - visita.tiempo_servicio
+                            despacho_origen.tiempo_trayecto = despacho_origen.tiempo_trayecto - visita.tiempo_trayecto
+                            despacho_origen.visitas = despacho_origen.visitas - 1                                   
+                            despacho_origen.save()                                
+                    visita.despacho = despacho
+                    visita.estado_despacho = True
+                    visita.save()                            
+                    despacho.peso = despacho.peso + visita.peso
+                    despacho.volumen = despacho.volumen + visita.volumen
+                    despacho.tiempo = despacho.tiempo + visita.tiempo
+                    despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
+                    despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
+                    despacho.visitas = despacho.visitas + 1                                   
+                    despacho.save()               
+                    return Response({'mensaje': 'Se adiciono la visita'}, status=status.HTTP_200_OK)                              
                 else:
                     return Response({'mensaje':'El despacho esta terminado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
             except RutDespacho.DoesNotExist:
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            except RutVisita.DoesNotExist:
+                return Response({'mensaje':'La visita no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
