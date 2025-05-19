@@ -26,6 +26,16 @@ class Backblaze():
             nombre_archivo
         )                
         return response.id_, response.size, response.content_type, uuid_referencia   
+    
+    def subir_data(self, file_data, tenant, nombre_archivo):
+        bucket_nombre = config('B2_BUCKET_NAME')
+        bucket = self.b2_api.get_bucket_by_name(bucket_nombre)
+        if bucket is None:
+            raise ValueError(f"El bucket '{bucket_nombre}' no existe.")                               
+        uuid_referencia = uuid.uuid4()
+        nombre_archivo = f"{tenant}/{uuid_referencia}_{nombre_archivo}"
+        response = bucket.upload_bytes(file_data,nombre_archivo)                
+        return response.id_, response.size, response.content_type, uuid_referencia
 
     def descargar(self, archivo_id):
         bucket_nombre = config('B2_BUCKET_NAME')

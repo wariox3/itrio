@@ -7,6 +7,7 @@ from ruteo.models.vehiculo import RutVehiculo
 from ruteo.models.franja import RutFranja
 from ruteo.models.flota import RutFlota
 from general.models.ciudad import GenCiudad
+from general.models.archivo import GenArchivo
 from contenedor.models import CtnDireccion
 from ruteo.serializers.visita import RutVisitaSerializador
 from datetime import datetime
@@ -20,9 +21,11 @@ from shapely.geometry import Point, Polygon
 from math import radians, cos, sin, asin, sqrt, atan2
 from django.db.models import Sum, F, Count
 from django.db.models.functions import Coalesce
+from django.db import transaction
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from io import BytesIO
 from decimal import Decimal
+from utilidades.backblaze import Backblaze
 import re
 import gc
 import base64
@@ -799,28 +802,39 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'entrega',)
-    def entrega(self, request):             
-        raw = request.data
-        id = raw.get('id')
-        imagenes = raw.get('imagenes')
+    def entrega(self, request):                     
+        id = request.POST.get('id')
+        imagenes = request.FILES.getlist('imagenes')
         if id:
             try:
                 visita = RutVisita.objects.get(pk=id)                            
             except RutVisita.DoesNotExist:
-                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
-            if visita.estado_entregado == False:                
-                visita.estado_entregado = True
-                visita.fecha_entrega = timezone.now()
-                visita.save()
-                visita.despacho.visitas_entregadas += 1
-                visita.despacho.save()
-                if imagenes:
-                    tenant = request.tenant.schema_name
-                    for imagen in imagenes:                                                
-                        objeto_base64 = Utilidades.separar_base64(imagen['base64'])
-                        nombre_archivo = f'{id}.{objeto_base64["extension"]}'
-                        respuesta = ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'], nombre_archivo, id, "RutVisita", tenant)                        
-                return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
+                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)           
+            if visita.estado_entregado == False:          
+                with transaction.atomic():                          
+                    visita.estado_entregado = True
+                    visita.fecha_entrega = timezone.now()
+                    visita.save()
+                    visita.despacho.visitas_entregadas += 1
+                    visita.despacho.save()
+                    if imagenes:
+                        backblaze = Backblaze()
+                        tenant = request.tenant.schema_name
+                        for imagen in imagenes:       
+                            file_content = imagen.read()                                                                 
+                            nombre_archivo = f'{id}.jpg'                                                   
+                            id_almacenamiento, tamano, tipo, uuid = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                            archivo = GenArchivo()
+                            archivo.archivo_tipo_id = 2
+                            archivo.almacenamiento_id = id_almacenamiento
+                            archivo.nombre = nombre_archivo
+                            archivo.tipo = tipo
+                            archivo.tamano = tamano
+                            archivo.uuid = uuid
+                            archivo.codigo = id
+                            archivo.modelo = "RutVisita"
+                            archivo.save()
+                    return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:

@@ -76,6 +76,12 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'mensaje':'La novedad ya esta solucionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
+
+    @action(detail=False, methods=["post"], url_path=r'nuevo',)
+    def nuevo_action(self, request):                     
+        imagenes = request.FILES.getlist('imagenes')
+        return Response({'mensaje': f'Se soluciono la novedad'}, status=status.HTTP_200_OK)          
         
 
