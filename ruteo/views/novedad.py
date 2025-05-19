@@ -3,50 +3,16 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from ruteo.models.novedad import RutNovedad
 from ruteo.models.visita import RutVisita
+from general.models.archivo import GenArchivo
 from ruteo.serializers.novedad import RutNovedadSerializador
 from django.db import transaction
 from django.utils import timezone
-from utilidades.utilidades import Utilidades
-from servicios.archivo_servicio import ArchivoServicio
+from utilidades.backblaze import Backblaze
 
 class RutNovedadViewSet(viewsets.ModelViewSet):
     queryset = RutNovedad.objects.all()
     serializer_class = RutNovedadSerializador
     permission_classes = [permissions.IsAuthenticated]  
-
-    def create(self, request, *args, **kwargs):
-        data = request.data.copy()
-        imagenes = data.pop('imagenes', None)
-        serializer = self.get_serializer(data=data)
-        if serializer.is_valid():
-            visita_id = serializer.validated_data['visita'].id
-            try:
-                visita = RutVisita.objects.get(pk=visita_id)
-            except RutVisita.DoesNotExist:
-                return Response({'mensaje': 'La visita no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
-            
-            if visita.estado_novedad:
-                return Response({'mensaje': 'La visita ya tiene una novedad activa', 'codigo': 3}, status=status.HTTP_400_BAD_REQUEST)
-            
-            with transaction.atomic():
-                instance = serializer.save()
-                visita.estado_novedad = True
-                visita.save(update_fields=['estado_novedad'])
-                if visita.despacho:
-                    despacho = visita.despacho
-                    despacho.visitas_novedad = despacho.visitas_novedad + 1
-                    despacho.save(update_fields=['visitas_novedad'])
-
-                if imagenes:
-                    tenant = request.tenant.schema_name
-                    for imagen in imagenes:
-                        objeto_base64 = Utilidades.separar_base64(imagen['base64'])
-                        nombre_archivo = f'{instance.id}.{objeto_base64["extension"]}'
-                        ArchivoServicio.cargar_modelo(objeto_base64['base64_raw'],nombre_archivo,instance.id,"RutNovedad",tenant)
-
-            return Response({'id': instance.id}, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje': 'Errores de validación', 'errores_validador': serializer.errors},status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'solucionar',)
     def solucionar(self, request):             
@@ -82,6 +48,58 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'nuevo',)
     def nuevo_action(self, request):                     
         imagenes = request.FILES.getlist('imagenes')
-        return Response({'mensaje': f'Se soluciono la novedad'}, status=status.HTTP_200_OK)          
+        visita_id = request.POST.get('visita_id')
+        novedad_tipo_id = request.POST.get('novedad_tipo_id')
+        if visita_id and novedad_tipo_id:            
+            try:
+                visita = RutVisita.objects.get(pk=visita_id)
+            except RutVisita.DoesNotExist:
+                return Response({'mensaje': 'La visita no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if visita.estado_novedad:
+                return Response({'mensaje': 'La visita ya tiene una novedad activa', 'codigo': 3}, status=status.HTTP_400_BAD_REQUEST)
+
+            with transaction.atomic():
+                data = {
+                    'visita': visita_id,
+                    'novedad_tipo': novedad_tipo_id
+                }
+                serializer = RutNovedadSerializador(data=data)
+                if serializer.is_valid():
+                    novedad = serializer.save()
+                    visita.estado_novedad = True
+                    visita.save(update_fields=['estado_novedad'])  
+                    if visita.despacho:
+                        despacho = visita.despacho
+                        despacho.visitas_novedad = despacho.visitas_novedad + 1
+                        despacho.save(update_fields=['visitas_novedad'])
+
+                    if imagenes:
+                        backblaze = Backblaze()
+                        tenant = request.tenant.schema_name
+                        for imagen in imagenes:
+                            file_content = imagen.read()                                                                 
+                            nombre_archivo = f'{novedad.id}.jpg'                                                   
+                            id_almacenamiento, tamano, tipo, uuid = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                            archivo = GenArchivo()
+                            archivo.archivo_tipo_id = 2
+                            archivo.almacenamiento_id = id_almacenamiento
+                            archivo.nombre = nombre_archivo
+                            archivo.tipo = tipo
+                            archivo.tamano = tamano
+                            archivo.uuid = uuid
+                            archivo.codigo = novedad.id
+                            archivo.modelo = "RutNovedad"
+                            archivo.save()
+                    return Response({'id': novedad.id}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)                              
+                
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+
+
+
+                  
         
 
