@@ -132,19 +132,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     try:                                        
                         fecha = datetime.strptime(fecha_texto, '%Y%m%d')
                     except ValueError:
-                        fecha = None
-                    
+                        fecha = None                    
                     documento = str(row[2])
-                    direccion_destinatario = row[4] or ""
-                    direccion_destinatario = direccion_destinatario.replace("\t", "").replace("\n", "")
-                    direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion_destinatario).strip()   
-                    direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion_destinatario).strip()                 
-                    direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())                    
-                    direccion_destinatario = direccion_destinatario[:150]
+                    direccion_destinatario = self.limpiar_direccion(row[4])
                     telefono_destinatario = str(row[6])
                     if telefono_destinatario:
                         telefono_destinatario[:50]                    
-
                     data = {
                         'numero': row[0],
                         'fecha':fecha,
@@ -237,18 +230,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if respuesta['error'] == False:                                   
             guias = respuesta['guias']
             for guia in guias:                                                                        
-                direccion_destinatario = f"{guia['direccionDestinatario']}, {guia['ciudadDestinoNombre']}" or ""
-                direccion_destinatario = direccion_destinatario.replace("\t", "").replace("\n", "")
-                direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion_destinatario).strip()   
-                direccion_destinatario = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion_destinatario).strip()                 
-                direccion_destinatario = re.sub(r'\s+', ' ', direccion_destinatario.strip())
-                direccion_destinatario = direccion_destinatario[:150]                                                
+                direccion_destinatario = self.limpiar_direccion(guia['direccionDestinatario'])                                               
                 fecha = datetime.fromisoformat(guia['fechaIngreso'])  
                 nombre_destinatario = (guia['nombreDestinatario'][:150] if guia['nombreDestinatario'] is not None and guia['nombreDestinatario'] != "" else None)                                                
                 documentoCliente = (guia['documentoCliente'][:30] if guia['documentoCliente'] is not None and guia['documentoCliente'] != "" else None)
                 telefono_destinatario = (guia['telefonoDestinatario'][:50] if guia['telefonoDestinatario'] is not None and guia['telefonoDestinatario'] != "" else None)
                 data = {
-                    'guia': guia['codigoGuiaPk'],
+                    'numero': guia['codigoGuiaPk'],
                     'fecha':fecha,
                     'documento': documentoCliente,
                     'destinatario': nombre_destinatario,
@@ -260,27 +248,32 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     'volumen': guia['pesoVolumen'] or 0,
                     'latitud': None,
                     'longitud': None,
-                    'tiempo_servicio': 3,
                     'estado_decodificado': False,
+                    'tiempo_servicio': 3,
                     'estado_franja': False,
-                    'franja': None
-                }
-
-                                          
-                direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
-                if direccion:    
-                    data['estado_decodificado'] = True            
-                    data['latitud'] = direccion.latitud                        
-                    data['longitud'] = direccion.longitud
-                    data['destinatario_direccion_formato'] = direccion.direccion_formato
-                else:
-                    respuesta = google.decodificar_direccion(data['destinatario_direccion'])
-                    if respuesta['error'] == False:                        
+                    'franja': None,
+                    'resultados': None
+                } 
+                if direccion_destinatario:                   
+                    direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
+                    if direccion:
                         data['estado_decodificado'] = True            
-                        data['latitud'] = respuesta['latitud']
-                        data['longitud'] = respuesta['longitud']
-                        data['destinatario_direccion_formato'] = respuesta['direccion_formato']
-                
+                        data['latitud'] = direccion.latitud                        
+                        data['longitud'] = direccion.longitud
+                        data['destinatario_direccion_formato'] = direccion.direccion_formato
+                        data['resultados'] = direccion.resultados
+                        if direccion.cantidad_resultados > 1:
+                            data['estado_decodificado_alerta'] = True                                
+                    else:
+                        respuesta = google.decodificar_direccion(data['destinatario_direccion'])
+                        if respuesta['error'] == False:   
+                            data['estado_decodificado'] = True            
+                            data['latitud'] = respuesta['latitud']
+                            data['longitud'] = respuesta['longitud']
+                            data['destinatario_direccion_formato'] = respuesta['direccion_formato']
+                            data['resultados'] = respuesta['resultados']
+                            if respuesta['cantidad_resultados'] > 1:
+                                data['estado_decodificado_alerta'] = True                                          
                 if data['estado_decodificado'] == True:
                     respuesta = ubicar_punto(franjas, data['latitud'], data['longitud'])
                     if respuesta['encontrado']:
@@ -294,6 +287,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     cantidad += 1                                                                                    
                 else:
                     return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                              
+            self.ubicar(request)
+            self.ordenar(request)
             return Response({'mensaje':f'Se importaron {cantidad} las guias con exito'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)
@@ -875,4 +870,22 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
             
-        
+    def limpiar_direccion(self, direccion):
+        if not direccion:
+            direccion = ""
+        direccion = direccion.replace("\t", "").replace("\n", "")
+        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion).strip()   
+        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion).strip()                 
+        direccion = re.sub(r'\s+', ' ', direccion.strip())                    
+        direccion = direccion[:150]        
+        return direccion
+    
+    def decodificar(self, direccion):
+        if not direccion:
+            direccion = ""
+        direccion = direccion.replace("\t", "").replace("\n", "")
+        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion).strip()   
+        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion).strip()                 
+        direccion = re.sub(r'\s+', ' ', direccion.strip())                    
+        direccion = direccion[:150]        
+        return direccion

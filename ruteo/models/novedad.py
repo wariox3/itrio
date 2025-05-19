@@ -8,7 +8,7 @@ class RutNovedad(models.Model):
     descripcion = models.CharField(max_length=255, null=True)
     solucion = models.CharField(max_length=255, null=True)
     estado_solucion = models.BooleanField(default = False)
-    visita = models.ForeignKey(RutVisita, on_delete=models.PROTECT, related_name='novedades_visita_rel')
+    visita = models.ForeignKey(RutVisita, on_delete=models.CASCADE, related_name='novedades_visita_rel')
     novedad_tipo = models.ForeignKey(RutNovedadTipo, on_delete=models.PROTECT, related_name='novedades_novedad_tipo_rel')        
 
     class Meta:
