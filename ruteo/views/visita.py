@@ -844,13 +844,21 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     def consulta_documento(self, request):             
         raw = request.data
         despacho_id = raw.get('despacho_id')    
+        estado_despacho = raw.get('estado_despacho', None)
         numero = raw.get('numero')
-        if despacho_id and numero:
-            visita = RutVisita.objects.filter(despacho_id=despacho_id, numero=numero).first()                                            
+        if numero:
+            visita = RutVisita.objects.filter(numero=numero)   
+            if despacho_id:
+                visita = visita.filter(despacho_id=despacho_id)  
+            if estado_despacho == True:  
+                visita = visita.filter(estado_despacho=True)
+            if estado_despacho == False:  
+                visita = visita.filter(estado_despacho=False)
+            visita = visita.first()
             if visita:
                 return Response({'id': visita.id}, status=status.HTTP_200_OK)
             else:
-                return Response({'mensaje':f'La visita con numero {numero} no existe en este despacho', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                              
+                return Response({'mensaje':f'La visita con numero {numero} no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                              
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
 
