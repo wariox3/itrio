@@ -2240,12 +2240,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             contactoSerializador = GenContactoSerializador(contacto)
                             contacto = contactoSerializador.data
 
-                            # Construir respuesta
+                            # Después de obtener los datos y antes de construir la respuesta
+                            referencia_numero = document_id_numerico if document_id_numerico else ''
+                            referencia_prefijo = prefix.strip() if prefix else ''
+
+                            # Si hay prefijo y número, y el número comienza con el prefijo
+                            if referencia_prefijo and referencia_numero and referencia_numero.startswith(referencia_prefijo):
+                                # Quitar el prefijo del número
+                                referencia_numero = referencia_numero[len(referencia_prefijo):]
                             datos = {
                                 'contacto': contacto,
-                                'referencia_numero': document_id_numerico,
+                                'referencia_numero': referencia_numero,
                                 'referencia_cue': document_uuid.strip() if document_uuid else '',
-                                'referencia_prefijo': prefix.strip() if prefix else '',
+                                'referencia_prefijo': referencia_prefijo,
                                 'fecha': issue_date.strip() if issue_date else '',
                                 'comentario': note if note else '',
                             }
