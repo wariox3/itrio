@@ -98,7 +98,7 @@ class FormatoFacturaPOS():
         y -= 5 * mm
 
         # Dibujar datos alineados a la izquierda
-        y = dibujar_campo_izquierda(p, f"Número:  {documento['numero']}", x, y, font_size=7)
+        y = dibujar_campo_izquierda(p, f"Número:  {documento['numero'] or ''}", x, y, font_size=7)
         y = dibujar_campo_izquierda(p, f"Fecha:  {fecha_hora_texto}", x, y, font_size=7)
         y = dibujar_campo_izquierda(p, f"Cliente:  {documento['contacto__nombre_corto']}", x, y, font_size=7)
         y = dibujar_campo_izquierda(p, f"Nit/C.C:  {documento['contacto__numero_identificacion']}", x, y, font_size=7)
