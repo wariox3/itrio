@@ -43,9 +43,17 @@ class Backblaze():
         if bucket is None:
             raise ValueError(f"El bucket '{bucket_nombre}' no existe.")         
                         
-        downloaded_file = bucket.download_file_by_id(archivo_id)
-        #downloaded_file.save_to("/home/desarrollo/Escritorio/prueba.png")    
+        downloaded_file = bucket.download_file_by_id(archivo_id)  
         return downloaded_file.response
+    
+    def descargar_bytes(self, archivo_id):
+        bucket_nombre = config('B2_BUCKET_NAME')
+        bucket = self.b2_api.get_bucket_by_name(bucket_nombre)
+        if bucket is None:
+            raise ValueError(f"El bucket '{bucket_nombre}' no existe.")         
+                        
+        downloaded_file = bucket.download_file_by_id(archivo_id)  
+        return downloaded_file.response.content    
     
     def eliminar(self, archivo_id):
         try:

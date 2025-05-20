@@ -778,8 +778,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     if imagenes:
                         backblaze = Backblaze()
                         tenant = request.tenant.schema_name
+                        imagenes_b64 = []
                         for imagen in imagenes:       
-                            file_content = imagen.read()                                                                 
+                            file_content = imagen.read()   
+                            base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
+                            imagenes_b64.append({
+                                'base64': base64_encoded,
+                            })                                                          
                             nombre_archivo = f'{id}.jpg'                                                   
                             id_almacenamiento, tamano, tipo, uuid = backblaze.subir_data(file_content, tenant, nombre_archivo)
                             archivo = GenArchivo()
@@ -792,6 +797,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             archivo.codigo = id
                             archivo.modelo = "RutVisita"
                             archivo.save()
+                        self.entrega_complemento(visita, imagenes_b64)
                     return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
@@ -852,9 +858,19 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             
     @action(detail=False, methods=["post"], url_path=r'entrega-complemento',)
     def entrega_complemento_action(self, request):   
-        visitas = RutVisita.objects.filter(estado_entregado=True, estado_entregado_complemento=False)        
-        #for visita in visitas:
-        #    self.entrega_complemento(visita)
+        backblaze = Backblaze()
+        visitas = RutVisita.objects.filter(estado_entregado=True, estado_entregado_complemento=False)                
+        for visita in visitas:
+            imagenes_b64 = []
+            archivos = GenArchivo.objects.filter(modelo='RutVisita', codigo=visita.id)
+            for archivo in archivos:
+                contenido = backblaze.descargar_bytes(archivo.almacenamiento_id)
+                if contenido is not None:
+                    contenido_base64 = base64.b64encode(contenido).decode('utf-8')                    
+                    imagenes_b64.append({
+                        'base64': contenido_base64,
+                    })            
+            self.entrega_complemento(visita, imagenes_b64)
         return Response({'mensaje': f'Entrega complemento {visitas.count()}'}, status=status.HTTP_200_OK)
 
     def limpiar_direccion(self, direccion):
@@ -867,12 +883,15 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         direccion = direccion[:150]        
         return direccion
     
-    def entrega_complemento(self, visita: RutVisita):
+    def entrega_complemento(self, visita: RutVisita, imagenes_b64):
         holmio = Holmio()
         parametros = {
             'codigoGuia': visita.numero,
             'usuario': 'ruteo'
         }
-        archivos = GenArchivo.objects.filter(modelo='RutVisita', codigo=visita.id)
+        if imagenes_b64:
+            parametros['imagenes'] = imagenes_b64
         respuesta = holmio.entrega(parametros)
+        visita.estado_entregado_complemento = True
+        visita.save()
         return True
