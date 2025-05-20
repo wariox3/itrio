@@ -219,11 +219,15 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         guia_desde = raw.get('guia_desde', None)
         guia_hasta = raw.get('guia_hasta', None)
         pendiente_despacho = raw.get('pendiente_despacho', None)
+        codigo_contrato = raw.get('codigo_contrato', None)
+        codigo_destino = raw.get('codigo_destino', None)
         parametros = {
             'limite': limite,
             'guia_desde': guia_desde,
             'guia_hasta': guia_hasta,
-            'pendiente_despacho': pendiente_despacho
+            'pendiente_despacho': pendiente_despacho,
+            'codigo_contrato': codigo_contrato,
+            'codigo_destino' : codigo_destino
         }
         franjas = RutFranja.objects.all()
         cantidad = 0       
