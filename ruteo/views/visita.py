@@ -218,6 +218,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         limite = raw.get('limite', 1)
         guia_desde = raw.get('guia_desde', None)
         guia_hasta = raw.get('guia_hasta', None)
+        fecha_desde = raw.get('fecha_desde', None)
+        fecha_hasta = raw.get('fecha_hasta', None)        
         pendiente_despacho = raw.get('pendiente_despacho', None)
         codigo_contacto = raw.get('codigo_contacto', None)
         codigo_destino = raw.get('codigo_destino', None)
@@ -225,6 +227,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             'limite': limite,
             'guia_desde': guia_desde,
             'guia_hasta': guia_hasta,
+            'fecha_desde': fecha_desde,
+            'fecha_hasta': fecha_hasta,
             'pendiente_despacho': pendiente_despacho,
             'codigo_contacto': codigo_contacto,
             'codigo_destino' : codigo_destino
