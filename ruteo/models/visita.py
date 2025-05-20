@@ -26,6 +26,7 @@ class RutVisita(models.Model):
     estado_franja = models.BooleanField(null=True, default=None)
     estado_despacho = models.BooleanField(default = False)
     estado_entregado = models.BooleanField(default = False)
+    estado_entregado_complemento = models.BooleanField(default = False)
     estado_novedad = models.BooleanField(default = False)
     estado_devolucion = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)

@@ -6,7 +6,7 @@ from requests.auth import HTTPBasicAuth
 
 class Holmio():
 
-    def ruteoPendiente(self, parametros):
+    def ruteo_pendiente(self, parametros):
         url = "/api/transporte/guia/ruteo/pendiente"        
         respuesta = self.consumirPost(parametros, url)        
         if respuesta['status'] == 200:
@@ -15,8 +15,8 @@ class Holmio():
         else:
             return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}
 
-    def ruteoMarcar(self, parametros):
-        url = "/api/transporte/guia/ruteo/marcar"        
+    def entrega(self, parametros):
+        url = "/api/transporte/guia/entrega"        
         respuesta = self.consumirPost(parametros, url)        
         if respuesta['status'] == 200:
             return {'error':False}

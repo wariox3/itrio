@@ -229,7 +229,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         cantidad = 0       
         google = Google() 
         holmio = Holmio()
-        respuesta = holmio.ruteoPendiente(parametros)
+        respuesta = holmio.ruteo_pendiente(parametros)
         if respuesta['error'] == False:                                   
             guias = respuesta['guias']
             for guia in guias:                                                                        
@@ -297,7 +297,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
-    def decodificar(self, request):
+    def decodificar_action(self, request):
         visitas = RutVisita.objects.filter(estado_decodificado = None)[:1]
         if visitas.exists():            
             datosVisitas = []           
@@ -328,48 +328,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 
-
-    @action(detail=False, methods=["post"], url_path=r'decodificar-externo',)
-    def decodificar_externo(self, request):
-        raw = request.data 
-        guia_id = raw.get('guia_id')
-        direccion = raw.get('direccion')
-        ciudad_id = raw.get('ciudad_id')
-        decodificar_principal = raw.get('decodificar_principal', False)
-        if guia_id and direccion and ciudad_id:
-            try:
-                ciudad = GenCiudad.objects.get(pk=ciudad_id)
-                zinc = Zinc()                                      
-                datos = {
-                    "cuenta": "1",
-                    "modelo": "guia",
-                    "canal": 3,
-                    "codigo": guia_id,
-                    "direccion": direccion,
-                    "ciudad": ciudad_id,
-                    "decodificarPrincipal": decodificar_principal,                
-                }
-                respuesta = zinc.decodificar_direccion(datos)
-                if respuesta['error'] == False:                     
-                    datos = respuesta['datos']
-                    codigo_franja = ""
-                    franjas = RutFranja.objects.all()
-                    respuesta = ubicar_punto(franjas, datos['latitud'], datos['longitud'])
-                    if respuesta['encontrado']:
-                        codigo_franja = respuesta['franja']['codigo']                 
-                    datosRespuesta = {
-                        "decodificado": datos['decodificado'],
-                        "latitud": datos['latitud'],
-                        "longitud": datos['longitud'],
-                        "franja": codigo_franja
-                    }
-                    return Response(datosRespuesta, status=status.HTTP_200_OK) 
-                else:
-                    return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)  
-            except GenCiudad.DoesNotExist:
-                return Response({'mensaje':'La ciudad no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
-        else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):      
@@ -892,6 +850,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
             
+    @action(detail=False, methods=["post"], url_path=r'entrega-complemento',)
+    def entrega_complemento_action(self, request):   
+        visitas = RutVisita.objects.filter(estado_entregado=True, estado_entregado_complemento=False)        
+        #for visita in visitas:
+        #    self.entrega_complemento(visita)
+        return Response({'mensaje': f'Entrega complemento {visitas.count()}'}, status=status.HTTP_200_OK)
+
     def limpiar_direccion(self, direccion):
         if not direccion:
             direccion = ""
@@ -902,12 +867,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         direccion = direccion[:150]        
         return direccion
     
-    def decodificar(self, direccion):
-        if not direccion:
-            direccion = ""
-        direccion = direccion.replace("\t", "").replace("\n", "")
-        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion).strip()   
-        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion).strip()                 
-        direccion = re.sub(r'\s+', ' ', direccion.strip())                    
-        direccion = direccion[:150]        
-        return direccion
+    def entrega_complemento(self, visita: RutVisita):
+        holmio = Holmio()
+        parametros = {
+            'codigoGuia': visita.numero,
+            'usuario': 'ruteo'
+        }
+        archivos = GenArchivo.objects.filter(modelo='RutVisita', codigo=visita.id)
+        respuesta = holmio.entrega(parametros)
+        return True

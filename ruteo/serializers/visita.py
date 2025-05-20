@@ -15,7 +15,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
                   'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
                   'latitud', 'longitud', 'estado_decodificado', 'estado_novedad', 'estado_devolucion', 
                   'estado_decodificado_alerta', 'orden', 'distancia',
-                  'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados', 'estado_entregado']
+                  'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados', 'estado_entregado', 'estado_entregado_complemento']
 
     def to_representation(self, instance): 
         ciudad_nombre = ''
@@ -43,6 +43,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'estado_decodificado_alerta': instance.estado_decodificado_alerta,
             'estado_despacho': instance.estado_despacho,
             'estado_entregado': instance.estado_entregado,
+            'estado_entregado_complemento': instance.estado_entregado_complemento,
             'estado_novedad': instance.estado_novedad,
             'estado_devolucion': instance.estado_devolucion,
             'latitud': instance.latitud,
