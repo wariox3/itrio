@@ -773,7 +773,15 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     def entrega(self, request):                     
         id = request.POST.get('id')
         imagenes = request.FILES.getlist('imagenes')
-        if id:
+        fecha_entrega_texto = request.POST.get('fecha_entrega')
+        if id and fecha_entrega_texto:
+            try:
+                fecha_entrega_naive = datetime.strptime(fecha_entrega_texto, '%Y-%m-%d %H:%M')
+                fecha_entrega = timezone.make_aware(fecha_entrega_naive)
+                if fecha_entrega > timezone.now():
+                    return Response({'mensaje':'La fecha de entrega no puede ser mayor a la fecha actual', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                             
+            except ValueError:
+                return Response({'mensaje':'Formato de fecha inválido. Use YYYY-MM-DD HH:MM', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             try:
                 visita = RutVisita.objects.get(pk=id)                            
             except RutVisita.DoesNotExist:
@@ -781,7 +789,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             if visita.estado_entregado == False:          
                 with transaction.atomic():                          
                     visita.estado_entregado = True
-                    visita.fecha_entrega = timezone.now()
+                    visita.fecha_entrega = fecha_entrega
                     visita.save()
                     visita.despacho.visitas_entregadas += 1
                     visita.despacho.save()
@@ -895,8 +903,10 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     
     def entrega_complemento(self, visita: RutVisita, imagenes_b64):
         holmio = Holmio()
+        fecha_formateada = visita.fecha_entrega.strftime('%Y-%m-%d %H:%M')
         parametros = {
             'codigoGuia': visita.numero,
+            'fechaEntrega': fecha_formateada,
             'usuario': 'ruteo'
         }
         if imagenes_b64:
