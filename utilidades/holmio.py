@@ -23,9 +23,9 @@ class Holmio():
         else:
             return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}
 
-    def estado(self, parametros):
+    def estado(self):
         url = "/api/seguridad/estado"        
-        respuesta = self.consumirPost(parametros, url)        
+        respuesta = self.consumirPost([], url)        
         if respuesta['status'] == 200:
             return {'error':False}
         else:

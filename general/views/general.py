@@ -58,6 +58,9 @@ class ListaView(APIView):
                     if operador:
                         if operador == 'range':
                             items = items.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                        elif operador == 'in':                                    
+                            valores = filtro['valor1'] if isinstance(filtro['valor1'], list) else [filtro['valor1']]     
+                            items = items.filter(**{filtro['propiedad']+'__'+operador: valores})                      
                         else:
                             items = items.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
                     else:
