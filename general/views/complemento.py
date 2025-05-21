@@ -23,8 +23,8 @@ class ComplementoViewSet(viewsets.ModelViewSet):
                 if respuesta['error'] == False:
                     validado = True
             if validado:
-                return Response({'mensaje': 'complemento validado'}, status=status.HTTP_200_OK)
+                return Response({'validado' : True,'mensaje': 'complemento validado'}, status=status.HTTP_200_OK)
             else:
-                return Response({'mensaje':f'Fallo la validacion', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                              
+                return Response({'validado' : False, 'mensaje':f'Fallo la validacion', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                              
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
+            return Response({'validado': False, 'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
