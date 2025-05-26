@@ -567,8 +567,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         raw = request.data
         filtros = raw.get('filtros')
         visitas = RutVisita.objects.filter(estado_despacho=False, estado_devolucion=False)
-        errores = RutVisita.objects.filter(estado_decodificado=False)
-        alertas = RutVisita.objects.filter(estado_decodificado_alerta=True)
+        errores = RutVisita.objects.filter(estado_decodificado=False, estado_despacho= False)
+        alertas = RutVisita.objects.filter(estado_decodificado_alerta=True, estado_despacho= False)
         if filtros:
             for filtro in filtros:                    
                 operador = filtro.get('operador', None)
