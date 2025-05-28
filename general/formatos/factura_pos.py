@@ -92,8 +92,7 @@ class FormatoFacturaPOS():
         telefono_texto = f"Teléfono: {documento['empresa__telefono']}"
         y = dibujar_campo_centrado(p, telefono_texto, POS_SIZE[0] / 2, y, font_size=7)
 
-        fecha_hora_actual = datetime.now()
-        fecha_hora_texto = fecha_hora_actual.strftime('%Y/%m/%d %H:%M:%S')
+        fecha_hora_texto = documento['fecha'].strftime('%Y/%m/%d')
 
         y -= 5 * mm
 
