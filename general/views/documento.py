@@ -2289,6 +2289,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             prefijo = "ND" 
                                         if documento.documento_tipo.documento_clase_id == 304:
                                             prefijo = "DSAJ"
+                                            if documento.documento_referencia:
+                                                documento_referencia_id = f"DS{documento.documento_referencia}"
                                         correo = documento.contacto.correo_facturacion_electronica if documento.contacto.correo_facturacion_electronica else documento.contacto.correo
                                         responsable = 0
                                         if documento.contacto.regimen_id in (1, 5):
