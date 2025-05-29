@@ -221,5 +221,13 @@
       "nombre": "CIERRE CONTABLE",
       "documento_clase": 603, "comprobante": 19, "contabilidad": true
     }
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 26,
+    "fields": {
+      "nombre": "PEDIDO CLIENTE",
+      "documento_clase": 106
+    }
   }    
 ]
