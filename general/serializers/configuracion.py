@@ -15,5 +15,5 @@ class GenConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'empresa', 'informacion_factura', 'informacion_factura_superior', 
             'gen_uvt', 'gen_emitir_automaticamente',
             'hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte', 'hum_entidad_riesgo',
-            'pos_documento_tipo', 'rut_sincronizar_complemento'
+            'pos_documento_tipo', 'rut_sincronizar_complemento', 'rut_rutear_franja'
         ]      
