@@ -1285,8 +1285,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         documento.save()                
                         self.notificar(documento_id)
                         return Response({'respuesta':True}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'mensaje':'El documento ya tiene respuesta'}, status=status.HTTP_400_BAD_REQUEST)    
+                    else:                        
+                        return Response({'respuesta':True}, status=status.HTTP_200_OK)    
                 else:
                     return Response({'mensaje':'No se puede entregar una respuesta porque el documento no se ha enviado'}, status=status.HTTP_400_BAD_REQUEST)
             except GenDocumento.DoesNotExist:
