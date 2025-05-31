@@ -16,6 +16,5 @@ class GenConfiguracion(models.Model):
     hum_entidad_riesgo = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True)  
     pos_documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, null=True)  
     rut_sincronizar_complemento = models.BooleanField(default = False)    
-    rut_rutear_franja = models.BooleanField(default = False)
     class Meta:
         db_table = "gen_configuracion"
