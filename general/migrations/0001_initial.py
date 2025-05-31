@@ -94,7 +94,6 @@ class Migration(migrations.Migration):
                 ('hum_salario_minimo', models.DecimalField(decimal_places=6, default=1423500, max_digits=20)),
                 ('hum_auxilio_transporte', models.DecimalField(decimal_places=6, default=200000, max_digits=20)),
                 ('rut_sincronizar_complemento', models.BooleanField(default=False)),
-                ('rut_rutear_franja', models.BooleanField(default=False)),
             ],
             options={
                 'db_table': 'gen_configuracion',
