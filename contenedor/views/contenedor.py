@@ -16,6 +16,24 @@ from django_tenants.utils import schema_context
 import os
 from datetime import datetime
 from django.utils import timezone
+from threading import Thread
+
+def cargar_fixtures_en_segundo_plano(schema_name):
+    """
+    Función que se ejecutará en segundo plano para cargar los fixtures
+    """
+    try:
+        with schema_context(schema_name):
+            # Opción 1: Usando call_command (recomendado)
+            #call_command('loaddata', 'fixture1.json', verbosity=0)
+            #call_command('loaddata', 'fixture2.json', verbosity=0)
+            
+            # Opción 2: Manteniendo tu enfoque actual con os.system
+            os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures/ --schema={schema_name}")
+            os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures_inicio/ --schema={schema_name}")                
+        print(f"Fixtures cargados exitosamente para {schema_name}")
+    except Exception as e:
+        print(f"Error cargando fixtures para {schema_name}: {str(e)}")
 
 class ContenedorViewSet(viewsets.ModelViewSet):
     queryset = Contenedor.objects.all()
@@ -54,8 +72,15 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                              ruteo=ruteo,
                              cortesia=False,
                              precio=0)  
-                os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures/ --schema={subdominio}")
-                os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures_inicio/ --schema={subdominio}")                           
+                #os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures/ --schema={subdominio}")
+                #os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures_inicio/ --schema={subdominio}")                                           
+                thread = Thread(
+                    target=cargar_fixtures_en_segundo_plano,
+                    args=(subdominio,),
+                    daemon=True
+                )
+                thread.start()                
+                
                 contenedor = Contenedor.objects.filter(**{'schema_name':subdominio}).first()                        
                 data = {'usuario': usuario.id, 'contenedor': contenedor.id, 'rol': 'propietario'}
                 usuarioContenedorSerializador = UsuarioContenedorSerializador(data=data)            
@@ -76,9 +101,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                             data = {
                                 'id':1,
                                 'empresa':1,
-                                'formato_factura':'F',
-                                'pos_documento_tipo':24
-                                }
+                                'formato_factura':'F'}
                             configuracionSerializador = GenConfiguracionSerializador(data=data)                                                
                             if configuracionSerializador.is_valid():
                                 configuracionSerializador.save()                            
@@ -107,7 +130,6 @@ class ContenedorViewSet(viewsets.ModelViewSet):
         empresa = self.get_object(pk)        
         self.perform_destroy(empresa)
         return Response(status=status.HTTP_200_OK)
-
        
     @action(detail=False, methods=["post"], url_path=r'validar',)
     def validar(self, request):
@@ -173,4 +195,6 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             except Contenedor.DoesNotExist:
                 return Response({'mensaje':'El contenedor no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)              
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+
+                    
