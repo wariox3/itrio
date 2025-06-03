@@ -39,3 +39,56 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_201_CREATED,
                 headers=headers
             )
+        
+    @action(detail=False, methods=['post'])
+    def cambiar_prioridad(self, request, *args, **kwargs):
+        with transaction.atomic():
+            try:
+                # Obtener datos del request
+                vehiculo_id = request.data.get('id')
+                nueva_prioridad = int(request.data.get('prioridad'))
+
+                # Validar que exista el vehículo a modificar
+                vehiculo_actual = RutVehiculo.objects.filter(id=vehiculo_id).first()
+                if not vehiculo_actual:
+                    return Response(
+                        {'error': 'El vehículo especificado no existe'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                # Buscar el vehículo que tiene actualmente esa prioridad
+                vehiculo_con_prioridad = RutVehiculo.objects.filter(
+                    prioridad=nueva_prioridad
+                ).exclude(id=vehiculo_id).first()
+
+                # Guardar la prioridad actual del vehículo que estamos modificando
+                prioridad_actual = vehiculo_actual.prioridad
+
+                # Intercambiar prioridades
+                vehiculo_actual.prioridad = nueva_prioridad
+                vehiculo_actual.save()
+
+                if vehiculo_con_prioridad:
+                    vehiculo_con_prioridad.prioridad = prioridad_actual
+                    vehiculo_con_prioridad.save()
+
+                return Response(
+                    {
+                        'message': 'Prioridades intercambiadas exitosamente',
+                        'vehiculo_actual': {
+                            'id': vehiculo_actual.id,
+                            'nueva_prioridad': nueva_prioridad
+                        },
+                        'vehiculo_afectado': {
+                            'id': vehiculo_con_prioridad.id if vehiculo_con_prioridad else None,
+                            'nueva_prioridad': prioridad_actual if vehiculo_con_prioridad else None
+                        }
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+            except Exception as e:
+                return Response(
+                    {'error': f'Error al intercambiar prioridades: {str(e)}'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
