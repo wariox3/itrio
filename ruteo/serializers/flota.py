@@ -7,7 +7,7 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
     vehiculo = serializers.PrimaryKeyRelatedField(queryset=RutVehiculo.objects.all())
     class Meta:
         model = RutFlota
-        fields = ['id', 'vehiculo']
+        fields = ['id', 'vehiculo', 'prioridad']
 
     def validate(self, data):
         vehiculo_id = data.get('vehiculo') 
@@ -38,6 +38,7 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
 
         return {
             'id': instance.id,  
+            'prioridad': instance.prioridad,
             'vehiculo_id': instance.vehiculo_id,
             'vehiculo_placa': vehiculo_placa,
             'vehiculo_capacidad': vehiculo_capacidad,
