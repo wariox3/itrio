@@ -40,7 +40,7 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
                 headers=headers
             )
         
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path=r'cambiar-prioridad',)
     def cambiar_prioridad(self, request, *args, **kwargs):
         with transaction.atomic():
             try:
