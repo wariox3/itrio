@@ -1452,12 +1452,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         resumen = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
+                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))        
+        vigente = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__gt=fecha_actual
+                                                ).aggregate(
+                                                    cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))
-        resumen_vencido = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__lt=fecha_actual
+        vencido = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__lt=fecha_actual
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))                
-        return Response({'resumen': resumen, 'vencido': resumen_vencido}, status=status.HTTP_200_OK)
+        return Response({'resumen':resumen, 'vigente': vigente, 'vencido': vencido}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'resumen-pagar',)
     def resumen_pagar(self, request):      
@@ -1466,11 +1470,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))
-        resumen_vencido = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__lt=fecha_actual
+        vigente = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__gt=fecha_actual
+                                                ).aggregate(
+                                                    cantidad=Count('id'), 
+                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))
+        vencido = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__lt=fecha_actual
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))                
-        return Response({'resumen': resumen, 'vencido': resumen_vencido}, status=status.HTTP_200_OK)
+        return Response({'resumen': resumen, 'vigente':vigente, 'vencido': vencido}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'resumen-venta-dia',)
     def resumen_venta_dia(self, request):      
