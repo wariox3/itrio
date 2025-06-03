@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from ruteo.models.despacho import RutDespacho
 from ruteo.models.visita import RutVisita
+from ruteo.models.vehiculo import RutVehiculo
 from vertical.models.entrega import VerEntrega
 from seguridad.models import User
 from ruteo.serializers.despacho import RutDespachoSerializador
@@ -22,6 +23,8 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
         if instance.estado_aprobado:
                 return Response({'mensaje': 'No se puede eliminar un despacho aprobado.'}, status=status.HTTP_400_BAD_REQUEST)        
         RutVisita.objects.filter(despacho_id=instance.id).update(despacho=None, estado_despacho=False)
+        if instance.vehiculo_id:
+            RutVehiculo.objects.filter(id=instance.vehiculo_id).update(estado_asignado=False)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)    
     

@@ -11,8 +11,9 @@ class RutVehiculo(models.Model):
     longitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     estado_activo = models.BooleanField(default=False)
     estado_asignado = models.BooleanField(default=False)
-    franjas = models.ManyToManyField(RutFranja)  # Cambio importante aquí
+    franjas = models.ManyToManyField(RutFranja)
     usuario_app = models.CharField(max_length=255, null=True)
+    prioridad = models.IntegerField(null=True)
 
     class Meta:
         db_table = "rut_vehiculo"

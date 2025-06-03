@@ -6,6 +6,7 @@ from ruteo.models.despacho import RutDespacho
 from ruteo.models.vehiculo import RutVehiculo
 from ruteo.models.franja import RutFranja
 from ruteo.models.flota import RutFlota
+from general.models.configuracion import GenConfiguracion
 from general.models.ciudad import GenCiudad
 from general.models.archivo import GenArchivo
 from contenedor.models import CtnDireccion
@@ -339,67 +340,167 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 
 
+    # @action(detail=False, methods=["post"], url_path=r'ordenar',)
+    # def ordenar(self, request):      
+    #     raw = request.data
+    #     visitas_franja = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('franja_codigo').annotate(cantidad=Count('id'))  
+    #     filtros = raw.get('filtros')        
+    #     if filtros:
+    #         for filtro in filtros:
+    #             visitas_franja = visitas_franja.filter(**{filtro['propiedad']: filtro['valor1']})
+    #     for visita_franja in visitas_franja:                        
+    #         print(visita_franja['franja_codigo'])
+    #         visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud', 'tiempo_servicio')
+    #         if visita_franja['franja_codigo']:
+    #             visitas = visitas.filter(franja_codigo=visita_franja['franja_codigo'])
+    #         else:
+    #             visitas = visitas.filter(franja_codigo=None)     
+    #         if visitas.exists():
+    #             cantidad_visitas = len(visitas)                   
+    #             punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
+    #             matriz = construir_matriz_distancias(visitas, punto_inicial)                    
+    #             manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
+    #             routing = pywrapcp.RoutingModel(manager)
+                
+    #             # Función de costo
+    #             def distancia_callback(from_index, to_index):
+    #                 from_node = manager.IndexToNode(from_index)
+    #                 to_node = manager.IndexToNode(to_index)
+    #                 return int(matriz[from_node][to_node] * 1000)
+                
+    #             transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
+    #             routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
+    #             search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+    #             search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+                
+    #             solution = routing.SolveWithParameters(search_parameters)            
+    #             if not solution:
+    #                 return None
+
+    #             # Extraer el orden óptimo
+    #             index = routing.Start(0)
+    #             orden = []
+    #             while not routing.IsEnd(index):
+    #                 node = manager.IndexToNode(index)
+    #                 if node != 0:  # Ignorar el punto de partida
+    #                     orden.append(node - 1)  # Ajustar índice
+    #                 index = solution.Value(routing.NextVar(index))
+
+    #             for idx, visita_idx in enumerate(orden):
+    #                 visita_id = visitas[visita_idx]['id']
+    #                 tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
+    #                 distancia = 0                
+    #                 if idx == 0:
+    #                     # Primera visita: distancia desde el punto inicial
+    #                     distancia = matriz[0][visita_idx + 1]
+    #                 else:
+    #                     # Visitas posteriores: distancia desde la visita anterior
+    #                     anterior_idx = orden[idx - 1]
+    #                     distancia = matriz[anterior_idx + 1][visita_idx + 1]
+    #                 tiempo_trayecto = Decimal(distancia * 1.6)
+    #                 tiempo = tiempo_servicio+tiempo_trayecto            
+    #                 RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)                
+    #     return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK) 
+
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):      
         raw = request.data
-        visitas_franja = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('franja_codigo').annotate(cantidad=Count('id'))  
-        filtros = raw.get('filtros')        
-        if filtros:
+        filtros = raw.get('filtros', [])
+        
+        # Verificar si hay filtros de franja (ahora buscando 'franja_id')
+        tiene_filtro_franja = any(filtro.get('propiedad') == 'franja_id' for filtro in filtros if isinstance(filtro, dict))
+        
+        if tiene_filtro_franja:
+            # Caso 1: Hay filtro de franja - ordenar todas las visitas juntas
+            visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True)
+            
+            # Aplicar todos los filtros
             for filtro in filtros:
-                visitas_franja = visitas_franja.filter(**{filtro['propiedad']: filtro['valor1']})
-        for visita_franja in visitas_franja:                        
-            print(visita_franja['franja_codigo'])
-            visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud', 'tiempo_servicio')
-            if visita_franja['franja_codigo']:
-                visitas = visitas.filter(franja_codigo=visita_franja['franja_codigo'])
-            else:
-                visitas = visitas.filter(franja_codigo=None)     
+                operador = filtro.get('operador')
+                propiedad = filtro['propiedad']
+                if operador == 'range':
+                    visitas = visitas.filter(**{f'{propiedad}__{operador}': (filtro['valor1'], filtro['valor2'])})
+                elif operador:
+                    visitas = visitas.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
+                else:
+                    visitas = visitas.filter(**{propiedad: filtro['valor1']})
+            
+            visitas = visitas.values('id', 'latitud', 'longitud', 'tiempo_servicio')
+            
             if visitas.exists():
-                cantidad_visitas = len(visitas)                   
-                punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
-                matriz = construir_matriz_distancias(visitas, punto_inicial)                    
-                manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
-                routing = pywrapcp.RoutingModel(manager)
-                
-                # Función de costo
-                def distancia_callback(from_index, to_index):
-                    from_node = manager.IndexToNode(from_index)
-                    to_node = manager.IndexToNode(to_index)
-                    return int(matriz[from_node][to_node] * 1000)
-                
-                transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
-                routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
-                search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-                search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-                
-                solution = routing.SolveWithParameters(search_parameters)            
-                if not solution:
-                    return None
-
-                # Extraer el orden óptimo
-                index = routing.Start(0)
-                orden = []
-                while not routing.IsEnd(index):
-                    node = manager.IndexToNode(index)
-                    if node != 0:  # Ignorar el punto de partida
-                        orden.append(node - 1)  # Ajustar índice
-                    index = solution.Value(routing.NextVar(index))
-
-                for idx, visita_idx in enumerate(orden):
-                    visita_id = visitas[visita_idx]['id']
-                    tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
-                    distancia = 0                
-                    if idx == 0:
-                        # Primera visita: distancia desde el punto inicial
-                        distancia = matriz[0][visita_idx + 1]
+                self.ordenar_visitas(visitas)
+        else:
+            # Caso 2: No hay filtro de franja - ordenar por franja separadamente
+            visitas_franja = RutVisita.objects.filter(
+                estado_despacho=False, 
+                estado_decodificado=True
+            ).values('franja_codigo').annotate(cantidad=Count('id'))
+            
+            # Aplicar otros filtros (excluyendo 'franja_id')
+            for filtro in filtros:
+                operador = filtro.get('operador')
+                propiedad = filtro['propiedad']
+                if propiedad != 'franja_id':  # Ahora excluimos filtros de franja_id
+                    if operador == 'range':
+                        visitas_franja = visitas_franja.filter(**{f'{propiedad}__{operador}': (filtro['valor1'], filtro['valor2'])})
+                    elif operador:
+                        visitas_franja = visitas_franja.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
                     else:
-                        # Visitas posteriores: distancia desde la visita anterior
-                        anterior_idx = orden[idx - 1]
-                        distancia = matriz[anterior_idx + 1][visita_idx + 1]
-                    tiempo_trayecto = Decimal(distancia * 1.6)
-                    tiempo = tiempo_servicio+tiempo_trayecto            
-                    RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)                
-        return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK) 
+                        visitas_franja = visitas_franja.filter(**{propiedad: filtro['valor1']})
+            
+            for visita_franja in visitas_franja:
+                visitas = RutVisita.objects.filter(
+                    estado_despacho=False, 
+                    estado_decodificado=True,
+                    franja_codigo=visita_franja['franja_codigo']
+                ).values('id', 'latitud', 'longitud', 'tiempo_servicio')
+                
+                if visitas.exists():
+                    self.ordenar_visitas(visitas)
+        
+        return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
+
+    def ordenar_visitas(self, visitas):
+        """Función auxiliar para ordenar un conjunto de visitas"""
+        punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
+        matriz = construir_matriz_distancias(visitas, punto_inicial)                    
+        manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
+        routing = pywrapcp.RoutingModel(manager)
+        
+        def distancia_callback(from_index, to_index):
+            from_node = manager.IndexToNode(from_index)
+            to_node = manager.IndexToNode(to_index)
+            return int(matriz[from_node][to_node] * 1000)
+        
+        transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
+        routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
+        search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+        search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+        
+        solution = routing.SolveWithParameters(search_parameters)            
+        if not solution:
+            return None
+
+        index = routing.Start(0)
+        orden = []
+        while not routing.IsEnd(index):
+            node = manager.IndexToNode(index)
+            if node != 0:
+                orden.append(node - 1)
+            index = solution.Value(routing.NextVar(index))
+
+        for idx, visita_idx in enumerate(orden):
+            visita_id = visitas[visita_idx]['id']
+            tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
+            distancia = matriz[0][visita_idx + 1] if idx == 0 else matriz[orden[idx - 1] + 1][visita_idx + 1]
+            tiempo_trayecto = Decimal(distancia * 1.6)
+            tiempo = tiempo_servicio + tiempo_trayecto            
+            RutVisita.objects.filter(id=visita_id).update(
+                orden=idx + 1, 
+                distancia=distancia, 
+                tiempo_trayecto=tiempo_trayecto, 
+                tiempo=tiempo
+            )
 
     @action(detail=False, methods=["post"], url_path=r'ordenar-google',)
     def ordenar_google(self, request):        
@@ -445,80 +546,248 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':resultado["mensaje"], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                   
         else:
             return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
+        
+    # @action(detail=False, methods=["post"], url_path=r'rutear',)
+    # def rutear(self, request):
+    #     raw = request.data
+    #     filtros = raw.get('filtros')
+    #     flota = RutFlota.objects.filter(vehiculo__estado_asignado=False)
+    #     if flota.exists():
+    #         visitas = RutVisita.objects.filter(estado_despacho=False, estado_devolucion=False, estado_novedad=False)
+    #         if filtros:
+    #             for filtro in filtros:                    
+    #                 operador = filtro.get('operador', None)
+    #                 if operador == 'range':
+    #                     visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+    #                 else:
+    #                     visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
 
-    @action(detail=False, methods=["post"], url_path=r'rutear',)
+    #         visitas = visitas.order_by('orden')      
+    #         cantidad_vehiculos = flota.count()                                      
+    #         vehiculo_indice = 0
+    #         vehiculo = flota[vehiculo_indice].vehiculo     
+    #         peso_total = 0
+    #         tiempo_total = 0 
+    #         tiempo_servicio_total = 0
+    #         tiempo_trayecto_total = 0 
+    #         crear_despacho = True
+    #         for visita in visitas:
+    #             if peso_total + visita.peso > vehiculo.capacidad or tiempo_total + visita.tiempo > vehiculo.tiempo:
+    #                 asignado = False
+    #                 peso_total = 0
+    #                 tiempo_total = 0 
+    #                 tiempo_servicio_total = 0
+    #                 tiempo_trayecto_total = 0                     
+    #                 while vehiculo_indice + 1 <= cantidad_vehiculos and asignado == False:                         
+    #                     vehiculo_indice += 1                        
+    #                     if vehiculo_indice >= cantidad_vehiculos:
+    #                         asignado = True
+    #                     else: 
+    #                         vehiculo = flota[vehiculo_indice].vehiculo
+    #                         if peso_total + visita.peso <= vehiculo.capacidad or tiempo_total + visita.tiempo <= vehiculo.tiempo:                             
+    #                             crear_despacho = True
+    #                             asignado = True
+    #                 if vehiculo_indice >= cantidad_vehiculos:
+    #                     break                                            
+
+    #             if crear_despacho:
+    #                 despacho = RutDespacho()
+    #                 despacho.fecha = timezone.now()
+    #                 despacho.vehiculo = vehiculo
+    #                 vehiculo.estado_asignado = True
+    #                 despacho.peso = despacho.peso + visita.peso
+    #                 despacho.volumen = despacho.volumen + visita.volumen
+    #                 despacho.tiempo = despacho.tiempo + visita.tiempo
+    #                 despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
+    #                 despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
+    #                 despacho.visitas = despacho.visitas + 1
+    #                 despacho.save()
+    #                 vehiculo.save()
+    #                 crear_despacho = False
+    #             else:
+    #                 despacho.peso = despacho.peso + visita.peso
+    #                 despacho.volumen = despacho.volumen + visita.volumen
+    #                 despacho.tiempo = despacho.tiempo + visita.tiempo
+    #                 despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
+    #                 despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
+    #                 despacho.visitas = despacho.visitas + 1
+    #                 despacho.save()        
+    #             peso_total += visita.peso
+    #             tiempo_total += visita.tiempo
+    #             tiempo_servicio_total += visita.tiempo_servicio
+    #             tiempo_trayecto_total += visita.tiempo_trayecto
+    #             visita.estado_despacho = True
+    #             visita.despacho = despacho
+    #             visita.save()
+    #         return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
+    #     else:
+    #         return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'rutear')
     def rutear(self, request):
         raw = request.data
         filtros = raw.get('filtros')
-        flota = RutFlota.objects.all()        
-        if flota.exists():
-            visitas = RutVisita.objects.filter(estado_despacho=False, estado_devolucion=False, estado_novedad=False)
-            if filtros:
-                for filtro in filtros:                    
-                    operador = filtro.get('operador', None)
-                    if operador == 'range':
-                        visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
-                    else:
-                        visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
+        
+        configuracion = GenConfiguracion.objects.filter(id=1).first()
+        rutear_franja = getattr(configuracion, 'rut_rutear_franja', False)
 
-            visitas = visitas.order_by('orden')                                        
-            cantidad_vehiculos = len(flota)
-            vehiculo_indice = 0
-            vehiculo = flota[vehiculo_indice].vehiculo            
-            peso_total = 0
-            tiempo_total = 0 
-            tiempo_servicio_total = 0
-            tiempo_trayecto_total = 0 
-            crear_despacho = True
-            for visita in visitas:
-                if peso_total + visita.peso > vehiculo.capacidad or tiempo_total + visita.tiempo > vehiculo.tiempo:
-                    asignado = False
-                    peso_total = 0
-                    tiempo_total = 0 
-                    tiempo_servicio_total = 0
-                    tiempo_trayecto_total = 0                     
-                    while vehiculo_indice + 1 <= cantidad_vehiculos and asignado == False:                         
-                        vehiculo_indice += 1                        
-                        if vehiculo_indice >= cantidad_vehiculos:
-                            asignado = True
-                        else: 
-                            vehiculo = flota[vehiculo_indice].vehiculo
-                            if peso_total + visita.peso <= vehiculo.capacidad or tiempo_total + visita.tiempo <= vehiculo.tiempo:                             
-                                crear_despacho = True
-                                asignado = True
-                    if vehiculo_indice >= cantidad_vehiculos:
-                        break                                            
+        flota_disponible = list(
+            RutFlota.objects.filter(vehiculo__estado_asignado=False)
+            .select_related('vehiculo')
+            .order_by('vehiculo__prioridad') 
+        )
+        if not flota_disponible:
+            return Response({'mensaje': 'No hay vehículos disponibles'}, 
+                        status=status.HTTP_400_BAD_REQUEST)
 
-                if crear_despacho:
-                    despacho = RutDespacho()
-                    despacho.fecha = timezone.now()
-                    despacho.vehiculo = vehiculo
-                    despacho.peso = despacho.peso + visita.peso
-                    despacho.volumen = despacho.volumen + visita.volumen
-                    despacho.tiempo = despacho.tiempo + visita.tiempo
-                    despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
-                    despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
-                    despacho.visitas = despacho.visitas + 1
-                    despacho.save()
-                    crear_despacho = False
-                else:
-                    despacho.peso = despacho.peso + visita.peso
-                    despacho.volumen = despacho.volumen + visita.volumen
-                    despacho.tiempo = despacho.tiempo + visita.tiempo
-                    despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
-                    despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
-                    despacho.visitas = despacho.visitas + 1
-                    despacho.save()        
-                peso_total += visita.peso
-                tiempo_total += visita.tiempo
-                tiempo_servicio_total += visita.tiempo_servicio
-                tiempo_trayecto_total += visita.tiempo_trayecto
-                visita.estado_despacho = True
-                visita.despacho = despacho
-                visita.save()
-            return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
+        visitas = RutVisita.objects.filter(
+            estado_despacho=False, 
+            estado_devolucion=False, 
+            estado_novedad=False
+        )
+
+        if filtros:
+            for filtro in filtros:
+                operador = filtro.get('operador')
+                propiedad = filtro['propiedad']
+                if operador == 'range':
+                    visitas = visitas.filter(**{f'{propiedad}__{operador}': (filtro['valor1'], filtro['valor2'])})
+                elif operador:
+                    visitas = visitas.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
+
+        visitas = visitas.order_by('orden')
+
+        visitas_pendientes = list(visitas)
+        despachos_creados = 0
+
+        def vehiculo_puede_tomar_visita(vehiculo, visita, peso_actual, tiempo_actual, verificar_franja):
+            # Verificar capacidad
+            if (peso_actual + visita.peso > vehiculo.capacidad or 
+                tiempo_actual + visita.tiempo > vehiculo.tiempo):
+                return False
+            
+            # Si no necesita verificar franja, retornar True
+            if not verificar_franja:
+                return True
+                
+            # Verificar franja
+            return vehiculo.franjas.filter(id=visita.franja_id).exists()
+
+        if rutear_franja:
+            for flota_item in flota_disponible:
+                vehiculo = flota_item.vehiculo
+                peso_total = 0
+                tiempo_total = 0
+                despacho = None
+
+                for visita in visitas_pendientes[:]:
+                    if vehiculo_puede_tomar_visita(vehiculo, visita, peso_total, tiempo_total, True):
+                        if despacho is None:
+                            despacho = RutDespacho.objects.create(
+                                fecha=timezone.now(),
+                                vehiculo=vehiculo,
+                                peso=visita.peso,
+                                volumen=visita.volumen,
+                                tiempo=visita.tiempo,
+                                tiempo_servicio=visita.tiempo_servicio,
+                                tiempo_trayecto=visita.tiempo_trayecto,
+                                visitas=1
+                            )
+                            vehiculo.estado_asignado = True
+                            vehiculo.save()
+                            despachos_creados += 1
+                        else:
+                            # Actualizar despacho existente
+                            despacho.peso += visita.peso
+                            despacho.volumen += visita.volumen
+                            despacho.tiempo += visita.tiempo
+                            despacho.tiempo_servicio += visita.tiempo_servicio
+                            despacho.tiempo_trayecto += visita.tiempo_trayecto
+                            despacho.visitas += 1
+                            despacho.save()
+
+                        # Actualizar totales
+                        peso_total += visita.peso
+                        tiempo_total += visita.tiempo
+                        
+                        # Marcar visita como asignada
+                        visita.estado_despacho = True
+                        visita.despacho = despacho
+                        visita.save()
+                        
+                        # Quitar de pendientes
+                        visitas_pendientes.remove(visita)
         else:
-            return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)
+            vehiculo_index = 0
+            while vehiculo_index < len(flota_disponible) and visitas_pendientes:
+                flota_item = flota_disponible[vehiculo_index]
+                vehiculo = flota_item.vehiculo
+                
+                # Saltar vehículos ya asignados
+                if vehiculo.estado_asignado:
+                    vehiculo_index += 1
+                    continue
+                    
+                peso_total = 0
+                tiempo_total = 0
+                despacho = None
+                visitas_asignadas_este_vehiculo = 0
+
+                # Hacer copia para iterar seguramente mientras removemos
+                for visita in list(visitas_pendientes):
+                    if vehiculo_puede_tomar_visita(vehiculo, visita, peso_total, tiempo_total, False):
+                        # Crear despacho si es la primera visita
+                        if despacho is None:
+                            despacho = RutDespacho.objects.create(
+                                fecha=timezone.now(),
+                                vehiculo=vehiculo,
+                                peso=visita.peso,
+                                volumen=visita.volumen,
+                                tiempo=visita.tiempo,
+                                tiempo_servicio=visita.tiempo_servicio,
+                                tiempo_trayecto=visita.tiempo_trayecto,
+                                visitas=1
+                            )
+                            vehiculo.estado_asignado = True
+                            vehiculo.save()
+                            despachos_creados += 1
+                        else:
+                            # Actualizar despacho existente
+                            despacho.peso += visita.peso
+                            despacho.volumen += visita.volumen
+                            despacho.tiempo += visita.tiempo
+                            despacho.tiempo_servicio += visita.tiempo_servicio
+                            despacho.tiempo_trayecto += visita.tiempo_trayecto
+                            despacho.visitas += 1
+                            despacho.save()
+
+                        # Actualizar totales
+                        peso_total += visita.peso
+                        tiempo_total += visita.tiempo
+                        
+                        # Marcar visita como asignada
+                        visita.estado_despacho = True
+                        visita.despacho = despacho
+                        visita.save()
+                        
+                        # Quitar de pendientes
+                        visitas_pendientes.remove(visita)
+                        visitas_asignadas_este_vehiculo += 1
+
+                # Siempre pasar al siguiente vehículo, haya asignado visitas o no
+                vehiculo_index += 1
+
+        # Preparar respuesta
+        mensaje = f'Se crearon {despachos_creados} rutas exitosamente' + (' por franjas' if rutear_franja else '')
+        if visitas_pendientes:
+            mensaje += f'. Quedaron {len(visitas_pendientes)} visitas pendientes por asignar.'
+
+        return Response({
+            'mensaje': mensaje,
+            'visitas_pendientes': [v.id for v in visitas_pendientes] if visitas_pendientes else None,
+            'despachos_creados': despachos_creados,
+            'modo_franjas': rutear_franja
+        }, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=["post"], url_path=r'ubicar',)
     def ubicar(self, request):             

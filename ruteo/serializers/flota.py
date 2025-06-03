@@ -27,14 +27,14 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
         vehiculo_placa = ""
         vehiculo_capacidad = 0
         vehiculo_tiempo = 0
-        vehiculo_franja_id = ""
-        vehiculo_franja_codigo = ""
+        vehiculo_estado_asignado = ""
+        vehiculo_prioridad = ""
         if instance.vehiculo:
             vehiculo_placa = instance.vehiculo.placa
             vehiculo_capacidad = instance.vehiculo.capacidad
             vehiculo_tiempo = instance.vehiculo.tiempo
-            vehiculo_franja_id = instance.vehiculo.franja_id
-            vehiculo_franja_codigo = instance.vehiculo.franja_codigo        
+            vehiculo_estado_asignado = instance.vehiculo.estado_asignado    
+            vehiculo_prioridad = instance.vehiculo.prioridad
 
         return {
             'id': instance.id,  
@@ -42,7 +42,7 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
             'vehiculo_placa': vehiculo_placa,
             'vehiculo_capacidad': vehiculo_capacidad,
             'vehiculo_tiempo': vehiculo_tiempo,
-            'vehiculo_franja_id': vehiculo_franja_id,
-            'vehiculo_franja_codigo': vehiculo_franja_codigo,
+            'vehiculo_estado_asignado' : vehiculo_estado_asignado,
+            'vehiculo_prioridad' : vehiculo_prioridad
         }
     

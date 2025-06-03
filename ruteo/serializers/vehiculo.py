@@ -1,21 +1,26 @@
 from rest_framework import serializers
 from ruteo.models.vehiculo import RutVehiculo
 
-class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):        
+class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):
+    franja_id = serializers.SerializerMethodField()
+    franja_codigo = serializers.SerializerMethodField()
+    
     class Meta:
         model = RutVehiculo
-        fields = ['id', 'placa', 'capacidad', 'tiempo', 'estado_activo', 'estado_asignado', 'franja_id', 'franja_codigo', 'usuario_app']
+        fields = [
+            'id', 'placa', 'capacidad', 'tiempo', 
+            'estado_activo', 'estado_asignado', 'usuario_app',
+            'franja_id', 'franja_codigo', 'prioridad'
+        ]
 
-    def to_representation(self, instance):        
-        return {
-            'id': instance.id, 
-            'placa': instance.placa,
-            'capacidad': instance.capacidad,
-            'tiempo': instance.tiempo,
-            'estado_activo': instance.estado_activo,
-            'estado_asignado': instance.estado_asignado,
-            'franja_id': instance.franja_id,            
-            'franja_codigo': instance.franja_codigo, 
-            'usuario_app': instance.usuario_app           
-        }
-    
+    def get_franja_id(self, obj):
+        return list(obj.franjas.values_list('id', flat=True))
+
+    def get_franja_codigo(self, obj):
+        return list(obj.franjas.values_list('codigo', flat=True))
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['franja_id'] = self.get_franja_id(instance)
+        representation['franja_codigo'] = self.get_franja_codigo(instance)
+        return representation
