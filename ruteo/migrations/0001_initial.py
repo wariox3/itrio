@@ -158,7 +158,6 @@ class Migration(migrations.Migration):
             name='RutFlota',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('prioridad', models.IntegerField(null=True)),
                 ('vehiculo', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='flotas_vehiculo_rel', to='ruteo.rutvehiculo')),
             ],
             options={
