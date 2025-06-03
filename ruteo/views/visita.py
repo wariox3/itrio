@@ -634,7 +634,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         flota_disponible = list(
             RutFlota.objects.filter(vehiculo__estado_asignado=False)
             .select_related('vehiculo')
-            .order_by('vehiculo__prioridad') 
+            .order_by('prioridad') 
         )
         if not flota_disponible:
             return Response({'mensaje': 'No hay vehículos disponibles'}, 

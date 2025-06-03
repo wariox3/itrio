@@ -43,61 +43,58 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(flota)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 
     @action(detail=False, methods=['post'], url_path=r'cambiar-prioridad')
     def cambiar_prioridad(self, request, *args, **kwargs):
         with transaction.atomic():
             try:
-                # Obtener datos del request
-                vehiculo_id = request.data.get('id')
+                flota_id = request.data.get('id')
                 nueva_prioridad = int(request.data.get('prioridad'))
 
-                # Validar que exista el vehículo a modificar
-                vehiculo_actual = RutVehiculo.objects.filter(id=vehiculo_id).first()
-                if not vehiculo_actual:
+                flota_actual = RutFlota.objects.select_for_update().filter(id=flota_id).first()
+                if not flota_actual:
                     return Response(
-                        {'error': 'El vehículo especificado no existe'},
+                        {'error': 'La flota especificada no existe'},
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-                # Obtener el conteo total de vehículos en la flota (usando el nombre correcto de la relación)
-                total_vehiculos = RutVehiculo.objects.filter(flotas_vehiculo_rel__isnull=False).count()
+                total_flotas = RutFlota.objects.count()
 
-                # Validar que la nueva prioridad esté dentro del rango permitido
-                if nueva_prioridad < 1 or nueva_prioridad > total_vehiculos:
+                if nueva_prioridad < 1 or nueva_prioridad > total_flotas:
                     return Response(
                         {
-                            'mensaje': f'La prioridad debe estar entre 1 y {total_vehiculos}', 'codigo':15,
+                            'mensaje': f'La prioridad debe estar entre 1 y {total_flotas}',
+                            'codigo': 15,
                         },
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-                # Buscar el vehículo que tiene actualmente esa prioridad
-                vehiculo_con_prioridad = RutVehiculo.objects.filter(
+                flota_con_prioridad = RutFlota.objects.select_for_update().filter(
                     prioridad=nueva_prioridad
-                ).exclude(id=vehiculo_id).first()
+                ).exclude(id=flota_id).first()
 
-                # Guardar la prioridad actual del vehículo que estamos modificando
-                prioridad_actual = vehiculo_actual.prioridad
+                prioridad_actual = flota_actual.prioridad
 
-                # Intercambiar prioridades
-                vehiculo_actual.prioridad = nueva_prioridad
-                vehiculo_actual.save()
+                flota_actual.prioridad = nueva_prioridad
+                flota_actual.save()
 
-                if vehiculo_con_prioridad:
-                    vehiculo_con_prioridad.prioridad = prioridad_actual
-                    vehiculo_con_prioridad.save()
+                if flota_con_prioridad:
+                    flota_con_prioridad.prioridad = prioridad_actual
+                    flota_con_prioridad.save()
 
                 return Response(
                     {
                         'mensaje': 'Prioridades intercambiadas exitosamente',
-                        'vehiculo_actual': {
-                            'id': vehiculo_actual.id,
-                            'nueva_prioridad': nueva_prioridad
+                        'flota_actual': {
+                            'id': flota_actual.id,
+                            'nueva_prioridad': nueva_prioridad,
+                            'vehiculo_id': flota_actual.vehiculo.id
                         },
-                        'vehiculo_afectado': {
-                            'id': vehiculo_con_prioridad.id if vehiculo_con_prioridad else None,
-                            'nueva_prioridad': prioridad_actual if vehiculo_con_prioridad else None
+                        'flota_afectada': {
+                            'id': flota_con_prioridad.id if flota_con_prioridad else None,
+                            'nueva_prioridad': prioridad_actual if flota_con_prioridad else None,
+                            'vehiculo_id': flota_con_prioridad.vehiculo.id if flota_con_prioridad else None
                         }
                     },
                     status=status.HTTP_200_OK
