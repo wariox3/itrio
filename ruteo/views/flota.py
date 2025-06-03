@@ -40,7 +40,7 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
                 headers=headers
             )
         
-    @action(detail=False, methods=['post'], url_path=r'cambiar-prioridad',)
+    @action(detail=False, methods=['post'], url_path=r'cambiar-prioridad')
     def cambiar_prioridad(self, request, *args, **kwargs):
         with transaction.atomic():
             try:
@@ -53,6 +53,20 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
                 if not vehiculo_actual:
                     return Response(
                         {'error': 'El vehículo especificado no existe'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+
+                # Obtener el conteo total de vehículos en la flota
+                total_vehiculos = RutVehiculo.objects.filter(rutflota__isnull=False).count()
+
+                # Validar que la nueva prioridad esté dentro del rango permitido
+                if nueva_prioridad < 1 or nueva_prioridad > total_vehiculos:
+                    return Response(
+                        {
+                            'error': f'Prioridad inválida',
+                            'mensaje': f'La prioridad debe estar entre 1 y {total_vehiculos}',
+                            'prioridad_maxima_permitida': total_vehiculos
+                        },
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
@@ -74,7 +88,7 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
 
                 return Response(
                     {
-                        'message': 'Prioridades intercambiadas exitosamente',
+                        'mensaje': 'Prioridades intercambiadas exitosamente',
                         'vehiculo_actual': {
                             'id': vehiculo_actual.id,
                             'nueva_prioridad': nueva_prioridad
