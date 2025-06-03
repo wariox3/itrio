@@ -13,7 +13,7 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         with transaction.atomic():
-            vehiculo_id = request.data.get('id')
+            vehiculo_id = request.data.get('vehiculo')
             nueva_prioridad = request.data.get('prioridad')
 
             vehiculo = RutVehiculo.objects.filter(id=vehiculo_id).first()
@@ -43,6 +43,7 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path=r'cambiar-prioridad')
     def cambiar_prioridad(self, request, *args, **kwargs):
         with transaction.atomic():
+            try:
                 # Obtener datos del request
                 vehiculo_id = request.data.get('id')
                 nueva_prioridad = int(request.data.get('prioridad'))
@@ -98,4 +99,10 @@ class RutFlotaViewSet(viewsets.ModelViewSet):
                         }
                     },
                     status=status.HTTP_200_OK
+                )
+
+            except Exception as e:
+                return Response(
+                    {'error': f'Error al intercambiar prioridades: {str(e)}'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
