@@ -661,16 +661,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         despachos_creados = 0
 
         def vehiculo_puede_tomar_visita(vehiculo, visita, peso_actual, tiempo_actual, verificar_franja):
-            # Verificar capacidad
             if (peso_actual + visita.peso > vehiculo.capacidad or 
                 tiempo_actual + visita.tiempo > vehiculo.tiempo):
                 return False
             
-            # Si no necesita verificar franja, retornar True
             if not verificar_franja:
                 return True
                 
-            # Verificar franja
             return vehiculo.franjas.filter(id=visita.franja_id).exists()
 
         if rutear_franja:
@@ -697,7 +694,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             vehiculo.save()
                             despachos_creados += 1
                         else:
-                            # Actualizar despacho existente
                             despacho.peso += visita.peso
                             despacho.volumen += visita.volumen
                             despacho.tiempo += visita.tiempo
@@ -706,16 +702,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             despacho.visitas += 1
                             despacho.save()
 
-                        # Actualizar totales
                         peso_total += visita.peso
                         tiempo_total += visita.tiempo
                         
-                        # Marcar visita como asignada
                         visita.estado_despacho = True
                         visita.despacho = despacho
                         visita.save()
                         
-                        # Quitar de pendientes
                         visitas_pendientes.remove(visita)
         else:
             vehiculo_index = 0
@@ -723,7 +716,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 flota_item = flota_disponible[vehiculo_index]
                 vehiculo = flota_item.vehiculo
                 
-                # Saltar vehículos ya asignados
                 if vehiculo.estado_asignado:
                     vehiculo_index += 1
                     continue
@@ -736,7 +728,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 # Hacer copia para iterar seguramente mientras removemos
                 for visita in list(visitas_pendientes):
                     if vehiculo_puede_tomar_visita(vehiculo, visita, peso_total, tiempo_total, False):
-                        # Crear despacho si es la primera visita
                         if despacho is None:
                             despacho = RutDespacho.objects.create(
                                 fecha=timezone.now(),
@@ -752,7 +743,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             vehiculo.save()
                             despachos_creados += 1
                         else:
-                            # Actualizar despacho existente
                             despacho.peso += visita.peso
                             despacho.volumen += visita.volumen
                             despacho.tiempo += visita.tiempo
@@ -761,33 +751,28 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             despacho.visitas += 1
                             despacho.save()
 
-                        # Actualizar totales
                         peso_total += visita.peso
                         tiempo_total += visita.tiempo
                         
-                        # Marcar visita como asignada
                         visita.estado_despacho = True
                         visita.despacho = despacho
                         visita.save()
                         
-                        # Quitar de pendientes
                         visitas_pendientes.remove(visita)
                         visitas_asignadas_este_vehiculo += 1
 
-                # Siempre pasar al siguiente vehículo, haya asignado visitas o no
                 vehiculo_index += 1
 
-        # Preparar respuesta
-        mensaje = f'Se crearon {despachos_creados} rutas exitosamente' + (' por franjas' if rutear_franja else '')
-        if visitas_pendientes:
-            mensaje += f'. Quedaron {len(visitas_pendientes)} visitas pendientes por asignar.'
+            mensaje = (
+                f"Operación completada: {despachos_creados} rutas creadas"
+                + (f"Pendientes: {len(visitas_pendientes)} visitas (IDs: {', '.join(str(v.id) for v in visitas_pendientes)})" 
+                if visitas_pendientes else "")
+            )
 
-        return Response({
-            'mensaje': mensaje,
-            'visitas_pendientes': [v.id for v in visitas_pendientes] if visitas_pendientes else None,
-            'despachos_creados': despachos_creados,
-            'modo_franjas': rutear_franja
-        }, status=status.HTTP_200_OK)
+            return Response({
+                'mensaje': mensaje,
+                'status': status.HTTP_200_OK
+            })
         
     @action(detail=False, methods=["post"], url_path=r'ubicar',)
     def ubicar(self, request):             

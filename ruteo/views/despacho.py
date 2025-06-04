@@ -75,7 +75,10 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                         if visitas:
                             return Response({'mensaje':'El despacho tiene visitas sin entregar', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                         despacho.estado_terminado = True                
-                        despacho.save()               
+                        despacho.save()              
+                        vehiculo = RutVehiculo.objects.get(pk=despacho.vehiculo_id)
+                        vehiculo.estado_asignado = False
+                        vehiculo.save() 
                         return Response({'mensaje': 'Se termino el despacho'}, status=status.HTTP_200_OK)                
                     else:
                         return Response({'mensaje':'El despacho ya esta terminado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                
@@ -104,7 +107,11 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                         visita.save()
                     despacho.estado_anulado = True
                     despacho.estado_terminado = True                                    
-                    despacho.save()               
+                    despacho.save()   
+                    vehiculo = RutVehiculo.objects.get(pk=despacho.vehiculo_id)
+                    vehiculo.estado_asignado = False
+                    vehiculo.save() 
+
                     return Response({'mensaje': 'Se anulo el despacho'}, status=status.HTTP_200_OK)                                                              
                 else:
                     return Response({'mensaje':'El despacho debe estar aprobado, sin terminar y sin anular', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                        
