@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db import models
 from general.models.documento import GenDocumento
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.contacto import GenContacto
@@ -181,6 +182,12 @@ class GenDocumentoListaSerializador(serializers.HyperlinkedModelSerializer):
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
     documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
+    def build_standard_field(self, field_name, model_field):
+        field_class, field_kwargs = super().build_standard_field(field_name, model_field)                
+        if isinstance(model_field, models.DecimalField):
+            field_kwargs['coerce_to_string'] = False        
+        return field_class, field_kwargs    
+    
     class Meta:
         model = GenDocumento
         fields = ['id', 
