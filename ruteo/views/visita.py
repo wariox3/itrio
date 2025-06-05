@@ -463,7 +463,18 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
 
     def ordenar_visitas(self, visitas):
         """Función auxiliar para ordenar un conjunto de visitas"""
-        punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
+        configuracion = GenConfiguracion.objects.filter(id=1).first()
+
+        if not configuracion or configuracion.rut_latitud is None or configuracion.rut_longitud is None:
+            return Response({
+                'mensaje': 'Debe configurar punto de origen para poder ordenar las visitas', 
+                'codigo': 15
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        latitud = float(configuracion.rut_latitud)
+        longitud = float(configuracion.rut_longitud)
+
+        punto_inicial = {'latitud': latitud, 'longitud': longitud}         
         matriz = construir_matriz_distancias(visitas, punto_inicial)                    
         manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
         routing = pywrapcp.RoutingModel(manager)
