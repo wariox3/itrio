@@ -8,7 +8,7 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeSerializador, GenDocumentoDetalleExcelSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
-from utilidades.excel import WorkbookEstilos
+from utilidades.workbook_estilos import WorkbookEstilos
 
 from openpyxl import Workbook
 class DocumentoDetalleViewSet(viewsets.ModelViewSet):

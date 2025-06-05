@@ -14,7 +14,7 @@ from django.db.models import F,Sum
 from io import BytesIO
 from django.http import HttpResponse
 from django.db import transaction
-from utilidades.excel import WorkbookEstilos
+from utilidades.workbook_estilos import WorkbookEstilos
 from openpyxl import Workbook
 from general.formatos.balance_prueba import FormatoBalancePrueba
 import base64

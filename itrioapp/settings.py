@@ -170,13 +170,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 30,    
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'EXCEPTION_HANDLER': 'itrioapp.exceptions.custom_exception_handler',
 }
 
-SIMPLE_JWT = {
+SIMPLE_JWT = { 
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
@@ -242,17 +245,15 @@ CORS_ALLOW_HEADERS = [
 
 '''LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
     'handlers': {
-        'console': {
-            'level': 'DEBUG',
+        'console':{
             'class': 'logging.StreamHandler',
         },
     },
     'loggers': {
         'django.db.backends': {
-            'level': 'DEBUG',
             'handlers': ['console'],
+            'level': 'DEBUG',  # Cambia a 'INFO' para menos detalles
         },
     },
 }'''

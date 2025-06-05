@@ -1,6 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.documento_impuesto import GenDocumentoImpuesto
@@ -21,7 +23,7 @@ from contabilidad.models.activo import ConActivo
 from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoExcelSerializador, GenDocumentoRetrieveSerializador, GenDocumentoInformeSerializador, GenDocumentoAdicionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento import GenDocumentoReferenciaSerializador
@@ -36,6 +38,7 @@ from general.formatos.recibo_caja import FormatoRecibo
 from general.formatos.egreso import FormatoEgreso
 from general.formatos.compra import FormatoCompra
 from general.formatos.factura_pos import FormatoFacturaPOS
+from general.filters.documento import DocumentoFilter
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
@@ -46,8 +49,9 @@ from django.db.models import Sum, Q, DecimalField, CharField
 from django.db import transaction
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
-from utilidades.excel import WorkbookEstilos
+from utilidades.workbook_estilos import WorkbookEstilos
 from utilidades.utilidades import Utilidades
+from utilidades.exportar_excel import ExportarExcel
 from decimal import Decimal
 from openpyxl import Workbook
 from datetime import datetime, timedelta, date
@@ -73,10 +77,38 @@ def transformar_decimal(obj):
     return obj
 
 class DocumentoViewSet(viewsets.ModelViewSet):
-    queryset = GenDocumento.objects.all()
-    serializer_class = GenDocumentoSerializador
     permission_classes = [permissions.IsAuthenticated]
-    
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = DocumentoFilter 
+    queryset = GenDocumento.objects.all()   
+    serializadores = {
+        'default': GenDocumentoListaSerializador,
+        'nomina': GenDocumentoSerializador,
+    }
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return GenDocumentoListaSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()
+        campos = serializer_class.Meta.fields        
+        queryset = queryset.select_related('contacto','documento_tipo').only(*campos)
+        if 'ordering' not in self.request.query_params:
+            queryset = queryset.order_by('-id')
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('excel'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExportarExcel(serializer.data, sheet_name="Documentos", filename="documentos.xlsx")
+            return exporter.export()
+        return super().list(request, *args, **kwargs)
+
     def retrieve(self, request, pk=None):
         queryset = GenDocumento.objects.all()
         documento = get_object_or_404(queryset, pk=pk)

@@ -177,6 +177,26 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_nombre': cuenta_nombre
         }
     
+class GenDocumentoListaSerializador(serializers.HyperlinkedModelSerializer):  
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
+    class Meta:
+        model = GenDocumento
+        fields = ['id', 
+                  'numero', 
+                  'fecha',
+                  'subtotal',
+                  'impuesto',
+                  'total',
+                  'estado_aprobado',
+                  'estado_anulado',
+                  'estado_electronico',
+                  'estado_contabilizado',
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',                   
+                  'documento_tipo__nombre'] 
+    
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
