@@ -32,6 +32,7 @@ import gc
 import base64
 import openpyxl
 import numpy as np
+from decimal import Decimal, ROUND_HALF_UP
 
 
 
@@ -489,12 +490,31 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 orden.append(node - 1)
             index = solution.Value(routing.NextVar(index))
 
+        # Definimos la precisión a 6 decimales
+        decimal_6_places = Decimal('0.000001')  # Para redondear a 6 decimales
+        
         for idx, visita_idx in enumerate(orden):
             visita_id = visitas[visita_idx]['id']
-            tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
+            
+            # Aseguramos que tiempo_servicio no tenga más de 6 decimales
+            tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio']).quantize(
+                decimal_6_places,
+                rounding=ROUND_HALF_UP  # Redondeo estándar (mitad hacia arriba)
+            )
+            
             distancia = matriz[0][visita_idx + 1] if idx == 0 else matriz[orden[idx - 1] + 1][visita_idx + 1]
-            tiempo_trayecto = Decimal(distancia * 1.6)
-            tiempo = tiempo_servicio + tiempo_trayecto            
+            
+            # Aseguramos que tiempo_trayecto y tiempo no tengan más de 6 decimales
+            tiempo_trayecto = (Decimal(distancia) * Decimal('1.6')).quantize(
+                decimal_6_places,
+                rounding=ROUND_HALF_UP
+            )
+            
+            tiempo = (tiempo_servicio + tiempo_trayecto).quantize(
+                decimal_6_places,
+                rounding=ROUND_HALF_UP
+            )
+            
             RutVisita.objects.filter(id=visita_id).update(
                 orden=idx + 1, 
                 distancia=distancia, 
@@ -627,6 +647,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     def rutear(self, request):
         raw = request.data
         filtros = raw.get('filtros')
+
+        decimal_6_places = Decimal('0.000001')
         
         configuracion = GenConfiguracion.objects.filter(id=1).first()
         rutear_franja = getattr(configuracion, 'rut_rutear_franja', False)
@@ -696,9 +718,18 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         else:
                             despacho.peso += visita.peso
                             despacho.volumen += visita.volumen
-                            despacho.tiempo += visita.tiempo
-                            despacho.tiempo_servicio += visita.tiempo_servicio
-                            despacho.tiempo_trayecto += visita.tiempo_trayecto
+                            despacho.tiempo = (Decimal(despacho.tiempo) + Decimal(visita.tiempo)).quantize(
+                                decimal_6_places,
+                                rounding=ROUND_HALF_UP
+                            )
+                            despacho.tiempo_servicio = (Decimal(despacho.tiempo_servicio) + Decimal(visita.tiempo_servicio)).quantize(
+                                decimal_6_places,
+                                rounding=ROUND_HALF_UP
+                            )
+                            despacho.tiempo_trayecto = (Decimal(despacho.tiempo_trayecto) + Decimal(visita.tiempo_trayecto)).quantize(
+                                decimal_6_places,
+                                rounding=ROUND_HALF_UP
+                            )
                             despacho.visitas += 1
                             despacho.save()
 
@@ -745,9 +776,18 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         else:
                             despacho.peso += visita.peso
                             despacho.volumen += visita.volumen
-                            despacho.tiempo += visita.tiempo
-                            despacho.tiempo_servicio += visita.tiempo_servicio
-                            despacho.tiempo_trayecto += visita.tiempo_trayecto
+                            despacho.tiempo = (Decimal(despacho.tiempo) + Decimal(visita.tiempo)).quantize(
+                                decimal_6_places,
+                                rounding=ROUND_HALF_UP
+                            )
+                            despacho.tiempo_servicio = (Decimal(despacho.tiempo_servicio) + Decimal(visita.tiempo_servicio)).quantize(
+                                decimal_6_places,
+                                rounding=ROUND_HALF_UP
+                            )
+                            despacho.tiempo_trayecto = (Decimal(despacho.tiempo_trayecto) + Decimal(visita.tiempo_trayecto)).quantize(
+                                decimal_6_places,
+                                rounding=ROUND_HALF_UP
+                            )
                             despacho.visitas += 1
                             despacho.save()
 

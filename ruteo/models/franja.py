@@ -15,3 +15,4 @@ class RutFranja(models.Model):
 
     class Meta:
         db_table = "rut_franja"
+        ordering = ['nombre']

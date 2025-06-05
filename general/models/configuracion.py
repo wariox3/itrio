@@ -17,5 +17,8 @@ class GenConfiguracion(models.Model):
     pos_documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, null=True)  
     rut_sincronizar_complemento = models.BooleanField(default = False)    
     rut_rutear_franja = models.BooleanField(default = False)
+    rut_direccion_origen = models.TextField(null=True)
+    rut_latitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
+    rut_longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     class Meta:
         db_table = "gen_configuracion"
