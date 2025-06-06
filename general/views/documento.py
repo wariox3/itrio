@@ -2921,16 +2921,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 # Validar inventario
                 for documento_detalle in documento_detalles:
                     if documento_detalle.operacion_inventario == -1:
-                        if documento_detalle.almacen:
-                            existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()
-                            if existencia:
-                                disponible = existencia.disponible + documento_detalle.cantidad_operada
-                                if disponible < 0:
-                                    return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}
-                            else:
-                                return {'error':True, 'mensaje':f"El item no tiene cantidades disponibles", 'codigo':1}
+                        if documento_detalle.almacen and documento_detalle.item:
+                            existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()                            
+                            if not existencia:
+                                existencia = InvExistencia(item=documento_detalle.item, almacen=documento_detalle.almacen)
+                                existencia.save()
+                            disponible = existencia.disponible + documento_detalle.cantidad_operada
+                            if disponible < 0 and documento_detalle.item.negativo == False:
+                                return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
                         else:
-                            return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen', 'codigo':1}                                   
+                            return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen o item', 'codigo':1}                                   
                 
                 # Notas credito
                 if documento.documento_referencia:
