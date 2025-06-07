@@ -105,7 +105,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="Documentos", filename="documentos.xlsx")
+            exporter = ExportarExcel(serializer.data, sheet_name="documentos", filename="documentos.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
 

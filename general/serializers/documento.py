@@ -191,18 +191,19 @@ class GenDocumentoListaSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenDocumento
         fields = ['id', 
+                  'documento_tipo__nombre',
                   'numero', 
                   'fecha',
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',                                     
                   'subtotal',
                   'impuesto',
                   'total',
                   'estado_aprobado',
                   'estado_anulado',
                   'estado_electronico',
-                  'estado_contabilizado',
-                  'contacto__numero_identificacion',
-                  'contacto__nombre_corto',                   
-                  'documento_tipo__nombre'] 
+                  'estado_contabilizado']
+ 
     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
