@@ -253,7 +253,7 @@ CORS_ALLOW_HEADERS = [
     'loggers': {
         'django.db.backends': {
             'handlers': ['console'],
-            'level': 'DEBUG',  # Cambia a 'INFO' para menos detalles
+            'level': 'DEBUG',
         },
     },
 }'''
