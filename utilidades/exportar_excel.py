@@ -27,9 +27,8 @@ class ExportarExcel:
                 for cell in ws[ws.max_row]:
                     cell.font = estilo
 
-        response = HttpResponse(
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
         response['Content-Disposition'] = f'attachment; filename="{self.filename}"'
         wb.save(response)
         return response
