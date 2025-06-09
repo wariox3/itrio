@@ -92,6 +92,33 @@ class Google():
         else:
             return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
     
+    def direcciones(self, visitas):                                
+        api_key = config('GOOGLE_MAPS_API_KEY')
+        base_url = "https://maps.googleapis.com/maps/api/directions/json"
+        waypoints = "|".join([f"{visita['latitud']},{visita['longitud']}" for visita in visitas])        
+        cantidad_visitas = len(visitas)
+        params = {
+            "origin": f"6.197023,-75.585760",
+            "destination": f"6.197023,-75.585760",
+            "waypoints": f"optimize:true|{waypoints}",
+            "key": api_key
+        }
+        response = requests.get(base_url, params=params)                
+        if response.status_code == 200:
+            data = response.json()
+            if data['status'] == 'OK':                                
+                ruta = data["routes"][0]                          
+                return {
+                    "error": False,
+                    "data": data,
+                    "ruta": ruta, 
+                    "ruta_puntos": ruta["overview_polyline"]["points"]
+                }
+            else:
+                return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de google')}
+        else:
+            return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
+
     def matriz_distancia(self, visitas_ubicaciones):
         api_key = config('GOOGLE_MAPS_API_KEY')                                                        
         url = "https://maps.googleapis.com/maps/api/distancematrix/json"

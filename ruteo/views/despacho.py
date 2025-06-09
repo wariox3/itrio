@@ -12,6 +12,7 @@ from openpyxl import Workbook
 from utilidades.workbook_estilos import WorkbookEstilos
 from datetime import datetime
 from django.db import transaction
+from utilidades.google import Google
 
 class RutDespachoViewSet(viewsets.ModelViewSet):
     queryset = RutDespacho.objects.all()
@@ -250,4 +251,21 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                         estado_aprobado=True, estado_terminado=False                                               
                     )           
         return Response({'mensaje': 'Se aprobo el despacho'}, status=status.HTTP_200_OK)  
+    
+    @action(detail=False, methods=["post"], url_path=r'ruta',)
+    def ruta_action(self, request):           
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:                
+                despacho = RutDespacho.objects.get(pk=id) 
+                google = Google()
+                visitas = RutVisita.objects.filter(despacho_id=id).values('latitud', 'longitud')
+                respuesta = google.direcciones(visitas)
+                return Response({'respuesta': respuesta}, status=status.HTTP_200_OK) 
+            except RutDespacho.DoesNotExist:
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)        
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
                
