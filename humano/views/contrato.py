@@ -11,11 +11,12 @@ from humano.models.pension import HumPension
 from humano.models.tipo_cotizante import HumTipoCotizante
 from humano.models.subtipo_cotizante import HumSubtipoCotizante
 from humano.models.entidad import HumEntidad
+from humano.models.contrato_tipo import HumContratoTipo
+from humano.models.motivo_terminacion import HumMotivoTerminacion
 from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
-from humano.models.contrato_tipo import HumContratoTipo
-from humano.models.tiempo import HumTiempo
 from humano.serializers.contrato import HumContratoSerializador
+from humano.serializers.liquidacion import HumLiquidacionSerializador
 from django.db.models.deletion import ProtectedError
 from datetime import datetime
 import base64
@@ -52,22 +53,39 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
         raw = request.data
         id = raw.get('id')
         fecha_terminacion = raw.get('fecha_terminacion')
-        if id and fecha_terminacion:
+        motivo_terminacion_id = raw.get('motivo_terminacion_id')
+        if id and fecha_terminacion and motivo_terminacion_id:
             try:
                 contrato = HumContrato.objects.get(pk=id)
-                if contrato.estado_terminado == False:
-                    fecha_terminacion = datetime.strptime(fecha_terminacion, '%Y-%m-%d').date()
-                    if fecha_terminacion > contrato.fecha_desde:
-                        contrato.fecha_hasta = fecha_terminacion
-                        contrato.estado_terminado = True
-                        contrato.save()
-                        return Response({'mensaje': 'Contrato finalizado'}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'mensaje':'No puede terminar el contrato antes de su inicio', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    return Response({'mensaje':'El contrato ya esta terminado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
             except HumContrato.DoesNotExist:
-                return Response({'mensaje':'El contrato no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje':'El contrato no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
+            if contrato.estado_terminado == False:
+                fecha_terminacion = datetime.strptime(fecha_terminacion, '%Y-%m-%d').date()
+                if fecha_terminacion > contrato.fecha_desde:
+                    try:
+                        motivo_terminacion = HumMotivoTerminacion.objects.get(pk=motivo_terminacion_id)
+                    except HumMotivoTerminacion.DoesNotExist:
+                        return Response({'mensaje':'El motivo terminacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                    
+                    
+                    contrato.fecha_hasta = fecha_terminacion
+                    contrato.motivo_terminacion = motivo_terminacion
+                    contrato.estado_terminado = True
+                    contrato.save()
+                    data = {
+                        "fecha":fecha_terminacion,
+                        "fecha_desde":contrato.fecha_desde,
+                        "fecha_hasta":fecha_terminacion,
+                        "contrato": id
+                    }
+                    liquidacion_serializador = HumLiquidacionSerializador(data=data)
+                    if liquidacion_serializador.is_valid():
+                        liquidacion_serializador.save()
+                    return Response({'mensaje': 'Contrato finalizado'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':f'No puede terminar el contrato antes de su inicio {contrato.fecha_desde}', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje':'El contrato ya esta terminado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)         
         

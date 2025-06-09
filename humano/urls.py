@@ -24,6 +24,8 @@ from .views.aporte_contrato import HumAporteContratoViewSet
 from .views.concepto_cuenta import HumConceptoCuentaViewSet
 from .views.configuracion_provision import HumConfiguracionProvisionViewSet
 from .views.configuracion_aporte import HumConfiguracionAporteViewSet
+from .views.liquidacion import HumLiquidacionViewSet
+
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -52,6 +54,7 @@ router.register(r'aporte_contrato', HumAporteContratoViewSet)
 router.register(r'concepto_cuenta', HumConceptoCuentaViewSet)
 router.register(r'configuracion_provision', HumConfiguracionProvisionViewSet)
 router.register(r'configuracion_aporte', HumConfiguracionAporteViewSet)
+router.register(r'liquidacion', HumLiquidacionViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),

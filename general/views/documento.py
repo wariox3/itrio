@@ -82,24 +82,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     filterset_class = DocumentoFilter 
     queryset = GenDocumento.objects.all()   
     serializadores = {
-        'default': GenDocumentoListaSerializador,
+        'lista': GenDocumentoListaSerializador,
         'nomina': GenDocumentoSerializador,
     }
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
         if not serializador_parametro or serializador_parametro not in self.serializadores:
-            return GenDocumentoListaSerializador
+            return GenDocumentoSerializador
         return self.serializadores[serializador_parametro]
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        serializer_class = self.get_serializer_class()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
         campos = serializer_class.Meta.fields        
-        queryset = queryset.select_related('contacto','documento_tipo').only(*campos)
-        if 'ordering' not in self.request.query_params:
-            queryset = queryset.order_by('-id')
-        return queryset
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos)  
+
 
     def list(self, request, *args, **kwargs):
         if request.query_params.get('excel'):

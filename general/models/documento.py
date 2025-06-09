@@ -93,3 +93,4 @@ class GenDocumento(models.Model):
 
     class Meta:
         db_table = "gen_documento"
+        ordering = ["-id"]

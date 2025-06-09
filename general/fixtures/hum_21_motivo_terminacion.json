@@ -1,0 +1,48 @@
+[
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 1,
+      "fields": {"nombre": "RENUNCIA VOLUNTARIA"}
+    },
+        {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 2,
+      "fields": {"nombre": "MUTUO ACUERDO"}
+    },
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 3,
+      "fields": {"nombre": "CON JUSTA CAUSA"}
+    },
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 4,
+      "fields": {"nombre": "SIN JUSTA CAUSA"}
+    },      
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 5,
+      "fields": {"nombre": "TERMINACIÓN DE CONTRATO"}
+    },      
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 6,
+      "fields": {"nombre": "PENSIÓN POR INVALIDEZ"}
+    },
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 7,
+      "fields": {"nombre": "PENSIÓN POR VEJEZ"}
+    },          
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 8,
+      "fields": {"nombre": "MUERTE"}
+    },      
+    {
+      "model": "humano.HumMotivoTerminacion",
+      "pk": 9,
+      "fields": {"nombre": "JUBILACIÓN"}
+    }
+  ]
+  

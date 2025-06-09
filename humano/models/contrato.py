@@ -14,6 +14,7 @@ from humano.models.subtipo_cotizante import HumSubtipoCotizante
 from humano.models.entidad import HumEntidad
 from humano.models.tiempo import HumTiempo
 from humano.models.tipo_costo import HumTipoCosto
+from humano.models.motivo_terminacion import HumMotivoTerminacion
 
 class HumContrato(models.Model):        
     fecha_desde = models.DateField()
@@ -46,6 +47,7 @@ class HumContrato(models.Model):
     tiempo = models.ForeignKey(HumTiempo, on_delete=models.PROTECT, null=True, related_name='contratos_tiempo_rel')
     tipo_costo = models.ForeignKey(HumTipoCosto, on_delete=models.PROTECT, null=True, related_name='contratos_tipo_costo_rel')
     grupo_contabilidad = models.ForeignKey(ConGrupo, on_delete=models.PROTECT, null=True, related_name='contratos_grupo_contabilidad_rel')
-
+    motivo_terminacion = models.ForeignKey(HumMotivoTerminacion, null=True, on_delete=models.PROTECT, related_name='contratos_motivo_terminacion_rel')
+    
     class Meta:
         db_table = "hum_contrato"   

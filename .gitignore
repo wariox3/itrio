@@ -31,3 +31,6 @@ bd.py
 .ionide
 .vscode/launch.json
 .env
+
+### PyCharm ###
+.idea/
