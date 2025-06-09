@@ -710,7 +710,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 tiempo_total = 0
                 despacho = None
 
-                for visita in visitas_pendientes[:]:
+                # Procesar solo si el vehículo no está ya asignado
+                if vehiculo.estado_asignado:
+                    continue
+
+                # Intentar asignar todas las visitas posibles a este vehículo
+                for visita in list(visitas_pendientes):
                     if vehiculo_puede_tomar_visita(vehiculo, visita, peso_total, tiempo_total, True):
                         if despacho is None:
                             despacho = RutDespacho.objects.create(
@@ -752,6 +757,22 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         visita.save()
                         
                         visitas_pendientes.remove(visita)
+
+                if visitas_pendientes:
+                    continue
+                else:
+                    break 
+
+            mensaje = (
+                f"Operación completada: {despachos_creados} rutas creadas"
+                + (f"Pendientes: {len(visitas_pendientes)} visitas (IDs: {', '.join(str(v.id) for v in visitas_pendientes)})" 
+                if visitas_pendientes else "")
+            )
+            return Response({
+                'mensaje': mensaje,
+                'status': status.HTTP_200_OK
+            })
+
         else:
             vehiculo_index = 0
             while vehiculo_index < len(flota_disponible) and visitas_pendientes:

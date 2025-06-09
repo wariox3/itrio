@@ -1,8 +1,122 @@
 [
     {
-      "model": "ruteo.RutNovedadTipo",
-      "pk": 1,
-      "fields": {"nombre": "Direccion errada"}
-    }         
-  ]
-  
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 1,
+        "fields": {"nombre": "Direccion errada"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 2,
+        "fields": {"nombre": "Problemas en la via"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 3,
+        "fields": {"nombre": "Vehiculo varado"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 4,
+        "fields": {"nombre": "Ruta sin finalizar (tiempo)"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 5,
+        "fields": {"nombre": "Población errada"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 6,
+        "fields": {"nombre": "Mercancia extraviada"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 7,
+        "fields": {"nombre": "Ingreso jaula"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 8,
+        "fields": {"nombre": "Mercancía retenida por orden de remitente"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 9,
+        "fields": {"nombre": "Decomiso por autoridades"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 10,
+        "fields": {"nombre": "Cliente reclama en oficina"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 11,
+        "fields": {"nombre": "Costo adicional por operacion"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 12,
+        "fields": {"nombre": "Ruta incompleta"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 13,
+        "fields": {"nombre": "Cliente no despacha (recogida)"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 14,
+        "fields": {"nombre": "Mercancia averiada / mal estado"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 15,
+        "fields": {"nombre": "Mercancia no despachada (bodega)"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 16,
+        "fields": {"nombre": "Mercancia hurtada"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 17,
+        "fields": {"nombre": "Destinatario no habita en el lugar"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 18,
+        "fields": {"nombre": "Cliente no recibe"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 19,
+        "fields": {"nombre": "Pedido errado"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 20,
+        "fields": {"nombre": "Mercancia incompleta"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 21,
+        "fields": {"nombre": "Persona destino ausente"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 22,
+        "fields": {"nombre": "Destinatario fallecido"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 23,
+        "fields": {"nombre": "Local cerrado"}
+    },
+    {
+        "model": "ruteo.RutNovedadTipo",
+        "pk": 24,
+        "fields": {"nombre": "Cliente vereda esperando que reciba"}
+    }
+]
