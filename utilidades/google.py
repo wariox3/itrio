@@ -5,6 +5,7 @@ from django.utils.timezone import now
 import requests
 import googlemaps
 from general.models.configuracion import GenConfiguracion
+from geopy.distance import geodesic
 
 class Google():
 
@@ -95,58 +96,68 @@ class Google():
             return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
     
     def direcciones(self, visitas):
-        configuracion = GenConfiguracion.objects.first()
-        origen_lat = configuracion.rut_latitud
-        origen_lng = configuracion.rut_longitud
-        
-        total_visitas = len(visitas)
-        
-        if total_visitas > 25:
-            visitas = visitas[:25]
-            advertencia = f"Se han limitado las {total_visitas} visitas a las últimas 25 para la API"
-        else:
-            advertencia = None
-        
-        if not visitas:
-            return {"error": True, "mensaje": "No hay visitas para calcular la ruta"}
-        
-        ultimo_waypoint = visitas[-1]
-        destino_lat = ultimo_waypoint['latitud']
-        destino_lng = ultimo_waypoint['longitud']
-        
-        waypoints_restantes = visitas[:-1]
-        waypoints_str = "|".join([f"{visita['latitud']},{visita['longitud']}" for visita in waypoints_restantes])
-        
         api_key = config('GOOGLE_MAPS_API_KEY')
-        base_url = "https://maps.googleapis.com/maps/api/directions/json"
+
+        configuracion = GenConfiguracion.objects.first()
+        origen = f"{configuracion.rut_latitud},{configuracion.rut_longitud}"
         
+        visitas_limitadas = visitas[:25]
+        
+        visitas_ordenadas = sorted(visitas_limitadas, key=lambda x: x.get('orden', 0))
+        
+        # 2. Preparar waypoints (excluyendo el último punto que será el destino)
+        destino = visitas_ordenadas[-1]
+        waypoints = [
+            f"{w['latitud']},{w['longitud']}" 
+            for w in visitas_ordenadas[:-1]
+        ]
+        
+        # 3. Llamar a la API de Directions
         params = {
-            "origin": f"{origen_lat},{origen_lng}",
-            "destination": f"{destino_lat},{destino_lng}",
-            "waypoints": f"optimize:false|{waypoints_str}" if waypoints_str else "",
-            "key": api_key
+            "origin": origen,
+            "destination": f"{destino['latitud']},{destino['longitud']}",
+            "waypoints": "|".join(waypoints),
+            "optimizeWaypoints": "false",
+            "mode": "driving",
+            "key": api_key,
         }
-        
-        response = requests.get(base_url, params=params)
-        
-        if response.status_code == 200:
+    
+
+        # 5. Llamar a la API de Google Maps
+        try:
+            response = requests.get(
+                "https://maps.googleapis.com/maps/api/directions/json",
+                params=params,
+                timeout=15
+            )
             data = response.json()
-            if data['status'] == 'OK':
-                ruta = data["routes"][0]
-                resultado = {
-                    "error": False,
-                    "response": response,
-                    "data": data,
-                    "ruta": ruta,
-                    "ruta_puntos": ruta["overview_polyline"]["points"]
+
+            if data['status'] != 'OK':
+                return {
+                    "error": True,
+                    "mensaje": data.get('error_message', 'Error en Google Maps'),
+                    "status": data['status']
                 }
-                if advertencia:
-                    resultado["advertencia"] = advertencia
-                return resultado
-            else:
-                return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de Google')}
-        else:
-            return {"error": True, "mensaje": "Estatus code de Google diferente a 200"}
+
+            # 4. Extraer la geometría detallada de cada tramo (leg)
+            puntos_ruta = []
+            for leg in data['routes'][0]['legs']:
+                for step in leg['steps']:
+                    # Decodificar el polyline de cada segmento
+                    puntos = self._decode_polyline(step['polyline']['points'])
+                    puntos_ruta.extend(puntos)
+            
+            return {
+                "error": False,
+                "puntos_detallados": puntos_ruta,  # Coordenadas que siguen calles
+                "ruta_simplificada": data['routes'][0]['overview_polyline']['points'],
+                "distancia": data['routes'][0]['legs'][0]['distance']['text'],
+                "duracion": data['routes'][0]['legs'][0]['duration']['text'],
+                "data": data
+            }
+
+        except Exception as e:
+            return {"error": True, "mensaje": str(e)}
 
     def matriz_distancia(self, visitas_ubicaciones):
         api_key = config('GOOGLE_MAPS_API_KEY')                                                        
@@ -175,3 +186,41 @@ class Google():
         else:
            return {"error": True, "mensaje": "Estatus code de google diferente a 200"}  
       
+    def _decode_polyline(self, polyline_str):
+        """
+        Decodifica un string polyline de Google Maps en una lista de coordenadas [lat, lng].
+        Basado en el algoritmo oficial de Google.
+        """
+        index, lat, lng = 0, 0, 0
+        coordinates = []
+        changes = {'latitude': 0, 'longitude': 0}
+        
+        # Los caracteres ASCII se decodifican en valores decimal
+        while index < len(polyline_str):
+            # Decodificar latitud
+            shift, result = 0, 0
+            while True:
+                byte = ord(polyline_str[index]) - 63
+                index += 1
+                result |= (byte & 0x1f) << shift
+                shift += 5
+                if byte < 0x20:
+                    break
+            changes['latitude'] = ~(result >> 1) if (result & 1) else (result >> 1)
+            
+            # Decodificar longitud
+            shift, result = 0, 0
+            while True:
+                byte = ord(polyline_str[index]) - 63
+                index += 1
+                result |= (byte & 0x1f) << shift
+                shift += 5
+                if byte < 0x20:
+                    break
+            changes['longitude'] = ~(result >> 1) if (result & 1) else (result >> 1)
+            
+            lat += changes['latitude']
+            lng += changes['longitude']
+            coordinates.append([lat / 100000.0, lng / 100000.0])
+        
+        return coordinates
