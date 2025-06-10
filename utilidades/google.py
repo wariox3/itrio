@@ -5,7 +5,6 @@ from django.utils.timezone import now
 import requests
 import googlemaps
 from general.models.configuracion import GenConfiguracion
-from geopy.distance import geodesic
 
 class Google():
 
