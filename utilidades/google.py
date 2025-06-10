@@ -4,6 +4,7 @@ from decouple import config
 from django.utils.timezone import now
 import requests
 import googlemaps
+from general.models.configuracion import GenConfiguracion
 
 class Google():
 
@@ -51,7 +52,8 @@ class Google():
         else:
             return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
 
-    def calcular_ruta(self, visitas):                                
+    def calcular_ruta(self, visitas):      
+                                      
         api_key = config('GOOGLE_MAPS_API_KEY')
         base_url = "https://maps.googleapis.com/maps/api/directions/json"
         waypoints = "|".join([f"{visita['latitud']},{visita['longitud']}" for visita in visitas])        
@@ -92,14 +94,19 @@ class Google():
         else:
             return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
     
-    def direcciones(self, visitas):                                
+    def direcciones(self, visitas):            
+        
+        configuracion = GenConfiguracion.objects.first()
+        
+        origen_lat = configuracion.latitud
+        origen_lng = configuracion.longitud
+                            
         api_key = config('GOOGLE_MAPS_API_KEY')
         base_url = "https://maps.googleapis.com/maps/api/directions/json"
         waypoints = "|".join([f"{visita['latitud']},{visita['longitud']}" for visita in visitas])        
-        cantidad_visitas = len(visitas)
         params = {
-            "origin": f"6.197023,-75.585760",
-            "destination": f"6.197023,-75.585760",
+            "origin": f"{origen_lat},{origen_lng}",
+            "destination": f"{origen_lat},{origen_lng}",
             "waypoints": f"optimize:true|{waypoints}",
             "key": api_key
         }

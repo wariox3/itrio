@@ -260,7 +260,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
             try:                
                 despacho = RutDespacho.objects.get(pk=id) 
                 google = Google()
-                visitas = RutVisita.objects.filter(despacho_id=id).values('latitud', 'longitud')
+                visitas = RutVisita.objects.filter(despacho_id=id).order_by('orden').values('latitud', 'longitud')
                 respuesta = google.direcciones(visitas)
                 return Response({'respuesta': respuesta}, status=status.HTTP_200_OK) 
             except RutDespacho.DoesNotExist:
