@@ -100,8 +100,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             queryset = queryset.select_related(*select_related)        
         campos = serializer_class.Meta.fields        
         if campos and campos != '__all__':
-            queryset = queryset.only(*campos)  
-
+            queryset = queryset.only(*campos) 
+        return queryset 
 
     def list(self, request, *args, **kwargs):
         if request.query_params.get('excel'):
@@ -1482,19 +1482,22 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                    
     @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
     def resumen_cobrar(self, request):      
-        fecha_actual = timezone.now().date()
+        fecha_actual = timezone.localtime(timezone.now()).date()
         resumen = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))        
-        vigente = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__gt=fecha_actual
+        vigente = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__gte=fecha_actual
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))
         vencido = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__lt=fecha_actual
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
-                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))                
+                                                    saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))    
+        print("Zona horaria de Django:", timezone.get_current_timezone_name())  # Ej: "America/Bogota"
+        print("Fecha/Hora actual con zona:", timezone.localtime(timezone.now()))  # Fecha LOCAL con hora
+        print("Fecha actual (date()):", timezone.now().date())  # Solo fecha (puede ser ambiguo)                    
         return Response({'resumen':resumen, 'vigente': vigente, 'vencido': vencido}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'resumen-pagar',)
@@ -1504,7 +1507,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))
-        vigente = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__gt=fecha_actual
+        vigente = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0, fecha_vence__gte=fecha_actual
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))

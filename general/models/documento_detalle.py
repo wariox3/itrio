@@ -56,4 +56,4 @@ class GenDocumentoDetalle(models.Model):
 
     class Meta:
         db_table = "gen_documento_detalle"
-        ordering = ['id', 'documento', 'item', 'cantidad']
+        ordering = ['-id']

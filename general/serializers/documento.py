@@ -199,8 +199,7 @@ class GenDocumentoListaSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_electronico',
                   'estado_contabilizado']
         select_related_fields = ['contacto','documento_tipo']
- 
-    
+     
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
