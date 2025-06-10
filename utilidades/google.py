@@ -98,8 +98,8 @@ class Google():
         
         configuracion = GenConfiguracion.objects.first()
         
-        origen_lat = configuracion.latitud
-        origen_lng = configuracion.longitud
+        origen_lat = configuracion.rut_latitud
+        origen_lng = configuracion.rut_longitud
                             
         api_key = config('GOOGLE_MAPS_API_KEY')
         base_url = "https://maps.googleapis.com/maps/api/directions/json"
