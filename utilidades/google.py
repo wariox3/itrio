@@ -94,38 +94,59 @@ class Google():
         else:
             return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
     
-    def direcciones(self, visitas):            
-        
+    def direcciones(self, visitas):
         configuracion = GenConfiguracion.objects.first()
-        
         origen_lat = configuracion.rut_latitud
         origen_lng = configuracion.rut_longitud
-                            
+        
+        total_visitas = len(visitas)
+        
+        if total_visitas > 25:
+            visitas = visitas[:25]
+            advertencia = f"Se han limitado las {total_visitas} visitas a las últimas 25 para la API"
+        else:
+            advertencia = None
+        
+        if not visitas:
+            return {"error": True, "mensaje": "No hay visitas para calcular la ruta"}
+        
+        ultimo_waypoint = visitas[-1]
+        destino_lat = ultimo_waypoint['latitud']
+        destino_lng = ultimo_waypoint['longitud']
+        
+        waypoints_restantes = visitas[:-1]
+        waypoints_str = "|".join([f"{visita['latitud']},{visita['longitud']}" for visita in waypoints_restantes])
+        
         api_key = config('GOOGLE_MAPS_API_KEY')
         base_url = "https://maps.googleapis.com/maps/api/directions/json"
-        waypoints = "|".join([f"{visita['latitud']},{visita['longitud']}" for visita in visitas])        
+        
         params = {
             "origin": f"{origen_lat},{origen_lng}",
-            "destination": f"{origen_lat},{origen_lng}",
-            "waypoints": f"optimize:true|{waypoints}",
+            "destination": f"{destino_lat},{destino_lng}",
+            "waypoints": f"optimize:false|{waypoints_str}" if waypoints_str else "",
             "key": api_key
         }
-        response = requests.get(base_url, params=params)                
+        
+        response = requests.get(base_url, params=params)
+        
         if response.status_code == 200:
             data = response.json()
-            if data['status'] == 'OK':                                
-                ruta = data["routes"][0]                          
-                return {
+            if data['status'] == 'OK':
+                ruta = data["routes"][0]
+                resultado = {
                     "error": False,
                     "response": response,
                     "data": data,
-                    "ruta": ruta, 
+                    "ruta": ruta,
                     "ruta_puntos": ruta["overview_polyline"]["points"]
                 }
+                if advertencia:
+                    resultado["advertencia"] = advertencia
+                return resultado
             else:
-                return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de google')}
+                return {"error": True, "mensaje": data.get('error_message', 'Error desconocido de Google')}
         else:
-            return {"error": True, "mensaje": "Estatus code de google diferente a 200"}
+            return {"error": True, "mensaje": "Estatus code de Google diferente a 200"}
 
     def matriz_distancia(self, visitas_ubicaciones):
         api_key = config('GOOGLE_MAPS_API_KEY')                                                        
