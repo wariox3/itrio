@@ -16,7 +16,6 @@ import openpyxl
 import gc
 
 class ContactoViewSet(viewsets.ModelViewSet):             
-
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ContactoFilter 
@@ -44,7 +43,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="documentos", filename="documentos.xlsx")
+            exporter = ExportarExcel(serializer.data, sheet_name="contactos", filename="contactos.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
 
