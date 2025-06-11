@@ -218,6 +218,8 @@ class GenDocumentoListaNominaSerializador(serializers.ModelSerializer):
                   'contacto__numero_identificacion',
                   'contacto__nombre_corto',                                     
                   'salario',
+                  'base_cotizacion',
+                  'base_prestacion',
                   'devengado',
                   'deduccion',
                   'total',
