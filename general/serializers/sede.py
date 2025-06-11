@@ -20,6 +20,12 @@ class GenSedeSerializador(serializers.HyperlinkedModelSerializer):
             'grupo_nombre': grupo_nombre    
         }     
 
+class GenSedeListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenSede
+        fields = ['id', 
+                  'nombre']
+
 class GenSedeListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenSede

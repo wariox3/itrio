@@ -36,7 +36,13 @@ class GenCuentaBancoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_codigo': cuenta_codigo,
             'cuenta_nombre': cuenta_nombre
         }
-        
+
+class GenCuentaBancoListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenCuentaBanco
+        fields = ['id', 
+                  'nombre']
+
 class GenCuentaBancoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
