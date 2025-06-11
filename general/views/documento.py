@@ -114,7 +114,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         queryset = GenDocumento.objects.all()
         documento = get_object_or_404(queryset, pk=pk)
         documentoSerializador = GenDocumentoRetrieveSerializador(documento)
-        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk)
+        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk).order_by('id')
         documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
         detalles = documentoDetallesSerializador.data
         for detalle in detalles:
