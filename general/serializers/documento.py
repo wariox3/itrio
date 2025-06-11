@@ -212,6 +212,7 @@ class GenDocumentoListaNominaSerializador(serializers.ModelSerializer):
                   'documento_tipo__nombre',
                   'numero', 
                   'fecha',
+                  'fecha_hasta',
                   'contacto__numero_identificacion',
                   'contacto__nombre_corto',                                     
                   'salario',
