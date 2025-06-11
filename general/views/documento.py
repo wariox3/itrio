@@ -26,7 +26,6 @@ from inventario.models.almacen import InvAlmacen
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoRetrieveSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
-from general.serializers.documento import GenDocumentoReferenciaSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
 from general.serializers.contacto import GenContactoSerializador
 from contabilidad.serializers.movimiento import ConMovimientoSerializador
