@@ -10,3 +10,4 @@ class HumAporteEntidad(models.Model):
 
     class Meta:
         db_table = "hum_aporte_entidad"
+        ordering = ["-id"]

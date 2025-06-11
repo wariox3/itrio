@@ -6,3 +6,4 @@ class ConCuentaSubcuenta(models.Model):
 
     class Meta:
         db_table = "con_cuenta_subcuenta"
+        ordering = ["-id"]

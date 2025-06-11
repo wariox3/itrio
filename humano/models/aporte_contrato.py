@@ -43,3 +43,4 @@ class HumAporteContrato(models.Model):
 
     class Meta:
         db_table = "hum_aporte_contrato"
+        ordering = ["-id"]

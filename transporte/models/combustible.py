@@ -7,3 +7,4 @@ class TteCombustible(models.Model):
     
     class Meta:
         db_table = "tte_combustible"
+        ordering = ["-id"]

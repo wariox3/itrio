@@ -24,3 +24,4 @@ class RutDespacho(models.Model):
 
     class Meta:
         db_table = "rut_despacho"
+        ordering = ["-id"]

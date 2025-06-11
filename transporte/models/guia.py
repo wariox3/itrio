@@ -63,3 +63,4 @@ class TteGuia(models.Model):
 
     class Meta:
         db_table = "tte_guia"
+        ordering = ["-id"]

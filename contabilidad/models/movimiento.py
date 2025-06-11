@@ -25,3 +25,4 @@ class ConMovimiento(models.Model):
 
     class Meta:
         db_table = "con_movimiento"
+        ordering = ["-id"]

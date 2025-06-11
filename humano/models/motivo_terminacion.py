@@ -6,3 +6,4 @@ class HumMotivoTerminacion(models.Model):
     
     class Meta:
         db_table = "hum_motivo_terminacion"
+        ordering = ["-id"]

@@ -7,3 +7,4 @@ class GenAsesor(models.Model):
 
     class Meta:
         db_table = "gen_asesor"
+        ordering = ["-id"]

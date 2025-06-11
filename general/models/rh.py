@@ -7,3 +7,4 @@ class GenRh(models.Model):
     
     class Meta:
         db_table = "gen_rh"
+        ordering = ["-id"]

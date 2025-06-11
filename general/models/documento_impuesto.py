@@ -13,3 +13,4 @@ class GenDocumentoImpuesto(models.Model):
 
     class Meta:
         db_table = "gen_documento_impuesto"
+        ordering = ["-id"]

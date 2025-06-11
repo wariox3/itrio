@@ -37,3 +37,4 @@ class HumNovedad(models.Model):
 
     class Meta:
         db_table = "hum_novedad"
+        ordering = ["-id"]

@@ -40,3 +40,4 @@ class TteVehiculo(models.Model):
 
     class Meta:
         db_table = "tte_vehiculo"
+        ordering = ["-id"]

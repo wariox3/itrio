@@ -8,3 +8,4 @@ class GenErrorImportar(models.Model):
     
     class Meta:
         db_table = "gen_error_importar"
+        ordering = ["-id"]

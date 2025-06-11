@@ -6,3 +6,4 @@ class HumSucursal(models.Model):
 
     class Meta:
         db_table = "hum_sucursal"
+        ordering = ["-id"]

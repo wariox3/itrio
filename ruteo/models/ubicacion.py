@@ -13,3 +13,4 @@ class RutUbicacion(models.Model):
 
     class Meta:
         db_table = "rut_ubicacion"
+        ordering = ["-id"]

@@ -9,4 +9,4 @@ class GenPrecioDetalle(models.Model):
 
     class Meta:
         db_table = "gen_precio_detalle"
-        ordering = ['id']
+        ordering = ['-id']

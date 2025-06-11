@@ -6,3 +6,4 @@ class TteServicio(models.Model):
     
     class Meta:
         db_table = "tte_servicio"
+        ordering = ["-id"]

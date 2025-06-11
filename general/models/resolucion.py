@@ -14,3 +14,4 @@ class GenResolucion(models.Model):
 
     class Meta:
         db_table = "gen_resolucion"
+        ordering = ["-id"]

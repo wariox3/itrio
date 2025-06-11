@@ -8,3 +8,4 @@ class HumPeriodo(models.Model):
 
     class Meta:
         db_table = "hum_periodo"
+        ordering = ["-id"]

@@ -7,3 +7,4 @@ class GenRegimen(models.Model):
     
     class Meta:
         db_table = "gen_regimen"
+        ordering = ["-id"]

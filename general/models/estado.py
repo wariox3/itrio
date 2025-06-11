@@ -9,3 +9,4 @@ class GenEstado(models.Model):
 
     class Meta:
         db_table = "gen_estado"
+        ordering = ["-id"]

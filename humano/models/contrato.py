@@ -50,4 +50,5 @@ class HumContrato(models.Model):
     motivo_terminacion = models.ForeignKey(HumMotivoTerminacion, null=True, on_delete=models.PROTECT, related_name='contratos_motivo_terminacion_rel')
     
     class Meta:
-        db_table = "hum_contrato"   
+        db_table = "hum_contrato"  
+        ordering = ["-id"] 

@@ -6,3 +6,4 @@ class ConMetodoDepreciacion(models.Model):
 
     class Meta:
         db_table = "con_metodo_depreciacion"
+        ordering = ["-id"]

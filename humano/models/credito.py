@@ -21,3 +21,4 @@ class HumCredito(models.Model):
 
     class Meta:
         db_table = "hum_credito"
+        ordering = ["-id"]

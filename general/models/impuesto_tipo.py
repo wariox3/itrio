@@ -7,3 +7,4 @@ class GenImpuestoTipo(models.Model):
 
     class Meta:
         db_table = "gen_impuesto_tipo"
+        ordering = ["-id"]

@@ -5,3 +5,4 @@ class TteOperacion(models.Model):
     
     class Meta:
         db_table = "tte_operacion"
+        ordering = ["-id"]

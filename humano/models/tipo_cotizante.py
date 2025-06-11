@@ -7,3 +7,4 @@ class HumTipoCotizante(models.Model):
 
     class Meta:
         db_table = "hum_tipo_cotizante"
+        ordering = ["-id"]

@@ -27,3 +27,4 @@ class ConActivo(models.Model):
 
     class Meta:
         db_table = "con_activo"
+        ordering = ["-id"]

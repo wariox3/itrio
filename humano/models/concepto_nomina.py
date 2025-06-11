@@ -8,4 +8,4 @@ class HumConceptoNomina(models.Model):
 
     class Meta:
         db_table = "hum_concepto_nomina"
-        ordering = ['id']
+        ordering = ['-id']

@@ -6,3 +6,4 @@ class TteDespachoTipo(models.Model):
     
     class Meta:
         db_table = "tte_despacho_tipo"
+        ordering = ["-id"]

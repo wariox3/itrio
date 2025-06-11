@@ -7,3 +7,4 @@ class GenDocumentoClase(models.Model):
         
     class Meta:
         db_table = "gen_documento_clase"
+        ordering = ["-id"]

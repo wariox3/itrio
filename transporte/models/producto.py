@@ -7,3 +7,4 @@ class TteProducto(models.Model):
     
     class Meta:
         db_table = "tte_producto"
+        ordering = ["-id"]

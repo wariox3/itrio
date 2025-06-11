@@ -9,3 +9,4 @@ class TteLinea(models.Model):
     
     class Meta:
         db_table = "tte_linea"
+        ordering = ["-id"]

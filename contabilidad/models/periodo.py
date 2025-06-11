@@ -10,3 +10,4 @@ class ConPeriodo(models.Model):
 
     class Meta:
         db_table = "con_periodo"
+        ordering = ["-id"]

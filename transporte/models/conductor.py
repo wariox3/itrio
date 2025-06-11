@@ -34,3 +34,4 @@ class TteConductor(models.Model):
 
     class Meta:
         db_table = "tte_conductor"
+        ordering = ["-id"]

@@ -8,3 +8,4 @@ class ConComprobante(models.Model):
     
     class Meta:
         db_table = "con_comprobante"
+        ordering = ["-id"]

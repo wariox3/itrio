@@ -7,3 +7,4 @@ class RutFlota(models.Model):
 
     class Meta:
         db_table = "rut_flota"
+        ordering = ["-id"]

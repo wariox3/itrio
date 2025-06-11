@@ -9,3 +9,4 @@ class GenConfiguracionUsuario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.PROTECT)
     class Meta:
         db_table = "gen_configuracion_usuario"
+        ordering = ["-id"]

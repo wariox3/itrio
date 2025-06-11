@@ -10,3 +10,4 @@ class HumNovedadTipo(models.Model):
 
     class Meta:
         db_table = "hum_novedad_tipo"
+        ordering = ["-id"]

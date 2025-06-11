@@ -6,3 +6,4 @@ class RutNovedadTipo(models.Model):
     
     class Meta:
         db_table = "rut_novedad_tipo"
+        ordering = ["-id"]

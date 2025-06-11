@@ -7,3 +7,4 @@ class GenSede(models.Model):
 
     class Meta:
         db_table = "gen_sede"
+        ordering = ["-id"]

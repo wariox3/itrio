@@ -24,3 +24,4 @@ class GenEmpresa(models.Model):
     regimen = models.ForeignKey(GenRegimen, null=True, on_delete=models.PROTECT)
     class Meta:
         db_table = "gen_empresa"
+        ordering = ["-id"]

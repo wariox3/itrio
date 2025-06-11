@@ -8,3 +8,4 @@ class TteMarca(models.Model):
     
     class Meta:
         db_table = "tte_marca"
+        ordering = ["-id"]

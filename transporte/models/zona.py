@@ -5,3 +5,4 @@ class TteZona(models.Model):
 
     class Meta:
         db_table = "tte_zona"
+        ordering = ["-id"]

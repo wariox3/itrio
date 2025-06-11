@@ -17,3 +17,4 @@ class RutVehiculo(models.Model):
 
     class Meta:
         db_table = "rut_vehiculo"
+        ordering = ["-id"]

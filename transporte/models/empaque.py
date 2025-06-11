@@ -7,3 +7,4 @@ class TteEmpaque(models.Model):
     
     class Meta:
         db_table = "tte_empaque"
+        ordering = ["-id"]

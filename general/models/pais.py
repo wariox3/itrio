@@ -7,3 +7,4 @@ class GenPais(models.Model):
     
     class Meta:
         db_table = "gen_pais"
+        ordering = ["-id"]

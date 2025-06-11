@@ -47,16 +47,4 @@ class HumProgramacionDetalle(models.Model):
 
     class Meta:
         db_table = "hum_programacion_detalle"
-
-class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer):
-    
-    class Meta:
-        model = HumProgramacionDetalle
-        fields = ['id', 'nombre', 'codigo']
-
-    def to_representation(self, instance):
-        return {
-            'id': instance.id,
-            'diurnas': instance.nombre,
-            'nocturnas': instance.codigo
-        } 
+        ordering = ["-id"]

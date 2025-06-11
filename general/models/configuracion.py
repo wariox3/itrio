@@ -22,3 +22,4 @@ class GenConfiguracion(models.Model):
     rut_longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     class Meta:
         db_table = "gen_configuracion"
+        ordering = ["-id"]

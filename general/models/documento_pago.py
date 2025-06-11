@@ -8,3 +8,4 @@ class GenDocumentoPago(models.Model):
     cuenta_banco = models.ForeignKey(GenCuentaBanco, on_delete=models.PROTECT, related_name='documentos_pagos_cuenta_banco')
     class Meta:
         db_table = "gen_documento_pago"
+        ordering = ["-id"]

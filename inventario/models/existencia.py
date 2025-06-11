@@ -11,3 +11,4 @@ class InvExistencia(models.Model):
 
     class Meta:
         db_table = "inv_existencia"
+        ordering = ["-id"]

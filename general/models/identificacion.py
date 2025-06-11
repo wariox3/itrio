@@ -14,3 +14,4 @@ class GenIdentificacion(models.Model):
     
     class Meta:
         db_table = "gen_identificacion"
+        ordering = ["-id"]

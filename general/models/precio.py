@@ -7,3 +7,4 @@ class GenPrecio(models.Model):
     
     class Meta:
         db_table = "gen_precio"  
+        ordering = ["-id"]

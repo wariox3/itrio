@@ -5,3 +5,4 @@ class TteRuta(models.Model):
 
     class Meta:
         db_table = "tte_ruta"
+        ordering = ["-id"]

@@ -15,3 +15,4 @@ class GenArchivo(models.Model):
 
     class Meta:
         db_table = "gen_archivo"
+        ordering = ["-id"]

@@ -6,3 +6,4 @@ class ConCuentaClase(models.Model):
 
     class Meta:
         db_table = "con_cuenta_clase"
+        ordering = ["-id"]

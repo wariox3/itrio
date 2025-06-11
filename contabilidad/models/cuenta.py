@@ -19,3 +19,4 @@ class ConCuenta(models.Model):
     
     class Meta:
         db_table = "con_cuenta"
+        ordering = ["-id"]

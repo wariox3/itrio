@@ -7,3 +7,4 @@ class HumPagoTipo(models.Model):
 
     class Meta:
         db_table = "hum_pago_tipo"
+        ordering = ["-id"]

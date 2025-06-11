@@ -7,3 +7,4 @@ class GenMetodoPago(models.Model):
     
     class Meta:
         db_table = "gen_metodo_pago"
+        ordering = ["-id"]

@@ -9,3 +9,4 @@ class GenComplemento(models.Model):
     
     class Meta:
         db_table = "gen_complemento"
+        ordering = ["-id"]

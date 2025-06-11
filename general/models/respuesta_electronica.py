@@ -10,3 +10,4 @@ class GenRespuestaElectronica(models.Model):
 
     class Meta:
         db_table = "gen_respuesta_electronica"
+        ordering = ["-id"]

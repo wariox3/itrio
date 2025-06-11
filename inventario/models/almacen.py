@@ -5,3 +5,4 @@ class InvAlmacen(models.Model):
 
     class Meta:
         db_table = "inv_almacen"
+        ordering = ["-id"]

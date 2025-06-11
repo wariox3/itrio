@@ -61,3 +61,4 @@ class HumAporteDetalle(models.Model):
 
     class Meta:
         db_table = "hum_aporte_detalle"
+        ordering = ["-id"]

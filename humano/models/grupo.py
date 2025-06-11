@@ -7,3 +7,4 @@ class HumGrupo(models.Model):
 
     class Meta:
         db_table = "hum_grupo"
+        ordering = ["-id"]

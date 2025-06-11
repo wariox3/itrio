@@ -12,3 +12,4 @@ class HumConfiguracionProvision(models.Model):
 
     class Meta:
         db_table = "hum_configuracion_provision"
+        ordering = ["-id"]

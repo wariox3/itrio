@@ -23,3 +23,4 @@ class GenItem(models.Model):
 
     class Meta:
         db_table = "gen_item"  
+        ordering = ["-id"]

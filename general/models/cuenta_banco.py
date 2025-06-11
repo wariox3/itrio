@@ -12,3 +12,4 @@ class GenCuentaBanco(models.Model):
 
     class Meta:
         db_table = "gen_cuenta_banco"  
+        ordering = ["-id"]

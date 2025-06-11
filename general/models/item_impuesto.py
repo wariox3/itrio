@@ -9,3 +9,4 @@ class GenItemImpuesto(models.Model):
     class Meta:
         unique_together = ('item', 'impuesto')
         db_table = "gen_item_impuesto"
+        ordering = ["-id"]

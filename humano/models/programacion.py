@@ -38,3 +38,4 @@ class HumProgramacion(models.Model):
 
     class Meta:
         db_table = "hum_programacion"
+        ordering = ["-id"]

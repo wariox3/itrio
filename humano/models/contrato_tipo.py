@@ -6,3 +6,4 @@ class HumContratoTipo(models.Model):
 
     class Meta:
         db_table = "hum_contrato_tipo"
+        ordering = ["-id"]

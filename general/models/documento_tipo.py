@@ -24,3 +24,4 @@ class GenDocumentoTipo(models.Model):
     
     class Meta:
         db_table = "gen_documento_tipo"
+        ordering = ["-id"]

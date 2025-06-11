@@ -6,3 +6,4 @@ class HumTipoCosto(models.Model):
 
     class Meta:
         db_table = "hum_tipo_costo"
+        ordering = ["-id"]

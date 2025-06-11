@@ -5,3 +5,4 @@ class GenCuentaBancoTipo(models.Model):
     
     class Meta:
         db_table = "gen_cuenta_banco_tipo"  
+        ordering = ["-id"]

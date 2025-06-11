@@ -16,3 +16,4 @@ class HumAdicional(models.Model):
 
     class Meta:
         db_table = "hum_adicional"
+        ordering = ["-id"]

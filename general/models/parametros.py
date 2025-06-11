@@ -8,3 +8,4 @@ class GenParametros(models.Model):
     auxilio_transporte = models.DecimalField(max_digits=20, decimal_places=6, default=162000)    
     class Meta:
         db_table = "gen_parametros"
+        ordering = ["-id"]

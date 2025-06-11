@@ -16,3 +16,4 @@ class VerEntrega(models.Model):
 
     class Meta:
         db_table = "ver_entrega"
+        ordering = ["-id"]

@@ -7,3 +7,4 @@ class TteColor(models.Model):
     
     class Meta:
         db_table = "tte_color"
+        ordering = ["-id"]
