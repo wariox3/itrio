@@ -49,6 +49,29 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
             'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen}" if instance.imagen else None          
         } 
     
+class GenItemListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenItem
+        fields = ['id', 
+                  'codigo',
+                  'nombre',
+                  'referencia',
+                  'precio',
+                  'costo',
+                  'existencia',
+                  'remision',
+                  'disponible',
+                  'producto',
+                  'servicio',
+                  'inventario',
+                  'negativo',
+                  'venta',
+                  'favorito',
+                  'inactivo']
+        
+
+#Deprecated
+
 class GenItemListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:

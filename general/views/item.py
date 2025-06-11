@@ -1,15 +1,16 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.item import GenItem
 from general.models.item_impuesto import GenItemImpuesto
 from contabilidad.models.cuenta import ConCuenta
-from general.serializers.item import GenItemSerializador, GenItemExcelSerializador
+from general.serializers.item import GenItemSerializador, GenItemListaSerializador
 from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenItemImpuestoDetalleSerializador
-from rest_framework.decorators import action
-from openpyxl import Workbook
-from django.http import HttpResponse
+from general.filters.item import ItemFilter
 from utilidades.utilidades import Utilidades
 from utilidades.space_do import SpaceDo
 from io import BytesIO
@@ -18,9 +19,36 @@ import openpyxl
 import gc
 
 class ItemViewSet(viewsets.ModelViewSet):
-    queryset = GenItem.objects.all()
-    serializer_class = GenItemSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = ItemFilter 
+    queryset = GenItem.objects.all()   
+    serializadores = {'lista': GenItemListaSerializador}
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return GenItemSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
+
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('excel'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExportarExcel(serializer.data, sheet_name="itemes", filename="itemes.xlsx")
+            return exporter.export()
+        return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, pk=None, venta=False):
         raw = request.data
