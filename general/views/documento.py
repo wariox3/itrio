@@ -49,11 +49,9 @@ from django.db.models import Sum, Q, DecimalField, CharField
 from django.db import transaction
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
-from utilidades.workbook_estilos import WorkbookEstilos
 from utilidades.utilidades import Utilidades
 from utilidades.exportar_excel import ExportarExcel
 from decimal import Decimal
-from openpyxl import Workbook
 from datetime import datetime, timedelta, date
 from io import BytesIO
 import base64
@@ -1480,7 +1478,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                    
-    @action(detail=False, methods=["post"], url_path=r'resumen-cobrar',)
+    @action(detail=False, methods=["get"], url_path=r'resumen-cobrar',)
     def resumen_cobrar(self, request):      
         fecha_actual = timezone.localtime(timezone.now()).date()
         resumen = GenDocumento.objects.filter(documento_tipo__cobrar=True, estado_aprobado=True, pendiente__gt=0
@@ -1500,7 +1498,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         print("Fecha actual (date()):", timezone.now().date())  # Solo fecha (puede ser ambiguo)                    
         return Response({'resumen':resumen, 'vigente': vigente, 'vencido': vencido}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["post"], url_path=r'resumen-pagar',)
+    @action(detail=False, methods=["get"], url_path=r'resumen-pagar',)
     def resumen_pagar(self, request):      
         fecha_actual = timezone.now().date()
         resumen = GenDocumento.objects.filter(documento_tipo__pagar=True, estado_aprobado=True, pendiente__gt=0
@@ -1517,7 +1515,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))                
         return Response({'resumen': resumen, 'vigente':vigente, 'vencido': vencido}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["post"], url_path=r'resumen-venta-dia',)
+    @action(detail=False, methods=["get"], url_path=r'resumen-venta-dia',)
     def resumen_venta_dia(self, request):      
         fecha_actual = timezone.now().date()
         # Obtener el primer y último día del mes actual

@@ -5,15 +5,10 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models.contacto import GenContacto
 from general.models.identificacion import GenIdentificacion
-from general.models.ciudad import GenCiudad
-from general.models.plazo_pago import GenPlazoPago
-from general.models.regimen import GenRegimen
-from general.models.tipo_persona import GenTipoPersona
 from general.serializers.contacto import GenContactoSerializador, GenContactoListaSerializador
 from general.filters.contacto import ContactoFilter
 from utilidades.wolframio import Wolframio
-from openpyxl import Workbook
-from django.http import HttpResponse
+from utilidades.exportar_excel import ExportarExcel
 from io import BytesIO
 from utilidades.utilidades import Utilidades
 import base64
