@@ -199,7 +199,47 @@ class GenDocumentoListaSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_electronico',
                   'estado_contabilizado']
         select_related_fields = ['contacto','documento_tipo']
-     
+
+class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):  
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)  
+    
+    class Meta:
+        model = GenDocumento
+        fields = ['id',
+                  'fecha',
+                  'fecha_vence',
+                  'fecha_contable',
+                  'numero',
+                  'documento_referencia',
+                  'documento_tipo_id',
+                  'documento_tipo__nombre',
+                  'contacto_id',
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',
+                  'descuento',       
+                  'subtotal',  
+                  'base_impuesto',              
+                  'impuesto',
+                  'total',
+                  'afectado',
+                  'pendiente',           
+                  'soporte',
+                  'orden_compra',
+                  'cue',
+                  'resolucion',
+                  'estado_aprobado',
+                  'estado_anulado',
+                  'estado_electronico',
+                  'estado_electronico_enviado',
+                  'estado_electronico_notificado',
+        ]
+        select_related_fields = ['contacto','documento_tipo']
+
+
+#Deprecated 
+
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
     documento_tipo = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoTipo.objects.all())    
@@ -386,53 +426,6 @@ class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer)
             'id': instance.id,            
             'numero' : instance.numero
         }   
-
-class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):    
-    class Meta:
-        model = GenDocumento        
-
-    def to_representation(self, instance):        
-        contacto_nombre_corto = ""
-        contacto_numero_identificacion = ""
-        if instance.contacto:
-            contacto_nombre_corto = instance.contacto.nombre_corto
-            contacto_numero_identificacion = instance.contacto.numero_identificacion 
-        documento_tipo_nombre = "" 
-        if instance.documento_tipo:
-            documento_tipo_nombre = instance.documento_tipo.nombre
-        return {
-            'id': instance.id,            
-            'fecha' : instance.fecha,
-            'fecha_vence' : instance.fecha_vence,
-            'fecha_contable' : instance.fecha_contable,
-            'numero' : instance.numero,
-            'documento_referencia' :  instance.documento_referencia_id,
-            'documento_tipo_id': instance.documento_tipo_id,
-            'documento_tipo_nombre': documento_tipo_nombre,
-            'contacto_id' : instance.contacto_id, 
-            'contacto_numero_identificacion': contacto_numero_identificacion,
-            'contacto_nombre_corto': contacto_nombre_corto,
-            'metodo_pago': instance.metodo_pago_id,
-            'plazo_pago': instance.plazo_pago_id,
-            'descuento': instance.descuento,       
-            'subtotal': instance.subtotal,  
-            'base_impuesto': instance.base_impuesto,              
-            'impuesto': instance.impuesto,
-            'total' :  instance.total,
-            'afectado':instance.afectado,
-            'pendiente':instance.pendiente,           
-            'soporte' : instance.soporte,
-            'orden_compra' : instance.orden_compra,
-            'comentario' : instance.comentario,
-            'cue' : instance.cue,
-            'empresa': instance.empresa_id,
-            'resolucion': instance.resolucion_id,
-            'estado_aprobado' : instance.estado_aprobado,
-            'estado_anulado' : instance.estado_anulado,
-            'estado_electronico' : instance.estado_electronico,
-            'estado_electronico_enviado' : instance.estado_electronico_enviado,
-            'estado_electronico_notificado' : instance.estado_electronico_notificado,
-        }
     
 class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
