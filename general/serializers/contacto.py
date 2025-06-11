@@ -92,6 +92,23 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_banco_clase_nombre': cuenta_banco_clase_nombre
         }     
 
+class GenContactoListaSerializador(serializers.HyperlinkedModelSerializer):      
+    identificacion__abreviatura = serializers.CharField(source='identificacion.abreviatura', read_only=True)
+    
+    class Meta:
+        model = GenContacto
+        fields = ['id', 
+                  'identificacion__abreviatura',
+                  'numero_identificacion', 
+                  'nombre_corto',
+                  'correo',
+                  'telefono',                                     
+                  'celular',
+                  'cliente',
+                  'proveedor',
+                  'empleado']
+        select_related_fields = ['identificacion']
+
 class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     identificacion = serializers.PrimaryKeyRelatedField(queryset=GenIdentificacion.objects.all())
     ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())    

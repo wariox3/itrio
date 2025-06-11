@@ -1,13 +1,16 @@
 from rest_framework import viewsets, permissions, status
+from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
 from general.models.contacto import GenContacto
 from general.models.identificacion import GenIdentificacion
 from general.models.ciudad import GenCiudad
 from general.models.plazo_pago import GenPlazoPago
 from general.models.regimen import GenRegimen
 from general.models.tipo_persona import GenTipoPersona
-from general.serializers.contacto import GenContactoSerializador, GenContactoExcelSerializador
-from rest_framework.response import Response
-from rest_framework.decorators import action
+from general.serializers.contacto import GenContactoSerializador, GenContactoListaSerializador
+from general.filters.contacto import ContactoFilter
 from utilidades.wolframio import Wolframio
 from openpyxl import Workbook
 from django.http import HttpResponse
@@ -17,10 +20,38 @@ import base64
 import openpyxl
 import gc
 
-class ContactoViewSet(viewsets.ModelViewSet):
-    queryset = GenContacto.objects.all()
-    serializer_class = GenContactoSerializador    
-    permission_classes = [permissions.IsAuthenticated]               
+class ContactoViewSet(viewsets.ModelViewSet):             
+
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = ContactoFilter 
+    queryset = GenContacto.objects.all()   
+    serializadores = {'lista': GenContactoListaSerializador}
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return GenContactoSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
+
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('excel'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExportarExcel(serializer.data, sheet_name="documentos", filename="documentos.xlsx")
+            return exporter.export()
+        return super().list(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -31,35 +62,6 @@ class ContactoViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-    @action(detail=False, methods=["post"], url_path=r'excel',)
-    def excel(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 5000)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        filtros = raw.get('filtros', [])        
-        ordenamientos = raw.get('ordenamientos', [])    
-        ordenamientos.append('-id')                 
-        respuesta = ContactoViewSet.listar(desplazar, limite, limiteTotal, filtros, ordenamientos)
-        serializador = GenContactoExcelSerializador(respuesta['contactos'], many=True)
-        contactos = serializador.data
-        if contactos:
-            field_names = list(contactos[0].keys())
-        else:
-            field_names = []
-
-        wb = Workbook()
-        ws = wb.active
-        ws.append(field_names)
-        for row in contactos:
-            row_data = [row[field] for field in field_names]
-            ws.append(row_data)
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-        response['Content-Disposition'] = 'attachment; filename=contactos.xlsx'
-        wb.save(response)
-        return response
-
     @action(detail=False, methods=["post"], url_path=r'validar',)
     def validar(self, request):        
         raw = request.data
@@ -170,18 +172,5 @@ class ContactoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Solo se pueden autocompletar NIT o Cedula', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
             
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
-    @staticmethod
-    def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-        contactos = GenContacto.objects.all()
-        if filtros:
-            for filtro in filtros:
-                contactos = contactos.filter(**{filtro['propiedad']: filtro['valor1']})
-        if ordenamientos:
-            contactos = contactos.order_by(*ordenamientos)              
-        contactos = contactos[desplazar:limite+desplazar]
-        itemsCantidad = GenContacto.objects.all()[:limiteTotal].count()                   
-        respuesta = {'contactos': contactos, "cantidad_registros": itemsCantidad}
-        return respuesta     
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         

@@ -42,3 +42,4 @@ class GenContacto(models.Model):
     
     class Meta:
         db_table = "gen_contacto"
+        ordering = ["-id"]
