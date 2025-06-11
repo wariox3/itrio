@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from general.models.cuenta_banco import GenCuentaBanco
 from general.serializers.cuenta_banco import GenCuentaBancoSerializador, GenCuentaBancoListaSerializador
 from general.filters.cuenta_banco import CuentaBancoFilter
+from utilidades.exportar_excel import ExportarExcel
 
 class CuentaBancoViewSet(viewsets.ModelViewSet):
     queryset = GenCuentaBanco.objects.all()
