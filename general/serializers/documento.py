@@ -197,6 +197,7 @@ class GenDocumentoListaSerializador(serializers.ModelSerializer):
                   'estado_aprobado',
                   'estado_anulado',
                   'estado_electronico',
+                  'estado_electronico_evento',
                   'estado_contabilizado']
         select_related_fields = ['contacto','documento_tipo']
 
