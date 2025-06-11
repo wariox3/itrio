@@ -178,7 +178,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_nombre': cuenta_nombre
         }
     
-class GenDocumentoListaSerializador(serializers.HyperlinkedModelSerializer):  
+class GenDocumentoListaSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
     documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)  
@@ -200,7 +200,7 @@ class GenDocumentoListaSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_contabilizado']
         select_related_fields = ['contacto','documento_tipo']
 
-class GenDocumentoInformeSerializador(serializers.HyperlinkedModelSerializer):  
+class GenDocumentoInformeSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
     documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)  

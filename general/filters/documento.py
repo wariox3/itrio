@@ -10,7 +10,7 @@ class DocumentoFilter(django_filters.FilterSet):
         fields = {'id': ['exact', 'lte'],
                   'documento_tipo_id': ['exact'],
                   'numero': ['exact'], 
-                  'pendiente':['gt'],
+                  'pendiente': ['gt'],
                   'estado_aprobado': ['exact'], 
                   'estado_anulado': ['exact'], 
                   'estado_electronico': ['exact'], 
