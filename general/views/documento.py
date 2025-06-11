@@ -23,7 +23,7 @@ from contabilidad.models.activo import ConActivo
 from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoInformeSerializador, GenDocumentoRetrieveSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoRetrieveSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento import GenDocumentoReferenciaSerializador
@@ -81,6 +81,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     queryset = GenDocumento.objects.all()   
     serializadores = {
         'lista': GenDocumentoListaSerializador,
+        'lista_nomina': GenDocumentoListaNominaSerializador,
         'informe': GenDocumentoInformeSerializador,
         'nomina': GenDocumentoSerializador,
     }
