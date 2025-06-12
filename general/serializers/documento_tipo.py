@@ -56,4 +56,13 @@ class GenDocumentoTipoListaAutocompletarSerializador(serializers.HyperlinkedMode
             'documento_tipo_id': instance.id,            
             'documento_tipo_nombre': instance.nombre
         }            
-        
+
+
+class GenDocumentoTipoListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenDocumentoTipo
+        fields = ['id', 
+                  'nombre',
+                  'venta',
+                  'compra',
+                  'operacion']
