@@ -136,8 +136,7 @@
     "pk": 16,
     "fields": {
       "nombre": "FACTURA RECURRENTE",
-      "documento_clase": 103,
-      "venta": true
+      "documento_clase": 103, "venta": false
     }
   },
   {
@@ -146,7 +145,7 @@
     "fields": {
       "nombre": "CUENTA COBRO",
       "documento_clase": 104,
-      "venta": true, "cobrar" : true, "operacion": 1, "comprobante": 18
+      "venta": true, "cobrar" : true, "operacion": 1, "operacion_inventario": -1, "comprobante": 18
     }
   },
   {

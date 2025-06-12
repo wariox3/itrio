@@ -7,6 +7,7 @@ class DocumentoFilter(django_filters.FilterSet):
     contacto__nombre_corto = django_filters.CharFilter(field_name='contacto__numero_identificacion', lookup_expr='icontains')
     documento_tipo__cobrar = django_filters.BooleanFilter(field_name='documento_tipo__cobrar')
     documento_tipo__pagar = django_filters.BooleanFilter(field_name='documento_tipo__cobrar')
+    documento_tipo__venta = django_filters.BooleanFilter(field_name='documento_tipo__venta')
     documento_tipo__documento_clase_id = django_filters.NumberFilter(field_name='documento_tipo__documento_clase_id')
     class Meta:
         model = GenDocumento        
