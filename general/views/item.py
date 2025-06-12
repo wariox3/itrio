@@ -87,7 +87,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None, *args, **kwargs):
         raw = request.data
         item = self.get_object()    
-        itemSerializador = self.serializer_class(instance=item, data=raw, partial=True)
+        itemSerializador = GenItemSerializador(instance=item, data=raw, partial=True)
         if itemSerializador.is_valid():
             itemSerializador.save()
             impuestosNuevos = raw.get('impuestos')
