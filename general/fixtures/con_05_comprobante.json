@@ -138,5 +138,12 @@
     "fields": {
       "nombre":"CIERRE AÑO", 
       "codigo":"CIE"}
-  }        
+  },
+  {
+    "model": "contabilidad.ConComprobante",
+    "pk": 20,
+    "fields": {
+      "nombre":"VENTA POS ELECTRONICO", 
+      "codigo":"PEL"}
+  }   
 ]

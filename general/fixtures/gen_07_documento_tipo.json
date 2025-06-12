@@ -210,7 +210,7 @@
     "fields": {
       "nombre": "FACTURA POS",
       "documento_clase": 105, "comprobante": 16,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : false, "pos":true
     }
   },
   {
@@ -228,5 +228,14 @@
       "nombre": "PEDIDO CLIENTE",
       "documento_clase": 106
     }
-  }    
+  },
+  {
+    "model": "general.GenDocumentoTipo",
+    "pk": 27,
+    "fields": {
+      "nombre": "FACTURA POS ELECTRONICO",
+      "documento_clase": 105, "comprobante": 20,
+      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true, "pos":true
+    }
+  }      
 ]

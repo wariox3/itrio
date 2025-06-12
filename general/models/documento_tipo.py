@@ -14,6 +14,7 @@ class GenDocumentoTipo(models.Model):
     electronico = models.BooleanField(default = False)
     contabilidad = models.BooleanField(default = False)
     inventario = models.BooleanField(default = False)
+    pos = models.BooleanField(default = False)
     operacion = models.BigIntegerField(default=0)
     operacion_inventario = models.BigIntegerField(default=0)
     documento_clase = models.ForeignKey(GenDocumentoClase, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_documento_clase')
