@@ -1171,7 +1171,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     pdf = formato.generar_pdf(id)                                        
                     nombre_archivo = f"compra{documento.numero}.pdf" if documento.numero else f"compra.pdf"
 
-                if documento.documento_tipo_id == 24:                                        
+                if documento.documento_tipo_id == 24 or documento.documento_tipo_id == 27:                                        
                     formato = FormatoFacturaPOS()
                     pdf = formato.generar_pdf(id)                                          
                     nombre_archivo = f"factura{documento.numero}.pdf" if documento.numero else f"factura.pdf"       
