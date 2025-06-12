@@ -6,11 +6,7 @@ from general.serializers.sede import GenSedeSerializador, GenSedeListaSerializad
 from general.filters.sede import SedeFilter
 from utilidades.exportar_excel import ExportarExcel
 
-class SedeViewSet(viewsets.ModelViewSet):
-    queryset = GenSede.objects.all()
-    serializer_class = GenSedeSerializador    
-    permission_classes = [permissions.IsAuthenticated]               
-
+class SedeViewSet(viewsets.ModelViewSet):             
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = SedeFilter 

@@ -7,7 +7,12 @@ class InvAlmacenSerializador(serializers.HyperlinkedModelSerializer):
         model = InvAlmacen
         fields = ['id', 'nombre']
 
-    
+class InvAlmacenListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = InvAlmacen
+        fields = ['id', 
+                  'nombre']
+
 
 class InvAlmacenListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     
