@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.resolucion import GenResolucion
-from general.serializers.documento_tipo import GenDocumentoTipoSerializador, GenDocumentoTipoListaSerializador
+from general.serializers.documento_tipo import GenDocumentoTipoSerializador, GenDocumentoTipoAutocompletarSerializador
 from general.filters.documento_tipo import DocumentoTipoFilter
 from utilidades.exportar_excel import ExportarExcel
 
@@ -15,7 +15,7 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = DocumentoTipoFilter 
-    serializadores = {'lista': GenDocumentoTipoListaSerializador}
+    serializadores = {'autocompletar': GenDocumentoTipoAutocompletarSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -34,14 +34,6 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
             queryset = queryset.only(*campos) 
         return queryset 
     
-    def list(self, request, *args, **kwargs):
-        if request.query_params.get('excel'):
-            queryset = self.filter_queryset(self.get_queryset())
-            serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="sedes", filename="sedes.xlsx")
-            return exporter.export()
-        return super().list(request, *args, **kwargs)    
-
     def create(self, request, *args, **kwargs):
         return Response({'mensaje': 'No es posible crear un registro nuevo'}, status=status.HTTP_400_BAD_REQUEST)
     

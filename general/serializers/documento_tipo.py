@@ -3,6 +3,13 @@ from general.models.documento_tipo import GenDocumentoTipo
 from general.models.resolucion import GenResolucion
 from contabilidad.models.cuenta import ConCuenta
 
+class GenDocumentoTipoAutocompletarSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenDocumentoTipo
+        fields = ['id', 
+                  'nombre']
+
+#deprecated
 class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):
     resolucion = serializers.PrimaryKeyRelatedField(queryset=GenResolucion.objects.all(), allow_null=True)
     cuenta_cobrar = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
@@ -56,13 +63,3 @@ class GenDocumentoTipoListaAutocompletarSerializador(serializers.HyperlinkedMode
             'documento_tipo_id': instance.id,            
             'documento_tipo_nombre': instance.nombre
         }            
-
-
-class GenDocumentoTipoListaSerializador(serializers.ModelSerializer):          
-    class Meta:
-        model = GenDocumentoTipo
-        fields = ['id', 
-                  'nombre',
-                  'venta',
-                  'compra',
-                  'operacion']
