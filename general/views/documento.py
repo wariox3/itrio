@@ -1494,9 +1494,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 ).aggregate(
                                                     cantidad=Count('id'), 
                                                     saldo_pendiente=Coalesce(Sum('pendiente'), 0, output_field=DecimalField()))    
-        print("Zona horaria de Django:", timezone.get_current_timezone_name())  # Ej: "America/Bogota"
-        print("Fecha/Hora actual con zona:", timezone.localtime(timezone.now()))  # Fecha LOCAL con hora
-        print("Fecha actual (date()):", timezone.now().date())  # Solo fecha (puede ser ambiguo)                    
+        #print("Zona horaria de Django:", timezone.get_current_timezone_name())  # Ej: "America/Bogota"
+        #print("Fecha/Hora actual con zona:", timezone.localtime(timezone.now()))  # Fecha LOCAL con hora
+        #print("Fecha actual (date()):", timezone.now().date())  # Solo fecha (puede ser ambiguo)                    
         return Response({'resumen':resumen, 'vigente': vigente, 'vencido': vencido}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path=r'resumen-pagar',)
@@ -2653,7 +2653,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         ).values(
                                             'id', 'operacion', 'porcentaje', 'dias', 'cantidad', 'pago','concepto_id', 'concepto__nombre', 'concepto__concepto_tipo_id'
                                         )
-                                        print(documento_detalles.query)
+                                        #print(documento_detalles.query)
                                         for documento_detalle in documento_detalles:                                        
                                             fecha = documento.fecha
                                             fecha_desde_extra = fecha.strftime('%Y-%m-%d') + "T11:00:00"

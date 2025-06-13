@@ -2,7 +2,7 @@ from django.db import models
 from general.models.documento import GenDocumento
 
 class GenArchivo(models.Model):    
-    archivo_tipo_id = models.IntegerField(default=1)
+    archivo_tipo_id = models.IntegerField(default=1) #1-General 2-Entrega 3-Firma
     fecha = models.DateTimeField(auto_now_add=True)    
     nombre = models.CharField(max_length=500)    
     tipo = models.CharField(max_length=100)
