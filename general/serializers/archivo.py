@@ -13,6 +13,7 @@ class GenArchivoSerializador(serializers.HyperlinkedModelSerializer):
         return {
             'id': instance.id,
             'fecha': instance.fecha,
+            'archivo_tipo_id': instance.archivo_tipo_id,
             'nombre': instance.nombre,
             'tipo': instance.tipo,
             'tamano': instance.tamano,
