@@ -5,6 +5,13 @@ from contabilidad.models.cuenta_grupo import ConCuentaGrupo
 from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from contabilidad.models.cuenta_subcuenta import ConCuentaSubcuenta
 
+class ConCuentaListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = ConCuenta
+        fields = ['id', 
+                  'nombre']
+
+#Deprecated
 class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_clase = serializers.PrimaryKeyRelatedField(queryset=ConCuentaClase.objects.all(), allow_null=True)
     cuenta_grupo = serializers.PrimaryKeyRelatedField(queryset=ConCuentaGrupo.objects.all(), allow_null=True)
