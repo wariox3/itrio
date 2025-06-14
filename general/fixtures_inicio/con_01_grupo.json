@@ -1,7 +1,7 @@
 {
-  "aplicacion": "general",
-  "modelo": "GenFormaPago",
-  "modelo_nativo": "gen_forma_pago",
+  "aplicacion": "contabilidad",
+  "modelo": "ConGrupo",
+  "modelo_nativo": "con_grupo",
   "actualizar_secuencia": true,
   "datos": [
     {
