@@ -1,16 +1,22 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumPeriodo",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
     {
         "model": "humano.HumPeriodo",
         "pk": 1,
-        "fields": {
+        "campos": {
             "nombre": "QUINCENAL", "codigo":"QUI", "dias":15
         }
     },
     {
         "model": "humano.HumPeriodo",
         "pk": 2,
-        "fields": {
+        "campos": {
             "nombre": "MENSUAL", "codigo":"MEN", "dias":30
         }
     }    
 ]
+}

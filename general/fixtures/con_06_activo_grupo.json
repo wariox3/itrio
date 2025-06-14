@@ -1,26 +1,36 @@
-[
-  {
-    "model": "contabilidad.ConActivoGrupo",
-    "pk": 1,
-    "fields": {
-      "nombre":"TERRENOS"}
-  },
-  {
-    "model": "contabilidad.ConActivoGrupo",
-    "pk": 2,
-    "fields": {
-      "nombre":"EQUIPO DE OFICINA"}
-  },
-  {
-    "model": "contabilidad.ConActivoGrupo",
-    "pk": 3,
-    "fields": {
-      "nombre":"EQUPO DE COMPUTO Y COMUNICACION"}
-  },
-  {
-    "model": "contabilidad.ConActivoGrupo",
-    "pk": 4,
-    "fields": {
-      "nombre":"VEHICULOS"}
-  }      
-]
+{
+  "aplicacion": "contabilidad",
+  "modelo": "ConActivoGrupo",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "contabilidad.ConActivoGrupo",
+      "pk": 1,
+      "campos": {
+        "nombre": "TERRENOS"
+      }
+    },
+    {
+      "model": "contabilidad.ConActivoGrupo",
+      "pk": 2,
+      "campos": {
+        "nombre": "EQUIPO DE OFICINA"
+      }
+    },
+    {
+      "model": "contabilidad.ConActivoGrupo",
+      "pk": 3,
+      "campos": {
+        "nombre": "EQUPO DE COMPUTO Y COMUNICACION"
+      }
+    },
+    {
+      "model": "contabilidad.ConActivoGrupo",
+      "pk": 4,
+      "campos": {
+        "nombre": "VEHICULOS"
+      }
+    }
+  ]
+}

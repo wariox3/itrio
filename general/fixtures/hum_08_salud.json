@@ -1,20 +1,25 @@
-[
-  {
-      "model": "humano.HumSalud",
+{
+  "aplicacion": "humano",
+  "modelo": "HumSalud",
+  "modelo_nativo": "hum_salud",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
       "pk": 1,
-      "fields": {
-          "nombre": "EMPLEADO",
-          "concepto": 14, 
-          "porcentaje_empleado":4
+      "campos": {
+        "nombre": "EMPLEADO",
+        "concepto": 14,
+        "porcentaje_empleado": 4
       }
-  },
-  {
-    "model": "humano.HumSalud",
-    "pk": 2,
-    "fields": {
+    },
+    {
+      "model": "humano.HumSalud",
+      "pk": 2,
+      "campos": {
         "nombre": "EMPLEADOR",
-        "concepto": 14, 
-        "porcentaje_empleado":4
+        "concepto": 14,
+        "porcentaje_empleado": 4
+      }
     }
-  }    
-]
+  ]
+}

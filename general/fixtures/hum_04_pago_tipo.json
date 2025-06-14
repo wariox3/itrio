@@ -1,22 +1,40 @@
-[
-  {
-    "model": "humano.HumPagoTipo",
-    "pk": 1,
-    "fields": {"nombre": "Nomina", "aplica_programacion": true}
-  },
-  {
-    "model": "humano.HumPagoTipo",
-    "pk": 2,
-    "fields": {"nombre": "Prima", "aplica_programacion": true}
-  },
-  {
-    "model": "humano.HumPagoTipo",
-    "pk": 3,
-    "fields": {"nombre": "Cesantia", "aplica_programacion": true}
-  },
-  {
-    "model": "humano.HumPagoTipo",
-    "pk": 4,
-    "fields": {"nombre": "Interes cesantia", "aplica_programacion": true}
-  }
-]
+{
+  "aplicacion": "humano",
+  "modelo": "HumPagoTipo",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "humano.HumPagoTipo",
+      "pk": 1,
+      "campos": {
+        "nombre": "Nomina",
+        "aplica_programacion": true
+      }
+    },
+    {
+      "model": "humano.HumPagoTipo",
+      "pk": 2,
+      "campos": {
+        "nombre": "Prima",
+        "aplica_programacion": true
+      }
+    },
+    {
+      "model": "humano.HumPagoTipo",
+      "pk": 3,
+      "campos": {
+        "nombre": "Cesantia",
+        "aplica_programacion": true
+      }
+    },
+    {
+      "model": "humano.HumPagoTipo",
+      "pk": 4,
+      "campos": {
+        "nombre": "Interes cesantia",
+        "aplica_programacion": true
+      }
+    }
+  ]
+}

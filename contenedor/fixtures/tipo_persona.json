@@ -1,12 +1,22 @@
-[
-  {
-    "model": "contenedor.CtnTipoPersona",
-    "pk": 1,
-    "fields": {"nombre": "Jurídica"}
-  },
-  {
-    "model": "contenedor.CtnTipoPersona",
-    "pk": 2,
-    "fields": {"nombre": "Natural"}
-  }
-]
+{
+  "aplicacion": "contenedor",
+  "modelo": "CtnTipoPersona",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "contenedor.CtnTipoPersona",
+      "pk": 1,
+      "campos": {
+        "nombre": "Jurídica"
+      }
+    },
+    {
+      "model": "contenedor.CtnTipoPersona",
+      "pk": 2,
+      "campos": {
+        "nombre": "Natural"
+      }
+    }
+  ]
+}

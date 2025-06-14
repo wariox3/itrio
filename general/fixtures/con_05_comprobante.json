@@ -1,149 +1,169 @@
-[
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 1,
-    "fields": {
-      "nombre":"SALDO INICIAL", 
-      "codigo":"SI"}
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 2,
-    "fields": {
-      "nombre":"RECIBO DE CAJA", 
-      "codigo":"RC"}
-  },  
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 3,
-    "fields": {
-      "nombre":"EGRESO", 
-      "codigo":"EG"}
-  },  
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 4,
-    "fields": {
-      "nombre":"VENTA", 
-      "codigo":"VEN"}
-  },  
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 5,
-    "fields": {
-      "nombre":"NOTA CREDITO VENTA", 
-      "codigo":"NCV"}
-  },  
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 6,
-    "fields": {
-      "nombre":"NOTA DEBITO VENTA", 
-      "codigo":"NDV"}
-  },   
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 7,
-    "fields": {
-      "nombre":"COMPRA", 
-      "codigo":"COM"}
-  },  
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 8,
-    "fields": {
-      "nombre":"NOTA CREDITO COMPRA", 
-      "codigo":"NCC"}
-  },  
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 9,
-    "fields": {
-      "nombre":"NOTA DEBITO COMPRA", 
-      "codigo":"NDC"}
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 10,
-    "fields": {
-      "nombre":"AJUSTE CONTABLE", 
-      "codigo":"AJU",
-      "permite_asiento":"True"
+{
+  "aplicacion": "contabilidad",
+  "modelo": "ConComprobante",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 1,
+      "campos": {
+        "nombre": "SALDO INICIAL",
+        "codigo": "SI"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 2,
+      "campos": {
+        "nombre": "RECIBO DE CAJA",
+        "codigo": "RC"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 3,
+      "campos": {
+        "nombre": "EGRESO",
+        "codigo": "EG"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 4,
+      "campos": {
+        "nombre": "VENTA",
+        "codigo": "VEN"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 5,
+      "campos": {
+        "nombre": "NOTA CREDITO VENTA",
+        "codigo": "NCV"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 6,
+      "campos": {
+        "nombre": "NOTA DEBITO VENTA",
+        "codigo": "NDV"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 7,
+      "campos": {
+        "nombre": "COMPRA",
+        "codigo": "COM"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 8,
+      "campos": {
+        "nombre": "NOTA CREDITO COMPRA",
+        "codigo": "NCC"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 9,
+      "campos": {
+        "nombre": "NOTA DEBITO COMPRA",
+        "codigo": "NDC"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 10,
+      "campos": {
+        "nombre": "AJUSTE CONTABLE",
+        "codigo": "AJU",
+        "permite_asiento": "True"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 11,
+      "campos": {
+        "nombre": "NOMINA",
+        "codigo": "NOM"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 12,
+      "campos": {
+        "nombre": "SEGURIDAD SOCIAL",
+        "codigo": "SSO"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 13,
+      "campos": {
+        "nombre": "PROVISION",
+        "codigo": "PRO"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 14,
+      "campos": {
+        "nombre": "DEPRECIACION",
+        "codigo": "DEP"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 15,
+      "campos": {
+        "nombre": "DOCUMENTO SOPORTE",
+        "codigo": "SOP"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 16,
+      "campos": {
+        "nombre": "VENTA POS",
+        "codigo": "POS"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 17,
+      "campos": {
+        "nombre": "NOTA DE AJUSTE",
+        "codigo": "NAJ"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 18,
+      "campos": {
+        "nombre": "CUENTA DE COBRO",
+        "codigo": "CDC"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 19,
+      "campos": {
+        "nombre": "CIERRE AÑO",
+        "codigo": "CIE"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 20,
+      "campos": {
+        "nombre": "VENTA POS ELECTRONICO",
+        "codigo": "PEL"
+      }
     }
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 11,
-    "fields": {
-      "nombre":"NOMINA", 
-      "codigo":"NOM"
-    }
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 12,
-    "fields": {
-      "nombre":"SEGURIDAD SOCIAL", 
-      "codigo":"SSO"
-    }
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 13,
-    "fields": {
-      "nombre":"PROVISION", 
-      "codigo":"PRO"
-    }
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 14,
-    "fields": {
-      "nombre":"DEPRECIACION", 
-      "codigo":"DEP"
-    }
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 15,
-    "fields": {
-      "nombre":"DOCUMENTO SOPORTE", 
-      "codigo":"SOP"
-    }
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 16,
-    "fields": {
-      "nombre":"VENTA POS", 
-      "codigo":"POS"}
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 17,
-    "fields": {
-      "nombre":"NOTA DE AJUSTE", 
-      "codigo":"NAJ"}
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 18,
-    "fields": {
-      "nombre":"CUENTA DE COBRO", 
-      "codigo":"CDC"}
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 19,
-    "fields": {
-      "nombre":"CIERRE AÑO", 
-      "codigo":"CIE"}
-  },
-  {
-    "model": "contabilidad.ConComprobante",
-    "pk": 20,
-    "fields": {
-      "nombre":"VENTA POS ELECTRONICO", 
-      "codigo":"PEL"}
-  }   
-]
+  ]
+}

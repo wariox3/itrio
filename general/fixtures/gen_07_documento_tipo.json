@@ -1,241 +1,342 @@
-[
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 1,
-    "fields": {
-      "nombre": "FACTURA ELECTRÓNICA DE VENTA",
-      "documento_clase": 100, "comprobante": 4,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true
+{
+  "aplicacion": "general",
+  "modelo": "GenDocumentoTipo",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 1,
+      "campos": {
+        "nombre": "FACTURA ELECTRÓNICA DE VENTA",
+        "documento_clase": 100,
+        "comprobante": 4,
+        "venta": true,
+        "cobrar": true,
+        "operacion": 1,
+        "contabilidad": true,
+        "inventario": true,
+        "operacion_inventario": -1,
+        "electronico": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 2,
+      "campos": {
+        "nombre": "NOTA CRÉDITO DE VENTA",
+        "documento_clase": 101,
+        "comprobante": 5,
+        "venta": true,
+        "cobrar": true,
+        "operacion": -1,
+        "contabilidad": true,
+        "inventario": true,
+        "operacion_inventario": 1,
+        "electronico": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 3,
+      "campos": {
+        "nombre": "NOTA DÉBITO DE VENTA",
+        "documento_clase": 102,
+        "comprobante": 6,
+        "venta": true,
+        "cobrar": true,
+        "operacion": 1,
+        "contabilidad": true,
+        "inventario": true,
+        "operacion_inventario": -1,
+        "electronico": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 4,
+      "campos": {
+        "nombre": "PAGO",
+        "documento_clase": 200,
+        "comprobante": 2,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 5,
+      "campos": {
+        "nombre": "COMPRA",
+        "documento_clase": 300,
+        "comprobante": 7,
+        "compra": true,
+        "pagar": true,
+        "electronico": true,
+        "operacion": 1,
+        "inventario": true,
+        "operacion_inventario": 1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 6,
+      "campos": {
+        "nombre": "NOTA CREDITO COMPRA",
+        "documento_clase": 301,
+        "comprobante": 8,
+        "compra": true,
+        "pagar": true,
+        "operacion": -1,
+        "inventario": true,
+        "operacion_inventario": -1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 7,
+      "campos": {
+        "nombre": "NOTA DEBITO COMPRA",
+        "documento_clase": 302,
+        "comprobante": 9,
+        "compra": true,
+        "pagar": true,
+        "operacion": 1,
+        "inventario": true,
+        "operacion_inventario": 1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 8,
+      "campos": {
+        "nombre": "EGRESO",
+        "documento_clase": 400,
+        "comprobante": 3,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 9,
+      "campos": {
+        "nombre": "ENTRADA ALMACEN",
+        "documento_clase": 500,
+        "invenario": true,
+        "operacion_inventario": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 10,
+      "campos": {
+        "nombre": "SALIDA ALMACEN",
+        "documento_clase": 501,
+        "invenario": true,
+        "operacion_inventario": -1
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 11,
+      "campos": {
+        "nombre": "DOCUMENTO SOPORTE",
+        "documento_clase": 303,
+        "comprobante": 15,
+        "compra": true,
+        "pagar": true,
+        "electronico": true,
+        "operacion": 1,
+        "inventario": true,
+        "operacion_inventario": 1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 12,
+      "campos": {
+        "nombre": "NOTA AJUSTE",
+        "documento_clase": 304,
+        "compra": true,
+        "pagar": true,
+        "electronico": true,
+        "operacion": -1,
+        "inventario": true,
+        "operacion_inventario": -1,
+        "contabilidad": true,
+        "comprobante": 17
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 13,
+      "campos": {
+        "nombre": "ASIENTO",
+        "documento_clase": 601,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 14,
+      "campos": {
+        "nombre": "NOMINA",
+        "documento_clase": 701,
+        "comprobante": 11,
+        "pagar": true,
+        "operacion": 1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 15,
+      "campos": {
+        "nombre": "NOMINA ELECTRONICA",
+        "documento_clase": 702,
+        "electronico": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 16,
+      "campos": {
+        "nombre": "FACTURA RECURRENTE",
+        "documento_clase": 103,
+        "venta": false
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 17,
+      "campos": {
+        "nombre": "CUENTA COBRO",
+        "documento_clase": 104,
+        "venta": true,
+        "cobrar": true,
+        "operacion": 1,
+        "operacion_inventario": -1,
+        "comprobante": 18
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 18,
+      "campos": {
+        "nombre": "SALDO INCIAL CXC",
+        "documento_clase": 201,
+        "cobrar": true,
+        "operacion": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 19,
+      "campos": {
+        "nombre": "SALDO INCIAL CXP",
+        "documento_clase": 401,
+        "pagar": true,
+        "operacion": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 20,
+      "campos": {
+        "nombre": "PRIMA",
+        "documento_clase": 701,
+        "pagar": true,
+        "operacion": 1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 21,
+      "campos": {
+        "nombre": "CESANTIA",
+        "documento_clase": 701,
+        "pagar": true,
+        "operacion": 1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 22,
+      "campos": {
+        "nombre": "SEGURIDAD SOCIAL",
+        "documento_clase": 703,
+        "comprobante": 11,
+        "pagar": true,
+        "operacion": 1,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 23,
+      "campos": {
+        "nombre": "DEPRECIACION",
+        "documento_clase": 602,
+        "comprobante": 14,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 24,
+      "campos": {
+        "nombre": "FACTURA POS ELECTRONICO",
+        "documento_clase": 105,
+        "comprobante": 16,
+        "venta": true,
+        "cobrar": true,
+        "operacion": 1,
+        "contabilidad": true,
+        "inventario": true,
+        "operacion_inventario": -1,
+        "electronico": true,
+        "pos": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 25,
+      "campos": {
+        "nombre": "CIERRE CONTABLE",
+        "documento_clase": 603,
+        "comprobante": 19,
+        "contabilidad": true
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 26,
+      "campos": {
+        "nombre": "PEDIDO CLIENTE",
+        "documento_clase": 106
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 27,
+      "campos": {
+        "nombre": "FACTURA POS",
+        "documento_clase": 105,
+        "comprobante": 20,
+        "venta": true,
+        "cobrar": true,
+        "operacion": 1,
+        "contabilidad": true,
+        "inventario": true,
+        "operacion_inventario": -1,
+        "electronico": false,
+        "pos": true
+      }
     }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 2,
-    "fields": {
-      "nombre": "NOTA CRÉDITO DE VENTA",
-      "documento_clase": 101, "comprobante": 5,
-      "venta": true, "cobrar" : true, "operacion": -1, "contabilidad": true, "inventario": true, "operacion_inventario": 1, "electronico" : true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 3,
-    "fields": {
-      "nombre": "NOTA DÉBITO DE VENTA",
-      "documento_clase": 102, "comprobante": 6,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 4,
-    "fields": {
-      "nombre": "PAGO",
-      "documento_clase": 200, "comprobante": 2,
-      "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 5,
-    "fields": {
-      "nombre": "COMPRA",
-      "documento_clase": 300, "comprobante": 7,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 6,
-    "fields": {
-      "nombre": "NOTA CREDITO COMPRA",
-      "documento_clase": 301,  "comprobante": 8,
-      "compra": true, "pagar": true, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 7,
-    "fields": {
-      "nombre": "NOTA DEBITO COMPRA",
-      "documento_clase": 302, "comprobante": 9,
-      "compra": true, "pagar": true, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 8,
-    "fields": {
-      "nombre": "EGRESO",
-      "documento_clase": 400, "comprobante": 3,
-      "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 9,
-    "fields": {
-      "nombre": "ENTRADA ALMACEN",
-      "documento_clase": 500, "invenario": true, "operacion_inventario": 1
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 10,
-    "fields": {
-      "nombre": "SALIDA ALMACEN",
-      "documento_clase": 501, "invenario": true, "operacion_inventario": -1
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 11,
-    "fields": {
-      "nombre": "DOCUMENTO SOPORTE",
-      "documento_clase": 303, "comprobante": 15,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": 1, "inventario": true, "operacion_inventario": 1, "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 12,
-    "fields": {
-      "nombre": "NOTA AJUSTE",
-      "documento_clase": 304,
-      "compra": true, "pagar": true, "electronico" : true, "operacion": -1, "inventario": true, "operacion_inventario": -1, "contabilidad": true, "comprobante": 17
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 13,
-    "fields": {
-      "nombre": "ASIENTO",
-      "documento_clase": 601, "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 14,
-    "fields": {
-      "nombre": "NOMINA",
-      "documento_clase": 701, "comprobante": 11,
-      "pagar": true, "operacion": 1,
-      "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 15,
-    "fields": {
-      "nombre": "NOMINA ELECTRONICA",
-      "documento_clase": 702, "electronico" : true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 16,
-    "fields": {
-      "nombre": "FACTURA RECURRENTE",
-      "documento_clase": 103, "venta": false
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 17,
-    "fields": {
-      "nombre": "CUENTA COBRO",
-      "documento_clase": 104,
-      "venta": true, "cobrar" : true, "operacion": 1, "operacion_inventario": -1, "comprobante": 18
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 18,
-    "fields": {
-      "nombre": "SALDO INCIAL CXC",
-      "documento_clase": 201,
-      "cobrar" : true, "operacion": 1
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 19,
-    "fields": {
-      "nombre": "SALDO INCIAL CXP",
-      "documento_clase": 401,
-      "pagar": true, "operacion": 1
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 20,
-    "fields": {
-      "nombre": "PRIMA",
-      "documento_clase": 701,
-      "pagar": true, "operacion": 1,
-      "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 21,
-    "fields": {
-      "nombre": "CESANTIA",
-      "documento_clase": 701,
-      "pagar": true, "operacion": 1,
-      "contabilidad": true
-    }
-  },  
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 22,
-    "fields": {
-      "nombre": "SEGURIDAD SOCIAL",
-      "documento_clase": 703, "comprobante": 11,
-      "pagar": true, "operacion": 1,
-      "contabilidad": true
-    }
-  },  
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 23,
-    "fields": {
-      "nombre": "DEPRECIACION",
-      "documento_clase": 602, "comprobante": 14, "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 24,
-    "fields": {
-      "nombre": "FACTURA POS ELECTRONICO",
-      "documento_clase": 105, "comprobante": 16,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : true, "pos":true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 25,
-    "fields": {
-      "nombre": "CIERRE CONTABLE",
-      "documento_clase": 603, "comprobante": 19, "contabilidad": true
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 26,
-    "fields": {
-      "nombre": "PEDIDO CLIENTE",
-      "documento_clase": 106
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 27,
-    "fields": {
-      "nombre": "FACTURA POS",
-      "documento_clase": 105, "comprobante": 20,
-      "venta": true, "cobrar" : true, "operacion": 1, "contabilidad": true, "inventario": true, "operacion_inventario": -1, "electronico" : false, "pos":true
-    }
-  }      
-]
+  ]
+}

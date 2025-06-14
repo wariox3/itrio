@@ -1,558 +1,563 @@
-[
-    {
-        "model": "humano.HumConcepto",
-        "pk": 1,
-        "fields": {
-            "nombre": "Salario ordinario", 
-            "porcentaje": 100,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,            
-            "orden": 1,
-            "concepto_tipo": 1
+{
+    "aplicacion": "humano",
+    "modelo": "HumConcepto",
+    "modelo_nativo": "",
+    "actualizar_secuencia": false,
+    "datos": [
+        {
+            "model": "humano.HumConcepto",
+            "pk": 1,
+            "campos": {
+                "nombre": "Salario ordinario",
+                "porcentaje": 100,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 1,
+                "concepto_tipo": 1
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 2,
+            "campos": {
+                "nombre": "Hora nocturna",
+                "porcentaje": 135,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 2,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 3,
+            "campos": {
+                "nombre": "Festiva diurna",
+                "porcentaje": 175,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 3,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 4,
+            "campos": {
+                "nombre": "Festiva nocturna",
+                "porcentaje": 210,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 4,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 5,
+            "campos": {
+                "nombre": "Extra diurna",
+                "porcentaje": 125,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 5,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 6,
+            "campos": {
+                "nombre": "Extra nocturna",
+                "porcentaje": 175,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 6,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 7,
+            "campos": {
+                "nombre": "Extra festiva diurna",
+                "porcentaje": 200,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 7,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 8,
+            "campos": {
+                "nombre": "Extra festiva nocturna",
+                "porcentaje": 250,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 8,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 9,
+            "campos": {
+                "nombre": "Recargo nocturno",
+                "porcentaje": 35,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 9,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 10,
+            "campos": {
+                "nombre": "Recargo festivo diurno",
+                "porcentaje": 75,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 10,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 11,
+            "campos": {
+                "nombre": "Recargo festivo nocturno",
+                "porcentaje": 110,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 11,
+                "concepto_tipo": 2
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 12,
+            "campos": {
+                "nombre": "Bonificacion",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 12,
+                "concepto_tipo": 3
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 13,
+            "campos": {
+                "nombre": "Bonificacion no prestacional",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 13,
+                "concepto_tipo": 4
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 14,
+            "campos": {
+                "nombre": "Salud",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": -1,
+                "orden": 200,
+                "concepto_tipo": 5
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 15,
+            "campos": {
+                "nombre": "Pension",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": -1,
+                "orden": 201,
+                "concepto_tipo": 6
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 16,
+            "campos": {
+                "nombre": "Auxilio de transporte",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 14,
+                "concepto_tipo": 7
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 17,
+            "campos": {
+                "nombre": "Credito",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": -1,
+                "orden": 202,
+                "concepto_tipo": 8
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 18,
+            "campos": {
+                "nombre": "Auxilio rodamiento",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 14,
+                "concepto_tipo": 4
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 19,
+            "campos": {
+                "nombre": "Reembolso",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 15,
+                "concepto_tipo": 4
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 20,
+            "campos": {
+                "nombre": "Fondo de solidaridad pensional",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": -1,
+                "orden": 203,
+                "concepto_tipo": 9
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 21,
+            "campos": {
+                "nombre": "Retencion en la fuente",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": -1,
+                "orden": 204,
+                "concepto_tipo": 10
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 22,
+            "campos": {
+                "nombre": "Descuento",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": -1,
+                "orden": 205,
+                "concepto_tipo": 11
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 23,
+            "campos": {
+                "nombre": "Incapacidad enfermedad general (empresa)",
+                "porcentaje": 66.67,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 16,
+                "concepto_tipo": 12
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 24,
+            "campos": {
+                "nombre": "Incapacidad enfermedad laboral",
+                "porcentaje": 100,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 17,
+                "concepto_tipo": 13
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 25,
+            "campos": {
+                "nombre": "Licencia maternidad / paternidad",
+                "porcentaje": 100,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 18,
+                "concepto_tipo": 14
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 26,
+            "campos": {
+                "nombre": "Licencia de luto",
+                "porcentaje": 100,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 18,
+                "concepto_tipo": 15
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 27,
+            "campos": {
+                "nombre": "Licencia remunerada",
+                "porcentaje": 100,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 19,
+                "concepto_tipo": 16
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 28,
+            "campos": {
+                "nombre": "Licencia no remunerada",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 0,
+                "orden": 20,
+                "concepto_tipo": 17
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 29,
+            "campos": {
+                "nombre": "Vacaciones disfrutadas",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 21,
+                "concepto_tipo": 18
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 30,
+            "campos": {
+                "nombre": "Vacaciones dinero",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 22,
+                "concepto_tipo": 19
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 31,
+            "campos": {
+                "nombre": "Incapacidad enfermedad general (entidad)",
+                "porcentaje": 66.67,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 23,
+                "concepto_tipo": 12
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 32,
+            "campos": {
+                "nombre": "Primas",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 24,
+                "concepto_tipo": 20
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 33,
+            "campos": {
+                "nombre": "Primas liquidacion",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 25,
+                "concepto_tipo": 21
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 34,
+            "campos": {
+                "nombre": "Cesantias anuales",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 26,
+                "concepto_tipo": 22
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 35,
+            "campos": {
+                "nombre": "Cesantias liquidacion",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 27,
+                "concepto_tipo": 23
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 36,
+            "campos": {
+                "nombre": "Intereses anuales",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 28,
+                "concepto_tipo": 24
+            }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 37,
+            "campos": {
+                "nombre": "Intereses liquidacion",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": false,
+                "ingreso_base_prestacion_vacacion": false,
+                "ingreso_base_cotizacion": false,
+                "adicional": false,
+                "operacion": 1,
+                "orden": 29,
+                "concepto_tipo": 25
+            }
         }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 2,
-        "fields": {
-            "nombre": "Hora nocturna", 
-            "porcentaje": 135,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden": 2,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 3,
-        "fields": {
-            "nombre": "Festiva diurna", 
-            "porcentaje": 175,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":3,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 4,
-        "fields": {
-            "nombre": "Festiva nocturna", 
-            "porcentaje": 210,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":4,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 5,
-        "fields": {
-            "nombre": "Extra diurna", 
-            "porcentaje": 125,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":5,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 6,
-        "fields": {
-            "nombre": "Extra nocturna", 
-            "porcentaje": 175,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":6,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 7,
-        "fields": {
-            "nombre": "Extra festiva diurna", 
-            "porcentaje": 200,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":7,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 8,
-        "fields": {
-            "nombre": "Extra festiva nocturna", 
-            "porcentaje": 250,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":8,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 9,
-        "fields": {
-            "nombre": "Recargo nocturno", 
-            "porcentaje": 35,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":9,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 10,
-        "fields": {
-            "nombre": "Recargo festivo diurno", 
-            "porcentaje": 75,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":10,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 11,
-        "fields": {
-            "nombre": "Recargo festivo nocturno", 
-            "porcentaje": 110,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":11,
-            "concepto_tipo": 2
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 12,
-        "fields": {
-            "nombre": "Bonificacion", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":true,
-            "operacion":1,
-            "orden":12,
-            "concepto_tipo": 3
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 13,
-        "fields": {
-            "nombre": "Bonificacion no prestacional", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":1,
-            "orden":13,
-            "concepto_tipo": 4
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 14,
-        "fields": {
-            "nombre": "Salud", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":-1,
-            "orden":200,
-            "concepto_tipo": 5
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 15,
-        "fields": {
-            "nombre": "Pension", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":-1,
-            "orden":201,
-            "concepto_tipo": 6
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 16,
-        "fields": {
-            "nombre": "Auxilio de transporte", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":1,
-            "orden":14,
-            "concepto_tipo": 7
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 17,
-        "fields": {
-            "nombre": "Credito", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":-1,
-            "orden":202,
-            "concepto_tipo": 8
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 18,
-        "fields": {
-            "nombre": "Auxilio rodamiento", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":1,
-            "orden":14,
-            "concepto_tipo": 4
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 19,
-        "fields": {
-            "nombre": "Reembolso", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":1,
-            "orden":15,
-            "concepto_tipo": 4
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 20,
-        "fields": {
-            "nombre": "Fondo de solidaridad pensional", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":-1,
-            "orden":203,
-            "concepto_tipo": 9
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 21,
-        "fields": {
-            "nombre": "Retencion en la fuente", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":-1,
-            "orden":204,
-            "concepto_tipo": 10
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 22,
-        "fields": {
-            "nombre": "Descuento", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":-1,
-            "orden":205,
-            "concepto_tipo": 11
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 23,
-        "fields": {
-            "nombre": "Incapacidad enfermedad general (empresa)", 
-            "porcentaje": 66.67,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":16,
-            "concepto_tipo": 12
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 24,
-        "fields": {
-            "nombre": "Incapacidad enfermedad laboral", 
-            "porcentaje": 100,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":17,
-            "concepto_tipo": 13
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 25,
-        "fields": {
-            "nombre": "Licencia maternidad / paternidad", 
-            "porcentaje": 100,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":18,
-            "concepto_tipo": 14
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 26,
-        "fields": {
-            "nombre": "Licencia de luto", 
-            "porcentaje": 100,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":18,
-            "concepto_tipo": 15
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 27,
-        "fields": {
-            "nombre": "Licencia remunerada", 
-            "porcentaje": 100,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":19,
-            "concepto_tipo": 16
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 28,
-        "fields": {
-            "nombre": "Licencia no remunerada", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":0,
-            "orden":20,
-            "concepto_tipo": 17
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 29,
-        "fields": {
-            "nombre": "Vacaciones disfrutadas", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":true,
-            "operacion":1,
-            "orden":21,
-            "concepto_tipo": 18
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 30,
-        "fields": {
-            "nombre": "Vacaciones dinero", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":1,
-            "orden":22,
-            "concepto_tipo": 19
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 31,
-        "fields": {
-            "nombre": "Incapacidad enfermedad general (entidad)", 
-            "porcentaje": 66.67,
-            "ingreso_base_prestacion": true,
-            "ingreso_base_prestacion_vacacion": true,
-            "ingreso_base_cotizacion":true,
-            "adicional":false,
-            "operacion":1,
-            "orden":23,
-            "concepto_tipo": 12
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 32,
-        "fields": {
-            "nombre": "Primas", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":1,
-            "orden":24,
-            "concepto_tipo": 20
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 33,
-        "fields": {
-            "nombre": "Primas liquidacion", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":1,
-            "orden":25,
-            "concepto_tipo": 21
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 34,
-        "fields": {
-            "nombre": "Cesantias anuales", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":1,
-            "orden":26,
-            "concepto_tipo": 22
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 35,
-        "fields": {
-            "nombre": "Cesantias liquidacion", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":1,
-            "orden":27,
-            "concepto_tipo": 23
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 36,
-        "fields": {
-            "nombre": "Intereses anuales", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":true,
-            "operacion":1,
-            "orden":28,
-            "concepto_tipo": 24
-        }
-    },
-    {
-        "model": "humano.HumConcepto",
-        "pk": 37,
-        "fields": {
-            "nombre": "Intereses liquidacion", 
-            "porcentaje": 0,
-            "ingreso_base_prestacion": false,
-            "ingreso_base_prestacion_vacacion": false,
-            "ingreso_base_cotizacion":false,
-            "adicional":false,
-            "operacion":1,
-            "orden":29,
-            "concepto_tipo": 25
-        }
-    }
-
-]
+    ]
+}

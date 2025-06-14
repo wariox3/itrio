@@ -1,9 +1,15 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumGrupo",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
     {
         "model": "humano.HumGrupo",
         "pk": 1,
-        "fields": {
+        "campos": {
             "nombre": "General", "periodo":1
         }
     }
 ]
+}

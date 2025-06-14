@@ -1,57 +1,85 @@
-[
-  {
-    "model": "general.GenBanco",
-    "pk": 1,
-    "fields": {"nombre": "Bancolombia"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 2,
-    "fields": {"nombre": "Banco avvillas"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 3,
-    "fields": {"nombre": "Davivienda"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 4,
-    "fields": {"nombre": "Banco agrario"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 5,
-    "fields": {"nombre": "Banco caja social"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 6,
-    "fields": {"nombre": "Banco de occidente"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 7,
-    "fields": {"nombre": "Colpatria"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 8,
-    "fields": {"nombre": "Banco bbva"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 9,
-    "fields": {"nombre": "Sudameris"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 10,
-    "fields": {"nombre": "Banco itau"}
-  },
-  {
-    "model": "general.GenBanco",
-    "pk": 11,
-    "fields": {"nombre": "Banco de bogota"}
-  }
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenBanco",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "general.GenBanco",
+      "pk": 1,
+      "campos": {
+        "nombre": "Bancolombia"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 2,
+      "campos": {
+        "nombre": "Banco avvillas"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 3,
+      "campos": {
+        "nombre": "Davivienda"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 4,
+      "campos": {
+        "nombre": "Banco agrario"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 5,
+      "campos": {
+        "nombre": "Banco caja social"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 6,
+      "campos": {
+        "nombre": "Banco de occidente"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 7,
+      "campos": {
+        "nombre": "Colpatria"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 8,
+      "campos": {
+        "nombre": "Banco bbva"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 9,
+      "campos": {
+        "nombre": "Sudameris"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 10,
+      "campos": {
+        "nombre": "Banco itau"
+      }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 11,
+      "campos": {
+        "nombre": "Banco de bogota"
+      }
+    }
+  ]
+}

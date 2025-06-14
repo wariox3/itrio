@@ -1,12 +1,22 @@
-[
-  {
-    "model": "general.GenTipoPersona",
-    "pk": 1,
-    "fields": {"nombre": "Jurídica"}
-  },
-  {
-    "model": "general.GenTipoPersona",
-    "pk": 2,
-    "fields": {"nombre": "Natural"}
-  }
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenTipoPersona",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "general.GenTipoPersona",
+      "pk": 1,
+      "campos": {
+        "nombre": "Jurídica"
+      }
+    },
+    {
+      "model": "general.GenTipoPersona",
+      "pk": 2,
+      "campos": {
+        "nombre": "Natural"
+      }
+    }
+  ]
+}

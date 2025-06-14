@@ -1,8 +1,14 @@
-[
-  {
-    "model": "general.GenFormaPago",
-    "pk": 1,
-    "fields": {"cuenta_pagar": 24},
-    "inicio": true
-  }
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenFormaPago",
+  "modelo_nativo": "gen_forma_pago",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "cuenta_pagar": 24
+      }    
+    }
+  ]  
+}

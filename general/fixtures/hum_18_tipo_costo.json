@@ -1,23 +1,30 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumTipoCosto",
+  "modelo_nativo": "hum_tipo_costo",
+  "actualizar_secuencia": false,
+  "datos": [
     {
       "model": "humano.HumTipoCosto",
       "pk": 1,
-      "fields": {"nombre": "Administrativo"}
+      "campos": {"nombre": "Administrativo"}
     },
     {
       "model": "humano.HumTipoCosto",
       "pk": 2,
-      "fields": {"nombre": "Administrativo operativo"}
+      "campos": {"nombre": "Administrativo operativo"}
     },
     {
       "model": "humano.HumTipoCosto",
       "pk": 3,
-      "fields": {"nombre": "Comercial"}
+      "campos": {"nombre": "Comercial"}
     },
     {
       "model": "humano.HumTipoCosto",
       "pk": 4,
-      "fields": {"nombre": "Operativo"}
+      "campos": {"nombre": "Operativo"}
     }
   ]
+}
+
   

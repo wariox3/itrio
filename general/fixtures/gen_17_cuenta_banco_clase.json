@@ -1,12 +1,22 @@
-[
-  {
-    "model": "general.GenCuentaBancoClase",
-    "pk": 1,
-    "fields": {"nombre": "Ahorro"}
-  },
-  {
-    "model": "general.GenCuentaBancoClase",
-    "pk": 2,
-    "fields": {"nombre": "Corriente"}
-  }
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenCuentaBancoClase",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "general.GenCuentaBancoClase",
+      "pk": 1,
+      "campos": {
+        "nombre": "Ahorro"
+      }
+    },
+    {
+      "model": "general.GenCuentaBancoClase",
+      "pk": 2,
+      "campos": {
+        "nombre": "Corriente"
+      }
+    }
+  ]
+}

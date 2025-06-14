@@ -33,18 +33,15 @@ class Command(BaseCommand):
                     actualizados = 0
                     creados = 0
                     nombre_archivo = os.path.basename(json_file)
-                    data = json.load(file)                    
-                    for item in data:
-                        model_name = item.get('model')                    
-                        inicio = item.get('inicio', False)
+                    data = json.load(file)                                 
+                    Model = apps.get_model(data['aplicacion'], data['modelo'])           
+                    for item in data['datos']:                                           
                         pk = item.get('pk')                
-                        fields = item.get('fields', {})                    
-                        app_label, model_name = model_name.split('.')
-                        Model = apps.get_model(app_label, model_name)
-                        model_fields = [field.name for field in Model._meta.get_fields()]
+                        campos = item.get('campos', {})                                                                    
+                        modelo_campos = [field.name for field in Model._meta.get_fields()]
                         filtered_fields = {}
-                        for key, value in fields.items():
-                            if key in model_fields:
+                        for key, value in campos.items():
+                            if key in modelo_campos:
                                 field = Model._meta.get_field(key)
                                 if isinstance(field, models.ForeignKey):
                                     related_model = field.related_model
@@ -57,19 +54,16 @@ class Command(BaseCommand):
                                 else:
                                     filtered_fields[key] = value
                         instance, created = Model.objects.update_or_create(pk=pk, defaults=filtered_fields)                    
-                        if inicio == True:
-                            modulo = model_name[:3].lower()
-                            tabla = model_name[3:]
-                            palabras_tabla = re.findall('[A-Z][^A-Z]*', tabla)  
-                            tabla_formateada = '_'.join(palabras_tabla).lower()
-                            modelo_nativo = f"{modulo}_{tabla_formateada}"
-                            cursor = connection.cursor()
-                            cursor.execute(f"SELECT setval(pg_get_serial_sequence('{modelo_nativo}', 'id'), (SELECT MAX(id) FROM {modelo_nativo}));")
-                            cursor.close()
                         if created:
                             creados += 1
                         else:
                             actualizados += 1
+                    actualizar_secuencia = data['actualizar_secuencia']
+                    if actualizar_secuencia:
+                        modelo_nativo = data['modelo_nativo']
+                        cursor = connection.cursor()
+                        cursor.execute(f"SELECT setval(pg_get_serial_sequence('{modelo_nativo}', 'id'), (SELECT MAX(id) FROM {modelo_nativo}));")
+                        cursor.close()
                     self.stdout.write(self.style.SUCCESS(f'Registros creados {creados} actualizados {actualizados} modelo {nombre_archivo}'))
             except FileNotFoundError:
                 self.stdout.write(self.style.ERROR('El archivo JSON no existe'))

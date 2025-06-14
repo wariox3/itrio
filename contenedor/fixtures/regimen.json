@@ -1,12 +1,22 @@
-[
-  {
-    "model": "contenedor.CtnRegimen",
-    "pk": 1,
-    "fields": {"nombre": "Ordinario común"}
-  },
-  {
-    "model": "contenedor.CtnRegimen",
-    "pk": 2,
-    "fields": {"nombre": "Simple"}
-  }
-]
+{
+  "aplicacion": "contenedor",
+  "modelo": "CtnRegimen",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "contenedor.CtnRegimen",
+      "pk": 1,
+      "campos": {
+        "nombre": "Ordinario común"
+      }
+    },
+    {
+      "model": "contenedor.CtnRegimen",
+      "pk": 2,
+      "campos": {
+        "nombre": "Simple"
+      }
+    }
+  ]
+}

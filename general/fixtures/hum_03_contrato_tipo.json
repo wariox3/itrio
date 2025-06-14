@@ -1,27 +1,43 @@
-[
-  {
-    "model": "humano.HumContratoTipo",
-    "pk": 1,
-    "fields": {"nombre": "Indefinido"}
-  },
-  {
-    "model": "humano.HumContratoTipo",
-    "pk": 2,
-    "fields": {"nombre": "Termino fijo inferior a un año"}
-  },
-  {
-    "model": "humano.HumContratoTipo",
-    "pk": 3,
-    "fields": {"nombre": "Obra o labor"}
-  },
-  {
-    "model": "humano.HumContratoTipo",
-    "pk": 4,
-    "fields": {"nombre": "Aprendíz del Sena"}
-  },
-  {
-    "model": "humano.HumContratoTipo",
-    "pk": 5,
-    "fields": {"nombre": "Practica estudiantil"}
-  }
-]
+{
+  "aplicacion": "humano",
+  "modelo": "HumContratoTipo",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "humano.HumContratoTipo",
+      "pk": 1,
+      "campos": {
+        "nombre": "Indefinido"
+      }
+    },
+    {
+      "model": "humano.HumContratoTipo",
+      "pk": 2,
+      "campos": {
+        "nombre": "Termino fijo inferior a un año"
+      }
+    },
+    {
+      "model": "humano.HumContratoTipo",
+      "pk": 3,
+      "campos": {
+        "nombre": "Obra o labor"
+      }
+    },
+    {
+      "model": "humano.HumContratoTipo",
+      "pk": 4,
+      "campos": {
+        "nombre": "Aprendíz del Sena"
+      }
+    },
+    {
+      "model": "humano.HumContratoTipo",
+      "pk": 5,
+      "campos": {
+        "nombre": "Practica estudiantil"
+      }
+    }
+  ]
+}

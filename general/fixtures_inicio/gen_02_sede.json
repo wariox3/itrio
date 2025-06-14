@@ -1,8 +1,13 @@
-[
-  {
-    "model": "general.GenSede",
-    "pk": 1,
-    "fields": {"nombre": "Principal"},
-    "inicio": true
-  }
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenSede",
+  "modelo_nativo": "gen_sede",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {"nombre": "Principal"}
+    }
+  ]
+}
+

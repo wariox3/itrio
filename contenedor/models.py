@@ -82,6 +82,7 @@ class CtnPlan(models.Model):
 
     class Meta:
         db_table = "cnt_plan"
+        ordering = ["-id"]
 
 class Contenedor(TenantMixin):
     schema_name = models.CharField(max_length=100)

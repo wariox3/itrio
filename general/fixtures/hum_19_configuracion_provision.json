@@ -1,203 +1,210 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumConfiguracionProvision",
+  "modelo_nativo": "hum_configuracion_provision",
+  "actualizar_secuencia": false,
+  "datos": [
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 1,
-      "fields": {"tipo": "CESANTIA", "orden": 1, "tipo_costo": 1}
+      "campos": {"tipo": "CESANTIA", "orden": 1, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 2,
-      "fields": {"tipo": "INTERES", "orden": 2, "tipo_costo": 1}
+      "campos": {"tipo": "INTERES", "orden": 2, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 3,
-      "fields": {"tipo": "PRIMA", "orden": 3, "tipo_costo": 1}
+      "campos": {"tipo": "PRIMA", "orden": 3, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 4,
-      "fields": {"tipo": "VACACION", "orden": 4, "tipo_costo": 1}
+      "campos": {"tipo": "VACACION", "orden": 4, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 5,
-      "fields": {"tipo": "PENSION", "orden": 5, "tipo_costo": 1}
+      "campos": {"tipo": "PENSION", "orden": 5, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 6,
-      "fields": {"tipo": "SALUD", "orden": 6, "tipo_costo": 1}
+      "campos": {"tipo": "SALUD", "orden": 6, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 7,
-      "fields": {"tipo": "CAJA", "orden": 7, "tipo_costo": 1}
+      "campos": {"tipo": "CAJA", "orden": 7, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 8,
-      "fields": {"tipo": "RIESGO", "orden": 8, "tipo_costo": 1}
+      "campos": {"tipo": "RIESGO", "orden": 8, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 9,
-      "fields": {"tipo": "SENA", "orden": 9, "tipo_costo": 1}
+      "campos": {"tipo": "SENA", "orden": 9, "tipo_costo": 1}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 10,
-      "fields": {"tipo": "ICBF", "orden": 10, "tipo_costo": 1}
+      "campos": {"tipo": "ICBF", "orden": 10, "tipo_costo": 1}
     },             
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 11,
-      "fields": {"tipo": "CESANTIA", "orden": 11, "tipo_costo": 2}
+      "campos": {"tipo": "CESANTIA", "orden": 11, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 12,
-      "fields": {"tipo": "INTERES", "orden": 12, "tipo_costo": 2}
+      "campos": {"tipo": "INTERES", "orden": 12, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 13,
-      "fields": {"tipo": "PRIMA", "orden": 13, "tipo_costo": 2}
+      "campos": {"tipo": "PRIMA", "orden": 13, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 14,
-      "fields": {"tipo": "VACACION", "orden": 14, "tipo_costo": 2}
+      "campos": {"tipo": "VACACION", "orden": 14, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 15,
-      "fields": {"tipo": "PENSION", "orden": 15, "tipo_costo": 2}
+      "campos": {"tipo": "PENSION", "orden": 15, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 16,
-      "fields": {"tipo": "SALUD", "orden": 16, "tipo_costo": 2}
+      "campos": {"tipo": "SALUD", "orden": 16, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 17,
-      "fields": {"tipo": "CAJA", "orden": 17, "tipo_costo": 2}
+      "campos": {"tipo": "CAJA", "orden": 17, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 18,
-      "fields": {"tipo": "RIESGO", "orden": 18, "tipo_costo": 2}
+      "campos": {"tipo": "RIESGO", "orden": 18, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 19,
-      "fields": {"tipo": "SENA", "orden": 19, "tipo_costo": 2}
+      "campos": {"tipo": "SENA", "orden": 19, "tipo_costo": 2}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 20,
-      "fields": {"tipo": "ICBF", "orden": 20, "tipo_costo": 2}
+      "campos": {"tipo": "ICBF", "orden": 20, "tipo_costo": 2}
     },    
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 21,
-      "fields": {"tipo": "CESANTIA", "orden": 21, "tipo_costo": 3}
+      "campos": {"tipo": "CESANTIA", "orden": 21, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 22,
-      "fields": {"tipo": "INTERES", "orden": 22, "tipo_costo": 3}
+      "campos": {"tipo": "INTERES", "orden": 22, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 23,
-      "fields": {"tipo": "PRIMA", "orden": 23, "tipo_costo": 3}
+      "campos": {"tipo": "PRIMA", "orden": 23, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 24,
-      "fields": {"tipo": "VACACION", "orden": 24, "tipo_costo": 3}
+      "campos": {"tipo": "VACACION", "orden": 24, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 25,
-      "fields": {"tipo": "PENSION", "orden": 25, "tipo_costo": 3}
+      "campos": {"tipo": "PENSION", "orden": 25, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 26,
-      "fields": {"tipo": "SALUD", "orden": 26, "tipo_costo": 3}
+      "campos": {"tipo": "SALUD", "orden": 26, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 27,
-      "fields": {"tipo": "CAJA", "orden": 27, "tipo_costo": 3}
+      "campos": {"tipo": "CAJA", "orden": 27, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 28,
-      "fields": {"tipo": "RIESGO", "orden": 28, "tipo_costo": 3}
+      "campos": {"tipo": "RIESGO", "orden": 28, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 29,
-      "fields": {"tipo": "SENA", "orden": 29, "tipo_costo": 3}
+      "campos": {"tipo": "SENA", "orden": 29, "tipo_costo": 3}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 30,
-      "fields": {"tipo": "ICBF", "orden": 30, "tipo_costo": 3}
+      "campos": {"tipo": "ICBF", "orden": 30, "tipo_costo": 3}
     },      
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 31,
-      "fields": {"tipo": "CESANTIA", "orden": 31, "tipo_costo": 4}
+      "campos": {"tipo": "CESANTIA", "orden": 31, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 32,
-      "fields": {"tipo": "INTERES", "orden": 32, "tipo_costo": 4}
+      "campos": {"tipo": "INTERES", "orden": 32, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 33,
-      "fields": {"tipo": "PRIMA", "orden": 33, "tipo_costo": 4}
+      "campos": {"tipo": "PRIMA", "orden": 33, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 34,
-      "fields": {"tipo": "VACACION", "orden": 34, "tipo_costo": 4}
+      "campos": {"tipo": "VACACION", "orden": 34, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 35,
-      "fields": {"tipo": "PENSION", "orden": 35, "tipo_costo": 4}
+      "campos": {"tipo": "PENSION", "orden": 35, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 36,
-      "fields": {"tipo": "SALUD", "orden": 36, "tipo_costo": 4}
+      "campos": {"tipo": "SALUD", "orden": 36, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 37,
-      "fields": {"tipo": "CAJA", "orden": 37, "tipo_costo": 4}
+      "campos": {"tipo": "CAJA", "orden": 37, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 38,
-      "fields": {"tipo": "RIESGO", "orden": 38, "tipo_costo": 4}
+      "campos": {"tipo": "RIESGO", "orden": 38, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 39,
-      "fields": {"tipo": "SENA", "orden": 39, "tipo_costo": 4}
+      "campos": {"tipo": "SENA", "orden": 39, "tipo_costo": 4}
     },
     {
       "model": "humano.HumConfiguracionProvision",
       "pk": 40,
-      "fields": {"tipo": "ICBF", "orden": 40, "tipo_costo": 4}
+      "campos": {"tipo": "ICBF", "orden": 40, "tipo_costo": 4}
     }               
   ]
+}
+
   

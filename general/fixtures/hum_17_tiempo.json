@@ -1,13 +1,22 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumTiempo",
+  "modelo_nativo": "hum_tiempo",
+  "actualizar_secuencia": false,
+  "datos": [
     {
       "model": "humano.HumTiempo",
       "pk": 1,
-      "fields": {"nombre": "Tiempo completo"}
+      "campos": {
+        "nombre": "Tiempo completo"
+      }
     },
     {
       "model": "humano.HumTiempo",
       "pk": 2,
-      "fields": {"nombre": "Medio tiempo"}
+      "campos": {
+        "nombre": "Medio tiempo"
+      }
     }
   ]
-  
+}

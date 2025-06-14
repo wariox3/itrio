@@ -1,48 +1,54 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumMotivoTerminacion",
+  "modelo_nativo": "hum_motivo_terminacion",
+  "actualizar_secuencia": false,
+  "datos": [
     {
-      "model": "humano.HumMotivoTerminacion",
       "pk": 1,
-      "fields": {"nombre": "RENUNCIA VOLUNTARIA"}
+      "campos": {"nombre": "RENUNCIA VOLUNTARIA"}
     },
         {
       "model": "humano.HumMotivoTerminacion",
       "pk": 2,
-      "fields": {"nombre": "MUTUO ACUERDO"}
+      "campos": {"nombre": "MUTUO ACUERDO"}
     },
     {
       "model": "humano.HumMotivoTerminacion",
       "pk": 3,
-      "fields": {"nombre": "CON JUSTA CAUSA"}
+      "campos": {"nombre": "CON JUSTA CAUSA"}
     },
     {
       "model": "humano.HumMotivoTerminacion",
       "pk": 4,
-      "fields": {"nombre": "SIN JUSTA CAUSA"}
+      "campos": {"nombre": "SIN JUSTA CAUSA"}
     },      
     {
       "model": "humano.HumMotivoTerminacion",
       "pk": 5,
-      "fields": {"nombre": "TERMINACIÓN DE CONTRATO"}
+      "campos": {"nombre": "TERMINACIÓN DE CONTRATO"}
     },      
     {
       "model": "humano.HumMotivoTerminacion",
       "pk": 6,
-      "fields": {"nombre": "PENSIÓN POR INVALIDEZ"}
+      "campos": {"nombre": "PENSIÓN POR INVALIDEZ"}
     },
     {
       "model": "humano.HumMotivoTerminacion",
       "pk": 7,
-      "fields": {"nombre": "PENSIÓN POR VEJEZ"}
+      "campos": {"nombre": "PENSIÓN POR VEJEZ"}
     },          
     {
       "model": "humano.HumMotivoTerminacion",
       "pk": 8,
-      "fields": {"nombre": "MUERTE"}
+      "campos": {"nombre": "MUERTE"}
     },      
     {
       "model": "humano.HumMotivoTerminacion",
       "pk": 9,
-      "fields": {"nombre": "JUBILACIÓN"}
+      "campos": {"nombre": "JUBILACIÓN"}
     }
   ]
+}
+
   

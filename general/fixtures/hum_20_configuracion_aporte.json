@@ -1,34 +1,39 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumConfiguracionAporte",
+  "modelo_nativo": "hum_configuracion_aporte",
+  "actualizar_secuencia": false,
+  "datos": [
     {
-      "model": "humano.HumConfiguracionAporte",
       "pk": 1,
-      "fields": {"tipo": "PENSION", "orden": 1}
+      "campos": {"tipo": "PENSION", "orden": 1}
     },
     {
       "model": "humano.HumConfiguracionAporte",
       "pk": 2,
-      "fields": {"tipo": "SALUD", "orden": 2}
+      "campos": {"tipo": "SALUD", "orden": 2}
     },
     {
       "model": "humano.HumConfiguracionAporte",
       "pk": 3,
-      "fields": {"tipo": "CAJA", "orden": 3}
+      "campos": {"tipo": "CAJA", "orden": 3}
     },
     {
       "model": "humano.HumConfiguracionAporte",
       "pk": 4,
-      "fields": {"tipo": "RIESGO", "orden": 4}
+      "campos": {"tipo": "RIESGO", "orden": 4}
     },
     {
       "model": "humano.HumConfiguracionAporte",
       "pk": 5,
-      "fields": {"tipo": "SENA", "orden": 5}
+      "campos": {"tipo": "SENA", "orden": 5}
     },
     {
       "model": "humano.HumConfiguracionAporte",
       "pk": 6,
-      "fields": {"tipo": "ICBF", "orden": 6}
-    }
-           
+      "campos": {"tipo": "ICBF", "orden": 6}
+    }           
   ]
+}
+
   

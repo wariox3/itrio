@@ -1,122 +1,224 @@
-[
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 100,
-    "fields": {"nombre": "Factura venta", "codigo_dian": "01", "grupo":1}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 101,
-    "fields": {"nombre": "Nota credito venta", "codigo_dian": "01", "grupo":1}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 102,
-    "fields": {"nombre": "Nota debito venta", "codigo_dian": "01", "grupo":1}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 103,
-    "fields": {"nombre": "Factura recurrente", "codigo_dian": "01", "grupo":1}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 104,
-    "fields": {"nombre": "Cuenta cobro", "codigo_dian": "01", "grupo":1}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 105,
-    "fields": {"nombre": "Factura POS", "codigo_dian": "01", "grupo":1}
-  },  
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 106,
-    "fields": {"nombre": "Pedido cliente", "codigo_dian": "01", "grupo":1}
-  },    
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 200,
-    "fields": {"nombre": "Pago", "codigo_dian": "01", "grupo":2}
-  },   
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 201,
-    "fields": {"nombre": "Saldo inicial CXC", "codigo_dian": "01", "grupo":2}
-  },    
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 300,
-    "fields": {"nombre": "Compra", "codigo_dian": "01", "grupo":3}
-  }, 
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 301,
-    "fields": {"nombre": "Nota credito compra", "codigo_dian": "01", "grupo":3}
-  },  
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 302,
-    "fields": {"nombre": "Nota credito venta", "codigo_dian": "01", "grupo":3}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 303,
-    "fields": {"nombre": "Documento soporte", "codigo_dian": "01", "grupo":3}
-  },  
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 304,
-    "fields": {"nombre": "Nota ajuste", "codigo_dian": "01", "grupo":3}
-  }, 
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 400,
-    "fields": {"nombre": "Egreso", "codigo_dian": "01", "grupo":4}
-  },   
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 401,
-    "fields": {"nombre": "Saldo inicial CXP", "codigo_dian": "01", "grupo":4}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 500,
-    "fields": {"nombre": "Entrada", "codigo_dian": "01", "grupo":5}
-  },  
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 501,
-    "fields": {"nombre": "Salida", "codigo_dian": "01", "grupo":5}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 601,
-    "fields": {"nombre": "Asiento", "codigo_dian": "01", "grupo":6}
-  },  
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 602,
-    "fields": {"nombre": "Depreciacion", "codigo_dian": "01", "grupo":6}
-  },   
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 603,
-    "fields": {"nombre": "Cierre", "codigo_dian": "01", "grupo":6}
-  },  
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 701,
-    "fields": {"nombre": "Nomina", "codigo_dian": "01", "grupo":7}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 702,
-    "fields": {"nombre": "Nomina electronica", "codigo_dian": "01", "grupo":7}
-  },
-  {
-    "model": "general.GenDocumentoClase",
-    "pk": 703,
-    "fields": {"nombre": "Seguridad social", "codigo_dian": "01", "grupo":7}
-  }   
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenDocumentoClase",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 100,
+      "campos": {
+        "nombre": "Factura venta",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 101,
+      "campos": {
+        "nombre": "Nota credito venta",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 102,
+      "campos": {
+        "nombre": "Nota debito venta",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 103,
+      "campos": {
+        "nombre": "Factura recurrente",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 104,
+      "campos": {
+        "nombre": "Cuenta cobro",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 105,
+      "campos": {
+        "nombre": "Factura POS",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 106,
+      "campos": {
+        "nombre": "Pedido cliente",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 200,
+      "campos": {
+        "nombre": "Pago",
+        "codigo_dian": "01",
+        "grupo": 2
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 201,
+      "campos": {
+        "nombre": "Saldo inicial CXC",
+        "codigo_dian": "01",
+        "grupo": 2
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 300,
+      "campos": {
+        "nombre": "Compra",
+        "codigo_dian": "01",
+        "grupo": 3
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 301,
+      "campos": {
+        "nombre": "Nota credito compra",
+        "codigo_dian": "01",
+        "grupo": 3
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 302,
+      "campos": {
+        "nombre": "Nota credito venta",
+        "codigo_dian": "01",
+        "grupo": 3
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 303,
+      "campos": {
+        "nombre": "Documento soporte",
+        "codigo_dian": "01",
+        "grupo": 3
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 304,
+      "campos": {
+        "nombre": "Nota ajuste",
+        "codigo_dian": "01",
+        "grupo": 3
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 400,
+      "campos": {
+        "nombre": "Egreso",
+        "codigo_dian": "01",
+        "grupo": 4
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 401,
+      "campos": {
+        "nombre": "Saldo inicial CXP",
+        "codigo_dian": "01",
+        "grupo": 4
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 500,
+      "campos": {
+        "nombre": "Entrada",
+        "codigo_dian": "01",
+        "grupo": 5
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 501,
+      "campos": {
+        "nombre": "Salida",
+        "codigo_dian": "01",
+        "grupo": 5
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 601,
+      "campos": {
+        "nombre": "Asiento",
+        "codigo_dian": "01",
+        "grupo": 6
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 602,
+      "campos": {
+        "nombre": "Depreciacion",
+        "codigo_dian": "01",
+        "grupo": 6
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 603,
+      "campos": {
+        "nombre": "Cierre",
+        "codigo_dian": "01",
+        "grupo": 6
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 701,
+      "campos": {
+        "nombre": "Nomina",
+        "codigo_dian": "01",
+        "grupo": 7
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 702,
+      "campos": {
+        "nombre": "Nomina electronica",
+        "codigo_dian": "01",
+        "grupo": 7
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 703,
+      "campos": {
+        "nombre": "Seguridad social",
+        "codigo_dian": "01",
+        "grupo": 7
+      }
+    }
+  ]
+}

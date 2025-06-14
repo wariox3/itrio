@@ -1,127 +1,183 @@
-[
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 1,
-        "fields": {"nombre": "Salario"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 2,
-        "fields": {"nombre": "Extras"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 3,
-        "fields": {"nombre": "Devengado prestacional"}
-    },    
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 4,
-        "fields": {"nombre": "Devengado no prestacional"}
-    },    
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 5,
-        "fields": {"nombre": "Salud"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 6,
-        "fields": {"nombre": "Pension"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 7,
-        "fields": {"nombre": "Transporte"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 8,
-        "fields": {"nombre": "Credito"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 9,
-        "fields": {"nombre": "Fondo solidaridad pensional"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 10,
-        "fields": {"nombre": "Retencion en la fuente"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 11,
-        "fields": {"nombre": "Descuento"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 12,
-        "fields": {"nombre": "Incapacidad por enfermedad general"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 13,
-        "fields": {"nombre": "Incapacidad por enfermedad laboral"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 14,
-        "fields": {"nombre": "Licencia maternidad / paternidad"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 15,
-        "fields": {"nombre": "Licencia de luto"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 16,
-        "fields": {"nombre": "Licencia remunerada"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 17,
-        "fields": {"nombre": "Licencia no remunerada"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 18,
-        "fields": {"nombre": "Vacaciones disfrutadas"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 19,
-        "fields": {"nombre": "Vacaciones dinero"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 20,
-        "fields": {"nombre": "Primas"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 21,
-        "fields": {"nombre": "Primas liquidacion"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 22,
-        "fields": {"nombre": "Cesantias"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 23,
-        "fields": {"nombre": "Cesantias liquidacion"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 24,
-        "fields": {"nombre": "Intereses"}
-    },
-    {
-        "model": "humano.HumConceptoTipo",
-        "pk": 25,
-        "fields": {"nombre": "Insteres liquidacion"}
-    }    
-]
+{
+    "aplicacion": "humano",
+    "modelo": "HumConceptoTipo",
+    "modelo_nativo": "",
+    "actualizar_secuencia": false,
+    "datos": [
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 1,
+            "campos": {
+                "nombre": "Salario"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 2,
+            "campos": {
+                "nombre": "Extras"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 3,
+            "campos": {
+                "nombre": "Devengado prestacional"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 4,
+            "campos": {
+                "nombre": "Devengado no prestacional"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 5,
+            "campos": {
+                "nombre": "Salud"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 6,
+            "campos": {
+                "nombre": "Pension"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 7,
+            "campos": {
+                "nombre": "Transporte"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 8,
+            "campos": {
+                "nombre": "Credito"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 9,
+            "campos": {
+                "nombre": "Fondo solidaridad pensional"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 10,
+            "campos": {
+                "nombre": "Retencion en la fuente"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 11,
+            "campos": {
+                "nombre": "Descuento"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 12,
+            "campos": {
+                "nombre": "Incapacidad por enfermedad general"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 13,
+            "campos": {
+                "nombre": "Incapacidad por enfermedad laboral"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 14,
+            "campos": {
+                "nombre": "Licencia maternidad / paternidad"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 15,
+            "campos": {
+                "nombre": "Licencia de luto"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 16,
+            "campos": {
+                "nombre": "Licencia remunerada"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 17,
+            "campos": {
+                "nombre": "Licencia no remunerada"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 18,
+            "campos": {
+                "nombre": "Vacaciones disfrutadas"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 19,
+            "campos": {
+                "nombre": "Vacaciones dinero"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 20,
+            "campos": {
+                "nombre": "Primas"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 21,
+            "campos": {
+                "nombre": "Primas liquidacion"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 22,
+            "campos": {
+                "nombre": "Cesantias"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 23,
+            "campos": {
+                "nombre": "Cesantias liquidacion"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 24,
+            "campos": {
+                "nombre": "Intereses"
+            }
+        },
+        {
+            "model": "humano.HumConceptoTipo",
+            "pk": 25,
+            "campos": {
+                "nombre": "Insteres liquidacion"
+            }
+        }
+    ]
+}

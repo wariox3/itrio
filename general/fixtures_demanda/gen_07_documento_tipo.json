@@ -1,177 +1,87 @@
-[
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 1,
-    "fields": {
-      "cuenta_cobrar": 23
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 2,
-    "fields": {
-      "cuenta_cobrar": 23
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 3,
-    "fields": {
-      "cuenta_cobrar": 23
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 4,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 5,
-    "fields": {
-      "cuenta_pagar": 24
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 6,
-    "fields": {
-      "cuenta_pagar": 24
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 7,
-    "fields": {
-      "cuenta_pagar": 24
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 8,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 9,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 10,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 11,
-    "fields": {
-      "cuenta_pagar": 24
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 12,
-    "fields": {
-      "cuenta_pagar": 24
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 13,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 14,
-    "fields": {
-      "cuenta_pagar": 25
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 15,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 16,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 17,
-    "fields": {
-      "cuenta_cobrar": 23
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 18,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 19,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 20,
-    "fields": {
-      "cuenta_pagar": 28
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 21,
-    "fields": {
-      "cuenta_pagar": 26
-    }
-  },  
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 22,
-    "fields": {
-
-    }
-  },  
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 23,
-    "fields": {
-
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 24,
-    "fields": {
-      "cuenta_cobrar": 23
-    }
-  },
-  {
-    "model": "general.GenDocumentoTipo",
-    "pk": 25,
-    "fields": {
-
-    }
-  }    
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenDocumentoTipo",
+  "modelo_nativo": "gen_documento_tipo",
+  "actualizar_secuencia": true,
+  "datos": [
+    {      
+      "pk": 1,
+      "campos": {
+        "cuenta_cobrar": 23
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "cuenta_cobrar": 23
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "cuenta_cobrar": 23
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "cuenta_pagar": 24
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "cuenta_pagar": 24
+      }
+    },
+    {
+      "pk": 7,
+      "campos": {
+        "cuenta_pagar": 24
+      }
+    },
+    {
+      "pk": 11,
+      "campos": {
+        "cuenta_pagar": 24
+      }
+    },
+    {
+      "pk": 12,
+      "campos": {
+        "cuenta_pagar": 24
+      }
+    },
+    {
+      "pk": 14,
+      "campos": {
+        "cuenta_pagar": 25
+      }
+    },
+    {
+      "pk": 17,
+      "campos": {
+        "cuenta_cobrar": 23
+      }
+    },
+    {
+      "pk": 20,
+      "campos": {
+        "cuenta_pagar": 28
+      }
+    },
+    {
+      "pk": 21,
+      "campos": {
+        "cuenta_pagar": 26
+      }
+    },    
+    {
+      
+      "pk": 24,
+      "campos": {
+        "cuenta_cobrar": 23
+      }
+    }    
+  ]  
+}

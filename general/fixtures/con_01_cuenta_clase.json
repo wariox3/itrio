@@ -1,47 +1,71 @@
-[
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 1,
-    "fields": {"nombre": "Activo"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 2,
-    "fields": {"nombre": "Pasivo"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 3,
-    "fields": {"nombre": "Patrimonio"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 4,
-    "fields": {"nombre": "Ingresos"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 5,
-    "fields": {"nombre": "Gastos"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 6,
-    "fields": {"nombre": "Costos de venta"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 7,
-    "fields": {"nombre": "Costos de produccion o de operacion"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 8,
-    "fields": {"nombre": "Cuentas de orden deudoras"}
-  },
-  {
-    "model": "contabilidad.ConCuentaClase",
-    "pk": 9,
-    "fields": {"nombre": "Cuentas de orden acreedoras"}
-  }
-]
+{
+  "aplicacion": "contabilidad",
+  "modelo": "ConCuentaClase",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 1,
+      "campos": {
+        "nombre": "Activo"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 2,
+      "campos": {
+        "nombre": "Pasivo"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 3,
+      "campos": {
+        "nombre": "Patrimonio"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 4,
+      "campos": {
+        "nombre": "Ingresos"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 5,
+      "campos": {
+        "nombre": "Gastos"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 6,
+      "campos": {
+        "nombre": "Costos de venta"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 7,
+      "campos": {
+        "nombre": "Costos de produccion o de operacion"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 8,
+      "campos": {
+        "nombre": "Cuentas de orden deudoras"
+      }
+    },
+    {
+      "model": "contabilidad.ConCuentaClase",
+      "pk": 9,
+      "campos": {
+        "nombre": "Cuentas de orden acreedoras"
+      }
+    }
+  ]
+}

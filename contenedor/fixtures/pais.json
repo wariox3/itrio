@@ -1,7 +1,16 @@
-[
-  {
-    "model": "contenedor.CtnPais",
-    "pk": "CO",
-    "fields": {"nombre": "Colombia", "codigo":"169"}
-  }
-]
+{
+  "aplicacion": "contenedor",
+  "modelo": "CtnPais",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "contenedor.CtnPais",
+      "pk": "CO",
+      "campos": {
+        "nombre": "Colombia",
+        "codigo": "169"
+      }
+    }
+  ]
+}

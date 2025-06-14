@@ -1,10 +1,13 @@
-[
-    {
-        "model": "humano.HumSucursal",
-        "pk": 1,
-        "fields": {
-            "nombre": "General", "codigo":"1"
-        },
-        "inicio": true
-    }
-]
+{
+    "aplicacion": "humano",
+    "modelo": "HumSucursal",
+    "modelo_nativo": "hum_sucursal",
+    "actualizar_secuencia": true,
+    "datos": [
+        {
+            "pk": 1,
+            "campos": {"nombre": "General", "codigo":"1"}
+        }
+    ]
+}
+

@@ -1,17 +1,29 @@
-[
-  {
-    "model": "general.GenCuentaBancoTipo",
-    "pk": 1,
-    "fields": {"nombre": "Banco nacional"}
-  },
-  {
-    "model": "general.GenCuentaBancoTipo",
-    "pk": 2,
-    "fields": {"nombre": "Tarjeta de credito"}
-  },
-  {
-    "model": "general.GenCuentaBancoTipo",
-    "pk": 3,
-    "fields": {"nombre": "Efectivo"}
-  }
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenCuentaBancoTipo",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "model": "general.GenCuentaBancoTipo",
+      "pk": 1,
+      "campos": {
+        "nombre": "Banco nacional"
+      }
+    },
+    {
+      "model": "general.GenCuentaBancoTipo",
+      "pk": 2,
+      "campos": {
+        "nombre": "Tarjeta de credito"
+      }
+    },
+    {
+      "model": "general.GenCuentaBancoTipo",
+      "pk": 3,
+      "campos": {
+        "nombre": "Efectivo"
+      }
+    }
+  ]
+}

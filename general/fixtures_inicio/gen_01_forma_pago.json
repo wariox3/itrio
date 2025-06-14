@@ -1,8 +1,12 @@
-[
-  {
-    "model": "general.GenFormaPago",
-    "pk": 1,
-    "fields": {"nombre": "Proveedores nacionales"},
-    "inicio": true
-  }
-]
+{
+  "aplicacion": "general",
+  "modelo": "GenFormaPago",
+  "modelo_nativo": "gen_forma_pago",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {"nombre": "Proveedores nacionales"}
+    }
+  ]
+}

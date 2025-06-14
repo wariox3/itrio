@@ -1,58 +1,64 @@
-[
-  {
-      "model": "humano.HumSubtipoCotizante",
-      "pk": 1,
-      "fields": {
-          "codigo": "00",
-          "nombre": "SIN PENSIONAR"
-      }
-  },
-  {
-    "model": "humano.HumSubtipoCotizante",
-    "pk": 2,
-    "fields": {
-        "codigo": "01",
-        "nombre": "Dependiente pensionado por vejez activo (SI no es pensionado es = a 00)"
-    }
-  },
-  {
-    "model": "humano.HumSubtipoCotizante",
-    "pk": 3,
-    "fields": {
-        "codigo": "02",
-        "nombre": "Independiente pensionado por vejez activo"
-    }
-},
 {
-    "model": "humano.HumSubtipoCotizante",
-    "pk": 4,
-    "fields": {
-        "codigo": "03",
-        "nombre": "Cotizante no obligado a cotización a pensiones por edad"
-    }
-},
-{
-    "model": "humano.HumSubtipoCotizante",
-    "pk": 5,
-    "fields": {
-        "codigo": "04",
-        "nombre": "Cotizante con requisitos cumplidos para pensión."
-    }
-},
-{
-    "model": "humano.HumSubtipoCotizante",
-    "pk": 6,
-    "fields": {
-        "codigo": "05",
-        "nombre": "Cotizante a quien se le ha reconocido indemnización sustitutiva o devolución de saldos"
-    }
-},
-{
-    "model": "humano.HumSubtipoCotizante",
-    "pk": 7,
-    "fields": {
-        "codigo": "06",
-        "nombre": "Cotizante perteneciente a un régimen exceptuado de pensiones o a entidades autorizadas para recibir aportes exclusivamente de un grupo de sus propio"
-    }
+    "aplicacion": "humano",
+    "modelo": "HumSubtipoCotizante",
+    "modelo_nativo": "",
+    "actualizar_secuencia": false,
+    "datos": [
+        {
+            "model": "humano.HumSubtipoCotizante",
+            "pk": 1,
+            "campos": {
+                "codigo": "00",
+                "nombre": "SIN PENSIONAR"
+            }
+        },
+        {
+            "model": "humano.HumSubtipoCotizante",
+            "pk": 2,
+            "campos": {
+                "codigo": "01",
+                "nombre": "Dependiente pensionado por vejez activo (SI no es pensionado es = a 00)"
+            }
+        },
+        {
+            "model": "humano.HumSubtipoCotizante",
+            "pk": 3,
+            "campos": {
+                "codigo": "02",
+                "nombre": "Independiente pensionado por vejez activo"
+            }
+        },
+        {
+            "model": "humano.HumSubtipoCotizante",
+            "pk": 4,
+            "campos": {
+                "codigo": "03",
+                "nombre": "Cotizante no obligado a cotización a pensiones por edad"
+            }
+        },
+        {
+            "model": "humano.HumSubtipoCotizante",
+            "pk": 5,
+            "campos": {
+                "codigo": "04",
+                "nombre": "Cotizante con requisitos cumplidos para pensión."
+            }
+        },
+        {
+            "model": "humano.HumSubtipoCotizante",
+            "pk": 6,
+            "campos": {
+                "codigo": "05",
+                "nombre": "Cotizante a quien se le ha reconocido indemnización sustitutiva o devolución de saldos"
+            }
+        },
+        {
+            "model": "humano.HumSubtipoCotizante",
+            "pk": 7,
+            "campos": {
+                "codigo": "06",
+                "nombre": "Cotizante perteneciente a un régimen exceptuado de pensiones o a entidades autorizadas para recibir aportes exclusivamente de un grupo de sus propio"
+            }
+        }
+    ]
 }
-]

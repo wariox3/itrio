@@ -1,122 +1,128 @@
-[
+{
+  "aplicacion": "humano",
+  "modelo": "HumConceptoNomina",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
     {
-        "model": "humano.HumConceptoNomina",
-        "pk": 1,
-        "fields": {
-            "nombre": "Diurna y/o salario",
-            "concepto": 1
-        }
+      "model": "humano.HumConceptoNomina",
+      "pk": 1,
+      "campos": {
+        "nombre": "Diurna y/o salario",
+        "concepto": 1
+      }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 2,
-      "fields": {
-          "nombre": "Nocturna",
-          "concepto": 2
+      "campos": {
+        "nombre": "Nocturna",
+        "concepto": 2
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 3,
-      "fields": {
-          "nombre": "Festiva diurna",
-          "concepto": 3
+      "campos": {
+        "nombre": "Festiva diurna",
+        "concepto": 3
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 4,
-      "fields": {
-          "nombre": "Festiva nocturna",
-          "concepto": 4
+      "campos": {
+        "nombre": "Festiva nocturna",
+        "concepto": 4
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 5,
-      "fields": {
-          "nombre": "Extra diurna",
-          "concepto": 5
+      "campos": {
+        "nombre": "Extra diurna",
+        "concepto": 5
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 6,
-      "fields": {
-          "nombre": "Extra nocturna",
-          "concepto": 6
+      "campos": {
+        "nombre": "Extra nocturna",
+        "concepto": 6
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 7,
-      "fields": {
-          "nombre": "Extra festiva diurna",
-          "concepto": 7
+      "campos": {
+        "nombre": "Extra festiva diurna",
+        "concepto": 7
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 8,
-      "fields": {
-          "nombre": "Extra festiva nocturna",
-          "concepto": 8
+      "campos": {
+        "nombre": "Extra festiva nocturna",
+        "concepto": 8
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 9,
-      "fields": {
-          "nombre": "Recargo nocturno",
-          "concepto": 9
+      "campos": {
+        "nombre": "Recargo nocturno",
+        "concepto": 9
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 10,
-      "fields": {
-          "nombre": "Recargo festivo diurno",
-          "concepto": 10
+      "campos": {
+        "nombre": "Recargo festivo diurno",
+        "concepto": 10
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 11,
-      "fields": {
-          "nombre": "Recargo festivo nocturno",
-          "concepto": 11
+      "campos": {
+        "nombre": "Recargo festivo nocturno",
+        "concepto": 11
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 12,
-      "fields": {
-          "nombre": "Auxilio transporte",
-          "concepto": 16
+      "campos": {
+        "nombre": "Auxilio transporte",
+        "concepto": 16
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 13,
-      "fields": {
-          "nombre": "Prima",
-          "concepto": 32
+      "campos": {
+        "nombre": "Prima",
+        "concepto": 32
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 14,
-      "fields": {
-          "nombre": "Cesantias anuales",
-          "concepto": 34
+      "campos": {
+        "nombre": "Cesantias anuales",
+        "concepto": 34
       }
     },
     {
       "model": "humano.HumConceptoNomina",
       "pk": 15,
-      "fields": {
-          "nombre": "Intereses anuales",
-          "concepto": 36
+      "campos": {
+        "nombre": "Intereses anuales",
+        "concepto": 36
       }
-    }       
-]
+    }
+  ]
+}
