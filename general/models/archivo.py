@@ -11,6 +11,7 @@ class GenArchivo(models.Model):
     uuid = models.CharField(max_length=100, null=True)
     codigo = models.IntegerField(null=True)
     modelo = models.CharField(max_length=100, null=True)
+    url = models.CharField(max_length=255, null=True)
     documento = models.ForeignKey(GenDocumento, null=True, on_delete=models.PROTECT, related_name='archivos_documento_rel')
 
     class Meta:

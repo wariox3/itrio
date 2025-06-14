@@ -13,11 +13,9 @@ from contenedor.models import CtnDireccion
 from ruteo.serializers.visita import RutVisitaSerializador
 from datetime import datetime
 from django.utils import timezone
-from utilidades.zinc import Zinc
 from utilidades.holmio import Holmio
 from utilidades.google import Google
-from servicios.archivo_servicio import ArchivoServicio
-from utilidades.utilidades import Utilidades
+from utilidades.backblaze import Backblaze
 from shapely.geometry import Point, Polygon
 from math import radians, cos, sin, asin, sqrt, atan2
 from django.db.models import Sum, F, Count
@@ -25,14 +23,14 @@ from django.db.models.functions import Coalesce
 from django.db import transaction
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from io import BytesIO
-from decimal import Decimal
-from utilidades.backblaze import Backblaze
+from decimal import Decimal, ROUND_HALF_UP
 import re
 import gc
 import base64
 import openpyxl
 import numpy as np
-from decimal import Decimal, ROUND_HALF_UP
+import json
+
 
 
 
@@ -94,6 +92,15 @@ def construir_matriz_distancias(visitas, punto_inicial):
             matriz[i][j] = haversine(puntos[i][0], puntos[i][1], puntos[j][0], puntos[j][1])
     
     return matriz
+
+def json_texto(texto):
+    if not texto or not texto.strip():
+        return None        
+    try:
+        datos = json.loads(texto)
+        return datos if isinstance(datos, dict) else None
+    except (json.JSONDecodeError, ValueError):
+        return None
 
 class RutVisitaViewSet(viewsets.ModelViewSet):
     queryset = RutVisita.objects.all()
@@ -1101,6 +1108,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         imagenes = request.FILES.getlist('imagenes')
         firmas = request.FILES.getlist('firmas')
         fecha_entrega_texto = request.POST.get('fecha_entrega')
+        datos_adicionales = request.POST.get('datos_adicionales')        
         if id and fecha_entrega_texto:
             try:
                 fecha_entrega_naive = datetime.strptime(fecha_entrega_texto, '%Y-%m-%d %H:%M')
@@ -1120,9 +1128,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     except ValueError:
                         return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
                     with transaction.atomic():          
-                        configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]
+                        configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]                                               
+                        datos_entrega = json_texto(datos_adicionales)
                         visita.estado_entregado = True
                         visita.fecha_entrega = fecha_entrega
+                        visita.datos_entrega = datos_entrega
                         visita.save()
                         despacho.visitas_entregadas += 1
                         despacho.save()                                    
@@ -1132,7 +1142,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             for imagen in imagenes:       
                                 file_content = imagen.read()   
                                 nombre_archivo = f'{id}.jpg'                                                   
-                                id_almacenamiento, tamano, tipo, uuid = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                                id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
                                 archivo = GenArchivo()
                                 archivo.archivo_tipo_id = 2
                                 archivo.almacenamiento_id = id_almacenamiento
@@ -1142,12 +1152,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 archivo.uuid = uuid
                                 archivo.codigo = id
                                 archivo.modelo = "RutVisita"
+                                archivo.url = url
                                 archivo.save()
                         if firmas:
                             for firma in firmas:       
                                 file_content = firma.read()                                                            
                                 nombre_archivo = f'{id}.png'                                                   
-                                id_almacenamiento, tamano, tipo, uuid = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                                id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
                                 archivo = GenArchivo()
                                 archivo.archivo_tipo_id = 3
                                 archivo.almacenamiento_id = id_almacenamiento
@@ -1157,8 +1168,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 archivo.uuid = uuid
                                 archivo.codigo = id
                                 archivo.modelo = "RutVisita"
-                                archivo.save()
-                        
+                                archivo.url = url
+                                archivo.save()                        
                         if configuracion['rut_sincronizar_complemento']:
                             imagenes_b64 = []
                             if imagenes:                        
@@ -1176,7 +1187,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                     firmas_b64.append({
                                         'base64': base64_encoded,
                                     })                                                                                                                                                                                                     
-                            self.entrega_complemento(visita, imagenes_b64, firmas_b64)
+                            self.entrega_complemento(visita, imagenes_b64, firmas_b64, datos_entrega)
                         return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
@@ -1261,7 +1272,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     firmas_b64.append({
                         'base64': contenido_base64,
                     })                              
-            self.entrega_complemento(visita, imagenes_b64, firmas_b64)
+            self.entrega_complemento(visita, imagenes_b64, firmas_b64, visita.datos_entrega)
         return Response({'mensaje': f'Entrega complemento {visitas.count()}'}, status=status.HTTP_200_OK)
 
     def limpiar_direccion(self, direccion):
@@ -1274,7 +1285,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         direccion = direccion[:150]        
         return direccion
     
-    def entrega_complemento(self, visita: RutVisita, imagenes_b64, firmas_b64):
+    def entrega_complemento(self, visita: RutVisita, imagenes_b64, firmas_b64, datos_entrega):
         holmio = Holmio()
         fecha_formateada = visita.fecha_entrega.strftime('%Y-%m-%d %H:%M')
         parametros = {
@@ -1286,6 +1297,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             parametros['imagenes'] = imagenes_b64
         if firmas_b64:
             parametros['firmarBase64'] = firmas_b64[0]
+        if datos_entrega:
+            parametros.update(datos_entrega)                    
         respuesta = holmio.entrega(parametros)
         visita.estado_entregado_complemento = True
         visita.save()

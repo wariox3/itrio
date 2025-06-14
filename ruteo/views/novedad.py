@@ -4,10 +4,13 @@ from rest_framework.response import Response
 from ruteo.models.novedad import RutNovedad
 from ruteo.models.visita import RutVisita
 from general.models.archivo import GenArchivo
+from general.models.configuracion import GenConfiguracion
 from ruteo.serializers.novedad import RutNovedadSerializador
 from django.db import transaction
 from django.utils import timezone
 from utilidades.backblaze import Backblaze
+from utilidades.holmio import Holmio
+import base64
 
 class RutNovedadViewSet(viewsets.ModelViewSet):
     queryset = RutNovedad.objects.all()
@@ -80,7 +83,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                         for imagen in imagenes:
                             file_content = imagen.read()                                                                 
                             nombre_archivo = f'{novedad.id}.jpg'                                                   
-                            id_almacenamiento, tamano, tipo, uuid = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                            id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
                             archivo = GenArchivo()
                             archivo.archivo_tipo_id = 2
                             archivo.almacenamiento_id = id_almacenamiento
@@ -90,13 +93,37 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                             archivo.uuid = uuid
                             archivo.codigo = novedad.id
                             archivo.modelo = "RutNovedad"
+                            archivo.url = url
                             archivo.save()
+                    configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]
+                    if configuracion['rut_sincronizar_complemento']:
+                        imagenes_b64 = []
+                        if imagenes:                        
+                            for imagen in imagenes:       
+                                file_content = imagen.read()   
+                                base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
+                                imagenes_b64.append({
+                                    'base64': base64_encoded,
+                                })                                                                                                                                                                                                        
+                        self.entrega_complemento(novedad, imagenes_b64)
                     return Response({'id': novedad.id}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)                              
                 
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+
+    def entrega_complemento(self, novedad: RutNovedad, imagenes_b64):
+        holmio = Holmio()        
+        parametros = {
+            'codigoGuia': novedad.visita.numero,            
+            'codigoNovedadTipo': novedad.novedad_tipo_id,
+            'usuario': 'ruteo'
+        }
+        if imagenes_b64:
+            parametros['imagenes'] = imagenes_b64                    
+        respuesta = holmio.novedad(parametros)
+        return True          
 
 
 
