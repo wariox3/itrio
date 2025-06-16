@@ -15,9 +15,11 @@ from humano.models.contrato_tipo import HumContratoTipo
 from humano.models.motivo_terminacion import HumMotivoTerminacion
 from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
-from humano.serializers.contrato import HumContratoSerializador
+from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador
 from humano.serializers.liquidacion import HumLiquidacionSerializador
 from django.db.models.deletion import ProtectedError
+from humano.filters.contrato import ContratoFilter
+from utilidades.exportar_excel import ExportarExcel
 from datetime import datetime
 import base64
 from io import BytesIO
@@ -28,6 +30,34 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
     queryset = HumContrato.objects.all()
     serializer_class = HumContratoSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = ContratoFilter 
+    queryset = HumContrato.objects.all()   
+    serializadores = {'lista': HumContratoListaSerializador}
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return HumContratoSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
+
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('excel'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExportarExcel(serializer.data, sheet_name="contratos", filename="contratos.xlsx")
+            return exporter.export()
+        return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         raw = request.data        

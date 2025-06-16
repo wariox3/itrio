@@ -16,6 +16,27 @@ from humano.models.entidad import HumEntidad
 from humano.models.tiempo import HumTiempo
 from humano.models.tipo_costo import HumTipoCosto
 
+class HumContratoListaSerializador(serializers.ModelSerializer):       
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    contacto__id = serializers.CharField(source='contacto.id', read_only=True)
+    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True)
+    contrato_tipo__nombre = serializers.CharField(source='contrato_tipo.nombre', read_only=True)
+    class Meta:
+        model = HumContrato
+        fields = ['id',
+                'contrato_tipo__nombre',
+                'contacto__id',
+                'fecha_desde',
+                'fecha_hasta',
+                'contacto__numero_identificacion',
+                'contacto__nombre_corto',
+                'grupo__nombre',
+                'salario',
+                'estado_terminado']
+
+#deprecated
+
 class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
     contrato_tipo = serializers.PrimaryKeyRelatedField(queryset=HumContratoTipo.objects.all())
     grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all())
