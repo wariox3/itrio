@@ -13,6 +13,6 @@ class HumCreditoViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         total = serializer.validated_data.get('total')
-        abono = serializer.validated_data.get('abono') or 0
+        abono = serializer.validated_data.get('abono', serializer.instance.abono)
         saldo = total - abono
-        serializer.save(saldo=saldo)   
+        serializer.save(saldo=saldo)
