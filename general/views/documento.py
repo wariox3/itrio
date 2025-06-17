@@ -1628,106 +1628,80 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 sheet = wb.active         
             except Exception as e:     
                 return Response({'mensaje':'Error procesando el archivo', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
-            
-            data_documento_detalle = []
+            cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}
+            contactos_map = {str(ct.numero_identificacion): ct.id for ct in GenContacto.objects.all()}
+            data_modelo = []
             errores = False
             errores_datos = []
             registros_importados = 0
             if documento.documento_tipo_id == 13:
                 for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-                    if len(row) == 5:
-                        data = {
-                            'cuenta': row[0],
-                            'numero_identificacion':row[1],
-                            'debito': row[2] if row[2] is not None else 0,
-                            'credito': row[3] if row[3] is not None else 0,
-                            'base': row[4] if row[4] is not None else 0,
-                            'descripcion': row[5]                    
-                        }                    
-                        if not data['cuenta']:
-                            error_dato = {
-                                'fila': i,
-                                'Mensaje': 'Debe digitar la cuenta'
-                            }
-                            errores_datos.append(error_dato)
-                            errores = True
-                        else:
-                            cuenta = ConCuenta.objects.filter(codigo=data['cuenta']).first()
-                            if cuenta is None:
-                                error_dato = {
-                                    'fila': i,
-                                    'Mensaje': f'La cuenta {data["cuenta"]} no existe'
-                                }
-                                errores_datos.append(error_dato)
-                                errores = True
-                            else:
-                                data['cuenta_id'] = cuenta.id
+                    cuenta_codigo = str(row[0])
+                    cuenta_id = cuentas_map.get(cuenta_codigo)
+                    debito = row[2] if row[2] is not None else 0
+                    credito = row[3] if row[3] is not None else 0  
+                    contacto_ident = str(row[1]) if row[1] is not None else None
 
-                        if not data['numero_identificacion']:
-                            error_dato = {
-                                'fila': i,
-                                'Mensaje': 'Debe digitar el numero de identificacion'
-                            }
-                            errores_datos.append(error_dato)
-                            errores = True  
-                        else:
-                            contacto = GenContacto.objects.filter(numero_identificacion=data['numero_identificacion']).first()
-                            if contacto is None:
-                                error_dato = {
-                                    'fila': i,
-                                    'Mensaje': f'El contacto con numero identificacion {data["numero_identificacion"]} no existe'
-                                }
-                                errores_datos.append(error_dato)
-                                errores = True
-                            else:
-                                data['contacto_id'] = contacto.id                                 
-                        
-                        if data['debito'] == 0 and data['credito'] == 0:
-                                error_dato = {
-                                    'fila': i,
-                                    'Mensaje': f'Los debitos y creditos estan en cero'
-                                }
-                                errores_datos.append(error_dato)
-                                errores = True
-                        else:
-                            if data['debito'] != 0 and data['credito'] != 0:
-                                error_dato = {
-                                    'fila': i,
-                                    'Mensaje': f'Los debitos y creditos tienen valores'
-                                }
-                                errores_datos.append(error_dato)
-                                errores = True
-                            else:
-                                total = data['debito']
-                                naturaleza = 'D'
-                                if data['credito'] > 0:
-                                    total = data['credito']
-                                    naturaleza = 'C'
-                                data['naturaleza'] = naturaleza
-                                data['total'] = total
-                        data_documento_detalle.append(data) 
+                    errores_fila = {}               
+
+                    if cuenta_codigo:   
+                        if not cuenta_id:
+                            errores_fila['cuenta'] = [f'Cuenta "{cuenta_codigo}" no encontrada.']
                     else:
+                        errores_fila['cuenta'] = ['La cuenta es requerida']
+                        
+                    if debito == 0 and credito == 0:
+                        errores_fila['movimiento'] = ['Los débitos y créditos están en cero.']
+                    elif debito != 0 and credito != 0:
+                        errores_fila['movimiento'] = ['Los débitos y créditos no pueden tener valores simultáneamente.']
+                    
+                    if errores_fila:
+                        errores = True
+                        errores_datos.append({
+                            'fila': i,
+                            'errores': errores_fila
+                        })
+                        continue
+                        
+                    if credito > 0:
+                        total = credito
+                        naturaleza = 'C'
+                    else:
+                        total = debito
+                        naturaleza = 'D'
+
+                    data = {
+                        'cuenta': cuentas_map.get(cuenta_codigo),
+                        'contacto': contactos_map.get(contacto_ident),
+                        'base': row[4] if row[4] is not None else 0,
+                        'detalle': row[5],
+                        'naturaleza': naturaleza,
+                        'precio': total,
+                        'tipo_registro': 'C',
+                        'documento': documento_id
+                    }
+
+                    serializer = GenDocumentoDetalleSerializador(data=data)
+                    if serializer.is_valid():
+                        data_modelo.append(serializer.validated_data)
+                        registros_importados += 1
+                    else:
+                        errores = True
                         error_dato = {
                             'fila': i,
-                            'Mensaje': f'La linea no tiene 5 columnas'
-                        }
+                            'errores': serializer.errors
+                        }                                    
                         errores_datos.append(error_dato)
-                        errores = True
+   
             if errores == False:
-                for detalle in data_documento_detalle:
-                    GenDocumentoDetalle.objects.create(
-                        documento=documento,
-                        cuenta_id=detalle['cuenta_id'],
-                        contacto_id=detalle['contacto_id'],
-                        total=detalle['total'],
-                        base_impuesto=detalle['base'],
-                        naturaleza=detalle['naturaleza'],
-                        detalle=detalle['descripcion']
-                    )
-                    registros_importados += 1
+                with transaction.atomic():
+                    batch_size = 1000 
+                    for i in range(0, len(data_modelo), batch_size):
+                        batch = data_modelo[i:i + batch_size]
+                        GenDocumentoDetalle.objects.bulk_create([GenDocumentoDetalle(**detalle) for detalle in batch])
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                return Response({'errores': True, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
