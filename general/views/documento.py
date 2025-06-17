@@ -1611,8 +1611,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["post"], url_path=r'importar-detalle',)
-    def importar_detalle(self, request):
+    @action(detail=False, methods=["post"], url_path=r'importar-detalle-cuenta',)
+    def importar_detalle_cuenta_action(self, request):
         raw = request.data
         documento_id = raw.get('documento_id')
         archivo_base64 = raw.get('archivo_base64')
