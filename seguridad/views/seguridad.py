@@ -15,7 +15,7 @@ class Login(TokenObtainPairView):
             turnstile_token = request.data.get('cf_turnstile_response', '')
             proyecto = request.data.get('proyecto', 'REDDOC').upper()
             
-            proyectos_validos = ['REDDOC', 'RUTEO', 'POS', 'RUTEOAPP']
+            proyectos_validos = ['REDDOC', 'RUTEO', 'POS', 'RUTEOAPP', 'CUENTA']
             if proyecto not in proyectos_validos:
                 return Response({
                     'error': 'Proyecto no válido',

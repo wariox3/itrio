@@ -7,19 +7,6 @@ class CloudflareTurnstile:
     
     @classmethod
     def verify_token(cls, token, secret_key, ip_address=None):
-        """Verifica un token de Turnstile con Cloudflare.
-        
-        Args:
-            token (str): Token de respuesta de Turnstile
-            secret_key (str): Clave secreta del sitio
-            ip_address (str, optional): Dirección IP del usuario. Defaults to None.
-        
-        Returns:
-            bool: True si la verificación fue exitosa
-        
-        Raises:
-            ValidationError: Si hay errores en la verificación
-        """
         if not token:
             raise ValidationError({
                 'cf_turnstile_response': "Token de Turnstile no proporcionado"
