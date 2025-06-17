@@ -13,6 +13,8 @@ from datetime import datetime
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import Paragraph
 from django.db.models import Sum
+from collections import OrderedDict
+from django.db.models import Prefetch
 from collections import defaultdict
 
 class FormatoFacturaPOS():
@@ -108,8 +110,25 @@ class FormatoFacturaPOS():
         dibujar_linea(p, x, y, POS_SIZE[0] - x, y, punteada=True, grosor=0.5)
         y -= 5 * mm
 
-        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'impuesto', 'total','item__nombre', 'item_id')
+        # 1. Obtenemos todos los detalles del documento
+        documento_detalles = GenDocumentoDetalle.objects.filter(
+            documento_id=documento['id']
+        ).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'total', 'item__nombre')
 
+        # 2. Obtenemos todos los impuestos relacionados en una sola consulta
+        impuestos_detalles = GenDocumentoImpuesto.objects.filter(
+            documento_detalle__documento_id=documento['id']
+        ).select_related('impuesto').values(
+            'documento_detalle_id', 'impuesto__nombre'
+        )
+
+        # 3. Creamos un diccionario para mapear detalle_id -> lista de nombres de impuestos
+        impuestos_por_detalle = defaultdict(list)
+        for imp in impuestos_detalles:
+            if imp['impuesto__nombre']:
+                impuestos_por_detalle[imp['documento_detalle_id']].append(imp['impuesto__nombre'])
+
+        # 4. Configuración inicial del PDF
         p.setFont("Courier-Bold", 7)
         p.drawString(x, y, "Ítem")
         p.drawString(x + 40 * mm, y, "Cant")
@@ -118,8 +137,18 @@ class FormatoFacturaPOS():
 
         p.setFont("Courier", 7)
         cantidad_total_items = 0
+
+        # 5. Procesamos los detalles con sus impuestos
         for detalle in documento_detalles:
-            item_paragraph = Paragraph(detalle['item__nombre'], estilo_item)
+            # Construimos el nombre del ítem con impuestos si existen
+            nombre_item = detalle['item__nombre']
+            impuestos = impuestos_por_detalle.get(detalle['id'], [])
+            
+            if impuestos:
+                nombre_item += f" ({', '.join(impuestos)})"
+            
+            # Dibujamos los elementos en el PDF
+            item_paragraph = Paragraph(nombre_item, estilo_item)
             item_paragraph.wrapOn(p, 40 * mm, 20 * mm)
             item_paragraph.drawOn(p, x, y - item_paragraph.height + 4 * mm)
 
@@ -149,7 +178,7 @@ class FormatoFacturaPOS():
         dibujar_linea(p, x, y, POS_SIZE[0] - x, y, punteada=True, grosor=0.5)
         y -= 4 * mm
 
-        p.drawString(x, y, "Vta gravada:")
+        p.drawString(x, y, "Vta antes de impuestos:")
         p.drawRightString(x + 70 * mm, y, f"{documento['subtotal']:,.0f}")
         y -= 4 * mm
 
@@ -171,18 +200,37 @@ class FormatoFacturaPOS():
             'impuesto_id', 'impuesto__nombre_extendido', 'base', 'total_operado'
         ).order_by('impuesto_id')
 
-        # Diccionario para acumular los valores por tipo de impuesto
-        acumulador_impuestos = defaultdict(lambda: {'base': 0, 'total_operado': 0})
+        # Obtener el subtotal y base_impuesto del documento
+        subtotal = documento.get('subtotal', 0)
+        base_impuesto = documento.get('base_impuesto', 0)
 
-        # Acumular los valores
+        # Usar OrderedDict para mantener el orden
+        acumulador_impuestos = OrderedDict()
+
+        # Primero verificamos y agregamos el impuesto exento si es necesario
+        if abs(subtotal - base_impuesto) > 0.01:
+            base_exento = subtotal - base_impuesto
+            acumulador_impuestos['Excluidos'] = {
+                'base': base_exento,
+                'total_operado': 0
+            }
+
+        # Luego procesamos los demás impuestos
         for impuesto in documento_impuestos:
             nombre_impuesto = impuesto['impuesto__nombre_extendido']
             base = impuesto['base']
             total_operado = impuesto['total_operado']
             
-            # Sumar al acumulador
-            acumulador_impuestos[nombre_impuesto]['base'] += base
-            acumulador_impuestos[nombre_impuesto]['total_operado'] += total_operado
+            if nombre_impuesto in acumulador_impuestos:
+                # Si ya existe (no debería pasar con Exento), sumamos los valores
+                acumulador_impuestos[nombre_impuesto]['base'] += base
+                acumulador_impuestos[nombre_impuesto]['total_operado'] += total_operado
+            else:
+                # Si no existe, lo agregamos
+                acumulador_impuestos[nombre_impuesto] = {
+                    'base': base,
+                    'total_operado': total_operado
+                }
 
         # Configuración de impresión
         espaciado_linea = 4 * mm
