@@ -23,6 +23,7 @@ from contabilidad.models.activo import ConActivo
 from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
+from contabilidad.models.grupo import ConGrupo
 from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoRetrieveSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
@@ -1630,17 +1631,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Error procesando el archivo', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
             cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}
             contactos_map = {str(ct.numero_identificacion): ct.id for ct in GenContacto.objects.all()}
+            grupos_map = {g.codigo: g.id for g in ConGrupo.objects.all()}
             data_modelo = []
             errores = False
             errores_datos = []
             registros_importados = 0
             if documento.documento_tipo_id == 13:
                 for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-                    cuenta_codigo = str(row[0])
+                    cuenta_codigo = str(row[1])
                     cuenta_id = cuentas_map.get(cuenta_codigo)
-                    debito = row[2] if row[2] is not None else 0
-                    credito = row[3] if row[3] is not None else 0  
-                    contacto_ident = str(row[1]) if row[1] is not None else None
+                    debito = row[4] if row[4] is not None else 0
+                    credito = row[5] if row[5] is not None else 0  
+                    contacto_ident = str(row[2]) if row[2] is not None else None
+                    grupo_id = str(row[3]) if row[3] is not None else None
 
                     errores_fila = {}               
 
@@ -1671,14 +1674,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         naturaleza = 'D'
 
                     data = {
+                        'numero': row[0],
                         'cuenta': cuentas_map.get(cuenta_codigo),
                         'contacto': contactos_map.get(contacto_ident),
-                        'base': row[4] if row[4] is not None else 0,
-                        'detalle': row[5],
+                        'base': row[6] if row[6] is not None else 0,
+                        'detalle': row[7],
                         'naturaleza': naturaleza,
                         'precio': total,
                         'tipo_registro': 'C',
-                        'documento': documento_id
+                        'documento': documento_id,
+                        'grupo' : grupos_map.get(grupo_id)
                     }
 
                     serializer = GenDocumentoDetalleSerializador(data=data)
