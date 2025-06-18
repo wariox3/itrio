@@ -258,15 +258,33 @@ class FormatoFacturaPOS():
         
         p.setFont("Courier", 7)
         
-        # Agrupar impuestos por nombre
-        impuestos_agrupados = defaultdict(lambda: {'base': 0, 'total': 0})
-        for imp in data['impuestos']:
-            nombre = imp.impuesto.nombre_extendido
-            impuestos_agrupados[nombre]['base'] += imp.base
-            impuestos_agrupados[nombre]['total'] += imp.total_operado
+        subtotal = getattr(doc, 'subtotal', 0)
+        base_impuesto = getattr(doc, 'base_impuesto', 0)
         
-        # Dibujar impuestos
-        for nombre, valores in impuestos_agrupados.items():
+        acumulador_impuestos = OrderedDict()
+        
+        if abs(subtotal - base_impuesto) > 0.01:
+            base_exento = subtotal - base_impuesto
+            acumulador_impuestos['Excluidos'] = {
+                'base': base_exento,
+                'total': 0
+            }
+        
+        for imp in data['impuestos']:
+            nombre = getattr(imp.impuesto, 'nombre_extendido', 'Impuesto')
+            base = getattr(imp, 'base', 0)
+            total = getattr(imp, 'total_operado', getattr(imp, 'total', 0))
+            
+            if nombre in acumulador_impuestos:
+                acumulador_impuestos[nombre]['base'] += base
+                acumulador_impuestos[nombre]['total'] += total
+            else:
+                acumulador_impuestos[nombre] = {
+                    'base': base,
+                    'total': total
+                }
+        
+        for nombre, valores in acumulador_impuestos.items():
             p.drawString(margen, y, nombre)
             p.drawRightString(margen + 50 * mm, y, f"{valores['base']:,.0f}")
             p.drawRightString(margen + 70 * mm, y, f"{valores['total']:,.0f}")
