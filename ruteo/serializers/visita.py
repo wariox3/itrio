@@ -15,7 +15,7 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
                   'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
                   'latitud', 'longitud', 'estado_decodificado', 'estado_novedad', 'estado_devolucion', 
                   'estado_decodificado_alerta', 'orden', 'distancia',
-                  'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados', 'estado_entregado', 'estado_entregado_complemento']
+                  'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados', 'estado_entregado', 'estado_entregado_complemento', 'datos_entrega']
 
     def to_representation(self, instance): 
         ciudad_nombre = ''
@@ -53,7 +53,8 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             'franja_id': instance.franja_id,
             'franja_codigo': instance.franja_codigo,
             'despacho_id': instance.despacho_id,
-            'resultados': instance.resultados
+            'resultados': instance.resultados,
+            'datos_entrega' : instance.datos_entrega
         }
 
 class RutVisitaExcelSerializador(serializers.HyperlinkedModelSerializer):    
