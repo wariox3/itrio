@@ -1,6 +1,13 @@
 from rest_framework import serializers
 from contenedor.models import CtnPlan       
 
+
+class CtnPlanListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = CtnPlan
+        fields = ['id', 
+                  'nombre']
+
 class CtnPlanSerializador(serializers.ModelSerializer):
     class Meta:
         model = CtnPlan
