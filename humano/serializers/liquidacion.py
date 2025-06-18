@@ -25,6 +25,14 @@ class HumLiquidacionListaSerializador(serializers.HyperlinkedModelSerializer):
                   'fecha_desde',
                   'fecha_hasta',
                   'total',
+                  'dias',
+                  'cesantia',
+                  'interes',
+                  'prima',
+                  'vacacion',
+                  'deduccion',
+                  'adicion',
                   'estado_generado',
-                  'estado_aprobado']      
+                  'estado_aprobado',
+                  'comentario']      
         select_related_fields = ['contrato', 'contrato__contacto']  
