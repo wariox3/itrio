@@ -11,7 +11,9 @@ class CtnPlanListaSerializador(serializers.ModelSerializer):
 class CtnPlanSerializador(serializers.ModelSerializer):
     class Meta:
         model = CtnPlan
-        fields = ['nombre']
+        fields = ['id', 
+                  'nombre',
+                  'orden']
     
     def to_representation(self, instance):
         return {
