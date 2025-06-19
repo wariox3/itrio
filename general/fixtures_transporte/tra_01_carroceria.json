@@ -1,0 +1,568 @@
+{
+  "aplicacion": "transporte",
+  "modelo": "TteCarroceria",
+  "modelo_nativo": "tte_carroceria",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "codigo": 0,
+        "nombre": "Sin carroceria"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "codigo": 1,
+        "nombre": "Estacas"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "codigo": 2,
+        "nombre": "Furgon"
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "codigo": 3,
+        "nombre": "Cisterna o tanque"
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "codigo": 4,
+        "nombre": "Volco"
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "codigo": 5,
+        "nombre": "Tolva"
+      }
+    },
+    {
+      "pk": 7,
+      "campos": {
+        "codigo": 6,
+        "nombre": "Recolector compactador"
+      }
+    },
+    {
+      "pk": 8,
+      "campos": {
+        "codigo": 7,
+        "nombre": "Srs"
+      }
+    },
+    {
+      "pk": 9,
+      "campos": {
+        "codigo": 8,
+        "nombre": "Cerrada"
+      }
+    },
+    {
+      "pk": 10,
+      "campos": {
+        "codigo": 9,
+        "nombre": "Sedan"
+      }
+    },
+    {
+      "pk": 11,
+      "campos": {
+        "codigo": 10,
+        "nombre": "Estibas"
+      }
+    },
+    {
+      "pk": 12,
+      "campos": {
+        "codigo": 11,
+        "nombre": "Botellero"
+      }
+    },
+    {
+      "pk": 13,
+      "campos": {
+        "codigo": 12,
+        "nombre": "Pick up"
+      }
+    },
+    {
+      "pk": 14,
+      "campos": {
+        "codigo": 13,
+        "nombre": "Platon"
+      }
+    },
+    {
+      "pk": 15,
+      "campos": {
+        "codigo": 14,
+        "nombre": "Hormigonero"
+      }
+    },
+    {
+      "pk": 16,
+      "campos": {
+        "codigo": 16,
+        "nombre": "Grua"
+      }
+    },
+    {
+      "pk": 17,
+      "campos": {
+        "codigo": 18,
+        "nombre": "Niñera"
+      }
+    },
+    {
+      "pk": 18,
+      "campos": {
+        "codigo": 21,
+        "nombre": "Cabinado"
+      }
+    },
+    {
+      "pk": 19,
+      "campos": {
+        "codigo": 22,
+        "nombre": "Carpado"
+      }
+    },
+    {
+      "pk": 20,
+      "campos": {
+        "codigo": 25,
+        "nombre": "Doble cabina"
+      }
+    },
+    {
+      "pk": 21,
+      "campos": {
+        "codigo": 29,
+        "nombre": "Bomba"
+      }
+    },
+    {
+      "pk": 22,
+      "campos": {
+        "codigo": 31,
+        "nombre": "Limpia alcantarillas"
+      }
+    },
+    {
+      "pk": 23,
+      "campos": {
+        "codigo": 33,
+        "nombre": "Panel"
+      }
+    },
+    {
+      "pk": 24,
+      "campos": {
+        "codigo": 38,
+        "nombre": "Plataforma"
+      }
+    },
+    {
+      "pk": 25,
+      "campos": {
+        "codigo": 42,
+        "nombre": "Equipo de lavado"
+      }
+    },
+    {
+      "pk": 26,
+      "campos": {
+        "codigo": 69,
+        "nombre": "Camabaja"
+      }
+    },
+    {
+      "pk": 27,
+      "campos": {
+        "codigo": 79,
+        "nombre": "Van"
+      }
+    },
+    {
+      "pk": 28,
+      "campos": {
+        "codigo": 80,
+        "nombre": "Tanqueta"
+      }
+    },
+    {
+      "pk": 29,
+      "campos": {
+        "codigo": 88,
+        "nombre": "Equipo especial del sector petrolero"
+      }
+    },
+    {
+      "pk": 30,
+      "campos": {
+        "codigo": 90,
+        "nombre": "Camabaja bagacero"
+      }
+    },
+    {
+      "pk": 31,
+      "campos": {
+        "codigo": 91,
+        "nombre": "Cama alta"
+      }
+    },
+    {
+      "pk": 32,
+      "campos": {
+        "codigo": 98,
+        "nombre": "Equipo petrolero"
+      }
+    },
+    {
+      "pk": 33,
+      "campos": {
+        "codigo": 100,
+        "nombre": "Grua aerea"
+      }
+    },
+    {
+      "pk": 34,
+      "campos": {
+        "codigo": 102,
+        "nombre": "Equipo irrigador de agua"
+      }
+    },
+    {
+      "pk": 35,
+      "campos": {
+        "codigo": 103,
+        "nombre": "Equipo irrigador de asfalto"
+      }
+    },
+    {
+      "pk": 36,
+      "campos": {
+        "codigo": 104,
+        "nombre": "Equipo de lavado y succion"
+      }
+    },
+    {
+      "pk": 37,
+      "campos": {
+        "codigo": 113,
+        "nombre": "Plataforma modular"
+      }
+    },
+    {
+      "pk": 38,
+      "campos": {
+        "codigo": 122,
+        "nombre": "Furgon refrigerado"
+      }
+    },
+    {
+      "pk": 39,
+      "campos": {
+        "codigo": 201,
+        "nombre": "Articulado"
+      }
+    },
+    {
+      "pk": 40,
+      "campos": {
+        "codigo": 217,
+        "nombre": "Planchon"
+      }
+    },
+    {
+      "pk": 41,
+      "campos": {
+        "codigo": 218,
+        "nombre": "Reparto o palet"
+      }
+    },
+    {
+      "pk": 42,
+      "campos": {
+        "codigo": 219,
+        "nombre": "Grua planchon"
+      }
+    },
+    {
+      "pk": 43,
+      "campos": {
+        "codigo": 230,
+        "nombre": "Granelera"
+      }
+    },
+    {
+      "pk": 44,
+      "campos": {
+        "codigo": 231,
+        "nombre": "Porta contenedor"
+      }
+    },
+    {
+      "pk": 45,
+      "campos": {
+        "codigo": 237,
+        "nombre": "Cañero"
+      }
+    },
+    {
+      "pk": 46,
+      "campos": {
+        "codigo": 241,
+        "nombre": "Pick up cabinada"
+      }
+    },
+    {
+      "pk": 47,
+      "campos": {
+        "codigo": 246,
+        "nombre": "Furgon frigorifico"
+      }
+    },
+    {
+      "pk": 48,
+      "campos": {
+        "codigo": 247,
+        "nombre": "Furgon cortinero"
+      }
+    },
+    {
+      "pk": 49,
+      "campos": {
+        "codigo": 248,
+        "nombre": "Cisterna para combustible"
+      }
+    },
+    {
+      "pk": 50,
+      "campos": {
+        "codigo": 249,
+        "nombre": "Cisterna para quimicos"
+      }
+    },
+    {
+      "pk": 51,
+      "campos": {
+        "codigo": 250,
+        "nombre": "Cisterna para acido sulfurico"
+      }
+    },
+    {
+      "pk": 52,
+      "campos": {
+        "codigo": 275,
+        "nombre": "Plataforma con equipo especial"
+      }
+    },
+    {
+      "pk": 53,
+      "campos": {
+        "codigo": 276,
+        "nombre": "Planchon plataforma"
+      }
+    },
+    {
+      "pk": 54,
+      "campos": {
+        "codigo": 284,
+        "nombre": "Plataforma con estacas"
+      }
+    },
+    {
+      "pk": 55,
+      "campos": {
+        "codigo": 285,
+        "nombre": "Plataforma con estacas desmontables"
+      }
+    },
+    {
+      "pk": 56,
+      "campos": {
+        "codigo": 286,
+        "nombre": "Plataforma con estacas metalicas"
+      }
+    },
+    {
+      "pk": 57,
+      "campos": {
+        "codigo": 287,
+        "nombre": "Plataforma con estacas removibles"
+      }
+    },
+    {
+      "pk": 58,
+      "campos": {
+        "codigo": 290,
+        "nombre": "Volco - platon"
+      }
+    },
+    {
+      "pk": 59,
+      "campos": {
+        "codigo": 291,
+        "nombre": "Tolva pipa cementera"
+      }
+    },
+    {
+      "pk": 60,
+      "campos": {
+        "codigo": 292,
+        "nombre": "Tanque de lodos"
+      }
+    },
+    {
+      "pk": 61,
+      "campos": {
+        "codigo": 293,
+        "nombre": "Plataforma barandas desarmables"
+      }
+    },
+    {
+      "pk": 62,
+      "campos": {
+        "codigo": 295,
+        "nombre": "Volquete"
+      }
+    },
+    {
+      "pk": 63,
+      "campos": {
+        "codigo": 298,
+        "nombre": "Plataforma modular carbonera"
+      }
+    },
+    {
+      "pk": 64,
+      "campos": {
+        "codigo": 299,
+        "nombre": "Cisterna"
+      }
+    },
+    {
+      "pk": 65,
+      "campos": {
+        "codigo": 309,
+        "nombre": "Modular"
+      }
+    },
+    {
+      "pk": 66,
+      "campos": {
+        "codigo": 312,
+        "nombre": "Multiproposito"
+      }
+    },
+    {
+      "pk": 67,
+      "campos": {
+        "codigo": 314,
+        "nombre": "Camabaja con equipo especial"
+      }
+    },
+    {
+      "pk": 68,
+      "campos": {
+        "codigo": 316,
+        "nombre": "Niñera multiproposito"
+      }
+    },
+    {
+      "pk": 69,
+      "campos": {
+        "codigo": 319,
+        "nombre": "Carbonera"
+      }
+    },
+    {
+      "pk": 70,
+      "campos": {
+        "codigo": 320,
+        "nombre": "Cama cuna"
+      }
+    },
+    {
+      "pk": 71,
+      "campos": {
+        "codigo": 325,
+        "nombre": "Bagacero"
+      }
+    },
+    {
+      "pk": 72,
+      "campos": {
+        "codigo": 331,
+        "nombre": "Planchón con grúa"
+      }
+    },
+    {
+      "pk": 73,
+      "campos": {
+        "codigo": 333,
+        "nombre": "Plataforma barandas desmontables"
+      }
+    },
+    {
+      "pk": 74,
+      "campos": {
+        "codigo": 336,
+        "nombre": "Pick up (pico) sencilla"
+      }
+    },
+    {
+      "pk": 75,
+      "campos": {
+        "codigo": 337,
+        "nombre": "Volco desmontable"
+      }
+    },
+    {
+      "pk": 76,
+      "campos": {
+        "codigo": 484,
+        "nombre": "Carrotaller"
+      }
+    },
+    {
+      "pk": 77,
+      "campos": {
+        "codigo": 501,
+        "nombre": "Frac tank"
+      }
+    },
+    {
+      "pk": 78,
+      "campos": {
+        "codigo": 512,
+        "nombre": "Campamento"
+      }
+    },
+    {
+      "pk": 79,
+      "campos": {
+        "codigo": 527,
+        "nombre": "Fracturador"
+      }
+    },
+    {
+      "pk": 80,
+      "campos": {
+        "codigo": 813,
+        "nombre": "Plataforma"
+      }
+    }
+  ]
+}
