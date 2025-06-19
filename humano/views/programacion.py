@@ -862,7 +862,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             porcentaje_fondo = calcular_porcentaje_fondo(configuracion['hum_salario_minimo'], base_cotizacion_total)
                                             if porcentaje_fondo > 0:
                                                 if base_cotizacion_total > configuracion['hum_salario_minimo'] * 25:
-                                                    round(base_cotizacion_total = configuracion['hum_salario_minimo'] * 25)                                            
+                                                    base_cotizacion_total = round(configuracion['hum_salario_minimo'] * 25)
                                                 concepto = HumConcepto.objects.get(pk=20)                                              
                                                 pago = round((base_cotizacion_total * porcentaje_fondo) / 100) 
                                                 pago = round(pago - programacion_detalle.deduccion_fondo_pension_acumulado)
