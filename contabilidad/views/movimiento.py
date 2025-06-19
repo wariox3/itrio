@@ -14,7 +14,8 @@ from django.db.models import F,Sum
 from io import BytesIO
 from django.http import HttpResponse
 from django.db import transaction
-from utilidades.workbook_estilos import WorkbookEstilos
+from utilidades.workbook_estilos_deprecated import WorkbookEstilos
+from utilidades.excel_funciones import ExcelFunciones
 from openpyxl import Workbook
 from general.formatos.balance_prueba import FormatoBalancePrueba
 import base64
@@ -100,13 +101,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
-    def obtener_saldo_cuenta(self, fecha_desde, fecha_hasta, cierre = False, cuenta = ''):
+    def obtener_saldo_cuenta(self, fecha_desde, fecha_hasta, cierre = False, cuenta_con_movimiento = False, cuenta = ''):
         parametro_cierre = ' AND m.cierre = false '
         if cierre == True:
             parametro_cierre = ''
         filtro_cuenta = ''
         if cuenta:
-            filtro_cuenta = f"AND c.codigo = '{cuenta}'"           
+            filtro_cuenta = f"AND c.codigo = '{cuenta}' "     
+        filtro_cuenta_con_movimiento = ''
+        if cuenta_con_movimiento:
+            filtro_cuenta_con_movimiento = f"AND (m.debito > 0 OR m.credito > 0) "
         query = f'''
             SELECT
                 c.id,
@@ -125,8 +129,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             LEFT JOIN
                 con_movimiento m ON m.cuenta_id = c.id
             WHERE
-                1=1
+                1=1 
                 {filtro_cuenta}
+                {filtro_cuenta_con_movimiento}
             GROUP BY
                 c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
@@ -502,26 +507,14 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
         raw = request.data
-        filtros = raw.get("filtros", [])
+        parametros = raw.get("parametros", [])
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)
-        fecha_desde = None
-        fecha_hasta = None
-        cierre = False        
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha":
-                fecha_hasta = filtro["valor2"]
-            if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                
-        
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        resultados_json = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
+        fecha_desde = parametros['fecha_desde']
+        fecha_hasta = parametros['fecha_hasta']
+        cierre = parametros['incluir_cierre']
+        cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
+        resultados_json = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, '')
         if pdf:
             formato = FormatoBalancePrueba()
             pdf = formato.generar_pdf(fecha_desde, fecha_hasta, resultados_json)
@@ -530,10 +523,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
             return response
-        if excel:
+        if excel:            
+            excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "Balance de prueba"
+            ws.title = "Balance de prueba"                                                
+            #excel_funciones.agregar_titulo_excel(ws, "Balance prueba", "Balance de prueba")            
             headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
             ws.append(headers)
             for registro in resultados_json:
@@ -546,9 +541,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['credito'],
                     registro['saldo_actual']
                 ])    
-            
-            estilos_excel = WorkbookEstilos(wb)
-            estilos_excel.aplicar_estilos([4,5,6,7])                                
+            excel_funciones.aplicar_estilos(ws, [4,5,6,7])                                
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename=balance_prueba.xlsx'

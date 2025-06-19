@@ -7,7 +7,7 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from rest_framework.permissions import IsAuthenticated
 from openpyxl import Workbook
 from django.http import HttpResponse
-from utilidades.workbook_estilos import WorkbookEstilos
+from utilidades.workbook_estilos_deprecated import WorkbookEstilos
 from django.db.models import Sum, F, Value, Subquery, OuterRef, Count, Q
 from django.db.models.functions import Coalesce
 from decimal import Decimal

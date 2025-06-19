@@ -7,7 +7,7 @@ from general.models.documento_tipo import GenDocumentoTipo
 from general.models.resolucion import GenResolucion
 from general.serializers.documento_tipo import GenDocumentoTipoSerializador, GenDocumentoTipoAutocompletarSerializador
 from general.filters.documento_tipo import DocumentoTipoFilter
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 
 class DocumentoTipoViewSet(viewsets.ModelViewSet):
     queryset = GenDocumentoTipo.objects.all().order_by('id')

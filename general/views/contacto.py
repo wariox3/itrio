@@ -8,7 +8,7 @@ from general.models.identificacion import GenIdentificacion
 from general.serializers.contacto import GenContactoSerializador, GenContactoListaSerializador
 from general.filters.contacto import ContactoFilter
 from utilidades.wolframio import Wolframio
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 from io import BytesIO
 from utilidades.utilidades import Utilidades
 import base64
@@ -43,7 +43,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="contactos", filename="contactos.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="contactos", filename="contactos.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
 

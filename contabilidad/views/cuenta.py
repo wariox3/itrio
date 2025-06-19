@@ -13,7 +13,7 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from contabilidad.serializers.cuenta import ConCuentaSerializador, ConCuentaListaSerializador
 from contabilidad.filters.cuenta import CuentaFilter
 from django.db.models import ProtectedError
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 from io import BytesIO
 import base64
 import openpyxl
@@ -49,7 +49,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="cuentas", filename="cuentas.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="cuentas", filename="cuentas.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)    
 

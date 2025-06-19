@@ -9,7 +9,7 @@ from django.apps import apps
 from importlib import import_module
 from openpyxl import Workbook
 from django.http import HttpResponse
-from utilidades.workbook_estilos import WorkbookEstilos
+from utilidades.workbook_estilos_deprecated import WorkbookEstilos
 import re
 import zipfile
 import io

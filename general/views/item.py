@@ -13,7 +13,7 @@ from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenIt
 from general.filters.item import ItemFilter
 from utilidades.utilidades import Utilidades
 from utilidades.space_do import SpaceDo
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 from io import BytesIO
 import base64
 import openpyxl
@@ -47,7 +47,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="itemes", filename="itemes.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="itemes", filename="itemes.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
 

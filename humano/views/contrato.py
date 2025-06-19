@@ -19,7 +19,7 @@ from humano.serializers.contrato import HumContratoSerializador, HumContratoList
 from humano.serializers.liquidacion import HumLiquidacionSerializador
 from django.db.models.deletion import ProtectedError
 from humano.filters.contrato import ContratoFilter
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 from datetime import datetime
 import base64
 from io import BytesIO
@@ -55,7 +55,7 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="contratos", filename="contratos.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="contratos", filename="contratos.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
 

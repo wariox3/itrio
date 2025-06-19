@@ -3,7 +3,7 @@ from openpyxl.styles import Font, NamedStyle
 from django.utils.encoding import smart_str
 from django.http import HttpResponse
 
-class ExportarExcel:
+class ExcelExportar:
     def __init__(self, data, sheet_name="Datos", filename="export.xlsx"):
         self.data = data
         self.sheet_name = sheet_name

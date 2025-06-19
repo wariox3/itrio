@@ -50,7 +50,7 @@ from django.db import transaction
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.utilidades import Utilidades
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 from decimal import Decimal
 from datetime import datetime, timedelta, date
 from io import BytesIO
@@ -107,7 +107,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="documentos", filename="documentos.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="documentos", filename="documentos.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
 

@@ -9,7 +9,7 @@ from seguridad.models import User
 from ruteo.serializers.despacho import RutDespachoSerializador
 from django.http import HttpResponse
 from openpyxl import Workbook
-from utilidades.workbook_estilos import WorkbookEstilos
+from utilidades.workbook_estilos_deprecated import WorkbookEstilos
 from datetime import datetime
 from django.db import transaction
 from utilidades.google import Google

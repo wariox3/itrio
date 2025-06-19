@@ -7,7 +7,7 @@ from general.models.item import GenItem
 from general.serializers.archivo import GenArchivoSerializador
 from utilidades.utilidades import Utilidades
 from utilidades.backblaze import Backblaze
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 from django.http import HttpResponse
 from io import BytesIO
 

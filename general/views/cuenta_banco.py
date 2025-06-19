@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from general.models.cuenta_banco import GenCuentaBanco
 from general.serializers.cuenta_banco import GenCuentaBancoSerializador, GenCuentaBancoListaSerializador
 from general.filters.cuenta_banco import CuentaBancoFilter
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 
 class CuentaBancoViewSet(viewsets.ModelViewSet):
     queryset = GenCuentaBanco.objects.all()
@@ -38,6 +38,6 @@ class CuentaBancoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="cuentas_bancos", filename="cuentas_bancos.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="cuentas_bancos", filename="cuentas_bancos.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)    

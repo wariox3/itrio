@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 
 class DocumentoDetalleViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -37,7 +37,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="documentos_detalles", filename="documentos_detalles.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="documentos_detalles", filename="documentos_detalles.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
 

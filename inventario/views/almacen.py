@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from inventario.models.almacen import InvAlmacen
 from inventario.serializers.almacen import InvAlmacenSerializador, InvAlmacenListaSerializador
 from inventario.filters.almacen import AlmacenFilter
-from utilidades.exportar_excel import ExportarExcel
+from utilidades.excel_exportar import ExcelExportar
 
 class InvAlmacenViewSet(viewsets.ModelViewSet):            
     permission_classes = [permissions.IsAuthenticated]
@@ -34,6 +34,6 @@ class InvAlmacenViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="almacenes", filename="almacenes.xlsx")
+            exporter = ExcelExportar(serializer.data, sheet_name="almacenes", filename="almacenes.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs) 
