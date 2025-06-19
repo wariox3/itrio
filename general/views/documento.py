@@ -498,6 +498,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     periodo_id = documento.fecha_contable.strftime("%Y%m")
                     if documento.documento_tipo_id == 25:
                         periodo_id = documento.fecha.strftime("%Y") + '13'
+                    if documento.documento_tipo_id == 20:
+                        periodo_id = documento.fecha_hasta.strftime("%Y%m")
                     periodo = ConPeriodo.objects.get(pk=periodo_id)
                     if periodo.estado_bloqueado == True:
                         return Response({'mensaje': f'El periodo {periodo_id} esta bloqueado y no es posible contabilizar el documento', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
