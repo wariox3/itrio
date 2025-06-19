@@ -41,4 +41,62 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
             exporter = ExportarExcel(serializer.data, sheet_name="liquidaciones", filename="liquidaciones.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)    
+    
+    @action(detail=False, methods=["post"], url_path=r'generar',)
+    def generar(self, request):
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                liquidacion = HumLiquidacion.objects.get(pk=id)
+                if liquidacion.estado_generado == False and liquidacion.estado_aprobado == False:
+                    liquidacion.estado_generado = True  
+                    liquidacion.save()
+                    return Response({'mensaje': 'Liquidación generada'}, status=status.HTTP_200_OK)
+
+                else:
+                    return Response({'mensaje':'La liquidación ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumLiquidacion.DoesNotExist:
+            return Response({'mensaje':'La liquidación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)     
         
+
+    @action(detail=False, methods=["post"], url_path=r'desgenerar',)
+    def desgenerar(self, request):
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                liquidacion = HumLiquidacion.objects.get(pk=id)
+                if liquidacion.estado_aprobado == False and liquidacion.estado_generado == True:
+                    liquidacion.estado_generado = False  
+                    liquidacion.save()
+                    return Response({'mensaje': 'Liquidación desgenerada'}, status=status.HTTP_200_OK)
+
+                else:
+                    return Response({'mensaje':'La liquidación ya esta aprobada o no esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumLiquidacion.DoesNotExist:
+            return Response({'mensaje':'La liquidación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)     
+        
+
+    @action(detail=False, methods=["post"], url_path=r'aprobar',)
+    def aprobar(self, request):
+        try:
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                liquidacion = HumLiquidacion.objects.get(pk=id)
+                if liquidacion.estado_generado == True and liquidacion.estado_aprobado == False:
+                    liquidacion.estado_aprobado = True  
+                    liquidacion.save()
+                    return Response({'mensaje': 'Liquidación aprobada'}, status=status.HTTP_200_OK)
+
+                else:
+                    return Response({'mensaje':'La liquidación ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        except HumLiquidacion.DoesNotExist:
+            return Response({'mensaje':'La liquidación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)     
