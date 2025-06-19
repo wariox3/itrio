@@ -148,4 +148,20 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La liquidacion no esta aprobada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'reliquidar',)
+    def reliquidar_action(self, request):                     
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                liquidacion = HumLiquidacion.objects.get(pk=id)
+            except HumLiquidacion.DoesNotExist:
+                return Response({'mensaje':'La liquidacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+            if liquidacion.estado_aprobado == False:                                                                                                                                                     
+                return Response({'mensaje': 'Liquidacion reliquidada'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':'La liquidacion ya esta aprobada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
           
