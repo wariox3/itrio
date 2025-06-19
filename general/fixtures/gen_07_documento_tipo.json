@@ -248,6 +248,7 @@
       "campos": {
         "nombre": "PRIMA",
         "documento_clase": 701,
+        "comprobante": 21,
         "pagar": true,
         "operacion": 1,
         "contabilidad": true
@@ -259,6 +260,7 @@
       "campos": {
         "nombre": "CESANTIA",
         "documento_clase": 701,
+        "comprobante": 22,
         "pagar": true,
         "operacion": 1,
         "contabilidad": true

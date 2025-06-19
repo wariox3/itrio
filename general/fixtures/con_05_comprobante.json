@@ -164,6 +164,22 @@
         "nombre": "VENTA POS ELECTRONICO",
         "codigo": "PEL"
       }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 21,
+      "campos": {
+        "nombre": "PRIMA",
+        "codigo": "PRI"
+      }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 22,
+      "campos": {
+        "nombre": "CESANTIA",
+        "codigo": "CES"
+      }
     }
   ]
 }
