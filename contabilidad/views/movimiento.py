@@ -727,41 +727,33 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return Response({'registros': resultados_json}, status=status.HTTP_200_OK) 
 
     @action(detail=False, methods=["post"], url_path=r'informe-auxiliar-general',)
-    def informe_auxiliar_general(self, request):    
+    def informe_auxiliar_general(self, request):             
         raw = request.data
-        filtros = raw.get("filtros", [])
+        parametros = raw.get("parametros", [])
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)
-        fecha_desde = None
-        fecha_hasta = None
-        cierre = False        
-        comprobante = None
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha":
-                fecha_hasta = filtro["valor2"]
-            if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]          
-            if filtro["propiedad"] == "comprobante_id":
-                comprobante = filtro["valor1"]             
-        
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )               
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
+        fecha_desde = parametros['fecha_desde']
+        fecha_hasta = parametros['fecha_hasta']
+        cierre = parametros['incluir_cierre']
+        cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
+        comprobante = parametros['comprobante']   
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento)
         resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
         resultados_movimiento = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante)
         resultados_json = resultados_cuenta + resultados_tercero + resultados_movimiento
         resultados_json.sort(key=lambda x: str(x['codigo']))
-
         if excel:
+            excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "Auxiliar general"
-            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "IDENTIFICACIÓN" ,"CONTACTO", "COMPROBANTE", "NUMERO", "FECHA","ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.title = "balance_prueba"                                                
+            excel_funciones.agregar_titulo(ws, "Auxiliar general", "A", "L")                                   
+            ws['A4'] = f"Fecha desde: {fecha_desde}"
+            ws['A4'].font = excel_funciones.fuente_general           
+            ws['A5'] = f"Fecha hasta: {fecha_hasta}"
+            ws['A5'].font = excel_funciones.fuente_general 
+            ws.append([])
+            headers = ["Tipo", "Cuenta", "Nombre Cuenta", "Identificación", "Contacto", "Comprobante", "Numero", "Fecha", "Saldo anterior ($)", "Debitos ($)", "Creditos ($)", "Saldo actual ($)"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
@@ -779,8 +771,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['saldo_actual']
                 ])    
             
-            estilos_excel = WorkbookEstilos(wb)
-            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            excel_funciones.aplicar_estilos(ws, 7, [9,10,11,12])                       
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename=auxiliar_general.xlsx'
