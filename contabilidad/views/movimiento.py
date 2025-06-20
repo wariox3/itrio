@@ -6,6 +6,9 @@ from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.cuenta import ConCuenta
 from contabilidad.models.grupo import ConGrupo
 from contabilidad.models.periodo import ConPeriodo
+from contabilidad.models.cuenta_clase import ConCuentaClase
+from contabilidad.models.cuenta_grupo import ConCuentaGrupo
+from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from general.models.contacto import GenContacto
 from contabilidad.serializers.movimiento import ConMovimientoSerializador
 from datetime import datetime
@@ -248,6 +251,20 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             cuentas_dict[cuenta_id]['credito'] += cuenta.credito
             cuentas_dict[cuenta_id]['saldo_actual'] += saldo_actual
         
+            cuentas_clases_map = {c.id: c.nombre for c in ConCuentaClase.objects.all()}
+            for clase_id, clase_data in clases_dict.items():
+                if clase_id in cuentas_clases_map and clase_id is not None:
+                    clase_data['nombre'] = cuentas_clases_map[clase_id]
+
+            cuentas_grupos_map = {g.id: g.nombre for g in ConCuentaGrupo.objects.all()}
+            for grupo_id, grupo_data in grupos_dict.items():
+                if grupo_id in cuentas_grupos_map and grupo_id is not None:
+                    grupo_data['nombre'] = cuentas_grupos_map[grupo_id]
+
+            cuentas_cuentas_map = {cc.id: cc.nombre for cc in ConCuentaCuenta.objects.all()}
+            for cuenta_cuenta_id, cuenta_cuenta_data in cuentas_dict.items():
+                if cuenta_cuenta_id in cuentas_cuentas_map and cuenta_cuenta_id is not None:
+                    cuenta_cuenta_data['nombre'] = cuentas_cuentas_map[cuenta_cuenta_id]
         # Agregar clases, grupos y cuentas al resultado final
         resultados_json.extend(clases_dict.values())
         resultados_json.extend(grupos_dict.values())
@@ -527,9 +544,15 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "Balance de prueba"                                                
-            #excel_funciones.agregar_titulo_excel(ws, "Balance prueba", "Balance de prueba")            
-            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.title = "balance_prueba"                                                
+            excel_funciones.agregar_titulo(ws, "Balance prueba", "A", "G")                                   
+            ws['A4'] = f"Fecha desde: {fecha_desde}"
+            ws['A4'].font = excel_funciones.fuente_general           
+            ws['A5'] = f"Fecha hasta: {fecha_hasta}"
+            ws['A5'].font = excel_funciones.fuente_general 
+            ws.append([])
+
+            headers = ["Tipo", "Cuenta", "Nombre de cuenta", "Saldo anterior ($)", "Debitos ($)", "Creditos ($)", "Saldo actual ($)"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
@@ -541,7 +564,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['credito'],
                     registro['saldo_actual']
                 ])    
-            excel_funciones.aplicar_estilos(ws, [4,5,6,7])                                
+            excel_funciones.aplicar_estilos(ws, 7, [4,5,6,7])                                
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename=balance_prueba.xlsx'

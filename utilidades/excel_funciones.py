@@ -1,29 +1,49 @@
-from openpyxl import Workbook
-from openpyxl.styles import PatternFill, Alignment, Font, numbers
+from general.models.empresa import GenEmpresa
+from openpyxl.styles import PatternFill, Alignment, Font
 from openpyxl.utils import get_column_letter
+from datetime import datetime
 
 class ExcelFunciones:
     def __init__(self):
-        pass
-
-    def agregar_titulo(self, ws, titulo, rango_titulo):
+        self.fill = PatternFill(start_color="9CDFEB", end_color="9CDFEB", fill_type="solid")
+        self.fuente_general = Font(name='Arial', size=10, bold=False)
+        self.fuente_encabezado = Font(name='Arial', size=10, bold=True)
+        
+    def agregar_titulo(self, ws, titulo, columna_desde, columna_hasta):
+        rango_titulo = f"{columna_desde}1:{columna_hasta}1"
         ws.merge_cells(rango_titulo)
-        celda_titulo = ws[rango_titulo.split(":")[0]]
-        celda_titulo.value = titulo
-        celda_titulo.font = Font(bold=True, size=14, color="000000")
+        celda_titulo = ws[f"{columna_desde}1"]
+        celda_titulo.value = titulo        
+        celda_titulo.font = Font(name='Arial', size=14, bold=True)
         celda_titulo.alignment = Alignment(horizontal="center", vertical="center")
-        celda_titulo.fill = PatternFill(start_color="DDDDDD", end_color="DDDDDD", fill_type="solid")
+        celda_titulo.fill = self.fill
 
-    def aplicar_estilos(self, ws, formato_numero=None):
-        font = Font(name='Arial', size=10, bold=False)
-        bold_font = Font(name='Arial', size=10, bold=True)
-        fill = PatternFill(start_color="9CDFEB", end_color="9CDFEB", fill_type="solid")
-        for row in ws.iter_rows():
+        empresa = GenEmpresa.objects.filter(pk=1).values('nombre_corto')[0]
+        rango_empresa = f"{columna_desde}2:{columna_hasta}2"
+        ws.merge_cells(rango_empresa)
+        celda_empresa = ws[f"{columna_desde}2"]
+        celda_empresa.value = empresa['nombre_corto']
+        celda_empresa.font = Font(name='Arial', size=12, bold=True)
+        celda_empresa.alignment = Alignment(horizontal="center", vertical="center")
+        celda_empresa.fill = self.fill
+
+        
+        rango_datos = f"{columna_desde}3:{columna_hasta}3"
+        ws.merge_cells(rango_datos)
+        celda_datos = ws[f"{columna_desde}3"]
+        celda_datos.value = f"Fecha generación: {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        celda_datos.font = Font(name='Arial', size=8, bold=False)
+        celda_datos.alignment = Alignment(horizontal="right")
+        celda_datos.fill = self.fill        
+        ws.append([])
+
+    def aplicar_estilos(self, ws, numero_fila_titulo = 1, formato_numero = None):
+        for row in ws.iter_rows(min_row=numero_fila_titulo):
             for cell in row:
-                cell.font = font                    
-                if cell.row == 1: 
-                    cell.font = bold_font
-                    cell.fill = fill
+                cell.font = self.fuente_general                    
+                if cell.row == numero_fila_titulo: 
+                    cell.font = self.fuente_encabezado
+                    cell.fill = self.fill
                 else:
                     if formato_numero is not None and cell.column in formato_numero:
                         cell.number_format = '#,##0.00'
