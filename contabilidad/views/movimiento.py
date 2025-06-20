@@ -675,42 +675,34 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=["post"], url_path=r'informe-auxiliar-tercero',)
-    def informe_auxiliar_tercero(self, request):    
+    def informe_auxiliar_tercero(self, request):                 
         raw = request.data
-        filtros = raw.get("filtros", [])
+        parametros = raw.get("parametros", [])
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)
-        fecha_desde = None
-        fecha_hasta = None
-        cierre = False       
-        numero_identificacion = None 
-        nombre_corto = None
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha":
-                fecha_hasta = filtro["valor2"]
-            if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                
-            if filtro["propiedad"] == "contacto__numero_identificacion":
-                numero_identificacion = filtro["valor1"]      
-            if filtro["propiedad"] == "contacto__nombre_corto":
-                nombre_corto = filtro["valor1"]      
-        
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )               
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre)
+        fecha_desde = parametros['fecha_desde']
+        fecha_hasta = parametros['fecha_hasta']
+        numero_identificacion = parametros['numero_identificacion']
+        nombre_corto = parametros['nombre_corto']
+        cierre = parametros['incluir_cierre']
+        cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento)
         resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre, numero_identificacion, nombre_corto)        
         resultados_json = resultados_cuenta + resultados_tercero
         resultados_json.sort(key=lambda x: str(x['codigo']))
         if excel:
+            excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "Auxiliar tercero"
-            headers = ["TIPO", "CUENTA", "NOMBRE CUENTA", "IDENTIFICACIÓN" ,"CONTACTO", "ANTERIOR", "DEBITO", "CREDITO", "ACTUAL"]
+            ws.title = "balance_prueba"                                                
+            excel_funciones.agregar_titulo(ws, "Auxiliar por tercero", "A", "I")                                   
+            ws['A4'] = f"Fecha desde: {fecha_desde}"
+            ws['A4'].font = excel_funciones.fuente_general           
+            ws['A5'] = f"Fecha hasta: {fecha_hasta}"
+            ws['A5'].font = excel_funciones.fuente_general 
+            ws.append([])
+
+            headers = ["Tipo", "Cuenta", "Nombre Cuenta", "Identificación", "Contacto", "Saldo anterior ($)", "Debitos ($)", "Creditos ($)", "Saldo actual ($)"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
@@ -725,8 +717,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['saldo_actual']
                 ])    
             
-            estilos_excel = WorkbookEstilos(wb)
-            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            excel_funciones.aplicar_estilos(ws, 7, [6,7,8,9])                              
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename=auxiliar_tercero.xlsx'
