@@ -1,0 +1,36 @@
+{
+  "aplicacion": "transporte",
+  "modelo": "TteCombustible",
+  "modelo_nativo": "tte_combustible",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "codigo": "1",
+        "nombre": "DIESEL"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "codigo": "2",
+        "nombre": "GASOLINA"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "codigo": "3",
+        "nombre": "GAS"
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "codigo": "4",
+        "nombre": "GAS - GASOLINA"
+      }
+    }
+  ]
+}
