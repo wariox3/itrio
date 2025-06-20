@@ -695,7 +695,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             wb = Workbook()
             ws = wb.active
             ws.title = "balance_prueba"                                                
-            excel_funciones.agregar_titulo(ws, "Auxiliar por tercero", "A", "I")                                   
+            excel_funciones.agregar_titulo(ws, "Auxiliar por contacto", "A", "I")                                   
             ws['A4'] = f"Fecha desde: {fecha_desde}"
             ws['A4'].font = excel_funciones.fuente_general           
             ws['A5'] = f"Fecha hasta: {fecha_hasta}"
