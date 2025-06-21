@@ -2232,6 +2232,13 @@
         },
         {
             "model": "contabilidad.ConCuentaCuenta",
+            "pk": 7235,
+            "campos": {
+                "nombre": "Servicios temporales"
+            }
+        },        
+        {
+            "model": "contabilidad.ConCuentaCuenta",
             "pk": 7305,
             "campos": {
                 "nombre": "Costos indirectos"
