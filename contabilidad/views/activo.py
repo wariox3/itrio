@@ -77,13 +77,13 @@ class ActivoViewSet(viewsets.ModelViewSet):
                 data['cuenta_depreciacion'] = cuentas_map.get(data['cuenta_depreciacion'])
 
                 if row[5]:                        
-                    fecha_valida = datetime.strptime(row[5], "%Y%m%d").date()
+                    fecha_valida = datetime.strptime(str(row[5]), "%Y%m%d").date()
                     data['fecha_compra'] = fecha_valida
                 if row[6]:                        
-                    fecha_valida = datetime.strptime(row[6], "%Y%m%d").date()
+                    fecha_valida = datetime.strptime(str(row[6]), "%Y%m%d").date()
                     data['fecha_activacion'] = fecha_valida 
                 if row[7]:                        
-                    fecha_valida = datetime.strptime(row[7], "%Y%m%d").date()
+                    fecha_valida = datetime.strptime(str(row[7]), "%Y%m%d").date()
                     data['fecha_baja'] = fecha_valida                     
 
                 valor_compra = Decimal(data['valor_compra'])
