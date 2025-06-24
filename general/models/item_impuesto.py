@@ -3,7 +3,7 @@ from general.models.item import GenItem
 from general.models.impuesto import GenImpuesto
 
 class GenItemImpuesto(models.Model):
-    item = models.ForeignKey(GenItem, on_delete=models.PROTECT, related_name='itemImpuestos')
+    item = models.ForeignKey(GenItem, on_delete=models.CASCADE, related_name='itemImpuestos')
     impuesto = models.ForeignKey(GenImpuesto, on_delete=models.PROTECT)
 
     class Meta:

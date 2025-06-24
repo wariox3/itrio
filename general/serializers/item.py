@@ -50,6 +50,7 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
         } 
     
 class GenItemListaSerializador(serializers.ModelSerializer):          
+    imagen = serializers.SerializerMethodField()
     class Meta:
         model = GenItem
         fields = ['id', 
@@ -67,8 +68,13 @@ class GenItemListaSerializador(serializers.ModelSerializer):
                   'negativo',
                   'venta',
                   'favorito',
-                  'inactivo']
+                  'inactivo',
+                  'imagen']
         
+    def get_imagen(self, obj):
+        if obj.imagen:
+            return f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{obj.imagen}"
+        return None        
 
 #Deprecated
 
