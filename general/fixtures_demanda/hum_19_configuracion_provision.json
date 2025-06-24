@@ -1,0 +1,170 @@
+{
+  "aplicacion": "humano",
+  "modelo": "HumConfiguracionProvision",
+  "modelo_nativo": "hum_configuracion_provision",
+  "actualizar_secuencia": false,
+  "datos": [
+    {      
+      "pk": 1,
+      "campos": {"cuenta_debito": 59, "cuenta_credito": 45}
+    },
+    {
+      "pk": 2,
+      "campos": {"cuenta_debito": 60, "cuenta_credito": 46}
+    },
+    {
+      "pk": 3,
+      "campos": {"cuenta_debito": 61, "cuenta_credito": 48}
+    },
+    {
+      "pk": 4,
+      "campos": {"cuenta_debito": 62, "cuenta_credito": 47}
+    },
+    {
+      "pk": 5,
+      "campos": {"cuenta_debito": 71}
+    },
+    {
+      "pk": 6,
+      "campos": {"cuenta_debito": 70}
+    },
+    {
+      "pk": 7,
+      "campos": {"cuenta_debito": 72}
+    },
+    {
+      "pk": 8,
+      "campos": {"cuenta_debito": 69}
+    },
+    {
+      "pk": 9,
+      "campos": {"cuenta_debito": 74}
+    },
+    {
+      "pk": 10,
+      "campos": {"cuenta_debito": 73}
+    },             
+    {
+      "pk": 11,
+      "campos": {"cuenta_debito": 59, "cuenta_credito": 45}
+    },
+    {
+      "pk": 12,
+      "campos": {"cuenta_debito": 60, "cuenta_credito": 46}
+    },
+    {
+      "pk": 13,
+      "campos": {"cuenta_debito": 61, "cuenta_credito": 48}
+    },
+    {
+      "pk": 14,
+      "campos": {"cuenta_debito": 62, "cuenta_credito": 47}
+    },
+    {
+      "pk": 15,
+      "campos": {"cuenta_debito": 71}
+    },
+    {
+      "pk": 16,
+      "campos": {"cuenta_debito": 70}
+    },
+    {
+      "pk": 17,
+      "campos": {"cuenta_debito": 72}
+    },
+    {
+      "pk": 18,
+      "campos": {"cuenta_debito": 69}
+    },
+    {
+      "pk": 19,
+      "campos": {"cuenta_debito": 74}
+    },
+    {
+      "pk": 20,
+      "campos": {"cuenta_debito": 73}
+    },    
+    {
+      "pk": 21,
+      "campos": {"cuenta_debito": 97, "cuenta_credito": 45}
+    },
+    {
+      "pk": 22,
+      "campos": {"cuenta_debito": 98, "cuenta_credito": 46}
+    },
+    {
+      "pk": 23,
+      "campos": {"cuenta_debito": 99, "cuenta_credito": 48}
+    },
+    {
+      "pk": 24,
+      "campos": {"cuenta_debito": 100, "cuenta_credito": 47}
+    },
+    {
+      "pk": 25,
+      "campos": {"cuenta_debito": 109}
+    },
+    {
+      "pk": 26,
+      "campos": {"cuenta_debito": 108}
+    },
+    {
+      "pk": 27,
+      "campos": {"cuenta_debito": 110}
+    },
+    {
+      "pk": 28,
+      "campos": {"cuenta_debito": 107}
+    },
+    {
+      "pk": 29,
+      "campos": {"cuenta_debito": 112}
+    },
+    {
+      "pk": 30,
+      "campos": {"cuenta_debito": 111}
+    },      
+    {
+      "pk": 31,
+      "campos": {"cuenta_debito": 121, "cuenta_credito": 45}
+    },
+    {
+      "pk": 32,
+      "campos": {"cuenta_debito": 122, "cuenta_credito": 46}
+    },
+    {
+      "pk": 33,
+      "campos": {"cuenta_debito": 123, "cuenta_credito": 48}
+    },
+    {
+      "pk": 34,
+      "campos": {"cuenta_debito": 124, "cuenta_credito": 47}
+    },
+    {
+      "pk": 35,
+      "campos": {"cuenta_debito": 133}
+    },
+    {
+      "pk": 36,
+      "campos": {"cuenta_debito": 132}
+    },
+    {
+      "pk": 37,
+      "campos": {"cuenta_debito": 134}
+    },
+    {
+      "pk": 38,
+      "campos": {"cuenta_debito": 131}
+    },
+    {
+      "pk": 39,
+      "campos": {"cuenta_debito": 136}
+    },
+    {
+      "pk": 40,
+      "campos": {"cuenta_debito": 135}
+    }               
+  ]
+}
+
+  

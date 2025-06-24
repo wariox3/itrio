@@ -610,7 +610,7 @@
             "pk": 44,
             "campos": {
                 "codigo": 251005,
-                "nombre": "Ley laboral anterior",
+                "nombre": "Cesantias consolidadas",
                 "cuenta_clase": 2,
                 "cuenta_grupo": 25,
                 "cuenta_cuenta": 2510,
@@ -1933,6 +1933,62 @@
                 "exige_base": false,
                 "exige_contacto": true,
                 "exige_grupo": true,
+                "permite_movimiento": true
+            }
+        },
+        {
+            "pk": 139,
+            "campos": {
+                "codigo": 250505,
+                "nombre": "Salarios por pagar",
+                "cuenta_clase": 2,
+                "cuenta_grupo": 25,
+                "cuenta_cuenta": 2505,
+                "exige_base": false,
+                "exige_contacto": true,
+                "exige_grupo": false,
+                "permite_movimiento": true
+            }
+        },
+        {
+            "pk": 140,
+            "campos": {
+                "codigo": 251505,
+                "nombre": "Intereses sobre cesantías",
+                "cuenta_clase": 2,
+                "cuenta_grupo": 25,
+                "cuenta_cuenta": 2515,
+                "exige_base": false,
+                "exige_contacto": true,
+                "exige_grupo": false,
+                "permite_movimiento": true
+            }
+        },
+        {
+            "pk": 141,
+            "campos": {
+                "codigo": 252005,
+                "nombre": "Primas",
+                "cuenta_clase": 2,
+                "cuenta_grupo": 25,
+                "cuenta_cuenta": 2520,
+                "exige_base": false,
+                "exige_contacto": true,
+                "exige_grupo": false,
+                "permite_movimiento": true
+            }
+        },
+        {
+            "pk": 142,
+            "campos": {
+                "codigo": 252505,
+                "nombre": "Vacaciones",
+                "cuenta_clase": 2,
+                "cuenta_grupo": 25,
+                "cuenta_cuenta": 2525,
+                "exige_base": false,
+                "exige_contacto": true,
+                "exige_grupo": false,
                 "permite_movimiento": true
             }
         }

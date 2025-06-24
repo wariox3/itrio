@@ -4,8 +4,7 @@
   "modelo_nativo": "",
   "actualizar_secuencia": false,
   "datos": [
-    {
-      "model": "general.GenImpuesto",
+    {  
       "pk": 1,
       "campos": {
         "nombre": "19%",
@@ -18,8 +17,7 @@
         "impuesto_tipo": 1
       }
     },
-    {
-      "model": "general.GenImpuesto",
+    {      
       "pk": 2,
       "campos": {
         "nombre": "5%",
@@ -33,7 +31,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 3,
       "campos": {
         "nombre": "19%",
@@ -47,7 +44,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 4,
       "campos": {
         "nombre": "5%",
@@ -61,7 +57,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 5,
       "campos": {
         "nombre": "19% AIU",
@@ -75,7 +70,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 501,
       "campos": {
         "nombre": "IPCU 20%",
@@ -89,7 +83,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 101,
       "campos": {
         "nombre": "RTF 10%",
@@ -103,7 +96,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 102,
       "campos": {
         "nombre": "RTF 6%",
@@ -117,7 +109,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 103,
       "campos": {
         "nombre": "RTF 1%",
@@ -131,7 +122,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 104,
       "campos": {
         "nombre": "RTF 4%",
@@ -145,7 +135,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 105,
       "campos": {
         "nombre": "RTF 2.5%",
@@ -159,7 +148,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 106,
       "campos": {
         "nombre": "RTF 11%",
@@ -173,7 +161,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 107,
       "campos": {
         "nombre": "RTF 3.5%",
@@ -187,7 +174,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 200,
       "campos": {
         "nombre": "RteFte 3.5%",
@@ -201,7 +187,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 201,
       "campos": {
         "nombre": "RteFte 2.5%",
@@ -215,7 +200,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 202,
       "campos": {
         "nombre": "RteFte 11%",
@@ -229,7 +213,6 @@
       }
     },
     {
-      "model": "general.GenImpuesto",
       "pk": 203,
       "campos": {
         "nombre": "RteFte 4%",

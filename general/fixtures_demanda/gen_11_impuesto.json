@@ -1,0 +1,76 @@
+{
+  "aplicacion": "general",
+  "modelo": "GenImpuesto",
+  "modelo_nativo": "",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {"cuenta": 42}
+    },
+    {
+      "pk": 2,
+      "campos": {"cuenta": 42}
+    },
+    {
+      "pk": 3,
+      "campos": {"cuenta": 43}
+    },
+    {
+      "pk": 4,
+      "campos": {"cuenta": 43}
+    },
+    {
+      "pk": 5,
+      "campos": {"cuenta": 42}
+    },
+    {
+      "pk": 501,
+      "campos": {"cuenta": 27}
+    },
+    {
+      "pk": 101,
+      "campos": {"cuenta": 25}
+    },
+    {
+      "pk": 102,
+      "campos": {"cuenta": 30}
+    },
+    {
+      "pk": 103,
+      "campos": {"cuenta": 27}
+    },
+    {
+      "pk": 104,
+      "campos": {"cuenta": 28}
+    },
+    {
+      "pk": 105,
+      "campos": {"cuenta": 30}
+    },
+    {
+      "pk": 106,
+      "campos": {"cuenta": 26}
+    },
+    {
+      "pk": 107,
+      "campos": {"cuenta": 27}
+    },
+    {
+      "pk": 200,
+      "campos": {"cuenta": 4}
+    },
+    {
+      "pk": 201,
+      "campos": {"cuenta": 4}
+    },
+    {
+      "pk": 202,
+      "campos": {"cuenta": 4}
+    },
+    {
+      "pk": 203,
+      "campos": {"cuenta": 4}
+    }
+  ]
+}

@@ -7,8 +7,9 @@
     {
       "pk": 1,
       "campos": {
-        "cuenta_pagar": 24
-      }    
+        "nombre": "Proveedores nacionales",
+        "cuenta": 22
+      }
     }
-  ]  
+  ]
 }

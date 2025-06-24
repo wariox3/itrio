@@ -1,0 +1,32 @@
+{
+  "aplicacion": "humano",
+  "modelo": "HumConfiguracionAporte",
+  "modelo_nativo": "hum_configuracion_aporte",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {"cuenta": 41}
+    },
+    {
+      "pk": 2,
+      "campos": {"cuenta": 38}
+    },
+    {
+      "pk": 3,
+      "campos": {"cuenta": 40}
+    },
+    {
+      "pk": 4,
+      "campos": {"cuenta": 39}
+    },
+    {
+      "pk": 5,
+      "campos": {"cuenta": 40}
+    },
+    {
+      "pk": 6,
+      "campos": {"cuenta": 40}
+    }
+  ]
+}

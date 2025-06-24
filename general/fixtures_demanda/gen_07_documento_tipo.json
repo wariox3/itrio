@@ -4,7 +4,7 @@
   "modelo_nativo": "gen_documento_tipo",
   "actualizar_secuencia": true,
   "datos": [
-    {      
+    {
       "pk": 1,
       "campos": {
         "cuenta_cobrar": 23
@@ -75,13 +75,12 @@
       "campos": {
         "cuenta_pagar": 26
       }
-    },    
+    },
     {
-      
       "pk": 24,
       "campos": {
         "cuenta_cobrar": 23
       }
-    }    
-  ]  
+    }
+  ]
 }

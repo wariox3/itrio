@@ -1,0 +1,1192 @@
+{
+  "aplicacion": "humano",
+  "modelo": "HumConceptoCuenta",
+  "modelo_nativo": "hum_concepto_cuenta",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "concepto": 1,
+        "cuenta": 54,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "concepto": 2,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "concepto": 3,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "concepto": 4,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "concepto": 5,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "concepto": 6,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 7,
+      "campos": {
+        "concepto": 7,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 8,
+      "campos": {
+        "concepto": 8,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 9,
+      "campos": {
+        "concepto": 9,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 10,
+      "campos": {
+        "concepto": 10,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 11,
+      "campos": {
+        "concepto": 11,
+        "cuenta": 55,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 12,
+      "campos": {
+        "concepto": 12,
+        "cuenta": 64,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 13,
+      "campos": {
+        "concepto": 13,
+        "cuenta": 63,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 14,
+      "campos": {
+        "concepto": 14,
+        "cuenta": 38,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 15,
+      "campos": {
+        "concepto": 15,
+        "cuenta": 41,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 16,
+      "campos": {
+        "concepto": 16,
+        "cuenta": 58,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 17,
+      "campos": {
+        "concepto": 17,
+        "cuenta": 7,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 18,
+      "campos": {
+        "concepto": 18,
+        "cuenta": 63,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 19,
+      "campos": {
+        "concepto": 19,
+        "cuenta": 54,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 20,
+      "campos": {
+        "concepto": 20,
+        "cuenta": 41,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 21,
+      "campos": {
+        "concepto": 21,
+        "cuenta": 23,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 22,
+      "campos": {
+        "concepto": 22,
+        "cuenta": 7,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 23,
+      "campos": {
+        "concepto": 23,
+        "cuenta": 57,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 24,
+      "campos": {
+        "concepto": 24,
+        "cuenta": 57,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 25,
+      "campos": {
+        "concepto": 25,
+        "cuenta": 54,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 26,
+      "campos": {
+        "concepto": 26,
+        "cuenta": 54,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 27,
+      "campos": {
+        "concepto": 27,
+        "cuenta": 54,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 28,
+      "campos": {
+        "concepto": 28,
+        "cuenta": 54,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 29,
+      "campos": {
+        "concepto": 29,
+        "cuenta": 47,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 30,
+      "campos": {
+        "concepto": 30,
+        "cuenta": 47,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 31,
+      "campos": {
+        "concepto": 31,
+        "cuenta": 57,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 32,
+      "campos": {
+        "concepto": 32,
+        "cuenta": 48,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 33,
+      "campos": {
+        "concepto": 33,
+        "cuenta": 48,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 34,
+      "campos": {
+        "concepto": 34,
+        "cuenta": 45,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 35,
+      "campos": {
+        "concepto": 35,
+        "cuenta": 45,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 36,
+      "campos": {
+        "concepto": 36,
+        "cuenta": 46,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 37,
+      "campos": {
+        "concepto": 37,
+        "cuenta": 46,
+        "tipo_costo": 1
+      }
+    },
+    {
+      "pk": 38,
+      "campos": {
+        "concepto": 1,
+        "cuenta": 54,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 39,
+      "campos": {
+        "concepto": 2,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 40,
+      "campos": {
+        "concepto": 3,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 41,
+      "campos": {
+        "concepto": 4,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 42,
+      "campos": {
+        "concepto": 5,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 43,
+      "campos": {
+        "concepto": 6,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 44,
+      "campos": {
+        "concepto": 7,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 45,
+      "campos": {
+        "concepto": 8,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 46,
+      "campos": {
+        "concepto": 9,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 47,
+      "campos": {
+        "concepto": 10,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 48,
+      "campos": {
+        "concepto": 11,
+        "cuenta": 55,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 49,
+      "campos": {
+        "concepto": 12,
+        "cuenta": 64,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 50,
+      "campos": {
+        "concepto": 13,
+        "cuenta": 63,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 51,
+      "campos": {
+        "concepto": 14,
+        "cuenta": 38,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 52,
+      "campos": {
+        "concepto": 15,
+        "cuenta": 41,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 53,
+      "campos": {
+        "concepto": 16,
+        "cuenta": 58,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 54,
+      "campos": {
+        "concepto": 17,
+        "cuenta": 7,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 55,
+      "campos": {
+        "concepto": 18,
+        "cuenta": 63,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 56,
+      "campos": {
+        "concepto": 19,
+        "cuenta": 54,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 57,
+      "campos": {
+        "concepto": 20,
+        "cuenta": 41,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 58,
+      "campos": {
+        "concepto": 21,
+        "cuenta": 23,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 59,
+      "campos": {
+        "concepto": 22,
+        "cuenta": 7,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 60,
+      "campos": {
+        "concepto": 23,
+        "cuenta": 57,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 61,
+      "campos": {
+        "concepto": 24,
+        "cuenta": 57,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 62,
+      "campos": {
+        "concepto": 25,
+        "cuenta": 54,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 63,
+      "campos": {
+        "concepto": 26,
+        "cuenta": 54,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 64,
+      "campos": {
+        "concepto": 27,
+        "cuenta": 54,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 65,
+      "campos": {
+        "concepto": 28,
+        "cuenta": 54,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 66,
+      "campos": {
+        "concepto": 29,
+        "cuenta": 47,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 67,
+      "campos": {
+        "concepto": 30,
+        "cuenta": 47,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 68,
+      "campos": {
+        "concepto": 31,
+        "cuenta": 57,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 69,
+      "campos": {
+        "concepto": 32,
+        "cuenta": 48,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 70,
+      "campos": {
+        "concepto": 33,
+        "cuenta": 48,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 71,
+      "campos": {
+        "concepto": 34,
+        "cuenta": 45,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 72,
+      "campos": {
+        "concepto": 35,
+        "cuenta": 45,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 73,
+      "campos": {
+        "concepto": 36,
+        "cuenta": 46,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 74,
+      "campos": {
+        "concepto": 37,
+        "cuenta": 46,
+        "tipo_costo": 2
+      }
+    },
+    {
+      "pk": 75,
+      "campos": {
+        "concepto": 1,
+        "cuenta": 92,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 76,
+      "campos": {
+        "concepto": 2,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 77,
+      "campos": {
+        "concepto": 3,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 78,
+      "campos": {
+        "concepto": 4,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 79,
+      "campos": {
+        "concepto": 5,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 80,
+      "campos": {
+        "concepto": 6,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 81,
+      "campos": {
+        "concepto": 7,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 82,
+      "campos": {
+        "concepto": 8,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 83,
+      "campos": {
+        "concepto": 9,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 84,
+      "campos": {
+        "concepto": 10,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 85,
+      "campos": {
+        "concepto": 11,
+        "cuenta": 93,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 86,
+      "campos": {
+        "concepto": 12,
+        "cuenta": 102,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 87,
+      "campos": {
+        "concepto": 13,
+        "cuenta": 101,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 88,
+      "campos": {
+        "concepto": 14,
+        "cuenta": 38,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 89,
+      "campos": {
+        "concepto": 15,
+        "cuenta": 41,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 90,
+      "campos": {
+        "concepto": 16,
+        "cuenta": 96,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 91,
+      "campos": {
+        "concepto": 17,
+        "cuenta": 7,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 92,
+      "campos": {
+        "concepto": 18,
+        "cuenta": 101,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 93,
+      "campos": {
+        "concepto": 19,
+        "cuenta": 92,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 94,
+      "campos": {
+        "concepto": 20,
+        "cuenta": 41,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 95,
+      "campos": {
+        "concepto": 21,
+        "cuenta": 23,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 96,
+      "campos": {
+        "concepto": 22,
+        "cuenta": 7,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 97,
+      "campos": {
+        "concepto": 23,
+        "cuenta": 95,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 98,
+      "campos": {
+        "concepto": 24,
+        "cuenta": 95,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 99,
+      "campos": {
+        "concepto": 25,
+        "cuenta": 92,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 100,
+      "campos": {
+        "concepto": 26,
+        "cuenta": 92,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 101,
+      "campos": {
+        "concepto": 27,
+        "cuenta": 92,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 102,
+      "campos": {
+        "concepto": 28,
+        "cuenta": 92,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 103,
+      "campos": {
+        "concepto": 29,
+        "cuenta": 47,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 104,
+      "campos": {
+        "concepto": 30,
+        "cuenta": 47,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 105,
+      "campos": {
+        "concepto": 31,
+        "cuenta": 95,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 106,
+      "campos": {
+        "concepto": 32,
+        "cuenta": 48,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 107,
+      "campos": {
+        "concepto": 33,
+        "cuenta": 48,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 108,
+      "campos": {
+        "concepto": 34,
+        "cuenta": 45,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 109,
+      "campos": {
+        "concepto": 35,
+        "cuenta": 45,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 110,
+      "campos": {
+        "concepto": 36,
+        "cuenta": 46,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 111,
+      "campos": {
+        "concepto": 37,
+        "cuenta": 46,
+        "tipo_costo": 3
+      }
+    },
+    {
+      "pk": 112,
+      "campos": {
+        "concepto": 1,
+        "cuenta": 116,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 113,
+      "campos": {
+        "concepto": 2,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 114,
+      "campos": {
+        "concepto": 3,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 115,
+      "campos": {
+        "concepto": 4,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 116,
+      "campos": {
+        "concepto": 5,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 117,
+      "campos": {
+        "concepto": 6,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 118,
+      "campos": {
+        "concepto": 7,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 119,
+      "campos": {
+        "concepto": 8,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 120,
+      "campos": {
+        "concepto": 9,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 121,
+      "campos": {
+        "concepto": 10,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 122,
+      "campos": {
+        "concepto": 11,
+        "cuenta": 117,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 123,
+      "campos": {
+        "concepto": 12,
+        "cuenta": 126,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 124,
+      "campos": {
+        "concepto": 13,
+        "cuenta": 125,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 125,
+      "campos": {
+        "concepto": 14,
+        "cuenta": 38,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 126,
+      "campos": {
+        "concepto": 15,
+        "cuenta": 41,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 127,
+      "campos": {
+        "concepto": 16,
+        "cuenta": 120,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 128,
+      "campos": {
+        "concepto": 17,
+        "cuenta": 7,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 129,
+      "campos": {
+        "concepto": 18,
+        "cuenta": 125,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 130,
+      "campos": {
+        "concepto": 19,
+        "cuenta": 116,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 131,
+      "campos": {
+        "concepto": 20,
+        "cuenta": 41,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 132,
+      "campos": {
+        "concepto": 21,
+        "cuenta": 23,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 133,
+      "campos": {
+        "concepto": 22,
+        "cuenta": 7,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 134,
+      "campos": {
+        "concepto": 23,
+        "cuenta": 119,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 135,
+      "campos": {
+        "concepto": 24,
+        "cuenta": 119,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 136,
+      "campos": {
+        "concepto": 25,
+        "cuenta": 116,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 137,
+      "campos": {
+        "concepto": 26,
+        "cuenta": 116,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 138,
+      "campos": {
+        "concepto": 27,
+        "cuenta": 116,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 139,
+      "campos": {
+        "concepto": 28,
+        "cuenta": 116,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 140,
+      "campos": {
+        "concepto": 29,
+        "cuenta": 47,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 141,
+      "campos": {
+        "concepto": 30,
+        "cuenta": 47,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 142,
+      "campos": {
+        "concepto": 31,
+        "cuenta": 119,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 143,
+      "campos": {
+        "concepto": 32,
+        "cuenta": 48,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 144,
+      "campos": {
+        "concepto": 33,
+        "cuenta": 48,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 145,
+      "campos": {
+        "concepto": 34,
+        "cuenta": 45,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 146,
+      "campos": {
+        "concepto": 35,
+        "cuenta": 45,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 147,
+      "campos": {
+        "concepto": 36,
+        "cuenta": 46,
+        "tipo_costo": 4
+      }
+    },
+    {
+      "pk": 148,
+      "campos": {
+        "concepto": 37,
+        "cuenta": 46,
+        "tipo_costo": 4
+      }
+    }
+  ]
+}
