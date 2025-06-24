@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from contabilidad.models.periodo import ConPeriodo
 
+class ConPeriodoListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = ConPeriodo
+        fields = ['id', 'anio', 'mes', 'estado_bloqueado', 'estado_cerrado', 'estado_inconsistencia']
+
+#deprecated
 class ConPeriodoSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:

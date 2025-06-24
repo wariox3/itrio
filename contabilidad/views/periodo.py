@@ -6,11 +6,39 @@ from contabilidad.models.movimiento import ConMovimiento
 from general.models.documento import GenDocumento
 from contabilidad.serializers.periodo import ConPeriodoSerializador
 from django.db.models import Sum
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
+from contabilidad.filters.periodo import PeriodoFilter
+from rest_framework.pagination import PageNumberPagination
 
 class PeriodoViewSet(viewsets.ModelViewSet):
     queryset = ConPeriodo.objects.all()
     serializer_class = ConPeriodoSerializador
     permission_classes = [permissions.IsAuthenticated]  
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = PeriodoFilter 
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return ConPeriodoSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        page_size = self.request.query_params.get('page_size')
+        if page_size:
+            if page_size != '0':
+                self.pagination_class = PageNumberPagination
+                self.pagination_class.page_size = int(page_size)
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
 
     @staticmethod
     def analizar_inconsistencias(periodo):
