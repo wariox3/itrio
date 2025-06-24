@@ -7,80 +7,86 @@
     {
       "pk": 1,
       "campos": {
-        "cuenta_cobrar": 23
+        "cuenta_cobrar": 3
       }
     },
     {
       "pk": 2,
       "campos": {
-        "cuenta_cobrar": 23
+        "cuenta_cobrar": 3
       }
     },
     {
       "pk": 3,
       "campos": {
-        "cuenta_cobrar": 23
+        "cuenta_cobrar": 3
       }
     },
     {
       "pk": 5,
       "campos": {
-        "cuenta_pagar": 24
+        "cuenta_pagar": 22
       }
     },
     {
       "pk": 6,
       "campos": {
-        "cuenta_pagar": 24
+        "cuenta_pagar": 2
       }
     },
     {
       "pk": 7,
       "campos": {
-        "cuenta_pagar": 24
+        "cuenta_pagar": 2
       }
     },
     {
       "pk": 11,
       "campos": {
-        "cuenta_pagar": 24
+        "cuenta_pagar": 22
       }
     },
     {
       "pk": 12,
       "campos": {
-        "cuenta_pagar": 24
+        "cuenta_pagar": 22
       }
     },
     {
       "pk": 14,
       "campos": {
-        "cuenta_pagar": 25
+        "cuenta_pagar": 139
       }
     },
     {
       "pk": 17,
       "campos": {
-        "cuenta_cobrar": 23
+        "cuenta_cobrar": 3
       }
     },
     {
       "pk": 20,
       "campos": {
-        "cuenta_pagar": 28
+        "cuenta_pagar": 141
       }
     },
     {
       "pk": 21,
       "campos": {
-        "cuenta_pagar": 26
+        "cuenta_pagar": 44
       }
     },
     {
       "pk": 24,
       "campos": {
-        "cuenta_cobrar": 23
+        "cuenta_cobrar": 3
       }
-    }
+    },
+    {
+      "pk": 27,
+      "campos": {
+        "cuenta_cobrar": 3
+      }
+    }    
   ]
 }
