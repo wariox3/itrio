@@ -435,7 +435,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 c.cuenta_cuenta_id,
                 c.nivel as cuenta_nivel,
                 cp.nombre as comprobante_nombre,
-                co.nombre_corto as contacto_nombre_corto
+                co.nombre_corto as contacto_nombre_corto,
+                co.numero_identificacion as contacto_numero_identificacion
             FROM
                 con_movimiento m
             LEFT JOIN
@@ -468,6 +469,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 'cuenta_nivel': movimiento.cuenta_nivel,
                 'contacto_id': movimiento.contacto_id,
                 'contacto_nombre_corto': movimiento.contacto_nombre_corto,  
+                'contacto_numero_identificacion': movimiento.contacto_numero_identificacion,  
                 'comprobante_nombre': movimiento.comprobante_nombre              
             })         
         return resultados_json
@@ -783,39 +785,35 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'informe-base',)
     def informe_base(self, request):    
         raw = request.data
-        filtros = raw.get("filtros", [])
+        parametros = raw.get("parametros", [])
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)
-        fecha_desde = None
-        fecha_hasta = None
-        cierre = False        
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha":
-                fecha_hasta = filtro["valor1"]
-            if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                
-        
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )               
+        fecha_desde = parametros['fecha_desde']
+        fecha_hasta = parametros['fecha_hasta']
+        cierre = parametros['incluir_cierre']
+        cuenta_con_movimiento = parametros['cuenta_con_movimiento']                                   
         resultados_movimiento = self.obtener_movimiento_detallado(fecha_desde, fecha_hasta, cierre)
         resultados_json = resultados_movimiento
         resultados_json.sort(key=lambda x: str(x['cuenta_codigo']))
 
         if excel:
+            excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "Base"
-            headers = ["CUENTA", "NOMBRE CUENTA", "CONTACTO", "NUMERO", "COMPROBANTE", "FECHA", "DETALLE", "DEBITO", "CREDITO", "BASE"]
+            ws.title = "bases"                                                
+            excel_funciones.agregar_titulo(ws, "Informe de bases", "A", "K")                                   
+            ws['A4'] = f"Fecha desde: {fecha_desde}"
+            ws['A4'].font = excel_funciones.fuente_general           
+            ws['A5'] = f"Fecha hasta: {fecha_hasta}"
+            ws['A5'].font = excel_funciones.fuente_general 
+            ws.append([])
+            headers = ["Cuenta", "Nombre Cuenta", "Identificación", "Contacto", "Numero", "Comprobante", "Fecha", "Detalle", "Debitos ($)", "Creditos ($)", "Base ($)"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
                     registro['cuenta_codigo'],
                     registro['cuenta_nombre'],
+                    registro['contacto_numero_identificacion'],
                     registro['contacto_nombre_corto'],
                     registro['numero'],
                     registro['comprobante_nombre'],
@@ -825,12 +823,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['credito'],
                     registro['base'],
                 ])    
-            
-            estilos_excel = WorkbookEstilos(wb)
-            estilos_excel.aplicar_estilos([5,6,7,8])                                
+            excel_funciones.aplicar_estilos(ws, 7, [9,10,11])                                
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            response['Content-Disposition'] = f'attachment; filename=base.xlsx'
+            response['Content-Disposition'] = f'attachment; filename=bases.xlsx'
             wb.save(response)
             return response
         else:
@@ -839,33 +835,28 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'informe-certificado-retencion',)
     def informe_certificado_retencion(self, request):    
         raw = request.data
-        filtros = raw.get("filtros", [])
+        parametros = raw.get("parametros", [])
         excel = raw.get('excel', False)
         pdf = raw.get('pdf', False)
-        fecha_desde = None
-        fecha_hasta = None
-        cierre = False        
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha":
-                fecha_desde = filtro["valor1"]
-            if filtro["propiedad"] == "fecha":
-                fecha_hasta = filtro["valor1"]
-            if filtro["propiedad"] == "cierre":
-                cierre = filtro["valor1"]                
-        
-        if not fecha_desde or not fecha_hasta:
-            return Response(
-                {"error": "Los filtros 'fecha_desde' y 'fecha_hasta' son obligatorios."},
-                status=status.HTTP_400_BAD_REQUEST
-            )               
+        fecha_desde = parametros['fecha_desde']
+        fecha_hasta = parametros['fecha_hasta']
+        cierre = parametros['incluir_cierre']
+        cuenta_con_movimiento = parametros['cuenta_con_movimiento']                                   
         resultados_movimiento = self.obtener_movimiento_certificado_retencion(fecha_desde, fecha_hasta, cierre)
         resultados_json = resultados_movimiento
 
         if excel:
+            excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "Certificado retencion"
-            headers = ["NIT", "CONTACTO", "CUENTA", "NOMBRE CUENTA", "DEBITO", "CREDITO", "BASE"]
+            ws.title = "Certificado de retencion"                                                
+            excel_funciones.agregar_titulo(ws, "Informe de bases", "A", "G")                                   
+            ws['A4'] = f"Fecha desde: {fecha_desde}"
+            ws['A4'].font = excel_funciones.fuente_general           
+            ws['A5'] = f"Fecha hasta: {fecha_hasta}"
+            ws['A5'].font = excel_funciones.fuente_general 
+            ws.append([])
+            headers = ["Identificación", "Contacto", "Cuenta", "Nombre cuenta", "Fecha", "Detalle", "Debitos ($)", "Creditos ($)", "Base ($)"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
@@ -876,10 +867,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['debito'],
                     registro['credito'],
                     registro['base'],
-                ])    
-            
-            estilos_excel = WorkbookEstilos(wb)
-            estilos_excel.aplicar_estilos([5,6,7,8])                                
+                ])            
+            excel_funciones.aplicar_estilos(ws, 7, [7,8,9])                             
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
             response['Content-Disposition'] = f'attachment; filename=certificado_retencion.xlsx'
