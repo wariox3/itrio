@@ -595,7 +595,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "balance_prueba"                                                
+            ws.title = "balance_prueba_contacto"                                                
             excel_funciones.agregar_titulo(ws, "Balance de prueba por contacto", "A", "I")                                   
             ws['A4'] = f"Fecha desde: {fecha_desde}"
             ws['A4'].font = excel_funciones.fuente_general           
@@ -647,7 +647,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "balance_prueba"                                                
+            ws.title = "auxiliar_cuenta"                                                
             excel_funciones.agregar_titulo(ws, "Auxiliar cuenta", "A", "G")                                   
             ws['A4'] = f"Fecha desde: {fecha_desde}"
             ws['A4'].font = excel_funciones.fuente_general           
@@ -696,7 +696,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "balance_prueba"                                                
+            ws.title = "auxiliar_contacto"                                                
             excel_funciones.agregar_titulo(ws, "Auxiliar por contacto", "A", "I")                                   
             ws['A4'] = f"Fecha desde: {fecha_desde}"
             ws['A4'].font = excel_funciones.fuente_general           
@@ -722,7 +722,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             excel_funciones.aplicar_estilos(ws, 7, [6,7,8,9])                              
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            response['Content-Disposition'] = f'attachment; filename=auxiliar_tercero.xlsx'
+            response['Content-Disposition'] = f'attachment; filename=auxiliar_contacto.xlsx'
             wb.save(response)
             return response
         else:
@@ -748,7 +748,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             excel_funciones = ExcelFunciones()
             wb = Workbook()
             ws = wb.active
-            ws.title = "balance_prueba"                                                
+            ws.title = "auxiliar_general"                                                
             excel_funciones.agregar_titulo(ws, "Auxiliar general", "A", "L")                                   
             ws['A4'] = f"Fecha desde: {fecha_desde}"
             ws['A4'].font = excel_funciones.fuente_general           
