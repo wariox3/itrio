@@ -161,7 +161,9 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
                     'entidad_pension': row[19],
                     'entidad_cesantias': row[20],
                     'entidad_caja': row[21],
-                    'comentario': row[22],
+                    'tipo_costo': row[22],
+                    'grupo_contabilidad': row[23],
+                    'comentario': row[24],
                     'estado_terminado' : False
                 }
 
