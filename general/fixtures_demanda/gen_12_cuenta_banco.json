@@ -1,0 +1,26 @@
+{
+  "aplicacion": "general",
+  "modelo": "GenCuentaBanco",
+  "modelo_nativo": "gen_cuenta_banco",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "nombre": "EFECTIVO",
+        "cuenta_banco_tipo": 3,
+        "cuenta": 1
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "nombre": "CUENTA AHORROS",
+        "cuenta_banco_tipo": 1,
+        "cuenta_banco_clase": 1,
+        "numero_cuenta": 0,
+        "cuenta": 2
+      }
+    }
+  ]
+}
