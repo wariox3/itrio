@@ -6,4 +6,4 @@ class GenTipoPersona(models.Model):
     
     class Meta:
         db_table = "gen_tipo_persona"
-        ordering = ["-id"]
+        ordering = ["nombre"]

@@ -7,4 +7,4 @@ class GenPlazoPago(models.Model):
     
     class Meta:
         db_table = "gen_plazo_pago"
-        ordering = ["-id"]
+        ordering = ["nombre"]

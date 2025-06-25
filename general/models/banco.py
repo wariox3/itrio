@@ -7,4 +7,4 @@ class GenBanco(models.Model):
     
     class Meta:
         db_table = "gen_banco"
-        ordering = ["-id"]
+        ordering = ["nombre"]

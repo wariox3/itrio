@@ -13,4 +13,4 @@ class GenCiudad(models.Model):
     
     class Meta:
         db_table = "gen_ciudad"
-        ordering = ["-id"]
+        ordering = ["nombre"]

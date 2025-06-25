@@ -36,7 +36,7 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'ciudad', CiudadViewSet)
 router.register(r'regimen', RegimenViewSet)
-router.register(r'tipopersona', TipoPersonaViewSet)
+router.register(r'tipo_persona', TipoPersonaViewSet)
 router.register(r'identificacion', IdentificacionViewSet)
 router.register(r'contacto', ContactoViewSet)
 router.register(r'item', ItemViewSet)

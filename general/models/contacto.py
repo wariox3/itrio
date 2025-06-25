@@ -3,7 +3,7 @@ from general.models.identificacion import GenIdentificacion
 from general.models.ciudad import GenCiudad
 from general.models.tipo_persona import GenTipoPersona
 from general.models.regimen import GenRegimen
-from general.models.gen_asesor import GenAsesor
+from general.models.asesor import GenAsesor
 from general.models.precio import GenPrecio
 from general.models.plazo_pago import GenPlazoPago
 from general.models.banco import GenBanco

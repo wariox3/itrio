@@ -7,7 +7,7 @@ from general.models.metodo_pago import GenMetodoPago
 from general.models.empresa import GenEmpresa
 from general.models.plazo_pago import GenPlazoPago
 from general.models.forma_pago import GenFormaPago
-from general.models.gen_asesor import GenAsesor
+from general.models.asesor import GenAsesor
 from general.models.resolucion import GenResolucion
 from general.models.sede import GenSede
 from general.models.cuenta_banco import GenCuentaBanco
