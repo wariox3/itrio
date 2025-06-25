@@ -6,7 +6,7 @@
   "datos": [
     {
       "pk": 1,
-      "campos": {"nombre": "Principal"}
+      "campos": {"nombre": "Principal", "grupo": 1}
     }
   ]
 }
