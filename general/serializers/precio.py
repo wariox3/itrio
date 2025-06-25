@@ -1,6 +1,13 @@
 from general.models.precio import GenPrecio
 from rest_framework import serializers
 
+
+class GenPrecioListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenPrecio
+        fields = ['id', 
+                  'nombre']
+
 class GenPrecioSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:

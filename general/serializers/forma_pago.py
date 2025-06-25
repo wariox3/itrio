@@ -2,6 +2,12 @@ from general.models.forma_pago import GenFormaPago
 from contabilidad.models.cuenta import ConCuenta
 from rest_framework import serializers
 
+class GenFormaPagoListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenFormaPago
+        fields = ['id', 
+                  'nombre']
+
 class GenFormaPagoSerializador(serializers.HyperlinkedModelSerializer):
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     class Meta:

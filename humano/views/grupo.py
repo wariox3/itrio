@@ -4,6 +4,7 @@ from humano.serializers.grupo import HumGrupoSerializador
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from humano.filters.grupo import GrupoFilter
+from utilidades.excel_exportar import ExcelExportar
 
 class HumGrupoViewSet(viewsets.ModelViewSet):
     queryset = HumGrupo.objects.all()
@@ -28,3 +29,11 @@ class HumGrupoViewSet(viewsets.ModelViewSet):
         if campos and campos != '__all__':
             queryset = queryset.only(*campos) 
         return queryset 
+    
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('excel'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExcelExportar(serializer.data, sheet_name="grupos", filename="grupos.xlsx")
+            return exporter.export()
+        return super().list(request, *args, **kwargs)   
