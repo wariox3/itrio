@@ -739,8 +739,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if movimiento_serializador.is_valid():
                                     movimientos_validos.append(movimiento_serializador)
                                 else:
-                                    return Response({'validaciones': movimiento_serializador.errors, 
-                                                        'mensaje': 'Seguridad social pension'}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                             
+                                    return Response({'validaciones': movimiento_serializador.errors, 'mensaje': f'Seguridad social {clase}'}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                     
 
                             # Depreciacion
                             if documento_detalle.tipo_registro == 'D':                                    
