@@ -49,3 +49,15 @@ class GenImpuestoSeleccionarSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenImpuesto
         fields = ['id', 'nombre', 'nombre_extendido', 'porcentaje', 'operacion', 'compra', 'venta', 'porcentaje_base']
+
+    def to_representation(self, instance):
+        return {
+            'impuesto_id': instance.id,            
+            'impuesto_nombre': instance.nombre,
+            'impuesto_nombre_extendido': instance.nombre_extendido,
+            'impuesto_porcentaje': instance.porcentaje,
+            'impuesto_compra': instance.compra,
+            'impuesto_venta': instance.venta,
+            'impuesto_porcentaje_base': instance.porcentaje_base,
+            'impuesto_operacion': instance.operacion
+        }
