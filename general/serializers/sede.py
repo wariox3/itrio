@@ -3,35 +3,10 @@ from rest_framework import serializers
 from contabilidad.models.grupo import ConGrupo
 
 class GenSedeSerializador(serializers.HyperlinkedModelSerializer):
-    grupo = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), default=None, allow_null=True)
+    grupo__nombre = serializers.CharField(source='estado.nombre', read_only=True)
     class Meta:
         model = GenSede
-        fields = ['id', 'nombre', 'grupo']  
-        
-    def to_representation(self, instance):
-        grupo_nombre = ""
-        if instance.grupo:
-            grupo_nombre = instance.grupo.nombre
+        fields = ['id', 'nombre', 'grupo__nombre']  
+        select_related_fields = ['grupo']        
 
-        return {
-            'id': instance.id,
-            'nombre': instance.nombre,
-            'grupo_id': instance.grupo_id,
-            'grupo_nombre': grupo_nombre    
-        }     
-
-class GenSedeListaSerializador(serializers.ModelSerializer):          
-    class Meta:
-        model = GenSede
-        fields = ['id', 
-                  'nombre']
-
-class GenSedeListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = GenSede
-        
-    def to_representation(self, instance):
-        return {
-            'sede_id': instance.id,            
-            'sede_nombre': instance.nombre
-        }       
+  
