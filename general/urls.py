@@ -31,6 +31,8 @@ from .views.parametros import ParametrosViewSet
 from .views.configuracion_usuario import ConfiguracionUsuarioViewSet
 from .views.complemento import ComplementoViewSet
 from .views.forma_pago import FormaPagoViewSet
+from .views.plazo_pago import PlazoPagoViewSet
+from .views.asesor import AsesorViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -63,6 +65,8 @@ router.register(r'parametros', ParametrosViewSet)
 router.register(r'configuracion_usuario', ConfiguracionUsuarioViewSet)
 router.register(r'complemento', ComplementoViewSet)
 router.register(r'forma_pago', FormaPagoViewSet)
+router.register(r'plazo_pago', PlazoPagoViewSet)
+router.register(r'asesor', AsesorViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
