@@ -7,6 +7,7 @@ from general.filters.resolucion import ResolucionFilter
 from general.serializers.resolucion import GenResolucionSerializador, GenResolucionSeleccionarSerializar
 from rest_framework.pagination import PageNumberPagination
 from utilidades.excel_exportar import ExcelExportar
+from rest_framework.response import Response
 
 class ResolucionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
