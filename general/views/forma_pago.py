@@ -42,3 +42,18 @@ class FormaPagoViewSet(viewsets.ModelViewSet):
             exporter = ExcelExportar(serializer.data, sheet_name="formaspago", filename="formas_pago.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)   
+    
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre = request.query_params.get('nombre__icontains', None)
+        queryset = self.get_queryset()
+        if nombre:
+            queryset = queryset.filter(nombre__icontains=nombre)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = self.get_serializer(queryset, many=True)        
+        return Response(serializer.data)    
