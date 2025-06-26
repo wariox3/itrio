@@ -22,15 +22,7 @@ class RegimenViewSet(viewsets.ModelViewSet):
         if campos and campos != '__all__':
             queryset = queryset.only(*campos)     
         return queryset 
-    
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        limit = request.query_params.get('limit')
-        if limit and limit.isdigit():
-            queryset = queryset[:int(limit)]
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-    
+        
 
     @action(detail=False, methods=["get"], url_path=r'seleccionar')
     def seleccionar_action(self, request):
