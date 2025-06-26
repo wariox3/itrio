@@ -8,7 +8,7 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.item import GenItem
 from general.models.item_impuesto import GenItemImpuesto
 from contabilidad.models.cuenta import ConCuenta
-from general.serializers.item import GenItemSerializador, GenItemListaSerializador
+from general.serializers.item import GenItemSerializador, GenItemListaSerializador, GenItemSeleccionarSerializador
 from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenItemImpuestoDetalleSerializador
 from general.filters.item import ItemFilter
 from utilidades.utilidades import Utilidades
@@ -25,7 +25,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ItemFilter 
     queryset = GenItem.objects.all()   
-    serializadores = {'lista': GenItemListaSerializador}
+    serializadores = {'lista': GenItemListaSerializador, 'seleccioanr' : GenItemSeleccionarSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -81,7 +81,7 @@ class ItemViewSet(viewsets.ModelViewSet):
             queryset = queryset[:limit]
         except ValueError:
             pass    
-        serializer = self.get_serializer(queryset, many=True)        
+        serializer = GenItemSeleccionarSerializador(queryset, many=True)        
         return Response(serializer.data)    
 
     def create(self, request):
