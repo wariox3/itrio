@@ -9,4 +9,4 @@ class GenResolucionSerializador(serializers.ModelSerializer):
 class GenResolucionSeleccionarSerializar(serializers.ModelSerializer):
     class Meta:
         model = GenResolucion
-        fields = ['id', 'numero'] 
+        fields = ['id', 'numero', 'prefijo'] 
