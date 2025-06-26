@@ -52,6 +52,24 @@ class CuentaViewSet(viewsets.ModelViewSet):
             exporter = ExcelExportar(serializer.data, sheet_name="cuentas", filename="cuentas.xlsx")
             return exporter.exportar()
         return super().list(request, *args, **kwargs)    
+    
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        codigo = request.query_params.get('codigo__startswith', None)
+        permite_movimiento = request.query_params.get('permite_movimiento', None)
+        queryset = self.get_queryset()
+        if permite_movimiento:
+            queryset = queryset.filter(permite_movimiento=permite_movimiento)
+        if codigo:
+            queryset = queryset.filter(codigo__startswith=codigo)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = ConCuentaListaSerializador(queryset, many=True)        
+        return Response(serializer.data)    
 
     def destroy(self, request, *args, **kwargs):        
         instance = self.get_object()

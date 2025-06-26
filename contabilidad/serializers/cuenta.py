@@ -9,7 +9,8 @@ class ConCuentaListaSerializador(serializers.ModelSerializer):
     class Meta:
         model = ConCuenta
         fields = ['id', 
-                  'nombre']
+                  'nombre',
+                  'codigo']
 
 #Deprecated
 class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
@@ -49,15 +50,3 @@ class ConCuentaSerializador(serializers.HyperlinkedModelSerializer):
         } 
 
 
-class ConCuentaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
-    
-    class Meta:
-        model = ConCuenta
-
-    def to_representation(self, instance):
-        return {
-            'cuenta_id': instance.id,
-            'cuenta_nombre': instance.nombre,
-            'cuenta_codigo': instance.codigo
-        }         
-        
