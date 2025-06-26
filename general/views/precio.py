@@ -1,10 +1,12 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
 from general.models.precio import GenPrecio
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from general.serializers.precio import GenPrecioSerializador, GenPrecioListaSerializador
+from general.serializers.precio import GenPrecioSerializador
 from general.filters.precio import PrecioFilter
 from utilidades.excel_exportar import ExcelExportar
+from rest_framework.response import Response
 
 class PrecioViewSet(viewsets.ModelViewSet):
     queryset = GenPrecio.objects.all()
@@ -12,7 +14,7 @@ class PrecioViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = PrecioFilter 
     permission_classes = [permissions.IsAuthenticated]
-    serializadores = {'lista': GenPrecioListaSerializador}
+    serializadores = {'lista': GenPrecioSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -38,3 +40,18 @@ class PrecioViewSet(viewsets.ModelViewSet):
             exporter = ExcelExportar(serializer.data, sheet_name="precios", filename="precios.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)    
+    
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre = request.query_params.get('nombre__icontains', None)
+        queryset = self.get_queryset()
+        if nombre:
+            queryset = queryset.filter(nombre__icontains=nombre)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = self.get_serializer(queryset, many=True)        
+        return Response(serializer.data)    
