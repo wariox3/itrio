@@ -12,6 +12,13 @@ class GenMetodoPagoSerializador(serializers.HyperlinkedModelSerializer):
             'nombre': instance.nombre
         }    
 
+class GenMetodoPagoListaSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenMetodoPago
+        fields = ['id', 
+                  'nombre']
+
+#deprecated
 class GenMetodoPagoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenMetodoPago 
