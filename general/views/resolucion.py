@@ -54,7 +54,7 @@ class ResolucionViewSet(viewsets.ModelViewSet):
         limit = request.query_params.get('limit', 10)
         numero = request.query_params.get('numero__icontains', None)
         queryset = self.get_queryset()
-        if nombre_corto:
+        if numero:
             queryset = queryset.filter(numero=numero)
         try:
             limit = int(limit)
