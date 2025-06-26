@@ -5,7 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from general.models.metodo_pago import GenMetodoPago
 from general.serializers.metodo_pago import GenMetodoPagoSerializador
 from general.filters.metodo_pago import MetodoPagoFilter
-from utilidades.excel_exportar import ExcelExportar
 from rest_framework.response import Response
 
 class MetodoPagoViewSet(viewsets.ModelViewSet):
