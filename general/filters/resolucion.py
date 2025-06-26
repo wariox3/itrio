@@ -5,4 +5,4 @@ class ResolucionFilter(django_filters.FilterSet):
     class Meta:
         model = GenResolucion        
         fields = {'id': ['exact'],
-                  'nombre': ['exact','icontains']}
+                  'numero': ['exact','icontains']}
