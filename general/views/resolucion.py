@@ -57,7 +57,7 @@ class ResolucionViewSet(viewsets.ModelViewSet):
         compra = request.query_params.get('compra', None)
         queryset = self.get_queryset()
         if numero:
-            queryset = queryset.filter(numero=numero)
+            queryset = queryset.filter(numero__icontains=numero)
         if venta:
             queryset = queryset.filter(venta=venta)
         if compra:
