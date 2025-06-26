@@ -5,7 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from general.models.plazo_pago import GenPlazoPago
 from general.serializers.plazo_pago import GenPlazoPagoSerializador
 from general.filters.plazo_pago import PlazoPagoFilter
-from rest_framework.response import Response
 
 
 class PlazoPagoViewSet(viewsets.ModelViewSet):

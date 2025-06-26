@@ -43,4 +43,9 @@ class GenImpuestoListaAutocompletarSerializador(serializers.HyperlinkedModelSeri
             'impuesto_venta': instance.venta,
             'impuesto_porcentaje_base': instance.porcentaje_base,
             'impuesto_operacion': instance.operacion
-        }             
+        }
+
+class GenImpuestoSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = GenImpuesto
+        fields = ['id', 'nombre', 'nombre_extendido', 'porcentaje', 'operacion', 'compra', 'venta', 'porcentaje_base']
