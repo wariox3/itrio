@@ -1,8 +1,10 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from contabilidad.models.comprobante import ConComprobante
-from contabilidad.serializers.comprobante import ConComprobanteSerializador
+from contabilidad.serializers.comprobante import ConComprobanteSerializador, ConComprobanteSeleccionarSerializar
 from io import BytesIO
 import base64
 import openpyxl
@@ -11,6 +13,21 @@ class ComprobanteViewSet(viewsets.ModelViewSet):
     queryset = ConComprobante.objects.all()
     serializer_class = ConComprobanteSerializador
     permission_classes = [permissions.IsAuthenticated]
+  
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre = request.query_params.get('nombre__icontains', None)
+        queryset = self.get_queryset()
+        if nombre:
+            queryset = queryset.filter(nombre=nombre)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = ConComprobanteSeleccionarSerializar(queryset, many=True)        
+        return Response(serializer.data)    
 
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):
