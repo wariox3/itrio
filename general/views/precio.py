@@ -38,7 +38,7 @@ class PrecioViewSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             exporter = ExcelExportar(serializer.data, sheet_name="precios", filename="precios.xlsx")
-            return exporter.export()
+            return exporter.exportar()
         return super().list(request, *args, **kwargs)    
     
     @action(detail=False, methods=["get"], url_path=r'seleccionar')

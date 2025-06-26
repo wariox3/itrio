@@ -245,7 +245,7 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with"
 ]
 
-'''LOGGING = {
+LOGGING = {
     'version': 1,
     'handlers': {
         'console':{
@@ -258,10 +258,10 @@ CORS_ALLOW_HEADERS = [
             'level': 'DEBUG',
         },
     },
-}'''
+}
 
 
-LOGGING = {
+'''LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
@@ -278,4 +278,4 @@ LOGGING = {
             'propagate': True,
         },
     },
-}
+}'''

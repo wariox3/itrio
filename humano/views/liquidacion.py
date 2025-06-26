@@ -40,7 +40,7 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             exporter = ExportarExcel(serializer.data, sheet_name="liquidaciones", filename="liquidaciones.xlsx")
-            return exporter.export()
+            return exporter.exportar()
         return super().list(request, *args, **kwargs)    
     
     @action(detail=False, methods=["post"], url_path=r'generar',)

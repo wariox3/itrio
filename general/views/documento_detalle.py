@@ -38,7 +38,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             exporter = ExcelExportar(serializer.data, sheet_name="documentos_detalles", filename="documentos_detalles.xlsx")
-            return exporter.export()
+            return exporter.exportar()
         return super().list(request, *args, **kwargs)
 
     def create(self, request):
