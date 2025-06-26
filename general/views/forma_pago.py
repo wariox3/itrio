@@ -17,7 +17,6 @@ class FormaPagoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializadores = {'lista': GenFormaPagoListaSerializador}   
 
-
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
         if not serializador_parametro or serializador_parametro not in self.serializadores:
