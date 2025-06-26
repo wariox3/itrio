@@ -109,42 +109,10 @@ class GenContactoListaSerializador(serializers.ModelSerializer):
                   'empleado']
         select_related_fields = ['identificacion']
 
-#Deprecated
-
-class GenContactoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
-    identificacion = serializers.PrimaryKeyRelatedField(queryset=GenIdentificacion.objects.all())
-    ciudad = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())    
-    tipo_persona = serializers.PrimaryKeyRelatedField(queryset=GenTipoPersona.objects.all())
-    regimen = serializers.PrimaryKeyRelatedField(queryset=GenRegimen.objects.all())
-    class Meta:
-        model = GenContacto 
-        
-    def to_representation(self, instance):
-        plazo_pago = instance.plazo_pago
-        plazo_pago_dias = 0
-        if plazo_pago:
-            plazo_pago_dias = plazo_pago.dias
-        plazo_pago_proveedor = instance.plazo_pago_proveedor
-        plazo_pago_proveedor_dias = 0
-        if plazo_pago_proveedor:
-            plazo_pago_proveedor_dias = plazo_pago_proveedor.dias
-        return {
-            'contacto_id': instance.id,  
-            'numero_identificacion': instance.numero_identificacion,          
-            'contacto_nombre_corto': instance.nombre_corto,
-            'plazo_pago_id': instance.plazo_pago_id,
-            'plazo_pago_dias': plazo_pago_dias,
-            'plazo_pago_proveedor_id': instance.plazo_pago_proveedor_id,
-            'plazo_pago_proveedor_dias': plazo_pago_proveedor_dias
-        }       
-
-class GenContactoListaBuscarSerializador(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = GenContacto 
-        
-    def to_representation(self, instance):
-        return {
-            'id': instance.id,            
-            'numero_identificacion': instance.numero_identificacion,
-            'nombre_corto': instance.nombre_corto            
-        }    
+class GenContactoSeleccionarSerializador(serializers.ModelSerializer):
+    plazo_pago__dias = serializers.IntegerField(source='plazo_pago.dias', read_only=True)
+    plazo_pago_proveedor__dias = serializers.IntegerField(source='plazo_pago_proveedor.dias', read_only=True)
+    class Meta: 
+        model = GenContacto
+        fields = ['id', 'nombre_corto', 'numero_identificacion', 'plazo_pago_id', 'plazo_pago_proveedor_id' ,'plazo_pago__dias', 'plazo_pago_proveedor__dias']
+        select_related_fields = ['plazo_pago', 'plazo_pago_proveedor']

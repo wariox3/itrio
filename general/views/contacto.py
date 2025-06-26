@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models.contacto import GenContacto
 from general.models.identificacion import GenIdentificacion
-from general.serializers.contacto import GenContactoSerializador, GenContactoListaSerializador
+from general.serializers.contacto import GenContactoSerializador, GenContactoListaSerializador, GenContactoSeleccionarSerializador
 from general.filters.contacto import ContactoFilter
 from utilidades.wolframio import Wolframio
 from utilidades.excel_exportar import ExcelExportar
@@ -52,6 +52,24 @@ class ContactoViewSet(viewsets.ModelViewSet):
             exporter = ExcelExportar(serializer.data, sheet_name="contactos", filename="contactos.xlsx")
             return exporter.export()
         return super().list(request, *args, **kwargs)
+    
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre_corto = request.query_params.get('nombre_corto__icontains', None)
+        cliente = request.query_params.get('cliente', None)
+        queryset = self.get_queryset()
+        if nombre_corto:
+            queryset = queryset.filter(nombre_corto__icontains=nombre_corto)
+        if cliente:
+            queryset = queryset.filter(cliente=cliente)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = GenContactoSeleccionarSerializador(queryset, many=True)        
+        return Response(serializer.data)    
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
