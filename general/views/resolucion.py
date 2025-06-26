@@ -53,9 +53,15 @@ class ResolucionViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         numero = request.query_params.get('numero__icontains', None)
+        venta = request.query_params.get('venta', None)
+        compra = request.query_params.get('compra', None)
         queryset = self.get_queryset()
         if numero:
             queryset = queryset.filter(numero=numero)
+        if venta:
+            queryset = queryset.filter(venta=venta)
+        if compra:
+            queryset = queryset.filter(compra=compra)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
