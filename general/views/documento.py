@@ -24,7 +24,7 @@ from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoRetrieveSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
@@ -83,6 +83,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         'lista': GenDocumentoListaSerializador,
         'lista_nomina': GenDocumentoListaNominaSerializador,
         'informe': GenDocumentoInformeSerializador,
+        'informe_cuenta_cobrar': GenDocumentoInformeCuentaCobrarSerializador,
         'nomina': GenDocumentoSerializador,
     }
 
@@ -107,8 +108,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="documentos", filename="documentos.xlsx")
-            return exporter.exportar()
+            exporter = ExcelExportar(serializer.data, sheet_name="documentos", filename="documentos.xlsx")            
+            if request.query_params.get('excel'):
+                return exporter.exportar_estilo()
+            if request.query_params.get('excel_masivo'):
+                return exporter.exportar()        
         return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, pk=None):

@@ -523,6 +523,65 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             })         
         return resultados_json
 
+    def obtener_movimiento_base(self, fecha_desde, fecha_hasta, cierre = False):
+        parametro_cierre = ' AND m.cierre = false '
+        if cierre == True:
+            parametro_cierre = ''
+            
+        query = f'''            
+            SELECT
+                m.id,
+                m.numero,
+                m.fecha,                
+                m.debito,
+                m.credito,
+                m.detalle, 
+                m.cuenta_id,
+                m.contacto_id,                               
+                m.comprobante_id,
+                c.codigo as cuenta_codigo,
+                c.nombre as cuenta_nombre,
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id,
+                c.cuenta_cuenta_id,
+                c.nivel as cuenta_nivel,
+                cp.nombre as comprobante_nombre,
+                co.nombre_corto as contacto_nombre_corto,
+                co.numero_identificacion as contacto_numero_identificacion
+            FROM
+                con_movimiento m
+            LEFT JOIN
+                con_cuenta c ON m.cuenta_id = c.id
+            LEFT JOIN
+                con_comprobante cp ON m.comprobante_id = cp.id                
+            LEFT JOIN
+                gen_contacto co ON m.contacto_id = co.id
+            WHERE
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}   
+                AND c.exige_base = true 
+            ORDER BY
+                m.fecha ASC;
+        '''
+        resultados = ConMovimiento.objects.raw(query)   
+        resultados_json = []
+        for movimiento in resultados:            
+            resultados_json.append({
+                'id': movimiento.id,
+                'comprobante_nombre': movimiento.comprobante_nombre, 
+                'numero': movimiento.numero,
+                'fecha': movimiento.fecha,    
+                'cuenta_codigo': movimiento.cuenta_codigo,
+                'cuenta_nombre': movimiento.cuenta_nombre,
+                'contacto_id': movimiento.contacto_id,
+                'contacto_nombre_corto': movimiento.contacto_nombre_corto,  
+                'contacto_numero_identificacion': movimiento.contacto_numero_identificacion,                  
+                'debito': movimiento.debito,
+                'credito': movimiento.credito,
+                'base': movimiento.base,  
+                'detalle': movimiento.detalle                                                                           
+            })         
+        return resultados_json
+
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
         raw = request.data
@@ -790,9 +849,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
-        cierre = parametros['incluir_cierre']
-        cuenta_con_movimiento = parametros['cuenta_con_movimiento']                                   
-        resultados_movimiento = self.obtener_movimiento_detallado(fecha_desde, fecha_hasta, cierre)
+        cierre = parametros['incluir_cierre']        
+        resultados_movimiento = self.obtener_movimiento_base(fecha_desde, fecha_hasta, cierre)
         resultados_json = resultados_movimiento
         resultados_json.sort(key=lambda x: str(x['cuenta_codigo']))
 
@@ -807,7 +865,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             ws['A5'] = f"Fecha hasta: {fecha_hasta}"
             ws['A5'].font = excel_funciones.fuente_general 
             ws.append([])
-            headers = ["Cuenta", "Nombre Cuenta", "Identificación", "Contacto", "Numero", "Comprobante", "Fecha", "Detalle", "Debitos ($)", "Creditos ($)", "Base ($)"]
+            headers = ["Cuenta", "Nombre Cuenta", "Identificación", "Contacto", "Comprobante", "Numero", "Fecha", "Detalle", "Debitos ($)", "Creditos ($)", "Base ($)"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
@@ -815,8 +873,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['cuenta_nombre'],
                     registro['contacto_numero_identificacion'],
                     registro['contacto_nombre_corto'],
-                    registro['numero'],
                     registro['comprobante_nombre'],
+                    registro['numero'],                    
                     registro['fecha'],
                     registro['detalle'],
                     registro['debito'],
