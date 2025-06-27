@@ -37,8 +37,22 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="documentos_detalles", filename="documentos_detalles.xlsx")
-            return exporter.exportar()
+            titulo = 'Informe documentos detalles'
+            nombre_hoja = "documentos_detalles"
+            nombre_archivo = "documentos_detalles.xlsx"
+            if request.query_params.get('excel_masivo'):
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar() 
+            elif request.query_params.get('excel_informe'): 
+                serializador_parametro = self.request.query_params.get('serializador', None)                
+                if serializador_parametro == 'informe_venta':
+                    titulo = 'Ventas por item' 
+                    nombre_archivo = "ventas_por_item.xlsx"  
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
+                return exporter.exportar_informe()                    
+            else:
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar_estilo()            
         return super().list(request, *args, **kwargs)
 
     def create(self, request):
