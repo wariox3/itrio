@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from humano.models.contrato_tipo import HumContratoTipo
 
+class HumContratoTipoSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumContratoTipo
+        fields = ['id', 'nombre']
+
 class HumContratoTipoSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
