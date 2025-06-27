@@ -43,16 +43,10 @@ class HumGrupoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], url_path=r'seleccionar')
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
-        nombre_corto = request.query_params.get('nombre_corto__icontains', None)
-        cliente = request.query_params.get('cliente', None)
-        proveedor = request.query_params.get('proveedor', None)
+        nombre = request.query_params.get('nombre__icontains', None)
         queryset = self.get_queryset()
-        if nombre_corto:
-            queryset = queryset.filter(nombre_corto__icontains=nombre_corto)
-        if cliente:
-            queryset = queryset.filter(cliente=cliente)
-        if proveedor:
-            queryset = queryset.filter(proveedor=proveedor)
+        if nombre:
+            queryset = queryset.filter(nombre__icontains=nombre)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
