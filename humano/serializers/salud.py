@@ -2,6 +2,10 @@ from rest_framework import serializers
 from humano.models.salud import HumSalud
 from humano.models.concepto import HumConcepto
 
+class HumSaludSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumSalud
+        fields = ['id', 'nombre']
 class HumSaludSerializador(serializers.HyperlinkedModelSerializer):
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
     class Meta:
