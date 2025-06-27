@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from humano.models.subtipo_cotizante import HumSubtipoCotizante
 
+class HumSubtipoCotizanteSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumSubtipoCotizante
+        fields = ['id', 'nombre']
+
 class HumSubtipoCotizanteSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
