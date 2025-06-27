@@ -18,6 +18,14 @@ class ExcelExportar:
         'contacto_id': 'Contacto ID',
         'contacto__numero_identificacion': 'Numero identificacion',
         'contacto__nombre_corto': 'Contacto',
+        'documento__contacto__nombre_corto': 'Contacto',
+        'documento__fecha': 'Fecha',
+        'documento__numero': 'Numero',
+        'documento__documento_tipo__nombre': 'Documento',
+        'item_id': 'Item ID',
+        'item__nombre': 'Item',
+        'cantidad': 'Cantidad',
+        'precio': 'Precio',
         'descuento': 'Descuento',
         'subtotal': 'Subtotal',
         'base_impuesto': 'Base',
@@ -31,6 +39,9 @@ class ExcelExportar:
         'estado_electronico_enviado': 'Electronico enviado',
         'estado_electronico_notificado': 'Electronico notificado'
     }
+			
+
+
 
     def __init__(self, data, nombre_hoja="documentos", nombre_archivo="documentos.xlsx", titulo='Documentos'):
         self.data = data

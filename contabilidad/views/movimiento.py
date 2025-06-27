@@ -490,7 +490,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 co.nombre_corto as contacto_nombre_corto,
                 SUM(m.debito) as debito,
                 SUM(m.credito) as credito,
-                SUM(m.base) as base
+                SUM(m.base) as base,
+                SUM(CASE WHEN m.debito > 0 THEN m.base ELSE 0 END) as base_debito,
+                SUM(CASE WHEN m.credito > 0 THEN m.base ELSE 0 END) as base_credito                
             FROM
                 con_movimiento m
             LEFT JOIN
@@ -498,7 +500,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             LEFT JOIN
                 gen_contacto co ON m.contacto_id = co.id
             WHERE
-        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' and m.cuenta_id = 7 {parametro_cierre}
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}
         	group by 
         		m.cuenta_id,
         		m.contacto_id,
@@ -509,11 +511,15 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         '''
         resultados = ConMovimiento.objects.raw(query)   
         resultados_json = []
-        for movimiento in resultados:            
+        for movimiento in resultados: 
+            retenido = movimiento.debito - movimiento.credito
+            base_retenido = movimiento.base_debito - movimiento.base_credito
             resultados_json.append({
                 'debito': movimiento.debito,
                 'credito': movimiento.credito,
-                'base': movimiento.base,                
+                'base': movimiento.base,     
+                'retenido': retenido,  
+                'base_retenido': base_retenido,         
                 'cuenta_codigo': movimiento.cuenta_codigo,
                 'cuenta_nombre': movimiento.cuenta_nombre,
                 'contacto_id': movimiento.contacto_id,
