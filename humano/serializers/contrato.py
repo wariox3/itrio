@@ -35,6 +35,17 @@ class HumContratoListaSerializador(serializers.ModelSerializer):
                 'salario',
                 'estado_terminado']
 
+class HumContratoSeleccionarSerializador(serializers.ModelSerializer):
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    class Meta:
+        model = HumContrato
+        fields = ['id',
+                'contrato_tipo__nombre',
+                'contacto__id',
+                'contacto__numero_identificacion',
+                'contacto__nombre_corto']
+
 #deprecated
 
 class HumContratoSerializador(serializers.HyperlinkedModelSerializer):

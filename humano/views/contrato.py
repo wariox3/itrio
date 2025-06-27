@@ -15,7 +15,7 @@ from humano.models.contrato_tipo import HumContratoTipo
 from humano.models.motivo_terminacion import HumMotivoTerminacion
 from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
-from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador
+from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador, HumContratoSeleccionarSerializador
 from humano.serializers.liquidacion import HumLiquidacionSerializador
 from django.db.models.deletion import ProtectedError
 from humano.filters.contrato import ContratoFilter
@@ -58,6 +58,21 @@ class HumMovimientoViewSet(viewsets.ModelViewSet):
             exporter = ExcelExportar(serializer.data, sheet_name="contratos", filename="contratos.xlsx")
             return exporter.exportar()
         return super().list(request, *args, **kwargs)
+    
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre_corto = request.query_params.get('contacto__nombre_corto__icontains', None)
+        queryset = self.get_queryset()
+        if nombre_corto:
+            queryset = queryset.filter(contacto__nombre_corto__icontains=nombre_corto)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = HumContratoSeleccionarSerializador(queryset, many=True)        
+        return Response(serializer.data)    
 
     def create(self, request, *args, **kwargs):
         raw = request.data        
