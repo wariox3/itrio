@@ -44,6 +44,7 @@ class HumContratoSeleccionarSerializador(serializers.ModelSerializer):
                 'contacto_id',
                 'contacto__numero_identificacion',
                 'contacto__nombre_corto']
+        select_related_fields = ['contacto']      
 
 #deprecated
 
