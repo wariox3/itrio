@@ -5,7 +5,7 @@ class GenSedeSerializador(serializers.ModelSerializer):
     grupo__nombre = serializers.SerializerMethodField()
     class Meta:
         model = GenSede
-        fields = ['id', 'nombre', 'grupo__nombre']  
+        fields = ['id', 'nombre', 'grupo__nombre', 'grupo']  
         select_related_fields = ['grupo']        
 
     def get_grupo__nombre(self, obj):
