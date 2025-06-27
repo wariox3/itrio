@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from humano.models.concepto import HumConcepto
 
+class HumConceptoSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumConcepto
+        fields = ['id', 'nombre']
+
 class HumConceptoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
