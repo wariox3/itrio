@@ -2,7 +2,7 @@ from rest_framework import serializers
 from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
 
-class HumGrupoSeleccionadorSerializador(serializers.ModelSerializer):
+class HumGrupoSeleccionarSerializador(serializers.ModelSerializer):
     class Meta:
         model = HumGrupo
         fields = ['id', 'nombre']

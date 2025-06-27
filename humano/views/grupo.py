@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from humano.models.grupo import HumGrupo
-from humano.serializers.grupo import HumGrupoSerializador, HumGrupoSeleccionadorSerializador
+from humano.serializers.grupo import HumGrupoSerializador, HumGrupoSeleccionarSerializador
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from humano.filters.grupo import GrupoFilter
@@ -52,5 +52,5 @@ class HumGrupoViewSet(viewsets.ModelViewSet):
             queryset = queryset[:limit]
         except ValueError:
             pass    
-        serializer = HumGrupoSeleccionadorSerializador(queryset, many=True)        
+        serializer = HumGrupoSeleccionarSerializador(queryset, many=True)        
         return Response(serializer.data)       
