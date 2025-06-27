@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from humano.models.contrato_tipo import HumContratoTipo
 from humano.serializers.contrato_tipo import HumContratoTipoSerializador, HumContratoTipoSeleccionarSerializador
 
-class HumConceptoTipoViewSet(viewsets.ModelViewSet):
+class HumContratoTipoViewSet(viewsets.ModelViewSet):
     queryset = HumContratoTipo.objects.all()
     serializer_class = HumContratoTipoSerializador
     permission_classes = [permissions.IsAuthenticated]

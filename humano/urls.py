@@ -14,6 +14,7 @@ from .views.riesgo import HumRiesgoViewSet
 from .views.cargo import HumCargoViewSet
 from .views.tipo_cotizante import HumTipoCotizanteViewSet
 from .views.subtipo_cotizante import HumSubtipoCotizanteViewSet
+from .views.contrato_tipo import HumContratoTipoViewSet
 from .views.salud import HumSaludViewSet
 from .views.pension import HumPensionViewSet
 from .views.concepto_nomina import HumConceptoNominaViewSet
@@ -31,6 +32,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'contrato', HumMovimientoViewSet)
+router.register(r'contrato_tipo', HumContratoTipoViewSet)
 router.register(r'grupo', HumGrupoViewSet)
 router.register(r'concepto_tipo', HumConceptoTipoViewSet)
 router.register(r'concepto', HumConceptoViewSet)
