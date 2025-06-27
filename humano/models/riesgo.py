@@ -8,4 +8,4 @@ class HumRiesgo(models.Model):
 
     class Meta:
         db_table = "hum_riesgo"
-        ordering = ["-id"]
+        ordering = ["id"]

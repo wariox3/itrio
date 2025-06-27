@@ -63,9 +63,12 @@ class HumContratoViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         nombre_corto = request.query_params.get('contacto__nombre_corto__icontains', None)
+        numero_identificacion = request.query_params.get('contacto__numero_identificacion__icontains', None)
         queryset = self.get_queryset()
         if nombre_corto:
             queryset = queryset.filter(contacto__nombre_corto__icontains=nombre_corto)
+        if numero_identificacion:
+            queryset = queryset.filter(contacto__numero_identificacion__icontains=numero_identificacion)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
