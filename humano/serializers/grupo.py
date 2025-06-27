@@ -3,10 +3,11 @@ from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
 
 class HumGrupoSeleccionarSerializador(serializers.ModelSerializer):
+    periodo__dias = serializers.IntegerField(source='periodo.dias', read_only=True)
     class Meta:
         model = HumGrupo
-        fields = ['id', 'nombre']
-
+        fields = ['id', 'nombre', 'periodo_id', 'periodo__dias']
+        select_related_fields = ['periodo']        
 class HumGrupoSerializador(serializers.HyperlinkedModelSerializer):
     periodo = serializers.PrimaryKeyRelatedField(queryset=HumPeriodo.objects.all(), default=None, allow_null=True)
     class Meta:
