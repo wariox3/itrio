@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from humano.models.sucursal import HumSucursal
 
+class HumSucursalSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumSucursal
+        fields = ['id', 'nombre']
+
 class HumSucursalSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
