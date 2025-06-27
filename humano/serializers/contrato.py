@@ -41,8 +41,7 @@ class HumContratoSeleccionarSerializador(serializers.ModelSerializer):
     class Meta:
         model = HumContrato
         fields = ['id',
-                'contrato_tipo__nombre',
-                'contacto__id',
+                'contacto_id',
                 'contacto__numero_identificacion',
                 'contacto__nombre_corto']
 

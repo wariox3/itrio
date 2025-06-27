@@ -26,7 +26,7 @@ from io import BytesIO
 import openpyxl
 import gc
 
-class HumMovimientoViewSet(viewsets.ModelViewSet):
+class HumContratoViewSet(viewsets.ModelViewSet):
     queryset = HumContrato.objects.all()
     serializer_class = HumContratoSerializador
     permission_classes = [permissions.IsAuthenticated]
