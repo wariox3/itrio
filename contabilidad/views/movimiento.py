@@ -914,13 +914,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             wb = Workbook()
             ws = wb.active
             ws.title = "Certificado de retencion"                                                
-            excel_funciones.agregar_titulo(ws, "Informe de bases", "A", "G")                                   
+            excel_funciones.agregar_titulo(ws, "Certificado retenciones", "A", "F")                                   
             ws['A4'] = f"Fecha desde: {fecha_desde}"
             ws['A4'].font = excel_funciones.fuente_general           
             ws['A5'] = f"Fecha hasta: {fecha_hasta}"
             ws['A5'].font = excel_funciones.fuente_general 
             ws.append([])
-            headers = ["Identificación", "Contacto", "Cuenta", "Nombre cuenta", "Fecha", "Detalle", "Debitos ($)", "Creditos ($)", "Base ($)"]
+            headers = ["Identificación", "Contacto", "Cuenta", "Nombre cuenta", "Monto del pago sujeto a retención ($)", "Retenido y consignado ($)"]
             ws.append(headers)
             for registro in resultados_json:
                 ws.append([
@@ -928,9 +928,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     registro['contacto_nombre_corto'],
                     registro['cuenta_codigo'],
                     registro['cuenta_nombre'],                                        
-                    registro['debito'],
-                    registro['credito'],
-                    registro['base'],
+                    registro['base_retenido'],
+                    registro['retenido'],
                 ])            
             excel_funciones.aplicar_estilos(ws, 7, [7,8,9])                             
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
