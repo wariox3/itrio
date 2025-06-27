@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from humano.models.pago_tipo import HumPagoTipo
 
+class HumPagoTipoSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumPagoTipo
+        fields = ['id', 'nombre']
+
+
 class HumPagoTipoSerializador(serializers.HyperlinkedModelSerializer):        
     class Meta:
         model = HumPagoTipo
