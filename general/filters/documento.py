@@ -16,6 +16,7 @@ class DocumentoFilter(django_filters.FilterSet):
                   'contacto__nombre_corto':['icontains'],
                   'contacto__numero_identificacion':['icontains'],
                   'documento_tipo_id': ['exact'],
+                  'documento_tipo__documento_clase_id' : ['exact'],
                   'contacto_id' : ['exact'],
                   'numero': ['exact'],                   
                   'fecha': ['gte', 'lte'], 
