@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from humano.models.riesgo import HumRiesgo
 
+class HumRiesgoSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumRiesgo
+        fields = ['id', 'nombre']
 class HumRiesgoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
