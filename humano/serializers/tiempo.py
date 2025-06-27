@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from humano.models.tiempo import HumTiempo
 
+
+class HumTiempoSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumTiempo
+        fields = ['id', 'nombre']
+
 class HumTiempoSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
