@@ -510,70 +510,38 @@ class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer)
             'numero' : instance.numero
         }   
     
-class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):    
-    class Meta:
-        model = GenDocumento        
+class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
+    documento_tipo__cuenta_cobrar_id = serializers.CharField(source='documento_tipo.cuenta_cobrar_id', read_only=True)
+    documento_tipo__cuenta_pagar_id = serializers.CharField(source='documento_tipo.cuenta_pagar_id', read_only=True)
+    documento_tipo__operacion = serializers.IntegerField(source='documento_tipo.operacion', read_only=True)
+    pendiente = serializers.DecimalField(read_only=True, max_digits=19, decimal_places=2)
+    empresa = serializers.PrimaryKeyRelatedField(read_only=True)
 
-    def to_representation(self, instance):        
-        contacto = instance.contacto
-        contacto_nombre_corto = None
-        if contacto:
-            contacto_nombre_corto = contacto.nombre_corto
-        documento_tipo_nombre = ""
-        documento_tipo_cuenta_cobrar_id = ""
-        documento_tipo_cuenta_cobrar_cuenta_codigo = ""
-        documento_tipo_cuenta_pagar_id = ""
-        documento_tipo_cuenta_pagar_cuenta_codigo = ""   
-        documento_tipo_operacion = 0              
-        if instance.documento_tipo:
-            documento_tipo_cuenta_cobrar_id = instance.documento_tipo.cuenta_cobrar_id
-            cuenta_cobrar = instance.documento_tipo.cuenta_cobrar
-            documento_tipo_nombre = instance.documento_tipo.nombre
-            if cuenta_cobrar:
-                documento_tipo_cuenta_cobrar_cuenta_codigo = cuenta_cobrar.codigo
-            documento_tipo_cuenta_pagar_id = instance.documento_tipo.cuenta_pagar_id
-            cuenta_pagar = instance.documento_tipo.cuenta_pagar
-            if cuenta_pagar:
-                documento_tipo_cuenta_pagar_cuenta_codigo = cuenta_pagar.codigo  
-            documento_tipo_operacion = instance.documento_tipo.operacion              
-        return {
-            'id': instance.id,            
-            'numero' : instance.numero,
-            'fecha' : instance.fecha,
-            'fecha_vence' : instance.fecha_vence,
-            'fecha_contable' : instance.fecha_contable,
-            'descuento': instance.descuento,
-            'base_impuesto': instance.base_impuesto,           
-            'subtotal': instance.subtotal,            
-            'impuesto': instance.impuesto,
-            'total' :  instance.total, 
-            'afectado':instance.afectado,
-            'pendiente':instance.pendiente,
-            'estado_aprobado' : instance.estado_aprobado,
-            'contacto' : instance.contacto_id,            
-            'documento_tipo': instance.documento_tipo_id,      
-            'documento_tipo_nombre': documento_tipo_nombre,  
-            'documento_tipo_cuenta_cobrar_id': documento_tipo_cuenta_cobrar_id,
-            'documento_tipo_cuenta_cobrar_cuenta_codigo':documento_tipo_cuenta_cobrar_cuenta_codigo,
-            'documento_tipo_cuenta_pagar_id': documento_tipo_cuenta_pagar_id,
-            'documento_tipo_cuenta_pagar_cuenta_codigo':documento_tipo_cuenta_pagar_cuenta_codigo,
-            'documento_tipo_operacion': documento_tipo_operacion,
-            'metodo_pago': instance.metodo_pago_id,
-            'contacto_id': instance.contacto_id,
-            'contacto_nombre_corto': contacto_nombre_corto,
-            'estado_anulado' : instance.estado_anulado,
-            'comentario' : instance.comentario,
-            'estado_electronico' : instance.estado_electronico,
-            'estado_electronico_enviado' : instance.estado_electronico_enviado,
-            'estado_electronico_notificado' : instance.estado_electronico_notificado,
-            'soporte' : instance.soporte,
-            'orden_compra' : instance.orden_compra,
-            'cue' : instance.cue,
-            'empresa': instance.empresa_id,
-            'resolucion': instance.resolucion_id,
-            'documento_referencia' :  instance.documento_referencia_id,
-            'plazo_pago': instance.plazo_pago_id
-        }    
+    class Meta:
+        model = GenDocumento
+        fields = [
+            'id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 
+            'impuesto_retencion', 'impuesto_operado', 'total_bruto', 'total', 'afectado', 
+            'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 
+            'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 
+            'soporte', 'forma_pago', 'estado_electronico_enviado', 'estado_electronico_notificado', 
+            'estado_electronico_evento', 'orden_compra', 'remision', 'documento_referencia', 
+            'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 
+            'almacen', 'resolucion', 'contacto__nombre_corto', 'documento_tipo__nombre',
+            'documento_tipo__cuenta_cobrar_id', 'documento_tipo__cuenta_pagar_id', 'documento_tipo__operacion', 'fecha_contable', 'pendiente', 'empresa'
+        ]
+        select_related_fields = [
+            'contacto',
+            'documento_tipo',
+            'documento_tipo__cuenta_cobrar',
+            'documento_tipo__cuenta_pagar',
+            'metodo_pago',
+            'plazo_pago',
+            'empresa',
+            'resolucion'
+        ]  
     
 class GenDocumentoNominaSerializador(serializers.HyperlinkedModelSerializer):    
 
