@@ -21,6 +21,7 @@ from .views.precio import PrecioViewSet
 from .views.precio_detalle import PrecioDetalleViewSet
 from .views.banco import BancoViewSet
 from .views.cuenta_banco import CuentaBancoViewSet
+from .views.cuenta_banco_tipo import CuentaBancoTipoViewSet
 from .views.asesor import AsesorViewSet
 from .views.sede import SedeViewSet
 from .views.plazo_pago import PlazoPagoViewSet
@@ -56,6 +57,7 @@ router.register(r'preciodetalle', PrecioDetalleViewSet)
 router.register(r'banco', BancoViewSet)
 router.register(r'cuenta_banco', CuentaBancoViewSet)
 router.register(r'cuenta_banco_clase', CuentaBancoViewSet)
+router.register(r'cuenta_banco_tipo', CuentaBancoTipoViewSet)
 router.register(r'asesor', AsesorViewSet)
 router.register(r'sede', SedeViewSet)
 router.register(r'plazopago', PlazoPagoViewSet)

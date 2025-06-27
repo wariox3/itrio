@@ -7,7 +7,7 @@ from general.serializers.cuenta_banco_tipo import GenCuentaBancoTipoSerializador
 from general.filters.cuenta_banco_tipo import CuentaBancoTipoFilter
 from rest_framework.response import Response
 
-class CuentaBancoViewSet(viewsets.ModelViewSet):
+class CuentaBancoTipoViewSet(viewsets.ModelViewSet):
     queryset = GenCuentaBancoTipo.objects.all()
     serializer_class = GenCuentaBancoTipoSerializador
     permission_classes = [permissions.IsAuthenticated]
