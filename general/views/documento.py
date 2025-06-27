@@ -84,6 +84,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         'lista_nomina': GenDocumentoListaNominaSerializador,
         'informe': GenDocumentoInformeSerializador,
         'informe_cuenta_cobrar': GenDocumentoInformeCuentaCobrarSerializador,
+        'informe_cuenta_pagar': GenDocumentoInformeCuentaCobrarSerializador,
         'nomina': GenDocumentoSerializador,
         'adicionar': GenDocumentoAdicionarSerializador
     }
@@ -108,13 +109,25 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.query_params.get('excel') or request.query_params.get('excel_masivo') or request.query_params.get('excel_informe'):
             queryset = self.filter_queryset(self.get_queryset())
-            serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="documentos", filename="documentos.xlsx")            
+            serializer = self.get_serializer(queryset, many=True)            
+            titulo = 'Informe documentos'
+            nombre_hoja = "documentos"
+            nombre_archivo = "documentos.xlsx"
             if request.query_params.get('excel'):
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
                 return exporter.exportar_estilo()
             if request.query_params.get('excel_masivo'):
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
                 return exporter.exportar() 
-            if request.query_params.get('excel_informe'):
+            if request.query_params.get('excel_informe'): 
+                serializador_parametro = self.request.query_params.get('serializador', None)                
+                if serializador_parametro == 'informe_cuenta_cobrar':
+                    titulo = 'Cuentas por cobrar' 
+                    nombre_archivo = "cuentas_por_cobrar.xlsx"  
+                if serializador_parametro == 'informe_cuenta_pagar':
+                    titulo = 'Cuentas por pagar' 
+                    nombre_archivo = "cuentas_por_pagar.xlsx"                                 
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
                 return exporter.exportar_informe()                    
         return super().list(request, *args, **kwargs)
     
