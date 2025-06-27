@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from humano.models.tiempo import HumTiempo
-from humano.serializers.tiempo import HumTiempoSerializador
+from humano.serializers.tiempo import HumTiempoSerializador, HumTiempoSeleccionarSerializador
 
 class HumTiempoViewSet(viewsets.ModelViewSet):
     queryset = HumTiempo.objects.all()
@@ -38,5 +38,5 @@ class HumTiempoViewSet(viewsets.ModelViewSet):
             queryset = queryset[:limit]
         except ValueError:
             pass    
-        serializer = HumEntidadSeleccionarSerializador(queryset, many=True)        
+        serializer = HumTiempoSeleccionarSerializador(queryset, many=True)        
         return Response(serializer.data)    
