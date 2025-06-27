@@ -9,6 +9,7 @@ from .views.comprobante import ComprobanteViewSet
 from .views.grupo import GrupoViewSet
 from .views.periodo import PeriodoViewSet
 from .views.activo import ActivoViewSet
+from .views.activo_grupo import ConActivoGrupoViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -22,6 +23,7 @@ router.register(r'comprobante', ComprobanteViewSet)
 router.register(r'grupo', GrupoViewSet)
 router.register(r'periodo', PeriodoViewSet)
 router.register(r'activo', ActivoViewSet)
+router.register(r'activo_grupo', ConActivoGrupoViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),

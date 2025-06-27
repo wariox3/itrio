@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from contabilidad.models.activo_grupo import ConActivoGrupo
 
+class ConActivoGrupoSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = ConActivoGrupo
+        fields = ['id', 'nombre']
+
 class ConActivoGrupoSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
