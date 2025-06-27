@@ -24,7 +24,7 @@ from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador, GenDocumentoReferenciaSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
@@ -86,7 +86,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         'informe_cuenta_cobrar': GenDocumentoInformeCuentaCobrarSerializador,
         'informe_cuenta_pagar': GenDocumentoInformeCuentaCobrarSerializador,
         'nomina': GenDocumentoSerializador,
-        'adicionar': GenDocumentoAdicionarSerializador
+        'adicionar': GenDocumentoAdicionarSerializador,
+        'referencia': GenDocumentoReferenciaSerializador
     }
 
     def get_serializer_class(self):
