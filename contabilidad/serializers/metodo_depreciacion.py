@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from contabilidad.models.metodo_depreciacion import ConMetodoDepreciacion
 
+class ConMetodoDepreciacionSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = ConMetodoDepreciacion
+        fields = ['id', 'nombre']
 class ConMetodoDepreciacionSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:

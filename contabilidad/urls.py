@@ -10,6 +10,7 @@ from .views.grupo import GrupoViewSet
 from .views.periodo import PeriodoViewSet
 from .views.activo import ActivoViewSet
 from .views.activo_grupo import ConActivoGrupoViewSet
+from .views.metodo_depreciacion import ConMetodoDepreciacionViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -24,6 +25,7 @@ router.register(r'grupo', GrupoViewSet)
 router.register(r'periodo', PeriodoViewSet)
 router.register(r'activo', ActivoViewSet)
 router.register(r'activo_grupo', ConActivoGrupoViewSet)
+router.register(r'metodo_depreciacion', ConMetodoDepreciacionViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
