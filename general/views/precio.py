@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from general.models.precio import GenPrecio
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from general.serializers.precio import GenPrecioSerializador
+from general.serializers.precio import GenPrecioSerializador, GenPrecioSeleccionarSerializador
 from general.filters.precio import PrecioFilter
 from utilidades.excel_exportar import ExcelExportar
 from rest_framework.response import Response
@@ -53,5 +53,5 @@ class PrecioViewSet(viewsets.ModelViewSet):
             queryset = queryset[:limit]
         except ValueError:
             pass    
-        serializer = self.get_serializer(queryset, many=True)        
+        serializer = GenPrecioSeleccionarSerializador(queryset, many=True)        
         return Response(serializer.data)    
