@@ -2,18 +2,17 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from general.models.cuenta_banco import GenCuentaBanco
+from general.models.cuenta_banco_clase import GenCuentaBancoClase
 from general.serializers.cuenta_banco_clase import GenCuentaBancoClaseSerializador
 from general.filters.cuenta_banco_clase import CuentaBancoClaseFilter
 from rest_framework.response import Response
 
-class CuentaBancoViewSet(viewsets.ModelViewSet):
-    queryset = GenCuentaBanco.objects.all()
+class CuentaBancoClaseViewSet(viewsets.ModelViewSet):
+    queryset = GenCuentaBancoClase.objects.all()
     serializer_class = GenCuentaBancoClaseSerializador
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = CuentaBancoClaseFilter 
-    queryset = GenCuentaBanco.objects.all()   
 
     def get_queryset(self):
         queryset = super().get_queryset()               
