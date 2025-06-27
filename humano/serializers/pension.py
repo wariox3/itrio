@@ -2,6 +2,11 @@ from rest_framework import serializers
 from humano.models.pension import HumPension
 from humano.models.concepto import HumConcepto
 
+class HumPensionSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumPension
+        fields = ['id', 'nombre']
+
 class HumPensionSerializador(serializers.HyperlinkedModelSerializer):    
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all(), default=None, allow_null=True)
 
