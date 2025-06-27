@@ -292,11 +292,7 @@ class GenDocumentoInformeCuentaCobrarSerializador(serializers.ModelSerializer):
                   'total',
                   'afectado',
                   'pendiente',                             
-                  'estado_aprobado',
-                  'estado_anulado',
-                  'estado_electronico',
-                  'estado_electronico_enviado',
-                  'estado_electronico_notificado',
+                  'estado_electronico'
         ]
         select_related_fields = ['contacto','documento_tipo']
 
