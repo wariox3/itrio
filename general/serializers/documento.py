@@ -300,6 +300,30 @@ class GenDocumentoInformeCuentaCobrarSerializador(serializers.ModelSerializer):
         ]
         select_related_fields = ['contacto','documento_tipo']
 
+class GenDocumentoSeleccionarSerializador(serializers.ModelSerializer):
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)  
+    class Meta:
+        model = GenDocumento
+        fields = ['id',
+                  'numero',
+                  'fecha',
+                  'fecha_vence',                                    
+                  'documento_tipo_id',
+                  'documento_tipo__nombre',
+                  'contacto_id',
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',
+                  'descuento',       
+                  'subtotal',  
+                  'base_impuesto',              
+                  'impuesto',
+                  'total',
+                  'afectado',
+                  'pendiente',                             
+        ]
+        select_related_fields = ['contacto','documento_tipo']
 
 #Deprecated 
 

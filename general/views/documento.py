@@ -24,7 +24,7 @@ from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
@@ -114,6 +114,21 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if request.query_params.get('excel_masivo'):
                 return exporter.exportar()        
         return super().list(request, *args, **kwargs)
+    
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre = request.query_params.get('nombre__icontains', None)
+        queryset = self.get_queryset()
+        if nombre:
+            queryset = queryset.filter(nombre__icontains=nombre)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = GenDocumentoSeleccionarSerializador(queryset, many=True)        
+        return Response(serializer.data)    
 
     def retrieve(self, request, pk=None):
         queryset = GenDocumento.objects.all()
