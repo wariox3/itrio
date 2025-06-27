@@ -1,6 +1,8 @@
 from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from humano.models.grupo import HumGrupo
-from humano.serializers.grupo import HumGrupoSerializador
+from humano.serializers.grupo import HumGrupoSerializador, HumGrupoSeleccionadorSerializador
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from humano.filters.grupo import GrupoFilter
@@ -36,4 +38,25 @@ class HumGrupoViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(queryset, many=True)
             exporter = ExcelExportar(serializer.data, sheet_name="grupos", filename="grupos.xlsx")
             return exporter.exportar()
-        return super().list(request, *args, **kwargs)   
+        return super().list(request, *args, **kwargs)
+
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre_corto = request.query_params.get('nombre_corto__icontains', None)
+        cliente = request.query_params.get('cliente', None)
+        proveedor = request.query_params.get('proveedor', None)
+        queryset = self.get_queryset()
+        if nombre_corto:
+            queryset = queryset.filter(nombre_corto__icontains=nombre_corto)
+        if cliente:
+            queryset = queryset.filter(cliente=cliente)
+        if proveedor:
+            queryset = queryset.filter(proveedor=proveedor)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = HumGrupoSeleccionadorSerializador(queryset, many=True)        
+        return Response(serializer.data)       
