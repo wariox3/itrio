@@ -21,7 +21,8 @@ class HumAporteContratoSerializador(serializers.ModelSerializer):
                   'cotizacion_voluntario_pension_aportante', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia',
                   'cotizacion_pension_total',
                   'cotizacion_salud', 'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total',
-                  'cotizacion_pension_empresa', 'cotizacion_pension_empleado', 'cotizacion_salud_empresa', 'cotizacion_salud_empleado']           
+                  'cotizacion_pension_empresa', 'cotizacion_pension_empleado', 'cotizacion_salud_empresa', 'cotizacion_salud_empleado', 'contrato__contacto__numero_identificacion',
+                  'contrato__contacto__nombre_corto']           
         select_related_fields = ['contrato']
 
 #deprecated
