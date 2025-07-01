@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from humano.models.aporte_detalle import HumAporteDetalle
-from humano.models.aporte_contrato import HumAporteContrato
 
-class HumAporteDetalleSerializador(serializers.HyperlinkedModelSerializer):    
-    aporte_contrato = serializers.PrimaryKeyRelatedField(queryset=HumAporteContrato.objects.all())
+class HumAporteDetalleSerializador(serializers.ModelSerializer):   
+    contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
+    contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)  
+    contrato__contacto_id = serializers.IntegerField(source='contrato.contacto_id', read_only=True)   
     
     class Meta:
         model = HumAporteDetalle
@@ -21,66 +22,68 @@ class HumAporteDetalleSerializador(serializers.HyperlinkedModelSerializer):
                   'tarifa_pension', 'tarifa_salud', 'tarifa_riesgos', 'tarifa_caja', 'tarifa_sena', 'tarifa_icbf', 
                   'cotizacion_pension', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia', 
                   'cotizacion_voluntario_pension_afiliado', 'cotizacion_voluntario_pension_aportante', 'cotizacion_salud', 
-                  'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total']
+                  'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total', 'contrato__contacto__numero_identificacion',
+                  'contrato__contacto__nombre_corto', 'contrato__contacto_id']
+        select_related_fields = ['contrato']
 
 
-    def to_representation(self, instance):         
-        aporte_contrato_contrato_contacto_numero_identificacion = ""
-        aporte_contrato_contrato_contacto_nombre_corto = ""
-        aporte_contrato_contrato_id = ""
-        aporte_contrato_salario = ""
-        if instance.aporte_contrato:
-            aporte_contrato_contrato_id = instance.aporte_contrato.contrato_id
-            aporte_contrato_salario = instance.aporte_contrato.salario
-            if instance.aporte_contrato.contrato:
-                if instance.aporte_contrato.contrato.contacto:
-                    aporte_contrato_contrato_contacto_numero_identificacion = instance.aporte_contrato.contrato.contacto.numero_identificacion
-                    aporte_contrato_contrato_contacto_nombre_corto = instance.aporte_contrato.contrato.contacto.nombre_corto
+    # def to_representation(self, instance):         
+    #     aporte_contrato_contrato_contacto_numero_identificacion = ""
+    #     aporte_contrato_contrato_contacto_nombre_corto = ""
+    #     aporte_contrato_contrato_id = ""
+    #     aporte_contrato_salario = ""
+    #     if instance.aporte_contrato:
+    #         aporte_contrato_contrato_id = instance.aporte_contrato.contrato_id
+    #         aporte_contrato_salario = instance.aporte_contrato.salario
+    #         if instance.aporte_contrato.contrato:
+    #             if instance.aporte_contrato.contrato.contacto:
+    #                 aporte_contrato_contrato_contacto_numero_identificacion = instance.aporte_contrato.contrato.contacto.numero_identificacion
+    #                 aporte_contrato_contrato_contacto_nombre_corto = instance.aporte_contrato.contrato.contacto.nombre_corto
         
-        return {
-            'id': instance.id,
-            'aporte_contrato_contrato_contacto_numero_identificacion': aporte_contrato_contrato_contacto_numero_identificacion,
-            'aporte_contrato_contrato_contacto_nombre_corto': aporte_contrato_contrato_contacto_nombre_corto,
-            'aport_contrato_contrato_id': aporte_contrato_contrato_id,            
-            'ingreso': instance.ingreso,
-            'retiro': instance.retiro,
-            'variacion_permanente_salario': instance.variacion_permanente_salario,
-            'variacion_transitoria_salario': instance.variacion_transitoria_salario,
-            'suspension_temporal_contrato': instance.suspension_temporal_contrato,
-            'incapacidad_general': instance.incapacidad_general,
-            'licencia_maternidad': instance.licencia_maternidad,
-            'vacaciones': instance.vacaciones,
-            'licencia_remunerada': instance.licencia_remunerada,
-            'dias_incapacidad_laboral': instance.dias_incapacidad_laboral,
-            'salario_integral': instance.salario_integral,
-            'aporte_contrato_salario': aporte_contrato_salario,
-            'horas': instance.horas,
-            'dias_pension': instance.dias_pension,
-            'dias_salud': instance.dias_salud,
-            'dias_riesgos': instance.dias_riesgos,
-            'dias_caja': instance.dias_caja,
-            'base_cotizacion_pension': instance.base_cotizacion_pension,
-            'base_cotizacion_salud': instance.base_cotizacion_salud,
-            'base_cotizacion_riesgos': instance.base_cotizacion_riesgos,
-            'base_cotizacion_caja': instance.base_cotizacion_caja,
-            'tarifa_pension': instance.tarifa_pension,
-            'tarifa_salud': instance.tarifa_salud,
-            'tarifa_riesgos': instance.tarifa_riesgos,
-            'tarifa_caja': instance.tarifa_caja,
-            'tarifa_sena': instance.tarifa_sena,
-            'tarifa_icbf': instance.tarifa_icbf,
-            'cotizacion_pension': instance.cotizacion_pension,
-            'cotizacion_solidaridad_solidaridad': instance.cotizacion_solidaridad_solidaridad,
-            'cotizacion_solidaridad_subsistencia': instance.cotizacion_solidaridad_subsistencia,
-            'cotizacion_voluntario_pension_afiliado': instance.cotizacion_voluntario_pension_afiliado,
-            'cotizacion_voluntario_pension_aportante': instance.cotizacion_voluntario_pension_aportante,
-            'cotizacion_salud': instance.cotizacion_salud,
-            'cotizacion_riesgos': instance.cotizacion_riesgos,
-            'cotizacion_caja': instance.cotizacion_caja,
-            'cotizacion_sena': instance.cotizacion_sena,
-            'cotizacion_icbf': instance.cotizacion_icbf,
-            'cotizacion_total': instance.cotizacion_total
-        } 
+    #     return {
+    #         'id': instance.id,
+    #         'aporte_contrato_contrato_contacto_numero_identificacion': aporte_contrato_contrato_contacto_numero_identificacion,
+    #         'aporte_contrato_contrato_contacto_nombre_corto': aporte_contrato_contrato_contacto_nombre_corto,
+    #         'aport_contrato_contrato_id': aporte_contrato_contrato_id,            
+    #         'ingreso': instance.ingreso,
+    #         'retiro': instance.retiro,
+    #         'variacion_permanente_salario': instance.variacion_permanente_salario,
+    #         'variacion_transitoria_salario': instance.variacion_transitoria_salario,
+    #         'suspension_temporal_contrato': instance.suspension_temporal_contrato,
+    #         'incapacidad_general': instance.incapacidad_general,
+    #         'licencia_maternidad': instance.licencia_maternidad,
+    #         'vacaciones': instance.vacaciones,
+    #         'licencia_remunerada': instance.licencia_remunerada,
+    #         'dias_incapacidad_laboral': instance.dias_incapacidad_laboral,
+    #         'salario_integral': instance.salario_integral,
+    #         'aporte_contrato_salario': aporte_contrato_salario,
+    #         'horas': instance.horas,
+    #         'dias_pension': instance.dias_pension,
+    #         'dias_salud': instance.dias_salud,
+    #         'dias_riesgos': instance.dias_riesgos,
+    #         'dias_caja': instance.dias_caja,
+    #         'base_cotizacion_pension': instance.base_cotizacion_pension,
+    #         'base_cotizacion_salud': instance.base_cotizacion_salud,
+    #         'base_cotizacion_riesgos': instance.base_cotizacion_riesgos,
+    #         'base_cotizacion_caja': instance.base_cotizacion_caja,
+    #         'tarifa_pension': instance.tarifa_pension,
+    #         'tarifa_salud': instance.tarifa_salud,
+    #         'tarifa_riesgos': instance.tarifa_riesgos,
+    #         'tarifa_caja': instance.tarifa_caja,
+    #         'tarifa_sena': instance.tarifa_sena,
+    #         'tarifa_icbf': instance.tarifa_icbf,
+    #         'cotizacion_pension': instance.cotizacion_pension,
+    #         'cotizacion_solidaridad_solidaridad': instance.cotizacion_solidaridad_solidaridad,
+    #         'cotizacion_solidaridad_subsistencia': instance.cotizacion_solidaridad_subsistencia,
+    #         'cotizacion_voluntario_pension_afiliado': instance.cotizacion_voluntario_pension_afiliado,
+    #         'cotizacion_voluntario_pension_aportante': instance.cotizacion_voluntario_pension_aportante,
+    #         'cotizacion_salud': instance.cotizacion_salud,
+    #         'cotizacion_riesgos': instance.cotizacion_riesgos,
+    #         'cotizacion_caja': instance.cotizacion_caja,
+    #         'cotizacion_sena': instance.cotizacion_sena,
+    #         'cotizacion_icbf': instance.cotizacion_icbf,
+    #         'cotizacion_total': instance.cotizacion_total
+    #     } 
 
 class HumAporteDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:

@@ -22,6 +22,7 @@ from .views.periodo import HumPeriodoViewSet
 from .views.entidad import HumEntidadViewSet
 from .views.aporte import HumAporteViewSet
 from .views.aporte_contrato import HumAporteContratoViewSet
+from .views.aporte_detalle import HumAporteDetalleViewSet
 from .views.concepto_cuenta import HumConceptoCuentaViewSet
 from .views.configuracion_provision import HumConfiguracionProvisionViewSet
 from .views.configuracion_aporte import HumConfiguracionAporteViewSet
@@ -57,6 +58,7 @@ router.register(r'periodo', HumPeriodoViewSet)
 router.register(r'entidad', HumEntidadViewSet)
 router.register(r'aporte', HumAporteViewSet)
 router.register(r'aporte_contrato', HumAporteContratoViewSet)
+router.register(r'aporte_detalle', HumAporteContratoViewSet)
 router.register(r'concepto_cuenta', HumConceptoCuentaViewSet)
 router.register(r'configuracion_provision', HumConfiguracionProvisionViewSet)
 router.register(r'configuracion_aporte', HumConfiguracionAporteViewSet)
