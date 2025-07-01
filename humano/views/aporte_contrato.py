@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions
 from humano.models.aporte_contrato import HumAporteContrato
 from humano.serializers.aporte_contrato import HumAporteContratoSerializador
 from rest_framework.filters import OrderingFilter
-from humano.filters.aporte_detalle import AporteContratoFilter
+from humano.filters.aporte_contrato import AporteContratoFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 class HumAporteContratoViewSet(viewsets.ModelViewSet):
