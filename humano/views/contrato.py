@@ -31,7 +31,6 @@ class HumContratoViewSet(viewsets.ModelViewSet):
     serializer_class = HumContratoSerializador
     permission_classes = [permissions.IsAuthenticated]
     filterset_class = ContratoFilter 
-    queryset = HumContrato.objects.all()   
     serializadores = {'lista': HumContratoListaSerializador}
 
     def get_serializer_class(self):
