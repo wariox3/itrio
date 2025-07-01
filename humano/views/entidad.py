@@ -29,6 +29,9 @@ class HumEntidadViewSet(viewsets.ModelViewSet):
         cesantias = request.query_params.get('cesantias', None)
         caja = request.query_params.get('caja', None)
         riesgo = request.query_params.get('riesgo', None)
+        icbf = request.query_params.get('icbf', None)
+        sena = request.query_params.get('sena', None)
+
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
@@ -42,6 +45,10 @@ class HumEntidadViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(caja=caja)
         if riesgo:
             queryset = queryset.filter(riesgo=riesgo)
+        if icbf:
+            queryset = queryset.filter(icbf=icbf)
+        if sena:
+            queryset = queryset.filter(sena=sena)            
         try:
             limit = int(limit)
             queryset = queryset[:limit]
