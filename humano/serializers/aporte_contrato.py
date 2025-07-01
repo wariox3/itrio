@@ -6,7 +6,26 @@ from humano.models.entidad import HumEntidad
 from humano.models.riesgo import HumRiesgo
 from general.models.ciudad import GenCiudad
 
-class HumAporteContratoSerializador(serializers.HyperlinkedModelSerializer):
+
+class HumAporteContratoSerializador(serializers.ModelSerializer):
+    contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
+    contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)  
+
+    class Meta:
+        model = HumAporteContrato
+        fields = ['id', 'fecha_desde', 'fecha_hasta', 'dias', 'salario',
+                  'base_cotizacion',
+                  'aporte', 'contrato', 'ingreso', 'retiro', 'error_terminacion',
+                  'ciudad_labora', 'entidad_salud', 'entidad_pension', 'entidad_caja', 'entidad_riesgo', 
+                  'entidad_sena', 'entidad_icbf', 'riesgo', 'cotizacion_pension', 'cotizacion_voluntario_pension_afiliado',
+                  'cotizacion_voluntario_pension_aportante', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia',
+                  'cotizacion_pension_total',
+                  'cotizacion_salud', 'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total',
+                  'cotizacion_pension_empresa', 'cotizacion_pension_empleado', 'cotizacion_salud_empresa', 'cotizacion_salud_empleado']           
+        select_related_fields = ['contrato']
+
+#deprecated
+class HumAporteContrato1Serializador(serializers.HyperlinkedModelSerializer):
     aporte = serializers.PrimaryKeyRelatedField(queryset=HumAporte.objects.all())
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
     ciudad_labora = serializers.PrimaryKeyRelatedField(queryset=GenCiudad.objects.all())
