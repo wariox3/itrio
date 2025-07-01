@@ -6,4 +6,4 @@ class ProgramacionDetalleFilter(django_filters.FilterSet):
     class Meta:
         model = HumProgramacionDetalle        
         fields = {'id': ['exact', 'lte'],
-                  'progrmacion_id':['exact']}
+                  'programacion_id':['exact']}
