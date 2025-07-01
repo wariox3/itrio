@@ -15,6 +15,7 @@ class HumAdicionalSerializador(serializers.ModelSerializer):
                   'inactivo', 'concepto__nombre', 'contrato__contacto__numero_identificacion', 'contrato__contacto__nombre_corto']
         select_related_fields = ['concepto','contrato']
 
+#deprecated
 class HumAdicional1Serializador(serializers.HyperlinkedModelSerializer):
     concepto = serializers.PrimaryKeyRelatedField(queryset=HumConcepto.objects.all())
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
