@@ -321,7 +321,37 @@ class GenDocumentoSeleccionarSerializador(serializers.ModelSerializer):
         ]
         select_related_fields = ['contacto','documento_tipo']
 
-#Deprecated 
+class GenDocumentoAdicionarSerializador(serializers.ModelSerializer):
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
+    documento_tipo__cuenta_cobrar_id = serializers.CharField(source='documento_tipo.cuenta_cobrar_id', read_only=True)
+    documento_tipo__cuenta_pagar_id = serializers.CharField(source='documento_tipo.cuenta_pagar_id', read_only=True)
+    documento_tipo__operacion = serializers.IntegerField(source='documento_tipo.operacion', read_only=True)
+
+    class Meta:
+        model = GenDocumento
+        fields = [
+            'id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 
+            'impuesto_retencion', 'impuesto_operado', 'total_bruto', 'total', 'afectado', 
+            'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 
+            'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 
+            'soporte', 'forma_pago', 'estado_electronico_enviado', 'estado_electronico_notificado', 
+            'estado_electronico_evento', 'orden_compra', 'remision', 'documento_referencia', 
+            'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 
+            'almacen', 'resolucion', 'contacto__nombre_corto', 'documento_tipo__nombre',
+            'documento_tipo__cuenta_cobrar_id', 'documento_tipo__cuenta_pagar_id', 'documento_tipo__operacion', 'fecha_contable', 'pendiente'
+        ]
+        select_related_fields = [
+            'contacto',
+            'documento_tipo',
+            'documento_tipo__cuenta_cobrar',
+            'documento_tipo__cuenta_pagar',
+            'metodo_pago',
+            'plazo_pago',
+            'resolucion'
+        ]  
+
+#deprecated
 
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
     contacto = serializers.PrimaryKeyRelatedField(queryset=GenContacto.objects.all(), allow_null=True)
@@ -510,38 +540,6 @@ class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer)
             'numero' : instance.numero
         }   
     
-class GenDocumentoAdicionarSerializador(serializers.HyperlinkedModelSerializer):
-    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
-    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
-    documento_tipo__cuenta_cobrar_id = serializers.CharField(source='documento_tipo.cuenta_cobrar_id', read_only=True)
-    documento_tipo__cuenta_pagar_id = serializers.CharField(source='documento_tipo.cuenta_pagar_id', read_only=True)
-    documento_tipo__operacion = serializers.IntegerField(source='documento_tipo.operacion', read_only=True)
-    pendiente = serializers.DecimalField(read_only=True, max_digits=19, decimal_places=2)
-    empresa = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = GenDocumento
-        fields = [
-            'id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 
-            'impuesto_retencion', 'impuesto_operado', 'total_bruto', 'total', 'afectado', 
-            'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 
-            'metodo_pago', 'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 
-            'soporte', 'forma_pago', 'estado_electronico_enviado', 'estado_electronico_notificado', 
-            'estado_electronico_evento', 'orden_compra', 'remision', 'documento_referencia', 
-            'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 
-            'almacen', 'resolucion', 'contacto__nombre_corto', 'documento_tipo__nombre',
-            'documento_tipo__cuenta_cobrar_id', 'documento_tipo__cuenta_pagar_id', 'documento_tipo__operacion', 'fecha_contable', 'pendiente', 'empresa'
-        ]
-        select_related_fields = [
-            'contacto',
-            'documento_tipo',
-            'documento_tipo__cuenta_cobrar',
-            'documento_tipo__cuenta_pagar',
-            'metodo_pago',
-            'plazo_pago',
-            'empresa',
-            'resolucion'
-        ]  
     
 class GenDocumentoNominaSerializador(serializers.HyperlinkedModelSerializer):    
 
