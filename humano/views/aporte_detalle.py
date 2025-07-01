@@ -1,12 +1,12 @@
 from rest_framework import viewsets, permissions
-from humano.models.aporte_contrato import HumAporteContrato
+from humano.models.aporte_detalle import HumAporteDetalle
 from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
 from rest_framework.filters import OrderingFilter
 from humano.filters.aporte_detalle import AporteDetalleFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 class HumAporteDetalleViewSet(viewsets.ModelViewSet):
-    queryset = HumAporteContrato.objects.all()
+    queryset = HumAporteDetalle.objects.all()
     serializer_class = HumAporteDetalleSerializador
     permission_classes = [permissions.IsAuthenticated]    
     filter_backends = [DjangoFilterBackend, OrderingFilter]

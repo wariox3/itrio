@@ -2,9 +2,9 @@ from rest_framework import serializers
 from humano.models.aporte_detalle import HumAporteDetalle
 
 class HumAporteDetalleSerializador(serializers.ModelSerializer):   
-    contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
-    contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)  
-    contrato__contacto_id = serializers.IntegerField(source='contrato.contacto_id', read_only=True)   
+    aporte_contrato__contrato__contacto__numero_identificacion = serializers.CharField(source='aporte_contrato.contrato.contacto.numero_identificacion', read_only=True)
+    aporte_contrato__contrato__contacto__nombre_corto = serializers.CharField(source='aporte_contrato.contrato.contacto.nombre_corto', read_only=True)  
+    aporte_contrato__contrato__contacto_id = serializers.IntegerField(source='aporte_contrato.contrato.contacto_id', read_only=True)   
     
     class Meta:
         model = HumAporteDetalle
@@ -22,9 +22,10 @@ class HumAporteDetalleSerializador(serializers.ModelSerializer):
                   'tarifa_pension', 'tarifa_salud', 'tarifa_riesgos', 'tarifa_caja', 'tarifa_sena', 'tarifa_icbf', 
                   'cotizacion_pension', 'cotizacion_solidaridad_solidaridad', 'cotizacion_solidaridad_subsistencia', 
                   'cotizacion_voluntario_pension_afiliado', 'cotizacion_voluntario_pension_aportante', 'cotizacion_salud', 
-                  'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total', 'contrato__contacto__numero_identificacion',
-                  'contrato__contacto__nombre_corto', 'contrato__contacto_id']
-        select_related_fields = ['contrato']
+                  'cotizacion_riesgos', 'cotizacion_caja', 'cotizacion_sena', 'cotizacion_icbf', 'cotizacion_total',
+                  'aporte_contrato__contrato__contacto__numero_identificacion', 'aporte_contrato__contrato__contacto__nombre_corto',
+                  'aporte_contrato__contrato__contacto_id']
+        select_related_fields = ['aporte_contrato']
 
 
     # def to_representation(self, instance):         
