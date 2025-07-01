@@ -28,6 +28,7 @@ class HumEntidadViewSet(viewsets.ModelViewSet):
         pension = request.query_params.get('pension', None)
         cesantias = request.query_params.get('cesantias', None)
         caja = request.query_params.get('caja', None)
+        riesgo = request.query_params.get('riesgo', None)
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
@@ -39,6 +40,8 @@ class HumEntidadViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(cesantias=cesantias)
         if caja:
             queryset = queryset.filter(caja=caja)
+        if riesgo:
+            queryset = queryset.filter(riesgo=riesgo)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
