@@ -6,4 +6,4 @@ class AporteDetalleFilter(django_filters.FilterSet):
     class Meta:
         model = HumAporteDetalle        
         fields = {'id': ['exact', 'lte'],
-                  'aporte_contrato__id':['exact']}
+                  'aporte_contrato__aporte_id':['exact']}
