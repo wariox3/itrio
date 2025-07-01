@@ -7,4 +7,5 @@ class DocumentoDetalleFilter(django_filters.FilterSet):
         model = GenDocumentoDetalle        
         fields = {'id': ['exact', 'lte'],
                   'documento__estado_aprobado':['exact'],
-                  'documento__documento_tipo__venta':['exact']}
+                  'documento__documento_tipo__venta':['exact'],
+                  'documento_id': ['exact']}
