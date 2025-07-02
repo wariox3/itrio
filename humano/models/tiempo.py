@@ -6,4 +6,4 @@ class HumTiempo(models.Model):
 
     class Meta:
         db_table = "hum_tiempo"
-        ordering = ["-id"]
+        ordering = ["id"]

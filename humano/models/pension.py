@@ -10,4 +10,4 @@ class HumPension(models.Model):
 
     class Meta:
         db_table = "hum_pension"
-        ordering = ["-id"]
+        ordering = ["id"]
