@@ -25,11 +25,14 @@ class HumConceptoViewSet(viewsets.ModelViewSet):
         limit = request.query_params.get('limit', 10)
         nombre = request.query_params.get('nombre__icontains', None)
         adicional = request.query_params.get('adicional', None)
+        concepto_tipo = request.query_params.get('concepto_tipo', None)
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
         if adicional:
             queryset = queryset.filter(adicional=adicional)
+        if concepto_tipo:
+            queryset = queryset.filter(concepto_tipo=concepto_tipo)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
