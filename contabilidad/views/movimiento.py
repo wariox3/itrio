@@ -474,10 +474,18 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             })         
         return resultados_json
 
-    def obtener_movimiento_certificado_retencion(self, fecha_desde, fecha_hasta, cierre = False):
-        parametro_cierre = ' AND m.cierre = false '
-        if cierre == True:
-            parametro_cierre = ''
+    def obtener_movimiento_certificado_retencion(self, fecha_desde, fecha_hasta, cuenta_desde = None, cuenta_hasta = None, contacto_id = None):
+        where_contacto = ''
+        if contacto_id:
+            where_contacto = f" AND m.contacto_id >= {contacto_id}"
+
+        where_cuenta_desde = ''
+        if cuenta_desde:
+            where_cuenta_desde = f" AND c.codigo >= '{cuenta_desde}'"
+
+        where_cuenta_hasta = ''
+        if cuenta_hasta:
+            where_cuenta_hasta = f" AND c.codigo <= '{cuenta_hasta}'"            
             
         query = f'''
             select
@@ -500,7 +508,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             LEFT JOIN
                 gen_contacto co ON m.contacto_id = co.id
             WHERE
-        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {parametro_cierre}
+        		m.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}' {where_cuenta_desde} {where_cuenta_hasta} {where_contacto}
         	group by 
         		m.cuenta_id,
         		m.contacto_id,
@@ -904,9 +912,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
-        cierre = parametros['incluir_cierre']
-        cuenta_con_movimiento = parametros['cuenta_con_movimiento']                                   
-        resultados_movimiento = self.obtener_movimiento_certificado_retencion(fecha_desde, fecha_hasta, cierre)
+        cuenta_desde = parametros.get('cuenta_desde_codigo', None)
+        cuenta_hasta = parametros.get('cuenta_hasta_codigo', None)
+        contacto_id = parametros.get('contacto_id', None)
+        resultados_movimiento = self.obtener_movimiento_certificado_retencion(fecha_desde, fecha_hasta, cuenta_desde, cuenta_hasta, contacto_id)
         resultados_json = resultados_movimiento
 
         if excel:
