@@ -8,11 +8,12 @@ class HumAdicionalSerializador(serializers.ModelSerializer):
     concepto__nombre = serializers.CharField(source='concepto.nombre', read_only=True)
     contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
     contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)  
+    contrato__contacto_id = serializers.CharField(source='contrato.contacto_id', read_only=True)
 
     class Meta:
         model = HumAdicional
         fields = ['id', 'valor', 'horas', 'aplica_dia_laborado', 'detalle', 'concepto', 'contrato', 'programacion', 'permanente',
-                  'inactivo', 'concepto__nombre', 'contrato__contacto__numero_identificacion', 'contrato__contacto__nombre_corto']
+                  'inactivo', 'concepto__nombre', 'contrato__contacto__numero_identificacion', 'contrato__contacto__nombre_corto', 'contrato__contacto_id']
         select_related_fields = ['concepto','contrato']
 
 #deprecated
