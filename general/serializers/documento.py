@@ -361,7 +361,7 @@ class GenDocumentoEventoCompraSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenDocumento
         fields = [
-            'id', 'numero', 'fecha', 'fecha_vence', 'soprote', 'orden_compra', 'cue',
+            'id', 'numero', 'fecha', 'fecha_vence', 'soporte', 'orden_compra', 'cue',
             'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'total',
             'estado_electronico', 'estado_electronico_enviado', 'estado_electronico_evento',
             'estado_aprobado', 'estado_anulado', 'evento_documento', 'evento_recepcion',
