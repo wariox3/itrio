@@ -329,6 +329,7 @@ class GenDocumentoAdicionarSerializador(serializers.ModelSerializer):
     documento_tipo__operacion = serializers.IntegerField(source='documento_tipo.operacion', read_only=True)
     documento_tipo__cuenta_pagar__codigo = serializers.CharField(source='documento_tipo.cuenta_pagar.codigo', read_only=True)
     documento_tipo__cuenta_cobrar__codigo = serializers.CharField(source='documento_tipo.cuenta_cobrar.codigo', read_only=True)
+    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True)
     class Meta:
         model = GenDocumento
         fields = [
@@ -341,7 +342,7 @@ class GenDocumentoAdicionarSerializador(serializers.ModelSerializer):
             'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 
             'almacen', 'resolucion', 'contacto__nombre_corto', 'documento_tipo__nombre',
             'documento_tipo__cuenta_pagar__codigo', 'documento_tipo__cuenta_cobrar__codigo',
-            'documento_tipo__cuenta_cobrar_id', 'documento_tipo__cuenta_pagar_id', 'documento_tipo__operacion', 'fecha_contable', 'pendiente'
+            'documento_tipo__cuenta_cobrar_id', 'documento_tipo__cuenta_pagar_id', 'documento_tipo__operacion', 'fecha_contable', 'pendiente', 'cuenta', 'cuenta__codigo'
         ]
         select_related_fields = [
             'contacto',
@@ -350,7 +351,8 @@ class GenDocumentoAdicionarSerializador(serializers.ModelSerializer):
             'documento_tipo__cuenta_pagar',
             'metodo_pago',
             'plazo_pago',
-            'resolucion'
+            'resolucion',
+            'cuenta'
         ]  
 
 #deprecated
