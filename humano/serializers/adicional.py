@@ -13,7 +13,8 @@ class HumAdicionalSerializador(serializers.ModelSerializer):
     class Meta:
         model = HumAdicional
         fields = ['id', 'valor', 'horas', 'aplica_dia_laborado', 'detalle', 'concepto', 'contrato', 'programacion', 'permanente',
-                  'inactivo', 'concepto__nombre', 'contrato__contacto__numero_identificacion', 'contrato__contacto__nombre_corto', 'contrato__contacto_id']
+                  'inactivo', 'concepto__nombre', 'contrato__contacto__numero_identificacion', 'contrato__contacto__nombre_corto', 'contrato__contacto_id',
+                  'concepto_id']
         select_related_fields = ['concepto','contrato']
 
 #deprecated
