@@ -32,6 +32,7 @@ urlpatterns = [
    path('contenedor/', include("contenedor.urls")),
    path('humano/', include("humano.urls")),   
    path('inventario/', include("inventario.urls")),
+   path('crm/', include("crm.urls")),
    path('ruteo/', include("ruteo.urls")),
    path('seguridad/login/', Login.as_view(), name='login'),
    path('seguridad/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -41,6 +41,7 @@ TENANT_APPS = (
     'transporte',
     'humano',
     'inventario',
+    'crm',
     'ruteo'
 )
 
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     'transporte',
     'inventario',
     'humano',
+    'crm',
     'ruteo'
 ]
 
