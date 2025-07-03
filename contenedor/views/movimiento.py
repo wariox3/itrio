@@ -192,9 +192,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                             usuario = User.objects.get(pk=pedido.usuario_id)
                             if usuario:
                                 usuario.vr_saldo -= valor
-                                usuario.save()
-                            
-
+                                usuario.save()                            
                 except Exception as e:
                     pass
         return Response(status=status.HTTP_200_OK)
