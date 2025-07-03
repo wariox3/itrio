@@ -11,7 +11,7 @@ class HumConfiguracionProvisionSerializador(serializers.ModelSerializer):
     cuenta_credito__codigo = serializers.CharField(source='cuenta_credito.codigo', read_only=True)
     class Meta:
         model = HumConfiguracionProvision
-        fields = ['id', 'tipo_costo', 'tipo_costo__nombre' , 'cuenta_debito' ,'cuenta_debito__nombre', 'cuenta_debito__codigo', 'cuenta_credito', 'cuenta_credito__nombre', 'cuenta_credito__codigo']  
+        fields = ['id', 'tipo', 'tipo_costo', 'tipo_costo__nombre' , 'cuenta_debito' ,'cuenta_debito__nombre', 'cuenta_debito__codigo', 'cuenta_credito', 'cuenta_credito__nombre', 'cuenta_credito__codigo']  
         select_related_fields = ['tipo_costo', 'cuenta_debito', 'cuenta_credito']        
 
           
