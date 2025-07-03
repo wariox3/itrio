@@ -12,11 +12,14 @@ class DocumentoFilter(django_filters.FilterSet):
     documento_tipo__documento_clase_id = django_filters.NumberFilter(field_name='documento_tipo__documento_clase_id')
     documento_tipo__documento_clase__grupo = django_filters.NumberFilter(field_name='documento_tipo__documento_clase__grupo')
     documento_tipo__pos = django_filters.BooleanFilter(field_name='documento_tipo__pos')
+    documento_tipo__contabilidad = django_filters.BooleanFilter(field_name='documento_tipo__contabilidad')
     class Meta:
         model = GenDocumento        
         fields = {'id': ['exact', 'lte'],
                   'contacto__nombre_corto':['icontains'],
                   'contacto__numero_identificacion':['icontains'],
+                  'documento_tipo__pos': ['exact'],
+                  'documento_tipo__contabilidad': ['exact'],
                   'documento_tipo_id': ['exact'],
                   'documento_tipo__documento_clase_id' : ['exact'],
                   'documento_tipo__nombre' : ['icontains'],
