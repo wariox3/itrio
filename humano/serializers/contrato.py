@@ -34,6 +34,7 @@ class HumContratoListaSerializador(serializers.ModelSerializer):
                 'grupo__nombre',
                 'salario',
                 'estado_terminado']
+        select_related_fields = ['contacto', 'grupo', 'contrato_tipo']      
 
 class HumContratoSeleccionarSerializador(serializers.ModelSerializer):
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
