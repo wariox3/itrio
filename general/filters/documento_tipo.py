@@ -7,4 +7,5 @@ class DocumentoTipoFilter(django_filters.FilterSet):
         model = GenDocumentoTipo        
         fields = {'venta': ['exact'], 
                   'operacion': ['exact'],
-                  'pos': ['exact']}
+                  'pos': ['exact'],
+                  'contabilidad': ['exact']}
