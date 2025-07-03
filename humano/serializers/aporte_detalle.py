@@ -13,6 +13,7 @@ class HumAporteDetalleSerializador(serializers.ModelSerializer):
                   'licencia_maternidad', 'vacaciones', 'licencia_remunerada', 'aporte_voluntario_pension',
                   'variacion_centro_trabajo', 'dias_incapacidad_laboral',                  
                   'horas', 'dias_pension',  'dias_salud', 'dias_riesgos', 'dias_caja', 
+                  'fecha_ingreso', 'fecha_retiro',
                   'fecha_inicio_incapacidad_general', 'fecha_fin_incapacidad_general',
                   'fecha_inicio_licencia_maternidad', 'fecha_fin_licencia_maternidad',
                   'fecha_inicio_suspension_temporal_contrato', 'fecha_fin_suspension_temporal_contrato', 

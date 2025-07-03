@@ -514,6 +514,13 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         tarifa_caja = 4
                         tarifa_sena = 0
                         tarifa_icbf = 0
+                        fecha_ingreso = None
+                        fecha_retiro = None
+                        # Registrar fecha de ingreso o retiro
+                        if aporte_contrato.ingreso:
+                            fecha_ingreso = aporte_contrato.contrato.fecha_desde
+                        if aporte_contrato.retiro:
+                            fecha_retiro = aporte_contrato.contrato.fecha_hasta
 
                         cotizacion_solidaridad_solidaridad = 0
                         cotizacion_solidaridad_subsistencia = 0
@@ -581,7 +588,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             'cotizacion_caja': cotizacion_caja,
                             'cotizacion_sena': cotizacion_sena,
                             'cotizacion_icbf': cotizacion_icbf,
-                            'cotizacion_total': cotizacion_total                            
+                            'cotizacion_total': cotizacion_total,
+                            'fecha_ingreso': fecha_ingreso,
+                            'fecha_retiro': fecha_retiro                            
                         }
                         aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
                         if aporte_detalle_serializador.is_valid():
