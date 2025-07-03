@@ -3,9 +3,10 @@ from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models.documento_detalle import GenDocumentoDetalle
-from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleAgregarDocumentoSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
+from rest_framework.decorators import action
 
 class DocumentoDetalleViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -14,6 +15,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
     queryset = GenDocumentoDetalle.objects.all()
     serializadores = {
         'informe_venta': GenDocumentoDetalleInformeVentaSerializador,
+        'agregar_documento':  GenDocumentoDetalleAgregarDocumentoSerializador
     }
     
     def get_serializer_class(self):
@@ -61,4 +63,19 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         if documentoDetalleSerializador.is_valid():
             documentoDetalleSerializador.save()            
             return Response({'documento': documentoDetalleSerializador.data}, status=status.HTTP_200_OK)
-        return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoDetalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)     
+        return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoDetalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["get"], url_path=r'agregar_documento')
+    def agregarDocumentoDetalle(self, request): 
+        limit = request.query_params.get('limit', 10)
+        documento_tipo = request.query_params.get('documento_tipo', None)
+        queryset = self.get_queryset()
+        if documento_tipo:
+            queryset = queryset.filter(documento__documento_tipo=documento_tipo)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = GenDocumentoDetalleAgregarDocumentoSerializador(queryset, many=True)        
+        return Response(serializer.data)    
