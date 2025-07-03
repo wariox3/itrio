@@ -23,7 +23,7 @@ class DocumentoFilter(django_filters.FilterSet):
                   'documento_tipo__electronico' : ['exact'],
                   'documento_tipo__documento_clase__grupo' : ['exact'],
                   'contacto_id' : ['exact'],
-                  'numero': ['exact'],                   
+                  'numero': ['exact', 'icontains'],                   
                   'fecha': ['gte', 'lte'], 
                   'pendiente': ['gt'],
                   'estado_aprobado': ['exact'], 
