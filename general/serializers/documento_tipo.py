@@ -8,6 +8,12 @@ class GenDocumentoTipoAutocompletarSerializador(serializers.ModelSerializer):
         model = GenDocumentoTipo
         fields = ['id', 
                   'nombre']
+        
+class GenDocumentoTipoSeleccionarSerializador(serializers.ModelSerializer):          
+    class Meta:
+        model = GenDocumentoTipo
+        fields = ['id', 
+                  'nombre']
 
 #deprecated
 class GenDocumentoTipoSerializador(serializers.HyperlinkedModelSerializer):

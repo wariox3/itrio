@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.resolucion import GenResolucion
-from general.serializers.documento_tipo import GenDocumentoTipoSerializador, GenDocumentoTipoAutocompletarSerializador
+from general.serializers.documento_tipo import GenDocumentoTipoSerializador, GenDocumentoTipoAutocompletarSerializador, GenDocumentoTipoSeleccionarSerializador
 from general.filters.documento_tipo import DocumentoTipoFilter
 from utilidades.excel_exportar import ExcelExportar
 
@@ -15,7 +15,7 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = DocumentoTipoFilter 
-    serializadores = {'autocompletar': GenDocumentoTipoAutocompletarSerializador}
+    serializadores = {'autocompletar': GenDocumentoTipoAutocompletarSerializador, 'seleccionar': GenDocumentoTipoSeleccionarSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -52,7 +52,7 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
             queryset = queryset[:limit]
         except ValueError:
             pass    
-        serializer = self.get_serializer(queryset, many=True)        
+        serializer = GenDocumentoTipoSeleccionarSerializador(queryset, many=True)        
         return Response(serializer.data)    
     
     @action(detail=False, methods=["post"], url_path=r'asignar-resolucion')
