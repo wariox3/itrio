@@ -25,7 +25,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ItemFilter 
     queryset = GenItem.objects.all()   
-    serializadores = {'lista': GenItemListaSerializador, 'seleccioanr' : GenItemSeleccionarSerializador}
+    serializadores = {'lista': GenItemListaSerializador, 'seleccionar' : GenItemSeleccionarSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
