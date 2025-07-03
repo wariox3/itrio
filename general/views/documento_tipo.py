@@ -37,6 +37,24 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         return Response({'mensaje': 'No es posible crear un registro nuevo'}, status=status.HTTP_400_BAD_REQUEST)
     
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre = request.query_params.get('nombre__icontains', None)
+        contabilidad = request.query_params.get('contabilidad', None)
+        queryset = self.get_queryset()
+        if nombre:
+            queryset = queryset.filter(nombre__icontains=nombre)
+        if contabilidad:
+            queryset = queryset.filter(contabilidad=contabilidad)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = self.get_serializer(queryset, many=True)        
+        return Response(serializer.data)    
+    
     @action(detail=False, methods=["post"], url_path=r'asignar-resolucion')
     def asignar_resolucion(self, request):
         raw = request.data
