@@ -160,6 +160,7 @@ class CtnMovimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)
     fecha = models.DateTimeField(null=True)
     fecha_vence = models.DateField(null=True)    
+    descripcion = models.CharField(max_length=250, null=True)
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_afectado = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_saldo = models.DecimalField(max_digits=16, decimal_places=2, default=0)

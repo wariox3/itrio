@@ -61,6 +61,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                             tipo = "PEDIDO",
                             fecha = timezone.now(),
                             fecha_vence = datetime.now().date() + timedelta(days=3),
+                            descripcion = 'SERVICIOS NUBE',
                             vr_total = total,
                             vr_saldo = total,
                             usuario_id = consumo['usuario_id'],
@@ -165,10 +166,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                 tipo = "RECIBO",
                                 fecha = timezone.now(),
                                 fecha_vence = timezone.now().date(),
+                                descripcion = 'PAGO SERVICIOS NUBE',
                                 contenedor_movimiento_id=referencia,
                                 vr_total = valor,
                                 vr_saldo = 0,
-                                socio_id = pedido.socio_id
+                                socio_id = pedido.socio_id,
+                                usuario_id = pedido.usuario_id
                             )
                             recibo.save()
                             valor = Decimal(valor)
@@ -183,10 +186,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                             tipo = "CREDITO",
                                             fecha = timezone.now(),
                                             fecha_vence = timezone.now().date(),
-                                            contenedor_movimiento_id=recibo.id,
+                                            descripcion = f'COMISION PEDIDO ID {referencia} PAGO ID {recibo.id}',
+                                            contenedor_movimiento_id=recibo.id,                                            
                                             vr_total = valor_credito,
                                             vr_saldo = 0,
-                                            socio_id = pedido.socio_id
+                                            socio_id = pedido.socio_id,
+                                            usuario_id = socio_usuario.id
                                         )
                                         credito.save()  
                                         socio_usuario.vr_credito += valor_credito
@@ -231,6 +236,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         tipo = "RECIBO_CREDITO",
                         fecha = timezone.now(),
                         fecha_vence = timezone.now().date(),
+                        descripcion = f'APLICACION DE CREDITOS PEDIDO ID {movimiento_id}',
                         contenedor_movimiento_id=movimiento_id,
                         vr_total = valor,
                         vr_saldo = 0
