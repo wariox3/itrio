@@ -38,6 +38,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'telefono': instance.telefono,
             'idioma': instance.idioma,
             'vr_saldo': instance.vr_saldo,
+            'vr_credito': instance.vr_credito,
             'cargo' : instance.cargo,
             'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen}",
             'fecha_limite_pago': instance.fecha_limite_pago,
