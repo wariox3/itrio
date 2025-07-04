@@ -168,7 +168,9 @@ class CtnMovimiento(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     socio = models.ForeignKey(CtnSocio, on_delete=models.CASCADE, null=True)
     class Meta:
-        db_table = "cnt_movimiento"   
+        db_table = "cnt_movimiento" 
+        ordering = ["-fecha"] 
+         
 
 class CtnEventoPago(models.Model):
     fecha = models.DateTimeField()    

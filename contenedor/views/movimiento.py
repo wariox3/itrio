@@ -1,7 +1,10 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from contenedor.models import CtnMovimiento, CtnEventoPago, CtnConsumo, CtnSocio
+from contenedor.filters.movimiento import MovimientoFilter
 from seguridad.models import User
 from contenedor.serializers.movimiento import CtnMovimientoSerializador
 from decouple import config
@@ -14,38 +17,23 @@ from utilidades.space_do import SpaceDo
 import hashlib
 
 
-def listar(desplazar, limite, limiteTotal, filtros, ordenamientos):
-    documentos = CtnMovimiento.objects.all()
-    if filtros:
-        for filtro in filtros:
-            documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})
-    if ordenamientos:
-        documentos = documentos.order_by(*ordenamientos)              
-    documentos = documentos[desplazar:limite+desplazar]
-    itemsCantidad = CtnMovimiento.objects.all()[:limiteTotal].count()                   
-    respuesta = {'movimientos': documentos, "cantidad_registros": itemsCantidad}
-    return respuesta  
-
 class MovimientoViewSet(viewsets.ModelViewSet):
-    queryset = CtnMovimiento.objects.all()
-    serializer_class = CtnMovimientoSerializador    
     permission_classes = [permissions.IsAuthenticated]     
-        
-    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'lista',)
-    def lista(self, request):
-        raw = request.data
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)    
-        limiteTotal = raw.get('limite_total', 5000)                
-        ordenamientos = raw.get('ordenamientos', [])            
-        ordenamientos.insert(0, '-fecha')
-        #ordenamientos.append('-numero')        
-        filtros = raw.get('filtros', [])            
-        #filtros.append({'propiedad': 'documento_tipo__documento_clase_id', 'valor1': documento_clase_id})        
-        respuesta = listar(desplazar, limite, limiteTotal, filtros, ordenamientos)     
-        serializador = CtnMovimientoSerializador(respuesta['movimientos'], many=True)
-        documentos = serializador.data
-        return Response(documentos, status=status.HTTP_200_OK)
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    queryset = CtnMovimiento.objects.all()
+    serializer_class = CtnMovimientoSerializador  
+    filterset_class = MovimientoFilter  
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
 
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-pedido',)
     def generar_pedido(self, request):
