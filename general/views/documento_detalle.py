@@ -3,10 +3,12 @@ from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models.documento_detalle import GenDocumentoDetalle
+from general.models.documento_impuesto import GenDocumentoImpuesto
 from general.models.documento import GenDocumento
 from general.models.item import GenItem
 from inventario.models.almacen import InvAlmacen
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleAgregarDocumentoSerializador
+from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
 from rest_framework.decorators import action
@@ -90,10 +92,48 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
     def agregar_documento_detalle_action(self, request): 
         raw = request.data
         documento_id = raw.get('documento_id')
-        documento_detalle_ids = []
+        documento_detalle_ids = raw.get('documento_detalle_ids')
         if documento_id:
             try:
                 documento = GenDocumento.objects.get(pk=documento_id)
+                if documento:
+                    for documento_detalle in documento_detalle_ids:
+                        try:
+                            documento_detalle = GenDocumentoDetalle.objects.get(pk=documento_detalle)
+                            nuevo_detalle_data = {
+                                'documento': documento.id,
+                                'item': documento_detalle.item,
+                                'tipo_registro': documento_detalle.tipo_registro,
+                                'cantidad': documento_detalle.cantidad,
+                                'precio': documento_detalle.precio,
+                            }
+                            if documento_detalle.tipo_registro == "I" and documento_detalle.item.inventario:
+                                nuevo_detalle_data['operacion_inventario'] = documento.documento_tipo.operacion_inventario
+                                nuevo_detalle_data['cantidad_operada'] = documento_detalle.cantidad * documento.documento_tipo.operacion_inventario
+
+                            detalle_serializer = GenDocumentoDetalleSerializador(data=nuevo_detalle_data)
+                            if detalle_serializer.is_valid():
+                                nuevo_detalle = detalle_serializer.save()
+                                impuestos_originales = GenDocumentoImpuesto.objects.filter(documento_detalle=documento_detalle)
+                                for impuesto_original in impuestos_originales:
+                                    nuevo_impuesto_data = {
+                                        'documento_detalle': nuevo_detalle.id,
+                                        'impuesto': impuesto_original,
+                                        'base': impuesto_original.base,
+                                        'porcentaje': impuesto_original.porcentaje,
+                                        'total': impuesto_original.total,
+                                        'total_operado': impuesto_original.total_operado,
+                                        'porcentaje_base': impuesto_original.porcentaje_base,
+                                    }
+                                    impuesto_serializer = GenDocumentoImpuestoSerializador(data=nuevo_impuesto_data)
+                                    if impuesto_serializer.is_valid():
+                                        impuesto_serializer.save()
+                                        return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
+                            else:
+                                return Response({'mensaje': 'Errores de validación en detalle', 'codigo': 14, 'validaciones': detalle_serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+                        except GenDocumentoDetalle.DoesNotExist:
+                                    return Response({'mensaje':'El documento detalle no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
 
