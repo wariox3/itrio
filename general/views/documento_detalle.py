@@ -71,8 +71,8 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
             return Response({'documento': documentoDetalleSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoDetalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["get"], url_path=r'agregar_documento')
-    def agregarDocumentoDetalle(self, request): 
+    @action(detail=False, methods=["get"], url_path=r'lista_agregar_documento_detalle')
+    def lista_agregar_documento_detalle_action(self, request): 
         limit = request.query_params.get('limit', 10)
         documento_tipo = request.query_params.get('documento_tipo', None)
         queryset = self.get_queryset()
@@ -85,7 +85,17 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
             pass    
         serializer = GenDocumentoDetalleAgregarDocumentoSerializador(queryset, many=True)        
         return Response(serializer.data)    
-
+    
+    @action(detail=False, methods=["post"], url_path=r'agregar_documento_detalle')
+    def agregar_documento_detalle_action(self, request): 
+        raw = request.data
+        documento_id = raw.get('documento_id')
+        documento_detalle_ids = []
+        if documento_id:
+            try:
+                documento = GenDocumento.objects.get(pk=documento_id)
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
 
     @action(detail=False, methods=["post"], url_path=r'importar_detalle_venta',)
     def importar_detalle_venta(self, request):
