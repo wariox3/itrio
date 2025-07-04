@@ -107,7 +107,9 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                 'cantidad': documento_detalle.cantidad,
                                 'precio': documento_detalle.precio,
                                 'grupo' : documento_detalle.grupo_id,
-                                'almacen' : documento_detalle.almacen_id
+                                'almacen' : documento_detalle.almacen_id,
+                                'descuento' : documento_detalle.descuento,
+                                'porcentaje_descuento' : documento_detalle.porcentaje_descuento
                             }
                             if documento_detalle.tipo_registro == "I" and documento_detalle.item.inventario:
                                 nuevo_detalle_data['operacion_inventario'] = documento.documento_tipo.operacion_inventario
