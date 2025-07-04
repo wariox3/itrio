@@ -35,6 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     idioma = models.CharField(max_length = 2, default='es')
     imagen = models.TextField(null=True)
     vr_saldo = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    vr_credito = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     fecha_limite_pago = models.DateField(null=True)
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)

@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from contenedor.models import CtnMovimiento, CtnEventoPago, CtnConsumo
+from contenedor.models import CtnMovimiento, CtnEventoPago, CtnConsumo, CtnSocio
 from seguridad.models import User
 from contenedor.serializers.movimiento import CtnMovimientoSerializador
 from decouple import config
@@ -183,20 +183,86 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                 socio_id = pedido.socio_id
                             )
                             recibo.save()
-                            valor = Decimal(valor)                
+                            valor = Decimal(valor)
+                            # Aplicar creditos al socio por el pago
+                            if pedido.socio_id:
+                                socio = CtnSocio.objects.get(id=pedido.socio_id)
+                                socio_usuario = User.objects.filter(es_socio=True, socio_id=pedido.socio_id).first()
+                                if socio_usuario and socio:
+                                    valor_credito = valor * socio.porcentaje_comision / 100
+                                    if valor_credito > 0:
+                                        credito = CtnMovimiento(
+                                            tipo = "CREDITO",
+                                            fecha = timezone.now(),
+                                            fecha_vence = timezone.now().date(),
+                                            contenedor_movimiento_id=recibo.id,
+                                            vr_total = valor_credito,
+                                            vr_saldo = 0,
+                                            socio_id = pedido.socio_id
+                                        )
+                                        credito.save()  
+                                        socio_usuario.vr_credito += valor_credito
+                                        socio_usuario.save()
+
+                            # Afectar saldo del pedido                                            
                             pedido.vr_afectado = pedido.vr_afectado + valor
                             pedido.vr_saldo =  pedido.vr_saldo - valor
                             pedido.save()
+                            
+                            # Actualizar la aplicacion del evento "pago"
                             evento_pago.estado_aplicado = True
                             evento_pago.save()
+
+                            # Actualiza saldo del usuario
                             usuario = User.objects.get(pk=pedido.usuario_id)
                             if usuario:
                                 usuario.vr_saldo -= valor
-                                usuario.save()                            
+                                usuario.save()                                
                 except Exception as e:
                     pass
         return Response(status=status.HTTP_200_OK)
     
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'aplicar-credito',)
+    def aplicar_credito_action(self, request):
+        raw = request.data
+        movimiento_id = raw.get('movimiento_id')
+        valor = raw.get('valor')
+        usuario_id = raw.get('usuario_id')
+        if movimiento_id and valor and usuario_id:
+            try:
+                movimiento = CtnMovimiento.objects.get(id=movimiento_id)
+            except CtnMovimiento.DoesNotExist:
+                return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
+            try:
+                usuario = User.objects.get(id=usuario_id)
+            except User.DoesNotExist:
+                return Response({'mensaje':'El usuario no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                                            
+            if movimiento.vr_saldo >= valor:
+                if usuario.vr_credito >= valor:
+                    recibo = CtnMovimiento(
+                        tipo = "RECIBO_CREDITO",
+                        fecha = timezone.now(),
+                        fecha_vence = timezone.now().date(),
+                        contenedor_movimiento_id=movimiento_id,
+                        vr_total = valor,
+                        vr_saldo = 0
+                    )
+                    recibo.save()                    
+                    movimiento.vr_saldo -= valor
+                    movimiento.vr_afectado += valor
+                    movimiento.save()
+                    usuario.vr_credito -= valor
+                    usuario.vr_saldo -= valor
+                    usuario.save()
+                    return Response(status=status.HTTP_200_OK)
+                else:
+                    return Response({'Mensaje': 'El usuario no tiene creditos suficientes para afectar', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                     
+            else:
+                return Response({'Mensaje': f'El movimiento tiene un saldo de {movimiento.vr_saldo} y esta intentado aplicar un valor mayor {valor}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                 
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)             
+        
+
     @action(detail=False, methods=["post"], url_path=r'descargar',)
     def descargar(self, request):
         raw = request.data

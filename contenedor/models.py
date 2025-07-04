@@ -57,6 +57,7 @@ class CtnIdentificacion(models.Model):
 
 class CtnSocio(models.Model):
     nombre = models.CharField(max_length=100)    
+    porcentaje_comision = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     
     class Meta:
         db_table = "cnt_socio"
