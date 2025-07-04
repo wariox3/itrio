@@ -93,7 +93,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         raw = request.data
         documento_id = raw.get('documento_id')
         documento_detalle_ids = raw.get('documento_detalle_ids')
-        if documento_id:
+        if documento_id and documento_detalle_ids:
             try:
                 documento = GenDocumento.objects.get(pk=documento_id)
                 if documento:
@@ -130,17 +130,16 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                     impuesto_serializer = GenDocumentoImpuestoSerializador(data=nuevo_impuesto_data)
                                     if impuesto_serializer.is_valid():
                                         impuesto_serializer.save()
-
-                                return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
                             else:
-                                return Response({'mensaje': 'Errores de validación en detalle', 'codigo': 14, 'validaciones': detalle_serializer.errors},status=status.HTTP_400_BAD_REQUEST)
+                                return Response({'mensaje': 'Errores de validación en detalle', 'codigo': 14, 'validaciones': detalle_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
                         except GenDocumentoDetalle.DoesNotExist:
-                                    return Response({'mensaje':'El documento detalle no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
-
+                            return Response({'mensaje': 'El documento detalle no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
             except GenDocumento.DoesNotExist:
-                return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
-            
-        return Response({'mensaje': 'No existe el documento', 'codigo': 14},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'mensaje': 'Faltan parametros', 'codigo': 14}, status=status.HTTP_400_BAD_REQUEST)
+
 
     @action(detail=False, methods=["post"], url_path=r'importar_detalle_venta',)
     def importar_detalle_venta(self, request):
