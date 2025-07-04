@@ -18,7 +18,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]  
 
     @action(detail=False, methods=["post"], url_path=r'solucionar',)
-    def solucionar(self, request):             
+    def solucionar(self, request):
         raw = request.data
         id = raw.get('id')  
         solucion = raw.get('solucion')  
@@ -46,7 +46,6 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La novedad ya esta solucionada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
-
 
     @action(detail=False, methods=["post"], url_path=r'nuevo',)
     def nuevo_action(self, request):                     
@@ -105,7 +104,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                                 imagenes_b64.append({
                                     'base64': base64_encoded,
                                 })                                                                                                                                                                                                        
-                        self.entrega_complemento(novedad, imagenes_b64)
+                        self.nuevo_complemento(novedad, imagenes_b64)
                     return Response({'id': novedad.id}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)                              
@@ -113,7 +112,24 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
 
-    def entrega_complemento(self, novedad: RutNovedad, imagenes_b64):
+    @action(detail=False, methods=["post"], url_path=r'nuevo_complemento',)
+    def nuevo_complemento_action(self, request):   
+        backblaze = Backblaze()
+        novedades = RutNovedad.objects.filter(nuevo_complemento=False)                
+        for novedad in novedades:
+            imagenes_b64 = []
+            archivos = GenArchivo.objects.filter(modelo='RutNovedad', codigo=novedad.id, archivo_tipo_id=2)
+            for archivo in archivos:
+                contenido = backblaze.descargar_bytes(archivo.almacenamiento_id)
+                if contenido is not None:
+                    contenido_base64 = base64.b64encode(contenido).decode('utf-8')                    
+                    imagenes_b64.append({
+                        'base64': contenido_base64,
+                    })                                
+            self.nuevo_complemento(novedad, imagenes_b64)
+        return Response({'mensaje': f'Nuevo complemento {novedades.count()}'}, status=status.HTTP_200_OK)
+
+    def nuevo_complemento(self, novedad: RutNovedad, imagenes_b64):
         holmio = Holmio()        
         parametros = {
             'codigoGuia': novedad.visita.numero,            
@@ -123,6 +139,9 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
         if imagenes_b64:
             parametros['imagenes'] = imagenes_b64                    
         respuesta = holmio.novedad(parametros)
+        if respuesta['error'] == False:
+            novedad.nuevo_complemento = True
+            novedad.save()
         return True          
 
 

@@ -22,6 +22,7 @@ class RutNovedadSerializador(serializers.HyperlinkedModelSerializer):
             'descripcion': instance.descripcion,
             'solucion': instance.solucion,
             'estado_solucion': instance.estado_solucion,
+            'nuevo_complemento': instance.nuevo_complemento,
             'novedad_tipo_nombre': novedad_tipo_nombre            
         }  
     
