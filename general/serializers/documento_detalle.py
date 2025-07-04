@@ -23,7 +23,7 @@ class GenDocumentoDetalleAgregarDocumentoSerializador(serializers.ModelSerialize
     documento__documento__tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
     class Meta:
         model = GenDocumentoDetalle
-        fields = ['item', 'item__nombre', 'grupo',  'grupo__nombre', 'almacen', 'almacen__nombre',
+        fields = ['id', 'item', 'item__nombre', 'grupo',  'grupo__nombre', 'almacen', 'almacen__nombre',
                   'cantidad', 'precio', 'documento__numero' ,'documento__documento__tipo__nombre', 'documento__contacto__nombre_corto',
                   'documento__contacto__numero_identificacion']   
         select_related_fields = ['item','grupo', 'almacen', 'documento', 'documento_tipo', 'contacto']     
