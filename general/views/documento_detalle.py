@@ -102,10 +102,12 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                             documento_detalle = GenDocumentoDetalle.objects.get(pk=documento_detalle)
                             nuevo_detalle_data = {
                                 'documento': documento.id,
-                                'item': documento_detalle.item,
+                                'item': documento_detalle.item_id,
                                 'tipo_registro': documento_detalle.tipo_registro,
                                 'cantidad': documento_detalle.cantidad,
                                 'precio': documento_detalle.precio,
+                                'grupo' : documento_detalle.grupo_id,
+                                'almacen' : documento_detalle.almacen_id
                             }
                             if documento_detalle.tipo_registro == "I" and documento_detalle.item.inventario:
                                 nuevo_detalle_data['operacion_inventario'] = documento.documento_tipo.operacion_inventario
@@ -118,7 +120,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                 for impuesto_original in impuestos_originales:
                                     nuevo_impuesto_data = {
                                         'documento_detalle': nuevo_detalle.id,
-                                        'impuesto': impuesto_original,
+                                        'impuesto': impuesto_original.impuesto_id,
                                         'base': impuesto_original.base,
                                         'porcentaje': impuesto_original.porcentaje,
                                         'total': impuesto_original.total,
@@ -128,8 +130,8 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                     impuesto_serializer = GenDocumentoImpuestoSerializador(data=nuevo_impuesto_data)
                                     if impuesto_serializer.is_valid():
                                         impuesto_serializer.save()
-                                        
-                                    return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
+
+                                return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
                             else:
                                 return Response({'mensaje': 'Errores de validación en detalle', 'codigo': 14, 'validaciones': detalle_serializer.errors},status=status.HTTP_400_BAD_REQUEST)
                         except GenDocumentoDetalle.DoesNotExist:
@@ -137,6 +139,8 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
 
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+            
+        return Response({'mensaje': 'No existe el documento', 'codigo': 14},status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'importar_detalle_venta',)
     def importar_detalle_venta(self, request):
