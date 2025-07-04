@@ -205,7 +205,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     def saldo(self, request, id=None):        
         usuario = User.objects.get(id=id)
         if usuario:
-            return Response({'saldo': usuario.vr_saldo}, status=status.HTTP_200_OK)
+            return Response({'saldo': usuario.vr_saldo, 'credito': usuario.vr_credito}, status=status.HTTP_200_OK)
         return Response({'mensaje':'El usuario no existe', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=["post"], url_path=r'estado-verificado',)
