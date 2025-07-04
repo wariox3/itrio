@@ -189,7 +189,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                 socio = CtnSocio.objects.get(id=pedido.socio_id)
                                 socio_usuario = User.objects.filter(es_socio=True, socio_id=pedido.socio_id).first()
                                 if socio_usuario and socio:
-                                    valor_credito = valor * socio.porcentaje_comision / 100
+                                    valor_credito = round(valor * socio.porcentaje_comision / 100)
                                     if valor_credito > 0:
                                         credito = CtnMovimiento(
                                             tipo = "CREDITO",
@@ -262,7 +262,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)             
         
-
     @action(detail=False, methods=["post"], url_path=r'descargar',)
     def descargar(self, request):
         raw = request.data
