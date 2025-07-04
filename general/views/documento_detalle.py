@@ -128,7 +128,8 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                     impuesto_serializer = GenDocumentoImpuestoSerializador(data=nuevo_impuesto_data)
                                     if impuesto_serializer.is_valid():
                                         impuesto_serializer.save()
-                                        return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
+                                        
+                                    return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
                             else:
                                 return Response({'mensaje': 'Errores de validación en detalle', 'codigo': 14, 'validaciones': detalle_serializer.errors},status=status.HTTP_400_BAD_REQUEST)
                         except GenDocumentoDetalle.DoesNotExist:
