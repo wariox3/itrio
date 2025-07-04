@@ -134,6 +134,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
         parametros = {
             'codigoGuia': novedad.visita.numero,            
             'codigoNovedadTipo': novedad.novedad_tipo_id,
+            'descripcion': novedad.descripcion,
             'usuario': 'ruteo'
         }
         if imagenes_b64:
