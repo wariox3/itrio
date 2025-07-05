@@ -96,7 +96,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                             archivo.modelo = "RutNovedad"
                             archivo.url = url
                             archivo.save()
-                    configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]
+                    configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]                    
                     if configuracion['rut_sincronizar_complemento']:
                         imagenes_b64 = []
                         if imagenes:                        

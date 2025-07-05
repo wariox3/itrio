@@ -1130,7 +1130,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     except ValueError:
                         return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
                     with transaction.atomic():          
-                        configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]                                               
+                                                                       
                         datos_entrega = json_texto(datos_adicionales)
                         visita.estado_entregado = True
                         visita.fecha_entrega = fecha_entrega
@@ -1174,6 +1174,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 archivo.modelo = "RutVisita"
                                 archivo.url = url
                                 archivo.save()                        
+                        configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]
                         if configuracion['rut_sincronizar_complemento']:
                             imagenes_b64 = []
                             if imagenes:                        
