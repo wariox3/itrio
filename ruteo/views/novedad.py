@@ -10,6 +10,7 @@ from django.db import transaction
 from django.utils import timezone
 from utilidades.backblaze import Backblaze
 from utilidades.holmio import Holmio
+from utilidades.imagen import Imagen
 import base64
 
 class RutNovedadViewSet(viewsets.ModelViewSet):
@@ -80,9 +81,10 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                         backblaze = Backblaze()
                         tenant = request.tenant.schema_name
                         for imagen in imagenes:
-                            file_content = imagen.read()                                                                 
+                            #file_content = imagen.read()    
+                            file_content = Imagen.comprimir_imagen_jpg(imagen, calidad=20, max_width=1920)                                                             
                             nombre_archivo = f'{novedad.id}.jpg'                                                   
-                            id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                            id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)                            
                             archivo = GenArchivo()
                             archivo.archivo_tipo_id = 2
                             archivo.almacenamiento_id = id_almacenamiento
