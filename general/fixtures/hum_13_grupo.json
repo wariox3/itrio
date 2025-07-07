@@ -1,7 +1,7 @@
 {
   "aplicacion": "humano",
   "modelo": "HumGrupo",
-  "modelo_nativo": "",
+  "modelo_nativo": "hum_grupo",
   "actualizar_secuencia": true,
   "datos": [
     {
