@@ -98,6 +98,19 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
 
+    @action(detail=False, methods=["post"], url_path=r'consulta_credito',)
+    def consulta_credito_action(self, request):
+        raw = request.data
+        socio_id = raw.get('socio_id')
+        if socio_id:
+            movimientos = CtnMovimiento.objects.filter(socio_id=socio_id).filter(
+                Q(tipo='CREDITO') | Q(tipo='RECIBO_CREDITO')
+            )
+            movimientosSerializador = CtnMovimientoSerializador(movimientos, many=True)
+            return Response({'movimientos':movimientosSerializador.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'pendiente',)
     def pendiente(self, request):
         raw = request.data
@@ -168,6 +181,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                 fecha_vence = timezone.now().date(),
                                 descripcion = 'PAGO SERVICIOS NUBE',
                                 contenedor_movimiento_id=referencia,
+                                movimiento_referencia_id=referencia,
                                 vr_total = valor,
                                 vr_saldo = 0,
                                 socio_id = pedido.socio_id,
@@ -186,8 +200,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                             tipo = "CREDITO",
                                             fecha = timezone.now(),
                                             fecha_vence = timezone.now().date(),
-                                            descripcion = f'COMISION PEDIDO ID {referencia} PAGO ID {recibo.id}',
-                                            contenedor_movimiento_id=recibo.id,                                            
+                                            descripcion = f'COMISION PEDIDO ID {referencia} RECIBO ID {recibo.id}',
+                                            contenedor_movimiento_id=recibo.id,  
+                                            movimiento_referencia_id=recibo.id,                                          
                                             vr_total = valor_credito,
                                             vr_saldo = 0,
                                             socio_id = pedido.socio_id,
@@ -238,6 +253,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         fecha_vence = timezone.now().date(),
                         descripcion = f'APLICACION DE CREDITOS PEDIDO ID {movimiento_id}',
                         contenedor_movimiento_id=movimiento_id,
+                        movimiento_referencia_id=movimiento_id,
+                        usuario_id=usuario_id,
+                        socio_id=usuario.socio_id,
                         vr_total = valor,
                         vr_saldo = 0
                     )

@@ -168,6 +168,7 @@ class CtnMovimiento(models.Model):
     documento_fisico = models.BooleanField(default = False) 
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     socio = models.ForeignKey(CtnSocio, on_delete=models.CASCADE, null=True)
+    movimiento_referencia = models.ForeignKey('self', on_delete=models.PROTECT, null=True)
     class Meta:
         db_table = "cnt_movimiento" 
         ordering = ["-fecha"] 
