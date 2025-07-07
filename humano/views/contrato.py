@@ -19,6 +19,8 @@ from humano.serializers.contrato import HumContratoSerializador, HumContratoList
 from humano.serializers.liquidacion import HumLiquidacionSerializador
 from django.db.models.deletion import ProtectedError
 from humano.filters.contrato import ContratoFilter
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from utilidades.excel_exportar import ExcelExportar
 from datetime import datetime
 import base64
@@ -30,6 +32,7 @@ class HumContratoViewSet(viewsets.ModelViewSet):
     queryset = HumContrato.objects.all()
     serializer_class = HumContratoSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ContratoFilter 
     serializadores = {'lista': HumContratoListaSerializador}
 
