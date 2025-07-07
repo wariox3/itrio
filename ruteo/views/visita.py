@@ -33,9 +33,6 @@ import numpy as np
 import json
 
 
-
-
-
 def calcular_distancia(lat1, lon1, lat2, lon2):
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 

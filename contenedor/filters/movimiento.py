@@ -6,5 +6,6 @@ class MovimientoFilter(django_filters.FilterSet):
         model = CtnMovimiento
         fields = {
             'id': ['exact'],
-            'tipo': ['exact']
+            'tipo': ['exact'],
+            'documento_fisico': ['exact']
         }

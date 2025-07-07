@@ -3,7 +3,8 @@ from ruteo.models.visita import RutVisita
 from ruteo.models.novedad_tipo import RutNovedadTipo
 
 class RutNovedad(models.Model):
-    fecha = models.DateTimeField(auto_now_add=True)  
+    fecha = models.DateTimeField()
+    fecha_registro = models.DateTimeField(auto_now_add=True, null=True)
     fecha_solucion = models.DateTimeField(null=True)  
     descripcion = models.CharField(max_length=255, null=True)
     solucion = models.CharField(max_length=255, null=True)

@@ -12,6 +12,7 @@ from utilidades.backblaze import Backblaze
 from utilidades.holmio import Holmio
 from utilidades.imagen import Imagen
 import base64
+from datetime import datetime
 
 class RutNovedadViewSet(viewsets.ModelViewSet):
     queryset = RutNovedad.objects.all()
@@ -53,7 +54,9 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
         imagenes = request.FILES.getlist('imagenes')
         visita_id = request.POST.get('visita_id')
         novedad_tipo_id = request.POST.get('novedad_tipo_id')
-        if visita_id and novedad_tipo_id:            
+        fecha_texto = request.POST.get('fecha')
+        descripcion = request.POST.get('descripcion')
+        if visita_id and novedad_tipo_id and fecha_texto:            
             try:
                 visita = RutVisita.objects.get(pk=visita_id)
             except RutVisita.DoesNotExist:
@@ -63,9 +66,13 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje': 'La visita ya tiene una novedad activa', 'codigo': 3}, status=status.HTTP_400_BAD_REQUEST)
 
             with transaction.atomic():
+                fecha_native = datetime.strptime(fecha_texto, '%Y-%m-%d %H:%M')
+                fecha = timezone.make_aware(fecha_native)                
                 data = {
+                    'fecha': fecha,
                     'visita': visita_id,
-                    'novedad_tipo': novedad_tipo_id
+                    'novedad_tipo': novedad_tipo_id,
+                    'descripcion': descripcion
                 }
                 serializer = RutNovedadSerializador(data=data)
                 if serializer.is_valid():
