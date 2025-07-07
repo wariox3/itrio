@@ -33,5 +33,6 @@ class DocumentoFilter(django_filters.FilterSet):
                   'estado_anulado': ['exact'], 
                   'estado_electronico': ['exact'], 
                   'estado_electronico_descartado': ['exact'], 
+                  'estado_electronico_evento': ['exact'], 
                   'estado_contabilizado': ['exact'],
                   'programacion_detalle_id':['exact']}
