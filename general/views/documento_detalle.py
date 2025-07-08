@@ -298,15 +298,16 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                     if len(row) == 4:
                         data = {
                             'item': row[0],
-                            'grupo':row[1],
-                            'almacen': row[2],
-                            'cantidad': row[3] if row[3] is not None else 0,
-                            'precio': row[4] if row[4] is not None else 0,              
+                            'almacen':row[1],
+                            'cantidad': row[2] if row[2] is not None else 0,
+                            'precio': row[3] if row[3] is not None else 0,              
                         }                    
                         if not data['item']:
                             error_dato = {
                                 'fila': i,
-                                'Mensaje': 'Debe digitar el código del item'
+                                'errores': {
+                                    'item': ['Debe digitar el código del item']
+                                }
                             }
                             errores_datos.append(error_dato)
                             errores = True
@@ -315,7 +316,9 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                             if item is None:
                                 error_dato = {
                                     'fila': i,
-                                    'Mensaje': f'El item {data["item"]} no existe'
+                                    'errores': {
+                                        'item': [f'El item {data["item"]} no existe']
+                                    }
                                 }
                                 errores_datos.append(error_dato)
                                 errores = True
@@ -325,16 +328,21 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                         if not data['almacen']:
                             error_dato = {
                                 'fila': i,
-                                'Mensaje': 'Debe digitar el código del almacen'
+                                'errores': {
+                                    'almacen': 'Debe digitar el código del almacen',
+                                }
                             }
                             errores_datos.append(error_dato)
                             errores = True  
                         else:
                             almacen = InvAlmacen.objects.filter(id=data['almacen']).first()
                             if almacen is None:
+                                errores = True
                                 error_dato = {
                                     'fila': i,
-                                    'Mensaje': f'El almacen con código {data["almacen"]} no existe'
+                                    'errores': {
+                                        'almacen': [f'El almacen con código {data["almacen"]} no existe']
+                                    }
                                 }
                                 errores_datos.append(error_dato)
                                 errores = True
@@ -344,22 +352,46 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                     else:
                         error_dato = {
                             'fila': i,
-                            'Mensaje': f'La linea no tiene 4 columnas'
+                            'errores': {
+                                'general': 'La linea no tiene 4 columnas',
+                            }
                         }
                         errores_datos.append(error_dato)
                         errores = True
             if errores == False:
                 for detalle in data_documento_detalle:
-                    GenDocumentoDetalle.objects.create(
+                    documento_detalle = GenDocumentoDetalle.objects.create(
                         documento=documento,
                         item_id=detalle['item_id'],
                         almacen_id=detalle['almacen_id'],
                         cantidad=detalle['cantidad'],
                         precio=detalle['precio']
                     )
-                    registros_importados += 1
+                    item_impuestos = GenItemImpuesto.objects.filter(item_id=detalle['item_id'])
+
+                    for item_impuesto in item_impuestos:
+                        impuesto = GenImpuesto.objects.filter(
+                            id=item_impuesto.impuesto_id,
+                            compra=True
+                        ).first()
+                        
+                        if impuesto:
+
+                            base = documento_detalle.cantidad * documento_detalle.precio
+                            total_impuesto = base * impuesto.porcentaje
+                            total_operado = total_impuesto * impuesto.operacion
+
+                            GenDocumentoImpuesto.objects.create(
+                                documento_detalle=documento_detalle,
+                                impuesto_id=impuesto.id,
+                                base= base,
+                                porcentaje=impuesto.porcentaje,
+                                total=total_impuesto,
+                                total_operado=total_operado
+                            )
+                registros_importados += 1
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)      
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
