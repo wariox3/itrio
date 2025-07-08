@@ -283,7 +283,7 @@ class GenDocumentoDetalleNominaExcelSerializador(serializers.HyperlinkedModelSer
             'BASE': instance.base_impuesto
         }     
     
-class GenDocumentoDetalleInformeVentaSerializador(serializers.HyperlinkedModelSerializer):          
+class GenDocumentoDetalleInformeVentaSerializador(serializers.ModelSerializer):          
     documento__numero = serializers.CharField(source='documento.numero', read_only=True)
     documento__fecha = serializers.CharField(source='documento.fecha', read_only=True)
     documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
@@ -304,3 +304,25 @@ class GenDocumentoDetalleInformeVentaSerializador(serializers.HyperlinkedModelSe
                   'impuesto',
                   'total']
         select_related_fields = ['documento', 'item', 'documento__documento_tipo', 'documento__contacto']    
+
+class GenDocumentoDetalleInformeInventarioSerializador(serializers.ModelSerializer):          
+    documento__numero = serializers.CharField(source='documento.numero', read_only=True)
+    documento__fecha = serializers.CharField(source='documento.fecha', read_only=True)
+    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
+    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
+    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
+    class Meta:
+        model = GenDocumentoDetalle
+        fields = ['id', 
+                'documento__documento_tipo__nombre',
+                'documento__numero',
+                'documento__fecha',
+                'documento__contacto__nombre_corto',
+                'item_id',
+                'item__nombre',
+                'cantidad',
+                'precio',
+                'subtotal',
+                'impuesto',
+                'total']
+        select_related_fields = ['documento', 'item', 'documento__documento_tipo', 'documento__contacto']        
