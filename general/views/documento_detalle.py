@@ -178,7 +178,9 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                         if not data['item']:
                             error_dato = {
                                 'fila': i,
-                                'Mensaje': 'Debe digitar el código del item'
+                                'errores': {
+                                    'item': ['Debe digitar el código del item']
+                                }
                             }
                             errores_datos.append(error_dato)
                             errores = True
@@ -187,7 +189,9 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                             if item is None:
                                 error_dato = {
                                     'fila': i,
-                                    'Mensaje': f'El item {data["item"]} no existe'
+                                    'errores': {
+                                        'item': [f'El item {data["item"]} no existe']
+                                    }
                                 }
                                 errores_datos.append(error_dato)
                                 errores = True
@@ -197,16 +201,21 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                         if not data['almacen']:
                             error_dato = {
                                 'fila': i,
-                                'Mensaje': 'Debe digitar el código del almacen'
+                                'errores': {
+                                    'almacen': 'Debe digitar el código del almacen',
+                                }
                             }
                             errores_datos.append(error_dato)
                             errores = True  
                         else:
                             almacen = InvAlmacen.objects.filter(id=data['almacen']).first()
                             if almacen is None:
+                                errores = True
                                 error_dato = {
                                     'fila': i,
-                                    'Mensaje': f'El almacen con código {data["almacen"]} no existe'
+                                    'errores': {
+                                        'almacen': [f'El almacen con código {data["almacen"]} no existe']
+                                    }
                                 }
                                 errores_datos.append(error_dato)
                                 errores = True
@@ -216,7 +225,9 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                     else:
                         error_dato = {
                             'fila': i,
-                            'Mensaje': f'La linea no tiene 4 columnas'
+                            'errores': {
+                                'general': 'La linea no tiene 4 columnas',
+                            }
                         }
                         errores_datos.append(error_dato)
                         errores = True
@@ -256,7 +267,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
 
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
-                return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)         
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         
