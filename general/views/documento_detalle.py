@@ -142,7 +142,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
 
         return Response({'mensaje': 'Faltan parametros', 'codigo': 14}, status=status.HTTP_400_BAD_REQUEST)
 
-
     @action(detail=False, methods=["post"], url_path=r'importar_detalle_venta',)
     def importar_detalle_venta(self, request):
         raw = request.data
