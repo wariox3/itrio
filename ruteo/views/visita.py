@@ -1284,7 +1284,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         direccion = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion).strip()   
         direccion = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion).strip()                 
         direccion = re.sub(r'\s+', ' ', direccion.strip())                    
-        direccion = direccion[:150]        
+        direccion = direccion[:200]        
         return direccion
     
     def entrega_complemento(self, visita: RutVisita, imagenes_b64, firmas_b64, datos_entrega):

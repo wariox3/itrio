@@ -13,6 +13,7 @@ from utilidades.workbook_estilos_deprecated import WorkbookEstilos
 from datetime import datetime
 from django.db import transaction
 from utilidades.google import Google
+from utilidades.holmio import Holmio
 
 class RutDespachoViewSet(viewsets.ModelViewSet):
     queryset = RutDespacho.objects.all()
@@ -303,7 +304,60 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                     despachos_actualizar, 
                     ['visitas_entregadas']
                 )      
-        return Response(
-            {'mensaje': f'Se actualizaron {actualizados} despachos'},
-            status=status.HTTP_200_OK
-        )
+        return Response({'mensaje': f'Se actualizaron {actualizados} despachos'},status=status.HTTP_200_OK )
+    
+    @action(detail=False, methods=["post"], url_path=r'nuevo-complemento',)
+    def nuevo_complemento_action(self, request): 
+        raw = request.data
+        despacho_id = raw.get('despacho_id')        
+        if despacho_id:
+            holmio = Holmio()
+            parametros = {
+                'codigo_despacho': despacho_id
+            }            
+            respuesta = holmio.despacho_detalle(parametros)
+            if respuesta['error'] == False: 
+                despacho_complemento = respuesta['despacho']                
+                vehiculo = RutVehiculo.objects.filter(placa=despacho_complemento['codigoVehiculoFk']).first() 
+                if vehiculo:
+                    with transaction.atomic():
+                        data = {
+                            'vehiculo':vehiculo.id,
+                            'fecha': datetime.now(),
+                            'fecha_salida': datetime.now(),
+                            'peso':0,
+                            'volumen':0,
+                            'tiempo':0,
+                            'tiempo_servicio':0,
+                            'tiempo_trayecto':0,
+                            'visitas':0                            
+                        }                                                                        
+                        despacho = RutDespachoSerializador(data=data)
+                        if despacho.is_valid():
+                            #despacho.save()       
+                            parametros = {
+                                'limite': 200,
+                                'guia_desde': None,
+                                'guia_hasta': None,
+                                'fecha_desde': None,
+                                'fecha_hasta': None,
+                                'pendiente_despacho': None,
+                                'codigo_contacto': None,
+                                'codigo_destino' : None,
+                                'codigo_zona': None,
+                                'codigo_despacho': despacho_id
+                            }            
+                            respuesta = holmio.ruteo_pendiente(parametros)
+                            if respuesta['error'] == False: 
+                                pass
+                            # Falta ubicar
+                            # Falta ordenar
+                            return Response({'mensaje': f'Se creo el despacho con exito'}, status=status.HTTP_200_OK)
+                        else:
+                            return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': despacho.errors}, status=status.HTTP_400_BAD_REQUEST)                              
+                else:
+                    return Response({'mensaje':f'No existe el vehiculo {despacho_complemento['codigoVehiculoFk']}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
+            else:
+                return Response({'mensaje':'No se pudo consultar el despacho en el complemento', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)

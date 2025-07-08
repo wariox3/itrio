@@ -14,6 +14,15 @@ class Holmio():
             return {'error':False, 'guias': datos['guias']}
         else:
             return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}
+        
+    def despacho_detalle(self, parametros):
+        url = "/api/transporte/despacho/detalle"        
+        respuesta = self.consumirPost(parametros, url)        
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            return {'error':False, 'despacho': datos['despacho']}
+        else:
+            return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}        
 
     def entrega(self, parametros):
         url = "/api/transporte/guia/entrega"        

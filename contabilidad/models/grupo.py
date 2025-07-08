@@ -6,4 +6,4 @@ class ConGrupo(models.Model):
     
     class Meta:
         db_table = "con_grupo"
-        ordering = ["-id"]
+        ordering = ["nombre"]
