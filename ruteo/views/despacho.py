@@ -356,7 +356,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                         else:
                             return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': despacho.errors}, status=status.HTTP_400_BAD_REQUEST)                              
                 else:
-                    return Response({'mensaje':f'No existe el vehiculo {despacho_complemento['codigoVehiculoFk']}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
+                    return Response({'mensaje':f'No existe el vehiculo {despacho_complemento["codigoVehiculoFk"]}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
             else:
                 return Response({'mensaje':'No se pudo consultar el despacho en el complemento', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:
