@@ -224,6 +224,19 @@
         "operacion": -1,
         "impuesto_tipo": 3
       }
+    },
+        {
+      "pk": 204,
+      "campos": {
+        "nombre": "RteFte 6%",
+        "nombre_extendido": "RteFte 6%",
+        "porcentaje": "6",
+        "porcentaje_base": "100",
+        "venta": "True",
+        "compra": "False",
+        "operacion": -1,
+        "impuesto_tipo": 3
+      }
     }
   ]
 }
