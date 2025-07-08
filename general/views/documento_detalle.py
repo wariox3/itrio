@@ -9,6 +9,7 @@ from general.models.item import GenItem
 from general.models.item_impuesto import GenItemImpuesto
 from general.models.impuesto import GenImpuesto
 from inventario.models.almacen import InvAlmacen
+from contabilidad.models.grupo import ConGrupo
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleAgregarDocumentoSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
@@ -295,12 +296,13 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
             registros_importados = 0
             if documento.documento_tipo_id in [5]:
                 for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-                    if len(row) == 4:
+                    if len(row) == 5:
                         data = {
                             'item': row[0],
                             'almacen':row[1],
-                            'cantidad': row[2] if row[2] is not None else 0,
-                            'precio': row[3] if row[3] is not None else 0,              
+                            'grupo':row[2],
+                            'cantidad': row[3] if row[3] is not None else 0,
+                            'precio': row[4] if row[4] is not None else 0,              
                         }                    
                         if not data['item']:
                             error_dato = {
@@ -347,7 +349,23 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                 errores_datos.append(error_dato)
                                 errores = True
                             else:
-                                data['almacen_id'] = almacen.id                                 
+                                data['almacen_id'] = almacen.id
+                                
+                        if data['grupo']:
+                            grupo = ConGrupo.objects.filter(id=data['grupo']).first()
+                            if grupo is None:
+                                errores = True
+                                error_dato = {
+                                    'fila': i,
+                                    'errores': {
+                                        'grupo': [f'El grupo con código {data["grupo"]} no existe']
+                                    }
+                                }
+                                errores_datos.append(error_dato)
+                                errores = True
+                            else:
+                                data['grupo_id'] = grupo.id
+
                         data_documento_detalle.append(data) 
                     else:
                         error_dato = {
@@ -363,6 +381,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                     documento_detalle = GenDocumentoDetalle.objects.create(
                         documento=documento,
                         item_id=detalle['item_id'],
+                        grupo_id=detalle['grupo_id'],
                         almacen_id=detalle['almacen_id'],
                         cantidad=detalle['cantidad'],
                         precio=detalle['precio']
