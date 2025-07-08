@@ -1179,6 +1179,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                     file_content = imagen.read()   
                                     base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
                                     imagenes_b64.append({
+                                        'comprimido': True,
                                         'base64': base64_encoded,
                                     })     
                             firmas_b64 = []
@@ -1263,6 +1264,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 if contenido is not None:
                     contenido_base64 = base64.b64encode(contenido).decode('utf-8')                    
                     imagenes_b64.append({
+                        'comprimido': True,
                         'base64': contenido_base64,
                     })   
             firmas_b64 = []
