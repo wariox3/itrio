@@ -6,6 +6,8 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.documento_impuesto import GenDocumentoImpuesto
 from general.models.documento import GenDocumento
 from general.models.item import GenItem
+from general.models.item_impuesto import GenItemImpuesto
+from general.models.impuesto import GenImpuesto
 from inventario.models.almacen import InvAlmacen
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleAgregarDocumentoSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
@@ -220,14 +222,38 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                         errores = True
             if errores == False:
                 for detalle in data_documento_detalle:
-                    GenDocumentoDetalle.objects.create(
+                    documento_detalle = GenDocumentoDetalle.objects.create(
                         documento=documento,
                         item_id=detalle['item_id'],
                         almacen_id=detalle['almacen_id'],
                         cantidad=detalle['cantidad'],
                         precio=detalle['precio']
                     )
-                    registros_importados += 1
+
+                    item_impuestos = GenItemImpuesto.objects.filter(item_id=detalle['item_id'])
+
+                    for item_impuesto in item_impuestos:
+                        impuesto = GenImpuesto.objects.filter(
+                            id=item_impuesto.impuesto_id,
+                            venta=True
+                        ).first()
+                        
+                        if impuesto:
+
+                            base = documento_detalle.cantidad * documento_detalle.precio
+                            total_impuesto = base * impuesto.porcentaje
+                            total_operado = total_impuesto * impuesto.operacion
+
+                            GenDocumentoImpuesto.objects.create(
+                                documento_detalle=documento_detalle,
+                                impuesto_id=impuesto.id,
+                                base= base,
+                                porcentaje=impuesto.porcentaje,
+                                total=total_impuesto,
+                                total_operado=total_operado
+                            )
+                registros_importados += 1
+
                 return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
                 return Response({'errores': True, 'errores_datos': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
