@@ -116,9 +116,11 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
         ciudad_contrato_nombre = ''
         if instance.ciudad_contrato:            
             ciudad_contrato_nombre = instance.ciudad_contrato.nombre
+            estado_contrato_nombre = instance.ciudad_contrato.estado.nombre
         ciudad_labora_nombre = ''
         if instance.ciudad_labora:            
             ciudad_labora_nombre = instance.ciudad_labora.nombre  
+            estado_labora_nombre = instance.ciudad_labora.estado.nombre
         entidad_salud_nombre = ''
         if instance.entidad_salud:
             entidad_salud_nombre = instance.entidad_salud.nombre
@@ -177,8 +179,10 @@ class HumContratoSerializador(serializers.HyperlinkedModelSerializer):
             'pension_nombre': pension_nombre,
             'ciudad_contrato_id': instance.ciudad_contrato_id,
             'ciudad_contrato_nombre': ciudad_contrato_nombre,
+            'estado_contrato_nombre': estado_contrato_nombre,
             'ciudad_labora_id': instance.ciudad_labora_id,
             'ciudad_labora_nombre': ciudad_labora_nombre,
+            'estado_labora_nombre': estado_labora_nombre,
             'entidad_salud_id': instance.entidad_salud_id,
             'entidad_salud_nombre': entidad_salud_nombre,
             'entidad_pension_id': instance.entidad_pension_id,
