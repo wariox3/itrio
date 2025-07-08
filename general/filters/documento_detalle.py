@@ -6,11 +6,21 @@ class DocumentoDetalleFilter(django_filters.FilterSet):
     item__nombre = django_filters.CharFilter(field_name='item__nombre', lookup_expr='icontains')     
     documento__contacto__nombre_corto = django_filters.CharFilter(field_name='documento__contacto__nombre_corto', lookup_expr='icontains')    
     documento__contacto__numero_identificacion = django_filters.CharFilter(field_name='documento__contacto__numero_identificacion', lookup_expr='icontains')    
+    inventario = django_filters.BooleanFilter(
+        method='filtrar_inventario',
+        label="Filtrar solo movimientos con efecto en inventario (1 o -1)"
+    )
+
+    def filtrar_inventario(self, queryset, name, value):
+        if value:
+            return queryset.exclude(operacion_inventario=0)
+        return queryset
+    
     class Meta:
         model = GenDocumentoDetalle        
         fields = {
                     'id': ['exact', 'lte'],
-                    'operacion_inventario': ['exact', 'exclude'],
+                    'operacion_inventario': ['exact'],
                     'documento__estado_aprobado':['exact'],
                     'documento__numero':['exact', 'icontains'],
                     'documento__contacto__nombre_corto':['exact', 'icontains'],
