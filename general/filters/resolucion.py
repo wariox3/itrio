@@ -5,4 +5,6 @@ class ResolucionFilter(django_filters.FilterSet):
     class Meta:
         model = GenResolucion        
         fields = {'id': ['exact'],
-                  'numero': ['exact','icontains']}
+                  'numero': ['exact','icontains'],
+                  'venta': ['exact'],
+                  'compra': ['exact'],}
