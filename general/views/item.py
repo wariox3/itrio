@@ -48,7 +48,7 @@ class ItemViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, nombre_hoja="itemes", nombre_archivo="itemes.xlsx", titulo="Itemes")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="ítems ", nombre_archivo="ítems .xlsx", titulo="Items")
             return exporter.exportar()
         return super().list(request, *args, **kwargs)
 
