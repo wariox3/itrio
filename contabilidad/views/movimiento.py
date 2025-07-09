@@ -732,7 +732,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             excel_funciones.aplicar_estilos(ws, 7, [6,7,8,9])                                      
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            response['Content-Disposition'] = f'attachment; filename=balance_prueba_tercero.xlsx'
+            response['Content-Disposition'] = f'attachment; filename=balance_prueba_contacto.xlsx'
             wb.save(response)
             return response
         else:
