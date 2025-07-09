@@ -111,11 +111,148 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         if request.query_params.get('excel'):
+            documento_tipo_id = request.query_params.get('documento_tipo_id')
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)            
-            titulo = 'Informe documentos'
-            nombre_hoja = "documentos"
-            nombre_archivo = "documentos.xlsx"
+
+            DOCUMENTO_TIPO_CONFIG = {
+                '1': {
+                    'titulo': 'Facturas de venta',
+                    'nombre_hoja': 'facturas_venta',
+                    'nombre_archivo': 'facturas_venta.xlsx',
+                },
+                '2': {
+                    'titulo': 'Notas de crédito',
+                    'nombre_hoja': 'notas_crédito',
+                    'nombre_archivo': 'notas_crédito.xlsx',
+                },
+                '3': {
+                    'titulo': 'Notas de débito',
+                    'nombre_hoja': 'notas_débito',
+                    'nombre_archivo': 'notas_débito.xlsx',
+                },
+                '4': {
+                    'titulo': 'Pagos',
+                    'nombre_hoja': 'pagos',
+                    'nombre_archivo': 'pagos.xlsx',
+                },
+                '5': {
+                    'titulo': 'Facturas de compra',
+                    'nombre_hoja': 'facturas_compra',
+                    'nombre_archivo': 'facturas_compra.xlsx',
+                },
+                '6': {
+                    'titulo': 'Nota de crédito',
+                    'nombre_hoja': 'notas_crédito',
+                    'nombre_archivo': 'notas_crédito.xlsx',
+                },
+                '7': {
+                    'titulo': 'Notas de débito',
+                    'nombre_hoja': 'notas_débito',
+                    'nombre_archivo': 'notas_débito.xlsx',
+                },
+                '8': {
+                    'titulo': 'Egresos',
+                    'nombre_hoja': 'egresos',
+                    'nombre_archivo': 'egresos.xlsx',
+                },
+                '9': {
+                    'titulo': 'Entradas',
+                    'nombre_hoja': 'entradas',
+                    'nombre_archivo': 'entradas.xlsx',
+                },
+                '10': {
+                    'titulo': 'Salidas',
+                    'nombre_hoja': 'salidas',
+                    'nombre_archivo': 'salidas.xlsx',
+                },  
+                '11': {
+                    'titulo': 'Documentos soporte',
+                    'nombre_hoja': 'documentos_soporte',
+                    'nombre_archivo': 'documentos_soporte.xlsx',
+                },         
+                '12': {
+                    'titulo': 'Notas de ajuste',
+                    'nombre_hoja': 'notas_ajuste',
+                    'nombre_archivo': 'notas_ajuste.xlsx',
+                },          
+                '13': {
+                    'titulo': 'Asientos',
+                    'nombre_hoja': 'asientos',
+                    'nombre_archivo': 'asientos.xlsx',
+                },   
+                '14': {
+                    'titulo': 'Nóminas',
+                    'nombre_hoja': 'nóminas',
+                    'nombre_archivo': 'nóminas.xlsx',
+                },          
+                '15': {
+                    'titulo': 'Nóminas_electrónicas',
+                    'nombre_hoja': 'nóminas_electrónicas',
+                    'nombre_archivo': 'nóminas_electrónicas.xlsx',
+                },                                          
+                '16': {
+                    'titulo': 'Facturas recurrentes',
+                    'nombre_hoja': 'facturas_recurrentes',
+                    'nombre_archivo': 'facturas_recurrentes.xlsx',
+                },
+                '17': {
+                    'titulo': 'Cuentas de cobro',
+                    'nombre_hoja': 'cuentas_de_cobro',
+                    'nombre_archivo': 'cuentas_de_cobro.xlsx',
+                },    
+                '18': {
+                    'titulo': 'Saldos iniciales',
+                    'nombre_hoja': 'saldos_iniciales',
+                    'nombre_archivo': 'saldos_iniciales.xlsx',
+                }, 
+                '19': {
+                    'titulo': 'Saldos iniciales',
+                    'nombre_hoja': 'saldos_iniciales',
+                    'nombre_archivo': 'saldos_iniciales.xlsx',
+                },
+                '22': {
+                    'titulo': 'Aportes seguridad social',
+                    'nombre_hoja': 'aportes_seguridad_social',
+                    'nombre_archivo': 'aportes_seguridad_social.xlsx',
+                },  
+                '23': {
+                    'titulo': 'Depreciaciones',
+                    'nombre_hoja': 'depreciaciones',
+                    'nombre_archivo': 'depreciaciones.xlsx',
+                },
+                '24': {
+                    'titulo': 'Facturas pos electrónicas',
+                    'nombre_hoja': 'facturas_pos_electrónicas',
+                    'nombre_archivo': 'facturas_pos_electrónicas.xlsx',
+                }, 
+                '25': {
+                    'titulo': 'Cierres',
+                    'nombre_hoja': 'cierres',
+                    'nombre_archivo': 'cierres.xlsx',
+                },                                               
+                '26': {
+                    'titulo': 'Pedidos de clientes',
+                    'nombre_hoja': 'pedidos_cliente',
+                    'nombre_archivo': 'pedidos_cliente.xlsx',
+                },
+                '27': {
+                    'titulo': 'Facturas pos',
+                    'nombre_hoja': 'facturas_pos',
+                    'nombre_archivo': 'facturas_pos.xlsx',
+                },                
+                'default': {
+                    'titulo': 'Informe documentos',
+                    'nombre_hoja': 'documentos',
+                    'nombre_archivo': 'documentos.xlsx',
+                }
+            }
+
+            config = DOCUMENTO_TIPO_CONFIG.get(documento_tipo_id, DOCUMENTO_TIPO_CONFIG['default'])
+            titulo = config['titulo']
+            nombre_hoja = config['nombre_hoja']
+            nombre_archivo = config['nombre_archivo']
+
             if request.query_params.get('excel_masivo'):
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
                 return exporter.exportar() 
