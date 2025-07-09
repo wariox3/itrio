@@ -6,4 +6,5 @@ class AdicionalFilter(django_filters.FilterSet):
         model = HumAdicional        
         fields = {
             'id': ['exact', 'lte'],
+            'permanente': ['exact']
         }
