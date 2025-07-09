@@ -38,7 +38,7 @@ class HumCargoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="cargos", filename="cargos.xlsx")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="cargos", nombre_archivo="cargos.xlsx", titulo="Cargos")            
             return exporter.exportar()
         return super().list(request, *args, **kwargs)   
     

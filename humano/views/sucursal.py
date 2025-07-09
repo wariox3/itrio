@@ -37,7 +37,7 @@ class HumSucursalViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="sucursales", filename="sucursales.xlsx")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="sucursales", nombre_archivo="sucursales.xlsx", titulo="Sucursales")            
             return exporter.exportar()
         return super().list(request, *args, **kwargs)   
     

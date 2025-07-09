@@ -34,7 +34,7 @@ class HumCreditoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="creditos", filename="creditos.xlsx")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="creditos", nombre_archivo="creditos.xlsx", titulo="Creditos")            
             return exporter.exportar()
         return super().list(request, *args, **kwargs)   
 

@@ -36,7 +36,7 @@ class HumGrupoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="grupos", filename="grupos.xlsx")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="grupos", nombre_archivo="grupos.xlsx", titulo="Grupos")            
             return exporter.exportar()
         return super().list(request, *args, **kwargs)
 

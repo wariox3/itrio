@@ -42,7 +42,7 @@ class ResolucionViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel') or request.query_params.get('excel_masivo'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="contactos", filename="contactos.xlsx")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="resoluciones", nombre_archivo="resoluciones.xlsx", titulo="Resoluciones")
             if request.query_params.get('excel'):
                 return exporter.exportar_estilo()
             if request.query_params.get('excel_masivo'):
