@@ -220,7 +220,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                     }
                                 }
                                 errores_datos.append(error_dato)
-                                errores = True
                             else:
                                 data['almacen_id'] = almacen.id                                 
                         data_documento_detalle.append(data) 
@@ -228,7 +227,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                         error_dato = {
                             'fila': i,
                             'errores': {
-                                'general': 'La linea no tiene 4 columnas',
+                                'general': ['La linea no tiene 4 columnas'],
                             }
                         }
                         errores_datos.append(error_dato)
@@ -306,6 +305,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                             'precio': row[4] if row[4] is not None else 0,              
                         }                    
                         if not data['item']:
+                            errores = True
                             error_dato = {
                                 'fila': i,
                                 'errores': {
@@ -313,7 +313,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                 }
                             }
                             errores_datos.append(error_dato)
-                            errores = True
                         else:
                             item = GenItem.objects.filter(id=data['item']).first()
                             if item is None:
@@ -324,7 +323,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                     }
                                 }
                                 errores_datos.append(error_dato)
-                                errores = True
                             else:
                                 data['item_id'] = item.id
 
@@ -348,7 +346,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                     }
                                 }
                                 errores_datos.append(error_dato)
-                                errores = True
                             else:
                                 data['almacen_id'] = almacen.id
                                 
@@ -363,7 +360,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                                     }
                                 }
                                 errores_datos.append(error_dato)
-                                errores = True
                             else:
                                 data['grupo_id'] = grupo.id
 
@@ -372,7 +368,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                         error_dato = {
                             'fila': i,
                             'errores': {
-                                'general': 'La linea no tiene 4 columnas',
+                                'general': ['La linea no tiene 5 columnas'],
                             }
                         }
                         errores_datos.append(error_dato)
@@ -382,7 +378,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                     documento_detalle = GenDocumentoDetalle.objects.create(
                         documento=documento,
                         item_id=detalle['item_id'],
-                        grupo_id=detalle['grupo_id'],
+                        grupo_id=detalle.get('grupo_id'),
                         almacen_id=detalle['almacen_id'],
                         cantidad=detalle['cantidad'],
                         precio=detalle['precio']
