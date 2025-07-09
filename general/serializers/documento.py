@@ -203,6 +203,32 @@ class GenDocumentoListaSerializador(serializers.ModelSerializer):
                   'estado_contabilizado']
         select_related_fields = ['contacto','documento_tipo']
 
+class GenDocumentoListaVentaSerializador(serializers.ModelSerializer):  
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)  
+    
+    class Meta:
+        model = GenDocumento
+        fields = ['id', 
+                  'documento_tipo__nombre',
+                  'numero', 
+                  'fecha',
+                  'soporte',
+                  'orden_compra',
+                  'contacto_id',                  
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',                                     
+                  'subtotal',
+                  'impuesto',
+                  'total',
+                  'estado_aprobado',
+                  'estado_anulado',
+                  'estado_electronico',
+                  'estado_electronico_evento',
+                  'estado_contabilizado']
+        select_related_fields = ['contacto','documento_tipo']
+
 class GenDocumentoListaNominaSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
@@ -558,8 +584,7 @@ class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer)
             'id': instance.id,            
             'numero' : instance.numero
         }   
-    
-    
+       
 class GenDocumentoNominaSerializador(serializers.HyperlinkedModelSerializer):    
 
     class Meta:
