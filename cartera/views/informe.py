@@ -51,24 +51,17 @@ class InformeView(APIView):
         documentos = documentos[desplazar:limite+desplazar]
         return {'registros': list(documentos), "cantidad_registros": cantidad_documentos}
 
-    def post(self, request):    
-        raw = request.data
-        filtros = raw.get("filtros", [])
-        cantidad_limite = raw.get('cantidad_limite', 30000)
-        desplazar = raw.get('desplazar', 0)
-        limite = raw.get('limite', 50)
-        excel = raw.get('excel', False)
-        pdf = raw.get('pdf', False)        
-        fecha_hasta = None
-        for filtro in filtros:
-            if filtro["propiedad"] == "fecha":
-                fecha_hasta = filtro["valor1"]            
-            if filtro["propiedad"] == "numero":
-                numero = filtro["valor1"]                
-        
+    def get(self, request):    
+        filtros = request.query_params.getlist('filtros')
+        cantidad_limite = request.query_params.get('cantidad_limite', 30000)
+        desplazar = request.query_params.get('desplazar', 0)
+        limite = request.query_params.get('limite', 50)
+        excel = request.query_params.get('excel', False)
+        pdf = request.query_params.get('pdf', False)   
+        fecha_hasta = request.query_params.get('fecha')
         if not fecha_hasta:
-            return Response(
-                {"mensaje": "Los filtros 'fecha' son obligatorios."},status=status.HTTP_400_BAD_REQUEST)               
+            return Response({"mensaje": "El parámetro fecha es obligatorio."},status=status.HTTP_400_BAD_REQUEST)
+
         resultados = self.obtener_pendiente_corte(fecha_hasta, filtros, cantidad_limite, desplazar, limite)
         if excel:
             wb = Workbook()
