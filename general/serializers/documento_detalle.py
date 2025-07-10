@@ -28,15 +28,15 @@ class GenDocumentoDetalleAgregarDocumentoSerializador(serializers.ModelSerialize
                   'documento__contacto__numero_identificacion']   
         select_related_fields = ['item','grupo', 'almacen', 'documento', 'documento_tipo', 'contacto']     
 
-class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializer):
+class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
     documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
     documento__contacto__numero_identificacion = serializers.CharField(source='documento.contacto.numero_identificacion', read_only=True)
     documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
     documento__fecha = serializers.DateField(source='documento.fecha', read_only=True)
     documento__fecha_hasta = serializers.DateField(source='documento.fecha_hasta', read_only=True)
     documento__numero = serializers.IntegerField(source='documento.numero', read_only=True)
-    documento__contacto = serializers.IntegerField(source='documento.contacto', read_only=True)
-    documento__contrato = serializers.IntegerField(source='documento.contrato', read_only=True)
+    documento__contacto = serializers.IntegerField(source='documento.contacto_id', read_only=True)
+    documento__contrato = serializers.IntegerField(source='documento.contrato_id', read_only=True)
     concepto__nombre = serializers.CharField(source='concepto.nombre', read_only=True)
     class Meta:
         model = GenDocumentoDetalle
