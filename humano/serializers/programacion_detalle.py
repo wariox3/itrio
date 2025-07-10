@@ -87,54 +87,43 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'deduccion_fondo_pension_acumulado': instance.deduccion_fondo_pension_acumulado
         }   
 
-class HumProgramacionDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
+class HumProgramacionDetalleInformeSerializador(serializers.ModelSerializer):
+    contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)
+    contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
+    contracto__contacto = serializers.IntegerField(source='contrato.contacto_id', read_only=True)
+    contrato__cargo__nombre = serializers.CharField(source='contrato.cargo.nombre', read_only=True)
+    contrato__riesgo__porcentaje = serializers.CharField(source='contrato.riesgo.porcentaje', read_only=True)
 
     class Meta:
         model = HumProgramacionDetalle
-
-    def to_representation(self, instance):      
-        contrato_contacto_numero_identificacion = ""
-        contrato_contacto_nombre_corto = ""
-        cargo_nombre = ""
-        contrato__riesgo_arl_porcentaje = ""
-        if instance.contrato:
-            if instance.contrato.contacto:
-                contrato_contacto_numero_identificacion = instance.contrato.contacto.numero_identificacion
-                contrato_contacto_nombre_corto = instance.contrato.contacto.nombre_corto
-            if instance.contrato.cargo:
-                cargo_nombre = instance.contrato.cargo.nombre      
-            if instance.contrato.riesgo:  # Verifica si existe la relación hum_riesgo
-                contrato__riesgo_arl_porcentaje = instance.contrato.riesgo.porcentaje
-        return {
-            'ID': instance.id,
-            'COD': instance.contrato.contacto_id,
-            'IDENTIFICACION': contrato_contacto_numero_identificacion,
-            'EMPLEADO': contrato_contacto_nombre_corto,
-            'CONT': instance.contrato_id,
-            'DESDE': instance.fecha_desde,
-            'HASTA': instance.fecha_hasta,            
-            'SALARIO': instance.salario,            
-            'DIAS': instance.dias,
-            'DIAS_T': instance.dias_transporte,
-            'D': instance.diurna,
-            'N': instance.nocturna,
-            'FD': instance.festiva_diurna,
-            'FN': instance.festiva_nocturna,
-            'ED': instance.extra_diurna,
-            'EN': instance.extra_nocturna,
-            'EFD': instance.extra_festiva_diurna,
-            'EFN': instance.extra_festiva_nocturna,
-            'RN': instance.recargo_nocturno,
-            'RFD': instance.recargo_festivo_diurno,
-            'RFN': instance.recargo_festivo_nocturno,            
-            'DEVENGADO': instance.devengado,
-            'DEDUCCION': instance.deduccion,
-            'TOTAL': instance.total,
-            'ING': instance.ingreso,
-            'RET': instance.retiro,
-            'CARGO': cargo_nombre,
-            '%ARL' : contrato__riesgo_arl_porcentaje
-        }           
+        fields = ['id', 
+                  'contracto__contacto',
+                  'contrato__contacto__numero_identificacion',
+                  'contrato__contacto__nombre_corto',
+                  'contrato_id',
+                  'fecha_desde',
+                  'fecha_hasta',
+                  'salario',
+                  'dias',
+                  'dias_transporte',
+                  'diurna',
+                  'nocturna',
+                  'festiva_diurna',
+                  'festiva_nocturna',
+                  'extra_diurna',
+                  'extra_nocturna',
+                  'extra_festiva_diurna',
+                  'extra_festiva_nocturna',
+                  'recargo_nocturno',
+                  'recargo_festivo_diurno',
+                  'recargo_festivo_nocturno',
+                  'total',
+                  'ingreso',
+                  'retiro',
+                  'contrato__cargo__nombre',
+                  'contrato__riesgo__porcentaje'
+                  ]
+        select_related_fields = ['contrato__contacto', 'contrato__cargo', 'contrato__riesgo']      
         
 class HumProgramacionDetalleImportarHorasSerializador(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
