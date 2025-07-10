@@ -251,10 +251,33 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 }
             }
 
-            config = DOCUMENTO_TIPO_CONFIG.get(documento_tipo_id, DOCUMENTO_TIPO_CONFIG['default'])
-            titulo = config['titulo']
-            nombre_hoja = config['nombre_hoja']
-            nombre_archivo = config['nombre_archivo']
+            DOCUMENTO_CLASE_CONFIG = {
+                '701': {
+                    'titulo': 'Nóminas',
+                    'nombre_hoja': 'nóminas',
+                    'nombre_archivo': 'nóminas.xlsx',
+                },
+                'default': {
+                    'titulo': 'Informe documentos',
+                    'nombre_hoja': 'documentos',
+                    'nombre_archivo': 'documentos.xlsx',
+                }
+            }
+
+            if documento_tipo_id:
+                config = DOCUMENTO_TIPO_CONFIG.get(documento_tipo_id, DOCUMENTO_TIPO_CONFIG['default'])
+                titulo = config['titulo']
+                nombre_hoja = config['nombre_hoja']
+                nombre_archivo = config['nombre_archivo']
+            elif documento_clase_id:
+                config = DOCUMENTO_CLASE_CONFIG.get(documento_clase_id, DOCUMENTO_TIPO_CONFIG['default'])
+                titulo = config['titulo']
+                nombre_hoja = config['nombre_hoja']
+                nombre_archivo = config['nombre_archivo']
+            else:
+                titulo = 'Informe documentos'
+                nombre_hoja = 'documentos'
+                nombre_archivo = 'documentos.xlsx'
 
             if request.query_params.get('excel_masivo'):
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
