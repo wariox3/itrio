@@ -10,7 +10,7 @@ from contabilidad.models.cuenta_clase import ConCuentaClase
 from contabilidad.models.cuenta_grupo import ConCuentaGrupo
 from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from general.models.contacto import GenContacto
-from contabilidad.serializers.movimiento import ConMovimientoSerializador
+from contabilidad.serializers.movimiento import ConMovimientoSerializador, ConMovimientoExcelSerializador
 from datetime import datetime
 from io import BytesIO
 from django.db.models import F,Sum
@@ -24,6 +24,7 @@ from general.formatos.balance_prueba import FormatoBalancePrueba
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from contabilidad.filters.movimiento import MovimientoFilter
+from utilidades.excel_exportar import ExcelExportar
 import base64
 import openpyxl
 
@@ -33,6 +34,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = MovimientoFilter 
+    serializadores = {
+        'informe_movimiento': ConMovimientoExcelSerializador,
+    }
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -55,9 +59,24 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, sheet_name="grupos", filename="grupos.xlsx")
-            return exporter.exportar()
-        return super().list(request, *args, **kwargs)   
+            titulo = 'Informe movimiento detalles'
+            nombre_hoja = "movimiento_detalles"
+            nombre_archivo = "movimiento_detalles.xlsx"
+            if request.query_params.get('excel_masivo'):
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar() 
+            elif request.query_params.get('excel_informe'): 
+                serializador_parametro = self.request.query_params.get('serializador', None)                
+                if serializador_parametro == 'informe_movimiento':
+                    titulo = 'Movimientos' 
+                    nombre_archivo = "movimientos.xlsx"  
+                    nombre_hoja = 'movimientos'    
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
+                return exporter.exportar_informe()                    
+            else:
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar_estilo()            
+        return super().list(request, *args, **kwargs)
 
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):

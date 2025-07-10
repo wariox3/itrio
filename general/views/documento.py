@@ -114,6 +114,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.query_params.get('excel'):
             documento_tipo_id = request.query_params.get('documento_tipo_id')
+            documento_clase_id = request.query_params.get('documento_tipo__documento_clase_id')
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)            
 

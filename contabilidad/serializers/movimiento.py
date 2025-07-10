@@ -87,47 +87,53 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
             'periodo_id': instance.periodo_id
         } 
 
-class ConMovimientoExcelSerializador(serializers.HyperlinkedModelSerializer):    
-
+class ConMovimientoExcelSerializador(serializers.ModelSerializer):    
+    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True)
+    cuenta__nombre = serializers.CharField(source='cuenta.nombre', read_only=True)
+    comprobante__nombre = serializers.CharField(source='comprobante.nombre', read_only=True)
+    comprobante__codigo = serializers.CharField(source='comprobante.codigo', read_only=True)
+    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True)
+    grupo__codigo = serializers.CharField(source='grupo.codigo', read_only=True)
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
     class Meta:
         model = ConMovimiento
+        fields = ['id', 
+                  'comprobante__codigo',
+                  'comprobante__nombre',
+                  'numero',
+                  'fecha',
+                  'cuenta__codigo',
+                  'cuenta__nombre',
+                  'debito',
+                  'credito',
+                  'base',
+                  'naturaleza',
+                  'grupo__codigo',
+                  'grupo__nombre',
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',
+                  'documento',
+                  'periodo']
+        select_related_fields = ['cuenta', 'comprobante', 'grupo', 'contacto']    
 
-    def to_representation(self, instance):
-        cuenta_codigo = ''
-        cuenta_nombre = ''
-        if instance.cuenta:
-            cuenta_codigo = instance.cuenta.codigo
-            cuenta_nombre = instance.cuenta.nombre
-        comprobante_codigo = ''
-        comprobante_nombre = ''
-        if instance.comprobante:
-            comprobante_codigo = instance.comprobante.codigo
-            comprobante_nombre = instance.comprobante.nombre
-        grupo_codigo = ''
-        grupo_nombre = ''
-        if instance.grupo:
-            grupo_codigo = instance.grupo.codigo
-            grupo_nombre = instance.grupo.nombre
-        contacto_nombre_corto = ''
-        if instance.contacto:
-            contacto_nombre_corto = instance.contacto.nombre_corto
-        return {
-            'ID': instance.id,
-            'COMPROBANTE': comprobante_codigo,
-            'COMPROBANTE_NOMBRE': comprobante_nombre,
-            'NUMERO': instance.numero,
-            'FECHA': instance.fecha,
-            'CUENTA': cuenta_codigo,
-            'CUENTA_NOMBRE': cuenta_nombre,
-            'DEBITO': instance.debito ,
-            'CREDITO': instance.credito ,
-            'BASE': instance.base ,
-            'NAT': instance.naturaleza ,                                            
-            'GRUPO': grupo_codigo,
-            'GRUPO_NOMBRE': grupo_nombre,
-            'IDENTIFICACION': instance.contacto_id,
-            'NOMBRE_CORTO': contacto_nombre_corto,
-            'DOCUMENTO_ID': instance.documento_id,
-            'PERIODO': instance.periodo_id
-        }             
+    #     return {
+    #         'ID': instance.id,
+    #         'COMPROBANTE': comprobante_codigo,
+    #         'COMPROBANTE_NOMBRE': comprobante_nombre,
+    #         'NUMERO': instance.numero,
+    #         'FECHA': instance.fecha,
+    #         'CUENTA': cuenta_codigo,
+    #         'CUENTA_NOMBRE': cuenta_nombre,
+    #         'DEBITO': instance.debito ,
+    #         'CREDITO': instance.credito ,
+    #         'BASE': instance.base ,
+    #         'NAT': instance.naturaleza ,                                            
+    #         'GRUPO': grupo_codigo,
+    #         'GRUPO_NOMBRE': grupo_nombre,
+    #         'IDENTIFICACION': instance.contacto_id,
+    #         'NOMBRE_CORTO': contacto_nombre_corto,
+    #         'DOCUMENTO_ID': instance.documento_id,
+    #         'PERIODO': instance.periodo_id
+    #     }             
         
