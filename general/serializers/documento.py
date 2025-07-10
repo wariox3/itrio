@@ -424,7 +424,22 @@ class GenDocumentoNominaExcelSerializador(serializers.ModelSerializer):
             'estado_anulado', 'estado_electronico', 'estado_contabilizado', 'cue'
         ]
         select_related_fields = ['contacto', 'contacto__banco', 'contrato', 'contrato__grupo']  
-    
+
+class GenDocumentoNominaElectronicaExcelSerializador(serializers.ModelSerializer):    
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    contacto__numero_cuenta = serializers.CharField(source='contacto.numero_cuenta', read_only=True)
+    contacto__banco__nombre = serializers.CharField(source='contacto.banco.nombre', read_only=True)
+    contrato__grupo__nombre = serializers.CharField(source='contrato.grupo.nombre', read_only=True)
+    class Meta:
+        model = GenDocumento
+        fields = [
+            'id', 'numero', 'fecha', 'fecha_hasta', 'contacto', 'contacto__numero_identificacion', 'contacto__nombre_corto', 'contacto__numero_cuenta', 'contacto__banco__nombre',
+            'contrato_id', 'contrato__grupo__nombre' ,'dias', 'salario', 'devengado', 'deduccion', 'total', 'base_cotizacion', 'base_prestacion',
+            'estado_anulado', 'estado_electronico', 'estado_contabilizado', 'cue'
+        ]
+        select_related_fields = ['contacto', 'contacto__banco', 'contrato', 'contrato__grupo']  
+        
 #deprecated
 
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
