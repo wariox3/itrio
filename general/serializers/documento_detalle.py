@@ -69,8 +69,6 @@ class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
         select_related_fields = ['documento__contacto', 'documento' , 'concepto', 'documento__documento_tipo']  
 
 class GenDocumentoDetalleNominaExcelSerializador(serializers.ModelSerializer):
-    class Meta:
-        model = GenDocumentoDetalle
         documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
         documento__contacto__numero_identificacion = serializers.CharField(source='documento.contacto.numero_identificacion', read_only=True)
         documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
