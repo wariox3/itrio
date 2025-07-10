@@ -60,8 +60,9 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
             elif request.query_params.get('excel_informe'): 
                 serializador_parametro = self.request.query_params.get('serializador', None)                
                 if serializador_parametro == 'informe_venta':
-                    titulo = 'Ventas por item' 
-                    nombre_archivo = "ventas_por_item.xlsx"  
+                    titulo = 'Ventas por ítem' 
+                    nombre_archivo = "ventas_por_ítem.xlsx"  
+                    nombre_hoja = 'ventas_por_ítem'    
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
                 return exporter.exportar_informe()                    
             else:
