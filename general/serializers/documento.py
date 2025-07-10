@@ -395,7 +395,20 @@ class GenDocumentoEventoCompraSerializador(serializers.ModelSerializer):
             'contacto__nombre_corto'
         ]
         select_related_fields = ['contacto']
-         
+
+
+class GenDocumentoNominaSerializador(serializers.ModelSerializer):    
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    class Meta:
+        model = GenDocumento
+        fields = [
+            'id', 'documento_tipo', 'numero', 'fecha', 'fecha_hasta', 'contacto', 'contacto__numero_identificacion', 'contacto__nombre_corto',
+            'salario', 'devengado', 'deduccion', 'total', 'base_cotizacion', 'base_prestacion', 'contrato_id', 'estado_aprobado',
+            'estado_anulado', 'estado_electronico', 'estado_contabilizado', 'cue'
+        ]
+        select_related_fields = ['contacto']
+
 #deprecated
 
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
@@ -585,40 +598,6 @@ class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer)
             'numero' : instance.numero
         }   
        
-class GenDocumentoNominaSerializador(serializers.HyperlinkedModelSerializer):    
-
-    class Meta:
-        model = GenDocumento
-    
-    def to_representation(self, instance):        
-        contacto_nombre_corto = ""
-        contacto_numero_identificacion = ""
-        if instance.contacto:
-            contacto_nombre_corto = instance.contacto.nombre_corto
-            contacto_numero_identificacion = instance.contacto.numero_identificacion
-        return {
-            'id': instance.id,            
-            'documento_tipo_id': instance.documento_tipo_id,
-            'numero' : instance.numero,
-            'fecha' : instance.fecha,
-            'fecha_hasta' : instance.fecha_hasta,            
-            'contacto_id': instance.contacto_id,
-            'contacto_numero_identificacion': contacto_numero_identificacion,
-            'contacto_nombre_corto': contacto_nombre_corto,            
-            'salario': instance.salario,
-            'devengado': instance.devengado,
-            'deduccion': instance.deduccion,
-            'total':  instance.total,
-            'base_cotizacion': instance.base_cotizacion,
-            'base_prestacion': instance.base_prestacion,
-            'contrato_id': instance.contrato_id,
-            'estado_aprobado': instance.estado_aprobado,
-            'estado_anulado': instance.estado_anulado,
-            'estado_electronico': instance.estado_electronico,
-            'estado_contabilizado': instance.estado_contabilizado,
-            'cue': instance.cue
-        } 
-
 class GenDocumentoNominaExcelSerializador(serializers.HyperlinkedModelSerializer):    
 
     class Meta:

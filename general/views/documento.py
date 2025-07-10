@@ -24,7 +24,7 @@ from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoListaVentaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador, GenDocumentoReferenciaSerializador, GenDocumentoEventoCompraSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoListaVentaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador, GenDocumentoReferenciaSerializador, GenDocumentoEventoCompraSerializador, GenDocumentoNominaSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
@@ -86,7 +86,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         'informe': GenDocumentoInformeSerializador,
         'informe_cuenta_cobrar': GenDocumentoInformeCuentaCobrarSerializador,
         'informe_cuenta_pagar': GenDocumentoInformeCuentaCobrarSerializador,
-        'nomina': GenDocumentoSerializador,
+        'nomina': GenDocumentoNominaSerializador,
         'adicionar': GenDocumentoAdicionarSerializador,
         'referencia': GenDocumentoReferenciaSerializador,
         'evento_compra' : GenDocumentoEventoCompraSerializador
@@ -266,6 +266,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     titulo = 'Cuentas por pagar' 
                     nombre_archivo = "cuentas_por_pagar.xlsx"         
                     nombre_hoja = 'cuentas_por_pagar'                        
+                if serializador_parametro == 'informe_nomina':
+                    titulo = 'Nominas' 
+                    nombre_archivo = "nóminas.xlsx"         
+                    nombre_hoja = 'nóminas'           
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
                 return exporter.exportar_informe()                    
             else:

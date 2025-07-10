@@ -66,7 +66,7 @@ class InformeView(APIView):
         if excel:
             wb = Workbook()
             ws = wb.active
-            ws.title = "Auxiliar general"
+            ws.title = "cuentas_cobrar_corte"
             headers = ["ID", "DOCUMENTO", "NUMERO", "FECHA", "VENCE", "NIT", "CONTACTO", "SUBTOTAL", "IMPUESTO", "TOTAL", "ABONO", "PENDIENTE"]
             ws.append(headers)
             for registro in resultados['registros']:
