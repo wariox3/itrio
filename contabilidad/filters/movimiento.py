@@ -8,4 +8,4 @@ class MovimientoFilter(django_filters.FilterSet):
         fields = {'id': ['exact'],
                   'documento_id': ['exact'],
                   'cuenta__codigo': ['icontains'],
-                  'fecha': ['gte', 'lte', 'gt'],}
+                  'fecha': ['gte', 'lte', 'gt', 'lt'],}
