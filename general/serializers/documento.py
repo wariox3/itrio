@@ -419,8 +419,8 @@ class GenDocumentoNominaExcelSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenDocumento
         fields = [
-            'id', 'numero', 'fecha', 'fecha_hasta', 'contacto', 'contacto__numero_identificacion', 'contacto__nombre_corto', 'contacto__cuenta', 'contacto__banco__nombre'
-            'contrato_id', 'contrato__grupo__nombre' ,'dias', 'salario', 'devengado', 'deduccion', 'total', 'base_cotizacion', 'base_prestacion'
+            'id', 'numero', 'fecha', 'fecha_hasta', 'contacto', 'contacto__numero_identificacion', 'contacto__nombre_corto', 'contacto__cuenta', 'contacto__banco__nombre',
+            'contrato_id', 'contrato__grupo__nombre' ,'dias', 'salario', 'devengado', 'deduccion', 'total', 'base_cotizacion', 'base_prestacion',
             'estado_anulado', 'estado_electronico', 'estado_contabilizado', 'cue'
         ]
         select_related_fields = ['contacto', 'grupo', 'banco']        
