@@ -409,6 +409,22 @@ class GenDocumentoNominaSerializador(serializers.ModelSerializer):
         ]
         select_related_fields = ['contacto']
 
+
+class GenDocumentoNominaExcelSerializador(serializers.ModelSerializer):    
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    contacto__cuenta = serializers.CharField(source='contacto.cuenta', read_only=True)
+    contacto__banco__nombre = serializers.CharField(source='contacto.banco.nombre', read_only=True)
+    contrato__grupo__nombre = serializers.CharField(source='contrato.grupo.nombre', read_only=True)
+    class Meta:
+        model = GenDocumento
+        fields = [
+            'id', 'numero', 'fecha', 'fecha_hasta', 'contacto', 'contacto__numero_identificacion', 'contacto__nombre_corto', 'contacto__cuenta', 'contacto__banco__nombre'
+            'contrato_id', 'contrato__grupo__nombre' ,'dias', 'salario', 'devengado', 'deduccion', 'total', 'base_cotizacion', 'base_prestacion'
+            'estado_anulado', 'estado_electronico', 'estado_contabilizado', 'cue'
+        ]
+        select_related_fields = ['contacto', 'grupo', 'banco']        
+    
 #deprecated
 
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
@@ -598,44 +614,5 @@ class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer)
             'numero' : instance.numero
         }   
        
-class GenDocumentoNominaExcelSerializador(serializers.HyperlinkedModelSerializer):    
 
-    class Meta:
-        model = GenDocumento
-    
-    def to_representation(self, instance):        
-        contacto_nombre_corto = ""
-        contacto_numero_identificacion = ""
-        numero_cuenta = ""
-        banco_nombre = ""        
-        if instance.contacto:
-            contacto_nombre_corto = instance.contacto.nombre_corto
-            contacto_numero_identificacion = instance.contacto.numero_identificacion
-            numero_cuenta = instance.contacto.numero_cuenta
-            if instance.contacto.banco:
-                banco_nombre = instance.contacto.banco.nombre
-        grupo_nombre = ""
-        if instance.contrato:
-            if instance.contrato.grupo:
-                grupo_nombre = instance.contrato.grupo.nombre         
-        return {
-            'ID': instance.id,            
-            'NUMERO' : instance.numero,
-            'DESDE' : instance.fecha,
-            'HASTA' : instance.fecha_hasta,            
-            'COD_EMP': instance.contacto_id,
-            'IDENTIFICACION': contacto_numero_identificacion,
-            'EMPLEADO': contacto_nombre_corto,            
-            'CUENTA': numero_cuenta,
-            'BANCO': banco_nombre,            
-            'CONT': instance.contrato_id,
-            'GRUPO': grupo_nombre,
-            'DIAS': instance.dias,
-            'SALARIO': instance.salario,
-            'DEVENGADO': instance.devengado,
-            'DEDUCCION': instance.deduccion,
-            'TOTAL':  instance.total,
-            'IBC': instance.base_cotizacion,
-            'IBP': instance.base_prestacion,                    
-        }    
     
