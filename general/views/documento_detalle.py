@@ -10,7 +10,7 @@ from general.models.item_impuesto import GenItemImpuesto
 from general.models.impuesto import GenImpuesto
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleAgregarDocumentoSerializador, GenDocumentoDetalleNominaSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleAgregarDocumentoSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoDetalleNominaExcelSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
@@ -27,6 +27,7 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
     serializadores = {
         'informe_venta': GenDocumentoDetalleInformeVentaSerializador,
         'informe_inventario': GenDocumentoDetalleInformeInventarioSerializador,
+        'informe_nomina_detalle': GenDocumentoDetalleNominaExcelSerializador,
         'agregar_documento':  GenDocumentoDetalleAgregarDocumentoSerializador,
         'nomina': GenDocumentoDetalleNominaSerializador
     }
@@ -64,6 +65,10 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                     titulo = 'Ventas por ítem' 
                     nombre_archivo = "ventas_por_ítem.xlsx"  
                     nombre_hoja = 'ventas_por_ítem'    
+                if serializador_parametro == 'informe_nomina_detalle':
+                    titulo = 'Nomina detalle' 
+                    nombre_archivo = "nóminas_detalles.xlsx"  
+                    nombre_hoja = 'nóminas_detalles'   
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
                 return exporter.exportar_informe()                    
             else:

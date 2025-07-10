@@ -68,10 +68,47 @@ class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
         ]
         select_related_fields = ['documento__contacto', 'documento' , 'concepto', 'documento__documento_tipo']  
 
+class GenDocumentoDetalleNominaExcelSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = GenDocumentoDetalle
+        documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
+        documento__contacto__numero_identificacion = serializers.CharField(source='documento.contacto.numero_identificacion', read_only=True)
+        documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
+        documento__fecha = serializers.DateField(source='documento.fecha', read_only=True)
+        documento__fecha_hasta = serializers.DateField(source='documento.fecha_hasta', read_only=True)
+        documento__contacto = serializers.IntegerField(source='documento.contacto_id', read_only=True)
+        documento__contrato = serializers.IntegerField(source='documento.contrato_id', read_only=True)
+        concepto__nombre = serializers.CharField(source='concepto.nombre', read_only=True)
+        class Meta:
+            model = GenDocumentoDetalle
+            fields = [
+                'id', 
+                'documento', 
+                'documento__documento_tipo__nombre', 
+                'documento__fecha', 
+                'documento__fecha_hasta',
+                'documento__contacto',
+                'documento__contacto__numero_identificacion', 
+                'documento__contacto__nombre_corto', 
+                'documento__contrato',
+                'concepto', 
+                'concepto__nombre', 
+                'detalle', 
+                'porcentaje', 
+                'cantidad', 
+                'dias', 
+                'hora', 
+                'operacion', 
+                'pago_operado', 
+                'devengado',
+                'deduccion', 
+                'base_cotizacion', 
+                'base_prestacion', 
+                'base_impuesto'
+            ]
+            select_related_fields = ['documento__contacto', 'documento' , 'concepto', 'documento__documento_tipo']          
+        
 #deprecated
-
-
-
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
     item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), default=None, allow_null=True)
@@ -241,48 +278,6 @@ class GenDocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerialize
             'documento_afectado_id': instance.documento_afectado_id,
             'documento_afectado_numero': documento_afectado_numero
         }      
-    
-class GenDocumentoDetalleNominaExcelSerializador(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = GenDocumentoDetalle        
-
-    def to_representation(self, instance):
-        documento_contacto_nombre = ""
-        documento_contacto_numero_identificacion = ""
-        if instance.documento.contacto:
-            documento_contacto_nombre = instance.documento.contacto.nombre_corto
-            documento_contacto_numero_identificacion = instance.documento.contacto.numero_identificacion
-        concepto_nombre = ""
-        if instance.concepto:
-            concepto_nombre = instance.concepto.nombre
-            
-        return {
-            'ID': instance.id,            
-            'DOC_ID': instance.documento_id,
-            'DOCUMENTO': instance.documento.documento_tipo.nombre,    
-            'NUMERO': instance.documento.numero,            
-            'DESDE': instance.documento.fecha,            
-            'HASTA': instance.documento.fecha_hasta,
-            'EMP_ID': instance.documento.contacto_id,
-            'IDENTIFICACION': documento_contacto_numero_identificacion,
-            'EMPLEADO': documento_contacto_nombre,
-            'CONT': instance.documento.contrato_id,        
-            'CON_ID': instance.concepto_id,
-            'CONCEPTO': concepto_nombre,
-            'DETALLE':instance.detalle,
-            'POR': instance.porcentaje,            
-            'DIAS': instance.dias,
-            'HORAS': instance.cantidad,
-            'HORA': instance.hora,
-            'OP': instance.operacion,
-            'PAGO': instance.pago,
-            'PAGO_OPE': instance.pago_operado,
-            'DEVENGADO': instance.devengado,
-            'DEDUCCION': instance.deduccion,
-            'IBC': instance.base_cotizacion,
-            'IBP': instance.base_prestacion,
-            'BASE': instance.base_impuesto
-        }     
     
 class GenDocumentoDetalleInformeVentaSerializador(serializers.ModelSerializer):          
     documento__numero = serializers.CharField(source='documento.numero', read_only=True)
