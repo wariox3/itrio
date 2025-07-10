@@ -261,9 +261,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if serializador_parametro == 'informe_cuenta_cobrar':
                     titulo = 'Cuentas por cobrar' 
                     nombre_archivo = "cuentas_por_cobrar.xlsx"  
+                    nombre_hoja = 'cuentas_por_cobrar'
                 if serializador_parametro == 'informe_cuenta_pagar':
                     titulo = 'Cuentas por pagar' 
-                    nombre_archivo = "cuentas_por_pagar.xlsx"                                 
+                    nombre_archivo = "cuentas_por_pagar.xlsx"         
+                    nombre_hoja = 'cuentas_por_pagar'                        
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
                 return exporter.exportar_informe()                    
             else:
