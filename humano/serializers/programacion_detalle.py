@@ -90,14 +90,14 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
 class HumProgramacionDetalleInformeSerializador(serializers.ModelSerializer):
     contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)
     contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
-    contracto__contacto = serializers.IntegerField(source='contrato.contacto_id', read_only=True)
+    contrato__contacto = serializers.IntegerField(source='contrato.contacto_id', read_only=True)
     contrato__cargo__nombre = serializers.CharField(source='contrato.cargo.nombre', read_only=True)
     contrato__riesgo__porcentaje = serializers.CharField(source='contrato.riesgo.porcentaje', read_only=True)
 
     class Meta:
         model = HumProgramacionDetalle
         fields = ['id', 
-                  'contracto__contacto',
+                  'contrato__contacto',
                   'contrato__contacto__numero_identificacion',
                   'contrato__contacto__nombre_corto',
                   'contrato_id',
