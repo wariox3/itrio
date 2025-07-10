@@ -423,7 +423,7 @@ class GenDocumentoNominaExcelSerializador(serializers.ModelSerializer):
             'contrato_id', 'contrato__grupo__nombre' ,'dias', 'salario', 'devengado', 'deduccion', 'total', 'base_cotizacion', 'base_prestacion',
             'estado_anulado', 'estado_electronico', 'estado_contabilizado', 'cue'
         ]
-        select_related_fields = ['contacto', 'grupo', 'banco']        
+        select_related_fields = ['contacto', 'contacto__banco', 'contrato', 'contrato__grupo']  
     
 #deprecated
 
