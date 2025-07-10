@@ -28,6 +28,49 @@ class GenDocumentoDetalleAgregarDocumentoSerializador(serializers.ModelSerialize
                   'documento__contacto__numero_identificacion']   
         select_related_fields = ['item','grupo', 'almacen', 'documento', 'documento_tipo', 'contacto']     
 
+class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializer):
+    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
+    documento__contacto__numero_identificacion = serializers.CharField(source='documento.contacto.numero_identificacion', read_only=True)
+    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
+    documento__fecha = serializers.DateField(source='documento.fecha', read_only=True)
+    documento__fecha_hasta = serializers.DateField(source='documento.fecha_hasta', read_only=True)
+    documento__numero = serializers.IntegerField(source='documento.numero', read_only=True)
+    documento__contacto = serializers.IntegerField(source='documento.contacto', read_only=True)
+    documento__contrato = serializers.IntegerField(source='documento.contrato', read_only=True)
+    concepto__nombre = serializers.CharField(source='concepto.nombre', read_only=True)
+    class Meta:
+        model = GenDocumentoDetalle
+        fields = [
+            'id', 
+            'documento', 
+            'documento__documento_tipo__nombre', 
+            'documento__fecha', 
+            'documento__fecha_hasta',
+            'documento__numero', 
+            'documento__contacto',
+            'documento__contacto__numero_identificacion', 
+            'documento__contacto__nombre_corto', 
+            'documento__contrato',
+            'concepto', 
+            'concepto__nombre', 
+            'detalle', 
+            'porcentaje', 
+            'cantidad', 
+            'dias', 
+            'hora', 
+            'operacion', 
+            'pago_operado', 
+            'devengado',
+            'deduccion', 
+            'base_cotizacion', 
+            'base_prestacion', 
+            'base_impuesto'
+        ]
+        select_related_fields = ['documento__contacto', 'documento' , 'concepto', 'documento__documento_tipo']  
+
+#deprecated
+
+
 
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
@@ -199,48 +242,6 @@ class GenDocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerialize
             'documento_afectado_numero': documento_afectado_numero
         }      
     
-class GenDocumentoDetalleNominaSerializador(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = GenDocumentoDetalle        
-
-    def to_representation(self, instance):
-        documento_contacto_nombre = ""
-        documento_contacto_numero_identificacion = ""
-        if instance.documento.contacto:
-            documento_contacto_nombre = instance.documento.contacto.nombre_corto
-            documento_contacto_numero_identificacion = instance.documento.contacto.numero_identificacion
-        concepto_nombre = ""
-        if instance.concepto:
-            concepto_nombre = instance.concepto.nombre
-            
-        return {
-            'id': instance.id,            
-            'documento_id': instance.documento_id,
-            'documento_tipo_nombre': instance.documento.documento_tipo.nombre,        
-            'documento_fecha': instance.documento.fecha,
-            'documento_numero': instance.documento.numero,    
-            'documento_contacto_id': instance.documento.contacto_id,
-            'documento_contacto_numero_identificacion': documento_contacto_numero_identificacion,
-            'documento_contacto_nombre': documento_contacto_nombre,
-            'documento_contrato_id': instance.documento.contrato_id,
-            'documento_fecha_hasta': instance.documento.fecha_hasta,
-            'concepto_id': instance.concepto_id,
-            'concepto_nombre': concepto_nombre,
-            'detalle':instance.detalle,
-            'porcentaje': instance.porcentaje,
-            'cantidad': instance.cantidad,
-            'dias': instance.dias,
-            'hora': instance.hora,
-            'operacion': instance.operacion,
-            'pago': instance.pago,
-            'pago_operado': instance.pago_operado,
-            'devengado': instance.devengado,
-            'deduccion': instance.deduccion,
-            'base_cotizacion': instance.base_cotizacion,
-            'base_prestacion': instance.base_prestacion,
-            'base_impuesto': instance.base_impuesto
-        } 
-
 class GenDocumentoDetalleNominaExcelSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenDocumentoDetalle        
