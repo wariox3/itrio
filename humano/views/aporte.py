@@ -1,6 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from humano.models.aporte import HumAporte
 from humano.models.aporte_contrato import HumAporteContrato
 from humano.models.aporte_detalle import HumAporteDetalle
@@ -19,6 +21,7 @@ from humano.serializers.aporte_detalle import HumAporteDetalleSerializador
 from humano.serializers.aporte_entidad import HumAporteEntidadSerializador
 from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
+from humano.filters.aporte import AporteFilter
 from datetime import date
 from django.db.models import Sum, Q, DecimalField
 from django.db.models.functions import Coalesce
@@ -50,7 +53,9 @@ def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
 class HumAporteViewSet(viewsets.ModelViewSet):
     queryset = HumAporte.objects.all()
     serializer_class = HumAporteSerializador
-    permission_classes = [permissions.IsAuthenticated]      
+    permission_classes = [permissions.IsAuthenticated]  
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = AporteFilter       
 
     def perform_create(self, serializer):
         anio = serializer.validated_data.get('anio')
