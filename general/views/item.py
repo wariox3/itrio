@@ -8,7 +8,7 @@ from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.item import GenItem
 from general.models.item_impuesto import GenItemImpuesto
 from contabilidad.models.cuenta import ConCuenta
-from general.serializers.item import GenItemSerializador, GenItemListaSerializador, GenItemSeleccionarSerializador
+from general.serializers.item import GenItemSerializador, GenItemListaSerializador, GenItemSeleccionarSerializador, GenItemInformeExistenciaSerializador
 from general.serializers.item_impuesto import GenItemImpuestoSerializador, GenItemImpuestoDetalleSerializador
 from general.filters.item import ItemFilter
 from utilidades.utilidades import Utilidades
@@ -25,7 +25,11 @@ class ItemViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ItemFilter 
     queryset = GenItem.objects.all()   
-    serializadores = {'lista': GenItemListaSerializador, 'seleccionar' : GenItemSeleccionarSerializador}
+    serializadores = {
+        'lista': GenItemListaSerializador,
+        'seleccionar' : GenItemSeleccionarSerializador,
+        'informe_existencia' : GenItemInformeExistenciaSerializador
+        }
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -48,10 +52,25 @@ class ItemViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, nombre_hoja="ítems ", nombre_archivo="ítems .xlsx", titulo="Items")
-            return exporter.exportar()
+            titulo = 'Items'
+            nombre_hoja = "ítems"
+            nombre_archivo = "ítems.xlsx"
+            if request.query_params.get('excel_masivo'):
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar() 
+            elif request.query_params.get('excel_informe'): 
+                serializador_parametro = self.request.query_params.get('serializador', None)                
+                if serializador_parametro == 'informe_existencia':
+                    titulo = 'Informe existencias' 
+                    nombre_archivo = "existencias.xlsx"  
+                    nombre_hoja = 'existencias'    
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
+                return exporter.exportar_informe()                    
+            else:
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar_estilo()        
         return super().list(request, *args, **kwargs)
-
+    
     def retrieve(self, request, pk=None, venta=False):
         raw = request.data
         venta = raw.get('venta')

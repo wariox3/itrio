@@ -80,3 +80,8 @@ class GenItemSeleccionarSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenItem
         fields = ['id', 'nombre']
+
+class GenItemInformeExistenciaSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = GenItem
+        fields = ['id', 'nombre', 'codigo', 'referencia', 'precio', 'costo', 'existencia', 'remision', 'disponible']
