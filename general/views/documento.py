@@ -2116,7 +2116,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento_nuevo = GenDocumento(**documento_data)
                 documento_nuevo.save()
                 
-                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id).order_by('id')
                 for documento_detalle in documento_detalles:
                     documento_detalle_data = documento_detalle.__dict__.copy()
                     documento_detalle_data.pop('id', None)
