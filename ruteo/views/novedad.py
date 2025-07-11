@@ -107,7 +107,8 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                     if configuracion['rut_sincronizar_complemento']:
                         imagenes_b64 = []
                         if imagenes:                        
-                            for imagen in imagenes:       
+                            for imagen in imagenes:   
+                                imagen.seek(0)    
                                 file_content = imagen.read()   
                                 base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
                                 imagenes_b64.append({

@@ -1126,8 +1126,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         despacho = RutDespacho.objects.get(pk=visita.despacho_id)
                     except ValueError:
                         return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
-                    with transaction.atomic():          
-                                                                       
+                    with transaction.atomic():                                                                              
                         datos_entrega = json_texto(datos_adicionales)
                         visita.estado_entregado = True
                         visita.fecha_entrega = fecha_entrega
@@ -1175,16 +1174,17 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         if configuracion['rut_sincronizar_complemento']:
                             imagenes_b64 = []
                             if imagenes:                        
-                                for imagen in imagenes:       
+                                for imagen in imagenes:    
+                                    imagen.seek(0)   
                                     file_content = imagen.read()   
                                     base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
                                     imagenes_b64.append({
-                                        'comprimido': True,
                                         'base64': base64_encoded,
                                     })     
                             firmas_b64 = []
                             if firmas:
-                                for firma in firmas:       
+                                for firma in firmas:
+                                    firma.seek(0)       
                                     file_content = firma.read()   
                                     base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
                                     firmas_b64.append({
