@@ -1,9 +1,10 @@
 from rest_framework import viewsets, permissions
 from humano.models.aporte_contrato import HumAporteContrato
-from humano.serializers.aporte_contrato import HumAporteContratoSerializador
+from humano.serializers.aporte_contrato import HumAporteContratoSerializador, HumAporteContratoInformeSerializador
 from rest_framework.filters import OrderingFilter
 from humano.filters.aporte_contrato import AporteContratoFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from utilidades.excel_exportar import ExcelExportar
 
 class HumAporteContratoViewSet(viewsets.ModelViewSet):
     queryset = HumAporteContrato.objects.all()
@@ -11,6 +12,9 @@ class HumAporteContratoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]    
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = AporteContratoFilter   
+    serializadores = {
+        'informe_aporte_contrato': HumAporteContratoInformeSerializador,
+    }
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -28,4 +32,23 @@ class HumAporteContratoViewSet(viewsets.ModelViewSet):
         if campos and campos != '__all__':
             queryset = queryset.only(*campos) 
         return queryset 
+    
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('excel'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            titulo = 'Informe aporte contrato'
+            nombre_hoja = "aporte_contratos"
+            nombre_archivo = "aporte_contratos.xlsx"
+            if request.query_params.get('excel_masivo'):
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar() 
+            elif request.query_params.get('excel_informe'): 
+                serializador_parametro = self.request.query_params.get('serializador', None)                
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo, titulo)
+                return exporter.exportar_informe()                    
+            else:
+                exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
+                return exporter.exportar_estilo()            
+        return super().list(request, *args, **kwargs)
     

@@ -26,6 +26,14 @@ class HumAporteContratoSerializador(serializers.ModelSerializer):
                   'contrato__contacto__nombre_corto', 'contrato__contacto_id']           
         select_related_fields = ['contrato']
 
+class HumAporteContratoInformeSerializador(serializers.ModelSerializer):
+    contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
+    contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)  
+    class Meta:
+        model = HumAporteContrato
+        fields = ['id', 'contrato_id', 'contrato__contacto__nombre_corto', 'contrato__contacto__numero_identificacion', 'dias', 'salario', 'base_cotizacion', 'aporte_id']      
+        select_related_fields = ['contrato']
+
 #deprecated
 class HumAporteContrato1Serializador(serializers.HyperlinkedModelSerializer):
     aporte = serializers.PrimaryKeyRelatedField(queryset=HumAporte.objects.all())
@@ -76,17 +84,3 @@ class HumAporteContrato1Serializador(serializers.HyperlinkedModelSerializer):
             'retiro': instance.retiro,
             'error_terminacion': instance.error_terminacion
         }      
-
-class HumAporteContratoExcelSerializador(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = HumAporteContrato   
-
-    def to_representation(self, instance):         
-        return {
-            'id': instance.id,
-            'dias': instance.dias,
-            'salario': instance.salario,
-            'base_cotizacion': instance.base_cotizacion,
-            'aporte_id': instance.aporte_id,
-            'cotrato_id': instance.contrato_id           
-        }       
