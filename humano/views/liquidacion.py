@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from humano.models.liquidacion import HumLiquidacion
-from general.models.documento import GenDocumento
 from humano.serializers.liquidacion import HumLiquidacionSerializador, HumLiquidacionListaSerializador
 from humano.filters.liquidacion import LiquidacionFilter
+from utilidades.excel_exportar import ExcelExportar
 
 class HumLiquidacionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -39,7 +39,7 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExportarExcel(serializer.data, sheet_name="liquidaciones", filename="liquidaciones.xlsx")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="liquidaciones", nombre_archivo="liquidaciones.xlsx")
             return exporter.exportar()
         return super().list(request, *args, **kwargs)    
     
