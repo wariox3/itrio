@@ -5,7 +5,7 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from humano.models.liquidacion import HumLiquidacion
 from general.models.configuracion import GenConfiguracion
-from humano.serializers.liquidacion import HumLiquidacionSerializador, HumLiquidacionListaSerializador
+from humano.serializers.liquidacion import HumLiquidacionSerializador, HumLiquidacionListaSerializador, HumLiquidacionDetalleSerializador
 from humano.filters.liquidacion import LiquidacionFilter
 from utilidades.excel_exportar import ExcelExportar
 from utilidades.utilidades import Utilidades
@@ -18,6 +18,7 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
     queryset = HumLiquidacion.objects.all()   
     serializadores = {
         'lista': HumLiquidacionListaSerializador,
+        'detalle': HumLiquidacionDetalleSerializador,
     }
 
     def get_serializer_class(self):
