@@ -172,16 +172,19 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
     def liquidar(self, liquidacion: HumLiquidacion):
         configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte')[0]
         auxilio_trasnporte = configuracion['hum_auxilio_transporte']
-        fecha_ultimo_pago_cesantia = liquidacion.contrato.fecha_desde
-        fecha_ultimo_pago_prima = liquidacion.contrato.fecha_desde
-        fecha_ultimo_pago_vacacion = liquidacion.contrato.fecha_desde        
+        fecha_desde = liquidacion.contrato.fecha_desde
+        fecha_hasta = liquidacion.contrato.fecha_hasta
+        fecha_ultimo_pago_cesantia = fecha_desde
+        fecha_ultimo_pago_prima = fecha_desde
+        fecha_ultimo_pago_vacacion = fecha_desde        
         if liquidacion.contrato.fecha_ultimo_pago_cesantia:
             fecha_ultimo_pago_cesantia = liquidacion.contrato.fecha_ultimo_pago_cesantia
         if liquidacion.contrato.fecha_ultimo_pago_prima:
             fecha_ultimo_pago_prima = liquidacion.contrato.fecha_ultimo_pago_prima
         if liquidacion.contrato.fecha_ultimo_pago_vacacion:
             fecha_ultimo_pago_vacacion = liquidacion.contrato.fecha_ultimo_pago_vacacion
-        fecha_hasta = liquidacion.contrato.fecha_hasta
+
+        dias = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
         dias_cesantia = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
         dias_prima = Utilidades.dias_prestacionales(fecha_ultimo_pago_prima.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
         dias_vacacion = Utilidades.dias_prestacionales(fecha_ultimo_pago_vacacion.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
@@ -197,6 +200,7 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
         prima = round(salario_promedio_prima * dias_prima / 360)              
         vacacion = round((salario_promedio_vacacion * dias_vacacion) / 720)         
         total = cesantia + interes + prima + vacacion
+        liquidacion.dias = dias
         liquidacion.dias_cesantia = dias_cesantia
         liquidacion.dias_prima = dias_prima
         liquidacion.dias_vacacion = dias_vacacion
