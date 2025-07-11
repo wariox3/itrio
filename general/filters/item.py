@@ -6,4 +6,5 @@ class ItemFilter(django_filters.FilterSet):
         model = GenItem        
         fields = {'id': ['exact'],
                   'nombre': ['exact','icontains'],
-                  'codigo': ['exact','icontains']}
+                  'codigo': ['exact','icontains'],
+                  'inventario': ['exact']}
