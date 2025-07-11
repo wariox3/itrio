@@ -196,6 +196,7 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
         interes = round(cesantia * porcentaje_interes)
         prima = round(salario_promedio_prima * dias_prima / 360)              
         vacacion = round((salario_promedio_vacacion * dias_vacacion) / 720)         
+        total = cesantia + interes + prima + vacacion
         liquidacion.dias_cesantia = dias_cesantia
         liquidacion.dias_prima = dias_prima
         liquidacion.dias_vacacion = dias_vacacion
@@ -203,6 +204,7 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
         liquidacion.interes = interes
         liquidacion.prima = prima
         liquidacion.vacacion = vacacion
+        liquidacion.total = total
         liquidacion.save()
 
 
