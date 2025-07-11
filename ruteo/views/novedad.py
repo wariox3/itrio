@@ -134,6 +134,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                 if contenido is not None:
                     contenido_base64 = base64.b64encode(contenido).decode('utf-8')                    
                     imagenes_b64.append({
+                        'comprimido': True,
                         'base64': contenido_base64,
                     })                                
             self.nuevo_complemento(novedad, imagenes_b64)
