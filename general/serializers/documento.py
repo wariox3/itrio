@@ -52,7 +52,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = GenDocumento
-        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'fecha_hasta', 
+        fields = ['id', 'numero', 'fecha', 'fecha_contable', 'fecha_vence', 'fecha_desde', 'fecha_hasta', 
                   'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 'total_bruto', 'total', 
                   'afectado', 'pendiente', 'contacto', 'documento_tipo', 'metodo_pago', 'forma_pago', 'empresa', 'base_impuesto', 
                   'estado_aprobado', 'estado_anulado', 'estado_contabilizado', 'comentario', 'soporte', 'orden_compra', 'remision',  

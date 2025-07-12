@@ -26,6 +26,7 @@ class GenDocumento(models.Model):
     fecha_contable = models.DateField(null=True)
     fecha_vence = models.DateField(null=True)
     fecha_validacion = models.DateTimeField(null=True)
+    fecha_desde = models.DateField(null=True)
     fecha_hasta = models.DateField(null=True)
     subtotal = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)

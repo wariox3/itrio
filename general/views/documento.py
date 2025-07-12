@@ -1297,13 +1297,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documento_detalle.impuesto = 0
                                     documento_detalle.impuesto_operado = 0
                                     documento_detalle.impuesto_retencion = 0
-                                    documento_detalle.base_impuesto = 0
+                                    documento_detalle.base_impuesto = 0                                    
+                                    documento_detalle.base_cotizacion = 0
+                                    documento_detalle.base_prestacion = 0
+                                    documento_detalle.deduccion = 0
+                                    documento_detalle.devengado = 0
                                     documento_detalle.total = 0
                                     documento_detalle.total_bruto = 0
                                     documento_detalle.pago = 0
                                     documento_detalle.save(update_fields=['cantidad', 'precio', 'porcentaje_descuento', 'descuento', 'subtotal', 
                                                                         'impuesto', 'impuesto_operado', 'impuesto_retencion', 'base_impuesto', 
-                                                                        'total', 'total_bruto', 'pago'])
+                                                                        'total', 'total_bruto', 'pago', 'base_cotizacion', 'base_prestacion', 
+                                                                        'deduccion', 'devengado'])
                                     documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
                                     for documento_impuesto in documento_impuestos:
                                         documento_impuesto.base = 0
@@ -1311,7 +1316,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         documento_impuesto.total_operado = 0 
                                         documento_impuesto.save(update_fields=['base','total', 'total_operado'])
 
-                                documento.estado_anulado = True  
+                                documento.estado_anulado = True                                  
                                 documento.subtotal = 0
                                 documento.total = 0
                                 documento.total_bruto = 0
@@ -1321,7 +1326,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 documento.impuesto_operado = 0
                                 documento.impuesto_retencion = 0
                                 documento.pendiente = 0
-                                documento.save(update_fields=['estado_anulado', 'subtotal', 'total', 'total_bruto', 'pendiente', 'base_impuesto', 'descuento', 'impuesto', 'impuesto_operado', 'impuesto_retencion'])
+                                documento.salario = 0
+                                documento.base_cotizacion = 0
+                                documento.base_prestacion = 0
+                                documento.deduccion = 0
+                                documento.devengado = 0
+                                documento.save(update_fields=['estado_anulado', 'subtotal', 'total', 'total_bruto', 'pendiente', 'base_impuesto', 'descuento', 'impuesto', 'impuesto_operado', 'impuesto_retencion', 'salario', 'base_cotizacion', 'base_prestacion', 'deduccion', 'devengado'])
+                                
+                                # En caso de ser nomina electronica liberar los pagos, eso se va remover porque ya no sera directo si no de detalle a documento
+                                if documento.documento_tipo_id == 15:                                    
+                                    documentos_nomina = GenDocumento.objects.filter(documento_referencia_id=id)
+                                    documentos_nomina.update(documento_referencia_id=None)
+
                                 return Response({'estado_anulado': True}, status=status.HTTP_200_OK)
                             else:
                                 return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
@@ -2025,26 +2041,28 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 fecha_desde = date(anio, mes, 1)            
                 ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
                 fecha_hasta = date(anio, mes, ultimo_dia_mes)
-                nominas_mes = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
-                                                        fecha__lte=fecha_hasta, 
-                                                        documento_tipo_id=14,
-                                                        documento_referencia_id = None,
-                                                        estado_aprobado = True)\
-                                                .values('contacto_id', 'contrato_id')\
-                                                .annotate(
-                                                    base_cotizacion=Sum('base_cotizacion'),
-                                                    base_prestacion=Sum('base_prestacion'),
-                                                    deduccion=Sum('deduccion'),
-                                                    devengado=Sum('devengado'),
-                                                    total=Sum('total'))           
+                nominas_mes = GenDocumento.objects.filter(
+                        Q(documento_tipo_id=14) | Q(documento_tipo_id=20),
+                        fecha__gte=fecha_desde, 
+                        fecha__lte=fecha_hasta,                                                         
+                        documento_referencia_id = None,
+                        estado_aprobado = True)\
+                    .values('contacto_id', 'contrato_id')\
+                    .annotate(
+                        base_cotizacion=Sum('base_cotizacion'),
+                        base_prestacion=Sum('base_prestacion'),
+                        deduccion=Sum('deduccion'),
+                        devengado=Sum('devengado'),
+                        total=Sum('total'))           
                 for nomina_mes in nominas_mes:
                     contrato = HumContrato.objects.get(pk=nomina_mes['contrato_id'])
                     data = {
                         'empresa': 1,
                         'numero': documento_tipo.consecutivo,
                         'documento_tipo': 15,
-                        'fecha': fecha_desde,
-                        'fecha_contable': fecha_desde,                    
+                        'fecha': fecha_hasta,
+                        'fecha_contable': fecha_hasta,    
+                        'fecha_desde': fecha_desde,                
                         'fecha_hasta': fecha_hasta,
                         'contacto': nomina_mes['contacto_id'],
                         'contrato': nomina_mes['contrato_id'],
@@ -2062,16 +2080,34 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     documento_serializador = GenDocumentoSerializador(data=data)
                     if documento_serializador.is_valid():
                         documento = documento_serializador.save()
-                        nominas = GenDocumento.objects.filter(fecha__gte=fecha_desde, 
-                                                            fecha__lte=fecha_hasta, 
-                                                            documento_tipo_id=14,
-                                                            contacto_id = nomina_mes['contacto_id'],
-                                                            contrato_id = nomina_mes['contrato_id'],
-                                                            documento_referencia_id = None,
-                                                            estado_aprobado = True) 
+                        nominas = GenDocumento.objects.filter(
+                            Q(documento_tipo_id=14) | Q(documento_tipo_id=20),
+                            fecha__gte=fecha_desde, 
+                            fecha__lte=fecha_hasta, 
+                            contacto_id = nomina_mes['contacto_id'],
+                            contrato_id = nomina_mes['contrato_id'],
+                            documento_referencia_id = None,
+                            estado_aprobado = True) 
                         for nomina in nominas:
-                            nomina.documento_referencia = documento
-                            nomina.save() 
+                            data = {
+                                'empresa': 1,
+                                'documento': documento.id,
+                                'tipo_registro': 'E',
+                                'documento_afectado': nomina.id,  
+                                'salario': contrato.salario,
+                                'base_cotizacion': nomina.base_cotizacion,
+                                'base_prestacion': nomina.base_prestacion,
+                                'deduccion': nomina.deduccion,
+                                'devengado': nomina.devengado,
+                                'total': nomina.total,                                                          
+                            }
+                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                            if documento_detalle_serializador.is_valid():
+                                documento_detalle = documento_detalle_serializador.save()
+                                nomina.documento_referencia = documento
+                                nomina.save()
+                            else:
+                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                             
                     else:
                         return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                 
             return Response({'resumen': 1}, status=status.HTTP_200_OK)
@@ -2709,7 +2745,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "devengado":str(documento.devengado),
                                                 "deduccion":str(documento.deduccion),
                                                 "total_documento" : str(documento.total),                                                                                                                                                                                                    
-                                                "fecha_desde":str(documento.fecha),
+                                                "fecha_desde":str(documento.fecha_desde),
                                                 "fecha_hasta":str(documento.fecha_hasta),                                                                                                                    
                                                 "empleado" : {
                                                     "codigo": documento.contacto_id,
