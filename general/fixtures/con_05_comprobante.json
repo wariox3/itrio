@@ -180,6 +180,14 @@
         "nombre": "CESANTIA",
         "codigo": "CES"
       }
-    }
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 23,
+      "campos": {
+        "nombre": "LIQUIDACION",
+        "codigo": "LIQ"
+      }
+    }    
   ]
 }

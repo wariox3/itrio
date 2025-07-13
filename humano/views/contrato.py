@@ -17,7 +17,9 @@ from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
 from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador, HumContratoSeleccionarSerializador
 from humano.serializers.liquidacion import HumLiquidacionSerializador
+from servicios.humano.liquidacion import LiquidacionServicio
 from django.db.models.deletion import ProtectedError
+from django.db import transaction
 from humano.filters.contrato import ContratoFilter
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -110,36 +112,37 @@ class HumContratoViewSet(viewsets.ModelViewSet):
             except HumContrato.DoesNotExist:
                 return Response({'mensaje':'El contrato no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
             if contrato.estado_terminado == False:
-                fecha_terminacion = datetime.strptime(fecha_terminacion, '%Y-%m-%d').date()
-                if fecha_terminacion > contrato.fecha_desde:
-                    try:
-                        motivo_terminacion = HumMotivoTerminacion.objects.get(pk=motivo_terminacion_id)
-                    except HumMotivoTerminacion.DoesNotExist:
-                        return Response({'mensaje':'El motivo terminacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                    
-                    
-                    contrato.fecha_hasta = fecha_terminacion
-                    contrato.motivo_terminacion = motivo_terminacion
-                    contrato.estado_terminado = True
-                    contrato.save()
-                    data = {
-                        "fecha":fecha_terminacion,
-                        "fecha_desde":contrato.fecha_desde,
-                        "fecha_hasta":fecha_terminacion,
-                        "contrato": id
-                    }
-                    liquidacion_serializador = HumLiquidacionSerializador(data=data)
-                    if liquidacion_serializador.is_valid():
-                        liquidacion_serializador.save()
-                    return Response({'mensaje': 'Contrato finalizado'}, status=status.HTTP_200_OK)
-                else:
-                    return Response({'mensaje':f'No puede terminar el contrato antes de su inicio {contrato.fecha_desde}', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                with transaction.atomic():
+                    fecha_terminacion = datetime.strptime(fecha_terminacion, '%Y-%m-%d').date()
+                    if fecha_terminacion > contrato.fecha_desde:
+                        try:
+                            motivo_terminacion = HumMotivoTerminacion.objects.get(pk=motivo_terminacion_id)
+                        except HumMotivoTerminacion.DoesNotExist:
+                            return Response({'mensaje':'El motivo terminacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                    
+                        
+                        contrato.fecha_hasta = fecha_terminacion
+                        contrato.motivo_terminacion = motivo_terminacion
+                        contrato.estado_terminado = True
+                        contrato.save()
+                        data = {
+                            "fecha":fecha_terminacion,
+                            "fecha_desde":contrato.fecha_desde,
+                            "fecha_hasta":fecha_terminacion,
+                            "contrato": id
+                        }
+                        liquidacion_serializador = HumLiquidacionSerializador(data=data)
+                        if liquidacion_serializador.is_valid():
+                            liquidacion = liquidacion_serializador.save()
+                            LiquidacionServicio.liquidar(liquidacion)
+                        return Response({'mensaje': 'Contrato finalizado'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':f'No puede terminar el contrato antes de su inicio {contrato.fecha_desde}', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({'mensaje':'El contrato ya esta terminado', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)         
         
-
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):
         raw = request.data        
@@ -389,7 +392,6 @@ class HumContratoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         
-
     @action(detail=False, methods=["post"], url_path=r'parametros-iniciales',)
     def parametros(self, request):
         raw = request.data

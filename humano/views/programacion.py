@@ -21,6 +21,7 @@ from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.formatos.programacion import FormatoProgramacion
 from general.formatos.nomina import FormatoNomina
+from servicios.humano.concepto import ConceptoServicio
 from django.db.models import Q, DecimalField, Sum
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse
@@ -52,32 +53,6 @@ def horas_programacion(programacion_detalle):
         {'cantidad':programacion_detalle.recargo_festivo_nocturno, 'clave':10},
     ]
     return respuesta_horas
-
-def datos_detalle(data_general, data, concepto):    
-    data['operacion'] = concepto.operacion
-    data['pago_operado'] = data['pago'] * concepto.operacion
-    if concepto.operacion == 1:
-        data['devengado'] = data['pago']
-        data_general['devengado'] += data['pago']
-    if concepto.operacion == -1:
-        data['deduccion'] = data['pago']   
-        data_general['deduccion'] += data['pago']     
-    if concepto.ingreso_base_cotizacion:
-        if concepto.id == 28:
-            base =  round(data['cantidad'] * data['hora'])
-            data['base_cotizacion'] = base
-            data_general['base_cotizacion'] += base
-            data_general['base_licencia'] += base
-        else:
-            data['base_cotizacion'] = data['pago']
-            data_general['base_cotizacion'] += data['pago']
-    if concepto.ingreso_base_prestacion:
-        data['base_prestacion'] = data['pago']
-        data_general['base_prestacion'] += data['pago']
-    if concepto.ingreso_base_prestacion_vacacion:        
-        data['base_prestacion_vacacion'] = data['pago']
-        data_general['base_prestacion_vacacion'] += data['pago']        
-    return data
 
 def calcular_porcentaje_fondo(salario_minimo, base_cotizacion):
     salarios_minimos = base_cotizacion / salario_minimo
@@ -550,7 +525,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 if hora['clave'] == 0:
                                                     data['dias'] = programacion_detalle.dias
 
-                                                datos_detalle(data_general, data, concepto)
+                                                ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
                                                     documento_detalle_serializador.save()
@@ -604,7 +579,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         data['porcentaje'] = concepto.porcentaje
                                                         data['concepto'] = novedad.novedad_tipo.concepto_id
                                                         data['novedad'] = novedad.id
-                                                        data = datos_detalle(data_general, data, concepto)
+                                                        ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                         if documento_detalle_serializador.is_valid():
                                                             documento_detalle_serializador.save()
@@ -632,7 +607,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         data['porcentaje'] = concepto.porcentaje
                                                         data['concepto'] = novedad.novedad_tipo.concepto2_id
                                                         data['novedad'] = novedad.id
-                                                        data = datos_detalle(data_general, data, concepto)
+                                                        ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                         if documento_detalle_serializador.is_valid():
                                                             documento_detalle_serializador.save()
@@ -661,7 +636,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     data['porcentaje'] = concepto.porcentaje
                                                     data['concepto'] = novedad.novedad_tipo.concepto_id
                                                     data['novedad'] = novedad.id
-                                                    data = datos_detalle(data_general, data, concepto)
+                                                    ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
@@ -678,7 +653,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 data['pago'] = pago
                                                 data['concepto'] = novedad.novedad_tipo.concepto_id
                                                 data['novedad'] = novedad.id
-                                                data = datos_detalle(data_general, data, concepto)
+                                                ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
                                                     documento_detalle_serializador.save()
@@ -693,7 +668,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 data['pago'] = pago
                                                 data['concepto'] = novedad.novedad_tipo.concepto2_id
                                                 data['novedad'] = novedad.id
-                                                data = datos_detalle(data_general, data, concepto)
+                                                ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
                                                     documento_detalle_serializador.save()
@@ -712,7 +687,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 data['pago'] = pago
                                                 data['dias'] = programacion_detalle.dias_transporte
                                                 data['concepto'] = concepto.id
-                                                datos_detalle(data_general, data, concepto)
+                                                ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
                                                     documento_detalle_serializador.save()
@@ -731,7 +706,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             data['pago'] = pago
                                             data['dias'] = programacion_detalle.dias
                                             data['concepto'] = concepto.id
-                                            datos_detalle(data_general, data, concepto)
+                                            ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
@@ -750,7 +725,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             data['pago'] = pago
                                             data['dias'] = programacion_detalle.dias
                                             data['concepto'] = concepto_cesantias.id
-                                            datos_detalle(data_general, data, concepto_cesantias)
+                                            ConceptoServicio.datos_documento_detalle(data_general, data, concepto_cesantias)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
@@ -768,7 +743,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             data['pago'] = pago
                                             data['dias'] = programacion_detalle.dias
                                             data['concepto'] = concepto_interes.id
-                                            datos_detalle(data_general, data, concepto_interes)
+                                            ConceptoServicio.datos_documento_detalle(data_general, data, concepto_interes)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
@@ -797,7 +772,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         data['pago'] = round(valor_adicional)
                                         data['concepto'] = adicional.concepto_id
                                         data['detalle'] = adicional.detalle
-                                        data = datos_detalle(data_general, data, concepto)
+                                        ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                         if documento_detalle_serializador.is_valid():
                                             documento_detalle_serializador.save()
@@ -826,7 +801,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             data['pago'] = round(pago)
                                             data['concepto'] = credito.concepto_id
                                             data['credito'] = credito.id
-                                            data = datos_detalle(data_general, data, concepto)
+                                            ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                             documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
@@ -854,7 +829,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     data['contacto'] = contacto.id
                                                 else:
                                                     data['contacto'] = None
-                                                datos_detalle(data_general, data, concepto)
+                                                ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
                                                     documento_detalle_serializador.save()
@@ -883,7 +858,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         data['contacto'] = contacto.id
                                                     else:
                                                         data['contacto'] = None                                                    
-                                                    datos_detalle(data_general, data, concepto)
+                                                    ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
@@ -914,16 +889,14 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         data['contacto'] = contacto.id
                                                     else:
                                                         data['contacto'] = None                                                     
-                                                    datos_detalle(data_general, data, concepto)
+                                                    ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
                                                     else:
                                                         return Response({'mensaje': f'Validaciones en fondo solidaridad detalle {programacion_detalle.id} {porcentaje_fondo}', 'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-                                total = data_general['devengado'] - data_general['deduccion']
-                                devengado = data_general['devengado']
-                                deduccion = data_general['deduccion']                                
+                                total = data_general['devengado'] - data_general['deduccion']                               
                                 provision_cesantia = data_general['base_prestacion'] * 0.0833
                                 provision_interes = provision_cesantia * 0.12
                                 provision_prima = data_general['base_prestacion'] * 0.0833
@@ -935,22 +908,20 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 documento.base_cotizacion = data_general['base_cotizacion']
                                 documento.base_prestacion = data_general['base_prestacion']
                                 documento.base_prestacion_vacacion = data_general['base_prestacion_vacacion']
-                                documento.devengado = devengado
-                                documento.deduccion = deduccion
+                                documento.devengado = data_general['devengado']
+                                documento.deduccion = data_general['deduccion']
                                 documento.total = total
                                 documento.save()
 
-                                programacion_detalle.devengado = devengado
-                                programacion_detalle.deduccion = deduccion
+                                programacion_detalle.devengado = data_general['devengado']
+                                programacion_detalle.deduccion = data_general['deduccion']
                                 programacion_detalle.total = total
                                 programacion_detalle.save()
                                 total_programacion += total
-                                devengado_programacion += devengado
-                                deduccion_programacion += deduccion
-
+                                devengado_programacion += data_general['devengado']
+                                deduccion_programacion += data_general['deduccion']
                             else:
                                 return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)  
-
                         programacion.estado_generado = True  
                         programacion.total = total_programacion
                         programacion.devengado = devengado_programacion

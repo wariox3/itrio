@@ -9,7 +9,7 @@ class HumLiquidacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumLiquidacion
         fields = ['id', 'fecha', 'fecha_desde', 'fecha_hasta', 'contrato', 'dias', 'cesantia', 'interes', 'prima'
-                  ,'vacacion', 'deduccion', 'adicion', 'total', 'estado_aprobado', 'estado_generado', 'comentario']        
+                  ,'vacacion', 'deduccion', 'adicion', 'total', 'salario', 'estado_aprobado', 'estado_generado', 'comentario']        
 
 class HumLiquidacionListaSerializador(serializers.HyperlinkedModelSerializer):      
     contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)

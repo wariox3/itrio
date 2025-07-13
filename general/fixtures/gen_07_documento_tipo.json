@@ -339,6 +339,18 @@
         "electronico": false,
         "pos": true
       }
-    }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 28,
+      "campos": {
+        "nombre": "LIQUIDACION",
+        "documento_clase": 701,
+        "comprobante": 21,
+        "pagar": true,
+        "operacion": 1,
+        "contabilidad": true
+      }
+    }    
   ]
 }

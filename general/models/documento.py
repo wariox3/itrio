@@ -14,6 +14,7 @@ from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
 from humano.models.aporte import HumAporte
+from humano.models.liquidacion import HumLiquidacion
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
 from contabilidad.models.cuenta import ConCuenta
@@ -83,9 +84,10 @@ class GenDocumento(models.Model):
     usuario = models.ForeignKey(User, null=True, on_delete=models.PROTECT,related_name='documentos_usuario_rel')
     programacion_detalle = models.ForeignKey(HumProgramacionDetalle, null=True, on_delete=models.PROTECT,related_name='documentos_programacion_detalle_rel')
     aporte = models.ForeignKey(HumAporte, null=True, on_delete=models.PROTECT,related_name='documentos_aporte_rel')
+    liquidacion = models.ForeignKey(HumLiquidacion, null=True, on_delete=models.PROTECT, related_name='documentos_liquidacion_rel')
     contrato = models.ForeignKey(HumContrato, null=True, on_delete=models.PROTECT,related_name='documentos_contrato_rel')
     grupo = models.ForeignKey(HumGrupo, null=True, on_delete=models.PROTECT,related_name='documentos_grupo_rel')
-    periodo = models.ForeignKey(HumPeriodo, on_delete=models.PROTECT, null=True, related_name='documentos_periodo_rel')
+    periodo = models.ForeignKey(HumPeriodo, on_delete=models.PROTECT, null=True, related_name='documentos_periodo_rel')    
     cuenta_banco = models.ForeignKey(GenCuentaBanco, null=True, on_delete=models.PROTECT, related_name='documentos_cuenta_banco_rel')
     comprobante = models.ForeignKey(ConComprobante, null=True, on_delete=models.PROTECT, related_name='documentos_comprobante_rel')
     grupo_contabilidad = models.ForeignKey(ConGrupo, null=True, on_delete=models.PROTECT, related_name='documentos_grupo_contabilidad_rel')

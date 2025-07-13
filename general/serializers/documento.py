@@ -16,6 +16,7 @@ from humano.models.contrato import HumContrato
 from humano.models.grupo import HumGrupo
 from humano.models.periodo import HumPeriodo
 from humano.models.aporte import HumAporte
+from humano.models.liquidacion import HumLiquidacion
 from contabilidad.models.comprobante import ConComprobante
 from contabilidad.models.grupo import ConGrupo
 from contabilidad.models.cuenta import ConCuenta
@@ -41,6 +42,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
     programacion_detalle = serializers.PrimaryKeyRelatedField(queryset=HumProgramacionDetalle.objects.all(), default=None, allow_null=True)
     aporte = serializers.PrimaryKeyRelatedField(queryset=HumAporte.objects.all(), default=None, allow_null=True)
+    liquidacion = serializers.PrimaryKeyRelatedField(queryset=HumLiquidacion.objects.all(), default=None, allow_null=True)
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all(), default=None, allow_null=True)
     grupo = serializers.PrimaryKeyRelatedField(queryset=HumGrupo.objects.all(), default=None, allow_null=True)
     periodo = serializers.PrimaryKeyRelatedField(queryset=HumPeriodo.objects.all(), default=None, allow_null=True)
@@ -58,7 +60,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
                   'estado_aprobado', 'estado_anulado', 'estado_contabilizado', 'comentario', 'soporte', 'orden_compra', 'remision',  
                   'estado_electronico_enviado', 'estado_electronico', 'estado_electronico_notificado', 'estado_electronico_evento',
                   'estado_electronico_descartado',
-                  'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle', 'aporte',
+                  'documento_referencia', 'plazo_pago', 'cue', 'asesor', 'sede', 'usuario', 'programacion_detalle', 'aporte', 'liquidacion',
                   'grupo', 'contrato', 'salario', 'devengado', 'deduccion', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 
                   'provision_cesantia', 'provision_interes', 'provision_prima', 'provision_vacacion',
                   'periodo', 'cuenta_banco', 

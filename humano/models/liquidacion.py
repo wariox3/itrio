@@ -17,6 +17,7 @@ class HumLiquidacion(models.Model):
     deduccion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     adicion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    salario = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     estado_aprobado = models.BooleanField(default = False)
     estado_generado = models.BooleanField(default = False)    
     comentario = models.CharField(max_length=300, null=True)

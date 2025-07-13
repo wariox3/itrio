@@ -4,11 +4,17 @@ from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from humano.models.liquidacion import HumLiquidacion
-from general.models.configuracion import GenConfiguracion
+from humano.models.concepto import HumConcepto
+from general.models.documento import GenDocumento
+from general.models.documento_detalle import GenDocumentoDetalle
 from humano.serializers.liquidacion import HumLiquidacionSerializador, HumLiquidacionListaSerializador, HumLiquidacionDetalleSerializador
+from general.serializers.documento import GenDocumentoSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from humano.filters.liquidacion import LiquidacionFilter
 from utilidades.excel_exportar import ExcelExportar
-from utilidades.utilidades import Utilidades
+from servicios.humano.liquidacion import LiquidacionServicio
+from servicios.humano.concepto import ConceptoServicio
+from django.db import transaction
 
 class HumLiquidacionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -54,10 +60,95 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
             if id:
                 liquidacion = HumLiquidacion.objects.get(pk=id)
                 if liquidacion.estado_generado == False and liquidacion.estado_aprobado == False:
-                    liquidacion.estado_generado = True  
-                    liquidacion.save()
-                    return Response({'mensaje': 'Liquidación generada'}, status=status.HTTP_200_OK)
+                    with transaction.atomic():
+                        data = {
+                            'liquidacion': id,
+                            'documento_tipo': 28,
+                            'empresa': 1,
+                            'fecha': liquidacion.fecha,
+                            'fecha_vence': liquidacion.fecha,
+                            'fecha_contable': liquidacion.fecha,
+                            'fecha_desde': liquidacion.fecha_desde,
+                            'fecha_hasta': liquidacion.fecha_hasta,
+                            'contrato': liquidacion.contrato_id,
+                            'contacto': liquidacion.contrato.contacto_id,
+                            'grupo': liquidacion.contrato.grupo_id,                            
+                            'dias': liquidacion.dias                    
+                        }
+                        documento_serializador = GenDocumentoSerializador(data=data)
+                        if documento_serializador.is_valid():
+                            documento = documento_serializador.save()
+                            data_general = {
+                                'devengado': 0,
+                                'deduccion': 0,
+                                'base_cotizacion': 0,
+                                'base_prestacion': 0,
+                                'base_prestacion_vacacion': 0,
+                                'base_licencia': 0
+                            }                              
+                            data_general_detalle = {
+                                'tipo_registro': 'N',
+                                'documento': documento.id,
+                                'contacto': liquidacion.contrato.contacto_id,                                    
+                            }
+                            # Cesantia
+                            concepto = HumConcepto.objects.get(pk=35)
+                            data = data_general_detalle.copy()
+                            data['pago'] = round(liquidacion.cesantia)
+                            data['concepto'] = concepto.id                            
+                            data = ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
+                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                            if documento_detalle_serializador.is_valid():
+                                documento_detalle_serializador.save()
+                            else:
+                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
+                            # Interes
+                            concepto = HumConcepto.objects.get(pk=37)
+                            data = data_general_detalle.copy()
+                            data['pago'] = round(liquidacion.interes)
+                            data['concepto'] = concepto.id                            
+                            data = ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
+                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                            if documento_detalle_serializador.is_valid():
+                                documento_detalle_serializador.save()
+                            else:
+                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                              
+                            # Prima
+                            concepto = HumConcepto.objects.get(pk=33)
+                            data = data_general_detalle.copy()
+                            data['pago'] = round(liquidacion.prima)
+                            data['concepto'] = concepto.id                            
+                            data = ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
+                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                            if documento_detalle_serializador.is_valid():
+                                documento_detalle_serializador.save()
+                            else:
+                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                            
+                            # Vacacion 
+                            concepto = HumConcepto.objects.get(pk=30)
+                            data = data_general_detalle.copy()
+                            data['pago'] = round(liquidacion.vacacion)
+                            data['concepto'] = concepto.id                            
+                            data = ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
+                            documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                            if documento_detalle_serializador.is_valid():
+                                documento_detalle_serializador.save()
+                            else:
+                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+                            documento.base_cotizacion = data_general['base_cotizacion']
+                            documento.base_prestacion = data_general['base_prestacion']
+                            documento.base_prestacion_vacacion = data_general['base_prestacion_vacacion']
+                            documento.devengado = data_general['devengado']
+                            documento.deduccion = data_general['deduccion']
+                            documento.total = data_general['devengado'] - data_general['deduccion']
+                            documento.salario = liquidacion.salario
+                            documento.save()
+                            liquidacion.estado_generado = True  
+                            liquidacion.save()
+                            return Response({'mensaje': 'Liquidación generada'}, status=status.HTTP_200_OK)                            
+                        else:
+                            return Response({'validaciones':documento_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                   
                 else:
                     return Response({'mensaje':'La liquidación ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
             else:
@@ -73,10 +164,15 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
             if id:
                 liquidacion = HumLiquidacion.objects.get(pk=id)
                 if liquidacion.estado_aprobado == False and liquidacion.estado_generado == True:
-                    liquidacion.estado_generado = False  
-                    liquidacion.save()
-                    return Response({'mensaje': 'Liquidación desgenerada'}, status=status.HTTP_200_OK)
-
+                    with transaction.atomic():
+                        documentos = GenDocumento.objects.filter(liquidacion_id=id)
+                        for documento in documentos:
+                            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
+                            documento_detalles.delete()
+                        documentos.delete()                                           
+                        liquidacion.estado_generado = False  
+                        liquidacion.save()
+                        return Response({'mensaje': 'Liquidación desgenerada'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'La liquidación ya esta aprobada o no esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
             else:
@@ -162,54 +258,9 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
             except HumLiquidacion.DoesNotExist:
                 return Response({'mensaje':'La liquidacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
             if liquidacion.estado_aprobado == False:  
-                self.liquidar(liquidacion)                                                                                                                                                   
+                LiquidacionServicio.liquidar(liquidacion)                                                                                                                                                
                 return Response({'mensaje': 'Liquidacion reliquidada'}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'La liquidacion ya esta aprobada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
-
-    def liquidar(self, liquidacion: HumLiquidacion):
-        configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte')[0]
-        auxilio_trasnporte = configuracion['hum_auxilio_transporte']
-        fecha_desde = liquidacion.contrato.fecha_desde
-        fecha_hasta = liquidacion.contrato.fecha_hasta
-        fecha_ultimo_pago_cesantia = fecha_desde
-        fecha_ultimo_pago_prima = fecha_desde
-        fecha_ultimo_pago_vacacion = fecha_desde        
-        if liquidacion.contrato.fecha_ultimo_pago_cesantia:
-            fecha_ultimo_pago_cesantia = liquidacion.contrato.fecha_ultimo_pago_cesantia
-        if liquidacion.contrato.fecha_ultimo_pago_prima:
-            fecha_ultimo_pago_prima = liquidacion.contrato.fecha_ultimo_pago_prima
-        if liquidacion.contrato.fecha_ultimo_pago_vacacion:
-            fecha_ultimo_pago_vacacion = liquidacion.contrato.fecha_ultimo_pago_vacacion
-
-        dias = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
-        dias_cesantia = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
-        dias_prima = Utilidades.dias_prestacionales(fecha_ultimo_pago_prima.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
-        dias_vacacion = Utilidades.dias_prestacionales(fecha_ultimo_pago_vacacion.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
-        salario_promedio_cesantia = liquidacion.contrato.salario
-        salario_promedio_prima = liquidacion.contrato.salario
-        salario_promedio_vacacion = liquidacion.contrato.salario
-        if liquidacion.contrato.auxilio_transporte:
-            salario_promedio_cesantia = liquidacion.contrato.salario + auxilio_trasnporte
-            salario_promedio_prima = liquidacion.contrato.salario + auxilio_trasnporte
-        cesantia = round(salario_promedio_cesantia * dias_cesantia / 360)
-        porcentaje_interes = ((dias_cesantia * 12) / 360) / 100
-        interes = round(cesantia * porcentaje_interes)
-        prima = round(salario_promedio_prima * dias_prima / 360)              
-        vacacion = round((salario_promedio_vacacion * dias_vacacion) / 720)         
-        total = cesantia + interes + prima + vacacion
-        liquidacion.dias = dias
-        liquidacion.dias_cesantia = dias_cesantia
-        liquidacion.dias_prima = dias_prima
-        liquidacion.dias_vacacion = dias_vacacion
-        liquidacion.cesantia = cesantia
-        liquidacion.interes = interes
-        liquidacion.prima = prima
-        liquidacion.vacacion = vacacion
-        liquidacion.total = total
-        liquidacion.save()
-
-
-          
