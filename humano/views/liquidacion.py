@@ -5,6 +5,7 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from humano.models.liquidacion import HumLiquidacion
 from humano.models.concepto import HumConcepto
+from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
 from humano.serializers.liquidacion import HumLiquidacionSerializador, HumLiquidacionListaSerializador, HumLiquidacionDetalleSerializador
@@ -188,10 +189,20 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
             if id:
                 liquidacion = HumLiquidacion.objects.get(pk=id)
                 if liquidacion.estado_generado == True and liquidacion.estado_aprobado == False:
-                    liquidacion.estado_aprobado = True  
-                    liquidacion.save()
-                    return Response({'mensaje': 'Liquidación aprobada'}, status=status.HTTP_200_OK)
-
+                    with transaction.atomic():
+                        documento_tipo = GenDocumentoTipo.objects.get(pk=28)
+                        documentos = GenDocumento.objects.filter(liquidacion_id=id)
+                        for documento in documentos:
+                            if documento.numero == None or documento.numero == 0:
+                                documento.numero = documento_tipo.consecutivo
+                                documento_tipo.consecutivo += 1
+                            documento.estado_aprobado = True
+                            documento.pendiente = documento.total 
+                            documento.save()                              
+                        documento_tipo.save()                      
+                        liquidacion.estado_aprobado = True  
+                        liquidacion.save()
+                        return Response({'mensaje': 'Liquidación aprobada'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'La liquidación ya esta generada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
             else:
@@ -209,39 +220,18 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
             except HumLiquidacion.DoesNotExist:
                 return Response({'mensaje':'La liquidacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
             if liquidacion.estado_aprobado == True:                                                                                                                
-                '''documentos = GenDocumento.objects.filter(programacion_detalle__programacion_id=id)
-                #Validar
-                for documento in documentos:
-                    if documento.afectado > 0:
-                        return Response({'mensaje':f'El documento {documento.id} ya tiene un egreso, no se puede desaprobar la programacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
-                    if documento.estado_contabilizado:
-                        return Response({'mensaje':f'El documento {documento.id} ya esta contabilizado, no se puede desaprobar la programacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
-                for documento in documentos:
-                    documento.estado_aprobado = False
-                    documento.pendiente = documento.total 
-                    documento.save()                        
-
-                    # Desafectar creditos
-                    documentos_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
-                    for documento_detalle in documentos_detalles:
-                        if documento_detalle.credito:
-                            credito = documento_detalle.credito
-                            credito.abono -= documento_detalle.pago
-                            credito.saldo += documento_detalle.pago
-                            credito.cuota_actual -= 1
-                            credito.save()
-
-                    # Desafectar contratos
-                    contrato = documento.contrato
-                    if programacion.pago_tipo_id == 1:
-                        contrato.fecha_ultimo_pago = programacion.fecha_desde
-                    if programacion.pago_tipo_id == 2:
-                        contrato.fecha_ultimo_pago_prima = programacion.fecha_desde
-                    if programacion.pago_tipo_id == 3:
-                        contrato.fecha_ultimo_pago_cesantia = programacion.fecha_desde
-                    contrato.save()  '''                      
-                liquidacion.estado_aprobado = False
-                liquidacion.save()
+                with transaction.atomic():
+                    documentos = GenDocumento.objects.filter(liquidacion=id)
+                    for documento in documentos:
+                        if documento.afectado > 0:
+                            return Response({'mensaje':f'El documento {documento.id} ya tiene un egreso, no se puede desaprobar la programacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+                        if documento.estado_contabilizado:
+                            return Response({'mensaje':f'El documento {documento.id} ya esta contabilizado, no se puede desaprobar la programacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
+                        documento.estado_aprobado = False
+                        documento.pendiente = documento.total 
+                        documento.save()                                           
+                    liquidacion.estado_aprobado = False
+                    liquidacion.save()
                 return Response({'mensaje': 'Liquidacion desaprobada'}, status=status.HTTP_200_OK)
             else:
                 return Response({'mensaje':'La liquidacion no esta aprobada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
