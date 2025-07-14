@@ -5,7 +5,10 @@ from django_filters import NumberFilter
 class DocumentoTipoFilter(django_filters.FilterSet):
     class Meta:
         model = GenDocumentoTipo        
-        fields = {'venta': ['exact'], 
-                  'operacion': ['exact'],
-                  'pos': ['exact'],
-                  'contabilidad': ['exact']}
+        fields = {
+                    'venta': ['exact'], 
+                    'operacion': ['exact'],
+                    'pos': ['exact'],
+                    'contabilidad': ['exact'],
+                    'documento_clase_id': ['exact']
+                }
