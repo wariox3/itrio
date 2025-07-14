@@ -307,7 +307,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
                 return exporter.exportar_estilo()
         return super().list(request, *args, **kwargs)
-    
+              
+    def destroy(self, request, *args, **kwargs):        
+        instance = self.get_object()
+        if instance.estado_aprobado:
+                return Response({'mensaje': 'No se puede eliminar un documento aprobado.'}, status=status.HTTP_400_BAD_REQUEST)
+        if instance.documento_tipo_id == 15:
+            nominas = GenDocumento.objects.filter(documento_referencia_id=instance.id)
+            nominas.update(documento_referencia_id=None)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     @action(detail=False, methods=["get"], url_path=r'seleccionar')
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
@@ -321,45 +331,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         except ValueError:
             pass    
         serializer = GenDocumentoSeleccionarSerializador(queryset, many=True)        
-        return Response(serializer.data)    
-
-    def retrieve(self, request, pk=None):
-        serializador_parametro = self.request.query_params.get('serializador', None)    
-        # Si hay un parámetro serializador, usar el comportamiento estándar del ModelViewSet
-        if serializador_parametro is not None:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
-        
-        queryset = GenDocumento.objects.all()
-        documento = get_object_or_404(queryset, pk=pk)
-        documentoSerializador = GenDocumentoRetrieveSerializador(documento)
-        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk).order_by('id')
-        documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
-        detalles = documentoDetallesSerializador.data
-        for detalle in detalles:
-            documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
-            documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
-            detalle['impuestos'] = documentoImpuestosSerializador.data
-        documentoRespuesta = documentoSerializador.data
-        documentoRespuesta['detalles'] = detalles
-        
-        documentoPagos = GenDocumentoPago.objects.filter(documento=pk)
-        documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
-        pagos = documentoPagosSerializador.data
-        documentoRespuesta['pagos'] = pagos        
-        
-        return Response({'documento':documentoRespuesta}, status=status.HTTP_200_OK)
-        
-    def destroy(self, request, *args, **kwargs):        
-        instance = self.get_object()
-        if instance.estado_aprobado:
-                return Response({'mensaje': 'No se puede eliminar un documento aprobado.'}, status=status.HTTP_400_BAD_REQUEST)
-        if instance.documento_tipo_id == 15:
-            nominas = GenDocumento.objects.filter(documento_referencia_id=instance.id)
-            nominas.update(documento_referencia_id=None)
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(serializer.data)  
 
     @action(detail=True, methods=["get"], url_path=r'detalle',)
     def detalle_action(self, request, pk=None):
