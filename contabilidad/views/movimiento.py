@@ -160,9 +160,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         filtro_cuenta = ''
         if cuenta:
             filtro_cuenta = f"AND c.codigo = '{cuenta}' "     
-        filtro_cuenta_con_movimiento = ''
-        if cuenta_con_movimiento:
-            filtro_cuenta_con_movimiento = f"AND (m.debito > 0 OR m.credito > 0) "
         query = f'''
             SELECT
                 c.id,
@@ -182,9 +179,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 con_movimiento m ON m.cuenta_id = c.id
             WHERE
                 1=1 
-                {filtro_cuenta}
-                {filtro_cuenta_con_movimiento}
-                {parametro_cierre}
+                {filtro_cuenta}                                
             GROUP BY
                 c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
@@ -202,6 +197,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         for cuenta in resultados:
             saldo_anterior = cuenta.debito_anterior - cuenta.credito_anterior
             saldo_actual = saldo_anterior + (cuenta.debito - cuenta.credito)
+            if cuenta_con_movimiento and saldo_anterior == 0 and cuenta.debito == 0 and cuenta.credito == 0:
+                continue 
             resultados_json.append({
                 'tipo': 'AUXILIAR',
                 'id': cuenta.id,
