@@ -1605,7 +1605,7 @@
             "campos": {
                 "codigo": 720503,
                 "nombre": "Salario integral",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1619,7 +1619,7 @@
             "campos": {
                 "codigo": 720506,
                 "nombre": "Sueldos",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1633,7 +1633,7 @@
             "campos": {
                 "codigo": 720515,
                 "nombre": "Horas extras y recargos",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1647,7 +1647,7 @@
             "campos": {
                 "codigo": 720518,
                 "nombre": "Comisiones",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1661,7 +1661,7 @@
             "campos": {
                 "codigo": 720524,
                 "nombre": "Incapacidades",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1675,7 +1675,7 @@
             "campos": {
                 "codigo": 720527,
                 "nombre": "Auxilio de transporte",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1689,7 +1689,7 @@
             "campos": {
                 "codigo": 720530,
                 "nombre": "Cesantías",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1703,7 +1703,7 @@
             "campos": {
                 "codigo": 720533,
                 "nombre": "Intereses sobre cesantías",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1717,7 +1717,7 @@
             "campos": {
                 "codigo": 720536,
                 "nombre": "Prima de servicios",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1731,7 +1731,7 @@
             "campos": {
                 "codigo": 720539,
                 "nombre": "Vacaciones",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1745,7 +1745,7 @@
             "campos": {
                 "codigo": 720545,
                 "nombre": "Auxilios",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1759,7 +1759,7 @@
             "campos": {
                 "codigo": 720548,
                 "nombre": "Bonificaciones",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1773,7 +1773,7 @@
             "campos": {
                 "codigo": 720551,
                 "nombre": "Dotación y suministro a trabajadores",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1787,7 +1787,7 @@
             "campos": {
                 "codigo": 720554,
                 "nombre": "Seguros",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1801,7 +1801,7 @@
             "campos": {
                 "codigo": 720560,
                 "nombre": "Indemnizaciones laborales",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1815,7 +1815,7 @@
             "campos": {
                 "codigo": 720566,
                 "nombre": "Gastos deportivos y de recreación",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1829,7 +1829,7 @@
             "campos": {
                 "codigo": 720568,
                 "nombre": "Aportes a administradoras de riesgos profesionales, ARP",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1843,7 +1843,7 @@
             "campos": {
                 "codigo": 720569,
                 "nombre": "Aportes a entidades promotoras de salud, EPS",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1857,7 +1857,7 @@
             "campos": {
                 "codigo": 720570,
                 "nombre": "Aportes a fondos de pensiones y/o cesantías",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1871,7 +1871,7 @@
             "campos": {
                 "codigo": 720572,
                 "nombre": "Aportes cajas de compensación familiar",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1885,7 +1885,7 @@
             "campos": {
                 "codigo": 720575,
                 "nombre": "Aportes ICBF",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1899,7 +1899,7 @@
             "campos": {
                 "codigo": 720578,
                 "nombre": "SENA",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1913,7 +1913,7 @@
             "campos": {
                 "codigo": 720584,
                 "nombre": "Gastos médicos y drogas",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
@@ -1927,7 +1927,7 @@
             "campos": {
                 "codigo": 720595,
                 "nombre": "Otros",
-                "cuenta_clase": 5,
+                "cuenta_clase": 7,
                 "cuenta_grupo": 72,
                 "cuenta_cuenta": 7205,
                 "exige_base": false,
