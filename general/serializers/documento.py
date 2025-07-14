@@ -242,6 +242,7 @@ class GenDocumentoListaNominaSerializador(serializers.ModelSerializer):
                   'documento_tipo__nombre',
                   'numero', 
                   'fecha',
+                  'fecha_desde',
                   'fecha_hasta',                  
                   'contacto_id',
                   'contacto__numero_identificacion',
@@ -397,7 +398,6 @@ class GenDocumentoEventoCompraSerializador(serializers.ModelSerializer):
             'contacto__nombre_corto'
         ]
         select_related_fields = ['contacto']
-
 
 class GenDocumentoNominaSerializador(serializers.ModelSerializer):    
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
