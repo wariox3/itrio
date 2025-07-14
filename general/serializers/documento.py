@@ -179,7 +179,37 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_codigo': cuenta_codigo,
             'cuenta_nombre': cuenta_nombre
         }
+
+class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):  
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)  
     
+    class Meta:
+        model = GenDocumento
+        fields = ['id', 
+                  'documento_tipo__nombre',
+                  'numero', 
+                  'fecha',
+                  'soporte',
+                  'contacto_id',                  
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',                                     
+                  'devengado',
+                  'deduccion',
+                  'base_cotizacion',
+                  'base_prestacion',
+                  'subtotal',
+                  'impuesto',
+                  'total',
+                  'cue',
+                  'estado_aprobado',
+                  'estado_anulado',
+                  'estado_electronico',
+                  'estado_electronico_evento',
+                  'estado_contabilizado']
+        select_related_fields = ['contacto','documento_tipo']
+
 class GenDocumentoListaSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
@@ -410,7 +440,6 @@ class GenDocumentoNominaSerializador(serializers.ModelSerializer):
             'estado_anulado', 'estado_electronico', 'estado_contabilizado', 'cue'
         ]
         select_related_fields = ['contacto']
-
 
 class GenDocumentoNominaExcelSerializador(serializers.ModelSerializer):    
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)

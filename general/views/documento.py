@@ -24,7 +24,7 @@ from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoListaVentaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador, GenDocumentoReferenciaSerializador, GenDocumentoEventoCompraSerializador, GenDocumentoNominaSerializador, GenDocumentoNominaExcelSerializador, GenDocumentoNominaElectronicaExcelSerializador
+from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoListaVentaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador, GenDocumentoReferenciaSerializador, GenDocumentoEventoCompraSerializador, GenDocumentoNominaSerializador, GenDocumentoNominaExcelSerializador, GenDocumentoNominaElectronicaExcelSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
@@ -83,6 +83,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         'lista': GenDocumentoListaSerializador,
         'lista_nomina': GenDocumentoListaNominaSerializador,
         'lista_venta': GenDocumentoListaVentaSerializador,
+        'detalle_nomina': GenDocumentoDetalleNominaSerializador,
         'informe': GenDocumentoInformeSerializador,
         'informe_cuenta_cobrar': GenDocumentoInformeCuentaCobrarSerializador,
         'informe_cuenta_pagar': GenDocumentoInformeCuentaCobrarSerializador,
@@ -323,6 +324,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)    
 
     def retrieve(self, request, pk=None):
+        serializador_parametro = self.request.query_params.get('serializador', None)    
+        # Si hay un parámetro serializador, usar el comportamiento estándar del ModelViewSet
+        if serializador_parametro is not None:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        
         queryset = GenDocumento.objects.all()
         documento = get_object_or_404(queryset, pk=pk)
         documentoSerializador = GenDocumentoRetrieveSerializador(documento)
