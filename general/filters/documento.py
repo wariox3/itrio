@@ -29,6 +29,7 @@ class DocumentoFilter(django_filters.FilterSet):
                   'documento_tipo__pagar' : ['exact'],
                   'documento_tipo__venta' : ['exact'],
                   'documento_tipo__documento_clase__grupo' : ['exact'],
+                  'documento_referencia_id' : ['exact'],
                   'contacto_id' : ['exact'],
                   'numero': ['exact', 'icontains'],                   
                   'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'], 
