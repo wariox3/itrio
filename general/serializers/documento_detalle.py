@@ -45,6 +45,7 @@ class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
             'documento', 
             'documento__documento_tipo__nombre', 
             'documento__fecha', 
+            'documento__fecha_desde',
             'documento__fecha_hasta',
             'documento__numero', 
             'documento__contacto',
