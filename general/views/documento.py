@@ -1764,8 +1764,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     def importar(self, request):
         raw = request.data        
         archivo_base64 = raw.get('archivo_base64')   
-        documento_clase_id = raw.get('documento_tipo_id')     
-        if archivo_base64 and documento_clase_id:
+        documento_tipo_id = raw.get('documento_tipo_id')     
+        if archivo_base64 and documento_tipo_id:
             try:
                 archivo_data = base64.b64decode(archivo_base64)
                 archivo = BytesIO(archivo_data)
@@ -1777,15 +1777,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             data_modelo = []
             errores = False
             errores_datos = []
-            documento_tipo_id = None
-            if documento_clase_id == 201:
-                documento_tipo_id = 18
-            if documento_clase_id == 401:
-                documento_tipo_id = 19
             registros_importados = 0            
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):     
                 pendiente = 0
-                if documento_clase_id in (201,401):
+                if documento_tipo_id in (18,19):
                     pendiente = row[4]
                 fecha = row[1].date()
                 fecha_vence = row[2].date()
