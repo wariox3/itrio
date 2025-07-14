@@ -361,9 +361,29 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, methods=["get"], url_path=r'detalle',)
-    def detalle_action(self, request):
-        pass
+    @action(detail=True, methods=["get"], url_path=r'detalle',)
+    def detalle_action(self, request, pk=None):
+        queryset = GenDocumento.objects.all()
+        documento = get_object_or_404(queryset, pk=pk)
+        documentoSerializador = GenDocumentoRetrieveSerializador(documento)
+        documentoDetalles = GenDocumentoDetalle.objects.filter(documento=pk).order_by('id')
+        documentoDetallesSerializador = GenDocumentoDetalleSerializador(documentoDetalles, many=True)
+        detalles = documentoDetallesSerializador.data
+        
+        for detalle in detalles:
+            documentoImpuestos = GenDocumentoImpuesto.objects.filter(documento_detalle=detalle['id'])
+            documentoImpuestosSerializador = GenDocumentoImpuestoSerializador(documentoImpuestos, many=True)
+            detalle['impuestos'] = documentoImpuestosSerializador.data
+        
+        documentoRespuesta = documentoSerializador.data
+        documentoRespuesta['detalles'] = detalles
+        
+        documentoPagos = GenDocumentoPago.objects.filter(documento=pk)
+        documentoPagosSerializador = GenDocumentoPagoSerializador(documentoPagos, many=True)
+        pagos = documentoPagosSerializador.data
+        documentoRespuesta['pagos'] = pagos        
+        
+        return Response({'documento': documentoRespuesta}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'nuevo',)
     def nuevo_action(self, request):
