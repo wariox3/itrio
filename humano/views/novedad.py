@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from humano.models.novedad import HumNovedad
 from general.models.configuracion import GenConfiguracion
-from humano.serializers.novedad import HumNovedadSerializador
+from humano.serializers.novedad import HumNovedadSerializador, HumNovedadSeleccionarSerializador
 from datetime import timedelta
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
@@ -42,6 +42,23 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             return exporter.exportar()
         return super().list(request, *args, **kwargs)   
 
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        contrato_id = request.query_params.get('contrato_id', None)
+        novedad_tipo_id = request.query_params.get('novedad_tipo_id', None)
+        queryset = self.get_queryset()
+        if contrato_id:
+            queryset = queryset.filter(contrato_id=contrato_id)
+        if novedad_tipo_id:
+            queryset = queryset.filter(novedad_tipo_id=novedad_tipo_id)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = HumNovedadSeleccionarSerializador(queryset, many=True)        
+        return Response(serializer.data)       
 
     def liquidar_novedad(self, novedad):
         configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte')[0]

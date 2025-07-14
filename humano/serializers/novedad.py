@@ -7,6 +7,11 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
     novedad_tipo = serializers.PrimaryKeyRelatedField(queryset=HumNovedadTipo.objects.all())
     novedad_referencia = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), required=False, allow_null=True)
+
+class HumNovedadSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumNovedad
+        fields = ['id']
     
     class Meta:
         model = HumNovedad
