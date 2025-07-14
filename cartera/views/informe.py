@@ -13,11 +13,21 @@ from django.db.models.functions import Coalesce
 from decimal import Decimal
 
 class InformeView(APIView):
-    permission_classes = (IsAuthenticated,)
-    
-    def obtener_pendiente_corte(self, fecha_hasta, filtros, cantidad_limite, desplazar, limite):
+    permission_classes = (IsAuthenticated,)        
+
+    def get(self, request):    
+        
+        cantidad_limite = request.query_params.get('cantidad_limite', 30000)
+        desplazar = request.query_params.get('desplazar', 0)
+        limite = request.query_params.get('limite', 50)
+        excel = request.query_params.get('excel', False)                
+        fecha_hasta = request.query_params.get('fecha')
+        if not fecha_hasta:
+            return Response({"mensaje": "El parámetro fecha es obligatorio."},status=status.HTTP_400_BAD_REQUEST)
+
         documentos = GenDocumento.objects.filter(            
             documento_tipo__cobrar=True,
+            estado_aprobado=True,
             fecha__lte=fecha_hasta
             ).annotate(                
                 abono=Coalesce(Sum(
@@ -35,34 +45,11 @@ class InformeView(APIView):
                 saldo__gt=0
             ).values('id', 'numero', 'fecha', 'fecha_vence', 'documento_tipo_id', 'subtotal', 'impuesto', 'total', 
                      'documento_tipo_nombre', 'contacto_numero_identificacion', 'contacto_nombre_corto',
-                     'abono', 'saldo')
-        if filtros:
-            for filtro in filtros:                    
-                if filtro['propiedad'] != 'fecha':
-                    operador = filtro.get('operador', None)                
-                    if operador:                        
-                        if operador == 'range':
-                            documentos = documentos.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
-                        else:
-                            documentos = documentos.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
-                    else:
-                        documentos = documentos.filter(**{filtro['propiedad']: filtro['valor1']})   
+                     'abono', 'saldo')   
         cantidad_documentos = documentos[:cantidad_limite].count()                                 
         documentos = documentos[desplazar:limite+desplazar]
-        return {'registros': list(documentos), "cantidad_registros": cantidad_documentos}
 
-    def get(self, request):    
-        filtros = request.query_params.getlist('filtros')
-        cantidad_limite = request.query_params.get('cantidad_limite', 30000)
-        desplazar = request.query_params.get('desplazar', 0)
-        limite = request.query_params.get('limite', 50)
-        excel = request.query_params.get('excel', False)
-        pdf = request.query_params.get('pdf', False)   
-        fecha_hasta = request.query_params.get('fecha')
-        if not fecha_hasta:
-            return Response({"mensaje": "El parámetro fecha es obligatorio."},status=status.HTTP_400_BAD_REQUEST)
-
-        resultados = self.obtener_pendiente_corte(fecha_hasta, filtros, cantidad_limite, desplazar, limite)
+        resultados = list(documentos)
         if excel:
             wb = Workbook()
             ws = wb.active
@@ -93,4 +80,4 @@ class InformeView(APIView):
             wb.save(response)
             return response
         else:
-            return Response(resultados, status=status.HTTP_200_OK) 
+            return Response({'registros': resultados, "cantidad_registros": cantidad_documentos}, status=status.HTTP_200_OK) 

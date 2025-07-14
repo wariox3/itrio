@@ -3215,8 +3215,4 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 return {'error':True, 'mensaje':f"El contacto no tiene un banco asignado", 'codigo':1}                
         else:
             return {'error':True, 'mensaje':f"El documento no tiene contacto", 'codigo':1}            
-        
-                    
-        
-             
-
+            
