@@ -62,6 +62,7 @@ class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
             'pago_operado', 
             'devengado',
             'deduccion', 
+            'total',
             'base_cotizacion', 
             'base_prestacion', 
             'base_impuesto'

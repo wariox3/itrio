@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from datetime import datetime
 import re
 import math
+from decimal import Decimal
+
 def convertir_a_letras(numero):
     if numero == 0:
         return "Cero pesos"
@@ -30,6 +32,7 @@ def generar_qr(data):
     return d
 
 class Utilidades:
+
     @staticmethod
     def rellenar(cadena, largo, caracter, direccion = "I"):
         if cadena is None:
@@ -144,3 +147,19 @@ class Utilidades:
             return int(format(float(valor), ".0f"))
         except (ValueError, TypeError):
             return 0 
+        
+
+class UtilidadGeneral:
+
+    @staticmethod
+    def transformar_decimal(obj):
+        if isinstance(obj, dict):            
+            return {key: UtilidadGeneral.transformar_decimal(value) 
+                for key, value in obj.items()}
+        elif isinstance(obj, (list, tuple)):            
+            return type(obj)(UtilidadGeneral.transformar_decimal(item) 
+                for item in obj)
+        elif isinstance(obj, Decimal):
+            return str(obj)
+        else:            
+            return obj            
