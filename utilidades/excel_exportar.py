@@ -40,9 +40,6 @@ class ExcelExportar:
         'estado_electronico_notificado': 'Electronico notificado'
     }
 			
-
-
-
     def __init__(self, data, nombre_hoja="documentos", nombre_archivo="documentos.xlsx", titulo='Documentos'):
         self.data = data
         self.nombre_hoja = nombre_hoja
@@ -141,6 +138,8 @@ class ExcelExportar:
                 for cell in ws[ws.max_row]:
                     if isinstance(cell.value, (float, Decimal)):
                         cell.number_format = estilo_decimal
+                    if isinstance(cell.value, bool):
+                        cell.value = "SI" if cell.value else "NO"                        
                     cell.font = estilo
 
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
