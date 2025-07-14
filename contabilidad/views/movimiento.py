@@ -184,6 +184,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 1=1 
                 {filtro_cuenta}
                 {filtro_cuenta_con_movimiento}
+                {parametro_cierre}
             GROUP BY
                 c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
