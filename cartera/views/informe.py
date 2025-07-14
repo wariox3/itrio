@@ -38,13 +38,13 @@ class InformeView(APIView):
                     'documentos_detalles_documento_afectado_rel__precio',
                     filter=Q(documentos_detalles_documento_afectado_rel__documento__fecha__lte=fecha_hasta)
                 ), Decimal(0)),
-                documento_tipo_nombre=F('documento_tipo__nombre'),
-                contacto_numero_identificacion=F('contacto__numero_identificacion'),
-                contacto_nombre_corto=F('contacto__nombre_corto')
+                documento_tipo__nombre=F('documento_tipo__nombre'),
+                contacto__numero_identificacion=F('contacto__numero_identificacion'),
+                contacto__nombre_corto=F('contacto__nombre_corto')
             ).filter(
                 saldo__gt=0
             ).values('id', 'numero', 'fecha', 'fecha_vence', 'documento_tipo_id', 'subtotal', 'impuesto', 'total', 
-                     'documento_tipo_nombre', 'contacto_numero_identificacion', 'contacto_nombre_corto',
+                     'documento_tipo__nombre', 'contacto__numero_identificacion', 'contacto__nombre_corto',
                      'abono', 'saldo')   
         cantidad_documentos = documentos[:cantidad_limite].count()                                 
         documentos = documentos[desplazar:limite+desplazar]
