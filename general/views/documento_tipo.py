@@ -15,7 +15,9 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = DocumentoTipoFilter 
-    serializadores = {'autocompletar': GenDocumentoTipoAutocompletarSerializador, 'seleccionar': GenDocumentoTipoSeleccionarSerializador}
+    serializadores = {
+        'autocompletar': GenDocumentoTipoAutocompletarSerializador, 
+        'seleccionar': GenDocumentoTipoSeleccionarSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -42,11 +44,14 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
         limit = request.query_params.get('limit', 10)
         nombre = request.query_params.get('nombre__icontains', None)
         contabilidad = request.query_params.get('contabilidad', None)
+        documento_clase_id = request.query_params.get('documento_clase_id', None)
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
         if contabilidad:
             queryset = queryset.filter(contabilidad=contabilidad)
+        if documento_clase_id:
+            queryset = queryset.filter(documento_clase_id=documento_clase_id)            
         try:
             limit = int(limit)
             queryset = queryset[:limit]
