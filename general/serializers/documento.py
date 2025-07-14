@@ -187,27 +187,30 @@ class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
     
     class Meta:
         model = GenDocumento
-        fields = ['id', 
-                  'documento_tipo__nombre',
-                  'numero', 
-                  'fecha',
-                  'soporte',
-                  'contacto_id',                  
-                  'contacto__numero_identificacion',
-                  'contacto__nombre_corto',                                     
-                  'devengado',
-                  'deduccion',
-                  'base_cotizacion',
-                  'base_prestacion',
-                  'subtotal',
-                  'impuesto',
-                  'total',
-                  'cue',
-                  'estado_aprobado',
-                  'estado_anulado',
-                  'estado_electronico',
-                  'estado_electronico_evento',
-                  'estado_contabilizado']
+        fields = [
+                    'id', 
+                    'documento_tipo__nombre',
+                    'numero', 
+                    'fecha',
+                    'soporte',
+                    'contacto_id',                  
+                    'contacto__numero_identificacion',
+                    'contacto__nombre_corto',                                     
+                    'devengado',
+                    'deduccion',
+                    'base_cotizacion',
+                    'base_prestacion',
+                    'subtotal',
+                    'impuesto',
+                    'total',
+                    'cue',
+                    'estado_aprobado',
+                    'estado_anulado',
+                    'estado_electronico_enviado',
+                    'estado_electronico',
+                    'estado_electronico_evento',
+                    'estado_contabilizado'
+                ]
         select_related_fields = ['contacto','documento_tipo']
 
 class GenDocumentoListaSerializador(serializers.ModelSerializer):  

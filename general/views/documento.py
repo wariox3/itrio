@@ -361,8 +361,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=False, methods=["get"], url_path=r'detalle',)
+    def detalle_action(self, request):
+        pass
+
     @action(detail=False, methods=["post"], url_path=r'nuevo',)
-    def nuevo(self, request):
+    def nuevo_action(self, request):
         raw = request.data
         documentoSerializador = GenDocumentoSerializador(data=raw)
         if documentoSerializador.is_valid():  
@@ -426,7 +430,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'actualizar',)
-    def actualizar(self, request):
+    def actualizar_action(self, request):
         raw = request.data        
         pk = raw.get('id')
         saltar_aprobado = raw.get('saltar_aprobado', False)
@@ -529,7 +533,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
         
     @action(detail=False, methods=["post"], url_path=r'eliminar',)
-    def eliminar(self, request):
+    def eliminar_action(self, request):
         try:
             raw = request.data
             documentos = raw.get('documentos')
@@ -556,7 +560,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'El documento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'aprobar',)
-    def aprobar(self, request):        
+    def aprobar_action(self, request):        
         raw = request.data
         id = raw.get('id')
         if id:
@@ -641,7 +645,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'desaprobar',)
-    def desaprobar(self, request):        
+    def desaprobar_action(self, request):        
         raw = request.data
         id = raw.get('id')
         if id:
@@ -696,7 +700,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'contabilizar',)
-    def contabilizar(self, request):        
+    def contabilizar_action(self, request):        
         raw = request.data
         ids = raw.get('ids')
         if ids:
