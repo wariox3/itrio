@@ -15,16 +15,22 @@ class LiquidacionServicio():
         fecha_hasta = liquidacion.contrato.fecha_hasta
         fecha_ultimo_pago_cesantia = fecha_desde
         fecha_ultimo_pago_prima = fecha_desde
-        fecha_ultimo_pago_vacacion = fecha_desde        
+        fecha_ultimo_pago_vacacion = fecha_desde   
+        fecha_ultimo_pago_cesantia_crudo = fecha_desde
+        fecha_ultimo_pago_prima_crudo = fecha_desde
+        fecha_ultimo_pago_vacacion_crudo = fecha_desde              
         # si ya se liquidaron primas o cesantias debemos sumar un dia, garantizar desde la programacion
         # que la fecha del ultimo pago sea fecha_hasta_periodo para tener el cuenta el 31 y al sumar
         # un dia nos de el mes siguiente
         if liquidacion.contrato.fecha_ultimo_pago_cesantia:
             fecha_ultimo_pago_cesantia = liquidacion.contrato.fecha_ultimo_pago_cesantia + timedelta(days=1)
+            fecha_ultimo_pago_cesantia_crudo = liquidacion.contrato.fecha_ultimo_pago_cesantia
         if liquidacion.contrato.fecha_ultimo_pago_prima:
             fecha_ultimo_pago_prima = liquidacion.contrato.fecha_ultimo_pago_prima + timedelta(days=1)
+            fecha_ultimo_pago_prima_crudo = liquidacion.contrato.fecha_ultimo_pago_prima
         if liquidacion.contrato.fecha_ultimo_pago_vacacion:
             fecha_ultimo_pago_vacacion = liquidacion.contrato.fecha_ultimo_pago_vacacion + timedelta(days=1)
+            fecha_ultimo_pago_vacacion_crudo = liquidacion.contrato.fecha_ultimo_pago_vacacion
 
         dias = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
         dias_cesantia = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
@@ -52,4 +58,8 @@ class LiquidacionServicio():
         liquidacion.vacacion = vacacion
         liquidacion.total = total
         liquidacion.salario = liquidacion.contrato.salario
+        liquidacion.fecha_ultimo_pago = liquidacion.contrato.fecha_ultimo_pago
+        liquidacion.fecha_ultimo_pago_prima = fecha_ultimo_pago_prima_crudo
+        liquidacion.fecha_ultimo_pago_cesantia = fecha_ultimo_pago_cesantia_crudo
+        liquidacion.fecha_ultimo_pago_vacacion = fecha_ultimo_pago_vacacion_crudo
         liquidacion.save()             

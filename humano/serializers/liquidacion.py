@@ -9,7 +9,8 @@ class HumLiquidacionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = HumLiquidacion
         fields = ['id', 'fecha', 'fecha_desde', 'fecha_hasta', 'contrato', 'dias', 'cesantia', 'interes', 'prima'
-                  ,'vacacion', 'deduccion', 'adicion', 'total', 'salario', 'estado_aprobado', 'estado_generado', 'comentario']        
+                  ,'vacacion', 'deduccion', 'adicion', 'total', 'salario', 'estado_aprobado', 'estado_generado', 'comentario',
+                  'fecha_ultimo_pago', 'fecha_ultimo_pago_prima', 'fecha_ultimo_pago_cesantia', 'fecha_ultimo_pago_vacacion']        
 
 class HumLiquidacionListaSerializador(serializers.HyperlinkedModelSerializer):      
     contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
@@ -50,7 +51,6 @@ class HumLiquidacionDetalleSerializador(serializers.HyperlinkedModelSerializer):
                   'contrato_id',                       
                   'fecha_desde',
                   'fecha_hasta',
-                  'total',
                   'dias',
                   'dias_cesantia',
                   'dias_prima',
@@ -61,6 +61,11 @@ class HumLiquidacionDetalleSerializador(serializers.HyperlinkedModelSerializer):
                   'vacacion',
                   'deduccion',
                   'adicion',
+                  'total',
+                  'fecha_ultimo_pago',
+                  'fecha_ultimo_pago_prima',
+                  'fecha_ultimo_pago_cesantia',
+                  'fecha_ultimo_pago_vacacion',
                   'estado_generado',
                   'estado_aprobado',
                   'comentario']      

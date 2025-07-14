@@ -3061,6 +3061,15 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                     detalle['Deducciones']['OtrasDeducciones'].append(documento_detalle['pago'])
 
                                         datos = transformar_decimal(datos)
+                                        '''if isinstance(datos, dict):
+                                            for key, value in datos.items():
+                                                datos[key] = transformar_decimal(value)
+                                        elif isinstance(datos, list):
+                                            for index, value in enumerate(datos):
+                                                datos[index] = transformar_decimal(value)
+                                        elif isinstance(datos, Decimal):
+                                            return str(datos)'''
+
                                         wolframio = Wolframio()
                                         respuesta = wolframio.emitir(datos)
                                         if respuesta['error'] == False: 
