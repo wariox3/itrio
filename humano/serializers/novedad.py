@@ -6,13 +6,7 @@ from humano.models.contrato import HumContrato
 class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
     contrato = serializers.PrimaryKeyRelatedField(queryset=HumContrato.objects.all())
     novedad_tipo = serializers.PrimaryKeyRelatedField(queryset=HumNovedadTipo.objects.all())
-    novedad_referencia = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), required=False, allow_null=True)
-
-class HumNovedadSeleccionarSerializador(serializers.ModelSerializer):
-    class Meta:
-        model = HumNovedad
-        fields = ['id']
-    
+    novedad_referencia = serializers.PrimaryKeyRelatedField(queryset=HumNovedad.objects.all(), required=False, allow_null=True)    
     class Meta:
         model = HumNovedad
         fields = ['id', 'fecha_desde', 'fecha_hasta', 'fecha_desde_periodo', 'fecha_hasta_periodo', 'fecha_desde_empresa', 'fecha_hasta_empresa',
@@ -86,3 +80,8 @@ class HumNovedadSeleccionarSerializador(serializers.ModelSerializer):
             'novedad_referencia_id' : instance.novedad_referencia_id,
             'prroroga' : instance.prorroga
         }         
+    
+class HumNovedadSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = HumNovedad
+        fields = ['id']
