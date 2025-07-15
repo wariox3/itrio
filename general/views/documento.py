@@ -1585,8 +1585,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         formatoFactura = FormatoFactura()
                         pdf = formatoFactura.generar_pdf(documento_id)   
                         pdf_base64 = "data:application/pdf;base64," + base64.b64encode(pdf).decode('utf-8')                                                    
+                        correo = documento.contacto.correo_facturacion_electronica if documento.contacto.correo_facturacion_electronica else documento.contacto.correo
                         wolframio = Wolframio()
-                        respuesta = wolframio.renotificar(documento.electronico_id, documento.contacto.correo, pdf_base64)
+                        respuesta = wolframio.renotificar(documento.electronico_id, correo, pdf_base64)
                         if respuesta['error'] == False: 
                             return Response({'mensaje': 'Documento re-notificado con éxito'}, status=status.HTTP_200_OK)           
                         else:
