@@ -16,6 +16,8 @@ from utilidades.excel_exportar import ExcelExportar
 from servicios.humano.liquidacion import LiquidacionServicio
 from servicios.humano.concepto import ConceptoServicio
 from django.db import transaction
+from django.http import HttpResponse
+from general.formatos.liquidacion import FormatoLiquidacion
 
 class HumLiquidacionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -254,3 +256,22 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La liquidacion ya esta aprobada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+        
+    @action(detail=False, methods=["post"], url_path=r'imprimir',)
+    def imprimir(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                pdf = None
+                formato = FormatoLiquidacion()
+                pdf = formato.generar_pdf(id)   
+                if pdf:
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                    response['Content-Disposition'] = f'attachment; filename="{'Liquidación.pdf'}"'
+                    return response
+            except HumLiquidacion.DoesNotExist:
+                return Response({'mensaje':'La liquidación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
