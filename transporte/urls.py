@@ -4,6 +4,7 @@ from .views.vehiculo import VehiculoViewSet
 from .views.conductor import ConductorViewSet
 from .views.color import ColorViewSet
 from .views.marca import MarcaViewSet
+from .views.linea import LineaViewSet
 
 from rest_framework import routers
 
@@ -13,6 +14,7 @@ router.register(r'vehiculo', VehiculoViewSet)
 router.register(r'conductor', ConductorViewSet)
 router.register(r'color', ColorViewSet)
 router.register(r'marca', MarcaViewSet)
+router.register(r'linea', LineaViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
