@@ -94,7 +94,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
 
 class GenContactoListaSerializador(serializers.ModelSerializer):      
     identificacion__abreviatura = serializers.CharField(source='identificacion.abreviatura', read_only=True)
-    
+    ciudad__nombre = serializers.CharField(source='ciudad.nombre', read_only=True)
     class Meta:
         model = GenContacto
         fields = ['id', 
@@ -104,10 +104,12 @@ class GenContactoListaSerializador(serializers.ModelSerializer):
                   'correo',
                   'telefono',                                     
                   'celular',
+                  'direccion',
+                  'ciudad__nombre',
                   'cliente',
                   'proveedor',
                   'empleado']
-        select_related_fields = ['identificacion']
+        select_related_fields = ['identificacion', 'ciudad']
 
 class GenContactoSeleccionarSerializador(serializers.ModelSerializer):
     plazo_pago__dias = serializers.IntegerField(source='plazo_pago.dias', read_only=True)
