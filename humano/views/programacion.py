@@ -1107,7 +1107,26 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
             except GenDocumento.DoesNotExist:
                 return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], url_path=r'imprimir-nominas',)
+    def imprimir_nominas_action(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                formato = FormatoNomina()
+                pdf = formato.generar_pdf(None, id)              
+                nombre_archivo = f"programacion_nominas_{id}.pdf"       
+                
+                response = HttpResponse(pdf, content_type='application/pdf')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                return response
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)          
 
     @action(detail=False, methods=["post"], url_path=r'notificar',)
     def notificar(self, request):

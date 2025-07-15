@@ -9,13 +9,40 @@ class FormatoNomina():
     def __init__(self):
         self.encabezado = FormatoEncabezado()
 
-    def generar_pdf(self, id):  
+    def generar_pdf(self, id=None, programacion_id=None):  
         buffer = BytesIO()   
         p = canvas.Canvas(buffer, pagesize=letter)  
         p.setTitle("nomina")              
+        if id:
+            documentos_ids = GenDocumento.objects.filter(id=id).values_list('id', flat=True)
+        if programacion_id:
+            documentos_ids = GenDocumento.objects.filter(programacion_detalle__programacion_id=programacion_id).values_list('id', flat=True)
+
+        for documentos_id in documentos_ids:
+            documento = GenDocumento.objects.filter(pk=documentos_id).values(
+                'id', 'numero', 'deduccion', 'devengado', 'total', 'fecha', 'fecha_hasta', 'salario',
+                'contacto__nombre_corto',
+                'contacto__numero_identificacion',
+                'contacto__numero_cuenta',
+                'contacto__banco__nombre',                        
+                'contrato__cargo__nombre', 
+                'contrato__grupo__nombre',
+                'periodo__nombre' 
+                ).first()
+            documento['detalles'] = GenDocumentoDetalle.objects.filter(documento_id=documentos_id).values(
+                    'concepto_id', 'concepto__nombre', 'detalle', 'cantidad', 'dias', 'porcentaje', 'devengado', 'deduccion')            
+            self.generar_pagina_nomina(p, documento)
+            p.showPage()
+
+        p.save()
+        pdf_bytes = buffer.getvalue()
+        buffer.close()
+        return pdf_bytes
+
+    def generar_pagina_nomina(self, p, documento):    
         self.encabezado.generar_pdf(p, "COMPROBANTE DE PAGO NÓMINA")
         p.setFont("Helvetica", 10)        
-        documento = GenDocumento.objects.filter(pk=id).values(
+        '''documento = GenDocumento.objects.filter(pk=id).values(
             'numero', 'deduccion', 'devengado', 'total', 'fecha', 'fecha_hasta', 
             'contacto__nombre_corto',
             'contacto__numero_identificacion',
@@ -27,7 +54,7 @@ class FormatoNomina():
             'contrato__grupo__nombre'
             ).first()        
         documento_detalles = GenDocumentoDetalle.objects.filter(documento_id = id).values(
-            'concepto_id', 'concepto__nombre', 'detalle', 'cantidad', 'dias', 'porcentaje', 'devengado', 'deduccion')
+            'concepto_id', 'concepto__nombre', 'detalle', 'cantidad', 'dias', 'porcentaje', 'devengado', 'deduccion')'''
 
         x = 40
         y = 680
@@ -85,7 +112,7 @@ class FormatoNomina():
         y -= alto_fila
 
         p.setFont("Helvetica", 8)
-        for documento_detalle in documento_detalles:      
+        for documento_detalle in documento['detalles']:      
             y_texto = y + 5
             p.drawString(x + sum(ancho_columna[:0]) + margen, y_texto, str(documento_detalle['concepto_id']))
             p.drawString(x + sum(ancho_columna[:1]) + margen, y_texto, str(documento_detalle['concepto__nombre']))
@@ -108,8 +135,4 @@ class FormatoNomina():
         p.drawRightString(570, y - alto_fila * 2, f"{documento['deduccion']:,.0f}")        
         p.drawRightString(570, y - alto_fila * 3, f"{documento['total']:,.0f}")        
         y -= alto_fila * 3
-
-        p.save()
-        pdf_bytes = buffer.getvalue()
-        buffer.close()
-        return pdf_bytes
+    
