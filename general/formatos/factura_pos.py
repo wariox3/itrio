@@ -161,7 +161,12 @@ class FormatoFacturaPOS():
         p.drawString(centro_pagina - (ancho_texto/2), y, nit_texto)
         y -= 4 * mm
 
-        y = self.dibujar_texto_centrado(p, direccion, centro_pagina, y, tamano=7)
+        direccion = f"{doc.empresa.direccion or ''}"
+        if doc.empresa.ciudad:
+            direccion += f" - {doc.empresa.ciudad.nombre.upper()}"
+
+        ancho_texto = p.stringWidth(direccion, "Courier", 7)
+        p.drawString(centro_pagina - (ancho_texto/2), y, direccion)
         y -= 4 * mm
         
         tel_texto = f"Tel: {doc.empresa.telefono}"

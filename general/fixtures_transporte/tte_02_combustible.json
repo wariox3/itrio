@@ -8,28 +8,28 @@
       "pk": 1,
       "campos": {
         "codigo": "1",
-        "nombre": "DIESEL"
+        "nombre": "Diesel"
       }
     },
     {
       "pk": 2,
       "campos": {
         "codigo": "2",
-        "nombre": "GASOLINA"
+        "nombre": "Gasolina"
       }
     },
     {
       "pk": 3,
       "campos": {
         "codigo": "3",
-        "nombre": "GAS"
+        "nombre": "Gas"
       }
     },
     {
       "pk": 4,
       "campos": {
         "codigo": "4",
-        "nombre": "GAS - GASOLINA"
+        "nombre": "Gas - gasolina"
       }
     }
   ]

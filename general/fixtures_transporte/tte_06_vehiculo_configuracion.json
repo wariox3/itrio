@@ -1,0 +1,309 @@
+{
+    "aplicacion": "transporte",
+    "modelo": "TteVehiculoConfiguracion",
+    "modelo_nativo": "tte_vehiculo_configuracion",
+    "actualizar_secuencia": true,
+    "datos": [
+        {
+            "pk": 1,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 9 ejes",
+                "codigo": "28"
+            }
+        },
+        {
+            "pk": 2,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 8 ejes",
+                "codigo": "27"
+            }
+        },
+        {
+            "pk": 3,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 7 ejes",
+                "codigo": "26"
+            }
+        },
+        {
+            "pk": 4,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 6 ejes",
+                "codigo": "25"
+            }
+        },
+        {
+            "pk": 5,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 5 ejes",
+                "codigo": "24"
+            }
+        },
+        {
+            "pk": 6,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 4 ejes",
+                "codigo": "23"
+            }
+        },
+        {
+            "pk": 7,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 3 ejes",
+                "codigo": "22"
+            }
+        },
+        {
+            "pk": 8,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 2 ejes",
+                "codigo": "21"
+            }
+        },
+        {
+            "pk": 9,
+            "campos": {
+                "nombre": "SemiRemolque Modular de 1 eje",
+                "codigo": "20"
+            }
+        },
+        {
+            "pk": 10,
+            "campos": {
+                "nombre": "Remolque Modular de 9 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 11,
+            "campos": {
+                "nombre": "Remolque Modular de 8 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 12,
+            "campos": {
+                "nombre": "Remolque Modular de 7 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 13,
+            "campos": {
+                "nombre": "Remolque Modular de 6 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 14,
+            "campos": {
+                "nombre": "Remolque Modular de 5 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 15,
+            "campos": {
+                "nombre": "Remolque Modular de 4 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 16,
+            "campos": {
+                "nombre": "Remolque Modular de 3 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 17,
+            "campos": {
+                "nombre": "Remolque Modular de 2 ejes",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 18,
+            "campos": {
+                "nombre": "Remolque Modular de 1 eje",
+                "codigo": "10"
+            }
+        },
+        {
+            "pk": 19,
+            "campos": {
+                "nombre": "Volqueta de 4 ejes",
+                "codigo": "47"
+            }
+        },
+        {
+            "pk": 20,
+            "campos": {
+                "nombre": "Volqueta de 3 ejes",
+                "codigo": "49"
+            }
+        },
+        {
+            "pk": 21,
+            "campos": {
+                "nombre": "Volqueta de 2 ejes",
+                "codigo": "48"
+            }
+        },
+        {
+            "pk": 22,
+            "campos": {
+                "nombre": "Camioneta de 2 ejes",
+                "codigo": "45"
+            }
+        },
+        {
+            "pk": 23,
+            "campos": {
+                "nombre": "Motocarro de 2 ejes",
+                "codigo": "40"
+            }
+        },
+        {
+            "pk": 24,
+            "campos": {
+                "nombre": "Remolque Balanceado de más de 4 ejes",
+                "codigo": "85"
+            }
+        },
+        {
+            "pk": 25,
+            "campos": {
+                "nombre": "Remolque Balanceado de 4 ejes",
+                "codigo": "84"
+            }
+        },
+        {
+            "pk": 26,
+            "campos": {
+                "nombre": "Remolque de más de 4 ejes",
+                "codigo": "74"
+            }
+        },
+        {
+            "pk": 27,
+            "campos": {
+                "nombre": "Tractocamión de 3 ejes",
+                "codigo": "54"
+            }
+        },
+        {
+            "pk": 28,
+            "campos": {
+                "nombre": "Tractocamión de 2 ejes",
+                "codigo": "53"
+            }
+        },
+        {
+            "pk": 29,
+            "campos": {
+                "nombre": "Camión Rígido de más de 4 ejes",
+                "codigo": "56"
+            }
+        },
+        {
+            "pk": 30,
+            "campos": {
+                "nombre": "Tractocamión de más de 3 ejes",
+                "codigo": "55"
+            }
+        },
+        {
+            "pk": 31,
+            "campos": {
+                "nombre": "Semiremolque de más de 3 ejes",
+                "codigo": "64"
+            }
+        },
+        {
+            "pk": 32,
+            "campos": {
+                "nombre": "Remolque Balanceado de 3 ejes",
+                "codigo": "83"
+            }
+        },
+        {
+            "pk": 33,
+            "campos": {
+                "nombre": "Semiremolque de 3 ejes",
+                "codigo": "63"
+            }
+        },
+        {
+            "pk": 34,
+            "campos": {
+                "nombre": "Camión Rígido de 4 ejes",
+                "codigo": "52"
+            }
+        },
+        {
+            "pk": 35,
+            "campos": {
+                "nombre": "Remolque de 4 ejes",
+                "codigo": "73"
+            }
+        },
+        {
+            "pk": 36,
+            "campos": {
+                "nombre": "Remolque de 3 ejes",
+                "codigo": "72"
+            }
+        },
+        {
+            "pk": 37,
+            "campos": {
+                "nombre": "Remolque Balanceado de 2 ejes",
+                "codigo": "82"
+            }
+        },
+        {
+            "pk": 38,
+            "campos": {
+                "nombre": "Remolque Balanceado de 1 eje",
+                "codigo": "81"
+            }
+        },
+        {
+            "pk": 39,
+            "campos": {
+                "nombre": "Remolque de 2 ejes",
+                "codigo": "71"
+            }
+        },
+        {
+            "pk": 40,
+            "campos": {
+                "nombre": "Semiremolque de 2 ejes",
+                "codigo": "62"
+            }
+        },
+        {
+            "pk": 41,
+            "campos": {
+                "nombre": "Semiremolque de 1 eje",
+                "codigo": "61"
+            }
+        },
+        {
+            "pk": 42,
+            "campos": {
+                "nombre": "Camión Rígido de 3 ejes",
+                "codigo": "51"
+            }
+        },
+        {
+            "pk": 43,
+            "campos": {
+                "nombre": "Camión Rígido de 2 ejes",
+                "codigo": "50"
+            }
+        }
+    ]
+}
