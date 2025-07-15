@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from humano.models.novedad import HumNovedad
+from humano.models.contrato import HumContrato
 from general.models.configuracion import GenConfiguracion
 from humano.serializers.novedad import HumNovedadSerializador, HumNovedadSeleccionarSerializador
 from datetime import timedelta
@@ -40,25 +41,7 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(queryset, many=True)
             exporter = ExcelExportar(serializer.data, nombre_hoja="novedades", nombre_archivo="novedades.xlsx", titulo="Novedades")            
             return exporter.exportar()
-        return super().list(request, *args, **kwargs)   
-
-    @action(detail=False, methods=["get"], url_path=r'seleccionar')
-    def seleccionar_action(self, request):
-        limit = request.query_params.get('limit', 10)
-        contrato_id = request.query_params.get('contrato_id', None)
-        novedad_tipo_id = request.query_params.get('novedad_tipo_id', None)
-        queryset = self.get_queryset()
-        if contrato_id:
-            queryset = queryset.filter(contrato_id=contrato_id)
-        if novedad_tipo_id:
-            queryset = queryset.filter(novedad_tipo_id=novedad_tipo_id)
-        try:
-            limit = int(limit)
-            queryset = queryset[:limit]
-        except ValueError:
-            pass    
-        serializer = HumNovedadSeleccionarSerializador(queryset, many=True)        
-        return Response(serializer.data)       
+        return super().list(request, *args, **kwargs)          
 
     def liquidar_novedad(self, novedad):
         configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte')[0]
@@ -222,6 +205,54 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
         novedad.total = total
         novedad.save()
 
+    def validar_rango(self, instance=None):        
+        data = self.request.data
+        fecha_desde = data.get('fecha_desde')
+        fecha_hasta = data.get('fecha_hasta')        
+        if instance and not fecha_desde:
+            fecha_desde = instance.fecha_desde
+        if instance and not fecha_hasta:
+            fecha_hasta = instance.fecha_hasta
+
+        if fecha_desde and fecha_hasta and fecha_desde > fecha_hasta:
+            return False, "La fecha desde no puede ser mayor que la fecha hasta"
+
+        if instance:
+            contacto_id = instance.contrato.contacto_id
+        else:
+            contrato = HumContrato.objects.get(pk=data.get('contrato'))
+            if contrato:
+                contacto_id = contrato.contacto_id
+            else:
+                return False, "El contrato no existe o no tiene un contacto asociado"
+
+        queryset = HumNovedad.objects.filter(contrato__contacto_id=contacto_id)        
+        if instance:
+            queryset = queryset.exclude(pk=instance.pk)
+
+        overlapping = queryset.filter(
+            fecha_desde__lte=fecha_hasta,
+            fecha_hasta__gte=fecha_desde
+        ).exists()
+
+        if overlapping:
+            return False, "El rango de fechas se cruza con otra novedad existente para este empleado"
+        
+        return True, None
+
+    def create(self, request, *args, **kwargs):
+        valid, message = self.validar_rango()
+        if not valid:
+            return Response({"mensaje": message},status=status.HTTP_400_BAD_REQUEST)
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        valid, message = self.validar_rango(instance=instance)
+        if not valid:
+            return Response({"mensaje": message}, status=status.HTTP_400_BAD_REQUEST)
+        return super().update(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         novedad = serializer.save()
         self.liquidar_novedad(novedad)
@@ -229,6 +260,24 @@ class HumNovedadViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         novedad = serializer.save()
         self.liquidar_novedad(novedad)       
+
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        contrato_id = request.query_params.get('contrato_id', None)
+        novedad_tipo_id = request.query_params.get('novedad_tipo_id', None)
+        queryset = self.get_queryset()
+        if contrato_id:
+            queryset = queryset.filter(contrato_id=contrato_id)
+        if novedad_tipo_id:
+            queryset = queryset.filter(novedad_tipo_id=novedad_tipo_id)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = HumNovedadSeleccionarSerializador(queryset, many=True)        
+        return Response(serializer.data)
 
     @action(detail=False, methods=["post"], url_path=r'liquidar',)
     def liquidar(self, request):        
