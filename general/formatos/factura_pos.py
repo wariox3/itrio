@@ -108,32 +108,47 @@ class FormatoFacturaPOS():
         """Calcula la altura total necesaria para el PDF"""
         doc = data['documento']
         altura = 10 * mm
-        
+
+        # Encabezado y datos del cliente
         altura += 4 * 4 * mm
         altura += 6 * 4 * mm
+
+        # Espacio inicial para tabla de productos
         altura += 8 * mm 
+
+        # Detalles de productos
         for detalle in data['detalles']:
             item_paragraph = Paragraph(detalle.item.nombre, self.estilo_normal)
             item_paragraph.wrapOn(None, 40 * mm, 20 * mm)
             altura += max(item_paragraph.height, 7 * mm) + 1 * mm
-        
+
+        # Totales y resumen
         altura += 7 * 4 * mm
-        
         altura += 4 * mm
         altura += len(data['impuestos']) * 4 * mm 
-        
+
+        # Resolución
         if doc.resolucion:
             altura += 2 * 4 * mm
-        
+
+        # Datos electrónicos
         if doc.cue:
             cue_paragraph = Paragraph(f"Cufe: {doc.cue}", self.estilo_normal)
             cue_paragraph.wrapOn(None, 60 * mm, 20 * mm)
             altura += cue_paragraph.height + 12 * mm
-        
+            altura += 7 * mm  # Fecha aceptación DIAN
+            altura += 10 * mm
+
         if doc.qr:
-            altura += 24 * mm
-            
-        return altura + 10 * mm
+            altura += 20 * mm  # Código QR
+            altura += 8 * mm   # Textos proveedor
+            altura += 4 * mm   # Margen
+
+        # Si tiene al menos una de las 3: resolución, cue o qr → margen adicional
+        if doc.resolucion or doc.cue or doc.qr:
+            return altura + 20 * mm
+        else:
+            return altura - 10 * mm
 
     def dibujar_encabezado(self, p, data, ancho, y, margen):
         doc = data['documento']
@@ -174,7 +189,6 @@ class FormatoFacturaPOS():
         p.drawString(centro_pagina - (ancho_texto/2), y, tel_texto)
         
         return y - 5 * mm
-
 
     def dibujar_datos_cliente(self, p, data, y, margen):
         doc = data['documento']
