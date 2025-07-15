@@ -269,7 +269,7 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')
                     response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-                    response['Content-Disposition'] = f'attachment; filename="{'Liquidación.pdf'}"'
+                    response['Content-Disposition'] = f"attachment; filename='{'Liquidación.pdf'}'"
                     return response
             except HumLiquidacion.DoesNotExist:
                 return Response({'mensaje':'La liquidación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
