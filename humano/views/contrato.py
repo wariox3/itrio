@@ -18,8 +18,10 @@ from general.models.ciudad import GenCiudad
 from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador, HumContratoSeleccionarSerializador
 from humano.serializers.liquidacion import HumLiquidacionSerializador
 from servicios.humano.liquidacion import LiquidacionServicio
+from humano.formatos.certificado_laboral import FormatoCertificadoLaboral
 from django.db.models.deletion import ProtectedError
 from django.db import transaction
+from django.http import HttpResponse
 from humano.filters.contrato import ContratoFilter
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -413,4 +415,24 @@ class HumContratoViewSet(viewsets.ModelViewSet):
             except HumContrato.DoesNotExist:
                 return Response({'mensaje':'El contrato no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)      
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], url_path=r'imprimir-certificado-laboral',)
+    def imprimir_certificado_laboral_action(self, request): 
+        raw = request.data
+        id = raw.get('id') 
+        if id:
+            try:
+                contrato = HumContrato.objects.get(pk=id)
+                formato = FormatoCertificadoLaboral()
+                pdf = formato.generar_pdf(id)              
+                nombre_archivo = f"certificado_laboral.pdf" 
+                response = HttpResponse(pdf, content_type='application/pdf')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                return response   
+            except HumContrato.DoesNotExist:
+                return Response({'mensaje':'El contrato no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                      
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)       
+               
