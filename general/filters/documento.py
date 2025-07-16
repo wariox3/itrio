@@ -8,7 +8,7 @@ class DocumentoFilter(django_filters.FilterSet):
     documento_tipo__cobrar = django_filters.BooleanFilter(field_name='documento_tipo__cobrar')
     documento_tipo__pagar = django_filters.BooleanFilter(field_name='documento_tipo__pagar')
     documento_tipo__venta = django_filters.BooleanFilter(field_name='documento_tipo__venta')
-    documento_tipo__operacion = django_filters.BooleanFilter(field_name='documento_tipo__operacion')
+    documento_tipo__operacion = django_filters.NumberFilter(field_name='documento_tipo__operacion')
     documento_tipo__electronico = django_filters.BooleanFilter(field_name='documento_tipo__electronico')
     documento_tipo__documento_clase_id = django_filters.NumberFilter(field_name='documento_tipo__documento_clase_id')
     documento_tipo__documento_clase__grupo = django_filters.NumberFilter(field_name='documento_tipo__documento_clase__grupo')
