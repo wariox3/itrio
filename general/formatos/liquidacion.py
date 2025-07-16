@@ -20,7 +20,10 @@ class FormatoLiquidacion():
             'contrato__contacto',
             'contrato__contacto__ciudad' 
         ).filter(id=id).first()
-        estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8, leading=8)   
+        left_margin = 20
+        right_margin = 20
+        page_width = letter[0]
+        usable_width = page_width - left_margin - right_margin
 
         def dibujar_encabezado():
             region = config('DO_REGION')
@@ -37,7 +40,7 @@ class FormatoLiquidacion():
                 logo_url = imagen_defecto_url
                 logo = ImageReader(logo_url)
 
-            x = 24
+            x = 20
 
             y = 680
 
@@ -64,21 +67,25 @@ class FormatoLiquidacion():
             p.drawString(x + 75, 715, f"DIRECCIÓN: {direccion}")
             p.drawString(x + 75, 705, f"TEL: {empresa.telefono}" if empresa.telefono else "")
 
-            #empleado
-            empleado_identificacion = ""
+            liquidacion_comentario = str(liquidacion.comentario or "")
             liquidacion_dias = liquidacion.dias or 0
+
             if liquidacion.contrato:
-                    contrato_fecha_ingreso = liquidacion.contrato.fecha_desde or ""
-                    contrato_fecha_terminacion = liquidacion.contrato.fecha_hasta or ""
-                    contrato_ciudad = liquidacion.contrato.ciudad_contrato.nombre or ""
-                    contrato_salario = liquidacion.contrato.salario or 0
-                    if liquidacion.contrato.contacto:
-                        empleado_identificacion = liquidacion.contrato.contacto.numero_identificacion or ""
-                        empleado_nombre = liquidacion.contrato.contacto.nombre_corto or ""
-                        empleado_celular = liquidacion.contrato.contacto.celular or ""
-                        empleado_banco = liquidacion.contrato.contacto.banco.nombre or ""
-                        empleado_cuenta = liquidacion.contrato.contacto.numero_cuenta or ""
-                        empleado_correo = liquidacion.contrato.contacto.correo or ""
+                contrato = liquidacion.contrato
+                contrato_fecha_ingreso = str(contrato.fecha_desde or "")
+                contrato_fecha_terminacion = str(contrato.fecha_hasta or "")
+                contrato_ciudad = str(contrato.ciudad_contrato.nombre if contrato.ciudad_contrato else "")
+                contrato_salario = contrato.salario or 0
+                contrato_grupo = str(contrato.grupo.nombre if contrato.grupo else "")
+                
+                if contrato.contacto:
+                    contacto = contrato.contacto
+                    empleado_identificacion = str(contacto.numero_identificacion or "")
+                    empleado_nombre = str(contacto.nombre_corto or "")
+                    empleado_celular = str(contacto.celular or "")
+                    empleado_banco = str(contacto.banco.nombre if contacto.banco else "")
+                    empleado_cuenta = str(contacto.numero_cuenta or "")
+                    empleado_correo = str(contacto.correo or "")
 
             #Primer columna
             p.setFont("Helvetica-Bold", 8)
@@ -102,43 +109,72 @@ class FormatoLiquidacion():
             p.drawString(x + 80, 620, str(contrato_fecha_terminacion))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 610, "CELULAR: ")
+            p.drawString(x, 610, "CORREO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 80, 610, str(empleado_celular))
+            p.drawString(x + 80, 610, str(empleado_correo.upper()))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x, 600, "COMENTARIO: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(x + 80, 600, str(liquidacion_comentario.upper()))
+
 
             #Segunda columna
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 220, 650, "CIUDAD: ")
+            p.drawString(x + 280, 650, "CIUDAD: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 260, 650, str(contrato_ciudad.upper()))      
+            p.drawString(x + 330, 650, str(contrato_ciudad.upper()))      
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 220, 640, "BANCO: ")
+            p.drawString(x + 280, 640, "BANCO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 260, 640, str(empleado_banco.upper()))
+            p.drawString(x + 330, 640, str(empleado_banco.upper()))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 220, 630, "CUENTA: ")
+            p.drawString(x + 280, 630, "CUENTA: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 260, 630, str(empleado_cuenta.upper()))
+            p.drawString(x + 330, 630, str(empleado_cuenta.upper()))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 220, 620, "CORREO: ")
+            p.drawString(x + 280, 620, "GRUPO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 260, 620, str(empleado_correo.upper()))
+            p.drawString(x + 330, 620, str(contrato_grupo.upper()))
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 280, 610, "CELULAR: ")
+            p.setFont("Helvetica", 8)
+            p.drawString(x + 330, 610, str(empleado_celular))            
 
             #Tercer columna
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 360, 650, "DÍAS LABORADOS: ")
+            p.drawString(x + 420, 650, "DÍAS LABORADOS: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 480, 650, f"{liquidacion_dias:,.0f}")        
+            p.drawRightString(x + 550, 650, f"{liquidacion_dias:,.0f}")        
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 360, 640, "SALARIO: ")
+            p.drawString(x + 420, 640, "SALARIO: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 480, 640, f"{contrato_salario:,.0f}")     
+            p.drawRightString(x + 550, 640, f"{contrato_salario:,.0f}")   
+              
+        def dibujar_cuerpo():
+            x = 20
+            y_position = 570
+            
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 300, y_position, "DÍAS ")
+            p.drawString(x + 400, y_position, "BASE ")
+            p.drawString(x + 440, y_position, "ULTIMO PAGO ")
+            p.drawString(x + 530, y_position, "TOTAL ")
+            y_position -= 20
+
+            p.drawString(x + 200, y_position, "CESANTÍAS")
+            p.setFont("Helvetica", 9)
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_cesantia:,.0f}")
+            p.drawRightString(x + 420, y_position, f"{liquidacion.salario:,.0f}")
+            y_position -= 20
 
         dibujar_encabezado()
+        dibujar_cuerpo()
 
         p.save()
 
