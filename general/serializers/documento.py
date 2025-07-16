@@ -478,7 +478,7 @@ class GenDocumentoReferenciaSerializador(serializers.ModelSerializer):
     documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
     class Meta:
         model = GenDocumento
-        fields = ['id', 'numero', 'documento_tipo__nombre'] 
+        fields = ['id', 'numero', 'fecha', 'documento_tipo__nombre'] 
         select_related_fields = ['documento_tipo']
 
 
