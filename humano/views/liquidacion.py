@@ -17,7 +17,7 @@ from servicios.humano.liquidacion import LiquidacionServicio
 from servicios.humano.concepto import ConceptoServicio
 from django.db import transaction
 from django.http import HttpResponse
-from general.formatos.liquidacion import FormatoLiquidacion
+from humano.formatos.liquidacion import FormatoLiquidacion
 
 class HumLiquidacionViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
