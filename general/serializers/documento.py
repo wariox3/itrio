@@ -474,6 +474,14 @@ class GenDocumentoNominaElectronicaExcelSerializador(serializers.ModelSerializer
         ]
         select_related_fields = ['contacto', 'contacto__banco', 'contrato', 'contrato__grupo']  
         
+class GenDocumentoReferenciaSerializador(serializers.ModelSerializer):    
+    documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
+    class Meta:
+        model = GenDocumento
+        fields = ['id', 'numero', 'documento_tipo__nombre'] 
+        select_related_fields = ['documento_tipo']
+
+
 #deprecated
 
 class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):        
@@ -610,58 +618,9 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_codigo': cuenta_codigo,
             'cuenta_nombre': cuenta_nombre                
         }
-
-class GenDocumentoExcelSerializador(serializers.HyperlinkedModelSerializer):    
-    class Meta:
-        model = GenDocumento
-
-    def to_representation(self, instance):        
-        contacto = instance.contacto
-        contacto_nombre_corto = None
-        if contacto:
-            contacto_nombre_corto = contacto.nombre_corto
-        return {
-            'id': instance.id,            
-            'tipo': instance.documento_tipo_id,
-            'numero' : instance.numero,
-            'fecha' : instance.fecha,
-            'fecha_vence' : instance.fecha_vence,            
-            'metodo_pago': instance.metodo_pago_id,
-            'orden_compra' : instance.orden_compra,
-            'contacto_id': instance.contacto_id,
-            'identificacion': instance.contacto.numero_identificacion if instance.contacto else None,
-            'contacto': contacto_nombre_corto,
-            'descuento': instance.descuento,            
-            'subtotal': instance.subtotal,            
-            'base_impuesto': instance.base_impuesto,           
-            'impuesto': instance.impuesto,
-            'total' :  instance.total,
-            'afectado' :  instance.afectado,
-            'pendiente' :  instance.pendiente,
-            'aprobado' : instance.estado_aprobado,
-            'anulado' : instance.estado_anulado,
-            'electronico' : instance.estado_electronico,
-            'ele_enviado' : instance.estado_electronico_enviado,
-            'ele_notificado' : instance.estado_electronico_notificado,        
-            'empresa': instance.empresa_id,
-            'resolucion': instance.resolucion_id,
-            'comentario' : instance.comentario,
-            'evento_documento': instance.evento_documento,
-            'evento_recepcion': instance.evento_documento,
-            'evento_aceptacion': instance.evento_aceptacion,
-        }    
+ 
     
-class GenDocumentoReferenciaSerializador(serializers.HyperlinkedModelSerializer):    
-    numero = serializers.IntegerField(allow_null=True, label='Numero')
-    class Meta:
-        model = GenDocumento
-        fields = ['id', 'numero']
 
-    def to_representation(self, instance):        
-        return {
-            'id': instance.id,            
-            'numero' : instance.numero
-        }   
        
 
     
