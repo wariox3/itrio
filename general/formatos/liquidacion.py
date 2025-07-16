@@ -221,8 +221,27 @@ class FormatoLiquidacion():
             p.drawRightString(x + 551, y_position, f"{liquidacion.total:,.0f}")     
             y_position -= 20
 
+        def dibujar_pie_pagina():
+            y_position = 180
+            
+            col1_x = left_margin + 120
+            col2_x = page_width / 2 + 150
+            
+            p.setFont("Helvetica-Bold", 8)
+            p.drawCentredString(col1_x, y_position, "__________________________")
+            p.drawCentredString(col1_x, y_position - 20, "FIRMA EMPLEADO")
+            p.drawCentredString(col1_x, y_position - 40, str(liquidacion.contrato.contacto.nombre_corto))
+            p.drawCentredString(col1_x, y_position - 60, "C.C. " + str(liquidacion.contrato.contacto.numero_identificacion))
+            
+            # Firma empresa
+            p.drawCentredString(col2_x, y_position, "__________________________")
+            p.drawCentredString(col2_x, y_position - 20, "FIRMA")
+            p.drawCentredString(col2_x, y_position - 40, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
+            p.drawCentredString(col2_x, y_position - 60, "NIT " + str(empresa.numero_identificacion.upper() if empresa.numero_identificacion.upper() else ""))
+
         dibujar_encabezado()
         dibujar_cuerpo()
+        dibujar_pie_pagina()
 
         p.save()
 
