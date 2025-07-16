@@ -162,15 +162,45 @@ class FormatoLiquidacion():
             
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 300, y_position, "DÍAS ")
-            p.drawString(x + 400, y_position, "BASE ")
-            p.drawString(x + 440, y_position, "ULTIMO PAGO ")
-            p.drawString(x + 530, y_position, "TOTAL ")
+            p.drawString(x + 380, y_position, "BASE ")
+            p.drawString(x + 430, y_position, "ULTIMO PAGO ")
+            p.drawString(x + 525, y_position, "TOTAL ")
             y_position -= 20
 
+            p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "CESANTÍAS")
             p.setFont("Helvetica", 9)
             p.drawRightString(x + 320, y_position, f"{liquidacion.dias_cesantia:,.0f}")
-            p.drawRightString(x + 420, y_position, f"{liquidacion.salario:,.0f}")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_cesantia))       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.cesantia:,.0f}")     
+            y_position -= 20
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 200, y_position, "INTERESES:")
+            p.setFont("Helvetica", 9)
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_cesantia:,.0f}")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_cesantia))       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.interes:,.0f}")     
+            y_position -= 20
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 200, y_position, "PRIMA:")
+            p.setFont("Helvetica", 9)
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_prima:,.0f}")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_prima))       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.prima:,.0f}")     
+            y_position -= 20
+
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x + 200, y_position, "VACACIONES:")
+            p.setFont("Helvetica", 9)
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_vacacion:,.0f}")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_vacacion))       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.vacacion:,.0f}")     
             y_position -= 20
 
         dibujar_encabezado()

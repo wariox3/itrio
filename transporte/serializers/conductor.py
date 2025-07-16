@@ -11,7 +11,7 @@ class TteConductorSerializador(serializers.ModelSerializer):
         model = TteConductor
         fields = ['id', 'identificacion', 'identificacion__nombre', 'ciudad__nombre' ,'ciudad__estado__nombre', 'rh', 'rh__nombre', 'rh__codigo',
                   'numero_identificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
-                  'direccion', 'barrio', 'telefono', 'celular', 'correo', 'numero_licencia', 'categoria_licencia',
+                  'direccion', 'barrio', 'telefono', 'celular', 'correo', 'numero_licencia', 'categoria_licencia', 'fecha_nacimiento',
                   'fecha_vence_licencia', 'fecha_expedicion_licencia', 'fecha_ingreso', 'fecha_retiro',
                   'propio', 'estado_inactivo', 'estado_revisado', 'comentario']
         select_related_fields = ['identificacion', 'ciudad', 'ciudad__estado', 'rh']  
