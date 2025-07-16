@@ -94,7 +94,7 @@ class FormatoCertificadoLaboral():
             p.setFont("Helvetica", 12)
             p.drawString(x + 20, y_position, "Atentamente,")
 
-            y_position -= 80
+            y_position -= 100
 
             p.line(x + 20, y_position + 20, x + 280, y_position + 20)
             p.setFont("Helvetica-Bold", 12)
