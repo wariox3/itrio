@@ -213,6 +213,25 @@ class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
                 ]
         select_related_fields = ['contacto','documento_tipo']
 
+class GenDocumentoDetalleCierreSerializador(serializers.ModelSerializer):  
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True, allow_null=True, default=None)
+    
+    class Meta:
+        model = GenDocumento
+        fields = [
+                    'id',                     
+                    'numero', 
+                    'fecha',
+                    'contacto_id',                  
+                    'contacto__numero_identificacion',
+                    'contacto__nombre_corto',                                     
+                    'comentario',
+                    'grupo__nombre'                    
+                ]
+        select_related_fields = ['contacto', 'grupo']
+
 class GenDocumentoListaSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)

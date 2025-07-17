@@ -24,7 +24,7 @@ from general.models.item import GenItem
 from inventario.models.existencia import InvExistencia
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento import GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoListaVentaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador, GenDocumentoReferenciaSerializador, GenDocumentoEventoCompraSerializador, GenDocumentoNominaSerializador, GenDocumentoNominaExcelSerializador, GenDocumentoNominaElectronicaExcelSerializador
+from general.serializers.documento import GenDocumentoDetalleCierreSerializador, GenDocumentoSerializador, GenDocumentoListaSerializador, GenDocumentoListaNominaSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoListaVentaSerializador, GenDocumentoInformeSerializador, GenDocumentoInformeCuentaCobrarSerializador, GenDocumentoRetrieveSerializador, GenDocumentoSeleccionarSerializador, GenDocumentoAdicionarSerializador, GenDocumentoReferenciaSerializador, GenDocumentoEventoCompraSerializador, GenDocumentoNominaSerializador, GenDocumentoNominaExcelSerializador, GenDocumentoNominaElectronicaExcelSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
@@ -84,6 +84,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         'lista_nomina': GenDocumentoListaNominaSerializador,
         'lista_venta': GenDocumentoListaVentaSerializador,
         'detalle_nomina': GenDocumentoDetalleNominaSerializador,
+        'detalle_cierre': GenDocumentoDetalleCierreSerializador,
         'informe': GenDocumentoInformeSerializador,
         'informe_cuenta_cobrar': GenDocumentoInformeCuentaCobrarSerializador,
         'informe_cuenta_pagar': GenDocumentoInformeCuentaCobrarSerializador,
