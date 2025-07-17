@@ -5,7 +5,6 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from utilidades.excel_exportar import ExcelExportar
 
-
 class VehiculoViewSet(viewsets.ModelViewSet):
     queryset = TteVehiculo.objects.all()
     serializer_class = TteVehiculoSerializador
