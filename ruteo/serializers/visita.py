@@ -13,9 +13,10 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
         model = RutVisita
         fields = ['id', 'guia', 'numero', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
                   'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
-                  'latitud', 'longitud', 'estado_decodificado', 'estado_novedad', 'estado_devolucion', 
-                  'estado_decodificado_alerta', 'orden', 'distancia',
-                  'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados', 'estado_entregado', 'estado_entregado_complemento', 'datos_entrega']
+                  'latitud', 'longitud', 'orden', 'distancia', 'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados',
+                  'datos_entrega', 
+                  'estado_decodificado', 'estado_novedad', 'estado_devolucion', 'estado_decodificado_alerta', 
+                  'estado_entregado', 'estado_entregado_complemento', 'estado_despacho']
 
     def to_representation(self, instance): 
         ciudad_nombre = ''

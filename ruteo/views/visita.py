@@ -160,9 +160,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         codigo_destino = raw.get('codigo_destino', None)
         codigo_zona = raw.get('codigo_zona', None)
         codigo_despacho = raw.get('codigo_despacho', None)
-        respuesta = VisitaServicio.importar_complemento(limite=limite, guia_desde=guia_desde, guia_hasta=guia_hasta, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta, pendiente_despacho=pendiente_despacho, codigo_contacto=codigo_contacto, codigo_destino=codigo_destino, codigo_zona=codigo_zona, codigo_despacho=codigo_despacho)
+        respuesta = VisitaServicio.importar_complemento(limite=limite, guia_desde=guia_desde, guia_hasta=guia_hasta, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta, pendiente_despacho=pendiente_despacho, codigo_contacto=codigo_contacto, codigo_destino=codigo_destino, codigo_zona=codigo_zona, codigo_despacho=codigo_despacho, despacho_id=None)
         if respuesta['error'] == False:
             cantidad = respuesta['cantidad']
+            visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
+            VisitaServicio.ubicar(visitas)
+            VisitaServicio.ordenar(visitas)            
             return Response({'mensaje': f'Se importaron {cantidad} guias con exito'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': respuesta['mensaje']}, status=status.HTTP_400_BAD_REQUEST)
@@ -239,82 +242,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         
         return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
         
-    @action(detail=False, methods=["post"], url_path=r'rutear_deprecated',)
-    def rutear_deprecated(self, request):
-        raw = request.data
-        filtros = raw.get('filtros')
-        flota = RutFlota.objects.filter(vehiculo__estado_asignado=False)
-        if flota.exists():
-            visitas = RutVisita.objects.filter(estado_despacho=False, estado_devolucion=False, estado_novedad=False)
-            if filtros:
-                for filtro in filtros:                    
-                    operador = filtro.get('operador', None)
-                    if operador == 'range':
-                        visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
-                    else:
-                        visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})
-
-            visitas = visitas.order_by('orden')      
-            cantidad_vehiculos = flota.count()                                      
-            vehiculo_indice = 0
-            vehiculo = flota[vehiculo_indice].vehiculo     
-            peso_total = 0
-            tiempo_total = 0 
-            tiempo_servicio_total = 0
-            tiempo_trayecto_total = 0 
-            crear_despacho = True
-            for visita in visitas:
-                if peso_total + visita.peso > vehiculo.capacidad or tiempo_total + visita.tiempo > vehiculo.tiempo:
-                    asignado = False
-                    peso_total = 0
-                    tiempo_total = 0 
-                    tiempo_servicio_total = 0
-                    tiempo_trayecto_total = 0                     
-                    while vehiculo_indice + 1 <= cantidad_vehiculos and asignado == False:                         
-                        vehiculo_indice += 1                        
-                        if vehiculo_indice >= cantidad_vehiculos:
-                            asignado = True
-                        else: 
-                            vehiculo = flota[vehiculo_indice].vehiculo
-                            if peso_total + visita.peso <= vehiculo.capacidad or tiempo_total + visita.tiempo <= vehiculo.tiempo:                             
-                                crear_despacho = True
-                                asignado = True
-                    if vehiculo_indice >= cantidad_vehiculos:
-                        break                                            
-
-                if crear_despacho:
-                    despacho = RutDespacho()
-                    despacho.fecha = timezone.now()
-                    despacho.vehiculo = vehiculo
-                    vehiculo.estado_asignado = True
-                    despacho.peso = despacho.peso + visita.peso
-                    despacho.volumen = despacho.volumen + visita.volumen
-                    despacho.tiempo = despacho.tiempo + visita.tiempo
-                    despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
-                    despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
-                    despacho.visitas = despacho.visitas + 1
-                    despacho.save()
-                    vehiculo.save()
-                    crear_despacho = False
-                else:
-                    despacho.peso = despacho.peso + visita.peso
-                    despacho.volumen = despacho.volumen + visita.volumen
-                    despacho.tiempo = despacho.tiempo + visita.tiempo
-                    despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
-                    despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
-                    despacho.visitas = despacho.visitas + 1
-                    despacho.save()        
-                peso_total += visita.peso
-                tiempo_total += visita.tiempo
-                tiempo_servicio_total += visita.tiempo_servicio
-                tiempo_trayecto_total += visita.tiempo_trayecto
-                visita.estado_despacho = True
-                visita.despacho = despacho
-                visita.save()
-            return Response({'mensaje': 'Se crean las rutas exitosamente'}, status=status.HTTP_200_OK)                
-        else:
-            return Response({'mensaje': 'No hay visitas pendientes por rutear o vehiculos disponibles'}, status=status.HTTP_400_BAD_REQUEST)
-
     @action(detail=False, methods=["post"], url_path=r'rutear')
     def rutear(self, request):
         raw = request.data

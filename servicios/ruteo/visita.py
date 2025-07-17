@@ -129,7 +129,7 @@ class VisitaServicio():
             RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)
 
     @staticmethod
-    def importar_complemento(limite=100, guia_desde=None, guia_hasta=None, fecha_desde=None, fecha_hasta=None, pendiente_despacho=False, codigo_contacto=None, codigo_destino=None, codigo_zona=None, codigo_despacho=None):        
+    def importar_complemento(limite=100, guia_desde=None, guia_hasta=None, fecha_desde=None, fecha_hasta=None, pendiente_despacho=False, codigo_contacto=None, codigo_destino=None, codigo_zona=None, codigo_despacho=None, despacho_id=None):        
         parametros = {
             'limite': limite,
             'guia_desde': guia_desde,
@@ -172,7 +172,9 @@ class VisitaServicio():
                     'tiempo_servicio': 3,
                     'estado_franja': False,
                     'franja': None,
-                    'resultados': None
+                    'resultados': None,
+                    'despacho': despacho_id,
+                    'estado_despacho': despacho_id is not None
                 } 
                 if direccion_destinatario:                   
                     direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
@@ -207,9 +209,6 @@ class VisitaServicio():
                     cantidad += 1                                                                                    
                 else:
                     return {'error': True, 'mensaje': 'Errores de validacion', 'validaciones': visitaSerializador.errors}
-            visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
-            VisitaServicio.ubicar(visitas)
-            VisitaServicio.ordenar(visitas)
             return {'error': False, 'cantidad': cantidad}
         else:
             return {

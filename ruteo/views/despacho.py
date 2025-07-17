@@ -5,7 +5,8 @@ from ruteo.models.despacho import RutDespacho
 from ruteo.models.visita import RutVisita
 from ruteo.models.vehiculo import RutVehiculo
 from vertical.models.entrega import VerEntrega
-from seguridad.models import User
+from servicios.ruteo.visita import VisitaServicio
+from servicios.ruteo.despacho import DespachoServicio
 from ruteo.serializers.despacho import RutDespachoSerializador
 from django.http import HttpResponse
 from openpyxl import Workbook
@@ -304,8 +305,8 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                     despachos_actualizar, 
                     ['visitas_entregadas']
                 )      
-        return Response({'mensaje': f'Se actualizaron {actualizados} despachos'},status=status.HTTP_200_OK )
-    
+        return Response({'mensaje': f'Se actualizaron {actualizados} despachos'},status=status.HTTP_200_OK )    
+
     @action(detail=False, methods=["post"], url_path=r'nuevo-complemento',)
     def nuevo_complemento_action(self, request): 
         raw = request.data
@@ -323,35 +324,16 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                     with transaction.atomic():
                         data = {
                             'vehiculo':vehiculo.id,
-                            'fecha': datetime.now(),
-                            'fecha_salida': datetime.now(),
-                            'peso':0,
-                            'volumen':0,
-                            'tiempo':0,
-                            'tiempo_servicio':0,
-                            'tiempo_trayecto':0,
-                            'visitas':0                            
+                            'fecha': datetime.now()                         
                         }                                                                        
-                        despacho = RutDespachoSerializador(data=data)
-                        if despacho.is_valid():
-                            #despacho.save()       
-                            parametros = {
-                                'limite': 200,
-                                'guia_desde': None,
-                                'guia_hasta': None,
-                                'fecha_desde': None,
-                                'fecha_hasta': None,
-                                'pendiente_despacho': None,
-                                'codigo_contacto': None,
-                                'codigo_destino' : None,
-                                'codigo_zona': None,
-                                'codigo_despacho': despacho_id
-                            }            
-                            respuesta = holmio.ruteo_pendiente(parametros)
-                            if respuesta['error'] == False: 
-                                pass
-                            # Falta ubicar
-                            # Falta ordenar
+                        serializador = RutDespachoSerializador(data=data)
+                        if serializador.is_valid():
+                            despacho = serializador.save()
+                            respuesta = VisitaServicio.importar_complemento(limite=300, guia_desde=None, guia_hasta=None, fecha_desde=None, fecha_hasta=None, pendiente_despacho=False, codigo_contacto=None, codigo_destino=None, codigo_zona=None, codigo_despacho=despacho_id, despacho_id=despacho.id)
+                            visitas = RutVisita.objects.filter(despacho_id=despacho.id)
+                            VisitaServicio.ubicar(visitas)
+                            VisitaServicio.ordenar(visitas) 
+                            DespachoServicio.regenerar_valores(despacho)
                             return Response({'mensaje': f'Se creo el despacho con exito'}, status=status.HTTP_200_OK)
                         else:
                             return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': despacho.errors}, status=status.HTTP_400_BAD_REQUEST)                              
