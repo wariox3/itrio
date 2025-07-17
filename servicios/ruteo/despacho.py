@@ -1,5 +1,6 @@
 from ruteo.models.visita import RutVisita
 from ruteo.models.despacho import RutDespacho
+from django.db import transaction
 
 class DespachoServicio():
 
@@ -20,4 +21,33 @@ class DespachoServicio():
             despacho.tiempo_trayecto+=visita.tiempo_trayecto
             despacho.visitas +=1
         despacho.save()
+
+    @staticmethod
+    def regenerar_indicador_entregas(despacho_id=None):    
+        cantidad = 0
+        parametro_despacho = ''
+        if despacho_id:
+            parametro_despacho = f' AND d.id = {despacho_id}'
         
+        query = f'''
+            SELECT
+                d.id,
+                d.visitas_entregadas,
+                (SELECT COUNT(*) FROM rut_visita v WHERE v.despacho_id = d.id AND v.estado_entregado = true) AS visitas_entregadas_totales
+            FROM
+                rut_despacho d
+            WHERE 
+                d.estado_aprobado = true AND d.estado_terminado = false AND d.estado_anulado = false {parametro_despacho}
+        '''        
+        despachos_actualizar = []        
+        with transaction.atomic():
+            despachos_query = RutDespacho.objects.raw(query)
+            for despacho_query in despachos_query:
+                if despacho_query.visitas_entregadas != despacho_query.visitas_entregadas_totales:
+                    despacho = RutDespacho.objects.get(id=despacho_query.id)      
+                    despacho.visitas_entregadas = despacho_query.visitas_entregadas_totales
+                    despachos_actualizar.append(despacho)
+                    cantidad += 1
+            if despachos_actualizar:
+                RutDespacho.objects.bulk_update(despachos_actualizar, ['visitas_entregadas'])  
+        return cantidad 

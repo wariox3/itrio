@@ -270,42 +270,12 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=["post"], url_path=r'regenerar-entregas',)
-    def regenerar_entregas(self, request): 
-        query = f'''
-            SELECT
-                d.id,
-                d.visitas_entregadas,
-                (
-                    SELECT COUNT(*) 
-                    FROM rut_visita v 
-                    WHERE v.despacho_id = d.id 
-                    AND v.estado_entregado = true
-                ) AS visitas_entregadas_totales
-            FROM
-                rut_despacho d
-            WHERE 
-                d.estado_aprobado = true 
-                AND d.estado_terminado = false 
-                AND d.estado_anulado = false
-        '''
-        actualizados = 0
-        despachos_actualizar = []
-        
-        with transaction.atomic():
-            despachos_query = RutDespacho.objects.raw(query)
-            for despacho_query in despachos_query:
-                if despacho_query.visitas_entregadas != despacho_query.visitas_entregadas_totales:
-                    despacho = RutDespacho.objects.get(id=despacho_query.id)      
-                    despacho.visitas_entregadas = despacho_query.visitas_entregadas_totales
-                    despachos_actualizar.append(despacho)
-                    actualizados += 1
-            if despachos_actualizar:
-                RutDespacho.objects.bulk_update(
-                    despachos_actualizar, 
-                    ['visitas_entregadas']
-                )      
-        return Response({'mensaje': f'Se actualizaron {actualizados} despachos'},status=status.HTTP_200_OK )    
+    @action(detail=False, methods=["post"], url_path=r'regenerar-indicador-entregas',)
+    def regenerar_indicador_entregas_action(self, request): 
+        raw = request.data
+        id = raw.get('id', None)
+        cantidad = DespachoServicio.regenerar_indicador_entregas(despacho_id=id)
+        return Response({'mensaje': f'Se actualizaron {cantidad} despachos'},status=status.HTTP_200_OK )    
 
     @action(detail=False, methods=["post"], url_path=r'nuevo-complemento',)
     def nuevo_complemento_action(self, request): 
