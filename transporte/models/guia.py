@@ -50,7 +50,7 @@ class TteGuia(models.Model):
     contacto = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='guias_contacto_rel')
     cliente = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='guias_cliente_rel')
     destinatario = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='guias_destinatario_rel')
-    operacion_ingeso = models.ForeignKey(TteOperacion, on_delete=models.PROTECT, related_name='guias_operacion_ingreso_rel')
+    operacion_ingreso = models.ForeignKey(TteOperacion, on_delete=models.PROTECT, related_name='guias_operacion_ingreso_rel')
     operacion_cargo = models.ForeignKey(TteOperacion, on_delete=models.PROTECT, related_name='guias_operacion_cargo_rel')
     ciudad_origen = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='guias_ciudad_origen_rel')
     ciudad_destino = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='guias_ciudad_destino_rel')
