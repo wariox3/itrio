@@ -130,6 +130,50 @@ class GenDocumentoDetalleListaDetalleCuentaSerializador(serializers.ModelSeriali
                 ]   
         select_related_fields = ['contacto','cuenta', 'grupo']
 
+class GenDocumentoDetalleInformeVentaSerializador(serializers.ModelSerializer):          
+    documento__numero = serializers.CharField(source='documento.numero', read_only=True)
+    documento__fecha = serializers.CharField(source='documento.fecha', read_only=True)
+    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
+    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
+    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
+    class Meta:
+        model = GenDocumentoDetalle
+        fields = ['id', 
+                  'documento__documento_tipo__nombre',
+                  'documento__numero',
+                  'documento__fecha',
+                  'documento__contacto__nombre_corto',
+                  'item_id',
+                  'item__nombre',
+                  'cantidad',
+                  'precio',
+                  'subtotal',
+                  'impuesto',
+                  'total']
+        select_related_fields = ['documento', 'item', 'documento__documento_tipo', 'documento__contacto']  
+
+class GenDocumentoDetalleInformeInventarioSerializador(serializers.ModelSerializer):          
+    documento__numero = serializers.CharField(source='documento.numero', read_only=True)
+    documento__fecha = serializers.CharField(source='documento.fecha', read_only=True)
+    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
+    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
+    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
+    class Meta:
+        model = GenDocumentoDetalle
+        fields = ['id', 
+                'documento__documento_tipo__nombre',
+                'documento__numero',
+                'documento__fecha',
+                'documento__contacto__nombre_corto',
+                'item_id',
+                'item__nombre',
+                'cantidad',
+                'precio',
+                'subtotal',
+                'impuesto',
+                'total']
+        select_related_fields = ['documento', 'item', 'documento__documento_tipo', 'documento__contacto']
+
 #deprecated
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
@@ -251,96 +295,8 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'activo_nombre': activo_nombre
         }  
             
-class GenDocumentoDetalleExcelSerializador(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = GenDocumentoDetalle        
-
-    def to_representation(self, instance):
-        item = instance.item
-        item_nombre = ""
-        if item is not None:
-            item_nombre = item.nombre
-        documento = instance.documento
-        documento_tipo_nombre = ""
-        documento_contacto_nombre = ""
-        documento_contacto_numero_identificacion = ""
-        if documento is not None:
-            documento_tipo = documento.documento_tipo
-            if documento_tipo is not None:
-                documento_tipo_nombre = documento_tipo.nombre
-            contacto = documento.contacto
-            if contacto is not None:
-                documento_contacto_nombre = contacto.nombre_corto 
-                documento_contacto_numero_identificacion = contacto.numero_identificacion 
-        documento_afectado_numero = ""
-        documento_afectado = instance.documento_afectado
-        if documento_afectado is not None:
-            documento_afectado_numero = documento_afectado.numero
-        return {
-            'id': instance.id,            
-            'documento_id': instance.documento_id,
-            'documento_tipo_nombre': documento_tipo_nombre,        
-            'documento_fecha': documento.fecha,
-            'documento_numero': documento.numero, 
-            'documento_contacto_numero_identificacion': documento_contacto_numero_identificacion,  
-            'documento_contacto_nombre': documento_contacto_nombre,  
-            'item_id': instance.item_id,
-            'item_nombre': item_nombre,
-            'cuenta_id': instance.cuenta_id,
-            'cantidad': instance.cantidad,
-            'precio': instance.precio,
-            'pago': instance.pago,
-            'porcentaje_descuento': instance.porcentaje_descuento,
-            'descuento' :  instance.descuento,
-            'subtotal' : instance.subtotal,
-            'total_bruto' : instance.total_bruto,
-            'base_impuesto' : instance.base_impuesto,
-            'impuesto' : instance.impuesto,
-            'total' : instance.total,
-            'documento_afectado_id': instance.documento_afectado_id,
-            'documento_afectado_numero': documento_afectado_numero
-        }      
+      
     
-class GenDocumentoDetalleInformeVentaSerializador(serializers.ModelSerializer):          
-    documento__numero = serializers.CharField(source='documento.numero', read_only=True)
-    documento__fecha = serializers.CharField(source='documento.fecha', read_only=True)
-    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
-    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
-    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
-    class Meta:
-        model = GenDocumentoDetalle
-        fields = ['id', 
-                  'documento__documento_tipo__nombre',
-                  'documento__numero',
-                  'documento__fecha',
-                  'documento__contacto__nombre_corto',
-                  'item_id',
-                  'item__nombre',
-                  'cantidad',
-                  'precio',
-                  'subtotal',
-                  'impuesto',
-                  'total']
-        select_related_fields = ['documento', 'item', 'documento__documento_tipo', 'documento__contacto']    
+  
 
-class GenDocumentoDetalleInformeInventarioSerializador(serializers.ModelSerializer):          
-    documento__numero = serializers.CharField(source='documento.numero', read_only=True)
-    documento__fecha = serializers.CharField(source='documento.fecha', read_only=True)
-    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
-    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
-    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
-    class Meta:
-        model = GenDocumentoDetalle
-        fields = ['id', 
-                'documento__documento_tipo__nombre',
-                'documento__numero',
-                'documento__fecha',
-                'documento__contacto__nombre_corto',
-                'item_id',
-                'item__nombre',
-                'cantidad',
-                'precio',
-                'subtotal',
-                'impuesto',
-                'total']
-        select_related_fields = ['documento', 'item', 'documento__documento_tipo', 'documento__contacto']        
+        
