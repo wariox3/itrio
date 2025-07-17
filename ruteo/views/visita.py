@@ -675,12 +675,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         id = request.POST.get('id')
         imagenes = request.FILES.getlist('imagenes')
         firmas = request.FILES.getlist('firmas')
-        fecha_entrega_texto = request.POST.get('fecha_entrega')
+        fecha_entrega_parametro = request.POST.get('fecha_entrega')
         datos_adicionales = request.POST.get('datos_adicionales')        
-        if id and fecha_entrega_texto:
+        if id and fecha_entrega_parametro:
             try:
-                fecha_entrega_naive = datetime.strptime(fecha_entrega_texto, '%Y-%m-%d %H:%M')
-                fecha_entrega = timezone.make_aware(fecha_entrega_naive)
+                fecha_entrega_nativa = datetime.strptime(fecha_entrega_parametro, '%Y-%m-%d %H:%M')
+                fecha_entrega = timezone.make_aware(fecha_entrega_nativa)
                 if fecha_entrega > timezone.now():
                     return Response({'mensaje':'La fecha de entrega no puede ser mayor a la fecha actual', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                             
             except ValueError:
@@ -762,8 +762,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             VisitaServicio.entrega_complemento(visita, imagenes_b64, firmas_b64, datos_entrega)
                         return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
-                
+                    return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                  
             else:
                 return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
         else:
