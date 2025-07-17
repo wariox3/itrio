@@ -10,7 +10,7 @@ from general.models.item_impuesto import GenItemImpuesto
 from general.models.impuesto import GenImpuesto
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento_detalle import GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleAgregarDocumentoSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoDetalleNominaExcelSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleListaDetalleCuentaSerializador, GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleAgregarDocumentoSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoDetalleNominaExcelSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
@@ -29,7 +29,9 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         'informe_inventario': GenDocumentoDetalleInformeInventarioSerializador,
         'informe_nomina_detalle': GenDocumentoDetalleNominaExcelSerializador,
         'agregar_documento':  GenDocumentoDetalleAgregarDocumentoSerializador,
-        'nomina': GenDocumentoDetalleNominaSerializador
+        'nomina': GenDocumentoDetalleNominaSerializador,
+        'lista_detalle_cuenta': GenDocumentoDetalleListaDetalleCuentaSerializador,
+        'lista_detalle_item': GenDocumentoDetalleListaDetalleCuentaSerializador,
     }
     
     def get_serializer_class(self):

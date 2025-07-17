@@ -108,7 +108,28 @@ class GenDocumentoDetalleNominaExcelSerializador(serializers.ModelSerializer):
                 'base_impuesto'
             ]
             select_related_fields = ['documento__contacto', 'documento' , 'concepto', 'documento__documento_tipo']          
-        
+
+class GenDocumentoDetalleListaDetalleCuentaSerializador(serializers.ModelSerializer):
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
+    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True)
+    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True)
+    class Meta:
+        model = GenDocumentoDetalle
+        fields = [
+                    'id', 
+                    'naturaleza', 
+                    'precio', 
+                    'base', 
+                    'total', 
+                    'detalle',
+                    'contacto__numero_identificacion',
+                    'contacto__nombre_corto',
+                    'cuenta__codigo',
+                    'grupo__nombre'
+                ]   
+        select_related_fields = ['contacto','cuenta', 'grupo']
+
 #deprecated
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
