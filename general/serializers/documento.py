@@ -228,6 +228,8 @@ class GenDocumentoDetalleCierreSerializador(serializers.ModelSerializer):
                     'contacto__numero_identificacion',
                     'contacto__nombre_corto',                                     
                     'comentario',
+                    'estado_aprobado',
+                    'estado_anulado',
                     'grupo__nombre'                    
                 ]
         select_related_fields = ['contacto', 'grupo']
