@@ -4,9 +4,10 @@ from reportlab.graphics.barcode.qr import QrCodeWidget
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from datetime import datetime
+from decimal import Decimal
 import re
 import math
-from decimal import Decimal
+import json
 
 def convertir_a_letras(numero):
     if numero == 0:
@@ -163,3 +164,13 @@ class UtilidadGeneral:
             return str(obj)
         else:            
             return obj            
+        
+    @staticmethod
+    def json_texto(texto):
+        if not texto or not texto.strip():
+            return None        
+        try:
+            datos = json.loads(texto)
+            return datos if isinstance(datos, dict) else None
+        except (json.JSONDecodeError, ValueError):
+            return None

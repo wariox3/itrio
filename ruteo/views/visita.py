@@ -3,103 +3,29 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from ruteo.models.visita import RutVisita
 from ruteo.models.despacho import RutDespacho
-from ruteo.models.vehiculo import RutVehiculo
 from ruteo.models.franja import RutFranja
 from ruteo.models.flota import RutFlota
 from general.models.configuracion import GenConfiguracion
-from general.models.ciudad import GenCiudad
 from general.models.archivo import GenArchivo
 from contenedor.models import CtnDireccion
 from ruteo.serializers.visita import RutVisitaSerializador
+from servicios.ruteo.visita import VisitaServicio
 from datetime import datetime
 from django.utils import timezone
 from utilidades.holmio import Holmio
 from utilidades.google import Google
 from utilidades.backblaze import Backblaze
 from utilidades.imagen import Imagen
-from shapely.geometry import Point, Polygon
-from math import radians, cos, sin, asin, sqrt, atan2
-from django.db.models import Sum, F, Count
+from utilidades.utilidades import UtilidadGeneral
+from django.db.models import Sum, Count
 from django.db.models.functions import Coalesce
 from django.db import transaction
-from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 from io import BytesIO
 from decimal import Decimal, ROUND_HALF_UP
 import re
 import gc
 import base64
 import openpyxl
-import numpy as np
-import json
-
-
-def calcular_distancia(lat1, lon1, lat2, lon2):
-    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-
-    # Fórmula de Haversine
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    c = 2 * asin(sqrt(a))
-    r = 6371
-    return c * r
-
-# Resolver el problema del viajante (TSP) para determinar la ruta óptima
-def tsp_ruta(inicio, distancias):
-    n = len(distancias)
-    visited = [False] * n
-    ruta = [inicio]
-    visited[inicio] = True
-
-    for _ in range(n - 1):
-        last = ruta[-1]
-        next_city = min(
-            (i for i in range(n) if not visited[i]),
-            key=lambda i: distancias[last][i]
-        )
-        ruta.append(next_city)
-        visited[next_city] = True
-    return ruta
-
-def ubicar_punto(franjas, latitud, longitud):    
-    for franja in franjas:
-        coordenadas = [(coord['lng'], coord['lat']) for coord in franja.coordenadas]
-        poligono = Polygon(coordenadas)                
-        punto = Point(longitud, latitud)
-        if poligono.contains(punto):
-            return {'encontrado': True, 'franja': {'id':franja.id, 'codigo':franja.codigo}}
-    return {'encontrado': False }
-
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371.0  # Radio de la Tierra en kilómetros
-    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-    return R * c  # Retorna la distancia en kilómetros
-
-def construir_matriz_distancias(visitas, punto_inicial):
-    n = len(visitas)
-    matriz = np.zeros((n + 1, n + 1))  # +1 para incluir el punto de partida
-    puntos = [(punto_inicial['latitud'], punto_inicial['longitud'])] + [(v['latitud'], v['longitud']) for v in visitas]
-
-    for i in range(n + 1):
-        for j in range(n + 1):
-            matriz[i][j] = haversine(puntos[i][0], puntos[i][1], puntos[j][0], puntos[j][1])
-    
-    return matriz
-
-def json_texto(texto):
-    if not texto or not texto.strip():
-        return None        
-    try:
-        datos = json.loads(texto)
-        return datos if isinstance(datos, dict) else None
-    except (json.JSONDecodeError, ValueError):
-        return None
 
 class RutVisitaViewSet(viewsets.ModelViewSet):
     queryset = RutVisita.objects.all()
@@ -145,7 +71,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     except ValueError:
                         fecha = None                    
                     documento = str(row[2])
-                    direccion_destinatario = self.limpiar_direccion(row[4])
+                    direccion_destinatario = VisitaServicio.limpiar_direccion(row[4])
                     telefono_destinatario = str(row[6])
                     if telefono_destinatario:
                         telefono_destinatario[:50]                    
@@ -189,7 +115,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 if respuesta['cantidad_resultados'] > 1:
                                     data['estado_decodificado_alerta'] = True
                     if data['estado_decodificado'] == True:
-                        respuesta = ubicar_punto(franjas, data['latitud'], data['longitud'])
+                        respuesta = VisitaServicio.ubicar_punto(franjas, data['latitud'], data['longitud'])
                         if respuesta['encontrado']:
                             data['franja'] = respuesta['franja']['id']
                             data['estado_franja'] = True
@@ -209,8 +135,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     for detalle in data_modelo:
                         RutVisita.objects.create(**detalle)
                     gc.collect()
-                    self.ubicar(request)
-                    self.ordenar(request)
+                    visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
+                    VisitaServicio.ubicar(visitas)
+                    VisitaServicio.ordenar(visitas)                                        
                     return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)                
                 else:
                     gc.collect()                    
@@ -221,7 +148,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=False, methods=["post"], url_path=r'importar-complemento',)
-    def importar_complemento(self, request):
+    def importar_complemento_action(self, request):
         raw = request.data 
         limite = raw.get('limite', 1)
         guia_desde = raw.get('guia_desde', None)
@@ -232,87 +159,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         codigo_contacto = raw.get('codigo_contacto', None)
         codigo_destino = raw.get('codigo_destino', None)
         codigo_zona = raw.get('codigo_zona', None)
-        parametros = {
-            'limite': limite,
-            'guia_desde': guia_desde,
-            'guia_hasta': guia_hasta,
-            'fecha_desde': fecha_desde,
-            'fecha_hasta': fecha_hasta,
-            'pendiente_despacho': pendiente_despacho,
-            'codigo_contacto': codigo_contacto,
-            'codigo_destino' : codigo_destino,
-            'codigo_zona': codigo_zona
-        }
-        franjas = RutFranja.objects.all()
-        cantidad = 0       
-        google = Google() 
-        holmio = Holmio()
-        respuesta = holmio.ruteo_pendiente(parametros)
-        if respuesta['error'] == False:                                   
-            guias = respuesta['guias']
-            for guia in guias:                                                                        
-                direccion_destinatario = self.limpiar_direccion(guia['direccionDestinatario'])                                               
-                fecha = datetime.fromisoformat(guia['fechaIngreso'])  
-                nombre_destinatario = (guia['nombreDestinatario'][:150] if guia['nombreDestinatario'] is not None and guia['nombreDestinatario'] != "" else None)                                                
-                documentoCliente = (guia['documentoCliente'][:30] if guia['documentoCliente'] is not None and guia['documentoCliente'] != "" else None)
-                telefono_destinatario = (guia['telefonoDestinatario'][:50] if guia['telefonoDestinatario'] is not None and guia['telefonoDestinatario'] != "" else None)
-                data = {
-                    'numero': guia['codigoGuiaPk'],
-                    'fecha':fecha,
-                    'documento': documentoCliente,
-                    'destinatario': nombre_destinatario,
-                    'destinatario_direccion': direccion_destinatario,
-                    'ciudad': None,
-                    'destinatario_telefono': telefono_destinatario,
-                    'destinatario_correo': None,
-                    'peso': guia['pesoReal'] or 0,
-                    'volumen': guia['pesoVolumen'] or 0,
-                    'latitud': None,
-                    'longitud': None,
-                    'estado_decodificado': False,
-                    'tiempo_servicio': 3,
-                    'estado_franja': False,
-                    'franja': None,
-                    'resultados': None
-                } 
-                if direccion_destinatario:                   
-                    direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
-                    if direccion:
-                        data['estado_decodificado'] = True            
-                        data['latitud'] = direccion.latitud                        
-                        data['longitud'] = direccion.longitud
-                        data['destinatario_direccion_formato'] = direccion.direccion_formato
-                        data['resultados'] = direccion.resultados
-                        if direccion.cantidad_resultados > 1:
-                            data['estado_decodificado_alerta'] = True                                
-                    else:
-                        respuesta = google.decodificar_direccion(data['destinatario_direccion'])
-                        if respuesta['error'] == False:   
-                            data['estado_decodificado'] = True            
-                            data['latitud'] = respuesta['latitud']
-                            data['longitud'] = respuesta['longitud']
-                            data['destinatario_direccion_formato'] = respuesta['direccion_formato']
-                            data['resultados'] = respuesta['resultados']
-                            if respuesta['cantidad_resultados'] > 1:
-                                data['estado_decodificado_alerta'] = True                                          
-                if data['estado_decodificado'] == True:
-                    respuesta = ubicar_punto(franjas, data['latitud'], data['longitud'])
-                    if respuesta['encontrado']:
-                        data['franja'] = respuesta['franja']['id']
-                        data['estado_franja'] = True
-                    else:
-                        data['estado_franja'] = False
-                visitaSerializador = RutVisitaSerializador(data=data)
-                if visitaSerializador.is_valid():
-                    visitaSerializador.save()
-                    cantidad += 1                                                                                    
-                else:
-                    return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': visitaSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                              
-            self.ubicar(request)
-            self.ordenar(request)
-            return Response({'mensaje':f'Se importaron {cantidad} las guias con exito'}, status=status.HTTP_200_OK)
+        codigo_despacho = raw.get('codigo_despacho', None)
+        respuesta = VisitaServicio.importar_complemento(limite=limite, guia_desde=guia_desde, guia_hasta=guia_hasta, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta, pendiente_despacho=pendiente_despacho, codigo_contacto=codigo_contacto, codigo_destino=codigo_destino, codigo_zona=codigo_zona, codigo_despacho=codigo_despacho)
+        if respuesta['error'] == False:
+            cantidad = respuesta['cantidad']
+            return Response({'mensaje': f'Se importaron {cantidad} guias con exito'}, status=status.HTTP_200_OK)
         else:
-            return Response({'mensaje':f'Error en la conexion: {respuesta["mensaje"]}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje': respuesta['mensaje']}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'decodificar',)
     def decodificar_action(self, request):
@@ -347,81 +200,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 
 
-    @action(detail=False, methods=["post"], url_path=r'ordenar_deprecated',)
-    def ordenar_deprecated(self, request):      
-        raw = request.data
-        visitas_franja = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('franja_codigo').annotate(cantidad=Count('id'))  
-        filtros = raw.get('filtros')        
-        if filtros:
-            for filtro in filtros:
-                visitas_franja = visitas_franja.filter(**{filtro['propiedad']: filtro['valor1']})
-        for visita_franja in visitas_franja:                        
-            print(visita_franja['franja_codigo'])
-            visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud', 'tiempo_servicio')
-            if visita_franja['franja_codigo']:
-                visitas = visitas.filter(franja_codigo=visita_franja['franja_codigo'])
-            else:
-                visitas = visitas.filter(franja_codigo=None)     
-            if visitas.exists():
-                cantidad_visitas = len(visitas)                   
-                punto_inicial = {'latitud': 6.200479, 'longitud': -75.586350}            
-                matriz = construir_matriz_distancias(visitas, punto_inicial)                    
-                manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
-                routing = pywrapcp.RoutingModel(manager)
-                
-                # Función de costo
-                def distancia_callback(from_index, to_index):
-                    from_node = manager.IndexToNode(from_index)
-                    to_node = manager.IndexToNode(to_index)
-                    return int(matriz[from_node][to_node] * 1000)
-                
-                transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
-                routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
-                search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-                search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-                
-                solution = routing.SolveWithParameters(search_parameters)            
-                if not solution:
-                    return None
-
-                # Extraer el orden óptimo
-                index = routing.Start(0)
-                orden = []
-                while not routing.IsEnd(index):
-                    node = manager.IndexToNode(index)
-                    if node != 0:  # Ignorar el punto de partida
-                        orden.append(node - 1)  # Ajustar índice
-                    index = solution.Value(routing.NextVar(index))
-
-                for idx, visita_idx in enumerate(orden):
-                    visita_id = visitas[visita_idx]['id']
-                    tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio'])
-                    distancia = 0                
-                    if idx == 0:
-                        # Primera visita: distancia desde el punto inicial
-                        distancia = matriz[0][visita_idx + 1]
-                    else:
-                        # Visitas posteriores: distancia desde la visita anterior
-                        anterior_idx = orden[idx - 1]
-                        distancia = matriz[anterior_idx + 1][visita_idx + 1]
-                    tiempo_trayecto = Decimal(distancia * 1.6)
-                    tiempo = tiempo_servicio+tiempo_trayecto            
-                    RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)                
-        return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK) 
-
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
     def ordenar(self, request):      
         raw = request.data
         filtros = raw.get('filtros', [])
-        
-        # Verificar si hay filtros de franja (ahora buscando 'franja_id')
-        tiene_filtro_franja = any(filtro.get('propiedad') == 'franja_id' for filtro in filtros if isinstance(filtro, dict))
-        
-        if tiene_filtro_franja:
-            # Caso 1: Hay filtro de franja - ordenar todas las visitas juntas
-            visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True)
-            
-            # Aplicar todos los filtros
+        tiene_filtro_franja = any(filtro.get('propiedad') == 'franja_id' for filtro in filtros if isinstance(filtro, dict))        
+        if tiene_filtro_franja:            
+            visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True)        
             for filtro in filtros:
                 operador = filtro.get('operador')
                 propiedad = filtro['propiedad']
@@ -430,20 +215,12 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 elif operador:
                     visitas = visitas.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
                 else:
-                    visitas = visitas.filter(**{propiedad: filtro['valor1']})
-            
-            visitas = visitas.values('id', 'latitud', 'longitud', 'tiempo_servicio')
-            
+                    visitas = visitas.filter(**{propiedad: filtro['valor1']})            
+            visitas = visitas.values('id', 'latitud', 'longitud', 'tiempo_servicio')            
             if visitas.exists():
-                self.ordenar_visitas(visitas)
+                VisitaServicio.ordenar(visitas)
         else:
-            # Caso 2: No hay filtro de franja - ordenar por franja separadamente
-            visitas_franja = RutVisita.objects.filter(
-                estado_despacho=False, 
-                estado_decodificado=True
-            ).values('franja_codigo').annotate(cantidad=Count('id'))
-            
-            # Aplicar otros filtros (excluyendo 'franja_id')
+            visitas_franja = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('franja_codigo').annotate(cantidad=Count('id'))        
             for filtro in filtros:
                 operador = filtro.get('operador')
                 propiedad = filtro['propiedad']
@@ -456,133 +233,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         visitas_franja = visitas_franja.filter(**{propiedad: filtro['valor1']})
             
             for visita_franja in visitas_franja:
-                visitas = RutVisita.objects.filter(
-                    estado_despacho=False, 
-                    estado_decodificado=True,
-                    franja_codigo=visita_franja['franja_codigo']
-                ).values('id', 'latitud', 'longitud', 'tiempo_servicio')
-                
+                visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True, franja_codigo=visita_franja['franja_codigo']).values('id', 'latitud', 'longitud', 'tiempo_servicio')                
                 if visitas.exists():
-                    self.ordenar_visitas(visitas)
+                    VisitaServicio.ordenar(visitas)
         
         return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
-
-    def ordenar_visitas(self, visitas):
-        """Función auxiliar para ordenar un conjunto de visitas"""
-        configuracion = GenConfiguracion.objects.filter(id=1).first()
-
-        if not configuracion or configuracion.rut_latitud is None or configuracion.rut_longitud is None:
-            return Response({
-                'mensaje': 'Debe configurar punto de origen para poder ordenar las visitas', 
-                'codigo': 15
-            }, status=status.HTTP_400_BAD_REQUEST)
-        
-        latitud = float(configuracion.rut_latitud)
-        longitud = float(configuracion.rut_longitud)
-
-        punto_inicial = {'latitud': latitud, 'longitud': longitud}         
-        matriz = construir_matriz_distancias(visitas, punto_inicial)                    
-        manager = pywrapcp.RoutingIndexManager(len(matriz), 1, 0)
-        routing = pywrapcp.RoutingModel(manager)
-        
-        def distancia_callback(from_index, to_index):
-            from_node = manager.IndexToNode(from_index)
-            to_node = manager.IndexToNode(to_index)
-            return int(matriz[from_node][to_node] * 1000)
-        
-        transit_callback_index = routing.RegisterTransitCallback(distancia_callback)
-        routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)                        
-        search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-        search_parameters.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-        
-        solution = routing.SolveWithParameters(search_parameters)            
-        if not solution:
-            return None
-
-        index = routing.Start(0)
-        orden = []
-        while not routing.IsEnd(index):
-            node = manager.IndexToNode(index)
-            if node != 0:
-                orden.append(node - 1)
-            index = solution.Value(routing.NextVar(index))
-
-        # Definimos la precisión a 6 decimales
-        decimal_6_places = Decimal('0.000001')  # Para redondear a 6 decimales
-        
-        for idx, visita_idx in enumerate(orden):
-            visita_id = visitas[visita_idx]['id']
-            
-            # Aseguramos que tiempo_servicio no tenga más de 6 decimales
-            tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio']).quantize(
-                decimal_6_places,
-                rounding=ROUND_HALF_UP  # Redondeo estándar (mitad hacia arriba)
-            )
-            
-            distancia = matriz[0][visita_idx + 1] if idx == 0 else matriz[orden[idx - 1] + 1][visita_idx + 1]
-            
-            # Aseguramos que tiempo_trayecto y tiempo no tengan más de 6 decimales
-            tiempo_trayecto = (Decimal(distancia) * Decimal('1.6')).quantize(
-                decimal_6_places,
-                rounding=ROUND_HALF_UP
-            )
-            
-            tiempo = (tiempo_servicio + tiempo_trayecto).quantize(
-                decimal_6_places,
-                rounding=ROUND_HALF_UP
-            )
-            
-            RutVisita.objects.filter(id=visita_id).update(
-                orden=idx + 1, 
-                distancia=distancia, 
-                tiempo_trayecto=tiempo_trayecto, 
-                tiempo=tiempo
-            )
-
-    @action(detail=False, methods=["post"], url_path=r'ordenar-google',)
-    def ordenar_google(self, request):        
-        visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('id', 'latitud', 'longitud')
-        if visitas.exists():
-            ubicacion_inicial = (6.197023, -75.585760)
-            visitas_ubicaciones = [ubicacion_inicial] + [(visita['latitud'], visita['longitud']) for visita in visitas]
-            gogle = Google()
-            resultado = gogle.matriz_distancia(visitas_ubicaciones)
-            if not resultado["error"]:  
-                distancias = resultado['distancias']
-                duraciones = resultado['duraciones']                                
-                ruta = tsp_ruta(0, distancias)
-                visitas_ordenadas = []
-                for orden, i in enumerate(ruta):
-                    if i == 0:  # Ubicación inicial no tiene id
-                        visitas_ordenadas.append({
-                            "id": None,
-                            "latitud": visitas_ubicaciones[i][0],
-                            "longitud": visitas_ubicaciones[i][1],
-                            "orden": orden,
-                            "tiempo_hasta_proxima": None,
-                            "distancia_hasta_proxima": None
-                        })
-                    else:
-                        visita = visitas[i - 1]
-                        tiempo_hasta_proxima = None
-                        distancia_hasta_proxima = None
-                        if orden < len(ruta) - 1:  # Si no es la última visita
-                            tiempo_hasta_proxima = duraciones[i][ruta[orden + 1]]
-                            distancia_hasta_proxima = distancias[i][ruta[orden + 1]]
-                        visitas_ordenadas.append({
-                            "id": visita['id'],
-                            "latitud": visitas_ubicaciones[i][0],
-                            "longitud": visitas_ubicaciones[i][1],
-                            "orden": orden,
-                            "tiempo_hasta_proxima": tiempo_hasta_proxima,
-                            "distancia_hasta_proxima": distancia_hasta_proxima
-                        })                    
-                        RutVisita.objects.filter(id=visita['id']).update(orden=orden)                       
-                return Response({'mensaje':'visitas ordenadas', 'datos': visitas_ordenadas}, status=status.HTTP_200_OK)
-            else:                
-                return Response({'mensaje':resultado["mensaje"], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                   
-        else:
-            return Response({'mensaje': 'No hay visitas pendientes por ordenar'}, status=status.HTTP_200_OK) 
         
     @action(detail=False, methods=["post"], url_path=r'rutear_deprecated',)
     def rutear_deprecated(self, request):
@@ -853,23 +508,10 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             })
         
     @action(detail=False, methods=["post"], url_path=r'ubicar',)
-    def ubicar(self, request):             
+    def ubicar_action(self, request):             
         raw = request.data
-        cantidad = 0
-        franjas = RutFranja.objects.all()
         visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
-        for visita in visitas:
-            respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
-            if respuesta['encontrado']:
-                visita.franja_id = respuesta['franja']['id']
-                visita.franja_codigo = respuesta['franja']['codigo']
-                visita.estado_franja = True
-            else:
-                visita.franja_id = None
-                visita.franja_codigo = None
-                visita.estado_franja = False
-            visita.save()  
-            cantidad += 1      
+        cantidad = VisitaServicio.ubicar(visitas)          
         return Response({'mensaje': f'Se asignó franja a {cantidad} de visitas'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path=r'ubicar-punto',)
@@ -879,7 +521,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         longitud = raw.get('longitud')           
         if latitud and longitud:
             franjas = RutFranja.objects.all()
-            respuesta = ubicar_punto(franjas, latitud, longitud)
+            respuesta = VisitaServicio.ubicar_punto(franjas, latitud, longitud)
             return Response(respuesta, status=status.HTTP_200_OK)                                                    
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
@@ -956,7 +598,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             try:                
                 visita = RutVisita.objects.get(pk=id)
                 franjas = RutFranja.objects.all()
-                respuesta = ubicar_punto(franjas, latitud, longitud)
+                respuesta = VisitaServicio.ubicar_punto(franjas, latitud, longitud)
                 if respuesta['encontrado']:                    
                     visita.franja_id = respuesta['franja']['id']
                     visita.estado_franja = True
@@ -1020,7 +662,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                     visita.estado_decodificado_alerta = True                
                     if visita.estado_decodificado == True:
                         franjas = RutFranja.objects.all()
-                        respuesta = ubicar_punto(franjas, visita.latitud, visita.longitud)
+                        respuesta = VisitaServicio.ubicar_punto(franjas, visita.latitud, visita.longitud)
                         if respuesta['encontrado']:
                             visita.franja_id = respuesta['franja']['id']
                             visita.estado_franja = True
@@ -1127,7 +769,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     except ValueError:
                         return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
                     with transaction.atomic():                                                                              
-                        datos_entrega = json_texto(datos_adicionales)
+                        datos_entrega = UtilidadGeneral.json_texto(datos_adicionales)
                         visita.estado_entregado = True
                         visita.fecha_entrega = fecha_entrega
                         visita.datos_entrega = datos_entrega
@@ -1190,7 +832,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                     firmas_b64.append({
                                         'base64': base64_encoded,
                                     })                                                                                                                                                                                                     
-                            self.entrega_complemento(visita, imagenes_b64, firmas_b64, datos_entrega)
+                            VisitaServicio.entrega_complemento(visita, imagenes_b64, firmas_b64, datos_entrega)
                         return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
@@ -1276,34 +918,6 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     firmas_b64.append({
                         'base64': contenido_base64,
                     })                              
-            self.entrega_complemento(visita, imagenes_b64, firmas_b64, visita.datos_entrega)
+            VisitaServicio.entrega_complemento(visita, imagenes_b64, firmas_b64, visita.datos_entrega)
         return Response({'mensaje': f'Entrega complemento {visitas.count()}'}, status=status.HTTP_200_OK)
-
-    def limpiar_direccion(self, direccion):
-        if not direccion:
-            direccion = ""
-        direccion = direccion.replace("\t", "").replace("\n", "")
-        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u31A0]+', ' ', direccion).strip()   
-        direccion = re.sub(r'[\s\u2000-\u200F\u3000\u3164]+', ' ', direccion).strip()                 
-        direccion = re.sub(r'\s+', ' ', direccion.strip())                    
-        direccion = direccion[:200]        
-        return direccion
     
-    def entrega_complemento(self, visita: RutVisita, imagenes_b64, firmas_b64, datos_entrega):
-        holmio = Holmio()
-        fecha_formateada = visita.fecha_entrega.strftime('%Y-%m-%d %H:%M')
-        parametros = {
-            'codigoGuia': visita.numero,
-            'fechaEntrega': fecha_formateada,
-            'usuario': 'ruteo'
-        }
-        if imagenes_b64:
-            parametros['imagenes'] = imagenes_b64
-        if firmas_b64:
-            parametros['firmarBase64'] = firmas_b64[0]
-        if datos_entrega:
-            parametros.update(datos_entrega)                    
-        respuesta = holmio.entrega(parametros)
-        visita.estado_entregado_complemento = True
-        visita.save()
-        return True

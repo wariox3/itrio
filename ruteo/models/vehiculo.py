@@ -4,7 +4,7 @@ from ruteo.models.franja import RutFranja
 franjas = models.ManyToManyField(RutFranja, related_name='vehiculos')
 
 class RutVehiculo(models.Model):
-    placa = models.CharField(max_length=10, null=True)
+    placa = models.CharField(max_length=10, unique=True)
     capacidad = models.FloatField(default=0)
     tiempo = models.FloatField(default=0)
     latitud = models.DecimalField(max_digits=9, decimal_places=6, null=True)
