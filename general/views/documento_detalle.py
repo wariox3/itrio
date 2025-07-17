@@ -420,3 +420,16 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)      
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'eliminar-todos',)
+    def eliminar_todos_action(self, request):
+        raw = request.data
+        documento_id = raw.get('documento_id')
+        if documento_id:
+            documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento_id)
+            if documento_detalles.exists():
+                documento_detalles.delete()
+            return Response({'mensaje':'Todos los detalles han sido eliminados', 'codigo':0}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+                
