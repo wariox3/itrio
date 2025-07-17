@@ -110,10 +110,10 @@ class GenDocumentoDetalleNominaExcelSerializador(serializers.ModelSerializer):
             select_related_fields = ['documento__contacto', 'documento' , 'concepto', 'documento__documento_tipo']          
 
 class GenDocumentoDetalleListaDetalleCuentaSerializador(serializers.ModelSerializer):
-    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
-    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
-    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True)
-    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True, allow_null=True, default=None)
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True, allow_null=True, default=None)
+    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True, allow_null=True, default=None)
+    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True, allow_null=True, default=None)
     class Meta:
         model = GenDocumentoDetalle
         fields = [

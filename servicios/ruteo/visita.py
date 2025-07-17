@@ -148,6 +148,7 @@ class VisitaServicio():
         holmio = Holmio()
         respuesta = holmio.ruteo_pendiente(parametros)
         if respuesta['error'] == False:                                   
+            visitas_creadas = []
             guias = respuesta['guias']
             for guia in guias:                                                                        
                 direccion_destinatario = VisitaServicio.limpiar_direccion(guia['direccionDestinatario'])                                               
@@ -205,11 +206,12 @@ class VisitaServicio():
                         data['estado_franja'] = False
                 visitaSerializador = RutVisitaSerializador(data=data)
                 if visitaSerializador.is_valid():
-                    visitaSerializador.save()
+                    visita = visitaSerializador.save()
+                    visitas_creadas.append(visita)
                     cantidad += 1                                                                                    
                 else:
                     return {'error': True, 'mensaje': 'Errores de validacion', 'validaciones': visitaSerializador.errors}
-            return {'error': False, 'cantidad': cantidad}
+            return {'error': False, 'cantidad': cantidad, 'visitas_creadas': visitas_creadas}
         else:
             return {
                 'error': True,

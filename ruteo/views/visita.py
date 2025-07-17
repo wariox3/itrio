@@ -163,8 +163,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         respuesta = VisitaServicio.importar_complemento(limite=limite, guia_desde=guia_desde, guia_hasta=guia_hasta, fecha_desde=fecha_desde, fecha_hasta=fecha_hasta, pendiente_despacho=pendiente_despacho, codigo_contacto=codigo_contacto, codigo_destino=codigo_destino, codigo_zona=codigo_zona, codigo_despacho=codigo_despacho, despacho_id=None)
         if respuesta['error'] == False:
             cantidad = respuesta['cantidad']
-            visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
-            VisitaServicio.ubicar(visitas)
+            visitas = respuesta['visitas_creadas']
+            #visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
+            VisitaServicio.ubicar(visitas)            
             VisitaServicio.ordenar(visitas)            
             return Response({'mensaje': f'Se importaron {cantidad} guias con exito'}, status=status.HTTP_200_OK)
         else:
