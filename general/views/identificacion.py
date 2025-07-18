@@ -27,9 +27,12 @@ class IdentificacionViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         nombre = request.query_params.get('nombre__icontains', None)
+        tipo_persona = request.query_params.get('tipo_persona', None)
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
+        if tipo_persona:
+            queryset = queryset.filter(tipo_persona=tipo_persona)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
