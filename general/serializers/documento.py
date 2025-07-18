@@ -230,6 +230,7 @@ class GenDocumentoDetalleCierreSerializador(serializers.ModelSerializer):
                     'comentario',
                     'estado_aprobado',
                     'estado_anulado',
+                    'estado_contabilizado',
                     'grupo_contabilidad',
                     'grupo_contabilidad__nombre'                    
                 ]
