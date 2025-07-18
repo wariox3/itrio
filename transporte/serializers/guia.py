@@ -24,7 +24,7 @@ class TteGuiaSerializador(serializers.ModelSerializer):
                   'servicio', 'servicio__nombre','producto', 'producto__nombre', 'ruta', 'ruta__nombre', 'zona', 'zona__nombre' ,'operacion_cargo', 'operacion_cargo__nombre' ,'operacion_ingreso', 'operacion_ingreso__nombre', 'unidades', 'peso',
                   'volumen', 'peso_facturado', 'declara', 'flete', 'manejo', 'recaudo', 'cobro_entrega', 'contenido_verificado', 'remitente_nombre', 
                   'mercancia_peligrosa', 'requiere_cita', 'comentario', 'documento', 'fecha_ingreso', 'fecha_entrega' ,'despacho', 'estado_recogido', 'estado_ingreso', 'estado_embarcado',
-                  'estado_despachado', 'estado_entregado', 'estado_soporte', 'estado_novedad', 'estado_novedad_solucionada', 'estado_rndc']
+                  'estado_despachado', 'estado_entregado', 'estado_soporte', 'estado_novedad', 'estado_novedad_solucionada', 'estado_rndc', 'numero_rndc', 'liquidacion']
         select_related_fields = ['contacto', 'destinatario', 'ciudad_destino', 'ciudad_origen', 'cliente', 'empaque', 
                                  'servicio', 'producto', 'ruta', 'zona', 'operacion_cargo', 'operacion_ingreso', 'despacho']  
     
