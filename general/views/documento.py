@@ -2256,59 +2256,59 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 cuenta = ConCuenta.objects.get(pk=cuenta_cierre_id)
             except ConCuenta.DoesNotExist:
                 return Response({'mensaje': 'La cuenta no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)             
-            movimientos = ConMovimiento.objects.filter(
-                    cuenta__codigo__gte=cuenta_desde_codigo,
-                    cuenta__codigo__lte=cuenta_hasta_codigo  
-                ).values(
-                    'cuenta_id',
-                    'contacto_id'
-                ).annotate(
-                    debito=Sum('debito'),
-                    credito=Sum('credito')                
-                ).order_by('cuenta_id', 'contacto_id')              
-            for movimiento in movimientos:
-                saldo_final = movimiento['debito'] - movimiento['credito']
-                if saldo_final < 0 or saldo_final > 0:
-                    data = {
-                        'tipo_registro': 'C',
-                        'documento': documento.id,
-                        'cuenta': movimiento['cuenta_id'],
-                        'contacto': movimiento['contacto_id'],
-                        'grupo': documento.grupo_contabilidad_id,
-                        'detalle': 'CIERRE AÑO'
-                    }
-                    if saldo_final < 0:
-                        data['naturaleza'] = 'D'
-                        data['precio'] = saldo_final * -1
-                    else:
-                        data['naturaleza'] = 'C'
-                        data['precio'] = saldo_final
-                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                    if documento_detalle_serializador.is_valid():
-                        documento_detalle_serializador.save()
-                    else:
-                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                    
-                    data = {
-                        'tipo_registro': 'C',
-                        'documento': documento.id,
-                        'cuenta': cuenta_cierre_id,
-                        'contacto': documento.contacto_id,
-                        'grupo': documento.grupo_contabilidad_id,
-                        'detalle': 'CIERRE AÑO'
-                    }
-                    if saldo_final < 0:
-                        data['naturaleza'] = 'C'
-                        data['precio'] = saldo_final * -1
-                    else:
-                        data['naturaleza'] = 'D'
-                        data['precio'] = saldo_final
-                    documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                    if documento_detalle_serializador.is_valid():
-                        documento_detalle_serializador.save()
-                    else:
-                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                
-                                     
+            with transaction.atomic():
+                movimientos = ConMovimiento.objects.filter(
+                        cuenta__codigo__gte=cuenta_desde_codigo,
+                        cuenta__codigo__lte=cuenta_hasta_codigo  
+                    ).values(
+                        'cuenta_id',
+                        'contacto_id'
+                    ).annotate(
+                        debito=Sum('debito'),
+                        credito=Sum('credito')                
+                    ).order_by('cuenta_id', 'contacto_id')              
+                for movimiento in movimientos:
+                    saldo_final = movimiento['debito'] - movimiento['credito']
+                    if saldo_final < 0 or saldo_final > 0:
+                        data = {
+                            'tipo_registro': 'C',
+                            'documento': documento.id,
+                            'cuenta': movimiento['cuenta_id'],
+                            'contacto': movimiento['contacto_id'],
+                            'grupo': documento.grupo_contabilidad_id,
+                            'detalle': 'CIERRE AÑO'
+                        }
+                        if saldo_final < 0:
+                            data['naturaleza'] = 'D'
+                            data['precio'] = saldo_final * -1
+                        else:
+                            data['naturaleza'] = 'C'
+                            data['precio'] = saldo_final
+                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                        if documento_detalle_serializador.is_valid():
+                            documento_detalle_serializador.save()
+                        else:
+                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        data = {
+                            'tipo_registro': 'C',
+                            'documento': documento.id,
+                            'cuenta': cuenta_cierre_id,
+                            'contacto': documento.contacto_id,
+                            'grupo': documento.grupo_contabilidad_id,
+                            'detalle': 'CIERRE AÑO'
+                        }
+                        if saldo_final < 0:
+                            data['naturaleza'] = 'C'
+                            data['precio'] = saldo_final * -1
+                        else:
+                            data['naturaleza'] = 'D'
+                            data['precio'] = saldo_final
+                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                        if documento_detalle_serializador.is_valid():
+                            documento_detalle_serializador.save()
+                        else:
+                            return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                        
             return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
