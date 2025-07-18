@@ -230,7 +230,7 @@ class GenDocumentoDetalleCierreSerializador(serializers.ModelSerializer):
                     'comentario',
                     'estado_aprobado',
                     'estado_anulado',
-                    'grupo_contabilidad'
+                    'grupo_contabilidad',
                     'grupo_contabilidad__nombre'                    
                 ]
         select_related_fields = ['contacto', 'grupo', 'grupo_contabilidad']
