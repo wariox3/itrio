@@ -2274,7 +2274,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'documento': documento.id,
                         'cuenta': movimiento['cuenta_id'],
                         'contacto': movimiento['contacto_id'],
-                        'grupo': documento.grupo_contabilidad_id,
+                        'grupo_contabilidad': documento.grupo_contabilidad_id,
                         'detalle': 'CIERRE AÑO'
                     }
                     if saldo_final < 0:
