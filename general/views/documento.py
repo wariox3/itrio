@@ -2294,7 +2294,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         'documento': documento.id,
                         'cuenta': cuenta_cierre_id,
                         'contacto': documento.contacto_id,
-                        'grupo': documento.grupo_contabilidad_id,
+                        'grupo_contabilidad': documento.grupo_contabilidad_id,
                         'detalle': 'CIERRE AÑO'
                     }
                     if saldo_final < 0:
