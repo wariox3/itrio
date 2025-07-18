@@ -777,7 +777,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
         comprobante = parametros['comprobante']
         cuenta = parametros['cuenta']         
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
         movimientos = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante, cuenta)
         resultados_json = resultados_cuenta + movimientos
         resultados_json.sort(key=lambda x: str(x['codigo']))
