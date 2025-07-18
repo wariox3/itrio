@@ -33,15 +33,14 @@ class VisitaServicio():
         return R * c  # Retorna la distancia en kilómetros
 
     @staticmethod
-    def construir_matriz_distancias(visitas, punto_inicial):
+    def construir_matriz_distancias(visitas: RutVisita, punto_inicial):
         n = len(visitas)
         matriz = np.zeros((n + 1, n + 1))  # +1 para incluir el punto de partida
-        puntos = [(punto_inicial['latitud'], punto_inicial['longitud'])] + [(v['latitud'], v['longitud']) for v in visitas]
+        puntos = [(punto_inicial['latitud'], punto_inicial['longitud'])] + [(v.latitud, v.longitud) for v in visitas]
 
         for i in range(n + 1):
             for j in range(n + 1):
-                matriz[i][j] = VisitaServicio.haversine(puntos[i][0], puntos[i][1], puntos[j][0], puntos[j][1])
-        
+                matriz[i][j] = VisitaServicio.haversine(puntos[i][0], puntos[i][1], puntos[j][0], puntos[j][1])        
         return matriz
 
     @staticmethod
@@ -87,7 +86,7 @@ class VisitaServicio():
     def ordenar(visitas: RutVisita):                  
         configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_latitud', 'rut_longitud')[0]
         if not configuracion or configuracion['rut_latitud'] is None or configuracion['rut_longitud'] is None:
-            return False
+            return {'error': True, 'mensaje': 'Configuración de ruteo no encontrada o incompleta.'}
         
         latitud = float(configuracion['rut_latitud'])
         longitud = float(configuracion['rut_longitud'])
@@ -120,14 +119,27 @@ class VisitaServicio():
             index = solution.Value(routing.NextVar(index))        
         decimal_6_places = Decimal('0.000001')  # Para redondear a 6 decimales
         
-        for idx, visita_idx in enumerate(orden):
-            visita_id = visitas[visita_idx]['id']            
+        for idx, visita_idx in enumerate(orden):                        
+            '''visita_id = visitas[visita_idx]['id']            
             tiempo_servicio = Decimal(visitas[visita_idx]['tiempo_servicio']).quantize(decimal_6_places, rounding=ROUND_HALF_UP)
             distancia = matriz[0][visita_idx + 1] if idx == 0 else matriz[orden[idx - 1] + 1][visita_idx + 1]                    
             tiempo_trayecto = (Decimal(distancia) * Decimal('1.6')).quantize(decimal_6_places, rounding=ROUND_HALF_UP)            
             tiempo = (tiempo_servicio + tiempo_trayecto).quantize(decimal_6_places, rounding=ROUND_HALF_UP)            
-            RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)
+            RutVisita.objects.filter(id=visita_id).update(orden=idx + 1, distancia=distancia, tiempo_trayecto=tiempo_trayecto, tiempo=tiempo)'''
 
+            visita = visitas[visita_idx]
+            distancia = Decimal(matriz[0][visita_idx + 1] if idx == 0 else matriz[orden[idx - 1] + 1][visita_idx + 1]).quantize(decimal_6_places)            
+            tiempo_trayecto = (distancia * Decimal('1.6')).quantize(decimal_6_places)
+            tiempo_servicio = Decimal(visita.tiempo_servicio).quantize(decimal_6_places)
+            tiempo = (tiempo_servicio + tiempo_trayecto).quantize(decimal_6_places)
+            
+            visita.orden = idx + 1
+            visita.distancia = Decimal(distancia)
+            visita.tiempo_trayecto = Decimal(tiempo_trayecto)
+            visita.tiempo = Decimal(tiempo)
+            visita.save()
+        return {'error': False}
+    
     @staticmethod
     def importar_complemento(limite=100, guia_desde=None, guia_hasta=None, fecha_desde=None, fecha_hasta=None, pendiente_despacho=False, codigo_contacto=None, codigo_destino=None, codigo_zona=None, codigo_despacho=None, despacho_id=None):        
         parametros = {

@@ -205,42 +205,23 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'No hay guias pendientes por decodificar'}, status=status.HTTP_200_OK) 
 
     @action(detail=False, methods=["post"], url_path=r'ordenar',)
-    def ordenar(self, request):      
+    def ordenar_action(self, request):      
         raw = request.data
-        filtros = raw.get('filtros', [])
-        tiene_filtro_franja = any(filtro.get('propiedad') == 'franja_id' for filtro in filtros if isinstance(filtro, dict))        
-        if tiene_filtro_franja:            
-            visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True)        
-            for filtro in filtros:
-                operador = filtro.get('operador')
-                propiedad = filtro['propiedad']
-                if operador == 'range':
-                    visitas = visitas.filter(**{f'{propiedad}__{operador}': (filtro['valor1'], filtro['valor2'])})
-                elif operador:
-                    visitas = visitas.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
-                else:
-                    visitas = visitas.filter(**{propiedad: filtro['valor1']})            
-            visitas = visitas.values('id', 'latitud', 'longitud', 'tiempo_servicio')            
-            if visitas.exists():
-                VisitaServicio.ordenar(visitas)
-        else:
-            visitas_franja = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True).values('franja_codigo').annotate(cantidad=Count('id'))        
-            for filtro in filtros:
-                operador = filtro.get('operador')
-                propiedad = filtro['propiedad']
-                if propiedad != 'franja_id':  # Ahora excluimos filtros de franja_id
-                    if operador == 'range':
-                        visitas_franja = visitas_franja.filter(**{f'{propiedad}__{operador}': (filtro['valor1'], filtro['valor2'])})
-                    elif operador:
-                        visitas_franja = visitas_franja.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
-                    else:
-                        visitas_franja = visitas_franja.filter(**{propiedad: filtro['valor1']})
-            
-            for visita_franja in visitas_franja:
-                visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True, franja_codigo=visita_franja['franja_codigo']).values('id', 'latitud', 'longitud', 'tiempo_servicio')                
-                if visitas.exists():
-                    VisitaServicio.ordenar(visitas)
-        
+        filtros = raw.get('filtros', [])           
+        visitas = RutVisita.objects.filter(estado_despacho=False, estado_decodificado=True)        
+        for filtro in filtros:
+            operador = filtro.get('operador')
+            propiedad = filtro['propiedad']
+            if operador == 'range':
+                visitas = visitas.filter(**{f'{propiedad}__{operador}': (filtro['valor1'], filtro['valor2'])})
+            elif operador:
+                visitas = visitas.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
+            else:
+                visitas = visitas.filter(**{propiedad: filtro['valor1']})                       
+        if visitas.exists():
+            respuesta = VisitaServicio.ordenar(visitas) 
+            if respuesta['error'] == True:
+                return Response({'mensaje': respuesta['mensaje']}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'visitas ordenadas'}, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=["post"], url_path=r'rutear')
