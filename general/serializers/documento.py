@@ -216,7 +216,6 @@ class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
 class GenDocumentoDetalleCierreSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
-    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True, allow_null=True, default=None)
     grupo_contabilidad__nombre = serializers.CharField(source='grupo_contabilidad.nombre', read_only=True, allow_null=True, default=None)
     
     class Meta:
@@ -231,7 +230,7 @@ class GenDocumentoDetalleCierreSerializador(serializers.ModelSerializer):
                     'comentario',
                     'estado_aprobado',
                     'estado_anulado',
-                    'grupo__nombre',
+                    'grupo_contabilidad'
                     'grupo_contabilidad__nombre'                    
                 ]
         select_related_fields = ['contacto', 'grupo', 'grupo_contabilidad']
