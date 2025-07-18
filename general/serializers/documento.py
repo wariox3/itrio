@@ -233,7 +233,7 @@ class GenDocumentoDetalleCierreSerializador(serializers.ModelSerializer):
                     'grupo_contabilidad',
                     'grupo_contabilidad__nombre'                    
                 ]
-        select_related_fields = ['contacto', 'grupo', 'grupo_contabilidad']
+        select_related_fields = ['contacto', 'grupo_contabilidad']
 
 class GenDocumentoListaSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
