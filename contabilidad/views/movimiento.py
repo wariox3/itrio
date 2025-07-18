@@ -153,13 +153,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
-    def obtener_saldo_cuenta(self, fecha_desde, fecha_hasta, cierre = False, cuenta_con_movimiento = False, cuenta = ''):
+    def obtener_saldo_cuenta(self, fecha_desde, fecha_hasta, cierre = False, cuenta_con_movimiento = False, cuenta_desde = None, cuenta_hasta = None):
         parametro_cierre = ' AND m.cierre = false '
         if cierre == True:
             parametro_cierre = ''
-        filtro_cuenta = ''
-        if cuenta:
-            filtro_cuenta = f"AND c.codigo = '{cuenta}' "     
+        filtro_cuenta_desde = ''
+        if cuenta_desde:
+            filtro_cuenta_desde = f"AND c.codigo >= '{cuenta_desde}' "  
+        filtro_cuenta_hasta = ''
+        if cuenta_hasta:
+            filtro_cuenta_hasta = f"AND c.codigo <= '{cuenta_hasta}' "               
         query = f'''
             SELECT
                 c.id,
@@ -179,7 +182,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 con_movimiento m ON m.cuenta_id = c.id
             WHERE
                 1=1 
-                {filtro_cuenta}                                
+                {filtro_cuenta_desde}
+                {filtro_cuenta_hasta}                                
             GROUP BY
                 c.id, c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
@@ -659,9 +663,11 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
+        cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
+        cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)       
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
-        resultados_json = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, '')
+        resultados_json = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
         if pdf:
             formato = FormatoBalancePrueba()
             pdf = formato.generar_pdf(fecha_desde, fecha_hasta, resultados_json)
@@ -711,11 +717,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
+        cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
+        cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
         numero_identificacion = parametros['numero_identificacion']
         nombre_corto = parametros['nombre_corto']
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, '')
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
         resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre ,numero_identificacion, nombre_corto)
         resultados = resultados_cuenta + resultados_tercero
         resultados.sort(key=lambda x: str(x['codigo']))
@@ -763,11 +771,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
+        cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
+        cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
         comprobante = parametros['comprobante']
         cuenta = parametros['cuenta']         
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta, cuenta_con_movimiento)
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
         movimientos = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante, cuenta)
         resultados_json = resultados_cuenta + movimientos
         resultados_json.sort(key=lambda x: str(x['codigo']))
@@ -812,11 +822,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
+        cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
+        cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
         numero_identificacion = parametros['numero_identificacion']
         nombre_corto = parametros['nombre_corto']
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento)
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
         resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre, numero_identificacion, nombre_corto)        
         resultados_json = resultados_cuenta + resultados_tercero
         resultados_json.sort(key=lambda x: str(x['codigo']))
@@ -864,10 +876,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
+        cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
+        cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
         comprobante = parametros['comprobante']   
-        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento)
+        resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
         resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
         resultados_movimiento = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante)
         resultados_json = resultados_cuenta + resultados_tercero + resultados_movimiento
@@ -918,10 +932,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']  
-        cuenta_desde = parametros.get('cuenta_desde_codigo', None)
-        cuenta_hasta = parametros.get('cuenta_hasta_codigo', None)
+        cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
+        cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
         contacto_id = parametros.get('contacto_id', None)                     
-        resultados_movimiento = self.obtener_movimiento_base(fecha_desde, fecha_hasta, cuenta_desde, cuenta_hasta, contacto_id)
+        resultados_movimiento = self.obtener_movimiento_base(fecha_desde, fecha_hasta, cuenta_codigo_desde, cuenta_codigo_hasta, contacto_id)
         resultados_json = resultados_movimiento
         resultados_json.sort(key=lambda x: str(x['cuenta_codigo']))
 
@@ -969,10 +983,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']
-        cuenta_desde = parametros.get('cuenta_desde_codigo', None)
-        cuenta_hasta = parametros.get('cuenta_hasta_codigo', None)
+        cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
+        cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
         contacto_id = parametros.get('contacto_id', None)
-        resultados_movimiento = self.obtener_movimiento_certificado_retencion(fecha_desde, fecha_hasta, cuenta_desde, cuenta_hasta, contacto_id)
+        resultados_movimiento = self.obtener_movimiento_certificado_retencion(fecha_desde, fecha_hasta, cuenta_codigo_desde, cuenta_codigo_hasta, contacto_id)
         resultados_json = resultados_movimiento
 
         if excel:

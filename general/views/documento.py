@@ -2259,14 +2259,16 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 movimientos = ConMovimiento.objects.filter(
                         cuenta__codigo__gte=cuenta_desde_codigo,
-                        cuenta__codigo__lte=cuenta_hasta_codigo  
+                        cuenta__codigo__lte=cuenta_hasta_codigo,
+                        fecha__lte=documento.fecha
                     ).values(
                         'cuenta_id',
                         'contacto_id'
                     ).annotate(
                         debito=Sum('debito'),
                         credito=Sum('credito')                
-                    ).order_by('cuenta_id', 'contacto_id')              
+                    ).order_by('cuenta_id', 'contacto_id')  
+                #print(movimientos.query)            
                 for movimiento in movimientos:
                     saldo_final = movimiento['debito'] - movimiento['credito']
                     if saldo_final < 0 or saldo_final > 0:
