@@ -170,55 +170,55 @@ class FormatoLiquidacion():
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "CESANTÍAS")
             p.setFont("Helvetica", 9)
-            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_cesantia:,.0f}")
-            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
-            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_cesantia))       
-            p.drawRightString(x + 551, y_position, f"{liquidacion.cesantia:,.0f}")     
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_cesantia:,.0f}" if liquidacion.dias_cesantia is not None else "")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}" if liquidacion.salario is not None else "")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_cesantia) if liquidacion.fecha_ultimo_pago_cesantia is not None else "")       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.cesantia:,.0f}" if liquidacion.cesantia is not None else "")     
             y_position -= 20
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "INTERESES")
             p.setFont("Helvetica", 9)
-            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_cesantia:,.0f}")
-            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
-            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_cesantia))       
-            p.drawRightString(x + 551, y_position, f"{liquidacion.interes:,.0f}")     
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_cesantia:,.0f}" if liquidacion.dias_cesantia is not None else "")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}" if liquidacion.salario is not None else "")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_cesantia) if liquidacion.fecha_ultimo_pago_cesantia is not None else "")       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.interes:,.0f}" if liquidacion.interes is not None else "")     
             y_position -= 20
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "PRIMA")
             p.setFont("Helvetica", 9)
-            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_prima:,.0f}")
-            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
-            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_prima))       
-            p.drawRightString(x + 551, y_position, f"{liquidacion.prima:,.0f}")     
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_prima:,.0f}" if liquidacion.dias_prima is not None else "")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}" if liquidacion.salario is not None else "")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_prima) if liquidacion.fecha_ultimo_pago_prima is not None else "")       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.prima:,.0f}" if liquidacion.prima is not None else "")     
             y_position -= 20
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "VACACIONES")
             p.setFont("Helvetica", 9)
-            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_vacacion:,.0f}")
-            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}")
-            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_vacacion))       
-            p.drawRightString(x + 551, y_position, f"{liquidacion.vacacion:,.0f}")     
+            p.drawRightString(x + 320, y_position, f"{liquidacion.dias_vacacion:,.0f}" if liquidacion.dias_vacacion is not None else "")
+            p.drawRightString(x + 400, y_position, f"{liquidacion.salario:,.0f}" if liquidacion.salario is not None else "")
+            p.drawRightString(x + 485, y_position, str(liquidacion.fecha_ultimo_pago_vacacion) if liquidacion.fecha_ultimo_pago_vacacion is not None else "")       
+            p.drawRightString(x + 551, y_position, f"{liquidacion.vacacion:,.0f}" if liquidacion.vacacion is not None else "")     
             y_position -= 20
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "BONIFICACIÓN")
             p.setFont("Helvetica", 9)   
-            p.drawRightString(x + 551, y_position, f"{liquidacion.adicion:,.0f}")     
+            p.drawRightString(x + 551, y_position, f"{liquidacion.adicion:,.0f}" if liquidacion.adicion is not None else "")     
             y_position -= 20
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "DEDUCCIÓN")
             p.setFont("Helvetica", 9)   
-            p.drawRightString(x + 551, y_position, f"{liquidacion.deduccion:,.0f}")     
+            p.drawRightString(x + 551, y_position, f"{liquidacion.deduccion:,.0f}" if liquidacion.deduccion is not None else "")     
             y_position -= 20
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 200, y_position, "TOTAL")
             p.setFont("Helvetica", 9)   
-            p.drawRightString(x + 551, y_position, f"{liquidacion.total:,.0f}")     
+            p.drawRightString(x + 551, y_position, f"{liquidacion.total:,.0f}" if liquidacion.total is not None else "")     
             y_position -= 20
 
         def dibujar_pie_pagina():
