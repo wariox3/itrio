@@ -28,7 +28,15 @@ class Holmio():
         url = "/api/transporte/guia/entrega"        
         respuesta = self.consumirPost(parametros, url)        
         if respuesta['status'] == 200:
-            return {'error':False}
+            datos = respuesta['datos']
+            if datos['error'] == False:
+                return {'error':False}
+            else:
+                error_codigo = datos.get('errorCodigo', None)
+                if error_codigo == 1:
+                    return {'error':False}
+                else:
+                    return {'error':True,'mensaje':f'Ocurrio un error con la entrega: {datos["mensaje"]}'}
         else:
             return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}
 

@@ -246,6 +246,6 @@ class VisitaServicio():
         if datos_entrega:
             parametros.update(datos_entrega)                    
         respuesta = holmio.entrega(parametros)
-        visita.estado_entregado_complemento = True
-        visita.save()
-        return True
+        if respuesta['error'] == False:
+            visita.estado_entregado_complemento = True
+            visita.save()
