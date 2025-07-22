@@ -30,7 +30,7 @@ class RutVisita(models.Model):
     estado_novedad = models.BooleanField(default = False)
     estado_devolucion = models.BooleanField(default = False)
     orden = models.IntegerField(default=0)
-    distancia = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    distancia = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     resultados = models.JSONField(null=True, blank=True)
     franja_id = models.IntegerField(null=True)
     franja_codigo = models.CharField(max_length=20, null=True)
