@@ -36,7 +36,7 @@ class Holmio():
                 if error_codigo == 1:
                     return {'error':False}
                 else:
-                    return {'error':True,'mensaje':f'Ocurrio un error con la entrega: {datos["mensaje"]}'}
+                    return {'error':True,'mensaje':f'Ocurrio un error con la entrega'}
         else:
             return {'error':True, 'mensaje':f'Ocurrio un error con la clase: {respuesta["mensaje"]}'}
 
