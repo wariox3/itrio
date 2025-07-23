@@ -17,7 +17,7 @@ from utilidades.google import Google
 from utilidades.backblaze import Backblaze
 from utilidades.imagen import Imagen
 from utilidades.utilidades import UtilidadGeneral
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, F
 from django.db.models.functions import Coalesce
 from django.db import transaction
 from io import BytesIO
@@ -683,8 +683,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         visita.fecha_entrega = fecha_entrega
                         visita.datos_entrega = datos_entrega
                         visita.save()
-                        despacho.visitas_entregadas += 1
-                        despacho.save()                                    
+                        RutDespacho.objects.filter(pk=visita.despacho_id).update(
+                            visitas_entregadas=F('visitas_entregadas') + 1
+                        )                                 
                         backblaze = Backblaze()
                         tenant = request.tenant.schema_name                    
                         if imagenes:                        
