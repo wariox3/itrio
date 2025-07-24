@@ -14,6 +14,7 @@ class CtnMovimientoSerializador(serializers.ModelSerializer):
             'fecha',
             'descripcion',
             'vr_total',
+            'vr_total_operado',
             'vr_afectado',
             'vr_saldo',            
             'documento_fisico',
