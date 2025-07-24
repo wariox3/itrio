@@ -58,6 +58,7 @@ class CtnIdentificacion(models.Model):
 class CtnSocio(models.Model):
     nombre = models.CharField(max_length=100)    
     porcentaje_comision = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     
     class Meta:
         db_table = "cnt_socio"
@@ -158,14 +159,15 @@ class UsuarioContenedor(models.Model):
 
 class CtnMovimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)
-    fecha = models.DateTimeField(null=True)
-    fecha_vence = models.DateField(null=True)    
+    fecha = models.DateTimeField(auto_now_add=True)    
     descripcion = models.CharField(max_length=250, null=True)
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    vr_total_operado = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_afectado = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_saldo = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     contenedor_movimiento_id = models.IntegerField(null=True) 
     documento_fisico = models.BooleanField(default = False) 
+    lote = models.CharField(max_length=50, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     socio = models.ForeignKey(CtnSocio, on_delete=models.CASCADE, null=True)
     movimiento_referencia = models.ForeignKey('self', on_delete=models.PROTECT, null=True)
@@ -175,18 +177,19 @@ class CtnMovimiento(models.Model):
          
 
 class CtnEventoPago(models.Model):
-    fecha = models.DateTimeField()    
+    fecha = models.DateTimeField(auto_now_add=True)    
     evento = models.CharField(max_length=50, null=True)
     entorno = models.CharField(max_length=10, null=True)
     transaccion = models.CharField(max_length=50, null=True)    
     metodo_pago = models.CharField(max_length=50, null=True)
-    referencia = models.CharField(max_length=50, null=True)    
+    referencia = models.CharField(max_length=500, null=True)    
     correo = models.CharField(max_length=250, null=True)
     estado = models.CharField(max_length=50, null=True)
     fecha_transaccion = models.DateTimeField(null=True)
     estado_aplicado = models.BooleanField(default = False)
     vr_original = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_aplicar = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+    datos = models.JSONField(null=True, blank=True)
     class Meta:
         db_table = "cnt_evento_pago"              
 

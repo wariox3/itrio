@@ -11,6 +11,8 @@ from decouple import config
 from datetime import timedelta, datetime
 from django.utils import timezone
 from django.db.models import Sum, Q, F
+from django.db import transaction
+from django.db import connection
 from django.http import HttpResponse
 from decimal import Decimal
 from utilidades.space_do import SpaceDo
@@ -51,27 +53,55 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     vr_total=Sum('vr_total'))
             if usuario_id:
                 consumos.filter(usuario_id=usuario_id)
-            facturas = []
+            lote = datetime.now().strftime("%Y%m%d%H%M%S")
+            pedidos = []
             for consumo in consumos:
                 total = round(consumo['vr_total'])
                 usuario = User.objects.get(pk=consumo['usuario_id'])
-                if usuario.vr_saldo <= 0:
-                    if usuario.cortesia == False:
-                        movimiento = CtnMovimiento(
-                            tipo = "PEDIDO",
-                            fecha = timezone.now(),
-                            fecha_vence = datetime.now().date() + timedelta(days=3),
-                            descripcion = 'SERVICIOS NUBE',
-                            vr_total = total,
-                            vr_saldo = total,
-                            usuario_id = consumo['usuario_id'],
-                            socio_id=usuario.socio_id
-                        )
-                        facturas.append(movimiento)                
-                        usuario.vr_saldo += total
-                        usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
-                        usuario.save()
-            CtnMovimiento.objects.bulk_create(facturas)
+                if usuario.cortesia == False:
+                    movimiento = CtnMovimiento(
+                        tipo = "PEDIDO",                           
+                        descripcion = 'SERVICIOS NUBE',
+                        vr_total = total,
+                        vr_total_operado = total,
+                        vr_saldo = total,
+                        usuario_id = consumo['usuario_id'],
+                        socio_id=usuario.socio_id,
+                        lote = lote,
+                    )
+                    pedidos.append(movimiento)                
+                    usuario.vr_saldo += total
+                    usuario.fecha_limite_pago = datetime.now().date() + timedelta(days=3)
+                    usuario.save()
+            CtnMovimiento.objects.bulk_create(pedidos)
+            
+            # Aplicar abonos si existen
+            movimientos = CtnMovimiento.objects.filter(lote=lote)            
+            for movimiento in movimientos:
+                if movimiento.usuario_id:
+                    usuario = User.objects.get(pk=movimiento.usuario_id)
+                    if usuario:
+                        if usuario.vr_abono > 0:
+                            abono = usuario.vr_abono
+                            if abono > movimiento.vr_saldo:
+                                abono = movimiento.vr_saldo
+                            saldo = movimiento.vr_saldo - abono
+                            recibo = CtnMovimiento(
+                                tipo = "RECIBO_ABONO",
+                                descripcion = 'APLICACION DE ABONO',
+                                contenedor_movimiento_id=movimiento.id,
+                                movimiento_referencia_id=movimiento.id,
+                                vr_total = abono,
+                                vr_total_operado = abono*-1,
+                                usuario_id = movimiento.usuario_id
+                            )
+                            recibo.save()
+                            saldo = movimiento.vr_saldo - abono
+                            movimiento.vr_afectado = movimiento.vr_afectado + abono
+                            movimiento.vr_saldo = saldo                            
+                            movimiento.save()
+                            usuario.vr_abono -= abono
+                            usuario.save()
             return Response({'proceso':True}, status=status.HTTP_200_OK)  
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
@@ -143,120 +173,128 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'evento-wompi',)
     def evento_wompi(self, request):
         raw = request.data
-        evento = raw.get('event')
-        entorno = raw.get('environment')
-        data = raw.get('data')
-        fecha_transaccion_parametro=raw.get('sent_at')
+        evento = raw.get('event', None)
+        entorno = raw.get('environment', None)
+        data = raw.get('data', None)
+        fecha_transaccion_parametro=raw.get('sent_at', None)
         fecha_transaccion_parametro = fecha_transaccion_parametro[:16]
         fecha_transaccion_parametro = fecha_transaccion_parametro.replace('T', ' ')
         fecha_transaccion = datetime.strptime(fecha_transaccion_parametro, '%Y-%m-%d %H:%M')
-        transaccion=data.get('transaction')
-        estado=transaccion.get('status')
-        valor_original=transaccion.get('amount_in_cents')
+        transaccion=data.get('transaction', None)
+        estado=transaccion.get('status', None)
+        valor_original=transaccion.get('amount_in_cents', 0)
         valor=valor_original/100
-        referencia=transaccion.get('reference')
-        evento_pago = CtnEventoPago(
-            fecha = timezone.now(),
+        referencia_cruda=transaccion.get('reference', None)
+        evento_pago = CtnEventoPago(            
             evento = evento,
             entorno = entorno,
             transaccion = transaccion.get('id'),
             metodo_pago = transaccion.get('payment_method_type'),
-            referencia = referencia,
+            referencia = referencia_cruda,
             estado = estado,
             correo = transaccion.get('customer_email'),
             fecha_transaccion = fecha_transaccion,
             vr_original = valor_original,
-            vr_aplicar = valor
+            vr_aplicar = valor,
+            datos = raw
         )
-        evento_pago.save()
+        evento_pago.save()        
         if estado == 'APPROVED':       
-            if referencia:
-                try:
-                    pedido = CtnMovimiento.objects.get(id=referencia) 
-                    if pedido:         
-                        if valor <= pedido.vr_saldo:                            
-                            recibo = CtnMovimiento(
-                                tipo = "RECIBO",
-                                fecha = timezone.now(),
-                                fecha_vence = timezone.now().date(),
-                                descripcion = 'PAGO SERVICIOS NUBE',
-                                contenedor_movimiento_id=referencia,
-                                movimiento_referencia_id=referencia,
-                                vr_total = valor,
-                                vr_saldo = 0,
-                                socio_id = pedido.socio_id,
-                                usuario_id = pedido.usuario_id
-                            )
-                            recibo.save()
-                            valor = Decimal(valor)
-                            # Aplicar creditos al socio por el pago
-                            if pedido.socio_id:
-                                socio = CtnSocio.objects.get(id=pedido.socio_id)
-                                socio_usuario = User.objects.filter(es_socio=True, socio_id=pedido.socio_id).first()
-                                if socio_usuario and socio:
-                                    valor_credito = round(valor * socio.porcentaje_comision / 100)
-                                    if valor_credito > 0:
-                                        credito = CtnMovimiento(
-                                            tipo = "CREDITO",
-                                            fecha = timezone.now(),
-                                            fecha_vence = timezone.now().date(),
-                                            descripcion = f'COMISION PEDIDO ID {referencia} RECIBO ID {recibo.id}',
-                                            contenedor_movimiento_id=recibo.id,  
-                                            movimiento_referencia_id=recibo.id,                                          
-                                            vr_total = valor_credito,
-                                            vr_saldo = 0,
-                                            socio_id = pedido.socio_id,
-                                            usuario_id = socio_usuario.id
-                                        )
-                                        credito.save()  
-                                        socio_usuario.vr_credito += valor_credito
-                                        socio_usuario.save()
+            try:
+                if referencia_cruda:  
+                    with transaction.atomic():                                      
+                        referencias = referencia_cruda.split('_')
+                        for referencia in referencias:
+                            tipo = referencia[0]                         
+                            if tipo == 'P':
+                                movimiento_id = referencia[1:]                            
+                                pedido = CtnMovimiento.objects.get(id=movimiento_id) 
+                                if pedido:                                                                     
+                                    recibo = CtnMovimiento(
+                                        tipo = "RECIBO",
+                                        descripcion = 'PAGO SERVICIOS NUBE',
+                                        contenedor_movimiento_id=movimiento_id,
+                                        movimiento_referencia_id=movimiento_id,
+                                        vr_total = pedido.vr_saldo,
+                                        vr_total_operado = pedido.vr_saldo*-1,
+                                        vr_saldo = 0,
+                                        socio_id = pedido.socio_id,
+                                        usuario_id = pedido.usuario_id
+                                    )
+                                    recibo.save()
+                                    total_pedido = Decimal(pedido.vr_saldo)
+                                    # Aplicar creditos al socio por el pago
+                                    if pedido.socio_id:
+                                        socio = CtnSocio.objects.get(id=pedido.socio_id)                                        
+                                        if socio:
+                                            valor_credito = round(total_pedido * socio.porcentaje_comision / 100)
+                                            if valor_credito > 0:
+                                                credito = CtnMovimiento(
+                                                    tipo = "CREDITO",
+                                                    descripcion = f'COMISION PEDIDO ID {movimiento_id} RECIBO ID {recibo.id}',
+                                                    contenedor_movimiento_id=recibo.id,  
+                                                    movimiento_referencia_id=recibo.id,                                          
+                                                    vr_total = valor_credito,
+                                                    vr_total_operado = valor_credito,
+                                                    vr_saldo = 0,
+                                                    socio_id = pedido.socio_id,
+                                                    usuario_id = socio.usuario_id
+                                                )
+                                                credito.save()  
+                                                User.objects.filter(id=socio.usuario_id).update(vr_credito=F('vr_credito') + valor_credito)
 
-                            # Afectar saldo del pedido                                            
-                            pedido.vr_afectado = pedido.vr_afectado + valor
-                            pedido.vr_saldo =  pedido.vr_saldo - valor
-                            pedido.save()
+                                    # Afectar saldo del pedido                                            
+                                    pedido.vr_afectado = total_pedido
+                                    pedido.vr_saldo =  0
+                                    pedido.save()                                
+
+                                    # Actualiza saldo del usuario
+                                    User.objects.filter(id=pedido.usuario_id).update(vr_saldo=F('vr_saldo') - total_pedido)                                         
                             
-                            # Actualizar la aplicacion del evento "pago"
-                            evento_pago.estado_aplicado = True
-                            evento_pago.save()
-
-                            # Actualiza saldo del usuario
-                            usuario = User.objects.get(pk=pedido.usuario_id)
-                            if usuario:
-                                usuario.vr_saldo -= valor
-                                usuario.save()                                
-                except Exception as e:
-                    pass
+                            if tipo == 'A': 
+                                usuario_id = referencia[1:]                            
+                                abono = CtnMovimiento(
+                                    tipo = "ABONO",
+                                    descripcion = 'ABONO',
+                                    vr_total = valor,
+                                    vr_total_operado = valor,
+                                    usuario_id = usuario_id
+                                )
+                                abono.save()
+                                # Actualiza usuario
+                                User.objects.filter(pk=usuario_id).update(vr_abono=F('vr_abono') + valor)                                                                                                            
+                        evento_pago.estado_aplicado = True
+                        evento_pago.save()
+            except Exception as e:
+                pass
         return Response(status=status.HTTP_200_OK)
     
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'aplicar-credito',)
     def aplicar_credito_action(self, request):
         raw = request.data
         movimiento_id = raw.get('movimiento_id')
-        valor = raw.get('valor')
-        usuario_id = raw.get('usuario_id')
-        if movimiento_id and valor and usuario_id:
+        valor = raw.get('valor')        
+        if movimiento_id and valor:
             try:
                 movimiento = CtnMovimiento.objects.get(id=movimiento_id)
             except CtnMovimiento.DoesNotExist:
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
             try:
-                usuario = User.objects.get(id=usuario_id)
+                usuario = User.objects.get(id=movimiento.usuario_id)
             except User.DoesNotExist:
-                return Response({'mensaje':'El usuario no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                                            
+                return Response({'mensaje':'El usuario no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)      
+                                                                                  
             if movimiento.vr_saldo >= valor:
                 if usuario.vr_credito >= valor:
                     recibo = CtnMovimiento(
                         tipo = "RECIBO_CREDITO",
-                        fecha = timezone.now(),
-                        fecha_vence = timezone.now().date(),
                         descripcion = f'APLICACION DE CREDITOS PEDIDO ID {movimiento_id}',
                         contenedor_movimiento_id=movimiento_id,
                         movimiento_referencia_id=movimiento_id,
-                        usuario_id=usuario_id,
+                        usuario_id=movimiento.usuario_id,
                         socio_id=usuario.socio_id,
                         vr_total = valor,
+                        vr_total_operado = valor*-1,
                         vr_saldo = 0
                     )
                     recibo.save()                    
@@ -273,7 +311,40 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 return Response({'Mensaje': f'El movimiento tiene un saldo de {movimiento.vr_saldo} y esta intentado aplicar un valor mayor {valor}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)             
-        
+
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'regenerar-saldos',)
+    def regenerar_saldos_action(self, request):
+        raw = request.data
+        usuario_id = raw.get('usuario_id', None)
+        if usuario_id:
+            User.objects.filter(id=usuario_id).update(vr_abono=0, vr_saldo=0, vr_credito=0)
+        else:
+            User.objects.all().update(vr_abono=0, vr_saldo=0, vr_credito=0)
+    
+
+        movimientos_abono = CtnMovimiento.objects.filter(tipo__in=['ABONO', 'RECIBO_ABONO']).values('usuario_id').annotate(total_abono=Sum('vr_total_operado'))
+        for movimiento_abono in movimientos_abono:
+            User.objects.filter(id=movimiento_abono['usuario_id']).update(vr_abono=movimiento_abono['total_abono'])
+
+        movimientos_pedido = CtnMovimiento.objects.filter(tipo__in=['PEDIDO', 'RECIBO', 'RECIBO_CREDITO', 'RECIBO_ABONO']).values('usuario_id').annotate(total=Sum('vr_total_operado'))
+        for movimiento_pedido in movimientos_pedido:
+            User.objects.filter(id=movimiento_pedido['usuario_id']).update(vr_saldo=movimiento_pedido['total'])
+
+        movimientos_credito = CtnMovimiento.objects.filter(tipo__in=['CREDITO', 'RECIBO_CREDITO']).values('usuario_id').annotate(total=Sum('vr_total_operado'))
+        for movimiento_credito in movimientos_credito:
+            User.objects.filter(id=movimiento_credito['usuario_id']).update(vr_credito=movimiento_credito['total'])
+
+        with connection.cursor() as cursor:        
+            query = f'''
+                UPDATE cnt_movimiento AS pedido
+                SET 
+                    vr_afectado = COALESCE((SELECT SUM(mr.vr_total) FROM cnt_movimiento mr WHERE mr.movimiento_referencia_id = pedido.id), 0),
+                    vr_saldo = pedido.vr_total - COALESCE((SELECT SUM(mr.vr_total) FROM cnt_movimiento mr WHERE mr.movimiento_referencia_id = pedido.id),0)
+                WHERE pedido.tipo = 'PEDIDO';
+            '''                    
+            cursor.execute(query)
+        return Response(status=status.HTTP_200_OK)
+      
     @action(detail=False, methods=["post"], url_path=r'descargar',)
     def descargar(self, request):
         raw = request.data
@@ -313,4 +384,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             except CtnMovimiento.DoesNotExist:
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
-            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)         
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)       
+
+          
