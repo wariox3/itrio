@@ -101,6 +101,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                             movimiento.vr_saldo = saldo                            
                             movimiento.save()
                             usuario.vr_abono -= abono
+                            usuario.vr_saldo -= abono
                             usuario.save()
             return Response({'proceso':True}, status=status.HTTP_200_OK)  
         else:
