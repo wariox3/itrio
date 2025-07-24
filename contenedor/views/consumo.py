@@ -87,12 +87,14 @@ class ConsumoViewSet(viewsets.ModelViewSet):
             consumos = CtnConsumo.objects.filter(
                 fecha__range=(fechaDesde,fechaHasta), usuario_id=usuario_id
                 ).values(
-                    'usuario_id', 'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre'
+                    'usuario_id', 'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre', 'plan__precio'
                 ).annotate(
                     vr_total=Sum('vr_total')
                 )
             total_consumo = sum(item['vr_total'] for item in consumos) if consumos else 0
             total_consumo_redondeado = round(total_consumo, 0)
-            return Response({'consumos':consumos, 'total_consumo': total_consumo_redondeado}, status=status.HTTP_200_OK)
+            plan_precio = sum(item['plan__precio'] for item in consumos) if consumos else 0
+            plan_precio = round(plan_precio, 0)            
+            return Response({'consumos':consumos, 'total_consumo': total_consumo_redondeado, 'plan_precio': plan_precio}, status=status.HTTP_200_OK)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
