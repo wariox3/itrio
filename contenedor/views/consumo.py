@@ -91,6 +91,8 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                 ).annotate(
                     vr_total=Sum('vr_total')
                 )
-            return Response({'consumos':consumos}, status=status.HTTP_200_OK)
+            total_consumo = sum(item['vr_total'] for item in consumos) if consumos else 0
+            total_consumo_redondeado = round(total_consumo, 0)
+            return Response({'consumos':consumos, 'total_consumo': total_consumo_redondeado}, status=status.HTTP_200_OK)
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
