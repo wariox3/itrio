@@ -252,7 +252,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                     User.objects.filter(id=pedido.usuario_id).update(vr_saldo=F('vr_saldo') - total_pedido)                                         
                             
                             if tipo == 'A': 
-                                usuario_id = referencia[1:]                            
+                                referencia_usuario_cruda = referencia[1:]
+                                referencia_usuario = referencia_usuario_cruda.split('-')
+                                usuario_id = referencia_usuario[0]                            
                                 abono = CtnMovimiento(
                                     tipo = "ABONO",
                                     descripcion = 'ABONO',
