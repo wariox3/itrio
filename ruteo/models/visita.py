@@ -5,7 +5,6 @@ from general.models.ciudad import GenCiudad
 
 class RutVisita(models.Model):
     numero = models.IntegerField(null=True)
-    guia = models.IntegerField(null=True)
     fecha = models.DateTimeField(null=True)  
     fecha_entrega = models.DateTimeField(null=True)  
     documento = models.CharField(max_length=30, null=True)
@@ -16,6 +15,7 @@ class RutVisita(models.Model):
     destinatario_correo = models.CharField(max_length=255, null=True, blank=True)
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)
+    cobro = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     tiempo_servicio = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     tiempo_trayecto = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     tiempo = models.DecimalField(max_digits=12, decimal_places=6, default=0)

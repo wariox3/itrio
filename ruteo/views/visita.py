@@ -707,8 +707,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 archivo.save()
                         if firmas:
                             for firma in firmas:       
-                                #file_content = firma.read()   
-                                file_content = Imagen.comprimir_imagen_jpg(firma, calidad=20, max_width=1920)                                                         
+                                file_content = firma.read()   
+                                #file_content = Imagen.comprimir_imagen_jpg(firma, calidad=20, max_width=1920)                                                         
                                 nombre_archivo = f'{id}.png'                                                   
                                 id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
                                 archivo = GenArchivo()

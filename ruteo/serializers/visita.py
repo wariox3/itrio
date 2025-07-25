@@ -11,8 +11,8 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = RutVisita
-        fields = ['id', 'guia', 'numero', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
-                  'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
+        fields = ['id', 'numero', 'fecha', 'documento', 'destinatario', 'destinatario_direccion', 'destinatario_direccion_formato', 
+                  'destinatario_telefono', 'destinatario_correo', 'peso', 'volumen', 'cobro', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
                   'latitud', 'longitud', 'orden', 'distancia', 'ciudad', 'despacho', 'franja_id', 'franja_codigo', 'resultados',
                   'datos_entrega', 
                   'estado_decodificado', 'estado_novedad', 'estado_devolucion', 'estado_decodificado_alerta', 
@@ -24,7 +24,6 @@ class RutVisitaSerializador(serializers.HyperlinkedModelSerializer):
             ciudad_nombre = instance.ciudad.nombre       
         return {
             'id': instance.id,  
-            'guia': instance.guia,
             'numero': instance.numero,
             'fecha': instance.fecha,
             'documento': instance.documento,
@@ -68,7 +67,6 @@ class RutVisitaExcelSerializador(serializers.HyperlinkedModelSerializer):
             ciudad_nombre = instance.ciudad.nombre     
         return {
             'id': instance.id,  
-            'guia': instance.guia,
             'numero': instance.guia,
             'fecha': instance.fecha,
             'documento': instance.documento,

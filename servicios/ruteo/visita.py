@@ -179,6 +179,7 @@ class VisitaServicio():
                     'destinatario_correo': None,
                     'peso': guia['pesoReal'] or 0,
                     'volumen': guia['pesoVolumen'] or 0,
+                    'cobro': guia['vrCobroEntrega'] or 0,
                     'latitud': None,
                     'longitud': None,
                     'estado_decodificado': False,
