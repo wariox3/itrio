@@ -7,6 +7,7 @@ from contenedor.models import CtnMovimiento, CtnEventoPago, CtnConsumo, CtnSocio
 from contenedor.filters.movimiento import MovimientoFilter
 from seguridad.models import User
 from contenedor.serializers.movimiento import CtnMovimientoSerializador
+from servicios.contenedor.movimiento import MovimientoServicio
 from decouple import config
 from datetime import timedelta, datetime
 from django.utils import timezone
@@ -17,6 +18,7 @@ from django.http import HttpResponse
 from decimal import Decimal
 from utilidades.space_do import SpaceDo
 import hashlib
+from decouple import config
 
 
 class MovimientoViewSet(viewsets.ModelViewSet):
@@ -253,19 +255,24 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                     User.objects.filter(id=pedido.usuario_id).update(vr_saldo=F('vr_saldo') - total_pedido)                                         
                             
                             if tipo == 'A': 
+
                                 referencia_usuario_cruda = referencia[1:]
                                 referencia_usuario = referencia_usuario_cruda.split('-')
-                                usuario_id = referencia_usuario[0]                            
+                                usuario_id = referencia_usuario[0]   
+                                # Crea factura en semantica
+                                factura_id = MovimientoServicio.crear_factura(55, valor)                    
                                 abono = CtnMovimiento(
                                     tipo = "ABONO",
                                     descripcion = 'ABONO',
                                     vr_total = valor,
                                     vr_total_operado = valor,
-                                    usuario_id = usuario_id
+                                    usuario_id = usuario_id,
+                                    factura_id = factura_id
                                 )
                                 abono.save()
                                 # Actualiza usuario
-                                User.objects.filter(pk=usuario_id).update(vr_abono=F('vr_abono') + valor)                                                                                                            
+                                User.objects.filter(pk=usuario_id).update(vr_abono=F('vr_abono') + valor)         
+
                         evento_pago.estado_aplicado = True
                         evento_pago.save()
             except Exception as e:
@@ -388,5 +395,3 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)       
-
-          
