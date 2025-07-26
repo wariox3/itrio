@@ -255,12 +255,13 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                     User.objects.filter(id=pedido.usuario_id).update(vr_saldo=F('vr_saldo') - total_pedido)                                         
                             
                             if tipo == 'A': 
-
-                                referencia_usuario_cruda = referencia[1:]
-                                referencia_usuario = referencia_usuario_cruda.split('-')
-                                usuario_id = referencia_usuario[0]   
+                                referencia_abono_cruda = referencia[1:]
+                                referencia_abono = referencia_abono_cruda.split('-')
+                                usuario_id = referencia_abono[0]   
+                                informacion_facturacion_id = referencia_abono[1]
+                                fecha = referencia_abono[2]   
                                 # Crea factura en semantica
-                                factura_id = MovimientoServicio.crear_factura(55, valor)                    
+                                factura_id = MovimientoServicio.crear_factura(informacion_facturacion_id, valor)                    
                                 abono = CtnMovimiento(
                                     tipo = "ABONO",
                                     descripcion = 'ABONO',
