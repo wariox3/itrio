@@ -90,8 +90,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                             saldo = movimiento.vr_saldo - abono
                             recibo = CtnMovimiento(
                                 tipo = "RECIBO_ABONO",
-                                descripcion = 'APLICACION DE ABONO',
-                                contenedor_movimiento_id=movimiento.id,
+                                descripcion = 'APLICACION DE ABONO',                                
                                 movimiento_referencia_id=movimiento.id,
                                 vr_total = abono,
                                 vr_total_operado = abono*-1,
@@ -210,19 +209,23 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                         for referencia in referencias:
                             tipo = referencia[0]                         
                             if tipo == 'P':
-                                movimiento_id = referencia[1:]                            
+                                referencia_pedido_cruda = referencia[1:]
+                                referencia_pedido = referencia_pedido_cruda.split('-')
+                                movimiento_id = referencia_pedido[0]   
+                                informacion_facturacion_id = referencia_pedido[1]                                                           
+                                factura_id = MovimientoServicio.crear_factura(informacion_facturacion_id, valor)
                                 pedido = CtnMovimiento.objects.get(id=movimiento_id) 
                                 if pedido:                                                                     
                                     recibo = CtnMovimiento(
                                         tipo = "RECIBO",
                                         descripcion = 'PAGO SERVICIOS NUBE',
-                                        contenedor_movimiento_id=movimiento_id,
                                         movimiento_referencia_id=movimiento_id,
                                         vr_total = pedido.vr_saldo,
                                         vr_total_operado = pedido.vr_saldo*-1,
                                         vr_saldo = 0,
                                         socio_id = pedido.socio_id,
-                                        usuario_id = pedido.usuario_id
+                                        usuario_id = pedido.usuario_id,
+                                        factura_id = factura_id
                                     )
                                     recibo.save()
                                     total_pedido = Decimal(pedido.vr_saldo)
@@ -234,8 +237,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                             if valor_credito > 0:
                                                 credito = CtnMovimiento(
                                                     tipo = "CREDITO",
-                                                    descripcion = f'COMISION PEDIDO ID {movimiento_id} RECIBO ID {recibo.id}',
-                                                    contenedor_movimiento_id=recibo.id,  
+                                                    descripcion = f'COMISION PEDIDO ID {movimiento_id} RECIBO ID {recibo.id}',                                                     
                                                     movimiento_referencia_id=recibo.id,                                          
                                                     vr_total = valor_credito,
                                                     vr_total_operado = valor_credito,
@@ -300,7 +302,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     recibo = CtnMovimiento(
                         tipo = "RECIBO_CREDITO",
                         descripcion = f'APLICACION DE CREDITOS PEDIDO ID {movimiento_id}',
-                        contenedor_movimiento_id=movimiento_id,
+                        
                         movimiento_referencia_id=movimiento_id,
                         usuario_id=movimiento.usuario_id,
                         socio_id=usuario.socio_id,
