@@ -1,12 +1,12 @@
 from contenedor.models import CtnInformacionFacturacion
 from decouple import config
 import requests
-
+from datetime import datetime
 
 class MovimientoServicio():
 
     @staticmethod
-    def crear_factura(informacion_facturacion_id, valor):       
+    def crear_factura(informacion_facturacion_id, valor, cometario = ''):       
         try:
             if informacion_facturacion_id and valor:
                 env = config('ENV', default='prod')                                                     
@@ -24,6 +24,7 @@ class MovimientoServicio():
                 token =  MovimientoServicio.autenticar(url_base)
                 contacto_id = MovimientoServicio.contacto(url_base_contenedor, token, informacion_facturacion_id)                    
                 if contacto_id:                
+                    fecha_actual = datetime.now().strftime('%Y-%m-%d')
                     headers = {
                         'Authorization': f'Bearer {token}',
                         'Content-Type': 'application/json'
@@ -32,10 +33,10 @@ class MovimientoServicio():
                         "empresa": 1,
                         "contacto": contacto_id,
                         "totalCantidad": 1,
-                        "contactoNombre": "Consumidor final",
+                        "contactoNombre": "",
                         "numero": None,
-                        "fecha": "2025-07-25",
-                        "fecha_vence": "2025-07-25",
+                        "fecha": fecha_actual,
+                        "fecha_vence": fecha_actual,
                         "forma_pago": None,
                         "forma_pago_nombre": "",
                         "metodo_pago": 1,
@@ -51,7 +52,7 @@ class MovimientoServicio():
                         "remision": None,
                         "afectado": 0,
                         "total_bruto": valor,
-                        "comentario": None,
+                        "comentario": cometario,
                         "orden_compra": None,
                         "documento_referencia": None,
                         "documento_referencia_numero": None,

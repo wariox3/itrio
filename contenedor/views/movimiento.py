@@ -213,6 +213,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                 referencia_pedido = referencia_pedido_cruda.split('-')
                                 movimiento_id = referencia_pedido[0]   
                                 informacion_facturacion_id = referencia_pedido[1]                                                           
+                                comentario = f'PED{movimiento_id} INF_FAC{informacion_facturacion_id}'
                                 factura_id = MovimientoServicio.crear_factura(informacion_facturacion_id, valor)
                                 pedido = CtnMovimiento.objects.get(id=movimiento_id) 
                                 if pedido:                                                                     
