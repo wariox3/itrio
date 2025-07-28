@@ -9,8 +9,7 @@ class MovimientoServicio():
     @staticmethod
     def crear_factura(informacion_facturacion_id, valor, cometario = None):       
         try:
-            if informacion_facturacion_id and valor:
-                logging.error(f'Se intento crear la factura')
+            if informacion_facturacion_id and valor:                
                 env = config('ENV', default='prod')                                                     
                 contenedor = config('FACTURACION_CONTENEDOR')                
                 url_base = {
@@ -117,13 +116,13 @@ class MovimientoServicio():
                         factura_id = respuesta_json['documento']['id']
                         return factura_id
                     else:
+                        logging.error(f'Error en la petición. Código: {respuesta.status_code}, Respuesta: {respuesta.text}')
                         return None
                 else:
                     return None                        
             else:
                 return None
         except Exception as e:
-            logging.error(f'Error al crear factura: {e}')
             return None   
         
     def autenticar(url_base):
@@ -148,14 +147,12 @@ class MovimientoServicio():
                     timeout=10
                 )
                 if not respuesta.ok:
-                    logging.error(f'Autenticado')
                     return ""                        
                 token = respuesta.json().get('token', '')        
                 return token
             else:
                 return ""
         except Exception as e:
-            logging.error(f'Error al autenticar: {e}')
             return ""  
         
     def contacto(url_base_contenedor, token, informacion_facturacion_id):
@@ -163,7 +160,6 @@ class MovimientoServicio():
             informacion_facturacion = CtnInformacionFacturacion.objects.get(pk=informacion_facturacion_id)
             if not informacion_facturacion:
                 return None
-            logging.error(f"Token enviado: '{token}'")
             headers = {
                 'Authorization': f'Bearer {token.strip()}',
                 'Content-Type': 'application/json'
@@ -182,10 +178,8 @@ class MovimientoServicio():
             if respuesta.ok:          
                 respuesta_json = respuesta.json()
                 return respuesta_json.get('id')
-            else:
-                logging.error(f'Error en la petición. Código: {respuesta.status_code}, Respuesta: {respuesta.text}')
+            else:                
                 return None            
         except Exception as e:
-            logging.error(f'Error al traer contacto: {e}')
             return None        
     
