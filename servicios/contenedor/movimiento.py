@@ -120,6 +120,7 @@ class MovimientoServicio():
             else:
                 return None
         except Exception as e:
+            print(f'Fallo creando la factura {e}')
             return None   
         
     def autenticar(url_base):
@@ -149,6 +150,7 @@ class MovimientoServicio():
             else:
                 return ""
         except Exception as e:
+            print(f'Fallo la autenticacion {e}')
             return ""  
         
     def contacto(url_base_contenedor, token, informacion_facturacion_id):
