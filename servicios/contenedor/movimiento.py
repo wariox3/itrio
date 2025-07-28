@@ -111,7 +111,6 @@ class MovimientoServicio():
                         timeout=10
                     )
                     if respuesta.ok:
-                        print(f'Si se autentico')
                         respuesta_json = respuesta.json()
                         factura_id = respuesta_json['documento']['id']
                         return factura_id
@@ -122,7 +121,7 @@ class MovimientoServicio():
             else:
                 return None
         except Exception as e:
-            print(f'Error al crear factura: {e}')
+            logging.error(f'Error al crear factura: {e}')
             return None   
         
     def autenticar(url_base):
@@ -182,5 +181,6 @@ class MovimientoServicio():
             else:
                 return None            
         except Exception as e:
+            logging.error(f'Error al traer contacto: {e}')
             return None        
     
