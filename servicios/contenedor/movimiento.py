@@ -69,7 +69,7 @@ class MovimientoServicio():
                                 "cuenta": None,
                                 "cuenta_codigo": None,
                                 "cuenta_nombre": None,
-                                "item": 1,
+                                "item": 12,
                                 "item_nombre": "SERVICIOS NUBE",
                                 "cantidad": 1,
                                 "precio": valor,
