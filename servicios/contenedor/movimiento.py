@@ -2,6 +2,7 @@ from contenedor.models import CtnInformacionFacturacion
 from decouple import config
 import requests
 from datetime import datetime
+import logging
 
 class MovimientoServicio():
 
@@ -120,6 +121,7 @@ class MovimientoServicio():
             else:
                 return None
         except Exception as e:
+            logging.error(f'Error al crear factura: {e}')
             return None   
         
     def autenticar(url_base):
@@ -149,6 +151,7 @@ class MovimientoServicio():
             else:
                 return ""
         except Exception as e:
+            logging.error(f'Error al autenticar: {e}')
             return ""  
         
     def contacto(url_base_contenedor, token, informacion_facturacion_id):
