@@ -24,7 +24,8 @@ class MovimientoServicio():
                     'prod': f"https://{contenedor}.reddocapi.co",                    
                 }.get(env)
                 token =  MovimientoServicio.autenticar(url_base)
-                contacto_id = MovimientoServicio.contacto(url_base_contenedor, token, informacion_facturacion_id)                    
+                contacto_id = MovimientoServicio.contacto(url_base_contenedor, token, informacion_facturacion_id)  
+                logging.error(f'contacto_id {contacto_id}')                  
                 if contacto_id:                
                     fecha_actual = datetime.now().strftime('%Y-%m-%d')
                     headers = {
@@ -146,6 +147,7 @@ class MovimientoServicio():
                     timeout=10
                 )
                 if not respuesta.ok:
+                    logging.error(f'Autenticado')
                     return ""                        
                 token = respuesta.json().get('token', '')        
                 return token
