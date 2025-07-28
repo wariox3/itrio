@@ -264,6 +264,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                 informacion_facturacion_id = referencia_abono[1]
                                 fecha = referencia_abono[2]
                                 comentario = f'ABONO USUARIO{usuario_id} INF_FAC{informacion_facturacion_id}'   
+                                print(f'Preparado para generar la factura')
                                 # Crea factura en semantica
                                 factura_id = MovimientoServicio.crear_factura(informacion_facturacion_id, valor, comentario)                    
                                 abono = CtnMovimiento(
