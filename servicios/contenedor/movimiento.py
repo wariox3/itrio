@@ -25,7 +25,7 @@ class MovimientoServicio():
                 }.get(env)
                 token =  MovimientoServicio.autenticar(url_base)
                 contacto_id = MovimientoServicio.contacto(url_base_contenedor, token, informacion_facturacion_id)  
-                logging.error(f'contacto_id {contacto_id}')                  
+                logging.error(f'inf_fac{informacion_facturacion_id} contacto_id {contacto_id} url_base{url_base} url_base_contenedor{url_base_contenedor}')                  
                 if contacto_id:                
                     fecha_actual = datetime.now().strftime('%Y-%m-%d')
                     headers = {
@@ -182,6 +182,7 @@ class MovimientoServicio():
                 respuesta_json = respuesta.json()
                 return respuesta_json.get('id')
             else:
+                logging.error(f'Error en la petición. Código: {respuesta.status_code}, Respuesta: {respuesta.text}')
                 return None            
         except Exception as e:
             logging.error(f'Error al traer contacto: {e}')
