@@ -134,7 +134,8 @@ class MovimientoServicio():
             if usuario and clave:
                 data = {
                     "username": usuario,
-                    "password": clave
+                    "password": clave,
+                    "proyecto":"RUTEOAPP"
                 }
                 headers = {
                     "Content-Type": "application/json"
