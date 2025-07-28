@@ -226,7 +226,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                         vr_saldo = 0,
                                         socio_id = pedido.socio_id,
                                         usuario_id = pedido.usuario_id,
-                                        factura_id = factura_id
+                                        factura_id = factura_id,
+                                        genera_factura = True
                                     )
                                     recibo.save()
                                     total_pedido = Decimal(pedido.vr_saldo)
@@ -272,7 +273,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                     vr_total = valor,
                                     vr_total_operado = valor,
                                     usuario_id = usuario_id,
-                                    factura_id = factura_id
+                                    factura_id = factura_id,
+                                    genera_factura = True
                                 )
                                 abono.save()
                                 # Actualiza usuario
