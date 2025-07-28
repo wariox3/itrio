@@ -224,7 +224,9 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 usuario.imagen = f"itrio/usuario_defecto.jpg"
                 usuario.imagen_thumbnail = f"itrio/usuario_defecto.jpg"
                 usuario.save()
-                return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{usuario.imagen}"}, status=status.HTTP_200_OK)                  
+                return Response({'limpiar':True, 
+                                 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{usuario.imagen}",
+                                 'imagen_thumbnail':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{usuario.imagen}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
