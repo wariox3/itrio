@@ -204,7 +204,9 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 usuario.imagen = archivo
                 usuario.imagen_thumbnail = archivo_thumb
                 usuario.save()
-                return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo_thumb}"}, status=status.HTTP_200_OK)                  
+                return Response({'cargar':True, 
+                                 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}",
+                                 'imagen_thumbnail':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo_thumb}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
