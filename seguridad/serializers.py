@@ -21,6 +21,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.is_active = True
         user.dominio = f"{config('DOMINIO_BACKEND')}"
         user.imagen = f"itrio/usuario_defecto.jpg"
+        user.imagen_thumbnail = f"itrio/usuario_defecto.jpg"
         user.set_password(validated_data['password'])    
         user.save()
         return user
