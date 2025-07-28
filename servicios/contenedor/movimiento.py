@@ -6,7 +6,7 @@ from datetime import datetime
 class MovimientoServicio():
 
     @staticmethod
-    def crear_factura(informacion_facturacion_id, valor, cometario = ''):       
+    def crear_factura(informacion_facturacion_id, valor, cometario = None):       
         try:
             if informacion_facturacion_id and valor:
                 env = config('ENV', default='prod')                                                     
