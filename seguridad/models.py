@@ -34,6 +34,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     telefono = models.CharField(max_length = 50, null = True)
     idioma = models.CharField(max_length = 2, default='es')
     imagen = models.TextField(null=True)
+    imagen_thumbnail = models.TextField(null=True)
     vr_saldo = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_credito = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_abono = models.DecimalField(max_digits=16, decimal_places=2, default=0)

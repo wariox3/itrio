@@ -42,6 +42,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'vr_abono': instance.vr_abono,
             'cargo' : instance.cargo,
             'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen}",
+            'imagen_thumbnail': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen_thumbnail}",
             'fecha_limite_pago': instance.fecha_limite_pago,
             'fecha_creacion': instance.fecha_creacion,
             'verificado': instance.verificado,

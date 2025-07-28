@@ -1,3 +1,4 @@
+import base64
 import secrets
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
@@ -15,6 +16,8 @@ from datetime import datetime, timedelta
 from utilidades.zinc import Zinc
 from decouple import config
 from utilidades.space_do import SpaceDo
+from PIL import Image
+from io import BytesIO
 
 class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     model = User
@@ -173,12 +176,35 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                 arrTipo = arrDatosB64[0].split(";")
                 arrData = arrTipo[0].split(":")
                 contentType = arrData[1]
+
+                img_data = base64.b64decode(base64Crudo)
+                img = Image.open(BytesIO(img_data))
+
+                if img.mode in ('RGBA', 'LA'):
+                    background = Image.new('RGB', img.size, (255, 255, 255))
+                    background.paste(img, mask=img.split()[-1])
+                    img = background
+
+                # Crear thumbnail (versión pequeña)
+                thumbnail_size = (100, 100)  # Tamaño adecuado para menús
+                img.thumbnail(thumbnail_size)
+
+                # Guardamos el original
                 archivo = f"itrio/{config('ENV')}/usuario/imagen_{usuario_id}.jpg"
                 spaceDo = SpaceDo()
                 spaceDo.putB64(archivo, base64Crudo, contentType)
+
+                #Guardar thumbnail
+                thumb_io = BytesIO()
+                img.save(thumb_io, format='JPEG', quality=85)  
+                thumb_data = thumb_io.getvalue()
+                archivo_thumb = f"itrio/{config('ENV')}/usuario/imagen_thumb_{usuario_id}.jpg"
+                spaceDo.putB64(archivo_thumb, base64.b64encode(thumb_data).decode('utf-8'), contentType)
+
                 usuario.imagen = archivo
+                usuario.imagen_thumbnail = archivo_thumb
                 usuario.save()
-                return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo}"}, status=status.HTTP_200_OK)                  
+                return Response({'cargar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{archivo_thumb}"}, status=status.HTTP_200_OK)                  
             else: 
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
