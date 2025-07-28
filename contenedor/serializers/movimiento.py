@@ -18,11 +18,12 @@ class CtnMovimientoSerializador(serializers.ModelSerializer):
             'vr_afectado',
             'vr_saldo',            
             'documento_fisico',
-
             'movimiento_referencia_id',
             'movimiento_referencia__usuario__username',
             'usuario_id',
             'usuario__username',
-            'socio_id'
+            'socio_id',
+            'factura_id',
+            'genera_factura'
         ]
         select_related_fields = ['usuario', 'movimiento_referencia']      
