@@ -162,9 +162,9 @@ class MovimientoServicio():
             informacion_facturacion = CtnInformacionFacturacion.objects.get(pk=informacion_facturacion_id)
             if not informacion_facturacion:
                 return None
-
+            logging.debug(f"Token enviado: '{token}'")
             headers = {
-                'Authorization': f'Bearer {token}',
+                'Authorization': f'Bearer {token.strip()}',
                 'Content-Type': 'application/json'
             }                
             data = {
