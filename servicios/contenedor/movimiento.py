@@ -10,6 +10,7 @@ class MovimientoServicio():
     def crear_factura(informacion_facturacion_id, valor, cometario = None):       
         try:
             if informacion_facturacion_id and valor:
+                logging.error(f'Se intento crear la factura')
                 env = config('ENV', default='prod')                                                     
                 contenedor = config('FACTURACION_CONTENEDOR')                
                 url_base = {
