@@ -54,7 +54,7 @@ class MovimientoServicio():
                         "documento_referencia_numero": None,
                         "asesor": "",
                         "asesor_nombre_corto": None,
-                        "sede": 1,
+                        "sede": 2,
                         "resolucion": "",
                         "resolucion_numero": "",
                         "descuento": 0,
