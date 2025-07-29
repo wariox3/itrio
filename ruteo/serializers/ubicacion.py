@@ -20,3 +20,8 @@ class RutUbicacionSerializador(serializers.HyperlinkedModelSerializer):
             'usuario_id': instance.usuario_id,
             'detenido': instance.detenido
         }
+    
+class RutUbicacionTraficoSerializador(serializers.ModelSerializer):        
+    class Meta:
+        model = RutUbicacion
+        fields = ['id', 'fecha', 'latitud', 'longitud', 'usuario_id', 'detenido']

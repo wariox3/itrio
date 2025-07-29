@@ -5,4 +5,6 @@ class DespachoFilter(django_filters.FilterSet):
     class Meta:
         model = RutDespacho
         fields = {'id': ['exact'],
-                  'nombre': ['exact','icontains']}
+                  'estado_aprobado': ['exact'], 
+                  'estado_anulado': ['exact'],
+                  'estado_terminado': ['exact'], }

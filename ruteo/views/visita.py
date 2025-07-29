@@ -8,7 +8,7 @@ from ruteo.models.flota import RutFlota
 from general.models.configuracion import GenConfiguracion
 from general.models.archivo import GenArchivo
 from contenedor.models import CtnDireccion
-from ruteo.serializers.visita import RutVisitaSerializador
+from ruteo.serializers.visita import RutVisitaSerializador, RutVistaTraficoSerializador
 from servicios.ruteo.visita import VisitaServicio
 from datetime import datetime
 from django.utils import timezone
@@ -21,6 +21,7 @@ from django.db.models import Sum, Count, F
 from django.db.models.functions import Coalesce
 from django.db import transaction
 from io import BytesIO
+from utilidades.excel_exportar import ExcelExportar
 from decimal import Decimal, ROUND_HALF_UP
 import re
 import gc
@@ -31,6 +32,28 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     queryset = RutVisita.objects.all()
     serializer_class = RutVisitaSerializador
     permission_classes = [permissions.IsAuthenticated]
+    serializadores = {
+        'lista': RutVisitaSerializador,
+        'trafico' : RutVistaTraficoSerializador
+    }
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return RutVisitaSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
+
 
     def destroy(self, request, *args, **kwargs):        
         visita = self.get_object()

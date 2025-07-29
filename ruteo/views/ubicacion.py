@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ruteo.models.ubicacion import RutUbicacion
-from ruteo.serializers.ubicacion import RutUbicacionSerializador
+from ruteo.serializers.ubicacion import RutUbicacionSerializador, RutUbicacionTraficoSerializador
 from decouple import config
 import requests
 
@@ -10,6 +10,26 @@ class RutUbicacionViewSet(viewsets.ModelViewSet):
     queryset = RutUbicacion.objects.all()
     serializer_class = RutUbicacionSerializador
     permission_classes = [permissions.IsAuthenticated]  
+    serializadores = {
+        'trafico' : RutUbicacionTraficoSerializador
+    }
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return RutUbicacionSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
 
     def perform_create(self, serializer):
         ubicacion = serializer.save()

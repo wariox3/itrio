@@ -7,7 +7,8 @@ from ruteo.models.vehiculo import RutVehiculo
 from vertical.models.entrega import VerEntrega
 from servicios.ruteo.visita import VisitaServicio
 from servicios.ruteo.despacho import DespachoServicio
-from ruteo.serializers.despacho import RutDespachoSerializador
+from ruteo.serializers.despacho import RutDespachoSerializador, RutDespachoTraficoSerializador
+from ruteo.filters.despacho import DespachoFilter
 from django.http import HttpResponse
 from openpyxl import Workbook
 from utilidades.workbook_estilos_deprecated import WorkbookEstilos
@@ -19,7 +20,28 @@ from utilidades.holmio import Holmio
 class RutDespachoViewSet(viewsets.ModelViewSet):
     queryset = RutDespacho.objects.all()
     serializer_class = RutDespachoSerializador
-    permission_classes = [permissions.IsAuthenticated]      
+    permission_classes = [permissions.IsAuthenticated]    
+    filterset_class = DespachoFilter   
+    serializadores = {
+        'trafico' : RutDespachoTraficoSerializador
+    }
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return RutDespachoSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
 
     def destroy(self, request, *args, **kwargs):        
         instance = self.get_object()
