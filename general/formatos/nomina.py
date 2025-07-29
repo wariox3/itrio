@@ -20,7 +20,7 @@ class FormatoNomina():
 
         for documentos_id in documentos_ids:
             documento = GenDocumento.objects.filter(pk=documentos_id).values(
-                'id', 'numero', 'deduccion', 'devengado', 'total', 'fecha', 'fecha_hasta', 'salario',
+                'id', 'numero', 'deduccion', 'devengado', 'total', 'fecha', 'fecha_desde', 'fecha_hasta', 'salario',
                 'contacto__nombre_corto',
                 'contacto__numero_identificacion',
                 'contacto__numero_cuenta',
@@ -42,20 +42,6 @@ class FormatoNomina():
     def generar_pagina_nomina(self, p, documento):    
         self.encabezado.generar_pdf(p, "COMPROBANTE DE PAGO NÓMINA")
         p.setFont("Helvetica", 10)        
-        '''documento = GenDocumento.objects.filter(pk=id).values(
-            'numero', 'deduccion', 'devengado', 'total', 'fecha', 'fecha_hasta', 
-            'contacto__nombre_corto',
-            'contacto__numero_identificacion',
-            'contacto__numero_cuenta',
-            'contacto__banco__nombre',
-            'periodo__nombre', 
-            'salario',
-            'contrato__cargo__nombre', 
-            'contrato__grupo__nombre'
-            ).first()        
-        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id = id).values(
-            'concepto_id', 'concepto__nombre', 'detalle', 'cantidad', 'dias', 'porcentaje', 'devengado', 'deduccion')'''
-
         x = 40
         y = 680
         alto_fila = 15  
@@ -79,7 +65,7 @@ class FormatoNomina():
         p.setFont("Helvetica", tamano_texto_encabezado)
         p.drawString(370, y - alto_fila * 1, documento['periodo__nombre'])
         p.drawString(370, y - alto_fila * 2, documento['contacto__numero_identificacion'])
-        p.drawString(370, y - alto_fila * 3, documento['fecha'].strftime('%Y-%m-%d'))
+        p.drawString(370, y - alto_fila * 3, documento['fecha_desde'].strftime('%Y-%m-%d'))
         p.drawString(370, y - alto_fila * 4, documento['fecha_hasta'].strftime('%Y-%m-%d'))  
 
         p.setFont("Helvetica-Bold", tamano_texto_encabezado) 
