@@ -14,7 +14,7 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
                   'dias_disfrutados', 'dias_disfrutados_reales', 'dias_dinero', 'dias', 'dias_empresa', 'dias_entidad',
                   'pago_disfrute', 'pago_dinero', 'pago_dia_disfrute', 'pago_dia_dinero', 
                   'base_cotizacion_propuesto', 'base_cotizacion', 'hora_empresa', 'hora_entidad', 'pago_empresa', 'pago_entidad',
-                  'total', 'contrato', 'novedad_tipo', 'novedad_referencia', 'prorroga']
+                  'total', 'contrato', 'novedad_tipo', 'novedad_referencia', 'prorroga', 'detalle']
 
     def validate(self, data):
         fecha_desde = data.get('fecha_desde')
@@ -78,7 +78,8 @@ class HumNovedadSerializador(serializers.HyperlinkedModelSerializer):
             'novedad_tipo_id': instance.novedad_tipo_id,
             'novedad_tipo_nombre': novedad_tipo_nombre,
             'novedad_referencia_id' : instance.novedad_referencia_id,
-            'prroroga' : instance.prorroga
+            'prorroga' : instance.prorroga,
+            'detalle' : instance.detalle,
         }         
     
 class HumNovedadSeleccionarSerializador(serializers.ModelSerializer):
