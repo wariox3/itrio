@@ -15,7 +15,7 @@ from humano.models.contrato_tipo import HumContratoTipo
 from humano.models.motivo_terminacion import HumMotivoTerminacion
 from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
-from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador, HumContratoSeleccionarSerializador
+from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador, HumContratoSeleccionarSerializador, HumContratoParametrosInicialesSerializador
 from humano.serializers.liquidacion import HumLiquidacionSerializador
 from servicios.humano.liquidacion import LiquidacionServicio
 from humano.formatos.certificado_laboral import FormatoCertificadoLaboral
@@ -38,7 +38,10 @@ class HumContratoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ContratoFilter 
-    serializadores = {'lista': HumContratoListaSerializador}
+    serializadores = {
+        'lista': HumContratoListaSerializador,
+        'parametros_iniciales' : HumContratoParametrosInicialesSerializador
+    }
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)

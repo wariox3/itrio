@@ -218,17 +218,8 @@ class HumContratoListaAutocompletarSerializador(serializers.HyperlinkedModelSeri
         } 
     
 
-class HumContratoParametrosInicialesSerializador(serializers.HyperlinkedModelSerializer):
-    
+class HumContratoParametrosInicialesSerializador(serializers.ModelSerializer):
     class Meta:
         model = HumContrato
-
-    def to_representation(self, instance):
-        return {
-            'contrato_id': instance.id,
-            'fecha_ultimo_pago': instance.fecha_ultimo_pago,
-            'fecha_ultimo_pago_prima': instance.fecha_ultimo_pago_prima,
-            'fecha_ultimo_pago_cesantia': instance.fecha_ultimo_pago_cesantia,
-            'fecha_ultimo_pago_vacacion': instance.fecha_ultimo_pago_vacacion
-        } 
+        fields = ['id', 'fecha_ultimo_pago' , 'fecha_ultimo_pago_prima' , 'fecha_ultimo_pago_cesantia' , 'fecha_ultimo_pago_vacacion']
         
