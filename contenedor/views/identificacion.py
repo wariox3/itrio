@@ -4,7 +4,7 @@ from contenedor.serializers.identificacion import CtnIdentificacionSerializador,
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from contenedor.filters.plan import PlanFilter
+from contenedor.filters.identificacion import IdentificacionFilter
 from rest_framework.response import Response
 
 class IdentificacionViewSet(viewsets.ModelViewSet):
@@ -12,7 +12,7 @@ class IdentificacionViewSet(viewsets.ModelViewSet):
     serializer_class = CtnIdentificacionSerializador    
     permission_classes = [permissions.IsAuthenticated]    
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    filterset_class = PlanFilter 
+    filterset_class = IdentificacionFilter 
     serializadores = {
         'lista': CtnIdentificacionSerializador,
         'seleccionar' : CtnIdentificacionSeleccionarSerializador
