@@ -1,5 +1,5 @@
 from rest_framework import viewsets, permissions
-from contenedor.models import CtnPlan
+from contenedor.models import CtnIdentificacion
 from contenedor.serializers.identificacion import CtnIdentificacionSerializador, CtnIdentificacionSeleccionarSerializador
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
@@ -8,7 +8,7 @@ from contenedor.filters.plan import PlanFilter
 from rest_framework.response import Response
 
 class IdentificacionViewSet(viewsets.ModelViewSet):
-    queryset = CtnPlan.objects.all()
+    queryset = CtnIdentificacion.objects.all()
     serializer_class = CtnIdentificacionSerializador    
     permission_classes = [permissions.IsAuthenticated]    
     filter_backends = [DjangoFilterBackend, OrderingFilter]
