@@ -10,7 +10,7 @@ class CtnTipoPersonaSerializador(serializers.ModelSerializer):
             ]  
              
 
-class CtnTipoPersonaSeleccionarSerializadorSerializador(serializers.ModelSerializer):
+class CtnTipoPersonaSeleccionarSerializador(serializers.ModelSerializer):
     
     class Meta:
         model = CtnTipoPersona

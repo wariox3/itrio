@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions
 from contenedor.models import CtnTipoPersona
-from contenedor.serializers.tipo_persona import CtnTipoPersonaSerializador, CtnTipoPersonaSeleccionarSerializadorSerializador
+from contenedor.serializers.tipo_persona import CtnTipoPersonaSerializador, CtnTipoPersonaSeleccionarSerializador
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,7 +15,7 @@ class TipoPersonaViewSet(viewsets.ModelViewSet):
     filterset_class = TipoPersonaFilter 
     serializadores = {
         'lista': CtnTipoPersonaSerializador,
-        'seleccionar' : CtnTipoPersonaSeleccionarSerializadorSerializador
+        'seleccionar' : CtnTipoPersonaSeleccionarSerializador
     }
 
     def get_serializer_class(self):
