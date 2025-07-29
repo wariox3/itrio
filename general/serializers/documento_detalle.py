@@ -174,6 +174,10 @@ class GenDocumentoDetalleInformeInventarioSerializador(serializers.ModelSerializ
                 'total']
         select_related_fields = ['documento', 'item', 'documento__documento_tipo', 'documento__contacto']
 
+class GenDocumentoDetalleCreditoPagoSerializador(serializers.ModelSerializer):  
+    class Meta:
+        model = GenDocumentoDetalle
+        fields = ['id', 'pago']
 #deprecated
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
