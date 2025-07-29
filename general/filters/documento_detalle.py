@@ -28,6 +28,7 @@ class DocumentoDetalleFilter(django_filters.FilterSet):
                     'documento__contacto__numero_identificacion':['exact', 'icontains'],
                     'documento__documento_tipo__venta':['exact'],
                     'documento_id': ['exact'],
+                    'documento_afectado_id': ['exact'],
                     'credito_id': ['exact'],
                     'item__nombre':['icontains'],
                     'documento__programacion_detalle__programacion_id': ['exact'],
