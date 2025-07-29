@@ -15,6 +15,24 @@ class ArchivoViewSet(viewsets.ModelViewSet):
     queryset = GenArchivo.objects.all()
     serializer_class = GenArchivoSerializador
     permission_classes = [permissions.IsAuthenticated]
+    serializadores = {'lista': GenArchivoSerializador}
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return GenArchivoSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
 
     def destroy(self, request, *args, **kwargs):        
         instance = self.get_object()
