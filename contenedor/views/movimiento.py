@@ -373,11 +373,11 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 movimiento = CtnMovimiento.objects.get(pk=id)  
                 if movimiento.factura_id:
                     respuesta = MovimientoServicio.descargar_factura(movimiento)
-                    response = HttpResponse(
+                    '''response = HttpResponse(
                         content=respuesta.content,
                         content_type=respuesta.headers.get('Content-Type', 'application/pdf')
-                    )                        
-                    #response = HttpResponse(respuesta['data'], content_type='application/pdf')
+                    )'''                      
+                    response = HttpResponse(respuesta.content, content_type='application/pdf')
                     response['Access-Control-Expose-Headers'] = 'Content-Disposition'
                     response['Content-Disposition'] = f'attachment; filename="factura_{id}.pdf"'
                     return response                                            
