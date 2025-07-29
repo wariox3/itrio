@@ -1,6 +1,5 @@
 from django.urls import path, include
 from .views.prueba import PruebaView, enviar_coreo
-from .views.general import ListaView
 from .views.predeterminado import PredeterminadoView
 from .views.item import ItemViewSet
 from .views.resolucion import ResolucionViewSet
@@ -76,7 +75,6 @@ router.register(r'rh', RhViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
-    path('funcionalidad/lista/', ListaView.as_view(), name='general'),
     path('funcionalidad/predeterminado/', PredeterminadoView.as_view(), name='general'),
     path('prueba/', PruebaView.as_view(), name='prueba'),
     path('prueba/enviar-correo/', enviar_coreo, name='prueba-enviar-correo')
