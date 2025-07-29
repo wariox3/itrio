@@ -5,6 +5,7 @@ from .views.consumo import ConsumoViewSet
 from .views.usuario_contenedor import UsuarioContenedorViewSet
 from .views.verificacion import VerificacionViewSet
 from .views.movimiento import MovimientoViewSet
+from .views.identificacion import IdentificacionViewSet
 from .views.informacion_facturacion import InformacionFacturacionViewSet
 from .views.general import ListaAutocompletarView
 from .views.session import CtnSessionView
@@ -19,6 +20,7 @@ router.register(r'usuariocontenedor', UsuarioContenedorViewSet)
 router.register(r'verificacion', VerificacionViewSet)
 router.register(r'movimiento', MovimientoViewSet)
 router.register(r'informacion_facturacion', InformacionFacturacionViewSet)
+router.register(r'identificacion', IdentificacionViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
