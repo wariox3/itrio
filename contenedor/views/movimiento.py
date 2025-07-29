@@ -382,7 +382,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     response['Content-Disposition'] = f'attachment; filename="factura_{id}.pdf"'
                     return response                                            
                 else:
-                    return Response({'mensaje':'El archivo aun no se encuentra disponible', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje':'El movimiento no tiene factura', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
             except CtnMovimiento.DoesNotExist:
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
