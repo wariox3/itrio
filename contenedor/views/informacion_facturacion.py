@@ -7,7 +7,7 @@ from contenedor.serializers.informacion_facturacion import CtnInformacionFactura
 class InformacionFacturacionViewSet(viewsets.ModelViewSet):
     queryset = CtnInformacionFacturacion.objects.all()
     serializer_class = CtnInformacionFacturacionSerializador    
-    permission_classes = [permissions.IsAuthenticated]   
+    permission_classes = [permissions.AllowAny]   
 
     @action(detail=False, methods=["post"], url_path=r'consulta-usuario',)
     def consulta_usuario(self, request):

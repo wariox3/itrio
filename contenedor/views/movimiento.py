@@ -22,7 +22,7 @@ from decouple import config
 
 
 class MovimientoViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]     
+    permission_classes = [permissions.AllowAny]     
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     queryset = CtnMovimiento.objects.all()
     serializer_class = CtnMovimientoSerializador  
@@ -227,7 +227,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                         socio_id = pedido.socio_id,
                                         usuario_id = pedido.usuario_id,
                                         factura_id = factura_id,
-                                        genera_factura = True
+                                        genera_factura = True,
+                                        informacion_facturacion_id = informacion_facturacion_id
                                     )
                                     recibo.save()
                                     total_pedido = Decimal(pedido.vr_saldo)
@@ -274,7 +275,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                                     vr_total_operado = valor,
                                     usuario_id = usuario_id,
                                     factura_id = factura_id,
-                                    genera_factura = True
+                                    genera_factura = True,
+                                    informacion_facturacion_id = informacion_facturacion_id
                                 )
                                 abono.save()
                                 # Actualiza usuario
@@ -362,6 +364,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             cursor.execute(query)
         return Response(status=status.HTTP_200_OK)
       
+    # Deprecated
     @action(detail=False, methods=["post"], url_path=r'descargar',)
     def descargar(self, request):
         raw = request.data
@@ -387,7 +390,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
             return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
-        
+
+    # Deprecated        
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'marcar-adjunto',)
     def marcar_adjunto(self, request):
         raw = request.data
@@ -401,4 +405,33 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             except CtnMovimiento.DoesNotExist:
                 return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
         else:
-            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)       
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], url_path=r'crear-factura',)
+    def crear_factura(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:                
+                movimiento = CtnMovimiento.objects.get(pk=id)  
+                if movimiento.factura_id == None:
+                    if movimiento.genera_factura:
+                        if movimiento.informacion_facturacion_id:
+                            comentario = f'PED/ABO{id} INF_FAC{movimiento.informacion_facturacion_id}'
+                            factura_id = MovimientoServicio.crear_factura(movimiento.informacion_facturacion_id, float(movimiento.vr_total), comentario)
+                            if factura_id:
+                                movimiento.factura_id = factura_id
+                                movimiento.save()
+                                return Response({'mensaje': 'Factura generada'}, status=status.HTTP_200_OK)
+                            else:
+                                return Response({'mensaje':'No se genero la factura', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)    
+                        else:
+                            return Response({'mensaje':'El movimiento no tiene informacion facturacion', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'mensaje':'El movimiento no genera factura', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje':'El movimiento ya tiene factura', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            except CtnMovimiento.DoesNotExist:
+                return Response({'mensaje':'El movimiento no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                 
+        else:
+            return Response({'mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)              

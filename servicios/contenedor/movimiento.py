@@ -12,17 +12,12 @@ class MovimientoServicio():
             if informacion_facturacion_id and valor:                
                 env = config('ENV', default='prod')                                                     
                 contenedor = config('FACTURACION_CONTENEDOR')                
-                url_base = {
-                    'dev': "http://localhost:8000",
-                    'test': "http://reddocapi.online",
-                    'prod': "https://reddocapi.co",                    
-                }.get(env)
                 url_base_contenedor = {
                     'dev': f"http://{contenedor}.localhost:8000",
                     'test': f"http://{contenedor}.reddocapi.online",
                     'prod': f"https://{contenedor}.reddocapi.co",                    
                 }.get(env)
-                token =  MovimientoServicio.autenticar(url_base)
+                token =  MovimientoServicio.autenticar()
                 contacto_id = MovimientoServicio.contacto(url_base_contenedor, token, informacion_facturacion_id)                  
                 if contacto_id:                
                     fecha_actual = datetime.now().strftime('%Y-%m-%d')
@@ -123,8 +118,14 @@ class MovimientoServicio():
         except Exception as e:
             return None   
         
-    def autenticar(url_base):
+    def autenticar():
         try:
+            env = config('ENV', default='prod')
+            url_base = {
+                'dev': "http://localhost:8000",
+                'test': "http://reddocapi.online",
+                'prod': "https://reddocapi.co",                    
+            }.get(env)            
             url = f"{url_base}/seguridad/login/"
             usuario = config('FACTURACION_USUARIO')
             clave = config('FACTURACION_CLAVE')

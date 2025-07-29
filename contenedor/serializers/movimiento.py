@@ -17,7 +17,7 @@ class CtnMovimientoSerializador(serializers.ModelSerializer):
             'vr_total_operado',
             'vr_afectado',
             'vr_saldo',            
-            'documento_fisico',
+            'informacion_facturacion_id',
             'movimiento_referencia_id',
             'movimiento_referencia__usuario__username',
             'usuario_id',
