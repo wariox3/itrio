@@ -517,7 +517,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     resolucion = serializers.PrimaryKeyRelatedField(queryset=GenResolucion.objects.all(), allow_null=True)   
     class Meta:
         model = GenDocumento
-        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
+        fields = ['id', 'numero', 'fecha', 'fecha_vence', 'fecha_desde', 'fecha_hasta' ,'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'total_bruto', 'total', 'afectado', 'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 'metodo_pago', 
                   'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'forma_pago'
                   'estado_electronico_enviado', 'estado_electronico_notificado', 'estado_electronico_evento', 'orden_compra', 'remision', 
@@ -577,6 +577,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'numero' : instance.numero,
             'fecha' : instance.fecha,
             'fecha_vence' : instance.fecha_vence, 
+            'fecha_desde' : instance.fecha_desde, 
             'fecha_hasta' : instance.fecha_hasta, 
             'contacto_id' : instance.contacto_id,
             'contacto_numero_identificacion': contacto_numero_identificacion,
