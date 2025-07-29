@@ -7,6 +7,13 @@ class HumPeriodoSerializador(serializers.HyperlinkedModelSerializer):
         model = HumPeriodo
         fields = ['id', 'nombre', 'codigo', 'dias']
 
+
+class HumPeriodoSeleccionarSerializador(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = HumPeriodo
+        fields = ['id', 'nombre']
+
     
 
 class HumPeriodoListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
