@@ -6,10 +6,6 @@ from contenedor.models import CtnIdentificacion
 from contenedor.models import CtnCiudad
 from contenedor.models import CtnRegimen
 from contenedor.models import CtnTipoPersona
-from contenedor.serializers.identificacion import CtnIdentificacionSerializador
-from contenedor.serializers.ciudad import CtnCiudadSerializador, CtnCiudadListaAutocompletarSerializador
-from contenedor.serializers.regimen import CtnRegimenSerializador, CtnRegimenListaAutocompletarSerializador
-from contenedor.serializers.tipo_persona import CtnTipoPersonaSerializador, CtnTipoPersonaListaAutocompletarSerializador
 from rest_framework.permissions import IsAuthenticated
 
 class ListaAutocompletarView(APIView):
