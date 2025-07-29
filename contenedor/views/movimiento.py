@@ -364,7 +364,6 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             cursor.execute(query)
         return Response(status=status.HTTP_200_OK)
       
-    # Deprecated
     @action(detail=False, methods=["post"], url_path=r'descargar',)
     def descargar(self, request):
         raw = request.data
@@ -372,18 +371,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         if id:
             try:
                 movimiento = CtnMovimiento.objects.get(pk=id)  
-                if movimiento.documento_fisico:
-                    archivo = f"itrio/prod/movimiento/factura_{id}.pdf" 
-                    spaceDo = SpaceDo()
-                    respuesta = spaceDo.descargar(archivo)         
-                    if respuesta['error'] == False:
-                        response = HttpResponse(respuesta['data'], content_type='application/pdf')
-                        response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-                        response['Content-Disposition'] = f'attachment; filename="factura_{id}.pdf"'
-                        return response
-                        #return Response({'mensaje': 'Hola'}, status=status.HTTP_200_OK)
-                    else:                    
-                        return Response({'mensaje':respuesta['mensaje'], 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                if movimiento.factura_id:
+                    respuesta = MovimientoServicio.descargar_factura(movimiento)
+                    response = HttpResponse(
+                        content=respuesta.content,
+                        content_type=respuesta.headers.get('Content-Type', 'application/pdf')
+                    )                        
+                    #response = HttpResponse(respuesta['data'], content_type='application/pdf')
+                    response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                    response['Content-Disposition'] = f'attachment; filename="factura_{id}.pdf"'
+                    return response                                            
                 else:
                     return Response({'mensaje':'El archivo aun no se encuentra disponible', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
             except CtnMovimiento.DoesNotExist:

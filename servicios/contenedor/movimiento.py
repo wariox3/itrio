@@ -117,7 +117,39 @@ class MovimientoServicio():
                 return None
         except Exception as e:
             return None   
-        
+
+    @staticmethod
+    def descargar_factura(movimiento):       
+        try:                           
+            env = config('ENV', default='prod')                                                     
+            contenedor = config('FACTURACION_CONTENEDOR')                
+            url_base_contenedor = {
+                'dev': f"http://{contenedor}.localhost:8000",
+                'test': f"http://{contenedor}.reddocapi.online",
+                'prod': f"https://{contenedor}.reddocapi.co",                    
+            }.get(env)
+            token =  MovimientoServicio.autenticar()                              
+            headers = {
+                'Authorization': f'Bearer {token}',
+                'Content-Type': 'application/json'
+            } 
+            data = {
+                'documento_id': movimiento.factura_id
+            }
+            url = f"{url_base_contenedor}/general/documento/imprimir/"
+            respuesta = requests.post(
+                url,
+                json=data,
+                headers=headers,
+                timeout=10
+            )
+            if respuesta.ok:
+                return respuesta
+            else:                        
+                return None                       
+        except Exception as e:
+            return None   
+
     def autenticar():
         try:
             env = config('ENV', default='prod')
