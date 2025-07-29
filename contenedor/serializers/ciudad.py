@@ -1,32 +1,17 @@
 from contenedor.models import CtnCiudad
 from rest_framework import serializers
 
-class CtnCiudadSerializador(serializers.HyperlinkedModelSerializer):
+class CtnCiudadSerializador(serializers.ModelSerializer):
+    estado__nombre = serializers.CharField(source='estado.nombre', read_only=True)
     class Meta:
         model = CtnCiudad
-        fields = ['id', 'nombre']  
+        fields = ['id', 'nombre', 'estado__nombre']  
+        select_related_fields = ['estado']        
         
-    def to_representation(self, instance):
-        estado_nombre = ''        
-        if instance.estado:
-            estado_nombre = instance.estado.nombre
-        return {
-            'id': instance.id,            
-            'nombre': instance.nombre,
-            'estado_nombre': estado_nombre
-        }
      
-class CtnCiudadListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):
-    
+class CtnCiudadSeleccionarSerializador(serializers.ModelSerializer):
+    estado__nombre = serializers.CharField(source='estado.nombre', read_only=True)
     class Meta:
         model = CtnCiudad
-
-    def to_representation(self, instance):
-        estado_nombre = ''        
-        if instance.estado:
-            estado_nombre = instance.estado.nombre
-        return {
-            'id': instance.id,            
-            'nombre': instance.nombre,
-            'estado_nombre': estado_nombre
-        }
+        fields = ['id', 'nombre', 'estado__nombre']  
+        select_related_fields = ['estado']    

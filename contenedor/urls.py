@@ -8,6 +8,7 @@ from .views.movimiento import MovimientoViewSet
 from .views.identificacion import IdentificacionViewSet
 from .views.regimen import RegimenViewSet
 from .views.tipo_persona import TipoPersonaViewSet
+from .views.ciudad import CiudadViewSet
 from .views.informacion_facturacion import InformacionFacturacionViewSet
 from .views.general import ListaAutocompletarView
 from .views.session import CtnSessionView
@@ -25,6 +26,7 @@ router.register(r'informacion_facturacion', InformacionFacturacionViewSet)
 router.register(r'identificacion', IdentificacionViewSet)
 router.register(r'regimen', RegimenViewSet)
 router.register(r'tipo_persona', TipoPersonaViewSet)
+router.register(r'ciudad', CiudadViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
