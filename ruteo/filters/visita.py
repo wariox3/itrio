@@ -6,4 +6,12 @@ class VisitaFilter(django_filters.FilterSet):
         model = RutVisita
         fields = {'id': ['exact'],
                   'despacho_id' : ['exact'],
-                  'estado_entregado': ['exact']}
+                  'numero': ['exact'],
+                  'estado_entregado': ['exact'],
+                  'estado_despacho': ['exact'],
+                  'estado_decodificado': ['exact'],
+                  'estado_decodificado_alerta': ['exact'],
+                  'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'], 
+                  'fecha_entrega': ['gte', 'lte', 'gt', 'lt', 'exact'], 
+                  'destinatario':['icontains'],
+                  }
