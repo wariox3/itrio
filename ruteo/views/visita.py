@@ -21,6 +21,9 @@ from django.db.models import Sum, Count, F
 from django.db.models.functions import Coalesce
 from django.db import transaction
 from io import BytesIO
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from ruteo.filters.visita import VisitaFilter
 from utilidades.excel_exportar import ExcelExportar
 from decimal import Decimal, ROUND_HALF_UP
 import re
@@ -32,6 +35,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     queryset = RutVisita.objects.all()
     serializer_class = RutVisitaSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = VisitaFilter 
     serializadores = {
         'lista': RutVisitaSerializador,
         'trafico' : RutVistaTraficoSerializador
