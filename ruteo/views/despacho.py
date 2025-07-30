@@ -10,6 +10,7 @@ from servicios.ruteo.despacho import DespachoServicio
 from ruteo.serializers.despacho import RutDespachoSerializador, RutDespachoTraficoSerializador
 from ruteo.filters.despacho import DespachoFilter
 from rest_framework.filters import OrderingFilter
+from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from openpyxl import Workbook
@@ -18,6 +19,7 @@ from datetime import datetime
 from django.db import transaction
 from utilidades.google import Google
 from utilidades.holmio import Holmio
+
 
 class RutDespachoViewSet(viewsets.ModelViewSet):
     queryset = RutDespacho.objects.all()
@@ -36,6 +38,11 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
         return self.serializadores[serializador_parametro]
 
     def get_queryset(self):
+        page_size = self.request.query_params.get('page_size')
+        if page_size:
+            if page_size != '0':
+                self.pagination_class = PageNumberPagination
+                self.pagination_class.page_size = int(page_size)
         queryset = super().get_queryset()
         serializer_class = self.get_serializer_class()        
         select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
