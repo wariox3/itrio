@@ -6,7 +6,7 @@ class RutNovedadSerializador(serializers.ModelSerializer):
     
     class Meta:
         model = RutNovedad
-        fields = ['id', 'fecha', 'fecha_solucion', 'descripcion', 'solucion', 'estado_solucion', 'visita', 
+        fields = ['id', 'fecha', 'fecha_solucion', 'descripcion', 'solucion', 'estado_solucion', 'visita', 'novedad_tipo',
                   'novedad_tipo__nombre', 'nuevo_complemento']
         select_related_fields = ['novedad_tipo']    
     
