@@ -9,6 +9,8 @@ from servicios.ruteo.visita import VisitaServicio
 from servicios.ruteo.despacho import DespachoServicio
 from ruteo.serializers.despacho import RutDespachoSerializador, RutDespachoTraficoSerializador
 from ruteo.filters.despacho import DespachoFilter
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from openpyxl import Workbook
 from utilidades.workbook_estilos_deprecated import WorkbookEstilos
@@ -21,6 +23,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
     queryset = RutDespacho.objects.all()
     serializer_class = RutDespachoSerializador
     permission_classes = [permissions.IsAuthenticated]    
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = DespachoFilter   
     serializadores = {
         'trafico' : RutDespachoTraficoSerializador

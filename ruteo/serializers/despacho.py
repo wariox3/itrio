@@ -5,43 +5,16 @@ from datetime import datetime
 from django.utils.timezone import now
 from decimal import Decimal
 
-class RutDespachoSerializador(serializers.HyperlinkedModelSerializer):    
-    vehiculo = serializers.PrimaryKeyRelatedField(queryset=RutVehiculo.objects.all()) 
+class RutDespachoSerializador(serializers.ModelSerializer):    
+    vehiculo__placa = serializers.CharField(source='vehiculo.placa', read_only=True, allow_null=True, default=None)
+    vehiculo__capacidad = serializers.IntegerField(source='vehiculo.capacidad', read_only=True, allow_null=True, default=None)
     
     class Meta:
         model = RutDespacho
         fields = ['id', 'fecha', 'fecha_salida', 'fecha_ubicacion', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
-                  'visitas', 'visitas_entregadas', 'visitas_liberadas', 'visitas_novedad', 'vehiculo', 'entrega_id', 'estado_aprobado', 'estado_terminado']
-
-    def to_representation(self, instance):      
-        vehiculo_placa = ""
-        vehiculo_capacidad = None
-        if instance.vehiculo:
-            vehiculo_placa = instance.vehiculo.placa
-            vehiculo_capacidad = instance.vehiculo.capacidad
-
-        return {
-            'id': instance.id,  
-            'fecha': instance.fecha,
-            'fecha_salida': instance.fecha_salida,
-            'fecha_ubicacion': instance.fecha_ubicacion,
-            'peso': instance.peso,
-            'volumen': instance.volumen,
-            'tiempo': instance.tiempo,
-            'tiempo_servicio': instance.tiempo_servicio,
-            'tiempo_trayecto': instance.tiempo_trayecto,
-            'visitas': instance.visitas,
-            'visitas_entregadas': instance.visitas_entregadas,
-            'visitas_liberadas': instance.visitas_liberadas,
-            'visitas_novedad': instance.visitas_novedad,
-            'vehiculo_id': instance.vehiculo_id,
-            'vehiculo_placa': vehiculo_placa,
-            'vehiculo_capacidad': vehiculo_capacidad,
-            'entrega_id': instance.entrega_id,
-            'estado_aprobado': instance.estado_aprobado,
-            'estado_terminado': instance.estado_terminado
-        }
-    
+                  'visitas', 'visitas_entregadas', 'visitas_liberadas', 'visitas_novedad', 'vehiculo', 'vehiculo__placa' , 'vehiculo__capacidad' 
+                  ,'entrega_id', 'estado_aprobado', 'estado_terminado']
+        select_related_fields = ['vehiculo']    
 class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = RutDespacho
