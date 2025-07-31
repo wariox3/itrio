@@ -7,6 +7,7 @@ class VisitaFilter(django_filters.FilterSet):
         fields = {'id': ['exact'],
                   'despacho_id' : ['exact'],
                   'numero': ['exact'],
+                  'documento': ['exact', 'icontains'],
                   'estado_entregado': ['exact'],
                   'estado_despacho': ['exact'],
                   'estado_decodificado': ['exact'],
