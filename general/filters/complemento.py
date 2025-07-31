@@ -5,5 +5,6 @@ class ComplementoFilter(django_filters.FilterSet):
     class Meta:
         model = GenComplemento        
         fields = {
-            'id': ['exact', 'lte']
+            'id': ['exact', 'lte'],
+            'instalado': ['exact']
         }
