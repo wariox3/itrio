@@ -61,7 +61,7 @@ class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):
             'visitas_novedad': instance.visitas_novedad,
             'visitas_entregadas_esperadas': visitas_entregadas_esperadas,
             'vehiculo_id': instance.vehiculo_id,
-            'vehiculo_placa': vehiculo_placa,
+            'vehiculo__placa': vehiculo_placa,
             'entrega_id': instance.entrega_id,
             'estado_aprobado': instance.estado_aprobado,
             'estado_terminado': instance.estado_terminado, 
