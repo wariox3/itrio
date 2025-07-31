@@ -295,8 +295,11 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                 despacho = RutDespacho.objects.get(pk=id) 
                 google = Google()
                 visitas = list(RutVisita.objects.filter(despacho_id=id).order_by('orden').values('latitud', 'longitud'))
-                respuesta = google.direcciones(visitas)
-                return Response({'respuesta': respuesta}, status=status.HTTP_200_OK) 
+                if visitas:
+                    respuesta = google.direcciones(visitas)
+                    return Response({'respuesta': respuesta}, status=status.HTTP_200_OK) 
+                else:
+                    return Response({'respuesta': None}, status=status.HTTP_200_OK)             
             except RutDespacho.DoesNotExist:
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)        
         else:
