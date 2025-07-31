@@ -5,5 +5,6 @@ class VehiculoFilter(django_filters.FilterSet):
     class Meta:
         model = RutVehiculo
         fields = {'id': ['exact'],
-                  'placa' : ['exact', 'icontains']                  
-                  }
+                  'placa' : ['exact', 'icontains'],
+                  'estado_activo': ['exact']
+                }
