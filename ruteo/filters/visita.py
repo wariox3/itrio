@@ -9,6 +9,7 @@ class VisitaFilter(django_filters.FilterSet):
                   'numero': ['exact'],
                   'documento': ['exact', 'icontains'],
                   'estado_entregado': ['exact'],
+                  'estado_novedad': ['exact'],
                   'estado_despacho': ['exact'],
                   'estado_decodificado': ['exact'],
                   'estado_decodificado_alerta': ['exact'],
