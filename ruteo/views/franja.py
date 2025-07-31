@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from ruteo.models.franja import RutFranja
 from ruteo.serializers.franja import RutFranjaSerializador
+from ruteo.filters.franja import FranjaFilter
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 import base64
 from io import BytesIO
 import openpyxl
@@ -20,9 +23,37 @@ def is_point_in_polygon(polygon_coords, point_coords):
     return polygon.contains(point)
 
 class RutFranjaViewSet(viewsets.ModelViewSet):
-    queryset = RutFranja.objects.all()
-    serializer_class = RutFranjaSerializador
     permission_classes = [permissions.IsAuthenticated]
+    queryset = RutFranja.objects.all()
+    serializer_class = RutFranjaSerializador    
+    filter_backends = [DjangoFilterBackend, OrderingFilter]    
+    filterset_class = FranjaFilter 
+    serializadores = {
+        'lista': RutFranjaSerializador
+    }
+
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return RutFranjaSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
+
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('lista', '').lower() == 'true':
+            self.pagination_class = None
+        return super().list(request, *args, **kwargs)
+
 
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):             
