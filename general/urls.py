@@ -35,7 +35,6 @@ from .views.forma_pago import FormaPagoViewSet
 from .views.plazo_pago import PlazoPagoViewSet
 from .views.asesor import AsesorViewSet
 from .views.rh import RhViewSet
-from .views.general import ListaView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -76,7 +75,6 @@ router.register(r'rh', RhViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
-    path('funcionalidad/lista/', ListaView.as_view(), name='general'),
     path('funcionalidad/predeterminado/', PredeterminadoView.as_view(), name='general'),
     path('prueba/', PruebaView.as_view(), name='prueba'),
     path('prueba/enviar-correo/', enviar_coreo, name='prueba-enviar-correo')
