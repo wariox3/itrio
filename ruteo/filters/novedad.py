@@ -7,4 +7,5 @@ class NovedadFilter(django_filters.FilterSet):
         fields = {'id': ['exact'],
                   'estado_solucion': ['exact'], 
                   'nuevo_complemento': ['exact'],
+                  'visita_id': ['exact'],
                   }
