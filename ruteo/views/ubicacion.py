@@ -3,13 +3,18 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from ruteo.models.ubicacion import RutUbicacion
 from ruteo.serializers.ubicacion import RutUbicacionSerializador, RutUbicacionTraficoSerializador
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from ruteo.filters.ubicacion import UbicacionFilter
 from decouple import config
 import requests
 
 class RutUbicacionViewSet(viewsets.ModelViewSet):
     queryset = RutUbicacion.objects.all()
     serializer_class = RutUbicacionSerializador
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = UbicacionFilter   
     serializadores = {
         'trafico' : RutUbicacionTraficoSerializador
     }
