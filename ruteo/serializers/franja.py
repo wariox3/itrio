@@ -16,13 +16,8 @@ class RutFranjaSerializador(serializers.HyperlinkedModelSerializer):
             'coordenadas': instance.coordenadas
         }
     
-class RutFranjaListaAutocompletarSerializador(serializers.HyperlinkedModelSerializer):    
+class RutFranjaSeleccionarSerializador(serializers.ModelSerializer):    
     class Meta:
         model = RutFranja
-
-    def to_representation(self, instance):        
-        return {
-            'id': instance.id,  
-            'codigo': instance.codigo,
-            'nombre': instance.nombre            
-        }    
+        fields = ['id', 'codigo', 'nombre']
+ 

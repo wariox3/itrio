@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from ruteo.models.franja import RutFranja
-from ruteo.serializers.franja import RutFranjaSerializador
+from ruteo.serializers.franja import RutFranjaSerializador, RutFranjaSeleccionarSerializador
 from ruteo.filters.franja import FranjaFilter
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -53,6 +53,21 @@ class RutFranjaViewSet(viewsets.ModelViewSet):
         if request.query_params.get('lista', '').lower() == 'true':
             self.pagination_class = None
         return super().list(request, *args, **kwargs)
+    
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre = request.query_params.get('nombre__icontains', None)
+        queryset = self.get_queryset()
+        if nombre:
+            queryset = queryset.filter(nombre__icontains=nombre)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = RutFranjaSeleccionarSerializador(queryset, many=True)        
+        return Response(serializer.data)         
 
 
     @action(detail=False, methods=["post"], url_path=r'importar',)
