@@ -7,5 +7,6 @@ class ArchivoFilter(django_filters.FilterSet):
         fields = {
             'id': ['exact', 'lte'],
             'documento_id':['exact',],
+            'codigo':['exact',],
             'modelo':['exact',]
         }
