@@ -135,7 +135,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             VisitaServicio.ordenar(visitas)    
             return Response({'mensaje': 'Visita creada exitosamente'}, status=status.HTTP_200_OK)    
         else: 
-            return Response({'mensaje': 'Error en los datos', 'errores': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)        
+            return Response({'mensaje': 'Error en los datos', 'errores_validador': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)        
 
     @action(detail=False, methods=["post"], url_path=r'importar-excel',)
     def importar_excel(self, request):
