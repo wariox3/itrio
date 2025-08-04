@@ -60,8 +60,14 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         return queryset 
 
     def list(self, request, *args, **kwargs):
-        if request.query_params.get('lista', '').lower() == 'true':
-            self.pagination_class = None
+        if request.query_params.get('excel') or request.query_params.get('excel_masivo'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExcelExportar(serializer.data, nombre_hoja="visitas", nombre_archivo="visitas.xlsx", titulo="Visitas")
+            if request.query_params.get('excel'):
+                return exporter.exportar_estilo()
+            if request.query_params.get('excel_masivo'):
+                return exporter.exportar()
         return super().list(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):        
