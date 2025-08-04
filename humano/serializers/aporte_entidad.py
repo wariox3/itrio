@@ -8,7 +8,7 @@ class HumAporteEntidadSerializador(serializers.ModelSerializer):
 
     class Meta:
         model = HumAporteEntidad
-        fields = ['id', 'tipo', 'cotizacion', 'entidad_id', 'entidad__nombre']      
+        fields = ['id', 'tipo', 'cotizacion', 'entidad', 'entidad__nombre', 'aporte']      
         select_related_fields = ['entidad']    
 
 
@@ -16,6 +16,6 @@ class HumAporteEntidadInformeSerializador(serializers.ModelSerializer):
     entidad__nombre = serializers.CharField(source='entidad.nombre', read_only=True)
     class Meta:
         model = HumAporteEntidad   
-        fields = ['id', 'tipo', 'cotizacion', 'entidad_id', 'entidad__nombre']      
+        fields = ['id', 'tipo', 'cotizacion', 'entidad', 'entidad__nombre']      
         select_related_fields = ['entidad']
  
