@@ -78,6 +78,65 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         self.perform_destroy(visita)
         return Response(status=status.HTTP_204_NO_CONTENT) 
 
+    @action(detail=False, methods=["post"], url_path=r'nuevo',)
+    def nuevo(self, request):
+        google = Google()
+        franjas = RutFranja.objects.all()
+        direccion_destinatario = VisitaServicio.limpiar_direccion(request.data.get('destinatario_direccion'))
+        data = {
+            'numero': request.data.get('numero', None),
+            'documento': request.data.get('documento', None),
+            'destinatario': request.data.get('destinatario', None),
+            'destinatario_direccion': direccion_destinatario,
+            'destinatario_telefono': request.data.get('destinatario_telefono', None),
+            'destinatario_correo': request.data.get('destinatario_correo', None),
+            'peso': request.data.get('peso', None),
+            'volumen': request.data.get('volumen', None),
+            'tiempo_servicio': request.data.get('tiempo_servicio', None),
+            'ciudad_id': request.data.get('ciudad', None),
+            'estado_franja': False,
+            'franja': None,
+            'resultados': None,
+            'latitud': None,
+            'longitud': None,
+        }
+        if direccion_destinatario:                   
+            direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
+            if direccion:
+                data['estado_decodificado'] = True            
+                data['latitud'] = direccion.latitud                        
+                data['longitud'] = direccion.longitud
+                data['destinatario_direccion_formato'] = direccion.direccion_formato
+                data['resultados'] = direccion.resultados
+                if direccion.cantidad_resultados > 1:
+                    data['estado_decodificado_alerta'] = True                                
+            else:
+                respuesta = google.decodificar_direccion(data['destinatario_direccion'])
+                if respuesta['error'] == False:   
+                    data['estado_decodificado'] = True            
+                    data['latitud'] = respuesta['latitud']
+                    data['longitud'] = respuesta['longitud']
+                    data['destinatario_direccion_formato'] = respuesta['direccion_formato']
+                    data['resultados'] = respuesta['resultados']
+                    if respuesta['cantidad_resultados'] > 1:
+                        data['estado_decodificado_alerta'] = True
+        if data['estado_decodificado'] == True:
+            respuesta = VisitaServicio.ubicar_punto(franjas, data['latitud'], data['longitud'])
+            if respuesta['encontrado']:
+                data['franja'] = respuesta['franja']['id']
+                data['estado_franja'] = True
+            else:
+                data['estado_franja'] = False
+        serializer = RutVisitaSerializador(data=data)
+        if serializer.is_valid():
+            visita = serializer.save() 
+            visitas = RutVisita.objects.filter(estado_despacho = False, estado_decodificado = True)
+            VisitaServicio.ubicar(visitas)
+            VisitaServicio.ordenar(visitas)    
+            return Response({'mensaje': 'Visita creada exitosamente'}, status=status.HTTP_200_OK)    
+        else: 
+            return Response({'mensaje': 'Error en los datos', 'errores': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)        
+
     @action(detail=False, methods=["post"], url_path=r'importar-excel',)
     def importar_excel(self, request):
         raw = request.data
