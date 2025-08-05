@@ -39,6 +39,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     filterset_class = VisitaFilter 
     serializadores = {
         'lista': RutVistaListaSerializador,
+        'lista_completa' : RutVistaListaSerializador,
         'trafico' : RutVistaTraficoSerializador
     }
 
@@ -60,6 +61,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         return queryset 
 
     def list(self, request, *args, **kwargs):
+        #Ya no se va a usar lista deprecated
+        if request.query_params.get('lista', '').lower() == 'true':
+            self.pagination_class = None
+        if request.query_params.get('lista_completa', '').lower() == 'true':
+            self.pagination_class = None
         if request.query_params.get('excel') or request.query_params.get('excel_masivo'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
