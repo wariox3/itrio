@@ -243,7 +243,7 @@ class VisitaServicio():
         if imagenes_b64:
             parametros['imagenes'] = imagenes_b64
         if firmas_b64:
-            parametros['firmarBase64'] = firmas_b64[0]
+            parametros['firmarBase64'] = firmas_b64[0]['base64']
         if datos_entrega:
             parametros.update(datos_entrega)                    
         respuesta = holmio.entrega(parametros)
