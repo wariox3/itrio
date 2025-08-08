@@ -15,6 +15,7 @@ from .views.producto import ProductoViewSet
 from .views.empaque import EmpaqueViewSet
 from .views.ruta import RutaViewSet
 from .views.zona import ZonaViewSet
+from .views.despacho import DespachoViewSet
 
 from rest_framework import routers
 
@@ -35,6 +36,7 @@ router.register(r'producto', ProductoViewSet)
 router.register(r'empaque', EmpaqueViewSet)
 router.register(r'ruta', RutaViewSet)
 router.register(r'zona', ZonaViewSet)
+router.register(r'despacho', DespachoViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
