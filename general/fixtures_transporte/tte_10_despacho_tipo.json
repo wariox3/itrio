@@ -1,0 +1,14 @@
+{
+  "aplicacion": "transporte",
+  "modelo": "TteDespachoTipo",
+  "modelo_nativo": "tte_despacho_tipo",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "nombre": "NACIONAL"
+      }
+    }    
+  ]
+}
