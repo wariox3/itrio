@@ -1,0 +1,694 @@
+{
+  "aplicacion": "transporte",
+  "modelo": "TteProducto",
+  "modelo_nativo": "tte_producto",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "codigo": 9990,
+        "nombre": "VARIOS"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "codigo": 9880,
+        "nombre": "OTROS"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "codigo": 9701,
+        "nombre": "OBJETOS DE ARTE, DE COLECCIÓN O DE ANTIGÜEDAD"
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "codigo": 9601,
+        "nombre": "MANUFACTURAS DIVERSAS"
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "codigo": 9501,
+        "nombre": "JUGUETES; JUEGOS Y ARTÍCULOS PARA RECREO O PARA DEPORTE; SUS PARTES Y"
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "codigo": 9401,
+        "nombre": "MUEBLES; MOBILIARIO MEDICOQUIRÚRGICO; ARTÍCULOS DE CAMA Y SIMILARES"
+      }
+    },
+    {
+      "pk": 7,
+      "campos": {
+        "codigo": 9301,
+        "nombre": "ARMAS Y MUNICIONES Y SUS PARTES Y ACCESORIOS"
+      }
+    },
+    {
+      "pk": 8,
+      "campos": {
+        "codigo": 9201,
+        "nombre": "INSTRUMENTOS DE MÚSICA; PARTES Y ACCESORIOS DE ESTOS INSTRUMENTOS"
+      }
+    },
+    {
+      "pk": 9,
+      "campos": {
+        "codigo": 9101,
+        "nombre": "RELOJERÍA"
+      }
+    },
+    {
+      "pk": 10,
+      "campos": {
+        "codigo": 9001,
+        "nombre": "INSTRUMENTOS Y APARATOS DE ÓPTICA; FOTOGRAFÍA O CINEMATOGRAFÍA"
+      }
+    },
+    {
+      "pk": 11,
+      "campos": {
+        "codigo": 8901,
+        "nombre": "NAVEGACIÓN MARÍTIMA O FLUVIAL"
+      }
+    },
+    {
+      "pk": 12,
+      "campos": {
+        "codigo": 8801,
+        "nombre": "NAVEGACIÓN AÉREA O ESPACIAL"
+      }
+    },
+    {
+      "pk": 13,
+      "campos": {
+        "codigo": 8701,
+        "nombre": "VEHÍCULOS AUTOMÓVILES; TRACTORES; CICLOS Y DEMÁS VEHÍCULOS TERRESTRES; SUS"
+      }
+    },
+    {
+      "pk": 14,
+      "campos": {
+        "codigo": 8601,
+        "nombre": "VEHÍCULOS Y MATERIAL PARA VÍAS FÉRREAS O SIMILARES Y SUS PARTES; APARATOS"
+      }
+    },
+    {
+      "pk": 15,
+      "campos": {
+        "codigo": 8501,
+        "nombre": "MÁQUINA; APARATOS Y MATERIAL ELÉCTRICO Y SUS PARTES; APARATOS DE"
+      }
+    },
+    {
+      "pk": 16,
+      "campos": {
+        "codigo": 8401,
+        "nombre": "REACTORES NUCLEARES; CALDERAS; MÁQUINAS; APARATOS Y ARTEFACTOS"
+      }
+    },
+    {
+      "pk": 17,
+      "campos": {
+        "codigo": 8301,
+        "nombre": "MANUFACTURAS DIVERSAS DE METALES COMUNES"
+      }
+    },
+    {
+      "pk": 18,
+      "campos": {
+        "codigo": 8201,
+        "nombre": "HERRAMIENTAS Y ÚTILES; ARTÍCULOS DE CUCHILLERÍA CUBIERTOS DE MESA; DE"
+      }
+    },
+    {
+      "pk": 19,
+      "campos": {
+        "codigo": 8101,
+        "nombre": "LOS DEMÁS METALES COMUNES; <<CERMETS>>; MANUFACTURAS DE ESTAS"
+      }
+    },
+    {
+      "pk": 20,
+      "campos": {
+        "codigo": 8001,
+        "nombre": "ESTAÑO Y MANUFACTURAS DE ESTAÑO"
+      }
+    },
+    {
+      "pk": 21,
+      "campos": {
+        "codigo": 7901,
+        "nombre": "CINC Y MANUFACTURAS DE CINC"
+      }
+    },
+    {
+      "pk": 22,
+      "campos": {
+        "codigo": 7801,
+        "nombre": "PLOMO Y MANUFACTURAS DE PLOMO"
+      }
+    },
+    {
+      "pk": 23,
+      "campos": {
+        "codigo": 7601,
+        "nombre": "ALUMINIO Y MANUFACTURAS DE ALUMINIO"
+      }
+    },
+    {
+      "pk": 24,
+      "campos": {
+        "codigo": 7501,
+        "nombre": "NÍQUEL Y MANUFACTURAS DE NÍQUEL"
+      }
+    },
+    {
+      "pk": 25,
+      "campos": {
+        "codigo": 7401,
+        "nombre": "COBRE Y MANUFACTURAS DE COBRE"
+      }
+    },
+    {
+      "pk": 26,
+      "campos": {
+        "codigo": 7301,
+        "nombre": "MANUFACTURAS DE FUNDICIÓN DE HIERRO O DE ACERO"
+      }
+    },
+    {
+      "pk": 27,
+      "campos": {
+        "codigo": 7201,
+        "nombre": "FUNDICIÓN; HIERRO Y ACERO"
+      }
+    },
+    {
+      "pk": 28,
+      "campos": {
+        "codigo": 7101,
+        "nombre": "PERLAS FINAS O CULTIVADAS; PIEDRAS PRECIOSAS Y SEMIPRECIOSAS O SIMILARES"
+      }
+    },
+    {
+      "pk": 29,
+      "campos": {
+        "codigo": 7001,
+        "nombre": "VIDRIO Y MANUFACTURAS DE VIDRIO"
+      }
+    },
+    {
+      "pk": 30,
+      "campos": {
+        "codigo": 6901,
+        "nombre": "PRODUCTOS CERÁMICOS"
+      }
+    },
+    {
+      "pk": 31,
+      "campos": {
+        "codigo": 6801,
+        "nombre": "MANUFACTURAS DE PIEDRA; YESO; CEMENTO; AMIANTO; MICA O MATERIAS"
+      }
+    },
+    {
+      "pk": 32,
+      "campos": {
+        "codigo": 6701,
+        "nombre": "PLUMAS Y PLUMÓN PREPARADOS Y ARTÍCULOS DE PLUMAS O PLUMÓN; FLORES"
+      }
+    },
+    {
+      "pk": 33,
+      "campos": {
+        "codigo": 6601,
+        "nombre": "PARAGUAS; SOMBRILLAS; QUITASOLES; BASTONES; BASTONES ASIENTO; LÁTIGOS"
+      }
+    },
+    {
+      "pk": 34,
+      "campos": {
+        "codigo": 6501,
+        "nombre": "ARTÍCULOS DE SOMBRERERÍA Y SUS PARTES"
+      }
+    },
+    {
+      "pk": 35,
+      "campos": {
+        "codigo": 6401,
+        "nombre": "CALZADO; POLAINAS; BOTINES Y ARTÍCULOS ANÁLOGOS; PARTES DE ESTOS ARTÍCULOS"
+      }
+    },
+    {
+      "pk": 36,
+      "campos": {
+        "codigo": 6301,
+        "nombre": "LOS DEMÁS ARTÍCULOS TEXTILES CONFECCIONADOS; CONJUNTOS O SURTIDOS"
+      }
+    },
+    {
+      "pk": 37,
+      "campos": {
+        "codigo": 6201,
+        "nombre": "PRENDAS Y COMPLEMENTOS DE VESTIR EXCEPTO LOS DE PUNTO"
+      }
+    },
+    {
+      "pk": 38,
+      "campos": {
+        "codigo": 6101,
+        "nombre": "PRENDAS Y COMPLEMENTOS DE VESTIR, DE PUNTO"
+      }
+    },
+    {
+      "pk": 39,
+      "campos": {
+        "codigo": 6001,
+        "nombre": "TEJIDOS DE PUNTO"
+      }
+    },
+    {
+      "pk": 40,
+      "campos": {
+        "codigo": 5901,
+        "nombre": "TEJIDOS IMPREGNADOS; RECUBIERTOS; REVESTIDOS O ESTRATIFICADOS; ARTÍCULOS"
+      }
+    },
+    {
+      "pk": 41,
+      "campos": {
+        "codigo": 5801,
+        "nombre": "TEJIDOS ESPECIALES; SUPERFICIES TEXTILES CON PELO INSERTADO; ENCAJES"
+      }
+    },
+    {
+      "pk": 42,
+      "campos": {
+        "codigo": 5701,
+        "nombre": "ALFOMBRAS Y DEMÁS REVESTIMIENTOS PARA EL SUELO, DE MATERIAS TEXTILES"
+      }
+    },
+    {
+      "pk": 43,
+      "campos": {
+        "codigo": 5601,
+        "nombre": "GUATA; FIELTRO Y TELAS SIN TEJER; HILADOS ESPECIALES; CORDELES, CUERDAS Y"
+      }
+    },
+    {
+      "pk": 44,
+      "campos": {
+        "codigo": 5501,
+        "nombre": "FIBRAS SINTÉTICAS O ARTIFICIALES DISCONTINUAS"
+      }
+    },
+    {
+      "pk": 45,
+      "campos": {
+        "codigo": 5401,
+        "nombre": "FILAMENTOS SINTÉTICOS O ARTIFICIALES"
+      }
+    },
+    {
+      "pk": 46,
+      "campos": {
+        "codigo": 5301,
+        "nombre": "LAS DEMÁS FIBRAS TEXTILES VEGETALES; HILADOS DE PAPEL Y TEJIDOS DE HILADOS"
+      }
+    },
+    {
+      "pk": 47,
+      "campos": {
+        "codigo": 5201,
+        "nombre": "ALGODÓN"
+      }
+    },
+    {
+      "pk": 48,
+      "campos": {
+        "codigo": 5101,
+        "nombre": "LANA Y PELO FINO U ORDINARIO; HILADOS Y TEJIDOS DE CRIN"
+      }
+    },
+    {
+      "pk": 49,
+      "campos": {
+        "codigo": 5001,
+        "nombre": "SEDA"
+      }
+    },
+    {
+      "pk": 50,
+      "campos": {
+        "codigo": 4901,
+        "nombre": "PRODUCTOS EDITORIALES; DE LA PRENSA O DE OTRAS INDUSTRIAS GRÁFICAS; TEXTOS"
+      }
+    },
+    {
+      "pk": 51,
+      "campos": {
+        "codigo": 4801,
+        "nombre": "PAPEL Y CARTÓN; MANUFACTURAS DE PASTA DE CELULOSA; DE PAPEL O DE CARTÓN"
+      }
+    },
+    {
+      "pk": 52,
+      "campos": {
+        "codigo": 4701,
+        "nombre": "PASTA DE MADERA O DE OTRAS MATERIAS FIBROSAS CELULÓSICAS; DESPERDICIOS Y"
+      }
+    },
+    {
+      "pk": 53,
+      "campos": {
+        "codigo": 4601,
+        "nombre": "MANUFACTURAS DE ESPARTERÍA O DE CESTERÍA"
+      }
+    },
+    {
+      "pk": 54,
+      "campos": {
+        "codigo": 4501,
+        "nombre": "CORCHO Y SUS MANUFACTURAS"
+      }
+    },
+    {
+      "pk": 55,
+      "campos": {
+        "codigo": 4401,
+        "nombre": "MADERA, CARBÓN VEGETAL Y MANUFACTURAS DE MADERA"
+      }
+    },
+    {
+      "pk": 56,
+      "campos": {
+        "codigo": 4301,
+        "nombre": "PELETERÍA Y CONFECCIONES DE PELETERÍA; PELETERÍA ARTIFICIAL O FICTICIA"
+      }
+    },
+    {
+      "pk": 57,
+      "campos": {
+        "codigo": 4201,
+        "nombre": "MANUFACTURAS DE CUERO; ARTÍCULOS DE GUARNICIONERÍA O DE TALABARTERÍA"
+      }
+    },
+    {
+      "pk": 58,
+      "campos": {
+        "codigo": 4101,
+        "nombre": "PIELES (EXCEPTO LA PELETERÍA) Y CUEROS"
+      }
+    },
+    {
+      "pk": 59,
+      "campos": {
+        "codigo": 4001,
+        "nombre": "CAUCHO Y MANUFACTURAS DE CAUCHO"
+      }
+    },
+    {
+      "pk": 60,
+      "campos": {
+        "codigo": 3901,
+        "nombre": "MATERIAS PLÁSTICAS Y MANUFACTURAS DE ESTAS MATERIAS"
+      }
+    },
+    {
+      "pk": 61,
+      "campos": {
+        "codigo": 3801,
+        "nombre": "PRODUCTOS DIVERSOS DE LAS INDUSTRIAS QUÍMICAS"
+      }
+    },
+    {
+      "pk": 62,
+      "campos": {
+        "codigo": 3701,
+        "nombre": "PRODUCTOS FOTOGRÁFICOS O CINEMATOGRÁFICOS"
+      }
+    },
+    {
+      "pk": 63,
+      "campos": {
+        "codigo": 3601,
+        "nombre": "PÓLVORAS Y EXPLOSIVOS; ARTÍCULOS DE PIROTECNIA; FÓSFOROS (CERILLAS)"
+      }
+    },
+    {
+      "pk": 64,
+      "campos": {
+        "codigo": 3501,
+        "nombre": "MATERIAS ALBUMINOIDEAS; PRODUCTOS A BASE DE ALMIDÓN O DE FÉCULA"
+      }
+    },
+    {
+      "pk": 65,
+      "campos": {
+        "codigo": 3401,
+        "nombre": "JABONES, AGENTES DE SUPERFICIE ORGÁNICOS, PREPARACIONES PARA LAVAR"
+      }
+    },
+    {
+      "pk": 66,
+      "campos": {
+        "codigo": 3301,
+        "nombre": "ACEITES ESENCIALES Y RESINOIDES; PRODUCTOS PREPARADOS Y PREPARACIONES"
+      }
+    },
+    {
+      "pk": 67,
+      "campos": {
+        "codigo": 3201,
+        "nombre": "EXTRACTOS CURTIENTES O TINTÓREOS; TANINOS Y SUS DERIVADOS; PIGMENTOS Y"
+      }
+    },
+    {
+      "pk": 68,
+      "campos": {
+        "codigo": 3101,
+        "nombre": "ABONOS"
+      }
+    },
+    {
+      "pk": 69,
+      "campos": {
+        "codigo": 3001,
+        "nombre": "PRODUCTOS FARMACÉUTICOS"
+      }
+    },
+    {
+      "pk": 70,
+      "campos": {
+        "codigo": 2901,
+        "nombre": "PRODUCTOS QUÍMICOS ORGÁNICOS"
+      }
+    },
+    {
+      "pk": 71,
+      "campos": {
+        "codigo": 2801,
+        "nombre": "PRODUCTOS QUÍMICOS INORGÁNICOS; COMPUESTOS INORGÁNICOS U ORGÁNICOS DE"
+      }
+    },
+    {
+      "pk": 72,
+      "campos": {
+        "codigo": 2701,
+        "nombre": "COMBUSTIBLES MINERALES; ACEITES MINERALES Y PRODUCTOS DE SU DESTILACIÓN"
+      }
+    },
+    {
+      "pk": 73,
+      "campos": {
+        "codigo": 2601,
+        "nombre": "MINERALES; ESCORIAS Y CENIZAS"
+      }
+    },
+    {
+      "pk": 74,
+      "campos": {
+        "codigo": 2501,
+        "nombre": "SAL; AZUFRE; TIERRAS Y PIEDRAS; YESOS, CALES Y CEMENTOS"
+      }
+    },
+    {
+      "pk": 75,
+      "campos": {
+        "codigo": 2401,
+        "nombre": "TABACO Y SUCEDÁNEOS DEL TABACO ELABORADOS"
+      }
+    },
+    {
+      "pk": 76,
+      "campos": {
+        "codigo": 2301,
+        "nombre": "RESIDUOS Y DESPERDICIOS DE LAS INDUSTRIAS ALIMENTARIAS; ALIMENTOS"
+      }
+    },
+    {
+      "pk": 77,
+      "campos": {
+        "codigo": 2201,
+        "nombre": "BEBIDAS; LÍQUIDOS ALCOHÓLICOS Y VINAGRE"
+      }
+    },
+    {
+      "pk": 78,
+      "campos": {
+        "codigo": 2101,
+        "nombre": "PREPARACIONES ALIMENTICIAS DIVERSAS"
+      }
+    },
+    {
+      "pk": 79,
+      "campos": {
+        "codigo": 2001,
+        "nombre": "PREPARACIONES DE LEGUMBRES U HORTALIZAS; DE FRUTOS O DE OTRAS PARTES DE"
+      }
+    },
+    {
+      "pk": 80,
+      "campos": {
+        "codigo": 1901,
+        "nombre": "PREPARACIONES A BASE DE CEREALES; HARINA; ALMIDÓN; FÉCULA O LECHE"
+      }
+    },
+    {
+      "pk": 81,
+      "campos": {
+        "codigo": 1801,
+        "nombre": "CACAO Y SUS PREPARACIONES"
+      }
+    },
+    {
+      "pk": 82,
+      "campos": {
+        "codigo": 1701,
+        "nombre": "AZÚCARES Y ARTÍCULOS DE CONFITERÍA"
+      }
+    },
+    {
+      "pk": 83,
+      "campos": {
+        "codigo": 1601,
+        "nombre": "PREPARACIONES DE CARNE, DE PESCADO O DE CRUSTÁCEOS, DE MOLUSCOS O DE"
+      }
+    },
+    {
+      "pk": 84,
+      "campos": {
+        "codigo": 1501,
+        "nombre": "GRASAS Y ACEITES ANIMALES O VEGETALES; PRODUCTOS DE SU DESDOBLAMIENTO"
+      }
+    },
+    {
+      "pk": 85,
+      "campos": {
+        "codigo": 1401,
+        "nombre": "MATERIAS TRENZABLES Y DEMÁS PRODUCTOS DE ORIGEN VEGETAL, NO EXPRESADOS"
+      }
+    },
+    {
+      "pk": 86,
+      "campos": {
+        "codigo": 1301,
+        "nombre": "GOMAS; RESINAS Y DEMÁS JUGOS Y EXTRACTOS VEGETALES"
+      }
+    },
+    {
+      "pk": 87,
+      "campos": {
+        "codigo": 1201,
+        "nombre": "SEMILLAS Y FRUTOS OLEAGINOSOS; SEMILLAS Y FRUTOS DIVERSOS; PLANTAS"
+      }
+    },
+    {
+      "pk": 88,
+      "campos": {
+        "codigo": 1101,
+        "nombre": "PRODUCTOS DE MOLINERÍA; MALTA; ALMIDÓN Y FÉCULA; INULINA; GLUTEN DE TRIGO"
+      }
+    },
+    {
+      "pk": 89,
+      "campos": {
+        "codigo": 1001,
+        "nombre": "CEREALES"
+      }
+    },
+    {
+      "pk": 90,
+      "campos": {
+        "codigo": 901,
+        "nombre": "CAFÉ, TÉ, YERBA MATE Y ESPECIAS"
+      }
+    },
+    {
+      "pk": 91,
+      "campos": {
+        "codigo": 801,
+        "nombre": "FRUTOS COMESTIBLES; CORTEZAS DE AGRIOS O DE MELONES"
+      }
+    },
+    {
+      "pk": 92,
+      "campos": {
+        "codigo": 701,
+        "nombre": "LEGUMBRES Y HORTALIZAS, PLANTAS, RAÍCES Y TUBÉRCULOS ALIMENTICIOS"
+      }
+    },
+    {
+      "pk": 93,
+      "campos": {
+        "codigo": 601,
+        "nombre": "PLANTAS VIVAS Y PRODUCTOS DE LA FLORICULTURA"
+      }
+    },
+    {
+      "pk": 94,
+      "campos": {
+        "codigo": 501,
+        "nombre": "LOS DEMÁS PRODUCTOS DE ORIGEN ANIMAL NO EXPRESADOS NI COMPRENDIDOS"
+      }
+    },
+    {
+      "pk": 95,
+      "campos": {
+        "codigo": 401,
+        "nombre": "LECHE Y PRODUCTOS LÁCTEOS; HUEVOS DE AVE; MIEL NATURAL; PRODUCTOS"
+      }
+    },
+    {
+      "pk": 96,
+      "campos": {
+        "codigo": 301,
+        "nombre": "PESCADOS Y CRUSTÁCEOS; MOLUSCOS Y OTROS INVERTEBRADOS ACUÁTICOS"
+      }
+    },
+    {
+      "pk": 97,
+      "campos": {
+        "codigo": 201,
+        "nombre": "CARNES Y DESPOJOS COMESTIBLES"
+      }
+    },
+    {
+      "pk": 98,
+      "campos": {
+        "codigo": 101,
+        "nombre": "ANIMALES VIVOS"
+      }
+    }
+  ]
+}

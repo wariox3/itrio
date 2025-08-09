@@ -1,0 +1,14 @@
+{
+  "aplicacion": "transporte",
+  "modelo": "TteServicio",
+  "modelo_nativo": "tte_servicio",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "nombre": "MASIVO"
+      }
+    }    
+  ]
+}

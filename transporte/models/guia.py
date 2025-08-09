@@ -28,6 +28,7 @@ class TteGuia(models.Model):
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)
     peso_facturado = models.FloatField(default=0)
+    costo = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     declara = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     flete = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     manejo = models.DecimalField(max_digits=20, decimal_places=6, default=0)

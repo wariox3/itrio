@@ -4,7 +4,7 @@ from transporte.models.operacion import TteOperacion
 class TteOperacionSerializador(serializers.ModelSerializer):    
     class Meta:
         model = TteOperacion
-        fields = ['id', 'nombre']
+        fields = ['id', 'nombre', 'ciudad']
 
 class TteOpercionSeleccionarSerializador(serializers.ModelSerializer):    
     class Meta:
