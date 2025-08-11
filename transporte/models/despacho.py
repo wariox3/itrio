@@ -3,7 +3,6 @@ from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
 from transporte.models.operacion import TteOperacion
 from transporte.models.vehiculo import TteVehiculo
-from transporte.models.conductor import TteConductor
 from transporte.models.ruta import TteRuta
 from transporte.models.despacho_tipo import TteDespachoTipo
 
