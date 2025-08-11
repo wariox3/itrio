@@ -2,7 +2,8 @@
     "aplicacion": "transporte",
     "modelo": "TteColor",
     "modelo_nativo": "tte_color",
-    "actualizar_secuencia": true,
+    "actualizar_secuencia": false,
+    "pausa": true,
     "datos": [
         {
             "pk": 1,
