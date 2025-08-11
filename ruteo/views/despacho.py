@@ -209,7 +209,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                 despacho_origen = RutDespacho.objects.get(pk=despacho_origen_id)  
                 if despacho.estado_aprobado == False:
                     if despacho_origen.estado_terminado == False:
-                        visitas = RutVisita.objects.filter(despacho_id=despacho_origen_id, estado_entregado=False)
+                        visitas = RutVisita.objects.filter(despacho_id=despacho_origen_id, estado_entregado=False, estado_novedad=False)
                         for visita in visitas:                                                                                
                             despacho_origen.peso = despacho_origen.peso - visita.peso
                             despacho_origen.volumen = despacho_origen.volumen - visita.volumen
