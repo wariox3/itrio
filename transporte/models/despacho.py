@@ -38,7 +38,6 @@ class TteDespacho(models.Model):
     ciudad_destino = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='despachos_ciudad_destino_rel')
     vehiculo = models.ForeignKey(TteVehiculo, on_delete=models.PROTECT, related_name='despachos_vehiculo_rel')
     remolque = models.ForeignKey(TteVehiculo, on_delete=models.PROTECT, related_name='despachos_remolque_rel')
-    conductor = models.ForeignKey(TteConductor, on_delete=models.PROTECT, related_name='despachos_conductor_rel')
     ruta = models.ForeignKey(TteRuta, on_delete=models.PROTECT, related_name='despachos_ruta_rel')
 
     class Meta:
