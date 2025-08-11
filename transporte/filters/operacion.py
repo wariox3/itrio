@@ -6,5 +6,6 @@ class OperacionFilter(django_filters.FilterSet):
     class Meta:
         model = TteOperacion
         fields = {'id': ['exact'],
-                  'ciudad__nombre': ['exact', 'icontains'],                  
+                  'ciudad__nombre': ['exact', 'icontains'],    
+                  'ciudad_id': ['exact'],              
                   }
