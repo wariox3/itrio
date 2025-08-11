@@ -9,4 +9,4 @@ class TteOperacionSerializador(serializers.ModelSerializer):
 class TteOpercionSeleccionarSerializador(serializers.ModelSerializer):    
     class Meta:
         model = TteOperacion
-        fields = ['id', 'nombre']
+        fields = ['id', 'nombre', 'ciudad']
