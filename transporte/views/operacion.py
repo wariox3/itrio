@@ -3,12 +3,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from transporte.models.operacion import TteOperacion
 from transporte.serializers.operacion import TteOperacionSerializador, TteOpercionSeleccionarSerializador
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class OperacionViewSet(viewsets.ModelViewSet):
     queryset = TteOperacion.objects.all()
     serializer_class = TteOperacionSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
 
     @action(detail=False, methods=["get"], url_path=r'seleccionar')
     def seleccionar_action(self, request):
