@@ -2,8 +2,10 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from transporte.models.despacho import TteDespacho
+from transporte.models.despacho_detalle import TteDespachoDetalle
 from transporte.models.guia import TteGuia
 from transporte.serializers.despacho import TteDespachoSerializador
+from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
 from transporte.filters.despacho import DespachoFilter
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -42,6 +44,27 @@ class DespachoViewSet(viewsets.ModelViewSet):
             self.pagination_class = None
         return super().list(request, *args, **kwargs)    
     
+    @action(detail=False, methods=["post"], url_path=r'aprobar',)
+    def aprobar_action(self, request):        
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                with transaction.atomic():
+                    despacho = TteDespacho.objects.get(pk=id)                
+                    despacho_detalles = TteDespachoDetalle.objects.filter(despacho_id=id)
+                    respuesta = self.validacion_aprobar(despacho, despacho_detalles)
+                    if respuesta['error'] == False:                                                                      
+                        despacho.estado_aprobado = True
+                        despacho.save()
+                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+            except TteDespacho.DoesNotExist:
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["post"], url_path=r'adicionar-guia',)
     def adicionar_guia_action(self, request):                     
         raw = request.data
@@ -56,14 +79,45 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 guia = TteGuia.objects.get(pk=guia_id)                            
             except TteGuia.DoesNotExist:
                 return Response({'mensaje':'La guia no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)           
-            if guia.estado_despachado == False:  
+            if guia.estado_despachado == False and guia.despacho_id == None:  
                 with transaction.atomic():   
+                    data = {
+                        'despacho':id,
+                        'guia':guia_id,
+                        'unidades': guia.unidades, 
+                        'peso': guia.peso, 
+                        'volumen': guia.volumen, 
+                        'peso_facturado': guia.peso_facturado, 
+                        'costo': guia.costo, 
+                        'declara': guia.declara,                         
+                        'flete':guia.flete, 
+                        'manejo':guia.manejo, 
+                        'recaudo':guia.recaudo, 
+                        'cobro_entrega':guia.cobro_entrega                        
+                    }
+                    serializador = TteDespachoDetalleSerializador(data=data)
+                    if serializador.is_valid():    
+                        serializador.save()                        
+                    else:
+                        return Response({'validaciones': serializador.errors, 'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)                        
                     guia.despacho = despacho
                     guia.estado_despachado = True
                     guia.save()
                     TteDespacho.objects.filter(pk=id).update(guias=F('guias') + 1)  
-                    return Response({'mensaje': f'Guia adicionada al despaho'}, status=status.HTTP_200_OK)                  
+                    return Response({'mensaje': f'Guia adicionada al despacho'}, status=status.HTTP_200_OK)                  
             else:
                 return Response({'mensaje':'La guia ya esta despachada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        
+    @staticmethod
+    def validacion_aprobar(despacho: TteDespacho, despacho_destalles: TteDespachoDetalle):
+        if despacho.estado_aprobado == False:  
+            if despacho_destalles:       
+                for despacho_detalle in despacho_destalles:
+                    pass
+                return {'error':False}                    
+            else:
+                return {'error':True, 'mensaje':'El despacho no tiene guias', 'codigo':1}  
+        else:
+            return {'error':True, 'mensaje':'El despacho ya esta aprobado', 'codigo':1}          
