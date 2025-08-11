@@ -5,6 +5,7 @@ from transporte.models.operacion import TteOperacion
 from transporte.serializers.operacion import TteOperacionSerializador, TteOpercionSeleccionarSerializador
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from transporte.filters.operacion import OperacionFilter
 
 
 class OperacionViewSet(viewsets.ModelViewSet):
@@ -12,6 +13,7 @@ class OperacionViewSet(viewsets.ModelViewSet):
     serializer_class = TteOperacionSerializador
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = OperacionFilter 
     serializadores = {
         'lista': TteOperacionSerializador,
     } 
