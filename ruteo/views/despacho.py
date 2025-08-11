@@ -106,7 +106,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                 despacho = RutDespacho.objects.get(pk=id)  
                 if despacho.estado_aprobado == True:
                     if despacho.estado_terminado == False:
-                        visitas = RutVisita.objects.filter(despacho_id=id, estado_entregado=False).first()
+                        visitas = RutVisita.objects.filter(despacho_id=id, estado_entregado=False, estado_novedad=False).first()
                         if visitas:
                             return Response({'mensaje':'El despacho tiene visitas sin entregar', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                         despacho.estado_terminado = True                
