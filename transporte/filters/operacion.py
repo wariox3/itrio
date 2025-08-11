@@ -8,4 +8,6 @@ class OperacionFilter(django_filters.FilterSet):
         fields = {'id': ['exact'],
                   'ciudad__nombre': ['exact', 'icontains'],    
                   'ciudad_id': ['exact'],              
+                  'nombre': ['exact', 'icontains'],              
                   }
+        
