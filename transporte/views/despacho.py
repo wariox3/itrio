@@ -40,9 +40,9 @@ class DespachoViewSet(viewsets.ModelViewSet):
         return queryset 
 
     def list(self, request, *args, **kwargs):
-        if request.query_params.get('lista', '').lower() == 'true':
+        if request.query_params.get('lista_completa', '').lower() == 'true':
             self.pagination_class = None
-        return super().list(request, *args, **kwargs)    
+        return super().list(request, *args, **kwargs)
     
     @action(detail=False, methods=["post"], url_path=r'aprobar',)
     def aprobar_action(self, request):        
