@@ -45,6 +45,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     cortesia = models.BooleanField(default = False)
     es_socio = models.BooleanField(default = False)
     socio_id = models.IntegerField(null = True)
+    operacion_id = models.IntegerField(null = True)
+    operacion_cargo_id = models.IntegerField(null = True)
     fecha_creacion = models.DateTimeField(null=True, auto_now_add=True)
     dominio = models.CharField(max_length = 50, null = True)
     objects = UserManager()
