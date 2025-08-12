@@ -53,6 +53,11 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
             queryset = queryset.only(*campos) 
         return queryset 
 
+    def list(self, request, *args, **kwargs):
+            if request.query_params.get('lista_completa', '').lower() == 'true':
+                self.pagination_class = None
+            return super().list(request, *args, **kwargs)
+
     def destroy(self, request, *args, **kwargs):        
         instance = self.get_object()
         if instance.estado_aprobado:
