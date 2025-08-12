@@ -209,33 +209,36 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
         id = raw.get('id')
         despacho_origen_id = raw.get('despacho_origen_id')        
         if id and despacho_origen_id:
-            try:                
-                despacho = RutDespacho.objects.get(pk=id)
-                despacho_origen = RutDespacho.objects.get(pk=despacho_origen_id)  
-                if despacho_origen.estado_terminado == False:
-                    visitas = RutVisita.objects.filter(despacho_id=despacho_origen_id, estado_entregado=False, estado_novedad=False)
-                    for visita in visitas:                                                                                
-                        despacho_origen.peso = despacho_origen.peso - visita.peso
-                        despacho_origen.volumen = despacho_origen.volumen - visita.volumen
-                        despacho_origen.tiempo = despacho_origen.tiempo - visita.tiempo
-                        despacho_origen.tiempo_servicio = despacho_origen.tiempo_servicio - visita.tiempo_servicio
-                        despacho_origen.tiempo_trayecto = despacho_origen.tiempo_trayecto - visita.tiempo_trayecto
-                        despacho_origen.visitas = despacho_origen.visitas - 1                                   
-                        despacho_origen.save()                                
+            try:          
+                if id != despacho_origen_id:      
+                    despacho = RutDespacho.objects.get(pk=id)
+                    despacho_origen = RutDespacho.objects.get(pk=despacho_origen_id)  
+                    if despacho_origen.estado_terminado == False:
+                        visitas = RutVisita.objects.filter(despacho_id=despacho_origen_id, estado_entregado=False, estado_novedad=False)
+                        for visita in visitas:                                                                                
+                            despacho_origen.peso = despacho_origen.peso - visita.peso
+                            despacho_origen.volumen = despacho_origen.volumen - visita.volumen
+                            despacho_origen.tiempo = despacho_origen.tiempo - visita.tiempo
+                            despacho_origen.tiempo_servicio = despacho_origen.tiempo_servicio - visita.tiempo_servicio
+                            despacho_origen.tiempo_trayecto = despacho_origen.tiempo_trayecto - visita.tiempo_trayecto
+                            despacho_origen.visitas = despacho_origen.visitas - 1                                   
+                            despacho_origen.save()                                
 
-                        despacho.peso = despacho.peso + visita.peso
-                        despacho.volumen = despacho.volumen + visita.volumen
-                        despacho.tiempo = despacho.tiempo + visita.tiempo
-                        despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
-                        despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
-                        despacho.visitas = despacho.visitas + 1                                   
-                        despacho.save()               
+                            despacho.peso = despacho.peso + visita.peso
+                            despacho.volumen = despacho.volumen + visita.volumen
+                            despacho.tiempo = despacho.tiempo + visita.tiempo
+                            despacho.tiempo_servicio = despacho.tiempo_servicio + visita.tiempo_servicio
+                            despacho.tiempo_trayecto = despacho.tiempo_trayecto + visita.tiempo_trayecto
+                            despacho.visitas = despacho.visitas + 1                                   
+                            despacho.save()               
 
-                        visita.despacho = despacho
-                        visita.save()
-                    return Response({'mensaje': 'Se trasbordaron las visitas pendientes por entrega'}, status=status.HTTP_200_OK)                            
-                else:                          
-                    return Response({'mensaje':'El despacho origen no puede estar terminado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                       
+                            visita.despacho = despacho
+                            visita.save()
+                        return Response({'mensaje': 'Se trasbordaron las visitas pendientes por entrega'}, status=status.HTTP_200_OK)                            
+                    else:                          
+                        return Response({'mensaje':'El despacho origen no puede estar terminado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                       
+                else:
+                    return Response({'mensaje':'Los despachos deben ser diferentes', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                    
             except RutDespacho.DoesNotExist:
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
