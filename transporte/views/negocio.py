@@ -6,6 +6,7 @@ from transporte.serializers.negocio import TteNegocioSerializador
 from transporte.filters.negocio import NegocioFilter
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from utilidades.excel_exportar import ExcelExportar
 
 class NegocioViewSet(viewsets.ModelViewSet):
     queryset = TteNegocio.objects.all()
@@ -38,4 +39,9 @@ class NegocioViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.query_params.get('lista_completa', '').lower() == 'true':
             self.pagination_class = None
+        if request.query_params.get('excel'):   
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)         
+            exporter = ExcelExportar(serializer.data, 'negocio', 'negocios.xlsx')
+            return exporter.exportar_estilo()
         return super().list(request, *args, **kwargs)
