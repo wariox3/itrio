@@ -114,6 +114,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         return queryset 
 
     def list(self, request, *args, **kwargs):
+        if request.query_params.get('lista_completa', '').lower() == 'true':
+            self.pagination_class = None
         if request.query_params.get('excel'):
             documento_tipo_id = request.query_params.get('documento_tipo_id')
             documento_clase_id = request.query_params.get('documento_tipo__documento_clase_id')
