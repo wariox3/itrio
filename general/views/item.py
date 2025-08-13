@@ -19,6 +19,8 @@ import base64
 import openpyxl
 import gc
 from django.db import models
+from rest_framework.pagination import PageNumberPagination
+
 
 class ItemViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
@@ -38,6 +40,11 @@ class ItemViewSet(viewsets.ModelViewSet):
         return self.serializadores[serializador_parametro]
 
     def get_queryset(self):
+        page_size = self.request.query_params.get('page_size')
+        if page_size:
+            if page_size != '0':
+                self.pagination_class = PageNumberPagination
+                self.pagination_class.page_size = int(page_size)
         queryset = super().get_queryset()
         serializer_class = self.get_serializer_class()        
         select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
