@@ -10,4 +10,6 @@ class ContactoFilter(django_filters.FilterSet):
             'nombre_corto': ['exact','icontains'],
             'cliente': ['exact'], 
             'proveedor': ['exact'], 
-            'empleado': ['exact']}
+            'empleado': ['exact'],
+            'conductor': ['exact'], 
+            }

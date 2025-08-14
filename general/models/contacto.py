@@ -28,6 +28,7 @@ class GenContacto(models.Model):
     cliente = models.BooleanField(default = False) 
     proveedor = models.BooleanField(default = False)
     empleado = models.BooleanField(default = False)
+    conductor = models.BooleanField(default = False)
     numero_cuenta = models.CharField(max_length=50, null=True)
     numero_licencia = models.CharField(max_length=50, null=True)
     categoria_licencia = models.CharField(max_length=2, null=True)
