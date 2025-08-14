@@ -47,9 +47,12 @@ class VehiculoViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         placa = request.query_params.get('placa__icontains', None)
+        remolque = request.query_params.get('remolque', None)
         queryset = self.get_queryset()
         if placa:
             queryset = queryset.filter(placa__icontains=placa)
+        if remolque:
+            queryset = queryset.filter(remolque=remolque)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
