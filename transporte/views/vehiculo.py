@@ -13,7 +13,10 @@ class VehiculoViewSet(viewsets.ModelViewSet):
     serializer_class = TteVehiculoSerializador
     permission_classes = [permissions.IsAuthenticated]
     filterset_class = TteVehiculo 
-    filter_backends = [DjangoFilterBackend, OrderingFilter] 
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    serializadores = {
+        'lista': TteVehiculoSerializador,
+    }  
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
