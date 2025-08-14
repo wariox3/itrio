@@ -1,7 +1,7 @@
 import django_filters
 from transporte.models.vehiculo import TteVehiculo
 
-class RutaFilter(django_filters.FilterSet):    
+class VehiculoFilter(django_filters.FilterSet):    
     
     class Meta:
         model = TteVehiculo

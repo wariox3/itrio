@@ -6,13 +6,13 @@ from transporte.serializers.vehiculo import TteVehiculoSerializador, TteVehiculo
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from utilidades.excel_exportar import ExcelExportar
-from transporte.filters.vehiculo import TteVehiculo
+from transporte.filters.vehiculo import VehiculoFilter
 
 class VehiculoViewSet(viewsets.ModelViewSet):
     queryset = TteVehiculo.objects.all()
     serializer_class = TteVehiculoSerializador
     permission_classes = [permissions.IsAuthenticated]
-    filterset_class = TteVehiculo 
+    filterset_class = VehiculoFilter 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     serializadores = {
         'lista': TteVehiculoSerializador,
