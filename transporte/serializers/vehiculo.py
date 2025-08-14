@@ -31,3 +31,8 @@ class TteVehiculoSerializador(serializers.ModelSerializer):
                   'combustible', 'combustible__nombre', 'combustible__codigo', 'carroceria', 'carroceria__nombre', 'carroceria__codigo',
                   'configuracion', 'configuracion__nombre', 'configuracion__codigo']
         select_related_fields = ['poseedor', 'propietario' , 'aseguradora', 'color', 'marca', 'linea', 'combustible', 'carroceria', 'configuracion']  
+
+class TteVehiculoSeleccionarSerializador(serializers.ModelSerializer):    
+    class Meta:
+        model = TteVehiculo
+        fields = ['id', 'placa']
