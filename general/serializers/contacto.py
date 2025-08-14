@@ -17,7 +17,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
         fields = [
             'id', 'identificacion', 'numero_identificacion', 'digito_verificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
             'direccion', 'ciudad', 'barrio', 'codigo_postal', 'telefono', 'celular', 'correo', 'correo_facturacion_electronica', 'tipo_persona', 'regimen', 'codigo_ciuu',
-            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado', 'banco', 'numero_cuenta', 'cuenta_banco_clase', 'numero_licencia',
+            'asesor', 'precio', 'plazo_pago', 'plazo_pago_proveedor', 'cliente', 'proveedor', 'empleado', 'conductor' ,'banco', 'numero_cuenta', 'cuenta_banco_clase', 'numero_licencia',
             'categoria_licencia', 'fecha_vence_licencia']  
         
     def to_representation(self, instance):
@@ -87,6 +87,7 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             'cliente': instance.cliente,
             'proveedor': instance.proveedor,
             'empleado': instance.empleado,
+            'conductor': instance.conductor,
             'banco_id': instance.banco_id,
             'banco_nombre': banco_nombre,
             'cuenta_banco_clase_id': instance.cuenta_banco_clase_id,
@@ -113,6 +114,7 @@ class GenContactoListaSerializador(serializers.ModelSerializer):
                   'cliente',
                   'proveedor',
                   'empleado',
+                  'conductor',
                   'numero_licencia',
                   'categoria_licencia',
                   'fecha_vence_licencia']
