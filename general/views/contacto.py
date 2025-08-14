@@ -63,6 +63,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
         cliente = request.query_params.get('cliente', None)
         proveedor = request.query_params.get('proveedor', None)
         empleado = request.query_params.get('empleado', None)
+        conductor = request.query_params.get('conductor', None)
         queryset = self.get_queryset()
         if nombre_corto:
             queryset = queryset.filter(nombre_corto__icontains=nombre_corto)
@@ -72,6 +73,8 @@ class ContactoViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(proveedor=proveedor)
         if empleado:
             queryset = queryset.filter(empleado=empleado)
+        if conductor:
+            queryset = queryset.filter(conductor=conductor)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
