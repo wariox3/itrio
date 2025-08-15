@@ -178,7 +178,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
                                         ingreso = True                
                                     retiro = False
-                                    if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.contrato_tipo_id != 1:
+                                    if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.estado_terminado:
                                         retiro = True
                                     data = {
                                         'programacion': programacion.id,
@@ -218,7 +218,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     error_terminacion = False    
                                     fecha_hasta = contrato.fecha_hasta
                                     if contrato.contrato_tipo_id == 1:
-                                        fecha_hasta = programacion.fecha_hasta
+                                        if contrato.estado_terminado == False:
+                                            fecha_hasta = programacion.fecha_hasta
                                     else:
                                         if contrato.estado_terminado == False:
                                             if contrato.fecha_hasta < programacion.fecha_desde:

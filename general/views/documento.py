@@ -578,7 +578,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             if documento.documento_referencia:
                                 documento.pendiente = 0
                             else:
-                                documento.pendiente = documento.total - documento.afectado
+                                documento.pendiente = documento.total - documento.afectado                            
                             
                         # Compra, Documento soporte
                         if documento.documento_tipo_id in [5,11]:
@@ -646,7 +646,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 with transaction.atomic():
                     documento = GenDocumento.objects.get(pk=id)
                     if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False and documento.estado_electronico_enviado == False:                                  
-                        if documento.documento_tipo.documento_clase_id in (100, 101, 200,300, 303,400,500,501,601,603):                    
+                        if documento.documento_tipo.documento_clase_id in (100, 101, 105, 200,300, 303,400,500,501,601,603):                    
                             respuesta = self.validacion_desaprobar(documento)
                             if respuesta['error'] == False:
                                 documento.estado_aprobado = False
@@ -738,28 +738,56 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     }
                             
                     if documento.documento_tipo.cobrar:
-                        data = data_general.copy()                                                                        
-                        data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
-                        #Se actualiza la cuenta en el documento para cuando se haga el recibo/pago quede a esta cuenta
-                        documento.cuenta_id = documento.documento_tipo.cuenta_cobrar_id
-                        data['contacto'] = documento.contacto_id        
-                        if documento.documento_tipo_id in [1,3, 17, 24]:
-                            data['naturaleza'] = 'D'
-                            data['debito'] = documento.total
-                        else: 
-                            data['naturaleza'] = 'C'
-                            data['credito'] = documento.total
-                        data['detalle'] = 'CLIENTE'
-                        if documento.documento_tipo.cuenta_cobrar:
-                            if documento.documento_tipo.cuenta_cobrar.exige_grupo:
-                                if documento.sede:
-                                    data['grupo'] = documento.sede.grupo_id                        
-                        movimiento_serializador = ConMovimientoSerializador(data=data)
-                        if movimiento_serializador.is_valid():                
-                            movimientos_validos.append(movimiento_serializador)
-                        else:
-                            return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Cuenta por cobrar'}, status=status.HTTP_400_BAD_REQUEST)
+                        # Validar pagos
+                        pagos = 0
+                        documento_pagos = GenDocumentoPago.objects.filter(documento_id=id)
+                        for documento_pago in documento_pagos:
+                            data = data_general.copy()                                                                        
+                            data['cuenta'] = documento_pago.cuenta_banco.cuenta_id                                                        
+                            data['contacto'] = documento.contacto_id        
+                            if documento.documento_tipo_id in [1, 3, 17, 24, 27]:
+                                data['naturaleza'] = 'D'
+                                data['debito'] = documento_pago.pago
+                            else: 
+                                data['naturaleza'] = 'C'
+                                data['credito'] = documento_pago.pago
+                            data['detalle'] = 'PAGO'
+                            if documento_pago.cuenta_banco.cuenta:
+                                if documento_pago.cuenta_banco.cuenta.exige_grupo:
+                                    if documento.sede:
+                                        data['grupo'] = documento.sede.grupo_id                        
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():                
+                                movimientos_validos.append(movimiento_serializador)
+                                pagos += documento_pago.pago
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'El pago de la cuenta banco no esta establecida'}, status=status.HTTP_400_BAD_REQUEST)
+
+                        pendiente = documento.total - pagos
+                        if pendiente > 0:
+                            data = data_general.copy()                                                                        
+                            data['cuenta'] = documento.documento_tipo.cuenta_cobrar_id
+                            #Se actualiza la cuenta en el documento para cuando se haga el recibo/pago quede a esta cuenta
+                            documento.cuenta_id = documento.documento_tipo.cuenta_cobrar_id
+                            data['contacto'] = documento.contacto_id        
+                            if documento.documento_tipo_id in [1, 3, 17, 24, 27]:
+                                data['naturaleza'] = 'D'
+                                data['debito'] = pendiente
+                            else: 
+                                data['naturaleza'] = 'C'
+                                data['credito'] = pendiente
+                            data['detalle'] = 'CLIENTE'
+                            if documento.documento_tipo.cuenta_cobrar:
+                                if documento.documento_tipo.cuenta_cobrar.exige_grupo:
+                                    if documento.sede:
+                                        data['grupo'] = documento.sede.grupo_id                        
+                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                            if movimiento_serializador.is_valid():                
+                                movimientos_validos.append(movimiento_serializador)
+                            else:
+                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'La cuenta por cobrar del tipo de documento no esta establecida'}, status=status.HTTP_400_BAD_REQUEST)
                 
                     if documento.documento_tipo.pagar:
                         data = data_general.copy()
@@ -840,7 +868,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     data = data_general.copy()                            
                                     data['cuenta'] = documento_detalle.item.cuenta_venta_id
                                     data['contacto'] = documento.contacto_id                                
-                                    if documento.documento_tipo_id in [1,3, 17, 24]:
+                                    if documento.documento_tipo_id in [1, 3, 17, 24, 27]:
                                         data['naturaleza'] = 'C'
                                         data['credito'] = documento_detalle.subtotal
                                     else:
@@ -856,7 +884,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         movimientos_validos.append(movimiento_serializador)
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Item cuenta de venta'}, status=status.HTTP_400_BAD_REQUEST) 
+                                                'mensaje': 'El item no tiene una cuenta de venta establecida'}, status=status.HTTP_400_BAD_REQUEST) 
                                     
                                 if documento.documento_tipo.compra:
                                     data = data_general.copy()                            
@@ -877,7 +905,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         movimientos_validos.append(movimiento_serializador)
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'Item cuenta compra'}, status=status.HTTP_400_BAD_REQUEST)  
+                                                'mensaje': 'El item no tiene una cuenta de compra establecida'}, status=status.HTTP_400_BAD_REQUEST)  
 
                             # Cuenta                                                                            
                             if documento_detalle.tipo_registro == 'C':                                    
@@ -1012,7 +1040,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         data['contacto'] = documento.contacto_id        
                         if documento_impuesto['impuesto__venta']:
                             if documento_impuesto['impuesto__operacion'] == 1:
-                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3,17,24]:
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1, 3, 17, 24, 27]:
                                     data['naturaleza'] = 'C'
                                     data['credito'] = documento_impuesto['total']
                                 else:
@@ -1020,7 +1048,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     data['debito'] = documento_impuesto['total']
 
                             if documento_impuesto['impuesto__operacion'] == -1:
-                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1,3,17,24]:
+                                if documento_impuesto['documento_detalle__documento__documento_tipo_id'] in [1, 3, 17, 24, 27]:
                                     data['naturaleza'] = 'D'
                                     data['debito'] = documento_impuesto['total']                    
                                 else:
@@ -1049,7 +1077,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             movimientos_validos.append(movimiento_serializador)
                         else:
                             return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': f'En el detalle Id {documento_impuesto["documento_detalle_id"]}, el impuesto {documento_impuesto["impuesto__nombre"]} no tiene cuenta'}, status=status.HTTP_400_BAD_REQUEST)   
+                                                'mensaje': f'Detalle Id {documento_impuesto["documento_detalle_id"]}, el impuesto {documento_impuesto["impuesto__nombre"]} no tiene cuenta establecida'}, status=status.HTTP_400_BAD_REQUEST)   
                                                     
                     # Pago y Egreso
                     if documento.documento_tipo_id in [4, 8]:
