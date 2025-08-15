@@ -17,7 +17,8 @@
         "limite_electronicos": 5,
         "plan_tipo_id": "F",
         "orden": 1,
-        "venta": true
+        "venta": true,
+        "inventario": true
       }
     },
     {
@@ -52,7 +53,8 @@
         "limite_electronicos": 100,
         "plan_tipo_id": "F",
         "orden": 2,
-        "venta": true
+        "venta": true,
+        "inventario": true
       }
     },
     {
@@ -89,7 +91,8 @@
         "limite_electronicos": 500,
         "plan_tipo_id": "F",
         "orden": 3,
-        "venta": true
+        "venta": true,
+        "inventario": true
       }
     },
     {
@@ -127,7 +130,8 @@
         "limite_electronicos": 0,
         "plan_tipo_id": "F",
         "orden": 4,
-        "venta": true
+        "venta": true,
+        "inventario": true
       }
     },
     {
