@@ -44,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     verificado = models.BooleanField(default = False)
     cortesia = models.BooleanField(default = False)
     es_socio = models.BooleanField(default = False)
+    es_administrador = models.BooleanField(default = False)
     socio_id = models.IntegerField(null = True)
     operacion_id = models.IntegerField(null = True)
     operacion_cargo_id = models.IntegerField(null = True)

@@ -48,6 +48,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'fecha_creacion': instance.fecha_creacion,
             'verificado': instance.verificado,
             'es_socio': instance.es_socio,
+            'es_administrador': instance.es_administrador,
             'socio_id': instance.socio_id,
             'is_active': instance.is_active
         }
