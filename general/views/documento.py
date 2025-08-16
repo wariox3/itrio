@@ -575,10 +575,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             documento_tipo.save()                
                         documento.estado_aprobado = True
                         if documento.documento_tipo.documento_clase_id in (100,101,102,104,105,300,301,302,303,304):
-                            if documento.documento_referencia:
+                            documento.pendiente = documento.total - documento.pago
+                            # Se comenta el codigo porque si debe quedar pendiente
+                            '''if documento.documento_referencia:
                                 documento.pendiente = 0
                             else:
-                                documento.pendiente = documento.total - documento.afectado                            
+                                documento.pendiente = documento.total - documento.afectado'''
                             
                         # Compra, Documento soporte
                         if documento.documento_tipo_id in [5,11]:
@@ -3205,6 +3207,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                 # Notas credito
                 if documento.documento_referencia:
+                    # Para las facturas que tienen pago y la nota credito debe devolver el pago
                     if documento.documento_referencia.pendiente < documento.total:
                         return {'error':True, 'mensaje':f"El documento referencia tiene saldo pendiente {documento.documento_referencia.pendiente} y se va afectar {documento.total}", 'codigo':1}
 
