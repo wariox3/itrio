@@ -620,10 +620,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         
                         # Nota credito
                         if documento.documento_referencia:
-                            documento_referencia = documento.documento_referencia
-                            documento_referencia.afectado += documento.total
-                            documento_referencia.pendiente = documento_referencia.total - documento_referencia.afectado
-                            documento_referencia.save(update_fields=['afectado', 'pendiente'])  
+                            if documento.documento_tipo_id in [2]:
+                                afectar = documento.total - documento.pago
+                                documento_referencia = documento.documento_referencia
+                                documento_referencia.afectado += afectar
+                                documento_referencia.pendiente = documento_referencia.total - (documento_referencia.afectado+documento_referencia.pago)
+                                documento_referencia.save(update_fields=['afectado', 'pendiente'])  
 
                         documento.save()
                         if documento.documento_tipo.electronico:
@@ -677,10 +679,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
                                 # Nota credito
                                 if documento.documento_referencia:
-                                    documento_referencia = documento.documento_referencia
-                                    documento_referencia.afectado -= documento.total
-                                    documento_referencia.pendiente = documento_referencia.total - documento_referencia.afectado
-                                    documento_referencia.save(update_fields=['afectado', 'pendiente'])                                                                               
+                                    if documento.documento_tipo_id in [2]:
+                                        afectar = documento.total - documento.pago
+                                        documento_referencia = documento.documento_referencia
+                                        documento_referencia.afectado -= afectar                                    
+                                        documento_referencia.pendiente = documento_referencia.total - (documento_referencia.afectado+documento_referencia.pago)
+                                        documento_referencia.save(update_fields=['afectado', 'pendiente'])                                                                               
                                 documento.save()
                                 return Response({'estado_aprobado': False}, status=status.HTTP_200_OK)
                             else:
@@ -3207,10 +3211,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                 # Notas credito
                 if documento.documento_referencia:
-                    # Para las facturas que tienen pago y la nota credito debe devolver el pago
-                    if documento.documento_referencia.pendiente < documento.total:
-                        return {'error':True, 'mensaje':f"El documento referencia tiene saldo pendiente {documento.documento_referencia.pendiente} y se va afectar {documento.total}", 'codigo':1}
-
+                    if documento.documento_tipo_id in [2]:
+                        # Para las facturas que tienen pago y la nota credito debe devolver el pago
+                        afectar = documento.total - documento.pago 
+                        if documento.documento_referencia.pendiente < afectar:
+                            return {'error':True, 'mensaje':f"El documento referencia tiene saldo pendiente {documento.documento_referencia.pendiente} y se va afectar {documento.total}", 'codigo':1}
                 return {'error':False}         
             else:
                 return {'error':True, 'mensaje':'El total del documento no puede ser menor a cero', 'codigo':1}            
