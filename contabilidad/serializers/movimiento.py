@@ -88,14 +88,14 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
         } 
 
 class ConMovimientoExcelSerializador(serializers.ModelSerializer):    
-    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True)
-    cuenta__nombre = serializers.CharField(source='cuenta.nombre', read_only=True)
-    comprobante__nombre = serializers.CharField(source='comprobante.nombre', read_only=True)
-    comprobante__codigo = serializers.CharField(source='comprobante.codigo', read_only=True)
-    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True)
-    grupo__codigo = serializers.CharField(source='grupo.codigo', read_only=True)
-    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)
-    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
+    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True, allow_null=True, default=None)
+    cuenta__nombre = serializers.CharField(source='cuenta.nombre', read_only=True, allow_null=True, default=None)
+    comprobante__nombre = serializers.CharField(source='comprobante.nombre', read_only=True, allow_null=True, default=None)
+    comprobante__codigo = serializers.CharField(source='comprobante.codigo', read_only=True, allow_null=True, default=None)
+    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True, allow_null=True, default=None)
+    grupo__codigo = serializers.CharField(source='grupo.codigo', read_only=True, allow_null=True, default=None)
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True, allow_null=True, default=None)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True, allow_null=True, default=None)
     class Meta:
         model = ConMovimiento
         fields = ['id', 
