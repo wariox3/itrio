@@ -39,6 +39,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
     forma_pago = serializers.PrimaryKeyRelatedField(queryset=GenFormaPago.objects.all(), default=None, allow_null=True)
     asesor = serializers.PrimaryKeyRelatedField(queryset=GenAsesor.objects.all(), default=None, allow_null=True)
     sede = serializers.PrimaryKeyRelatedField(queryset=GenSede.objects.all(), default=None, allow_null=True)
+    resolucion = serializers.PrimaryKeyRelatedField(queryset=GenResolucion.objects.all(), default=None, allow_null=True)
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), default=None, allow_null=True)
     programacion_detalle = serializers.PrimaryKeyRelatedField(queryset=HumProgramacionDetalle.objects.all(), default=None, allow_null=True)
     aporte = serializers.PrimaryKeyRelatedField(queryset=HumAporte.objects.all(), default=None, allow_null=True)
@@ -78,7 +79,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             asesor_nombre_corto = instance.asesor.nombre_corto    
         sede_nombre = ""
         if instance.sede:
-            sede_nombre = instance.sede.nombre    
+            sede_nombre = instance.sede.nombre      
         cuenta_banco_nombre = ""
         if instance.cuenta_banco:
             cuenta_banco_nombre = instance.cuenta_banco.nombre  
@@ -148,7 +149,7 @@ class GenDocumentoSerializador(serializers.HyperlinkedModelSerializer):
             'referencia_numero' : instance.referencia_numero,
             'referencia_prefijo' : instance.referencia_prefijo,
             'empresa': instance.empresa_id,            
-            'resolucion': instance.resolucion_id,
+            'resolucion_id': instance.resolucion_id,
             'documento_referencia' :  instance.documento_referencia_id,
             'plazo_pago': instance.plazo_pago_id,
             'asesor_id': instance.asesor_id,
