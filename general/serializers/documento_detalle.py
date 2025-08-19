@@ -266,6 +266,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'impuesto_retencion' : instance.impuesto_retencion,
             'impuesto_operado' : instance.impuesto_operado,
             'total' : instance.total,
+            'pago': instance.pago,
             'hora' : instance.hora,
             'dias' : instance.dias,
             'devengado': instance.devengado,
