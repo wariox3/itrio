@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from seguridad.models import User
 from contenedor.models import Contenedor, UsuarioContenedor, CtnVerificacion
-from contenedor.serializers.contenedor import ContenedorSerializador
+from contenedor.serializers.contenedor import ContenedorSerializador, ContenedorUsuarioSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorConsultaContenedorSerializador
 from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from datetime import datetime, timedelta
@@ -139,13 +139,25 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
         usuario_id = raw.get('usuario_id')
         reddoc = raw.get('reddoc')
         ruteo = raw.get('ruteo')
+        
         if usuario_id and (reddoc or ruteo):  
-            usuarioEmpresa = UsuarioContenedor.objects.filter(usuario_id=usuario_id).order_by('-rol', 'contenedor__nombre')                         
-            if reddoc:
-                usuarioEmpresa = usuarioEmpresa.filter(contenedor__reddoc=reddoc)
-            if ruteo:
-                usuarioEmpresa = usuarioEmpresa.filter(contenedor__ruteo=ruteo)
-            usuarioEmpresaSerializer = UsuarioContenedorSerializador(usuarioEmpresa, many=True)
-            return Response({'contenedores': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
+            usuario = User.objects.get(pk=usuario_id)
+            es_administrador = getattr(usuario, 'es_administrador', False)
+            if es_administrador:
+                contenedores = Contenedor.objects.all()
+                if reddoc:
+                    contenedores = contenedores.filter(reddoc=reddoc)
+                if ruteo:
+                    contenedores = contenedores.filter(ruteo=ruteo)
+                contenedorSerializer = ContenedorUsuarioSerializador(contenedores, many=True)
+                return Response({'contenedores': contenedorSerializer.data}, status=status.HTTP_200_OK)
+            else:
+                usuarioEmpresa = UsuarioContenedor.objects.filter(usuario_id=usuario_id).order_by('-rol', 'contenedor__nombre')                         
+                if reddoc:
+                    usuarioEmpresa = usuarioEmpresa.filter(contenedor__reddoc=reddoc)
+                if ruteo:
+                    usuarioEmpresa = usuarioEmpresa.filter(contenedor__ruteo=ruteo)
+                usuarioEmpresaSerializer = UsuarioContenedorSerializador(usuarioEmpresa, many=True)
+                return Response({'contenedores': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
         else:
-            return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
+            return Response({'mensaje': "Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
