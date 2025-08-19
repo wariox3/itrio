@@ -257,17 +257,25 @@ class ItemViewSet(viewsets.ModelViewSet):
                     
                     # Procesar impuesto_venta
                     if impuesto_venta:
-                        datos_impuesto_venta = {"item": item.id, "impuesto": impuesto_venta}
-                        item_impuesto_venta_serializer = GenItemImpuestoSerializador(data=datos_impuesto_venta)
-                        if item_impuesto_venta_serializer.is_valid():
-                            item_impuesto_venta_serializer.save()
+                        impuestos_venta_str = str(impuesto_venta)
+                        impuestos_venta_ids = [id_str.strip() for id_str in impuestos_venta_str.split(',') if id_str.strip()]
+                        for impuesto_id in impuestos_venta_ids:
+                            id_numero = int(float(impuesto_id))
+                            datos_impuesto_venta = {"item": item.id, "impuesto": id_numero}
+                            item_impuesto_venta_serializer = GenItemImpuestoSerializador(data=datos_impuesto_venta)
+                            if item_impuesto_venta_serializer.is_valid():
+                                item_impuesto_venta_serializer.save()
 
                     # Procesar impuesto_compra
                     if impuesto_compra:
-                        datos_impuesto_compra = {"item": item.id, "impuesto": impuesto_compra}
-                        item_impuesto_compra_serializer = GenItemImpuestoSerializador(data=datos_impuesto_compra)
-                        if item_impuesto_compra_serializer.is_valid():
-                            item_impuesto_compra_serializer.save()
+                        impuestos_compra_str = str(impuesto_compra)
+                        impuestos_compra_ids = [id_str.strip() for id_str in impuestos_compra_str.split(',') if id_str.strip()]
+                        for impuesto_id in impuestos_compra_ids:
+                            id_numero = int(float(impuesto_id))
+                            datos_impuesto_compra = {"item": item.id, "impuesto": id_numero}
+                            item_impuesto_compra_serializer = GenItemImpuestoSerializador(data=datos_impuesto_compra)
+                            if item_impuesto_compra_serializer.is_valid():
+                                item_impuesto_compra_serializer.save()
 
                     registros_importados += 1
 
