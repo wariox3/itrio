@@ -86,7 +86,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                                 <a href='{url}' class='button'>Aceptar invitacion</a>
                                 """.format(url=url, usuario=invitado, aplicacion_nombre=aplicacion_datos['nombre'])
                     correo = Zinc()  
-                    correo.correo(invitado, f'Invitacion a {aplicacion_datos['nombre']}', html_content, aplicacion)
+                    correo.correo(invitado, f'Invitacion a {aplicacion_datos["nombre"]}', html_content, aplicacion)
                     return Response({'verificacion': serializador.data}, status=status.HTTP_201_CREATED)
                 return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
             else:
