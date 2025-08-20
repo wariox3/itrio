@@ -311,3 +311,29 @@ class ItemViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
     
+    @action(detail=False, methods=["post"], url_path=r'eliminar-imagen',)
+    def eliminar_imagen(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:                            
+                item = GenItem.objects.get(pk=id)
+            except GenItem.DoesNotExist:
+                return Response({'mensaje':'El item no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+            
+            if item.imagen:
+                if f"itrio/imagen/{request.tenant.id}/item/{id}" in item.imagen:
+                    try:
+                        spaceDo = SpaceDo()
+                        spaceDo.eliminar(item.imagen)
+                        item.imagen = None
+                        item.save()
+                        return Response({'mensaje': 'Imagen eliminada'}, status=status.HTTP_200_OK)                      
+                    except Exception as e:
+                        return Response({'mensaje': f'Error al eliminar imagen: {str(e)}', 'codigo':17}, status=status.HTTP_400_BAD_REQUEST)             
+                else:
+                    return Response({'mensaje': 'La ruta de la imagen no es válida', 'codigo': 18}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'mensaje': 'El item no tiene imagen', 'codigo': 16}, status=status.HTTP_400_BAD_REQUEST)        
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
