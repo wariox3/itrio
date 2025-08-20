@@ -284,9 +284,11 @@ LOGGING = {
 
 APLICACIONES = {
     'reddoc': {
-        'nombre': 'RedDoc',        
+        'nombre': 'RedDoc', 
+        'dominio': 'reddoc.co'       
     },
     'ruteo': {
         'nombre': 'Ruteo.co',
+        'dominio': 'ruteo.co'
     },
 }

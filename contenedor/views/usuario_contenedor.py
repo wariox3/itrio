@@ -78,7 +78,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                         },
                     }
 
-                    url = f"https://app.{config('DOMINIO_FRONTEND')}/auth/login/" + token
+                    url = f"https://app.{aplicacion_datos['dominio']}/auth/login/" + token
                     html_content = """
                                 <h1>¡Hola {usuario}!</h1>
                                 <p>Te han invitado para que seas parte de un equipo de trabajo en {aplicacion_nombre}. Clic en el siguiente enlace 
