@@ -77,8 +77,11 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                             'nombre': 'Ruteo.co'
                         },
                     }
-
                     url = f"https://app.{aplicacion_datos['dominio']}/auth/login/" + token
+                    if config('ENV') == "test":
+                        url = f"http://app.{aplicacion_datos['dominio_test']}/auth/login/" + token
+                    if config('ENV') == "dev":
+                        url = f"http://{aplicacion_datos['dominio_dev']}/auth/login/" + token                    
                     html_content = """
                                 <h1>¡Hola {usuario}!</h1>
                                 <p>Te han invitado para que seas parte de un equipo de trabajo en {aplicacion_nombre}. Clic en el siguiente enlace 

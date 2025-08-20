@@ -108,7 +108,12 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                     serializador_verificacion = CtnVerificacionSerializador(data = data)
                     if serializador_verificacion.is_valid():                                             
                         serializador_verificacion.save()                                                
-                        url = f"https://app.{aplicacion_datos['dominio']}/auth/verificacion/" + token
+                        url = f"https://app.{aplicacion_datos['dominio']}/auth/verificacion/" + token                        
+                        if config('ENV') == "test":
+                            url = f"https://app.{aplicacion_datos['dominio_test']}/auth/verificacion/" + token
+                        if config('ENV') == "dev":
+                            url = f"http://{aplicacion_datos['dominio_dev']}/auth/verificacion/" + token
+                        
                         html_content = """
                                         <h1>¡Hola {usuario}!</h1>
                                         <p>Estamos comprometidos con la seguridad de tu cuenta, por esta razón necesitamos que nos valides 

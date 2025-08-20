@@ -285,10 +285,14 @@ LOGGING = {
 APLICACIONES = {
     'reddoc': {
         'nombre': 'RedDoc', 
-        'dominio': 'reddoc.co'       
+        'dominio': 'reddoc.co',
+        'dominio_test': 'reddoc.online',
+        'dominio_dev': 'localhost:4200'      
     },
     'ruteo': {
         'nombre': 'Ruteo.co',
-        'dominio': 'ruteo.co'
+        'dominio': 'ruteo.co',
+        'dominio_test': 'ruteo.online',
+        'dominio_dev': 'localhost:4200'        
     },
 }
