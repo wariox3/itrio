@@ -10,6 +10,7 @@ from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from datetime import datetime, timedelta
 from decouple import config
 from utilidades.zinc import Zinc
+from django.conf import settings
 
 class UsuarioContenedorViewSet(viewsets.ModelViewSet):
     queryset = UsuarioContenedor.objects.all()
@@ -28,50 +29,70 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':"El usuario propietario no se puede eliminar", 'codigo': 22}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'invitar',)
-    def invitar(self, request):
-        try:
-            raw = request.data
-            invitado = raw.get('invitado')
-            contenedor_id = raw.get('contenedor_id')
-            usuario_id = raw.get('usuario_id')
-            if invitado and contenedor_id and usuario_id:
+    def invitar(self, request):        
+        raw = request.data
+        invitado = raw.get('invitado', None)
+        contenedor_id = raw.get('contenedor_id', None)
+        usuario_id = raw.get('usuario_id', None)
+        aplicacion = raw.get('aplicacion', None)
+        if invitado and contenedor_id and usuario_id and aplicacion:
+            try:
                 contenedor = Contenedor.objects.get(pk=contenedor_id)
+            except Contenedor.DoesNotExist:
+                return Response({'mensaje':'El contenedor no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)                 
+            try:
                 usuario = User.objects.get(pk=usuario_id)
-                token = secrets.token_urlsafe(20)            
-                raw["token"] = token
-                raw["vence"] = datetime.now().date() + timedelta(days=1)
-                raw["contenedor_id"] = contenedor.id
-                raw["usuario_invitado_username"] = invitado
-                if User.objects.filter(username=invitado).exists():
-                    usuarioInvitado = User.objects.get(username = invitado)
-                    if usuarioInvitado.id == usuario.id:
-                        return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
-                    if UsuarioContenedor.objects.filter(usuario_id=usuarioInvitado.id, contenedor_id=contenedor.id).exists():
-                        return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
-                if contenedor.plan:
+            except User.DoesNotExist:
+                return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
+            
+            usuario_invitado = User.objects.filter(username = invitado).first()
+            if usuario_invitado:                
+                if usuario_invitado.id == usuario.id:
+                    return Response({'mensaje':'El usuario no se puede invitar a el mismo', 'codigo':18}, status=status.HTTP_400_BAD_REQUEST)
+                
+                if UsuarioContenedor.objects.filter(usuario_id=usuario_invitado.id, contenedor_id=contenedor.id).exists():
+                    return Response({'mensaje':'El usuario ya esta invitado o confirmado para este contenedor', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
+            aplicaciones = settings.APLICACIONES
+            if aplicacion in aplicaciones:
+                '''if contenedor.plan:
                     if contenedor.plan.limite_usuarios > 0:
                         if contenedor.plan.limite_usuarios >= contenedor.usuarios:
-                            return Response({'mensaje':'La empresa supera el numero de usuarios segun el plan, si quiere invitar nuevos usuarios debe incrementar el plan', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
-                verificacionSerializador = CtnVerificacionSerializador(data = raw)
-                if verificacionSerializador.is_valid():                                             
-                    verificacionSerializador.save()                    
+                            return Response({'mensaje':'La empresa supera el numero de usuarios segun el plan, si quiere invitar nuevos usuarios debe incrementar el plan', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)'''
+                aplicacion_datos = aplicaciones[aplicacion]
+                token = secrets.token_urlsafe(20)
+                data = {
+                    'token': token,
+                    'vence': datetime.now().date() + timedelta(days=1),
+                    'contenedor_id': contenedor_id,
+                    'usuario_invitado_username': invitado
+                }
+                serializador = CtnVerificacionSerializador(data = data)
+                if serializador.is_valid():                                             
+                    serializador.save() 
+                    aplicaciones = {
+                        'reddoc': {
+                            'nombre': 'RedDoc'
+                        },                    
+                        'ruteo': {
+                            'nombre': 'Ruteo.co'
+                        },
+                    }
+
                     url = f"https://app.{config('DOMINIO_FRONTEND')}/auth/login/" + token
                     html_content = """
                                 <h1>¡Hola {usuario}!</h1>
-                                <p>Te han invitado para que seas parte de un equipo de trabajo en RedDoc. Clic en el siguiente enlace 
+                                <p>Te han invitado para que seas parte de un equipo de trabajo en {aplicacion_nombre}. Clic en el siguiente enlace 
                                 para aceptar la invitacion</p>
                                 <a href='{url}' class='button'>Aceptar invitacion</a>
-                                """.format(url=url, usuario=invitado)
+                                """.format(url=url, usuario=invitado, aplicacion_nombre=aplicacion_datos['nombre'])
                     correo = Zinc()  
-                    correo.correo_reddoc(invitado, 'Invitacion a RedDoc', html_content)
-                    return Response({'verificacion': verificacionSerializador.data}, status=status.HTTP_201_CREATED)
-                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacionSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
+                    correo.correo(invitado, f'Invitacion a {aplicacion_datos['nombre']}', html_content, aplicacion)
+                    return Response({'verificacion': serializador.data}, status=status.HTTP_201_CREATED)
+                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
             else:
-                return Response({'mensaje':'Faltal parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                
-        except User.DoesNotExist:
-            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
-        except Contenedor.DoesNotExist:
-            return Response({'mensaje':'El contenedor no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST) 
+                return Response({'mensaje':'La aplicacion no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                
+        else:
+            return Response({'mensaje':'Faltal parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                
 
     @action(detail=False, methods=["post"], url_path=r'confirmar',)
     def confirmar(self, request):

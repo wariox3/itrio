@@ -281,3 +281,12 @@ LOGGING = {
         },
     },
 }
+
+APLICACIONES = {
+    'reddoc': {
+        'nombre': 'RedDoc',        
+    },
+    'ruteo': {
+        'nombre': 'Ruteo.co',
+    },
+}

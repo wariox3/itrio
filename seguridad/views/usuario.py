@@ -53,7 +53,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                                 <a href='{url}' class='button'>Verificar cuenta</a>
                                 """.format(url=url, usuario=usuario.nombre_corto)
                 correo = Zinc()  
-                correo.correo_reddoc(usuario.correo, 'Verificar cuenta de RedDoc', html_content)  
+                correo.correo(usuario.correo, 'Verificar cuenta de RedDoc', html_content)  
                 return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         return Response({'mensaje':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
@@ -116,7 +116,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                                     <a href='{url}' class='button'>Cambiar clave</a>
                                     """.format(url=url, usuario=usuario.nombre_corto)
                     correo = Zinc()  
-                    correo.correo_reddoc(usuario.correo, 'Solicitud cambio clave RedDoc', html_content)
+                    correo.correo(usuario.correo, 'Solicitud cambio clave RedDoc', html_content)
                     return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
                 return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            

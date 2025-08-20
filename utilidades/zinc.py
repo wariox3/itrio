@@ -42,25 +42,13 @@ class Zinc():
         else:
             return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}           
 
-    def correo_reddoc(self, correo, asunto, contenido):
-        url = "/api/correo/reddoc"
-        datos = {
-            "correo" : correo,
-            "asunto" : asunto,
-            "contenido": contenido
-        }
-        respuesta = self.consumirPost(datos, url)
-        if respuesta['status'] == 200:
-            return {'error': False}
-        else:
-            return {'error':True, 'mensaje':'Ocurrio un error en el servicio zinc'}
-
-    def correo_reddoc_v2(self, correo, asunto, contenido, archivos):
-        url = "/api/correo/reddoc/v2"
+    def correo(self, correo, asunto, contenido, aplicacion='reddoc', archivos = []):
+        url = "/api/correo/itrio"
         datos = {
             "correo" : correo,
             "asunto" : asunto,
             "contenido": contenido,
+            "aplicacion":aplicacion,
             "archivos": archivos
         }
         respuesta = self.consumirPost(datos, url)
