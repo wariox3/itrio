@@ -11,7 +11,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'username', 'password', 'aplicacion']
     
     def create(self, validated_data):
         user = User(**validated_data)
@@ -50,7 +50,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'es_socio': instance.es_socio,
             'es_administrador': instance.es_administrador,
             'socio_id': instance.socio_id,
-            'is_active': instance.is_active
+            'is_active': instance.is_active,
+            'aplicacion': instance.aplicacion
         }
 
 class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
