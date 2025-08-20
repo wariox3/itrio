@@ -49,7 +49,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     operacion_id = models.IntegerField(null = True)
     operacion_cargo_id = models.IntegerField(null = True)
     fecha_creacion = models.DateTimeField(null=True, auto_now_add=True)
-    dominio = models.CharField(max_length = 50, null = True)
+    aplicacion = models.CharField(max_length=10, null=True)
+    dominio = models.CharField(max_length = 50, null=True)
     objects = UserManager()
 
     class Meta:

@@ -18,6 +18,7 @@ from decouple import config
 from utilidades.space_do import SpaceDo
 from PIL import Image
 from io import BytesIO
+from django.conf import settings
 
 class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     model = User
@@ -32,6 +33,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
         serializer_class = UserSerializer(queryset, many=True)
         return Response(serializer_class.data, status=status.HTTP_200_OK)
     
+    # deprecated se debe eliminar este metodo
     def create(self, request):
         raw = request.data
         user_serializer = self.serializer_class(data=raw)
@@ -70,6 +72,61 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             user_serializer.save()
             return Response({'actualizacion': True, 'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)            
         return Response({'mensaje':'Errores en la actualizacion del usuario', 'codigo':10, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'nuevo',)
+    def nuevo_action(self, request):
+        raw = request.data
+        username = raw.get('username', None)
+        password = raw.get('password', None)
+        nombre_corto = raw.get('nombre_corto', None)
+        nombre = raw.get('nombre', None)
+        apellido = raw.get('apellido', None)
+        telefono = raw.get('telefono', None)
+        aplicacion = raw.get('aplicacion', None)
+        if username and password and aplicacion:
+            aplicaciones = settings.APLICACIONES
+            if aplicacion in aplicaciones:
+                aplicacion_datos = aplicaciones[aplicacion]
+                data = {
+                    'username': username,
+                    'password': password,
+                    'nombre_corto': nombre_corto,
+                    'nombre': nombre,
+                    'apellido': apellido,
+                    'telefono': telefono,
+                    'aplicacion': aplicacion
+                }
+                serializador_usuario = UserSerializer(data=data)
+                if serializador_usuario.is_valid():
+                    usuario = serializador_usuario.save()
+                    token = secrets.token_urlsafe(20)
+                    data = {
+                        'usuario_id': usuario.id,
+                        'token': token,
+                        'vence': datetime.now().date() + timedelta(days=1)
+                    }
+                    serializador_verificacion = CtnVerificacionSerializador(data = data)
+                    if serializador_verificacion.is_valid():                                             
+                        serializador_verificacion.save()                                                
+                        url = f"https://app.{aplicacion_datos['dominio']}/auth/verificacion/" + token
+                        html_content = """
+                                        <h1>¡Hola {usuario}!</h1>
+                                        <p>Estamos comprometidos con la seguridad de tu cuenta, por esta razón necesitamos que nos valides 
+                                        que eres tú, por favor verifica tu cuenta haciendo clic en el siguiente enlace.</p>
+                                        <a href='{url}' class='button'>Verificar cuenta</a>
+                                        """.format(url=url, usuario=usuario.nombre_corto)
+                        correo = Zinc()  
+                        correo.correo(usuario.correo, f'Verificar cuenta de {aplicacion_datos["nombre"]}', html_content, aplicacion)  
+                        return Response({'usuario': serializador_usuario.data}, status=status.HTTP_201_CREATED)
+                    return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': serializador_verificacion.errors}, status=status.HTTP_400_BAD_REQUEST)                
+                else:
+                    return Response({'mensaje':'Errores en el registro del usuario', 'codigo':2, 'validaciones': serializador_usuario.errors}, status=status.HTTP_400_BAD_REQUEST)     
+            else:
+                return Response({'mensaje':'La aplicacion no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                 
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':2}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
     @action(detail=False, methods=["post"], url_path=r'verificar',)
     def verificar(self, request):
