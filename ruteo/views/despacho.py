@@ -334,7 +334,8 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                     with transaction.atomic():
                         data = {
                             'vehiculo':vehiculo.id,
-                            'fecha': datetime.now()                         
+                            'fecha': datetime.now(),
+                            'codigo_complemento': despacho_complemento['codigoDespachoPk']                         
                         }                                                                        
                         serializador = RutDespachoSerializador(data=data)
                         if serializador.is_valid():

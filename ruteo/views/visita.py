@@ -756,7 +756,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'entrega',)
-    def entrega(self, request):                     
+    def entrega_action(self, request):                     
         id = request.POST.get('id')
         imagenes = request.FILES.getlist('imagenes')
         firmas = request.FILES.getlist('firmas')

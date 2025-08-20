@@ -12,9 +12,13 @@ class RutDespachoSerializador(serializers.ModelSerializer):
     class Meta:
         model = RutDespacho
         fields = ['id', 'fecha', 'fecha_salida', 'fecha_ubicacion', 'peso', 'volumen', 'tiempo', 'tiempo_servicio', 'tiempo_trayecto',
-                  'visitas', 'visitas_entregadas', 'visitas_liberadas', 'visitas_novedad', 'vehiculo', 'vehiculo__placa' , 'vehiculo__capacidad' 
-                  ,'entrega_id', 'estado_aprobado', 'estado_terminado']
+                  'visitas', 'visitas_entregadas', 'visitas_liberadas', 'visitas_novedad', 'entrega_id', 'estado_aprobado', 'estado_terminado', 
+                  'codigo_complemento', 
+                  'vehiculo', 
+                  'vehiculo__placa' , 
+                  'vehiculo__capacidad']
         select_related_fields = ['vehiculo']    
+
 class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = RutDespacho

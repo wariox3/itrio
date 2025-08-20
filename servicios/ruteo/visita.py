@@ -238,7 +238,7 @@ class VisitaServicio():
         parametros = {
             'codigoGuia': visita.numero,
             'fechaEntrega': fecha_formateada,
-            'usuario': 'ruteo'
+            'usuario': 'ruteo'            
         }
         if imagenes_b64:
             parametros['imagenes'] = imagenes_b64

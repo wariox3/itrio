@@ -18,6 +18,7 @@ class RutDespacho(models.Model):
     estado_terminado = models.BooleanField(default = False)
     estado_anulado = models.BooleanField(default = False)
     entrega_id = models.IntegerField(null=True)
+    codigo_complemento = models.IntegerField(null=True)
     latitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)    
     vehiculo = models.ForeignKey(RutVehiculo, null=True, on_delete=models.PROTECT, related_name='despachos_vehiculo_rel')
