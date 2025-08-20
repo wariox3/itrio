@@ -1153,7 +1153,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         'contacto': nomina.contacto.nombre_corto
                                     })                    
                                     correo = Zinc()  
-                                    correo.correo(nomina.contacto.correo, 'Notificacion nomina', contenido_html, archivos)                 
+                                    correo.correo(nomina.contacto.correo, 'Notificacion nomina', contenido_html, 'reddoc', archivos)                 
                     return Response({'mensaje': 'Programacion notificada'}, status=status.HTTP_200_OK)
                     #return HttpResponse(contenido_html, content_type="text/html")
                 else:
