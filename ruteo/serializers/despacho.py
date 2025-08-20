@@ -73,6 +73,7 @@ class RutDespachoTraficoSerializador(serializers.HyperlinkedModelSerializer):
             'tiempo_trafico': tiempo_trafico,
             'estado': estado,
             'latitud' : instance.latitud,
-            'longitud' : instance.longitud
+            'longitud' : instance.longitud,
+            'codigo_complemento': instance.codigo_complemento
         }    
     
