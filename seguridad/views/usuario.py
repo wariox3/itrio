@@ -110,7 +110,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                         serializador_verificacion.save()                                                
                         url = f"https://app.{aplicacion_datos['dominio']}/auth/verificacion/" + token                        
                         if config('ENV') == "test":
-                            url = f"https://app.{aplicacion_datos['dominio_test']}/auth/verificacion/" + token
+                            url = f"http://app.{aplicacion_datos['dominio_test']}/auth/verificacion/" + token
                         if config('ENV') == "dev":
                             url = f"http://{aplicacion_datos['dominio_dev']}/auth/verificacion/" + token
                         
