@@ -214,6 +214,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://190.249.212.131",
     "https://ruteo.co",
     "http://ruteo.online",
+    "http://app.ruteo.online",
 ]
 
 
@@ -222,6 +223,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https?://(\w+\.)?reddoc\.online$",
     r"^https?://(\w+\.)?reddoc\.co$",
     r"^https?://(\w+\.)?ruteo\.co$",
+    r"^https?://(\w+\.)?ruteo\.online$",
     r"^https?://(\w+\.)?reddoc\.com\.co$",
     r"http?://(\w+\.)?localhost:4200"
 ]
