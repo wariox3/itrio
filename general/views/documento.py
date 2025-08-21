@@ -39,6 +39,7 @@ from general.formatos.egreso import FormatoEgreso
 from general.formatos.compra import FormatoCompra
 from general.formatos.factura_pos import FormatoFacturaPOS
 from general.filters.documento import DocumentoFilter
+from servicios.general.documento import DocumentoServicio
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
@@ -626,7 +627,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 documento_referencia.afectado += afectar
                                 documento_referencia.pendiente = documento_referencia.total - (documento_referencia.afectado+documento_referencia.pago)
                                 documento_referencia.save(update_fields=['afectado', 'pendiente'])  
-
+                        # Si es electronico generar el cufe temporal
+                        if documento.documento_tipo.electronico:
+                            pass
                         documento.save()
                         if documento.documento_tipo.electronico:
                             configuracion = GenConfiguracion.objects.filter(pk=1).values('gen_emitir_automaticamente')[0] 
@@ -2572,6 +2575,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje': 'El ZIP no contiene archivos XML', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         else :
             return Response({'mensaje': 'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'cufe')
+    def cufe_action(self, request):      
+        raw = request.data
+        id = raw.get('id')                
+        if id:
+            try:
+                documento = GenDocumento.objects.get(pk=id)
+            except GenDocumentoTipo.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
+            cufe = DocumentoServicio.generar_cufe(documento)                                                        
+            return Response({'mensaje': f'Proceso exitoso cufe {cufe}'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
     def emitir(self, id):
         documento = GenDocumento.objects.get(pk=id)

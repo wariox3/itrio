@@ -131,8 +131,6 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':2}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
     @action(detail=False, methods=["post"], url_path=r'verificar',)
     def verificar(self, request):
         tokenUrl = request.data.get('token')
