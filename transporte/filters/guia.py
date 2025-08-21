@@ -5,5 +5,6 @@ class GuiaFilter(django_filters.FilterSet):
     
     class Meta:
         model = TteGuia
-        fields = {'id': ['exact']                  
+        fields = {'id': ['exact'],
+                  'estado_despachado': ['exact']                  
                   }

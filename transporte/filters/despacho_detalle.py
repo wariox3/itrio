@@ -6,4 +6,5 @@ class DespachoDetalleFilter(django_filters.FilterSet):
     class Meta:
         model = TteDespachoDetalle
         fields = {'id': ['exact'],
-                  'despacho_id': ['exact']}
+                  'despacho_id': ['exact'],
+                  }
