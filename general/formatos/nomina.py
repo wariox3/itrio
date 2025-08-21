@@ -102,7 +102,7 @@ class FormatoNomina():
             y_texto = y + 5
             p.drawString(x + sum(ancho_columna[:0]) + margen, y_texto, str(documento_detalle['concepto_id']))
             p.drawString(x + sum(ancho_columna[:1]) + margen, y_texto, str(documento_detalle['concepto__nombre']))
-            p.drawString(x + sum(ancho_columna[:2]) + margen, y_texto, Utilidades.pdf_texto(documento_detalle['detalle'], 36))            
+            p.drawString(x + sum(ancho_columna[:2]) + margen, y_texto, Utilidades.pdf_texto(documento_detalle['detalle'], 25))            
             p.drawRightString(x + sum(ancho_columna[:3]) + ancho_columna[3] - margen, y_texto, f"{documento_detalle['cantidad']:.2f}")
             p.drawRightString(x + sum(ancho_columna[:4]) + ancho_columna[4] - margen, y_texto, str(int(documento_detalle['dias'])))
             p.drawRightString(x + sum(ancho_columna[:5]) + ancho_columna[5] - margen, y_texto, str(int(documento_detalle['porcentaje'])))

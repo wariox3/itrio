@@ -580,6 +580,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         data['porcentaje'] = concepto.porcentaje
                                                         data['concepto'] = novedad.novedad_tipo.concepto_id
                                                         data['novedad'] = novedad.id
+                                                        data['detalle'] = novedad.detalle
                                                         ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                         if documento_detalle_serializador.is_valid():
@@ -608,6 +609,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                         data['porcentaje'] = concepto.porcentaje
                                                         data['concepto'] = novedad.novedad_tipo.concepto2_id
                                                         data['novedad'] = novedad.id
+                                                        data['detalle'] = novedad.detalle
                                                         ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                         documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                         if documento_detalle_serializador.is_valid():
@@ -637,6 +639,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                     data['porcentaje'] = concepto.porcentaje
                                                     data['concepto'] = novedad.novedad_tipo.concepto_id
                                                     data['novedad'] = novedad.id
+                                                    data['detalle'] = novedad.detalle
                                                     ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
@@ -654,6 +657,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 data['pago'] = pago
                                                 data['concepto'] = novedad.novedad_tipo.concepto_id
                                                 data['novedad'] = novedad.id
+                                                data['detalle'] = novedad.detalle
                                                 ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
@@ -669,6 +673,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 data['pago'] = pago
                                                 data['concepto'] = novedad.novedad_tipo.concepto2_id
                                                 data['novedad'] = novedad.id
+                                                data['detalle'] = novedad.detalle
                                                 ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                 documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                 if documento_detalle_serializador.is_valid():
