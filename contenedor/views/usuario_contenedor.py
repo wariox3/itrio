@@ -48,7 +48,6 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(queryset, many=True)
         return super().list(request, *args, **kwargs)
 
-
     def destroy(self, request, *args, **kwargs):
         usuarioEmpresa = self.get_object()
         if usuarioEmpresa.rol == 'invitado':
@@ -178,6 +177,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         
+    # Deprecated
     @action(detail=False, methods=["post"], url_path=r'consulta-contenedor',)
     def consulta_contenedor(self, request):
         raw = request.data
@@ -189,6 +189,7 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
         
+    # Deprecated
     @action(detail=False, methods=["post"], url_path=r'consulta-usuario',)
     def consulta_usuario(self, request):
         raw = request.data

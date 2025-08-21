@@ -4,6 +4,7 @@ from seguridad.models import User
 from datetime import datetime
 from decouple import config
 
+# Deprecated
 class UsuarioContenedorSerializador(serializers.HyperlinkedModelSerializer):
     usuario = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     contenedor = serializers.PrimaryKeyRelatedField(queryset=Contenedor.objects.all())
