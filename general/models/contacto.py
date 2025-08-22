@@ -8,6 +8,7 @@ from general.models.precio import GenPrecio
 from general.models.plazo_pago import GenPlazoPago
 from general.models.banco import GenBanco
 from general.models.cuenta_banco_clase import GenCuentaBancoClase
+from transporte.models.categoria_licencia import TteCategoriaLicencia
 
 class GenContacto(models.Model):        
     numero_identificacion = models.CharField(max_length=20)
@@ -31,7 +32,6 @@ class GenContacto(models.Model):
     conductor = models.BooleanField(default = False)
     numero_cuenta = models.CharField(max_length=50, null=True)
     numero_licencia = models.CharField(max_length=50, null=True)
-    categoria_licencia = models.CharField(max_length=2, null=True)
     fecha_vence_licencia = models.DateField(null=True)
     identificacion = models.ForeignKey(GenIdentificacion, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(GenCiudad, on_delete=models.PROTECT)
@@ -43,6 +43,7 @@ class GenContacto(models.Model):
     plazo_pago_proveedor = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT, related_name='contactos_plazo_pago_proveedor')
     banco = models.ForeignKey(GenBanco, null=True, on_delete=models.PROTECT)
     cuenta_banco_clase = models.ForeignKey(GenCuentaBancoClase, null=True, on_delete=models.PROTECT)
+    categoria_licencia = models.ForeignKey(TteCategoriaLicencia, null=True, on_delete=models.PROTECT)
     
     class Meta:
         db_table = "gen_contacto"

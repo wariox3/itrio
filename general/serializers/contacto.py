@@ -1,4 +1,5 @@
 from general.models.contacto import GenContacto, GenCiudad, GenIdentificacion, GenRegimen, GenTipoPersona, GenAsesor, GenPrecio, GenPlazoPago, GenBanco, GenCuentaBancoClase
+from transporte.models.categoria_licencia import TteCategoriaLicencia
 from rest_framework import serializers
 
 class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
@@ -12,6 +13,8 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
     plazo_pago_proveedor = serializers.PrimaryKeyRelatedField(queryset=GenPlazoPago.objects.all(), allow_null=True, required=False)
     banco = serializers.PrimaryKeyRelatedField(queryset=GenBanco.objects.all(), allow_null=True, required=False)
     cuenta_banco_clase = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBancoClase.objects.all(), allow_null=True, required=False)
+    cuenta_banco_clase = serializers.PrimaryKeyRelatedField(queryset=GenCuentaBancoClase.objects.all(), allow_null=True, required=False)
+    categoria_licencia = serializers.PrimaryKeyRelatedField(queryset=TteCategoriaLicencia.objects.all(), allow_null=True, required=False)
     class Meta:
         model = GenContacto
         fields = [
@@ -47,6 +50,9 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
         cuenta_banco_clase_nombre =""
         if instance.cuenta_banco_clase:
             cuenta_banco_clase_nombre = instance.cuenta_banco_clase.nombre
+        categoria_licencia_nombre =""
+        if instance.categoria_licencia:
+            categoria_licencia_nombre = instance.categoria_licencia.nombre
         return {
             'id': instance.id,
             'identificacion_id': instance.identificacion_id, 
@@ -93,7 +99,8 @@ class GenContactoSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_banco_clase_id': instance.cuenta_banco_clase_id,
             'cuenta_banco_clase_nombre': cuenta_banco_clase_nombre, 
             'numero_licencia': instance.numero_licencia,
-            'categoria_licencia': instance.categoria_licencia,
+            'categoria_licencia_id': instance.categoria_licencia_id,
+            'categoria_licencia_nombre': categoria_licencia_nombre, 
             'fecha_vence_licencia': instance.fecha_vence_licencia
         }     
 
