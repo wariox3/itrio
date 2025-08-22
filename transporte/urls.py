@@ -17,6 +17,7 @@ from .views.zona import ZonaViewSet
 from .views.despacho import DespachoViewSet
 from .views.despacho_detalle import DespachoDetalleViewSet
 from .views.despacho_tipo import DespachoTipoViewSet
+from .views.categoria_licencia import CategoriaLicenciaViewSet
 
 from rest_framework import routers
 
@@ -39,6 +40,7 @@ router.register(r'zona', ZonaViewSet)
 router.register(r'despacho', DespachoViewSet)
 router.register(r'despacho_detalle', DespachoDetalleViewSet)
 router.register(r'despacho_tipo', DespachoTipoViewSet)
+router.register(r'categoria_licencia', CategoriaLicenciaViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
