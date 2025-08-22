@@ -50,8 +50,8 @@ class UsuarioContenedorListaSerializador(serializers.ModelSerializer):
 class UsuarioContenedorConfiguracionSerializador(serializers.ModelSerializer):
     usuario__nombre = serializers.CharField(source='usuario.nombre', read_only=True)
     usuario__username = serializers.CharField(source='usuario.username', read_only=True)
-    usuario__operacion_id = serializers.IntegerField(source='usuario.operacion_id', read_only=True)
-    usuario__operacion_cargo_id = serializers.IntegerField(source='usuario.operacion_cargo_id', read_only=True)
+    usuario__operacion_id = serializers.IntegerField(source='usuario.operacion_id', read_only=True, allow_null=True)
+    usuario__operacion_cargo_id = serializers.IntegerField(source='usuario.operacion_cargo_id', read_only=True, allow_null=True)
     class Meta:
         model = UsuarioContenedor
         fields = ['usuario', 'usuario__nombre', 'usuario__username', 'usuario__operacion_id', 'usuario__operacion_cargo_id']
