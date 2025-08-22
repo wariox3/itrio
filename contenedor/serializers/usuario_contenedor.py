@@ -6,9 +6,10 @@ from decouple import config
 
 class UsuarioContenedorSerializador(serializers.ModelSerializer):
     usuario__nombre = serializers.CharField(source='usuario.nombre', read_only=True)
+    usuario__username = serializers.CharField(source='usuario.username', read_only=True)
     class Meta:
         model = UsuarioContenedor
-        fields = ['id', 'usuario', 'usuario__nombre' ,'contenedor', 'rol']
+        fields = ['id', 'usuario', 'usuario__nombre', 'usuario__username' ,'contenedor', 'rol']
         select_related_fields = ['usuario']        
 
 
