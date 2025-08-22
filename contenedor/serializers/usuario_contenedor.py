@@ -5,9 +5,11 @@ from datetime import datetime
 from decouple import config
 
 class UsuarioContenedorSerializador(serializers.ModelSerializer):
+    usuario__nombre = serializers.CharField(source='usuario.nombre', read_only=True)
     class Meta:
         model = UsuarioContenedor
-        fields = ['id', 'usuario', 'contenedor', 'rol']
+        fields = ['id', 'usuario', 'usuario__nombre' ,'contenedor', 'rol']
+        select_related_fields = ['usuario']        
 
 
 class UsuarioContenedorListaSerializador(serializers.ModelSerializer):
