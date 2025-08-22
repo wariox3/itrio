@@ -33,33 +33,6 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
         serializer_class = UserSerializer(queryset, many=True)
         return Response(serializer_class.data, status=status.HTTP_200_OK)
     
-    # deprecated se debe eliminar este metodo
-    def create(self, request):
-        raw = request.data
-        user_serializer = self.serializer_class(data=raw)
-        if user_serializer.is_valid():
-            usuario = user_serializer.save()
-            token = secrets.token_urlsafe(20)                           
-            raw["usuario_id"] = usuario.id
-            raw["token"] = token
-            raw["vence"] = datetime.now().date() + timedelta(days=1)             
-            verificacion_serializer = CtnVerificacionSerializador(data = raw)
-            if verificacion_serializer.is_valid():                                             
-                verificacion_serializer.save()
-                dominio = config('DOMINIO_FRONTEND')                
-                url = 'https://' + dominio + '/auth/verificacion/' + token
-                html_content = """
-                                <h1>¡Hola {usuario}!</h1>
-                                <p>Estamos comprometidos con la seguridad de tu cuenta, por esta razón necesitamos que nos valides 
-                                que eres tú, por favor verifica tu cuenta haciendo clic en el siguiente enlace.</p>
-                                <a href='{url}' class='button'>Verificar cuenta</a>
-                                """.format(url=url, usuario=usuario.nombre_corto)
-                correo = Zinc()  
-                correo.correo(usuario.correo, 'Verificar cuenta de RedDoc', html_content)  
-                return Response({'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)
-            return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'mensaje':'Errores en el registro del usuario', 'codigo':2, 'validaciones': user_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    
     def retrieve(self, request, pk=None):
         user = self.get_object(pk)
         user_serializer = self.serializer_class(user)
