@@ -5,6 +5,7 @@ from transporte.models.operacion import TteOperacion
 from transporte.models.vehiculo import TteVehiculo
 from transporte.models.ruta import TteRuta
 from transporte.models.despacho_tipo import TteDespachoTipo
+from transporte.models.servicio import TteServicio
 
 class TteDespacho(models.Model):
     fecha_registro = models.DateTimeField(auto_now_add=True)    
@@ -32,6 +33,7 @@ class TteDespacho(models.Model):
     estado_entregado = models.BooleanField(default = False)
     estado_soporte = models.BooleanField(default = False)
     despacho_tipo = models.ForeignKey(TteDespachoTipo, on_delete=models.PROTECT, related_name='despachos_despacho_tipo_rel')    
+    servicio = models.ForeignKey(TteServicio, on_delete=models.PROTECT, related_name='despachos_servicio_rel')
     operacion = models.ForeignKey(TteOperacion, on_delete=models.PROTECT, related_name='despachos_operacion_rel')
     contacto = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='despachos_contacto_rel')
     conductor = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='despachos_conductor_rel')
