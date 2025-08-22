@@ -57,5 +57,5 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['nombre_corto', 'nombre', 'apellido', 'telefono', 'idioma', 'numero_identificacion', 'cargo']    
+        fields = ['nombre_corto', 'nombre', 'apellido', 'telefono', 'idioma', 'numero_identificacion', 'cargo', 'operacion_id', 'operacion_cargo_id']    
       
