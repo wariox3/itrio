@@ -38,9 +38,9 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
         user_serializer = self.serializer_class(user)
         return Response(user_serializer.data)
 
-    def update(self, request, pk=None):
+    def update(self, request, pk=None, partial=False):
         user = self.get_object(pk)
-        user_serializer = UserUpdateSerializer(user, data=request.data)
+        user_serializer = UserUpdateSerializer(user, data=request.data, partial=partial)
         if user_serializer.is_valid():
             user_serializer.save()
             return Response({'actualizacion': True, 'usuario': user_serializer.data}, status=status.HTTP_201_CREATED)            
