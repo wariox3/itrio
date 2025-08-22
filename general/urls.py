@@ -10,6 +10,7 @@ from .views.contacto import ContactoViewSet
 from .views.documento_tipo import DocumentoTipoViewSet
 from .views.documento import DocumentoViewSet
 from .views.documento_detalle import DocumentoDetalleViewSet
+from .views.documento_guia import DocumentoGuiaViewSet
 from .views.documento_pago import DocumentoPagoViewSet
 from .views.identificacion import IdentificacionViewSet
 from .views.ciudad import CiudadViewSet
@@ -35,7 +36,6 @@ from .views.forma_pago import FormaPagoViewSet
 from .views.plazo_pago import PlazoPagoViewSet
 from .views.asesor import AsesorViewSet
 from .views.rh import RhViewSet
-from .views.general import ListaView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -52,6 +52,7 @@ router.register(r'itemimpuesto', ItemImpuestoViewSet)
 router.register(r'documento_tipo', DocumentoTipoViewSet)
 router.register(r'documento', DocumentoViewSet, basename='gen_documento')
 router.register(r'documento_detalle', DocumentoDetalleViewSet)
+router.register(r'documento_guia', DocumentoGuiaViewSet)
 router.register(r'documento_pago', DocumentoPagoViewSet)
 router.register(r'metodo_pago', MetodoPagoViewSet)
 router.register(r'precio', PrecioViewSet)
@@ -76,7 +77,6 @@ router.register(r'rh', RhViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
-    path('funcionalidad/lista/', ListaView.as_view(), name='general'),
     path('funcionalidad/predeterminado/', PredeterminadoView.as_view(), name='general'),
     path('prueba/', PruebaView.as_view(), name='prueba'),
     path('prueba/enviar-correo/', enviar_coreo, name='prueba-enviar-correo')
