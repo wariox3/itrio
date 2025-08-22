@@ -3,6 +3,7 @@
     "modelo": "TteMarca",
     "modelo_nativo": "tte_marca",
     "actualizar_secuencia": true,
+    "pausa": true,
     "datos": [
         {
             "pk": 1,

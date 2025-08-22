@@ -7,8 +7,20 @@
     {
       "pk": 1,
       "campos": {
-        "nombre": "MASIVO"
+        "nombre": "NACIONAL"
       }
-    }    
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "nombre": "URBANO"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "nombre": "PAQUETEO"
+      }
+    }           
   ]
 }

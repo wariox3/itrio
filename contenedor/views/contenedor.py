@@ -173,7 +173,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 empresa = Contenedor.objects.get(pk=empresa_id)                
                 spaceDo = SpaceDo()
                 spaceDo.eliminar(empresa.imagen)
-                empresa.imagen = f"itrio/{config('ENV')}/contenedor/logo_defecto.jpg"
+                empresa.imagen = f"itrio/logo_defecto.jpg"
                 empresa.save()
                 return Response({'limpiar':True, 'imagen':f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{empresa.imagen}"}, status=status.HTTP_200_OK)                  
             else: 

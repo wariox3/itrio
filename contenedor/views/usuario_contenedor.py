@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from seguridad.models import User
 from contenedor.models import Contenedor, UsuarioContenedor, CtnVerificacion
-from contenedor.serializers.contenedor import ContenedorSerializador, ContenedorUsuarioSerializador
-from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorListaSerializador, UsuarioContenedorConsultaContenedorSerializador
+from contenedor.serializers.contenedor import ContenedorSerializador
+from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorListaSerializador
 from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -181,46 +181,4 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'validar': False}, status=status.HTTP_200_OK) 
         else:
-            return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-        
-    # Deprecated
-    @action(detail=False, methods=["post"], url_path=r'consulta-contenedor',)
-    def consulta_contenedor(self, request):
-        raw = request.data
-        contenedor_id = raw.get('contenedor_id')
-        if contenedor_id:  
-            usuarioContenedor = UsuarioContenedor.objects.filter(contenedor_id=contenedor_id).order_by('-rol', 'contenedor__nombre')                         
-            usuarioContenedorSerializer = UsuarioContenedorConsultaContenedorSerializador(usuarioContenedor, many=True)
-            return Response({'usuarios': usuarioContenedorSerializer.data}, status=status.HTTP_200_OK)                
-        else:
-            return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
-        
-    # Deprecated
-    @action(detail=False, methods=["post"], url_path=r'consulta-usuario',)
-    def consulta_usuario(self, request):
-        raw = request.data
-        usuario_id = raw.get('usuario_id')
-        reddoc = raw.get('reddoc')
-        ruteo = raw.get('ruteo')
-        
-        if usuario_id and (reddoc or ruteo):  
-            usuario = User.objects.get(pk=usuario_id)
-            es_administrador = getattr(usuario, 'es_administrador', False)
-            if es_administrador:
-                contenedores = Contenedor.objects.all()
-                if reddoc:
-                    contenedores = contenedores.filter(reddoc=reddoc)
-                if ruteo:
-                    contenedores = contenedores.filter(ruteo=ruteo)
-                contenedorSerializer = ContenedorUsuarioSerializador(contenedores, many=True)
-                return Response({'contenedores': contenedorSerializer.data}, status=status.HTTP_200_OK)
-            else:
-                usuarioEmpresa = UsuarioContenedor.objects.filter(usuario_id=usuario_id).order_by('-rol', 'contenedor__nombre')                         
-                if reddoc:
-                    usuarioEmpresa = usuarioEmpresa.filter(contenedor__reddoc=reddoc)
-                if ruteo:
-                    usuarioEmpresa = usuarioEmpresa.filter(contenedor__ruteo=ruteo)
-                usuarioEmpresaSerializer = UsuarioContenedorSerializador(usuarioEmpresa, many=True)
-                return Response({'contenedores': usuarioEmpresaSerializer.data}, status=status.HTTP_200_OK)                
-        else:
-            return Response({'mensaje': "Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'mensaje':"Faltan parametros", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)        
