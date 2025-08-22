@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from seguridad.models import User
 from contenedor.models import Contenedor, UsuarioContenedor, CtnVerificacion
 from contenedor.serializers.contenedor import ContenedorSerializador
-from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorListaSerializador
+from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorListaSerializador, UsuarioContenedorConfiguracionSerializador
 from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -23,7 +23,8 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = UsuarioContenedorFilter 
     serializadores = {
-        'lista': UsuarioContenedorListaSerializador
+        'lista': UsuarioContenedorListaSerializador,
+        'configuracion': UsuarioContenedorConfiguracionSerializador
     }
 
     def get_serializer_class(self):
