@@ -2,8 +2,11 @@ import django_filters
 from transporte.models.despacho import TteDespacho
 
 class DespachoFilter(django_filters.FilterSet):    
-    
+    ciudad_origen__nombre = django_filters.CharFilter(field_name='ciudad_origen__nombre', lookup_expr='icontains')
+    ciudad_destino__nombre = django_filters.CharFilter(field_name='ciudad_destino__nombre', lookup_expr='icontains')  
     class Meta:
         model = TteDespacho
-        fields = {'id': ['exact']                  
+        fields = {'id': ['exact'],
+                  'ciudad_origen__nombre' : ['icontains'],
+                  'ciudad_destino__nombre' : ['icontains']
                   }
