@@ -9,5 +9,7 @@ class GuiaFilter(django_filters.FilterSet):
         fields = {'id': ['exact'],
                   'estado_despachado': ['exact'],
                   'ciudad_origen__nombre' : ['icontains'],
-                  'ciudad_destino__nombre' : ['icontains']
+                  'ciudad_origen': ['exact'],
+                  'ciudad_destino__nombre' : ['icontains'],
+                  'ciudad_destino': ['exact'],
                   }

@@ -8,5 +8,7 @@ class DespachoFilter(django_filters.FilterSet):
         model = TteDespacho
         fields = {'id': ['exact'],
                   'ciudad_origen__nombre' : ['icontains'],
-                  'ciudad_destino__nombre' : ['icontains']
+                  'ciudad_origen': ['exact'],
+                  'ciudad_destino__nombre' : ['icontains'],
+                  'ciudad_destino': ['exact'],
                   }
