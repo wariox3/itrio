@@ -11,4 +11,9 @@ class DespachoFilter(django_filters.FilterSet):
                   'ciudad_origen': ['exact'],
                   'ciudad_destino__nombre' : ['icontains'],
                   'ciudad_destino': ['exact'],
+                  'ruta': ['exact'],
+                  'operacion': ['exact'],
+                  'conductor': ['exact'],
+                  'vehiculo': ['exact'],
+                  'remolque': ['exact'],
                   }
