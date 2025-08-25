@@ -621,8 +621,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         
                         # Nota credito
                         if documento.documento_referencia:
-                            if documento.documento_tipo_id in [2]:
-                                afectar = documento.total - documento.pago
+                            if documento.documento_tipo_id in [2, 6]:
+                                afectar = documento.total - documento.pago                                
+                                documento.afectado += afectar    
+                                documento.pendiente -= afectar                        
                                 documento_referencia = documento.documento_referencia
                                 documento_referencia.afectado += afectar
                                 documento_referencia.pendiente = documento_referencia.total - (documento_referencia.afectado+documento_referencia.pago)
@@ -653,7 +655,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 with transaction.atomic():
                     documento = GenDocumento.objects.get(pk=id)
                     if documento.estado_aprobado == True and documento.estado_anulado == False and documento.estado_contabilizado == False and documento.estado_electronico_enviado == False:                                  
-                        if documento.documento_tipo.documento_clase_id in (100, 101, 105, 200,300, 303,400,500,501,601,603):                    
+                        if documento.documento_tipo.documento_clase_id in (100,101,105,200,300,301,303,400,500,501,601,603):                    
                             respuesta = self.validacion_desaprobar(documento)
                             if respuesta['error'] == False:
                                 documento.estado_aprobado = False
@@ -682,8 +684,10 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
                                 # Nota credito
                                 if documento.documento_referencia:
-                                    if documento.documento_tipo_id in [2]:
+                                    if documento.documento_tipo_id in [2, 6]:
                                         afectar = documento.total - documento.pago
+                                        documento.afectado -= afectar
+                                        documento.pendiente += afectar                                        
                                         documento_referencia = documento.documento_referencia
                                         documento_referencia.afectado -= afectar                                    
                                         documento_referencia.pendiente = documento_referencia.total - (documento_referencia.afectado+documento_referencia.pago)
@@ -3228,7 +3232,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                 # Notas credito
                 if documento.documento_referencia:
-                    if documento.documento_tipo_id in [2]:
+                    if documento.documento_tipo_id in [2, 6]:
                         # Para las facturas que tienen pago y la nota credito debe devolver el pago
                         afectar = documento.total - documento.pago 
                         if documento.documento_referencia.pendiente < afectar:
