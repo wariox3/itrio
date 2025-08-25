@@ -5,5 +5,6 @@ class NegocioFilter(django_filters.FilterSet):
     
     class Meta:
         model = TteNegocio
-        fields = {'id': ['exact']                  
+        fields = {'id': ['exact'],
+                  'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'], 
                   }
