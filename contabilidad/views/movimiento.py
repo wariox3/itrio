@@ -10,7 +10,7 @@ from contabilidad.models.cuenta_clase import ConCuentaClase
 from contabilidad.models.cuenta_grupo import ConCuentaGrupo
 from contabilidad.models.cuenta_cuenta import ConCuentaCuenta
 from general.models.contacto import GenContacto
-from contabilidad.serializers.movimiento import ConMovimientoSerializador, ConMovimientoExcelSerializador
+from contabilidad.serializers.movimiento import ConMovimientoSerializador, ConMovimientoExcelSerializador, ConMovimientoListaSerializador
 from datetime import datetime
 from io import BytesIO
 from django.db.models import F,Sum
@@ -35,6 +35,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = MovimientoFilter 
     serializadores = {
+        'lista': ConMovimientoListaSerializador,
         'informe_movimiento': ConMovimientoExcelSerializador,
     }
 

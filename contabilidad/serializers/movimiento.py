@@ -7,6 +7,7 @@ from contabilidad.models.grupo import ConGrupo
 from general.models.contacto import GenContacto
 from general.models.documento import GenDocumento
 
+# Deprecated
 class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):    
     comprobante = serializers.PrimaryKeyRelatedField(queryset=ConComprobante.objects.all())
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all())
@@ -87,6 +88,36 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
             'periodo_id': instance.periodo_id
         } 
 
+class ConMovimientoListaSerializador(serializers.ModelSerializer):    
+    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True, allow_null=True, default=None)
+    cuenta__nombre = serializers.CharField(source='cuenta.nombre', read_only=True, allow_null=True, default=None)
+    comprobante__nombre = serializers.CharField(source='comprobante.nombre', read_only=True, allow_null=True, default=None)
+    comprobante__codigo = serializers.CharField(source='comprobante.codigo', read_only=True, allow_null=True, default=None)
+    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True, allow_null=True, default=None)
+    grupo__codigo = serializers.CharField(source='grupo.codigo', read_only=True, allow_null=True, default=None)
+    contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True, allow_null=True, default=None)
+    contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True, allow_null=True, default=None)
+    class Meta:
+        model = ConMovimiento
+        fields = ['id', 
+                  'comprobante__codigo',
+                  'comprobante__nombre',
+                  'numero',
+                  'fecha',
+                  'cuenta__codigo',
+                  'cuenta__nombre',
+                  'debito',
+                  'credito',
+                  'base',
+                  'naturaleza',
+                  'grupo__codigo',
+                  'grupo__nombre',
+                  'contacto__numero_identificacion',
+                  'contacto__nombre_corto',
+                  'documento',
+                  'periodo']
+        select_related_fields = ['cuenta', 'comprobante', 'grupo', 'contacto'] 
+
 class ConMovimientoExcelSerializador(serializers.ModelSerializer):    
     cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True, allow_null=True, default=None)
     cuenta__nombre = serializers.CharField(source='cuenta.nombre', read_only=True, allow_null=True, default=None)
@@ -115,25 +146,5 @@ class ConMovimientoExcelSerializador(serializers.ModelSerializer):
                   'contacto__nombre_corto',
                   'documento',
                   'periodo']
-        select_related_fields = ['cuenta', 'comprobante', 'grupo', 'contacto']    
-
-    #     return {
-    #         'ID': instance.id,
-    #         'COMPROBANTE': comprobante_codigo,
-    #         'COMPROBANTE_NOMBRE': comprobante_nombre,
-    #         'NUMERO': instance.numero,
-    #         'FECHA': instance.fecha,
-    #         'CUENTA': cuenta_codigo,
-    #         'CUENTA_NOMBRE': cuenta_nombre,
-    #         'DEBITO': instance.debito ,
-    #         'CREDITO': instance.credito ,
-    #         'BASE': instance.base ,
-    #         'NAT': instance.naturaleza ,                                            
-    #         'GRUPO': grupo_codigo,
-    #         'GRUPO_NOMBRE': grupo_nombre,
-    #         'IDENTIFICACION': instance.contacto_id,
-    #         'NOMBRE_CORTO': contacto_nombre_corto,
-    #         'DOCUMENTO_ID': instance.documento_id,
-    #         'PERIODO': instance.periodo_id
-    #     }             
+        select_related_fields = ['cuenta', 'comprobante', 'grupo', 'contacto']               
         
