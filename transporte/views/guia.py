@@ -41,7 +41,7 @@ class GuiaViewSet(viewsets.ModelViewSet):
         if request.query_params.get('excel') or request.query_params.get('excel_masivo'):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
-            exporter = ExcelExportar(serializer.data, nombre_hoja="visitas", nombre_archivo="visitas.xlsx", titulo="Visitas")
+            exporter = ExcelExportar(serializer.data, nombre_hoja="guias", nombre_archivo="guias.xlsx", titulo="Guias")
             if request.query_params.get('excel'):
                 return exporter.exportar_estilo()
             if request.query_params.get('excel_masivo'):
