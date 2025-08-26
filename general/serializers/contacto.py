@@ -129,6 +129,31 @@ class GenContactoListaSerializador(serializers.ModelSerializer):
                   'fecha_vence_licencia']
         select_related_fields = ['identificacion', 'ciudad', 'categoria_licencia']
 
+class GenContactoDetalleSerializador(serializers.ModelSerializer):      
+    identificacion__abreviatura = serializers.CharField(source='identificacion.abreviatura', read_only=True)
+    ciudad__nombre = serializers.CharField(source='ciudad.nombre', read_only=True)
+    categoria_licencia__nombre = serializers.CharField(source='categoria_licencia.nombre', read_only=True)
+    class Meta:
+        model = GenContacto
+        fields = ['id', 
+                  'identificacion__abreviatura',
+                  'numero_identificacion', 
+                  'nombre_corto',
+                  'correo',
+                  'telefono',                                     
+                  'celular',
+                  'direccion',
+                  'ciudad__nombre',
+                  'cliente',
+                  'proveedor',
+                  'empleado',
+                  'conductor',
+                  'numero_licencia',
+                  'categoria_licencia',
+                  'categoria_licencia__nombre',
+                  'fecha_vence_licencia']
+        select_related_fields = ['identificacion', 'ciudad', 'categoria_licencia']
+
 class GenContactoSeleccionarSerializador(serializers.ModelSerializer):
     plazo_pago__dias = serializers.IntegerField(source='plazo_pago.dias', read_only=True)
     plazo_pago_proveedor__dias = serializers.IntegerField(source='plazo_pago_proveedor.dias', read_only=True)

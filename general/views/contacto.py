@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from general.models.contacto import GenContacto
 from general.models.identificacion import GenIdentificacion
-from general.serializers.contacto import GenContactoSerializador, GenContactoListaSerializador, GenContactoSeleccionarSerializador
+from general.serializers.contacto import GenContactoSerializador, GenContactoListaSerializador, GenContactoDetalleSerializador, GenContactoSeleccionarSerializador
 from general.filters.contacto import ContactoFilter
 from utilidades.wolframio import Wolframio
 from utilidades.excel_exportar import ExcelExportar
@@ -117,6 +117,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+
     @action(detail=False, methods=["post"], url_path=r'validar',)
     def validar(self, request):        
         raw = request.data
@@ -126,13 +127,16 @@ class ContactoViewSet(viewsets.ModelViewSet):
             try:
                 contacto = GenContacto.objects.filter(identificacion_id=identificacion_id, numero_identificacion=numero_identificacion).first()
                 if contacto:
-                    return Response({'validacion': True, 'id': contacto.id}, status=status.HTTP_200_OK)
+                    serializer = GenContactoDetalleSerializador(contacto)
+                    return Response({'validacion': True, 'id': contacto.id, 'contacto': serializer.data}, status=status.HTTP_200_OK)
                 else:
                     return Response({'validacion':False, 'codigo':15}, status=status.HTTP_200_OK)    
             except GenContacto.DoesNotExist:
                 return Response({'validacion':False, 'codigo':15}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
+
         
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):
