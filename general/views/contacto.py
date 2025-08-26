@@ -117,7 +117,6 @@ class ContactoViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-
     @action(detail=False, methods=["post"], url_path=r'validar',)
     def validar(self, request):        
         raw = request.data
@@ -135,8 +134,6 @@ class ContactoViewSet(viewsets.ModelViewSet):
                 return Response({'validacion':False, 'codigo':15}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
-
         
     @action(detail=False, methods=["post"], url_path=r'importar',)
     def importar(self, request):
