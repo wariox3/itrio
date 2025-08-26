@@ -132,7 +132,8 @@ class GenContactoListaSerializador(serializers.ModelSerializer):
 class GenContactoSeleccionarSerializador(serializers.ModelSerializer):
     plazo_pago__dias = serializers.IntegerField(source='plazo_pago.dias', read_only=True)
     plazo_pago_proveedor__dias = serializers.IntegerField(source='plazo_pago_proveedor.dias', read_only=True)
+    ciudad__nombre = serializers.CharField(source='ciudad.nombre', read_only=True)
     class Meta: 
         model = GenContacto
-        fields = ['id', 'nombre_corto', 'numero_identificacion', 'direccion', 'correo', 'ciudad', 'celular' ,'plazo_pago_id', 'plazo_pago_proveedor_id' ,'plazo_pago__dias', 'plazo_pago_proveedor__dias']
-        select_related_fields = ['plazo_pago', 'plazo_pago_proveedor']
+        fields = ['id', 'nombre_corto', 'numero_identificacion', 'direccion', 'correo', 'ciudad', 'celular' ,'plazo_pago_id', 'plazo_pago_proveedor_id' ,'plazo_pago__dias', 'plazo_pago_proveedor__dias', 'ciudad__nombre']
+        select_related_fields = ['plazo_pago', 'plazo_pago_proveedor', 'ciudad']
