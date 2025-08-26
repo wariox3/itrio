@@ -115,7 +115,8 @@ class ConMovimientoListaSerializador(serializers.ModelSerializer):
                   'contacto__numero_identificacion',
                   'contacto__nombre_corto',
                   'documento',
-                  'periodo']
+                  'periodo',
+                  'detalle']
         select_related_fields = ['cuenta', 'comprobante', 'grupo', 'contacto'] 
 
 class ConMovimientoExcelSerializador(serializers.ModelSerializer):    
