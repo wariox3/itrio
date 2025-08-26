@@ -38,10 +38,18 @@ class DespachoViewSet(viewsets.ModelViewSet):
         if campos and campos != '__all__':
             queryset = queryset.only(*campos) 
         return queryset 
-
+    
     def list(self, request, *args, **kwargs):
         if request.query_params.get('lista_completa', '').lower() == 'true':
             self.pagination_class = None
+        if request.query_params.get('excel') or request.query_params.get('excel_masivo'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExcelExportar(serializer.data, nombre_hoja="despachos", nombre_archivo="contdespachosactos.xlsx", titulo="Despachos")
+            if request.query_params.get('excel'):
+                return exporter.exportar_estilo()
+            if request.query_params.get('excel_masivo'):
+                return exporter.exportar()
         return super().list(request, *args, **kwargs)
     
     @action(detail=False, methods=["post"], url_path=r'aprobar',)
