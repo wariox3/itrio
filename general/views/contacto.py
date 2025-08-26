@@ -85,10 +85,35 @@ class ContactoViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        relaciones = instance.contactos_rel.first()
-        if relaciones:
-            modelo_asociado = relaciones.__class__.__name__           
-            return Response({'mensaje':f"El registro no se puede eliminar porque tiene registros asociados en {modelo_asociado}", 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+        
+        # Verificar todas las relaciones inversas
+        for field in instance._meta.get_fields():
+            if field.one_to_many or field.one_to_one:
+                related_name = field.get_accessor_name()
+                try:
+                    related_objects = getattr(instance, related_name)
+                    
+                    # Para relaciones one-to-many
+                    if hasattr(related_objects, 'first'):
+                        primera_relacion = related_objects.first()
+                        if primera_relacion:
+                            modelo_asociado = primera_relacion.__class__.__name__
+                            return Response({
+                                'mensaje': f"El registro no se puede eliminar porque tiene registros asociados en {modelo_asociado}",
+                                'codigo': 1
+                            }, status=status.HTTP_400_BAD_REQUEST)
+                    
+                    # Para relaciones one-to-one
+                    elif related_objects:
+                        modelo_asociado = related_objects.__class__.__name__
+                        return Response({
+                            'mensaje': f"El registro no se puede eliminar porque tiene registros asociados en {modelo_asociado}",
+                            'codigo': 1
+                        }, status=status.HTTP_400_BAD_REQUEST)
+                        
+                except AttributeError:
+                    continue
+        
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
     
