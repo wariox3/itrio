@@ -39,6 +39,9 @@ class RutVistaListaSerializador(serializers.ModelSerializer):
             'longitud', 
             'orden', 
             'distancia', 
+            'despacho_id',
+            'franja_id', 
+            'franja_codigo',
             'estado_novedad', 
             'estado_devolucion', 
             'estado_entregado'
