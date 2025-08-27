@@ -8,7 +8,7 @@ from ruteo.models.flota import RutFlota
 from general.models.configuracion import GenConfiguracion
 from general.models.archivo import GenArchivo
 from contenedor.models import CtnDireccion
-from ruteo.serializers.visita import RutVisitaSerializador, RutVistaTraficoSerializador, RutVistaListaSerializador
+from ruteo.serializers.visita import RutVisitaSerializador, RutVistaTraficoSerializador, RutVistaListaSerializador, RutVisitaExcelSerializador
 from servicios.ruteo.visita import VisitaServicio
 from datetime import datetime
 from django.utils import timezone
@@ -40,7 +40,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     serializadores = {
         'lista': RutVistaListaSerializador,
         'lista_completa' : RutVistaListaSerializador,
-        'trafico' : RutVistaTraficoSerializador
+        'trafico' : RutVistaTraficoSerializador,
+        'excel': RutVisitaExcelSerializador
     }
 
     def get_serializer_class(self):
