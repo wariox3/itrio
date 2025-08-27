@@ -33,7 +33,8 @@ class DespachoServicio():
             SELECT
                 d.id,
                 d.visitas_entregadas,
-                (SELECT COUNT(*) FROM rut_visita v WHERE v.despacho_id = d.id AND v.estado_entregado = true) AS visitas_entregadas_totales
+                (SELECT COUNT(*) FROM rut_visita v WHERE v.despacho_id = d.id AND v.estado_entregado = true) AS visitas_entregadas_totales,
+                (SELECT COUNT(*) FROM rut_visita v WHERE v.despacho_id = d.id) AS visitas_totales
             FROM
                 rut_despacho d
             WHERE 
@@ -42,12 +43,12 @@ class DespachoServicio():
         despachos_actualizar = []        
         with transaction.atomic():
             despachos_query = RutDespacho.objects.raw(query)
-            for despacho_query in despachos_query:
-                if despacho_query.visitas_entregadas != despacho_query.visitas_entregadas_totales:
-                    despacho = RutDespacho.objects.get(id=despacho_query.id)      
-                    despacho.visitas_entregadas = despacho_query.visitas_entregadas_totales
-                    despachos_actualizar.append(despacho)
-                    cantidad += 1
+            for despacho_query in despachos_query:                
+                despacho = RutDespacho.objects.get(id=despacho_query.id)      
+                despacho.visitas_entregadas = despacho_query.visitas_entregadas_totales
+                despacho.visitas = despacho_query.visitas_totales
+                despachos_actualizar.append(despacho)
+                cantidad += 1
             if despachos_actualizar:
-                RutDespacho.objects.bulk_update(despachos_actualizar, ['visitas_entregadas'])  
+                RutDespacho.objects.bulk_update(despachos_actualizar, ['visitas_entregadas', 'visitas'])  
         return cantidad 
