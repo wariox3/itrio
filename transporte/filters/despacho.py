@@ -8,12 +8,12 @@ class DespachoFilter(django_filters.FilterSet):
         model = TteDespacho
         fields = {'id': ['exact'],
                   'ciudad_origen__nombre' : ['icontains'],
-                  'ciudad_origen': ['exact'],
+                  'ciudad_origen_id': ['exact'],
                   'ciudad_destino__nombre' : ['icontains'],
-                  'ciudad_destino': ['exact'],
-                  'ruta': ['exact'],
-                  'operacion': ['exact'],
-                  'conductor': ['exact'],
-                  'vehiculo': ['exact'],
+                  'ciudad_destino_id': ['exact'],
+                  'ruta_id': ['exact'],
+                  'operacion_id': ['exact'],
+                  'conductor_id': ['exact'],
+                  'vehiculo_id': ['exact'],
                   'remolque': ['exact'],
                   }

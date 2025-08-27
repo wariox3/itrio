@@ -7,8 +7,7 @@ class OperacionFilter(django_filters.FilterSet):
         model = TteOperacion
         fields = {'id': ['exact'],
                   'ciudad__nombre': ['exact', 'icontains'],    
-                  'ciudad_id': ['exact'],              
-                  'ciudad': ['exact'],        
+                  'ciudad_id': ['exact'],                   
                   'nombre': ['exact', 'icontains'],              
                   }
         
