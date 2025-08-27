@@ -1,0 +1,272 @@
+{
+  "aplicacion": "vertical",
+  "modelo": "VerEstado",
+  "modelo_nativo": "ver_estado",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "nombre": "Antioquia",
+        "pais": "CO",
+        "codigo": "05"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "nombre": "Atlántico",
+        "pais": "CO",
+        "codigo": "08"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "nombre": "Bogotá",
+        "pais": "CO",
+        "codigo": "11"
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "nombre": "Bolívar",
+        "pais": "CO",
+        "codigo": "13"
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "nombre": "Boyacá",
+        "pais": "CO",
+        "codigo": "15"
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "nombre": "Caldas",
+        "pais": "CO",
+        "codigo": "17"
+      }
+    },
+    {
+      "pk": 7,
+      "campos": {
+        "nombre": "Caquetá",
+        "pais": "CO",
+        "codigo": "18"
+      }
+    },
+    {
+      "pk": 8,
+      "campos": {
+        "nombre": "Cauca",
+        "pais": "CO",
+        "codigo": "19"
+      }
+    },
+    {
+      "pk": 9,
+      "campos": {
+        "nombre": "Cesar",
+        "pais": "CO",
+        "codigo": "20"
+      }
+    },
+    {
+      "pk": 10,
+      "campos": {
+        "nombre": "Córdoba",
+        "pais": "CO",
+        "codigo": "23"
+      }
+    },
+    {
+      "pk": 11,
+      "campos": {
+        "nombre": "Cundinamarca",
+        "pais": "CO",
+        "codigo": "25"
+      }
+    },
+    {
+      "pk": 12,
+      "campos": {
+        "nombre": "Chocó",
+        "pais": "CO",
+        "codigo": "27"
+      }
+    },
+    {
+      "pk": 13,
+      "campos": {
+        "nombre": "Huila",
+        "pais": "CO",
+        "codigo": "41"
+      }
+    },
+    {
+      "pk": 14,
+      "campos": {
+        "nombre": "La Guajira",
+        "pais": "CO",
+        "codigo": "44"
+      }
+    },
+    {
+      "pk": 15,
+      "campos": {
+        "nombre": "Magdalena",
+        "pais": "CO",
+        "codigo": "47"
+      }
+    },
+    {
+      "pk": 16,
+      "campos": {
+        "nombre": "Meta",
+        "pais": "CO",
+        "codigo": "50"
+      }
+    },
+    {
+      "pk": 17,
+      "campos": {
+        "nombre": "Nariño",
+        "pais": "CO",
+        "codigo": "52"
+      }
+    },
+    {
+      "pk": 18,
+      "campos": {
+        "nombre": "Norte de Santander",
+        "pais": "CO",
+        "codigo": "54"
+      }
+    },
+    {
+      "pk": 19,
+      "campos": {
+        "nombre": "Quindío",
+        "pais": "CO",
+        "codigo": "63"
+      }
+    },
+    {
+      "pk": 20,
+      "campos": {
+        "nombre": "Risaralda",
+        "pais": "CO",
+        "codigo": "66"
+      }
+    },
+    {
+      "pk": 21,
+      "campos": {
+        "nombre": "Santander",
+        "pais": "CO",
+        "codigo": "68"
+      }
+    },
+    {
+      "pk": 22,
+      "campos": {
+        "nombre": "Sucre",
+        "pais": "CO",
+        "codigo": "70"
+      }
+    },
+    {
+      "pk": 23,
+      "campos": {
+        "nombre": "Tolima",
+        "pais": "CO",
+        "codigo": "73"
+      }
+    },
+    {
+      "pk": 24,
+      "campos": {
+        "nombre": "Valle del Cauca",
+        "pais": "CO",
+        "codigo": "76"
+      }
+    },
+    {
+      "pk": 25,
+      "campos": {
+        "nombre": "Arauca",
+        "pais": "CO",
+        "codigo": "81"
+      }
+    },
+    {
+      "pk": 26,
+      "campos": {
+        "nombre": "Casanare",
+        "pais": "CO",
+        "codigo": "85"
+      }
+    },
+    {
+      "pk": 27,
+      "campos": {
+        "nombre": "Putumayo",
+        "pais": "CO",
+        "codigo": "86"
+      }
+    },
+    {
+      "pk": 28,
+      "campos": {
+        "nombre": "San Andrés y Providencia",
+        "pais": "CO",
+        "codigo": "88"
+      }
+    },
+    {
+      "pk": 29,
+      "campos": {
+        "nombre": "Amazonas",
+        "pais": "CO",
+        "codigo": "91"
+      }
+    },
+    {
+      "pk": 30,
+      "campos": {
+        "nombre": "Guainía",
+        "pais": "CO",
+        "codigo": "94"
+      }
+    },
+    {
+      "pk": 31,
+      "campos": {
+        "nombre": "Guaviare",
+        "pais": "CO",
+        "codigo": "95"
+      }
+    },
+    {
+      "pk": 32,
+      "campos": {
+        "nombre": "Vaupés",
+        "pais": "CO",
+        "codigo": "97"
+      }
+    },
+    {
+      "pk": 33,
+      "campos": {
+        "nombre": "Vichada",
+        "pais": "CO",
+        "codigo": "99"
+      }
+    }
+  ]
+}

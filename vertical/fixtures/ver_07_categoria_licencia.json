@@ -1,0 +1,56 @@
+{
+  "aplicacion": "vertical",
+  "modelo": "VerCategoriaLicencia",
+  "modelo_nativo": "ver_categoria_licencia",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "nombre": "A1"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "nombre": "A2"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "nombre": "B1"
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "nombre": "B2"
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "nombre": "B3"
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "nombre": "C1"
+      }
+    },
+    {
+      "pk": 7,
+      "campos": {
+        "nombre": "C2"
+      }
+    },
+    {
+      "pk": 8,
+      "campos": {
+        "nombre": "C3"
+      }
+    }
+  ]
+}

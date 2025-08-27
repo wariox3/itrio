@@ -1,0 +1,36 @@
+{
+  "aplicacion": "vertical",
+  "modelo": "VerCombustible",
+  "modelo_nativo": "ver_combustible",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "codigo": "1",
+        "nombre": "Diesel"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "codigo": "2",
+        "nombre": "Gasolina"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "codigo": "3",
+        "nombre": "Gas"
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "codigo": "4",
+        "nombre": "Gas - gasolina"
+      }
+    }
+  ]
+}

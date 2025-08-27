@@ -1,0 +1,15 @@
+{
+  "aplicacion": "vertical",
+  "modelo": "VerPais",
+  "modelo_nativo": "ver_pais",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": "CO",
+      "campos": {
+        "nombre": "Colombia",
+        "codigo": "169"
+      }
+    }
+  ]
+}
