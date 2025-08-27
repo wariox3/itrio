@@ -3,7 +3,9 @@ from transporte.models.despacho import TteDespacho
 
 class DespachoFilter(django_filters.FilterSet):    
     ciudad_origen__nombre = django_filters.CharFilter(field_name='ciudad_origen__nombre', lookup_expr='icontains')
-    ciudad_destino__nombre = django_filters.CharFilter(field_name='ciudad_destino__nombre', lookup_expr='icontains')  
+    ciudad_destino__nombre = django_filters.CharFilter(field_name='ciudad_destino__nombre', lookup_expr='icontains')
+    vehiculo__placa = django_filters.CharFilter(field_name='vehiculo__placa', lookup_expr='icontains')
+    remolque__placa = django_filters.CharFilter(field_name='remolque__placa', lookup_expr='icontains')
     class Meta:
         model = TteDespacho
         fields = {'id': ['exact'],
@@ -16,4 +18,8 @@ class DespachoFilter(django_filters.FilterSet):
                   'conductor_id': ['exact'],
                   'vehiculo_id': ['exact'],
                   'remolque_id': ['exact'],
+                  'vehiculo__placa': ['exact'],
+                  'vehiculo__placa' : ['icontains'],
+                  'remolque__placa': ['exact'],
+                  'remolque__placa' : ['icontains'],
                   }
