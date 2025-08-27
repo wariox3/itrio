@@ -15,5 +15,5 @@ class DespachoFilter(django_filters.FilterSet):
                   'operacion_id': ['exact'],
                   'conductor_id': ['exact'],
                   'vehiculo_id': ['exact'],
-                  'remolque': ['exact'],
+                  'remolque_id': ['exact'],
                   }
