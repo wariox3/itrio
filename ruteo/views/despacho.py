@@ -8,6 +8,7 @@ from vertical.models.entrega import VerEntrega
 from servicios.ruteo.visita import VisitaServicio
 from servicios.ruteo.despacho import DespachoServicio
 from ruteo.serializers.despacho import RutDespachoSerializador, RutDespachoTraficoSerializador
+from ruteo.formatos.orden_entrega import FormatoOrdenEntrega
 from ruteo.filters.despacho import DespachoFilter
 from rest_framework.filters import OrderingFilter
 from rest_framework.pagination import PageNumberPagination
@@ -354,3 +355,23 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'No se pudo consultar el despacho en el complemento', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'imprimir-orden-entrega',)
+    def imprimirOrdenEntrega(self, request):
+        raw = request.data
+        id = raw.get('despacho_id')
+        if id:
+            try:
+                pdf = None                                     
+                formato = FormatoOrdenEntrega()
+                pdf = formato.generar_pdf(id)              
+                nombre_archivo = f"orden_entrega{id}.pdf"       
+                
+                response = HttpResponse(pdf, content_type='application/pdf')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                return response
+            except RutDespacho.DoesNotExist:
+                return Response({'mensaje':'La programacion no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
