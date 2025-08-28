@@ -7,4 +7,5 @@ class DespachoDetalleFilter(django_filters.FilterSet):
         model = TteDespachoDetalle
         fields = {'id': ['exact'],
                   'despacho_id': ['exact'],
+                  'guia_id': ['exact'],
                   }

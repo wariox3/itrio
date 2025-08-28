@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from transporte.models.despacho import TteDespacho
 from transporte.models.despacho_detalle import TteDespachoDetalle
 from transporte.models.guia import TteGuia
-from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
+from transporte.serializers.despacho_detalle import TteDespachoDetalleGuiaSerializador, TteDespachoDetalleSerializador
 from transporte.filters.despacho_detalle import DespachoDetalleFilter
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -19,6 +19,7 @@ class DespachoDetalleViewSet(viewsets.ModelViewSet):
     filterset_class = DespachoDetalleFilter 
     serializadores = {
         'lista': TteDespachoDetalleSerializador,
+        'guia': TteDespachoDetalleGuiaSerializador,
     } 
 
     def get_serializer_class(self):
