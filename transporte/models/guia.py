@@ -10,7 +10,7 @@ from transporte.models.ruta import TteRuta
 from transporte.models.zona import TteZona
 
 class TteGuia(models.Model):
-    fecha = models.DateField()
+    fecha = models.DateTimeField(auto_now_add=True)
     fecha_registro = models.DateTimeField(auto_now_add=True, null=True)
     fecha_recogida = models.DateTimeField(null=True)
     fecha_ingreso = models.DateTimeField(null=True)
@@ -19,7 +19,7 @@ class TteGuia(models.Model):
     fecha_soporte = models.DateTimeField(null=True)
     documento = models.CharField(max_length=30, null=True)
     numero_rndc = models.IntegerField(null=True)
-    remitente_nombre = models.CharField(max_length=150)
+    remitente_nombre = models.CharField(max_length=150, null=True)
     destinatario_nombre = models.CharField(max_length=150)
     destinatario_direccion = models.CharField(max_length=150)
     destinatario_telefono = models.CharField(max_length=50, null=True)
@@ -50,7 +50,7 @@ class TteGuia(models.Model):
     comentario = models.CharField(max_length=500, null=True)
     contacto = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='guias_contacto_rel')
     cliente = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='guias_cliente_rel')
-    destinatario = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='guias_destinatario_rel')
+    destinatario = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='guias_destinatario_rel')
     operacion_ingreso = models.ForeignKey(TteOperacion, on_delete=models.PROTECT, related_name='guias_operacion_ingreso_rel')
     operacion_cargo = models.ForeignKey(TteOperacion, on_delete=models.PROTECT, related_name='guias_operacion_cargo_rel')
     ciudad_origen = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='guias_ciudad_origen_rel')

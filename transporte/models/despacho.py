@@ -9,7 +9,7 @@ from transporte.models.servicio import TteServicio
 
 class TteDespacho(models.Model):
     fecha_registro = models.DateTimeField(auto_now_add=True)    
-    fecha = models.DateField()
+    fecha = models.DateTimeField(auto_now_add=True)
     numero = models.IntegerField(null=True)
     numero_rndc = models.IntegerField(null=True)    
     fecha_salida = models.DateTimeField(null=True)

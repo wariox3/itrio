@@ -3,12 +3,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from transporte.models.despacho import TteDespacho
 from transporte.models.despacho_detalle import TteDespachoDetalle
-from transporte.models.vehiculo import TteVehiculo
+from transporte.models.negocio import TteNegocio
 from general.models.contacto import GenContacto
 from transporte.models.guia import TteGuia
 from vertical.models.viaje import VerViaje
 from transporte.serializers.despacho import TteDespachoSerializador
 from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
+from transporte.serializers.guia import TteGuiaSerializador
 from transporte.filters.despacho import DespachoFilter
 from transporte.servicios.despacho import TteDespachoServicio
 from rest_framework.filters import OrderingFilter
@@ -16,6 +17,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db import transaction
 from django.db.models import Sum, Count, F
 from utilidades.excel_exportar import ExcelExportar
+from datetime import datetime
 
 class DespachoViewSet(viewsets.ModelViewSet):
     queryset = TteDespacho.objects.all()
@@ -132,11 +134,65 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 with transaction.atomic():
                     viaje = VerViaje.objects.get(pk=viaje_id)   
                     try:
+                        negocio = TteNegocio.objects.get(pk=viaje.negocio_id)
+                    except TteNegocio.DoesNotExist:
+                        return Response({'mensaje':'El negocio no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                    try:
                         vehiculo = TteDespachoServicio.validar_vehiculo_vertical(viaje)
                     except ValueError as e:
-                        return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                        
-                                        
-                    return Response({'mensaje': 'viaje generado'}, status=status.HTTP_200_OK) 
+                        return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                                                                
+                    try:
+                        conductor = TteDespachoServicio.validar_conductor_vertical(viaje)
+                    except ValueError as e:
+                        return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                         
+                    data = {
+                        'fecha': datetime.now(),    
+                        'fecha_ingreso': datetime.now(),    
+                        'operacion_ingreso': negocio.operacion_id,
+                        'operacion_cargo': negocio.operacion_id,
+                        'contacto': negocio.contacto_id,
+                        'cliente': negocio.contacto_id,
+                        'unidades': negocio.unidades,
+                        'peso': negocio.peso,
+                        'volumen': negocio.volumen,
+                        'peso_facturado': negocio.peso,
+                        'flete': negocio.flete,                                
+                        'ciudad_origen': negocio.ciudad_origen_id,
+                        'ciudad_destino': negocio.ciudad_destino_id,
+                        'remitente': negocio.contacto.nombre_corto,
+                        'destinatario_nombre': negocio.destinatario_nombre if negocio.destinatario_nombre else "Destinatario conocido",
+                        'destinatario_direccion': negocio.destinatario_direccion,
+                        'destinatario_telefono': negocio.destinatario_telefono,
+                        'destinatario_correo': negocio.destinatario_correo,
+                        'servicio': negocio.servicio_id,
+                        'producto': negocio.producto_id,
+                        'empaque': negocio.empaque_id,
+                        'liquidacion': 'M',
+                        'estado_recodigo': True,
+                        'estado_ingreso': True
+                    }
+                    guia_serializador = TteGuiaSerializador(data=data)
+                    if guia_serializador.is_valid():
+                        guia = guia_serializador.save()   
+                        data = {
+                            'fecha':datetime.now(),
+                            'despacho_tipo':1,
+                            'ciudad_origen':negocio.ciudad_origen_id,
+                            'ciudad_destino':negocio.ciudad_destino_id,
+                            'operacion':negocio.operacion_id,
+                            'contacto':vehiculo.propietario_id,
+                            'vehiculo':vehiculo.id,                        
+                            'conductor':conductor.id,
+                            'servicio': negocio.servicio_id
+                        }    
+                        despacho_serializador = TteDespachoSerializador(data=data)
+                        if despacho_serializador.is_valid(): 
+                            despacho = despacho_serializador.save()
+                        else:
+                            return Response({'mensaje': 'Se presentaron errores creando el despacho', 'validariovalidacionesnes': despacho_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                             
+                    else:
+                        return Response({'mensaje': 'Se presentaron errores creado la guia', 'validaciones': guia_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje': 'viaje generado'}, status=status.HTTP_200_OK)                 
             except VerViaje.DoesNotExist:
                 return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:

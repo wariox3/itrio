@@ -8,7 +8,8 @@ class TteNegocioSerializador(serializers.ModelSerializer):
     class Meta:
         model = TteNegocio
         fields = ['id', 'fecha', 'fecha_registro', 'unidades' , 'peso', 'volumen', 'declara' ,'pago', 
-                  'flete' , 'manejo', 'comentario', 'estado_aprobado', 'publicar',
+                  'flete' , 'manejo', 'comentario', 'estado_aprobado', 'publicar','servicio', 'producto', 'empaque', 'operacion',
+                  'destinatario_nombre', 'destinatario_direccion', 'destinatario_telefono', 'destinatario_correo',
                   'contacto',  
                   'contacto__nombre_corto', 
                   'ciudad_origen',
