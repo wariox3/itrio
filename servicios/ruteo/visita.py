@@ -165,18 +165,21 @@ class VisitaServicio():
             for guia in guias:                                                                        
                 direccion_destinatario = VisitaServicio.limpiar_direccion(guia['direccionDestinatario'])                                               
                 fecha = datetime.fromisoformat(guia['fechaIngreso'])  
-                nombre_destinatario = (guia['nombreDestinatario'][:150] if guia['nombreDestinatario'] is not None and guia['nombreDestinatario'] != "" else None)                                                
+                nombre_remitente = (guia['nombreRemitente'][:150] if guia['nombreRemitente'] is not None and guia['nombreRemitente'] != "" else None)
+                nombre_destinatario = (guia['nombreDestinatario'][:150] if guia['nombreDestinatario'] is not None and guia['nombreDestinatario'] != "" else None)
                 documentoCliente = (guia['documentoCliente'][:30] if guia['documentoCliente'] is not None and guia['documentoCliente'] != "" else None)
                 telefono_destinatario = (guia['telefonoDestinatario'][:50] if guia['telefonoDestinatario'] is not None and guia['telefonoDestinatario'] != "" else None)
                 data = {
                     'numero': guia['codigoGuiaPk'],
                     'fecha':fecha,
                     'documento': documentoCliente,
+                    'remitente': nombre_remitente,
                     'destinatario': nombre_destinatario,
                     'destinatario_direccion': direccion_destinatario,
                     'ciudad': None,
                     'destinatario_telefono': telefono_destinatario,
                     'destinatario_correo': None,
+                    'unidades': guia['unidades'] or 0,
                     'peso': guia['pesoReal'] or 0,
                     'volumen': guia['pesoVolumen'] or 0,
                     'cobro': guia['vrCobroEntrega'] or 0,
