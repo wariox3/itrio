@@ -3,10 +3,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from transporte.models.despacho import TteDespacho
 from transporte.models.despacho_detalle import TteDespachoDetalle
+from transporte.models.vehiculo import TteVehiculo
+from general.models.contacto import GenContacto
 from transporte.models.guia import TteGuia
+from vertical.models.viaje import VerViaje
 from transporte.serializers.despacho import TteDespachoSerializador
 from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
 from transporte.filters.despacho import DespachoFilter
+from transporte.servicios.despacho import TteDespachoServicio
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db import transaction
@@ -119,6 +123,25 @@ class DespachoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
         
+    @action(detail=False, methods=["post"], url_path=r'generar-viaje',)
+    def generar_viaje_action(self, request):        
+        raw = request.data
+        viaje_id = raw.get('viaje_id')
+        if viaje_id:
+            try:
+                with transaction.atomic():
+                    viaje = VerViaje.objects.get(pk=viaje_id)   
+                    try:
+                        vehiculo = TteDespachoServicio.validar_vehiculo_vertical(viaje)
+                    except ValueError as e:
+                        return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                        
+                                        
+                    return Response({'mensaje': 'viaje generado'}, status=status.HTTP_200_OK) 
+            except VerViaje.DoesNotExist:
+                return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
     @staticmethod
     def validacion_aprobar(despacho: TteDespacho, despacho_destalles: TteDespachoDetalle):
         if despacho.estado_aprobado == False:  

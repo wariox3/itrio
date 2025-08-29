@@ -18,6 +18,7 @@ class VerConductor(models.Model):
     correo = models.CharField(max_length = 255)
     numero_licencia = models.CharField(max_length=50, null=True)
     fecha_vence_licencia = models.DateField(null=True)
+    verificado = models.BooleanField(default = False)
     identificacion = models.ForeignKey(VerIdentificacion, on_delete=models.PROTECT)
     ciudad = models.ForeignKey(VerCiudad, on_delete=models.PROTECT)
     categoria_licencia = models.ForeignKey(VerCategoriaLicencia, on_delete=models.PROTECT)

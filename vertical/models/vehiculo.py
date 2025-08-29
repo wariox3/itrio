@@ -22,6 +22,7 @@ class VerVehiculo(models.Model):
     vence_tecnicomecanica = models.DateField()
     propio = models.BooleanField(default = False)
     remolque = models.BooleanField(default = False)
+    verificado = models.BooleanField(default = False)
     marca = models.ForeignKey(VerMarca, on_delete=models.PROTECT, related_name='vehiculos_marca_rel')
     linea = models.ForeignKey(VerLinea, on_delete=models.PROTECT, related_name='vehiculos_linea_rel')
     color = models.ForeignKey(VerColor, on_delete=models.PROTECT, related_name='vehiculos_color_rel')
