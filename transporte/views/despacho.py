@@ -145,53 +145,81 @@ class DespachoViewSet(viewsets.ModelViewSet):
                         conductor = TteDespachoServicio.validar_conductor_vertical(viaje)
                     except ValueError as e:
                         return Response({'mensaje': str(e), 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                                         
+
                     data = {
-                        'fecha': datetime.now(),    
-                        'fecha_ingreso': datetime.now(),    
-                        'operacion_ingreso': negocio.operacion_id,
-                        'operacion_cargo': negocio.operacion_id,
-                        'contacto': negocio.contacto_id,
-                        'cliente': negocio.contacto_id,
+                        'fecha':datetime.now(),
+                        'despacho_tipo':1,
+                        'ciudad_origen':negocio.ciudad_origen_id,
+                        'ciudad_destino':negocio.ciudad_destino_id,
+                        'operacion':negocio.operacion_id,
+                        'contacto':vehiculo.propietario_id,
+                        'vehiculo':vehiculo.id,                        
+                        'conductor':conductor.id,
+                        'servicio': negocio.servicio_id,
+                        'guias': 1,
                         'unidades': negocio.unidades,
                         'peso': negocio.peso,
                         'volumen': negocio.volumen,
-                        'peso_facturado': negocio.peso,
-                        'flete': negocio.flete,                                
-                        'ciudad_origen': negocio.ciudad_origen_id,
-                        'ciudad_destino': negocio.ciudad_destino_id,
-                        'remitente': negocio.contacto.nombre_corto,
-                        'destinatario_nombre': negocio.destinatario_nombre if negocio.destinatario_nombre else "Destinatario conocido",
-                        'destinatario_direccion': negocio.destinatario_direccion,
-                        'destinatario_telefono': negocio.destinatario_telefono,
-                        'destinatario_correo': negocio.destinatario_correo,
-                        'servicio': negocio.servicio_id,
-                        'producto': negocio.producto_id,
-                        'empaque': negocio.empaque_id,
-                        'liquidacion': 'M',
-                        'estado_recodigo': True,
-                        'estado_ingreso': True
-                    }
-                    guia_serializador = TteGuiaSerializador(data=data)
-                    if guia_serializador.is_valid():
-                        guia = guia_serializador.save()   
+                        'pago': negocio.pago
+                    }    
+                    despacho_serializador = TteDespachoSerializador(data=data)
+                    if despacho_serializador.is_valid(): 
+                        despacho = despacho_serializador.save()
                         data = {
-                            'fecha':datetime.now(),
-                            'despacho_tipo':1,
-                            'ciudad_origen':negocio.ciudad_origen_id,
-                            'ciudad_destino':negocio.ciudad_destino_id,
-                            'operacion':negocio.operacion_id,
-                            'contacto':vehiculo.propietario_id,
-                            'vehiculo':vehiculo.id,                        
-                            'conductor':conductor.id,
-                            'servicio': negocio.servicio_id
-                        }    
-                        despacho_serializador = TteDespachoSerializador(data=data)
-                        if despacho_serializador.is_valid(): 
-                            despacho = despacho_serializador.save()
+                            'fecha': datetime.now(),    
+                            'fecha_ingreso': datetime.now(),    
+                            'operacion_ingreso': negocio.operacion_id,
+                            'operacion_cargo': negocio.operacion_id,
+                            'contacto': negocio.contacto_id,
+                            'cliente': negocio.contacto_id,
+                            'unidades': negocio.unidades,
+                            'peso': negocio.peso,
+                            'volumen': negocio.volumen,
+                            'peso_facturado': negocio.peso,
+                            'flete': negocio.flete,                                
+                            'ciudad_origen': negocio.ciudad_origen_id,
+                            'ciudad_destino': negocio.ciudad_destino_id,
+                            'remitente': negocio.contacto.nombre_corto,
+                            'destinatario_nombre': negocio.destinatario_nombre if negocio.destinatario_nombre else "Destinatario conocido",
+                            'destinatario_direccion': negocio.destinatario_direccion,
+                            'destinatario_telefono': negocio.destinatario_telefono,
+                            'destinatario_correo': negocio.destinatario_correo,
+                            'servicio': negocio.servicio_id,
+                            'producto': negocio.producto_id,
+                            'empaque': negocio.empaque_id,
+                            'liquidacion': 'M',
+                            'despacho': despacho.id,
+                            'estado_despachado': True,
+                            'estado_recodigo': True,
+                            'estado_ingreso': True
+                        }
+                        guia_serializador = TteGuiaSerializador(data=data)
+                        if guia_serializador.is_valid():
+                            guia = guia_serializador.save()
+                            data = {
+                                'despacho':despacho.id,
+                                'guia':guia.id,
+                                'unidades': guia.unidades, 
+                                'peso': guia.peso, 
+                                'volumen': guia.volumen, 
+                                'peso_facturado': guia.peso_facturado, 
+                                'costo': guia.costo, 
+                                'declara': guia.declara,                         
+                                'flete':guia.flete, 
+                                'manejo':guia.manejo, 
+                                'recaudo':guia.recaudo, 
+                                'cobro_entrega':guia.cobro_entrega                        
+                            }
+                            despacho_detalle_serializador = TteDespachoDetalleSerializador(data=data)
+                            if despacho_detalle_serializador.is_valid():    
+                                despacho_detalle_serializador.save()                        
+                            else:
+                                return Response({'validaciones': despacho_detalle_serializador.errors, 'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)                            
                         else:
-                            return Response({'mensaje': 'Se presentaron errores creando el despacho', 'validariovalidacionesnes': despacho_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                             
+                            return Response({'mensaje': 'Se presentaron errores creado la guia', 'validaciones': guia_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                        
                     else:
-                        return Response({'mensaje': 'Se presentaron errores creado la guia', 'validaciones': guia_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje': 'Se presentaron errores creando el despacho', 'validariovalidacionesnes': despacho_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                             
+
                     return Response({'mensaje': 'viaje generado'}, status=status.HTTP_200_OK)                 
             except VerViaje.DoesNotExist:
                 return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)

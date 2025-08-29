@@ -8,7 +8,7 @@ class TteDespachoDetalleSerializador(serializers.ModelSerializer):
     guia__estado_entregado = serializers.BooleanField(source='guia.estado_entregado', read_only=True, allow_null=True, default=None)    
     class Meta:
         model = TteDespachoDetalle
-        fields = ['id', 'unidades', 'peso', 'volumen', 'cobro_entrega', 
+        fields = ['id', 'unidades', 'peso', 'volumen', 'cobro_entrega', 'despacho', 'guia',
                   'guia_id', 
                   'guia__fecha',
                   'guia__ciudad_destino__nombre', 
