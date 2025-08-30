@@ -13,12 +13,30 @@ class TteNegocioSerializador(serializers.ModelSerializer):
         model = TteNegocio
         fields = ['id', 'fecha', 'fecha_registro', 'nombre', 'unidades' , 'peso', 'volumen', 'declara' ,'pago', 
                   'flete' , 'manejo', 'comentario', 'estado_aprobado', 'publicar','servicio', 'producto', 'empaque', 'operacion',
-                  'destinatario_nombre', 'destinatario_direccion', 'destinatario_telefono', 'destinatario_correo', 'contacto',  'contacto__nombre_corto', 'ciudad_origen',
-                  'ciudad_origen__nombre' ,'ciudad_destino', 'ciudad_destino__nombre', 'servicio', 'servicio__nombre', 'operacion', 'operacion__nombre',
-                  'producto', 'producto__nombre', 'empaque', 'empaque__nombre']
+                  'destinatario_nombre', 'destinatario_direccion', 'destinatario_telefono', 'destinatario_correo', 
+                  'contacto',  
+                  'contacto__nombre_corto', 
+                  'ciudad_origen',
+                  'ciudad_origen__nombre',
+                  'ciudad_destino', 
+                  'ciudad_destino__nombre', 
+                  'servicio', 
+                  'servicio__nombre', 
+                  'operacion', 
+                  'operacion__nombre',
+                  'producto', 
+                  'producto__nombre', 
+                  'empaque', 
+                  'empaque__nombre']
         select_related_fields = ['contacto', 'ciudad_origen', 'ciudad_destino', 'servicio', 'operacion', 'producto', 'empaque']  
 
-class TteNegocioSeleccionarSerializador(serializers.ModelSerializer):    
+class TteNegocioSeleccionarSerializador(serializers.ModelSerializer):   
+    ciudad_destino__nombre = serializers.CharField(source='ciudad_destino.nombre', read_only=True, allow_null=True, default=None) 
     class Meta:
         model = TteNegocio
-        fields = ['id', 'nombre', 'fecha']        
+        fields = [  'id', 'nombre', 'fecha', 'nombre', 'unidades' , 'peso', 'volumen', 'declara', 'flete' , 'manejo',
+                    'destinatario_nombre', 'destinatario_direccion', 'destinatario_telefono', 'destinatario_correo',
+                    'ciudad_destino_id', 
+                    'ciudad_destino__nombre'
+                ] 
+        select_related_fields = ['ciudad_destino']       
