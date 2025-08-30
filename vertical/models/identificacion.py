@@ -1,6 +1,4 @@
 from django.db import models
-from general.models.pais import GenPais
-from general.models.tipo_persona import GenTipoPersona
 
 class VerIdentificacion(models.Model):
     id = models.BigIntegerField(primary_key=True)

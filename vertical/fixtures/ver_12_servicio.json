@@ -1,0 +1,26 @@
+{
+  "aplicacion": "transporte",
+  "modelo": "VerServicio",
+  "modelo_nativo": "ver_servicio",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "nombre": "NACIONAL"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "nombre": "URBANO"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "nombre": "PAQUETEO"
+      }
+    }           
+  ]
+}

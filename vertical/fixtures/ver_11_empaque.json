@@ -1,0 +1,225 @@
+{
+  "aplicacion": "transporte",
+  "modelo": "VerEmpaque",
+  "modelo_nativo": "ver_empaque",
+  "actualizar_secuencia": true,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "codigo": "3H",
+        "nombre": "Jerrican, Envase poligonal en Plastico"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "codigo": "3A",
+        "nombre": "Jerrican, Envase poligonal en Acero"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "codigo": "1A",
+        "nombre": "Bidon, Envase de cuerpo cilindrico en Acero"
+      }
+    },
+    {
+      "pk": 4,
+      "campos": {
+        "codigo": "1B",
+        "nombre": "Bidon, Envase de cuerpo cilindrico en Aluminio"
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "codigo": "6P",
+        "nombre": "Embalaje/Envase Compuesto de Vidrio"
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "codigo": "4B",
+        "nombre": "Caja de Aluminio"
+      }
+    },
+    {
+      "pk": 7,
+      "campos": {
+        "codigo": "4A",
+        "nombre": "Caja de Acero"
+      }
+    },
+    {
+      "pk": 8,
+      "campos": {
+        "codigo": "6H",
+        "nombre": "Embalaje/Envase Compuesto de Plastico"
+      }
+    },
+    {
+      "pk": 9,
+      "campos": {
+        "codigo": "5M",
+        "nombre": "Saco o Talega de Papel"
+      }
+    },
+    {
+      "pk": 10,
+      "campos": {
+        "codigo": "13H4",
+        "nombre": "Big-Bag tejido Laminado + Bolsa interior"
+      }
+    },
+    {
+      "pk": 11,
+      "campos": {
+        "codigo": "13H3",
+        "nombre": "Big-Bag tejido No Laminado + Bolsa interior"
+      }
+    },
+    {
+      "pk": 12,
+      "campos": {
+        "codigo": "13H2",
+        "nombre": "Big-Bag tejido Laminado Sin Bolsa interior"
+      }
+    },
+    {
+      "pk": 13,
+      "campos": {
+        "codigo": "13H1",
+        "nombre": "Big-Bag tejido No Laminado Sin Bolsa interior"
+      }
+    },
+    {
+      "pk": 14,
+      "campos": {
+        "codigo": 10,
+        "nombre": "1 C 45 pies (Contenedor)"
+      }
+    },
+    {
+      "pk": 15,
+      "campos": {
+        "codigo": 19,
+        "nombre": "Carga Estibada"
+      }
+    },
+    {
+      "pk": 16,
+      "campos": {
+        "codigo": 18,
+        "nombre": "Unidad sin empaque"
+      }
+    },
+    {
+      "pk": 17,
+      "campos": {
+        "codigo": 17,
+        "nombre": "Varios"
+      }
+    },
+    {
+      "pk": 18,
+      "campos": {
+        "codigo": 15,
+        "nombre": "Granel Sólido"
+      }
+    },
+    {
+      "pk": 19,
+      "campos": {
+        "codigo": 12,
+        "nombre": "Cilindros"
+      }
+    },
+    {
+      "pk": 20,
+      "campos": {
+        "codigo": 4,
+        "nombre": "General Fraccionada (Bulto, Caja, Saco, Paca, Pieza)"
+      }
+    },
+    {
+      "pk": 21,
+      "campos": {
+        "codigo": "4H",
+        "nombre": "Caja de plastico"
+      }
+    },
+    {
+      "pk": 22,
+      "campos": {
+        "codigo": "1H",
+        "nombre": "Bidón o Envase de plastico"
+      }
+    },
+    {
+      "pk": 23,
+      "campos": {
+        "codigo": "4G",
+        "nombre": "Caja de Cartón"
+      }
+    },
+    {
+      "pk": 24,
+      "campos": {
+        "codigo": 6,
+        "nombre": "Granel Líquido"
+      }
+    },
+    {
+      "pk": 25,
+      "campos": {
+        "codigo": 9,
+        "nombre": "1 C 40 pies (Contenedor)"
+      }
+    },
+    {
+      "pk": 26,
+      "campos": {
+        "codigo": 8,
+        "nombre": "2 C 20 pies (Contenedor)"
+      }
+    },
+    {
+      "pk": 27,
+      "campos": {
+        "codigo": 7,
+        "nombre": "1 C 20 pies (Contenedor)"
+      }
+    },
+    {
+      "pk": 28,
+      "campos": {
+        "codigo": "5H",
+        "nombre": "Saco o Talega de Polietileno o Polipropileno"
+      }
+    },
+    {
+      "pk": 29,
+      "campos": {
+        "codigo": "5L",
+        "nombre": "Saco o Talega de Yute, Algodón, Fique o Cabuya"
+      }
+    },
+    {
+      "pk": 30,
+      "campos": {
+        "codigo": 0,
+        "nombre": "Paquete. General Fraccionada en máximo 2 kgs por unidad de empaque"
+      }
+    },
+    {
+      "pk": 31,
+      "campos": {
+        "codigo": "4C",
+        "nombre": "Caja de Madera Natural"
+      }
+    }
+  ]
+}
