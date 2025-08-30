@@ -8,7 +8,8 @@ from transporte.models.servicio import TteServicio
 
 class TteNegocio(models.Model):
     fecha = models.DateField()
-    fecha_registro = models.DateTimeField(auto_now_add=True, null=True)    
+    fecha_registro = models.DateTimeField(auto_now_add=True, null=True)  
+    nombre = models.CharField(max_length=100, null=True)  
     unidades = models.FloatField(default=0)
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)    

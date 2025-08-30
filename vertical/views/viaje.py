@@ -4,14 +4,51 @@ from rest_framework.response import Response
 from vertical.models.viaje import VerViaje
 from vertical.models.vehiculo import VerVehiculo
 from vertical.models.conductor import VerConductor
-from vertical.serializers.viaje import VerViajeSerializador
+from vertical.serializers.viaje import VerViajeSerializador, VerViajeListaSerializador
+from vertical.filters.viaje import VerViajeFilter
 from django.db import transaction
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ViajeViewSet(viewsets.ModelViewSet):
     queryset = VerViaje.objects.all()
     serializer_class = VerViajeSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = VerViajeFilter 
+    serializadores = {
+        'lista': VerViajeListaSerializador,
+    } 
 
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return VerViajeSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
+    
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('lista_completa', '').lower() == 'true':
+            self.pagination_class = None
+        if request.query_params.get('excel') or request.query_params.get('excel_masivo'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            exporter = ExcelExportar(serializer.data, nombre_hoja="despachos", nombre_archivo="despachos.xlsx", titulo="Despachos")
+            if request.query_params.get('excel'):
+                return exporter.exportar_estilo()
+            if request.query_params.get('excel_masivo'):
+                return exporter.exportar()
+        return super().list(request, *args, **kwargs)
 
     @action(detail=False, methods=["post"], url_path=r'aceptar',)
     def aceptar_action(self, request):        
