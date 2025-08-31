@@ -1,5 +1,5 @@
 {
-  "aplicacion": "transporte",
+  "aplicacion": "vertical",
   "modelo": "VerServicio",
   "modelo_nativo": "ver_servicio",
   "actualizar_secuencia": false,

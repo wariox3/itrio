@@ -2,13 +2,16 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from vertical.models.viaje import VerViaje
+from vertical.models.propuesta import VerPropuesta
 from vertical.models.vehiculo import VerVehiculo
 from vertical.models.conductor import VerConductor
-from vertical.serializers.viaje import VerViajeSerializador, VerViajeListaSerializador
+from vertical.serializers.viaje import VerViajeSerializador, VerViajeListaSerializador, VerViajeListaEspecialSerializador
+from vertical.serializers.propuesta import VerPropuestaSerializador
 from vertical.filters.viaje import VerViajeFilter
 from django.db import transaction
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Prefetch
 
 class ViajeViewSet(viewsets.ModelViewSet):
     queryset = VerViaje.objects.all()
@@ -50,6 +53,7 @@ class ViajeViewSet(viewsets.ModelViewSet):
                 return exporter.exportar()
         return super().list(request, *args, **kwargs)
 
+
     @action(detail=False, methods=["post"], url_path=r'aceptar',)
     def aceptar_action(self, request):        
         raw = request.data
@@ -78,4 +82,42 @@ class ViajeViewSet(viewsets.ModelViewSet):
                 viaje.save()
                 return Response({'mensaje': 'viaje aceptado'}, status=status.HTTP_200_OK) 
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+
+    @action(detail=False, methods=["get"], url_path=r'lista')
+    def lista_action(self, request):                
+        usuario_id = request.query_params.get('usuario_id')
+        estado_aceptado = request.query_params.get('estado_aceptado')
+        queryset = VerViaje.objects.select_related(
+            'ciudad_origen', 
+            'ciudad_destino', 
+            'servicio', 
+            'producto', 
+            'empaque',
+            'usuario'
+        )
+        if usuario_id:
+            queryset = queryset.filter(usuario_id=usuario_id)
+        if estado_aceptado == True or estado_aceptado == 'true':
+            queryset = queryset.filter(estado_aceptado=True)
+        if estado_aceptado == False or estado_aceptado == 'false':
+            queryset = queryset.filter(estado_aceptado=False)            
+        viajes = queryset.prefetch_related(
+            Prefetch(
+                'propuestas_viaje_rel',
+                queryset=VerPropuesta.objects.order_by('-id'),
+                to_attr='propuestas_ordenadas'
+            )
+        ).order_by('-id')
+
+        resultado = []
+        for viaje in viajes:
+            viaje_serializador = VerViajeListaEspecialSerializador(viaje)
+            propuestas_serializador = VerPropuestaSerializador(viaje.propuestas_ordenadas, many=True)
+            
+            resultado.append({
+                'viaje': viaje_serializador.data,
+                'propuestas': propuestas_serializador.data
+            })
+        
+        return Response({'viajes': resultado}, status=status.HTTP_200_OK)            

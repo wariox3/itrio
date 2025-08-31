@@ -7,6 +7,7 @@ class VerPropuesta(models.Model):
     precio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     contenedor_id = models.IntegerField(null=True)
     estado_aceptado = models.BooleanField(default = False)
+    empresa = models.CharField(max_length=200, null=True)
     viaje = models.ForeignKey(VerViaje, on_delete=models.PROTECT, related_name='propuestas_viaje_rel')    
     usuario = models.ForeignKey(User, on_delete=models.PROTECT, related_name='propuestas_usuario_rel')
 
