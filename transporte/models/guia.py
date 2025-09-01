@@ -8,6 +8,7 @@ from transporte.models.producto import TteProducto
 from transporte.models.empaque import TteEmpaque
 from transporte.models.ruta import TteRuta
 from transporte.models.zona import TteZona
+from transporte.models.negocio import TteNegocio
 
 class TteGuia(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
@@ -61,6 +62,7 @@ class TteGuia(models.Model):
     empaque = models.ForeignKey(TteEmpaque, on_delete=models.PROTECT, related_name='guias_empaque_rel')
     ruta = models.ForeignKey(TteRuta, null=True, on_delete=models.PROTECT, related_name='guias_ruta_rel')
     zona = models.ForeignKey(TteZona, null=True, on_delete=models.PROTECT, related_name='guias_zona_rel')
+    negocio = models.ForeignKey(TteNegocio, null=True, on_delete=models.PROTECT, related_name='guias_negocio_rel')
 
     class Meta:
         db_table = "tte_guia"
