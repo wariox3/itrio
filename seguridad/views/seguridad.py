@@ -17,7 +17,7 @@ class Login(TokenObtainPairView):
 
             auth_interna = request.headers.get('X-Internal-Auth') == config('AUT_INTERNA')
             
-            proyectos_validos = ['REDDOC', 'RUTEO', 'POS', 'RUTEOAPP', 'CUENTA', 'TRANSPORTE', 'TURNOS']
+            proyectos_validos = ['REDDOC', 'RUTEO', 'POS', 'RUTEOAPP', 'CUENTA', 'TRANSPORTE', 'TURNOS', 'CLIENTE']
             if proyecto not in proyectos_validos:
                 return Response({
                     'error': 'Proyecto no válido',
