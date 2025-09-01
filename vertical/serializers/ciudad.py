@@ -6,4 +6,9 @@ class VerCiudadSerializador(serializers.ModelSerializer):
     class Meta:
         model = VerCiudad
         fields = ['id', 'nombre']
-        
+
+class VerCiudadSeleccionarSerializador(serializers.ModelSerializer):
+
+    class Meta:
+        model = VerCiudad
+        fields = ['id', 'nombre']        
