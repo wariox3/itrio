@@ -6,4 +6,10 @@ class VerProductoSerializador(serializers.ModelSerializer):
     class Meta:
         model = VerProducto
         fields = ['id', 'nombre', 'codigo']
+
+class VerProductoSeleccionarSerializador(serializers.ModelSerializer):
+
+    class Meta:
+        model = VerProducto
+        fields = ['id', 'nombre', 'codigo']        
         
