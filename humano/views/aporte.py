@@ -174,7 +174,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             if contrato.fecha_desde >= aporte.fecha_desde and contrato.fecha_desde <= aporte.fecha_hasta_periodo:
                                 ingreso = True                
                             retiro = False
-                            if contrato.fecha_hasta <= aporte.fecha_hasta and contrato.fecha_hasta >= aporte.fecha_desde and contrato.contrato_tipo_id != 1:
+                            if contrato.fecha_hasta <= aporte.fecha_hasta and contrato.fecha_hasta >= aporte.fecha_desde and contrato.estado_terminado:
                                 retiro = True
                             data = {
                                 'aporte': aporte.id,
@@ -200,7 +200,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
 
                             error_terminacion = False    
                             fecha_hasta = contrato.fecha_hasta
-                            if contrato.contrato_tipo_id == 1:
+                            if contrato.contrato_tipo_id == 1 and contrato.estado_terminado == False:
                                 fecha_hasta = aporte.fecha_hasta
                             else:
                                 if contrato.estado_terminado == False:
