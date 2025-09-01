@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from transporte.models.guia import TteGuia
-from transporte.serializers.guia import TteGuiaSerializador
+from transporte.serializers.guia import TteGuiaSerializador, TteGuiaDetalleSerializador
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from utilidades.excel_exportar import ExcelExportar
@@ -16,6 +16,7 @@ class GuiaViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = GuiaFilter 
     serializadores = {
+        'detalle': TteGuiaDetalleSerializador,
     }
 
     def get_serializer_class(self):
