@@ -52,9 +52,12 @@ class NegocioViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         nombre = request.query_params.get('nombre__icontains', None)
+        contacto_id = request.query_params.get('contacto_id', None)
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
+        if contacto_id:
+            queryset = queryset.filter(contacto_id=contacto_id)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
