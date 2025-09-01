@@ -7,7 +7,7 @@ from transporte.models.negocio import TteNegocio
 from general.models.contacto import GenContacto
 from transporte.models.guia import TteGuia
 from vertical.models.viaje import VerViaje
-from transporte.serializers.despacho import TteDespachoSerializador
+from transporte.serializers.despacho import TteDespachoSerializador, TteDespachoListaSerializador, TteDespachoDetalleVerSerializador
 from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
 from transporte.serializers.guia import TteGuiaSerializador
 from transporte.filters.despacho import DespachoFilter
@@ -26,7 +26,8 @@ class DespachoViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = DespachoFilter 
     serializadores = {
-        'lista': TteDespachoSerializador,
+        'lista': TteDespachoListaSerializador,
+        'detalle': TteDespachoDetalleVerSerializador,
     } 
 
     def get_serializer_class(self):
