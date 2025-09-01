@@ -8,7 +8,8 @@ class VerCiudadSerializador(serializers.ModelSerializer):
         fields = ['id', 'nombre']
 
 class VerCiudadSeleccionarSerializador(serializers.ModelSerializer):
-
+    estado__nombre = serializers.CharField(source='estado.nombre', read_only=True)
     class Meta:
         model = VerCiudad
-        fields = ['id', 'nombre']        
+        fields = ['id', 'nombre', 'estado__nombre']  
+        select_related_fields = ['estado']      
