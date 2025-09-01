@@ -13,8 +13,8 @@ from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from humano.filters.liquidacion import LiquidacionFilter
 from utilidades.excel_exportar import ExcelExportar
-from servicios.humano.liquidacion import LiquidacionServicio
-from servicios.humano.concepto import ConceptoServicio
+from humano.servicios.liquidacion import LiquidacionServicio
+from humano.servicios.concepto import ConceptoServicio
 from django.db import transaction
 from django.http import HttpResponse
 from humano.formatos.liquidacion import FormatoLiquidacion

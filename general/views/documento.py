@@ -39,7 +39,7 @@ from general.formatos.egreso import FormatoEgreso
 from general.formatos.compra import FormatoCompra
 from general.formatos.factura_pos import FormatoFacturaPOS
 from general.filters.documento import DocumentoFilter
-from servicios.general.documento import DocumentoServicio
+from general.servicios.documento import DocumentoServicio
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count

@@ -9,7 +9,7 @@ from general.models.configuracion import GenConfiguracion
 from general.models.archivo import GenArchivo
 from contenedor.models import CtnDireccion
 from ruteo.serializers.visita import RutVisitaSerializador, RutVistaTraficoSerializador, RutVistaListaSerializador, RutVisitaExcelSerializador, RutVisitaDetalleSerializador
-from servicios.ruteo.visita import VisitaServicio
+from ruteo.servicios.visita import VisitaServicio
 from datetime import datetime
 from django.utils import timezone
 from utilidades.holmio import Holmio

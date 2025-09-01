@@ -5,8 +5,8 @@ from ruteo.models.despacho import RutDespacho
 from ruteo.models.visita import RutVisita
 from ruteo.models.vehiculo import RutVehiculo
 from vertical.models.entrega import VerEntrega
-from servicios.ruteo.visita import VisitaServicio
-from servicios.ruteo.despacho import DespachoServicio
+from ruteo.servicios.visita import VisitaServicio
+from ruteo.servicios.despacho import DespachoServicio
 from ruteo.serializers.despacho import RutDespachoSerializador, RutDespachoTraficoSerializador
 from ruteo.formatos.orden_entrega import FormatoOrdenEntrega
 from ruteo.filters.despacho import DespachoFilter

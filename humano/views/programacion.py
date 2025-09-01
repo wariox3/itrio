@@ -21,7 +21,7 @@ from general.serializers.documento import GenDocumentoSerializador
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.formatos.programacion import FormatoProgramacion
 from general.formatos.nomina import FormatoNomina
-from servicios.humano.concepto import ConceptoServicio
+from humano.servicios.concepto import ConceptoServicio
 from django.db.models import Q, DecimalField, Sum
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse

@@ -17,7 +17,7 @@ from general.models.contacto import GenContacto
 from general.models.ciudad import GenCiudad
 from humano.serializers.contrato import HumContratoSerializador, HumContratoListaSerializador, HumContratoSeleccionarSerializador, HumContratoParametrosInicialesSerializador
 from humano.serializers.liquidacion import HumLiquidacionSerializador
-from servicios.humano.liquidacion import LiquidacionServicio
+from humano.servicios.liquidacion import LiquidacionServicio
 from humano.formatos.certificado_laboral import FormatoCertificadoLaboral
 from django.db.models.deletion import ProtectedError
 from django.db import transaction

@@ -7,7 +7,7 @@ from contenedor.models import CtnMovimiento, CtnEventoPago, CtnConsumo, CtnSocio
 from contenedor.filters.movimiento import MovimientoFilter
 from seguridad.models import User
 from contenedor.serializers.movimiento import CtnMovimientoSerializador
-from servicios.contenedor.movimiento import MovimientoServicio
+from contenedor.servicios.movimiento import MovimientoServicio
 from decouple import config
 from datetime import timedelta, datetime
 from django.utils import timezone
