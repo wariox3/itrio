@@ -116,7 +116,7 @@ class ViajeViewSet(viewsets.ModelViewSet):
             propuestas_serializador = VerPropuestaSerializador(viaje.propuestas_ordenadas, many=True)
             
             resultado.append({
-                'viaje': viaje_serializador.data,
+                'datos': viaje_serializador.data,
                 'propuestas': propuestas_serializador.data
             })
         
