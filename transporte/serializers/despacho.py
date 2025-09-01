@@ -16,7 +16,7 @@ class TteDespachoSerializador(serializers.ModelSerializer):
         model = TteDespacho
         fields = ['id', 'fecha', 'numero', 'numero_rndc', 'fecha_salida', 'fecha_llegada', 'fecha_entrega', 'fecha_soporte', 'pago', 
                   'precinto', 'guias', 'unidades', 'peso', 'volumen', 'declara', 'flete',
-                  'manejo', 'recaudo', 'cobro_entrega', 'comentario', 'estado_rndc', 
+                  'manejo', 'recaudo', 'cobro_entrega', 'comentario', 'estado_rndc', 'estado_aprobado',
                   'estado_entregado', 'estado_soporte', 'despacho_tipo' ,'despacho_tipo__nombre', 'operacion' ,'operacion__nombre', 'contacto', 'contacto__nombre_corto', 
                   'ciudad_origen', 'ciudad_origen__nombre', 'ciudad_destino', 'ciudad_destino__nombre', 'vehiculo', 'vehiculo__placa', 'remolque', 'remolque__placa', 'conductor',
                   'conductor__nombre_corto', 'ruta', 'ruta__nombre', 'servicio', 'servicio__nombre']
