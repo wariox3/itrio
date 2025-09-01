@@ -75,7 +75,7 @@ class NegocioViewSet(viewsets.ModelViewSet):
                 with transaction.atomic():
                     negocio = TteNegocio.objects.get(pk=id)
                     if negocio.estado_aprobado == False:
-                        if negocio.publicar:
+                        '''if negocio.publicar:
                             viaje = VerViaje()
                             viaje.negocio_id = id                            
                             viaje.peso = negocio.peso
@@ -84,7 +84,7 @@ class NegocioViewSet(viewsets.ModelViewSet):
                             viaje.ciudad_destino_id = negocio.ciudad_destino_id                       
                             viaje.contenedor_id = request.tenant.id
                             viaje.schema_name = request.tenant.schema_name
-                            viaje.save()  
+                            viaje.save()  '''
                         negocio.estado_aprobado = True
                         negocio.save()
                         return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
