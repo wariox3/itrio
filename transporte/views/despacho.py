@@ -240,8 +240,7 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 return {'error':True, 'mensaje':'El despacho no tiene guias', 'codigo':1}  
         else:
             return {'error':True, 'mensaje':'El despacho ya esta aprobado', 'codigo':1}                
-        
-                
+                        
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
         raw = request.data

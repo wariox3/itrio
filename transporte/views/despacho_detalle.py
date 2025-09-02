@@ -63,7 +63,7 @@ class DespachoDetalleViewSet(viewsets.ModelViewSet):
                     guia.despacho = None
                     guia.estado_despachado = False
                     guia.save()
-                    TteDespacho.objects.filter(pk=id).update(guias=F('guias') - 1)  
+                    TteDespacho.objects.filter(pk=despacho_detalle.despacho_id).update(guias=F('guias') - 1)  
                     return Response({'mensaje': f'Guia eliminada del despacho'}, status=status.HTTP_200_OK)                  
             else:
                 return Response({'mensaje':'El despacho ya esta aprobado', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 

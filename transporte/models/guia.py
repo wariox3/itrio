@@ -9,6 +9,7 @@ from transporte.models.empaque import TteEmpaque
 from transporte.models.ruta import TteRuta
 from transporte.models.zona import TteZona
 from transporte.models.negocio import TteNegocio
+from general.models.documento import GenDocumento
 
 class TteGuia(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
@@ -41,6 +42,7 @@ class TteGuia(models.Model):
     estado_despachado = models.BooleanField(default = False)
     estado_entregado = models.BooleanField(default = False)
     estado_soporte = models.BooleanField(default = False)
+    estado_facturado = models.BooleanField(default = False)
     estado_novedad = models.BooleanField(default = False)
     estado_novedad_solucionada = models.BooleanField(default = False)
     estado_rndc = models.BooleanField(default = False)
@@ -57,6 +59,7 @@ class TteGuia(models.Model):
     ciudad_origen = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='guias_ciudad_origen_rel')
     ciudad_destino = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='guias_ciudad_destino_rel')
     despacho = models.ForeignKey(TteDespacho, null=True, on_delete=models.PROTECT, related_name='guias_despacho_rel')
+    factura = models.ForeignKey(GenDocumento, null=True, on_delete=models.PROTECT, related_name='guias_factura_rel')
     servicio = models.ForeignKey(TteServicio, on_delete=models.PROTECT, related_name='guias_servicio_rel')
     producto = models.ForeignKey(TteProducto, on_delete=models.PROTECT, related_name='guias_producto_rel')
     empaque = models.ForeignKey(TteEmpaque, on_delete=models.PROTECT, related_name='guias_empaque_rel')
