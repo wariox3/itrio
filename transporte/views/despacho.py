@@ -19,6 +19,7 @@ from django.db.models import Sum, Count, F
 from utilidades.excel_exportar import ExcelExportar
 from datetime import datetime
 from transporte.formatos.orden_cargue import FormatoOrdenCargue
+from transporte.formatos.manifiesto import FormatoManifiesto
 from django.http import HttpResponse
 
 class DespachoViewSet(viewsets.ModelViewSet):
@@ -251,6 +252,27 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 formato = FormatoOrdenCargue()
                 pdf = formato.generar_pdf(id)              
                 nombre_archivo = f"orden_cargue_{id}.pdf"       
+                
+                response = HttpResponse(pdf, content_type='application/pdf')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                return response
+            except TteDespacho.DoesNotExist:
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+        
+
+    @action(detail=False, methods=["post"], url_path=r'imprimir-manifiesto',)
+    def imprimirManifiesto(self, request):
+        raw = request.data
+        id = raw.get('despacho_id')
+        if id:
+            try:
+                pdf = None                                     
+                formato = FormatoManifiesto()
+                pdf = formato.generar_pdf(id)              
+                nombre_archivo = f"manifiesto_{id}.pdf"       
                 
                 response = HttpResponse(pdf, content_type='application/pdf')
                 response['Access-Control-Expose-Headers'] = 'Content-Disposition'
