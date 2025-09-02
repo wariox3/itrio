@@ -53,7 +53,6 @@ class ViajeViewSet(viewsets.ModelViewSet):
                 return exporter.exportar()
         return super().list(request, *args, **kwargs)
 
-
     @action(detail=False, methods=["post"], url_path=r'aceptar',)
     def aceptar_action(self, request):        
         raw = request.data
@@ -84,10 +83,29 @@ class ViajeViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
 
+    @action(detail=False, methods=["post"], url_path=r'cancelar',)
+    def cancelar_action(self, request):        
+        raw = request.data
+        id = raw.get('id')        
+        if id:            
+            with transaction.atomic():
+                try:
+                    viaje = VerViaje.objects.get(pk=id)
+                except VerViaje.DoesNotExist:
+                    return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                if viaje.estado_aceptado:
+                    return Response({'mensaje':'El viaje ya fue aceptado y no se puede cancelar', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                                       
+                viaje.estado_cancelado = True
+                viaje.save()
+                return Response({'mensaje': 'Viaje cancelado aceptado'}, status=status.HTTP_200_OK) 
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=["get"], url_path=r'lista')
     def lista_action(self, request):                
         usuario_id = request.query_params.get('usuario_id')
         estado_aceptado = request.query_params.get('estado_aceptado')
+        estado_cancelado = request.query_params.get('estado_cancelado')
         queryset = VerViaje.objects.select_related(
             'ciudad_origen', 
             'ciudad_destino', 
@@ -101,7 +119,11 @@ class ViajeViewSet(viewsets.ModelViewSet):
         if estado_aceptado == True or estado_aceptado == 'true':
             queryset = queryset.filter(estado_aceptado=True)
         if estado_aceptado == False or estado_aceptado == 'false':
-            queryset = queryset.filter(estado_aceptado=False)            
+            queryset = queryset.filter(estado_aceptado=False)    
+        if estado_cancelado == True or estado_cancelado == 'true':
+            queryset = queryset.filter(estado_cancelado=True)
+        if estado_cancelado == False or estado_cancelado == 'false':
+            queryset = queryset.filter(estado_cancelado=False)                     
         viajes = queryset.prefetch_related(
             Prefetch(
                 'propuestas_viaje_rel',

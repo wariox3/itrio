@@ -22,6 +22,7 @@ class VerViaje(models.Model):
     schema_name = models.CharField(max_length=100, null=True)
     solicitud_cliente = models.BooleanField(default=False)
     estado_aceptado = models.BooleanField(default=False)
+    estado_cancelado = models.BooleanField(default=False)
     estado_aceptado_transporte = models.BooleanField(default=False)
     propuestas = models.IntegerField(default=0)
     comentario = models.CharField(max_length=500, null=True)
