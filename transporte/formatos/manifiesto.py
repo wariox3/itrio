@@ -1,40 +1,57 @@
 from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
 from reportlab.lib.pagesizes import letter, landscape
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
-from general.formatos.encabezado import FormatoEncabezado
 from reportlab.lib.units import inch
-from utilidades.pdf_utilidades import PDFUtilidades
 from transporte.models.despacho import TteDespacho
-from transporte.models.despacho_detalle import TteDespachoDetalle
-from reportlab.lib import colors
-
+from general.models.empresa import GenEmpresa
+from decouple import config
 
 class FormatoManifiesto:
     def generar_pdf(self, despacho_id):
         buffer = BytesIO()
-        
-        # Configurar página en formato horizontal (landscape)
-        ancho, alto = landscape(letter)  # Invierte las dimensiones de letter
-        
-        doc = SimpleDocTemplate(
-            buffer,
-            pagesize=landscape(letter),  # Usar landscape en lugar de letter
-            leftMargin=0.4*inch, 
-            rightMargin=0.4*inch,
-            topMargin=0.5*inch, 
-            bottomMargin=0.5*inch
-        )
-        
-        elementos = []
-        estilos = PDFUtilidades.obtener_estilos()
+        p = canvas.Canvas(buffer, pagesize=landscape(letter))
 
-        elementos.append(Paragraph("Título del Manifiesto", estilos['titulo']))
-        elementos.append(Spacer(1, 0.2*inch))
+        # Configurar coordenadas (en landscape, el ancho es mayor que el alto)
+        width, height = landscape(letter)  # width = 792, height = 612 (en puntos)
+
+        empresa = GenEmpresa.objects.get(pk=1)
         
-        doc.build(
-            elementos,
-            canvasmaker=PDFUtilidades.PieDePagina
-        )
+        def draw_header():
+            region = config('DO_REGION')
+            bucket = config('DO_BUCKET')
+            entorno = config('ENV')
+
+            imagen_defecto_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
+
+            # Intenta cargar la imagen desde la URL
+            imagen_empresa = empresa.imagen
+
+            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{imagen_empresa}'
+            try:
+                logo = ImageReader(logo_url)
+            except Exception as e:
+                logo_url = imagen_defecto_url
+                logo = ImageReader(logo_url)
+
+            # Posicionar la imagen en la esquina superior izquierda con menos margen
+            x = 10  # Muy cerca del borde izquierdo (10 puntos en lugar de 24)
+            y = height - 80  # Posicionar cerca del borde superior
+            tamano_cuadrado = 1 * inch
+
+            # Dibujar la imagen sin los cuadros
+            p.drawImage(logo, x, y, width=tamano_cuadrado, height=tamano_cuadrado, mask='auto', preserveAspectRatio=True)
+
+            # Agregar información de la empresa al lado de la imagen
+            p.setFont("Helvetica-Bold", 14)
+            p.drawString(x + tamano_cuadrado + 10, y + 40, "MANIFIESTO ELECTRÓNICO DE CARGA")
+            p.drawString(x + tamano_cuadrado + 10, y + 20, f"RUT: {empresa.numero_identificacion}")
+            p.setFont("Helvetica", 10)
+            p.drawString(x + tamano_cuadrado + 10, y, f"Dirección: {empresa.direccion}")
+
+        draw_header()
+        p.showPage()
+        p.save()
         
         pdf_bytes = buffer.getvalue()
         buffer.close()
