@@ -48,3 +48,16 @@ class GuiaViewSet(viewsets.ModelViewSet):
             if request.query_params.get('excel_masivo'):
                 return exporter.exportar()
         return super().list(request, *args, **kwargs)
+    
+    @action(detail=False, methods=["post"], url_path=r'enviar-rndc',)
+    def enviar_rndc_action(self, request):                     
+        raw = request.data
+        id = raw.get('id')                             
+        if id:
+            try:
+                guia = TteGuia.objects.get(pk=id)
+            except TteGuia.DoesNotExist:
+                return Response({'mensaje':'La guia no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
+            return Response({'mensaje': f'Guia enviada'}, status=status.HTTP_200_OK)                  
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     

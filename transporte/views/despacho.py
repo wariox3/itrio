@@ -260,3 +260,16 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
+        
+    @action(detail=False, methods=["post"], url_path=r'enviar-rndc',)
+    def enviar_rndc_action(self, request):                     
+        raw = request.data
+        id = raw.get('id')                             
+        if id:
+            try:
+                despacho = TteDespacho.objects.get(pk=id)
+            except TteDespacho.DoesNotExist:
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
+            return Response({'mensaje': f'Despacho enviado'}, status=status.HTTP_200_OK)                  
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
