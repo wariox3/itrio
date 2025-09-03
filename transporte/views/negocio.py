@@ -133,6 +133,7 @@ class NegocioViewSet(viewsets.ModelViewSet):
                             viaje.schema_name = request.tenant.schema_name
                             viaje.usuario_id = request.user.id
                             viaje.solicitud_transporte = True
+                            viaje.publicar = True
                             viaje.save()
                         negocio.estado_aprobado = True
                         negocio.save()

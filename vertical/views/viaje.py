@@ -1,3 +1,4 @@
+from decimal import Decimal
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -5,6 +6,7 @@ from vertical.models.viaje import VerViaje
 from vertical.models.propuesta import VerPropuesta
 from vertical.models.vehiculo import VerVehiculo
 from vertical.models.conductor import VerConductor
+from vertical.models.precio_detalle import VerPrecioDetalle
 from vertical.serializers.viaje import VerViajeSerializador, VerViajeListaSerializador, VerViajeListaEspecialSerializador
 from vertical.serializers.propuesta import VerPropuestaSerializador
 from vertical.filters.viaje import VerViajeFilter
@@ -52,6 +54,35 @@ class ViajeViewSet(viewsets.ModelViewSet):
             if request.query_params.get('excel_masivo'):
                 return exporter.exportar()
         return super().list(request, *args, **kwargs)
+
+    @action(detail=False, methods=["post"], url_path=r'nuevo',)
+    def nuevo_action(self, request):        
+        raw = request.data
+        data = raw
+        with transaction.atomic():
+            viaje_serializador = VerViajeSerializador(data=data)
+            if viaje_serializador.is_valid():
+                viaje = viaje_serializador.save()
+                precios_detalles = VerPrecioDetalle.objects.filter(ciudad_origen_id=data['ciudad_origen'], ciudad_destino_id=data['ciudad_destino'])
+                for precio_detalle in precios_detalles:
+                    peso_toneladas = Decimal(viaje.peso) / Decimal(1000)                    
+                    data = {
+                        'viaje': viaje.id,
+                        'usuario': viaje.usuario_id,
+                        'precio': round(peso_toneladas * precio_detalle.tonelada),
+                        'contenedor_id': precio_detalle.contenedor_id,
+                        'schema_name': precio_detalle.schema_name,
+                        'empresa': precio_detalle.empresa
+                    }
+                    propuesta_serializador = VerPropuestaSerializador(data=data)
+                    if propuesta_serializador.is_valid():
+                        propuesta_serializador.save()
+                    else:
+                        transaction.set_rollback(True)
+                        return Response({'validaciones': propuesta_serializador.errors, 'mensaje': 'No se pudo crear la propuesta'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje': 'viaje creado', 'viaje': viaje_serializador.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'mensaje': 'Error al crear el viaje', 'validaciones': viaje_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'aceptar',)
     def aceptar_action(self, request):        

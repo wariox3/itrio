@@ -8,6 +8,7 @@ from .views.empaque import EmpaqueViewSet
 from .views.servicio import ServicioViewSet
 from .views.producto import ProductoViewSet
 from .views.ciudad import CiudadViewSet
+from .views.precio_detalle import PrecioDetalleViewSet
 
 from rest_framework import routers
 
@@ -21,6 +22,7 @@ router.register(r'empaque', EmpaqueViewSet)
 router.register(r'servicio', ServicioViewSet)
 router.register(r'producto', ProductoViewSet)
 router.register(r'ciudad', CiudadViewSet)
+router.register(r'precio_detalle', PrecioDetalleViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
