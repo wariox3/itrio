@@ -116,13 +116,13 @@ class ViajeViewSet(viewsets.ModelViewSet):
         )
         if usuario_id:
             queryset = queryset.filter(usuario_id=usuario_id)
-        if estado_aceptado == True or estado_aceptado == 'true':
+        if estado_aceptado == True or estado_aceptado == 'true' or estado_aceptado == 'True':
             queryset = queryset.filter(estado_aceptado=True)
-        if estado_aceptado == False or estado_aceptado == 'false':
+        if estado_aceptado == False or estado_aceptado == 'false' or estado_aceptado == 'False':
             queryset = queryset.filter(estado_aceptado=False)    
-        if estado_cancelado == True or estado_cancelado == 'true':
+        if estado_cancelado == True or estado_cancelado == 'true' or estado_cancelado == 'True':
             queryset = queryset.filter(estado_cancelado=True)
-        if estado_cancelado == False or estado_cancelado == 'false':
+        if estado_cancelado == False or estado_cancelado == 'false' or estado_cancelado == 'False':
             queryset = queryset.filter(estado_cancelado=False)                     
         viajes = queryset.prefetch_related(
             Prefetch(
