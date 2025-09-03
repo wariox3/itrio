@@ -12,8 +12,9 @@ class VerViajeSerializador(serializers.ModelSerializer):
     class Meta:
         model = VerViaje
         fields = [  
-                    'id', 'fecha', 'cliente', 'unidades', 'peso', 'volumen', 'negocio_id', 'contenedor_id', 'schema_name', 'solicitud_cliente', 
-                    'estado_aceptado', 'estado_aceptado_transporte', 'flete', 'puntos_entrega', 'comentario', 'propuestas',
+                    'id', 'fecha', 'cliente', 'unidades', 'peso', 'volumen', 'negocio_id', 'contenedor_id', 'schema_name', 
+                    'solicitud_cliente', 'solicitud_transporte',
+                    'estado_aceptado', 'estado_cancelado', 'flete', 'puntos_entrega', 'comentario', 'propuestas',
                     'vehiculo', 
                     'conductor',
                     'ciudad_origen',

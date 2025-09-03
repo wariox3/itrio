@@ -20,8 +20,7 @@ class PropuestaViewSet(viewsets.ModelViewSet):
         raw = request.data
         viaje_id = raw.get('viaje_id')           
         precio = raw.get('precio')  
-        empresa = raw.get('empresa')  
-        contenedor_id = raw.get('contenedor_id')       
+        empresa = raw.get('empresa')        
         if viaje_id and precio and empresa:
             try:
                 viaje = VerViaje.objects.get(pk=viaje_id)
@@ -33,12 +32,14 @@ class PropuestaViewSet(viewsets.ModelViewSet):
                 if existe_propuesta:
                     return Response({'mensaje':'Ya existe una propuesta de este usuario para este viaje', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                 
-                with transaction.atomic():                                          
+                with transaction.atomic():  
+                    tenant = request.tenant                                       
                     data = {
                         'viaje':viaje_id,
                         'precio':precio,    
                         'usuario': request.user.id, 
-                        'contenedor_id': contenedor_id,
+                        'contenedor_id': tenant.id,
+                        'schema_name': tenant.schema_name,
                         'empresa': empresa               
                     }
                     propuesta_serializador = VerPropuestaSerializador(data=data)

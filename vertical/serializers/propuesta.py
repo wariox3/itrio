@@ -4,7 +4,7 @@ from vertical.models.propuesta import VerPropuesta
 class VerPropuestaSerializador(serializers.ModelSerializer):
     class Meta:
         model = VerPropuesta
-        fields = ['id', 'precio', 'contenedor_id', 'empresa', 'usuario', 'viaje']
+        fields = ['id', 'precio', 'contenedor_id', 'schema_name', 'empresa', 'usuario', 'viaje']
 
 
           

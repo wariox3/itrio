@@ -11,7 +11,7 @@ class TteNegocioSerializador(serializers.ModelSerializer):
     empaque__nombre = serializers.CharField(source='producto.nombre', read_only=True, allow_null=True, default=None)
     class Meta:
         model = TteNegocio
-        fields = ['id', 'fecha', 'fecha_registro', 'nombre', 'unidades' , 'peso', 'volumen', 'declara' ,'pago', 
+        fields = ['id', 'fecha', 'fecha_registro', 'nombre', 'unidades', 'peso', 'volumen', 'declara' ,'pago', 'puntos_entrega',
                   'flete' , 'manejo', 'comentario', 'estado_aprobado', 'publicar','servicio', 'producto', 'empaque', 'operacion',
                   'destinatario_nombre', 'destinatario_direccion', 'destinatario_telefono', 'destinatario_correo', 
                   'contacto',  

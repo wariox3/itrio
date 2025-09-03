@@ -8,6 +8,7 @@ class VerPropuesta(models.Model):
     contenedor_id = models.IntegerField(null=True)
     estado_aceptado = models.BooleanField(default = False)
     empresa = models.CharField(max_length=200, null=True)
+    schema_name = models.CharField(max_length=100, null=True)
     viaje = models.ForeignKey(VerViaje, on_delete=models.PROTECT, related_name='propuestas_viaje_rel')    
     usuario = models.ForeignKey(User, on_delete=models.PROTECT, related_name='propuestas_usuario_rel')
 

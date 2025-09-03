@@ -14,6 +14,7 @@ class TteNegocio(models.Model):
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)    
     declara = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    puntos_entrega = models.IntegerField(default=0)
     pago = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     flete = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     manejo = models.DecimalField(max_digits=20, decimal_places=6, default=0)
@@ -24,13 +25,13 @@ class TteNegocio(models.Model):
     publicar = models.BooleanField(default = False)
     estado_aprobado = models.BooleanField(default = False)
     comentario = models.CharField(max_length=500, null=True)    
-    contacto = models.ForeignKey(GenContacto, on_delete=models.PROTECT, related_name='negocios_contacto_rel')
+    contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='negocios_contacto_rel')
     ciudad_origen = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='negocios_ciudad_origen_rel')
     ciudad_destino = models.ForeignKey(GenCiudad, on_delete=models.PROTECT, related_name='negocios_ciudad_destino_rel')
     servicio = models.ForeignKey(TteServicio, on_delete=models.PROTECT, related_name='negocios_servicio_rel')
     producto = models.ForeignKey(TteProducto, on_delete=models.PROTECT, related_name='negocios_producto_rel')
     empaque = models.ForeignKey(TteEmpaque, on_delete=models.PROTECT, related_name='negocios_empaque_rel')
-    operacion = models.ForeignKey(TteOperacion, on_delete=models.PROTECT, related_name='negocios_operacion_ingreso_rel')
+    operacion = models.ForeignKey(TteOperacion, null=True, on_delete=models.PROTECT, related_name='negocios_operacion_ingreso_rel')
     
     class Meta:
         db_table = "tte_negocio"
