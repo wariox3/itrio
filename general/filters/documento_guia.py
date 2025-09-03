@@ -7,4 +7,5 @@ class DocumentoGuiaFilter(django_filters.FilterSet):
         model = GenDocumentoGuia        
         fields = {
                     'id': ['exact', 'lte'],
+                    'documento_id': ['exact'],
                 }
