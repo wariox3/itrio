@@ -74,7 +74,8 @@ class PropuestaViewSet(viewsets.ModelViewSet):
                     viaje.estado_aceptado = True
                     viaje.contenedor_negocio_id = propuesta.contenedor_id
                     viaje.save()
-                    return Response({'mensaje': 'propuesta aceptada'}, status=status.HTTP_200_OK) 
+                    propuestas_serializador = VerPropuestaSerializador(propuesta)
+                    return Response({'mensaje': 'propuesta aceptada', 'propuesta': propuestas_serializador.data}, status=status.HTTP_200_OK) 
                 else:
                     return Response({'mensaje':'La propuesta ya fue aceptada con anterioridad', 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)                                                                                                           
 
