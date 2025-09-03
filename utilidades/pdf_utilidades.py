@@ -41,6 +41,61 @@ class PDFUtilidades:
                 texto
             )
     
+    @staticmethod
+    def dibujar_celda_con_borde(p, x, y, ancho, alto, titulo, valor=None, 
+                            font_titulo="Helvetica-Bold", font_valor="Helvetica", 
+                            size_titulo=10, size_valor=9, padding=5,
+                            con_linea_divisora=True, solo_titulo=False):
+        """
+        Dibuja una celda con borde, con opción de solo título o título+valor
+        
+        Args:
+            p: Objeto canvas
+            x, y: Coordenadas de la celda
+            ancho, alto: Dimensiones de la celda
+            titulo: Texto del título
+            valor: Texto del valor (opcional si solo_titulo=True)
+            font_titulo, font_valor: Fuentes para título y valor
+            size_titulo, size_valor: Tamaños de fuente
+            padding: Espaciado interno
+            con_linea_divisora: Si True, dibuja línea divisora entre título y valor
+            solo_titulo: Si True, solo muestra el título centrado
+        
+        Returns:
+            float: Posición X para la siguiente celda
+        """
+        
+        # Dibujar el rectángulo del borde
+        p.rect(x, y, ancho, alto)
+        
+        if solo_titulo:
+            # Modo solo título - título centrado vertical y horizontalmente
+            p.setFont(font_titulo, size_titulo)
+            titulo_width = p.stringWidth(titulo.upper(), font_titulo, size_titulo)
+            titulo_x = x + (ancho - titulo_width) / 2
+            titulo_y = y + (alto - size_titulo) / 2  # Centrado verticalmente
+            p.drawString(titulo_x, titulo_y, titulo.upper())
+        else:
+            # Modo título + valor
+            p.setFont(font_titulo, size_titulo)
+            titulo_width = p.stringWidth(titulo.upper(), font_titulo, size_titulo)
+            titulo_x = x + (ancho - titulo_width) / 2
+            titulo_y = y + alto - size_titulo - padding
+            p.drawString(titulo_x, titulo_y, titulo.upper())
+            
+            if con_linea_divisora:
+                p.line(x, titulo_y - padding, x + ancho, titulo_y - padding)
+            
+            if valor is not None:
+                p.setFont(font_valor, size_valor)
+                valor_str = str(valor) if valor is not None else ""
+                valor_width = p.stringWidth(valor_str, font_valor, size_valor)
+                valor_x = x + (ancho - valor_width) / 2
+                valor_y = y + padding
+                p.drawString(valor_x, valor_y, valor_str)
+        
+        return x + ancho
+    
     # Métodos estáticos para estilos
     @staticmethod
     def obtener_estilos():
@@ -139,3 +194,26 @@ class PDFUtilidades:
         """Retorna solo el estilo numérico para tablas"""
         estilos = PDFUtilidades.obtener_estilos()
         return estilos['numero_tabla']
+    
+    @staticmethod
+    def formatear_fecha(fecha_obj, formato='%Y-%m-%d'):
+        """
+        Formatea un objeto fecha al formato especificado
+        
+        Args:
+            fecha_obj: Objeto datetime o date
+            formato: Formato de fecha (por defecto: '%Y-%m-%d')
+        
+        Returns:
+            str: Fecha formateada o cadena vacía si no hay fecha
+        """
+        if not fecha_obj:
+            return ""
+        try:
+            if hasattr(fecha_obj, 'strftime'):
+                return fecha_obj.strftime(formato)
+            else:
+                # Si no es un objeto datetime, intentar convertirlo
+                return str(fecha_obj)
+        except (AttributeError, ValueError, TypeError):
+            return str(fecha_obj) if fecha_obj else ""
