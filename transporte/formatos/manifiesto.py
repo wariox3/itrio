@@ -42,6 +42,7 @@ class FormatoManifiesto:
                 logo_url = imagen_defecto_url
                 logo = ImageReader(logo_url)
 
+            # Variables de posición inicial
             x = 10
             y = height - 80 
             tamano_cuadrado = 1 * inch
@@ -95,9 +96,12 @@ class FormatoManifiesto:
             parrafo_legal.wrapOn(p, parrafo_width, parrafo_height)
             parrafo_legal.drawOn(p, parrafo_x, parrafo_y)
 
+            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
+            y_seccion = y - 85  # Posición inicial para la sección de despacho
+
             # Bloque despacho - Ahora con celdas con bordes
             celda_x = x + 20  # Posición inicial X
-            celda_y = y - 100  # Posición Y (más abajo)
+            celda_y = y_seccion  # Posición Y
             celda_ancho = 150  # Ancho de cada celda
             celda_alto = 35   # Alto de cada celda
             espacio_entre_celdas = 0  # Espacio entre celdas
@@ -160,26 +164,30 @@ class FormatoManifiesto:
                     con_linea_divisora=False
                 )
 
-            titulo_y = celda_y - celda_alto + 21
-            ancho_total = width - 52  # Ancho total (márgenes de 20 a cada lado)
+            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
+            y_seccion = celda_y - celda_alto + 18 # Salto de línea después del bloque anterior
 
-            # Dibujar la celda de título único
+            titulo_y = y_seccion
+            ancho_total = width - 52 
             PDFUtilidades.dibujar_celda_con_borde(
-                p, 
-                x + 20,           # Mismo margen izquierdo que las otras celdas
-                titulo_y,         # Nueva posición Y (debajo de las otras celdas)
-                ancho_total,      # Ancho completo
-                14,       # Mismo alto que las otras celdas
+                p,
+                x + 20,
+                titulo_y,
+                ancho_total,
+                14,
                 "INFORMACIÓN DEL VEHÍCULO Y CONDUCTOR",
-                valor=None,       # Sin valor
+                valor=None,
                 font_titulo="Helvetica-Bold",
                 size_titulo=10,
                 padding=5,
-                con_linea_divisora=False,  # Sin línea divisora
-                solo_titulo=True           # Modo solo título
+                con_linea_divisora=False,
+                solo_titulo=True  
             )
 
-            nuevas_celdas_y = titulo_y - celda_alto 
+            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
+            y_seccion = titulo_y - celda_alto - 3  # Salto de línea después del título
+
+            nuevas_celdas_y = y_seccion
             nuevo_celda_x = x + 20
 
             if hasattr(empresa, 'nombre_corto'):
@@ -204,7 +212,55 @@ class FormatoManifiesto:
                     "DIRECCIÓN", validarVacio(empresa.direccion),
                     con_linea_divisora=False
                 )
+
+            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
+            y_seccion = nuevas_celdas_y - celda_alto - 3  # Salto de línea después del bloque anterior
+
+            # Información del vehículo - ahora en una nueva línea
+            nuevo_celda_x = x + 20
+
+            if hasattr(despacho, 'vehiculo') and hasattr(despacho.vehiculo, 'placa'): 
+                nuevo_celda_x = PDFUtilidades.dibujar_celda_con_borde(
+                    p, nuevo_celda_x, y_seccion, 80, celda_alto, 
+                    "PLACA", validarVacio(despacho.vehiculo.placa),
+                    con_linea_divisora=False
+                )
             nuevo_celda_x += espacio_entre_celdas
+
+            if hasattr(despacho, 'vehiculo') and hasattr(despacho.vehiculo.marca, 'nombre'): 
+                nuevo_celda_x = PDFUtilidades.dibujar_celda_con_borde(
+                    p, nuevo_celda_x, y_seccion, 80, celda_alto, 
+                    "MARCA", validarVacio(despacho.vehiculo.marca.nombre),
+                    con_linea_divisora=False
+                )
+            nuevo_celda_x += espacio_entre_celdas
+
+            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
+            y_seccion = y_seccion - celda_alto - 3
+
+            nuevo_celda_x = x + 20
+
+            if hasattr(despacho, 'conductor') and hasattr(despacho.conductor, 'nombre_corto'): 
+                nuevo_celda_x = PDFUtilidades.dibujar_celda_con_borde(
+                    p, nuevo_celda_x, y_seccion, 160, celda_alto, 
+                    "CONDUCTOR", validarVacio(despacho.conductor.nombre_corto),
+                    con_linea_divisora=False
+                )
+            nuevo_celda_x += espacio_entre_celdas
+
+            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
+            y_seccion = y_seccion - celda_alto - 3
+
+            nuevo_celda_x = x + 20
+
+            if hasattr(despacho, 'vehiculo') and hasattr(despacho.vehiculo.poseedor, 'nombre_corto'): 
+                nuevo_celda_x = PDFUtilidades.dibujar_celda_con_borde(
+                    p, nuevo_celda_x, y_seccion, 160, celda_alto, 
+                    "POSEEDOR O TENER VEHÍCULO", validarVacio(despacho.vehiculo.poseedor.nombre_corto),
+                    con_linea_divisora=False
+                )
+            nuevo_celda_x += espacio_entre_celdas
+
 
         dibujar_formato()
         p.showPage()
