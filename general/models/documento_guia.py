@@ -12,6 +12,7 @@ class GenDocumentoGuia(models.Model):
     declara = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     flete = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     manejo = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     recaudo = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     cobro_entrega = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     documento = models.ForeignKey(GenDocumento, on_delete=models.PROTECT, related_name='documentos_guias_documento_rel')

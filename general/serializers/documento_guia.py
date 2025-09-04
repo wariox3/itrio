@@ -8,8 +8,13 @@ class GenDocumentoGuiaSerializador(serializers.ModelSerializer):
     guia__estado_entregado = serializers.BooleanField(source='guia.estado_entregado', read_only=True, allow_null=True, default=None)
     class Meta:
         model = GenDocumentoGuia
-        fields = ['id', 'unidades', 'peso', 'volumen', 'peso_facturado', 'costo', 'declara', 'flete', 'manejo', 'recaudo', 'cobro_entrega', 
-                  'documento', 'guia', 'guia__fecha', 'guia__ciudad_destino__nombre', 'guia__cliente__nombre_corto', 'guia__estado_entregado']   
+        fields = ['id', 'unidades', 'peso', 'volumen', 'peso_facturado', 'costo', 'declara', 'flete', 'manejo', 'total', 'recaudo', 'cobro_entrega', 
+                  'documento', 
+                  'guia', 
+                  'guia__fecha', 
+                  'guia__ciudad_destino__nombre', 
+                  'guia__cliente__nombre_corto', 
+                  'guia__estado_entregado']   
         select_related_fields = ['guia', 'documento']     
   
 
