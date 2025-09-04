@@ -2,7 +2,7 @@ from general.models.documento_guia import GenDocumentoGuia
 from rest_framework import serializers
 
 class GenDocumentoGuiaSerializador(serializers.ModelSerializer):
-    guia__fecha = serializers.DateField(source='guia.fecha', read_only=True, allow_null=True, default=None)
+    guia__fecha = serializers.DateField(source='guia.fecha', read_only=True)
     guia__ciudad_destino__nombre = serializers.CharField(source='guia.ciudad_destino.nombre', read_only=True, allow_null=True, default=None)
     guia__cliente__nombre_corto = serializers.CharField(source='guia.cliente.nombre_corto', read_only=True, allow_null=True, default=None)
     guia__estado_entregado = serializers.CharField(source='guia.estado_entregado', read_only=True, allow_null=True, default=None)
