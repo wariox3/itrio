@@ -88,7 +88,8 @@ class NegocioViewSet(viewsets.ModelViewSet):
                     'comentario': viaje.comentario,
                     'ciudad_origen': viaje.ciudad_origen_id,
                     'ciudad_destino': viaje.ciudad_destino_id,    
-                    'puntos_entrega': viaje.puntos_entrega,           
+                    'puntos_entrega': viaje.puntos_entrega,    
+                    'publicar': True       
                 }     
                 serializador_negocio = TteNegocioSerializador(data=data)
                 if serializador_negocio.is_valid():
@@ -132,8 +133,7 @@ class NegocioViewSet(viewsets.ModelViewSet):
                             viaje.contenedor_id = request.tenant.id
                             viaje.schema_name = request.tenant.schema_name
                             viaje.usuario_id = request.user.id
-                            viaje.solicitud_transporte = True
-                            viaje.publicar = True
+                            viaje.solicitud_transporte = True                            
                             viaje.save()
                         negocio.estado_aprobado = True
                         negocio.save()
