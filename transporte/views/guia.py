@@ -49,6 +49,21 @@ class GuiaViewSet(viewsets.ModelViewSet):
                 return exporter.exportar()
         return super().list(request, *args, **kwargs)
     
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        related_objects = []
+        for related_object in instance._meta.related_objects:
+            if not hasattr(related_object, 'field') or related_object.field.remote_field.on_delete == models.CASCADE:
+                continue
+            related_manager = getattr(instance, related_object.get_accessor_name())
+            if related_manager.exists():
+                related_objects.append(related_object.related_model.__name__)
+        if related_objects:
+            relaciones_texto = ', '.join(related_objects)
+            return Response({'mensaje': f"El registro no se puede eliminar porque tiene registros asociados en: {relaciones_texto}"},status=status.HTTP_400_BAD_REQUEST) 
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
     @action(detail=False, methods=["post"], url_path=r'enviar-rndc',)
     def enviar_rndc_action(self, request):                     
         raw = request.data

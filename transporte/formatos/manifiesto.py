@@ -103,7 +103,7 @@ class FormatoManifiesto:
             celda_x = x + 20  # Posición inicial X
             celda_y = y_seccion  # Posición Y
             celda_ancho = 150  # Ancho de cada celda
-            celda_alto = 35   # Alto de cada celda
+            celda_alto = 28   # Alto de cada celda
             espacio_entre_celdas = 0  # Espacio entre celdas
             
             # FECHA EXPEDICIÓN - Con línea divisora
@@ -165,7 +165,7 @@ class FormatoManifiesto:
                 )
 
             # Ajustar posición Y para la siguiente sección (mover hacia abajo)
-            y_seccion = celda_y - celda_alto + 18 # Salto de línea después del bloque anterior
+            y_seccion = celda_y - celda_alto + 14 # Salto de línea después del bloque anterior
 
             titulo_y = y_seccion
             ancho_total = width - 52 
@@ -178,14 +178,14 @@ class FormatoManifiesto:
                 "INFORMACIÓN DEL VEHÍCULO Y CONDUCTOR",
                 valor=None,
                 font_titulo="Helvetica-Bold",
-                size_titulo=10,
+                size_titulo=9,
                 padding=5,
                 con_linea_divisora=False,
-                solo_titulo=True  
+                solo_titulo=True,
             )
 
             # Ajustar posición Y para la siguiente sección (mover hacia abajo)
-            y_seccion = titulo_y - celda_alto - 3  # Salto de línea después del título
+            y_seccion = titulo_y - celda_alto   # Salto de línea después del título
 
             nuevas_celdas_y = y_seccion
             nuevo_celda_x = x + 20
@@ -213,10 +213,8 @@ class FormatoManifiesto:
                     con_linea_divisora=False
                 )
 
-            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
-            y_seccion = nuevas_celdas_y - celda_alto - 3  # Salto de línea después del bloque anterior
+            y_seccion = nuevas_celdas_y - celda_alto
 
-            # Información del vehículo - ahora en una nueva línea
             nuevo_celda_x = x + 20
 
             if hasattr(despacho, 'vehiculo') and hasattr(despacho.vehiculo, 'placa'): 
@@ -235,8 +233,7 @@ class FormatoManifiesto:
                 )
             nuevo_celda_x += espacio_entre_celdas
 
-            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
-            y_seccion = y_seccion - celda_alto - 3
+            y_seccion = y_seccion - celda_alto
 
             nuevo_celda_x = x + 20
 
@@ -248,8 +245,7 @@ class FormatoManifiesto:
                 )
             nuevo_celda_x += espacio_entre_celdas
 
-            # Ajustar posición Y para la siguiente sección (mover hacia abajo)
-            y_seccion = y_seccion - celda_alto - 3
+            y_seccion = y_seccion - celda_alto
 
             nuevo_celda_x = x + 20
 

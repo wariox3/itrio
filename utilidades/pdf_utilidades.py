@@ -44,25 +44,15 @@ class PDFUtilidades:
     @staticmethod
     def dibujar_celda_con_borde(p, x, y, ancho, alto, titulo, valor=None, 
                             font_titulo="Helvetica-Bold", font_valor="Helvetica", 
-                            size_titulo=10, size_valor=9, padding=5,
-                            con_linea_divisora=True, solo_titulo=False):
+                            size_titulo=9, size_valor=8, padding=5,
+                            con_linea_divisora=True, solo_titulo=False,
+                            ajuste_titulo=2):  # Nuevo parámetro para ajuste
         """
         Dibuja una celda con borde, con opción de solo título o título+valor
         
         Args:
-            p: Objeto canvas
-            x, y: Coordenadas de la celda
-            ancho, alto: Dimensiones de la celda
-            titulo: Texto del título
-            valor: Texto del valor (opcional si solo_titulo=True)
-            font_titulo, font_valor: Fuentes para título y valor
-            size_titulo, size_valor: Tamaños de fuente
-            padding: Espaciado interno
-            con_linea_divisora: Si True, dibuja línea divisora entre título y valor
-            solo_titulo: Si True, solo muestra el título centrado
-        
-        Returns:
-            float: Posición X para la siguiente celda
+            ... [parámetros existentes] ...
+            ajuste_titulo: Ajuste vertical del título en puntos (positivo = subir)
         """
         
         # Dibujar el rectángulo del borde
@@ -73,17 +63,18 @@ class PDFUtilidades:
             p.setFont(font_titulo, size_titulo)
             titulo_width = p.stringWidth(titulo.upper(), font_titulo, size_titulo)
             titulo_x = x + (ancho - titulo_width) / 2
-            titulo_y = y + (alto - size_titulo) / 2  # Centrado verticalmente
+            titulo_y = y + (alto - size_titulo) / 2 + ajuste_titulo  # Ajuste añadido
             p.drawString(titulo_x, titulo_y, titulo.upper())
         else:
             # Modo título + valor
             p.setFont(font_titulo, size_titulo)
             titulo_width = p.stringWidth(titulo.upper(), font_titulo, size_titulo)
             titulo_x = x + (ancho - titulo_width) / 2
-            titulo_y = y + alto - size_titulo - padding
+            titulo_y = y + alto - size_titulo - padding + ajuste_titulo  # Ajuste añadido
             p.drawString(titulo_x, titulo_y, titulo.upper())
             
             if con_linea_divisora:
+                # Ajustar también la línea divisora si es necesario
                 p.line(x, titulo_y - padding, x + ancho, titulo_y - padding)
             
             if valor is not None:
