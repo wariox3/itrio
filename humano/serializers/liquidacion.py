@@ -12,9 +12,10 @@ class HumLiquidacionSerializador(serializers.HyperlinkedModelSerializer):
                   ,'vacacion', 'deduccion', 'adicion', 'total', 'salario', 'estado_aprobado', 'estado_generado', 'comentario',
                   'fecha_ultimo_pago', 'fecha_ultimo_pago_prima', 'fecha_ultimo_pago_cesantia', 'fecha_ultimo_pago_vacacion']        
 
-class HumLiquidacionListaSerializador(serializers.HyperlinkedModelSerializer):      
+class HumLiquidacionListaSerializador(serializers.ModelField):      
     contrato__contacto__numero_identificacion = serializers.CharField(source='contrato.contacto.numero_identificacion', read_only=True)
     contrato__contacto__nombre_corto = serializers.CharField(source='contrato.contacto.nombre_corto', read_only=True)   
+    contrato__salario = serializers.CharField(source='contrato.salario', read_only=True)   
     
     class Meta:
         model = HumLiquidacion
