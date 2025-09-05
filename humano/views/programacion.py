@@ -37,6 +37,7 @@ import base64
 from io import BytesIO
 import openpyxl
 from utilidades.excel_exportar import ExcelExportar
+from humano.filters.programacion import Programacionilter
 
 def horas_programacion(programacion_detalle):
     respuesta_horas = [
@@ -76,6 +77,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
     serializer_class = HumProgramacionSerializador
     permission_classes = [permissions.IsAuthenticated]
     serializer_class_2 = HumProgramacionDetalleSerializador
+    filterset_class = Programacionilter 
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
