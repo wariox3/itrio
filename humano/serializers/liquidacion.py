@@ -23,6 +23,7 @@ class HumLiquidacionListaSerializador(serializers.HyperlinkedModelSerializer):
                   'fecha',    
                   'contrato__contacto__numero_identificacion',      
                   'contrato__contacto__nombre_corto', 
+                  'contrato__salario',
                   'contrato_id',                       
                   'fecha_desde',
                   'fecha_hasta',
