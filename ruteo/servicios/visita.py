@@ -186,12 +186,12 @@ class VisitaServicio():
                     'latitud': None,
                     'longitud': None,
                     'estado_decodificado': False,
-                    'estado_despacho': True,
                     'tiempo_servicio': 3,
                     'estado_franja': False,
                     'franja': None,
                     'resultados': None,
-                    'despacho': despacho_id
+                    'despacho': despacho_id,
+                    'estado_despacho': despacho_id is not None
                 } 
                 if direccion_destinatario:                   
                     direccion = CtnDireccion.objects.filter(direccion=direccion_destinatario).first()
