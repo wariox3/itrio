@@ -47,7 +47,7 @@ class RutVistaListaSerializador(serializers.ModelSerializer):
             'estado_novedad', 
             'estado_devolucion', 
             'estado_entregado',
-            'estado_despachado'
+            'estado_despacho'
         ]
 
 class RutVisitaDetalleSerializador(serializers.ModelSerializer):    
