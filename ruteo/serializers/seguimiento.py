@@ -5,5 +5,5 @@ class RutSeguimientoSerializador(serializers.ModelSerializer):
 
     class Meta:
         model = RutSeguimiento
-        fields = ['id', 'fecha_registro', 'comentario', 'despacho']  
+        fields = ['id', 'fecha_registro', 'comentario', 'despacho', 'usuario_id']  
     
