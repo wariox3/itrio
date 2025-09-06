@@ -46,7 +46,8 @@ class RutVistaListaSerializador(serializers.ModelSerializer):
             'franja_codigo',
             'estado_novedad', 
             'estado_devolucion', 
-            'estado_entregado'
+            'estado_entregado',
+            'estado_despachado'
         ]
 
 class RutVisitaDetalleSerializador(serializers.ModelSerializer):    
