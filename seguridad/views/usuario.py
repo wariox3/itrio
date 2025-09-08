@@ -151,11 +151,11 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                     verificacion_serializer.save()
                     #dominio = config('DOMINIO_FRONTEND')                
                     #url = 'https://' + dominio + '/auth/clave/cambiar/' + token
-                    url = f"https://app.{aplicacion_datos['dominio']}/auth/login/" + token
+                    url = f"https://app.{aplicacion_datos['dominio']}/auth/clave/cambiar/" + token
                     if config('ENV') == "test":
-                        url = f"http://app.{aplicacion_datos['dominio_test']}/auth/login/" + token
+                        url = f"http://app.{aplicacion_datos['dominio_test']}/auth/clave/cambiar/" + token
                     if config('ENV') == "dev":
-                        url = f"http://{aplicacion_datos['dominio_dev']}/auth/login/" + token  
+                        url = f"http://{aplicacion_datos['dominio_dev']}/auth/clave/cambiar/" + token  
 
                     html_content = """
                                     <h1>¡Hola {usuario}!</h1>
@@ -170,9 +170,7 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
             else:
                 return Response({'mensaje':'La aplicacion no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
         return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
-          
-
-        
+                  
     @action(detail=False, methods=["post"], url_path=r'cambio-clave-verificar',)
     def cambio_clave_verificar(self, request):
         raw = request.data
