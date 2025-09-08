@@ -127,21 +127,36 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     
     @action(detail=False, methods=["post"], url_path=r'cambio-clave-solicitar',)
     def cambio_clave_solicitar(self, request):
-        try:
-            raw = request.data            
-            username = raw.get('username')
-            if username:
+        raw = request.data            
+        username = raw.get('username')
+        aplicacion = raw.get('aplicacion', None)
+        if username and aplicacion:
+            try:
                 usuario = User.objects.get(username = username)
+            except User.DoesNotExist:
+                return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
+            
+            aplicaciones = settings.APLICACIONES
+            if aplicacion in aplicaciones:
+                aplicacion_datos = aplicaciones[aplicacion]
                 token = secrets.token_urlsafe(20)            
-                raw["token"] = token
-                raw["vence"] = datetime.now().date() + timedelta(days=1)                                    
-                raw["usuario_id"] = usuario.id
-                raw["accion"] = "clave"
-                verificacion_serializer = CtnVerificacionSerializador(data = raw)
+                data = {
+                    'token': token,
+                    'vence': datetime.now().date() + timedelta(days=1),
+                    'usuario_id': usuario.id,
+                    'accion': 'clave'
+                }
+                verificacion_serializer = CtnVerificacionSerializador(data = data)
                 if verificacion_serializer.is_valid():                                             
                     verificacion_serializer.save()
-                    dominio = config('DOMINIO_FRONTEND')                
-                    url = 'https://' + dominio + '/auth/clave/cambiar/' + token
+                    #dominio = config('DOMINIO_FRONTEND')                
+                    #url = 'https://' + dominio + '/auth/clave/cambiar/' + token
+                    url = f"https://app.{aplicacion_datos['dominio']}/auth/login/" + token
+                    if config('ENV') == "test":
+                        url = f"http://app.{aplicacion_datos['dominio_test']}/auth/login/" + token
+                    if config('ENV') == "dev":
+                        url = f"http://{aplicacion_datos['dominio_dev']}/auth/login/" + token  
+
                     html_content = """
                                     <h1>¡Hola {usuario}!</h1>
                                     <p>Recibimos una solicitud para cambiar tu clave, puedes cambiarla haciendo clic en 
@@ -149,12 +164,14 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
                                     <a href='{url}' class='button'>Cambiar clave</a>
                                     """.format(url=url, usuario=usuario.nombre_corto)
                     correo = Zinc()  
-                    correo.correo(usuario.correo, 'Solicitud cambio clave RedDoc', html_content)
+                    correo.correo(usuario.correo, f'Solicitud cambio clave {aplicacion_datos["nombre"]}', html_content, aplicacion)
                     return Response({'verificacion': verificacion_serializer.data}, status=status.HTTP_201_CREATED)
-                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
-        except User.DoesNotExist:
-            return Response({'mensaje':'El usuario no existe', 'codigo':8}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':3, 'validaciones': verificacion_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)            
+            else:
+                return Response({'mensaje':'La aplicacion no existe', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+        return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+          
+
         
     @action(detail=False, methods=["post"], url_path=r'cambio-clave-verificar',)
     def cambio_clave_verificar(self, request):
