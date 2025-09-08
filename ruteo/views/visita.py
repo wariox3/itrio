@@ -358,16 +358,17 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             for filtro in filtros:
                 operador = filtro.get('operador')
                 propiedad = filtro['propiedad']
+                valor = filtro['valor1']
+                if operador == 'in' and isinstance(valor, str) and ',' in valor:
+                    valor = [int(v.strip()) for v in valor.split(',')]
+                    filtro['valor1'] = valor                 
                 if operador == 'range':
                     visitas = visitas.filter(**{f'{propiedad}__{operador}': (filtro['valor1'], filtro['valor2'])})
                 elif operador:
                     visitas = visitas.filter(**{f'{propiedad}__{operador}': filtro['valor1']})
-
         visitas = visitas.order_by('orden')
-
         visitas_pendientes = list(visitas)
         despachos_creados = 0
-
         def vehiculo_puede_tomar_visita(vehiculo, visita, peso_actual, tiempo_actual, verificar_franja):
             if (peso_actual + visita.peso > vehiculo.capacidad or 
                 tiempo_actual + visita.tiempo > vehiculo.tiempo):
