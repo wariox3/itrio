@@ -560,6 +560,10 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         if filtros:
             for filtro in filtros:                    
                 operador = filtro.get('operador', None)
+                valor = filtro['valor1']
+                if operador == 'in' and isinstance(valor, str) and ',' in valor:
+                    valor = [int(v.strip()) for v in valor.split(',')]
+                    filtro['valor1'] = valor                
                 if operador == 'range':
                     visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
                     errores = errores.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
