@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ruteo.models.vehiculo import RutVehiculo
 from ruteo.models.flota import RutFlota
+from ruteo.serializers.franja import RutFranjaSeleccionarSerializador
 
 
 class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):    
@@ -29,12 +30,16 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
         vehiculo_tiempo = 0
         vehiculo_estado_asignado = ""
         vehiculo_prioridad = ""
+        vehiculo_franjas = []
         if instance.vehiculo:
+            vehiculo = instance.vehiculo 
             vehiculo_placa = instance.vehiculo.placa
             vehiculo_capacidad = instance.vehiculo.capacidad
             vehiculo_tiempo = instance.vehiculo.tiempo
             vehiculo_estado_asignado = instance.vehiculo.estado_asignado    
             vehiculo_prioridad = instance.vehiculo.prioridad
+            franjas = vehiculo.franjas.all()
+            vehiculo_franjas = RutFranjaSeleccionarSerializador(franjas, many=True).data
 
         return {
             'id': instance.id,  
@@ -44,6 +49,7 @@ class RutFlotaSerializador(serializers.HyperlinkedModelSerializer):
             'vehiculo_capacidad': vehiculo_capacidad,
             'vehiculo_tiempo': vehiculo_tiempo,
             'vehiculo_estado_asignado' : vehiculo_estado_asignado,
-            'vehiculo_prioridad' : vehiculo_prioridad
+            'vehiculo_prioridad' : vehiculo_prioridad,
+            'vehiculo_franjas': vehiculo_franjas
         }
     
