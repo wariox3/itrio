@@ -32,6 +32,7 @@ from .views.motivo_terminacion import HumMotivoTerminacionViewSet
 from .views.tiempo import HumTiempoViewSet
 from .views.tipo_costo import HumTipoCostoViewSet
 from .views.pago_tipo import HumPagoTipoViewSet
+from .views.liquidacion_adicional import HumLiquidacionAdicionalViewSet
 
 from rest_framework import routers
 
@@ -69,6 +70,7 @@ router.register(r'motivo_terminacion', HumMotivoTerminacionViewSet)
 router.register(r'tiempo', HumTiempoViewSet)
 router.register(r'tipo_costo', HumTipoCostoViewSet)
 router.register(r'pago_tipo', HumPagoTipoViewSet)
+router.register(r'liquidacion_adicional', HumLiquidacionAdicionalViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
