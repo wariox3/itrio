@@ -5,7 +5,7 @@ from ruteo.models.franja import RutFranja
 class RutFranjaSimpleSerializador(serializers.ModelSerializer):
     class Meta:
         model = RutFranja
-        fields = ['codigo', 'nombre']  # Ajusta según los campos de tu modelo RutFranja
+        fields = ['id', 'codigo', 'nombre'] 
 
 class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):   
     franjas = RutFranjaSimpleSerializador(many=True, read_only=True)
