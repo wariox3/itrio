@@ -883,7 +883,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                  
             else:
-                return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+                return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
+                #return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
