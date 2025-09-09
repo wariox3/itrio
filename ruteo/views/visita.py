@@ -597,10 +597,18 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
     def resumen_pendiente(self, request):
         raw = request.data
         filtros = raw.get('filtros')
-        visitas = RutVisita.objects.all()
+        visitas = RutVisita.objects.filter(estado_despacho=False, estado_devolucion=False)        
         if filtros:
             for filtro in filtros:
-                visitas = visitas.filter(**{filtro['propiedad']: filtro['valor1']})
+                operador = filtro.get('operador', None)
+                valor = filtro['valor1']  
+                if operador == 'in' and isinstance(valor, str):                      
+                    if ',' in valor:
+                        valor = [int(v.strip()) for v in valor.split(',')]
+                    else:
+                        valor = [int(valor.strip())]
+                    filtro['valor1'] = valor                 
+                visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
         visitas = visitas.values('franja_codigo').annotate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0),
