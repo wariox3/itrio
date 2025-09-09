@@ -608,7 +608,11 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     else:
                         valor = [int(valor.strip())]
                     filtro['valor1'] = valor                 
-                visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                
+                if operador == 'range':
+                    visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: (filtro['valor1'], filtro['valor2'])})
+                else:
+                    visitas = visitas.filter(**{filtro['propiedad']+'__'+operador: filtro['valor1']})                    
         visitas = visitas.values('franja_codigo').annotate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0),
