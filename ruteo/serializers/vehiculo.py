@@ -1,9 +1,8 @@
 from rest_framework import serializers
 from ruteo.models.vehiculo import RutVehiculo
 
-class RutVehiculoSerializador(serializers.HyperlinkedModelSerializer):
+class RutVehiculoSerializador(serializers.ModelSerializer):
     franjas_codigo = serializers.SerializerMethodField()
-
     class Meta:
         model = RutVehiculo
         fields = [
