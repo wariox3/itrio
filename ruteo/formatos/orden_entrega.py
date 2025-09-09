@@ -45,7 +45,7 @@ class FormatoOrdenEntrega:
             buffer,
             pagesize=letter,
             leftMargin=0.4*inch, rightMargin=0.4*inch,
-            topMargin=1.1*inch, bottomMargin=0.5*inch
+            topMargin=1.4*inch, bottomMargin=0.5*inch
         )
         elementos = []
         estilos = getSampleStyleSheet()
@@ -83,16 +83,22 @@ class FormatoOrdenEntrega:
 
         fecha_formateada = despacho.fecha.strftime("%Y-%m-%d") if despacho.fecha else "N/A"
 
+        # Fila 1 - Agregar "Orden entrega:" antes de "Vehículo:"
         fila1_data = [
-            Paragraph("Despacho:", estilo_etiqueta),
+            Paragraph("Id:", estilo_etiqueta),
             Paragraph(str(despacho.id), estilo_dato),
+            Paragraph("Orden entrega:", estilo_etiqueta),
+            Paragraph(str(despacho.entrega_id) if hasattr(despacho, 'entrega_id') and despacho.entrega_id else "N/A", estilo_dato),
             Paragraph("Vehículo:", estilo_etiqueta),
             Paragraph(str(despacho.vehiculo.placa if despacho.vehiculo else "N/A"), estilo_dato),
             Paragraph("Fecha:", estilo_etiqueta),
             Paragraph(fecha_formateada, estilo_fecha)
         ]
 
+        # Fila 2 - Agregar "Código complemento:" antes de "Peso Total:"
         fila2_data = [
+            Paragraph("Complemento:", estilo_etiqueta),
+            Paragraph(str(despacho.codigo_complemento) if hasattr(despacho, 'codigo_complemento') and despacho.codigo_complemento else "N/A", estilo_dato),
             Paragraph("Peso Total:", estilo_etiqueta),
             Paragraph(f"{int(despacho.peso)}" if despacho.peso else "0", estilo_dato),
             Paragraph("Volumen Total:", estilo_etiqueta),
@@ -101,18 +107,33 @@ class FormatoOrdenEntrega:
             Paragraph(str(visitas.count()), estilo_dato)
         ]
 
+        # Ajustar los anchos de columna para acomodar los nuevos campos
         ancho_total = letter[0] - (0.8 * inch)
         anchos_columnas = [
-            ancho_total * 0.15,  # Etiqueta 1
-            ancho_total * 0.18,  # Dato 1
-            ancho_total * 0.15,  # Etiqueta 2
-            ancho_total * 0.18,  # Dato 2
-            ancho_total * 0.12,  # Etiqueta 3
-            ancho_total * 0.22,  # Dato 3
+            ancho_total * 0.15,  
+            ancho_total * 0.05,  
+            ancho_total * 0.15,  
+            ancho_total * 0.10,  
+            ancho_total * 0.15,  
+            ancho_total * 0.10, 
+            ancho_total * 0.12, 
+            ancho_total * 0.14,
+        ]
+
+        # Ajustar tabla_fila2 para 8 columnas también
+        anchos_columnas_fila2 = [
+            ancho_total * 0.15,  # Etiqueta 1 (Código complemento:)
+            ancho_total * 0.05,  # Dato 1 (codigo_complemento)
+            ancho_total * 0.15,  # Etiqueta 2 (Peso Total:)
+            ancho_total * 0.10,  # Dato 2 (peso)
+            ancho_total * 0.15,  # Etiqueta 3 (Volumen Total:)
+            ancho_total * 0.10,  # Dato 3 (volumen)
+            ancho_total * 0.12,  # Etiqueta 4 (Total Visitas:)
+            ancho_total * 0.14,  # Dato 4 (count)
         ]
 
         tabla_fila1 = Table([fila1_data], colWidths=anchos_columnas)
-        tabla_fila2 = Table([fila2_data], colWidths=anchos_columnas)
+        tabla_fila2 = Table([fila2_data], colWidths=anchos_columnas_fila2)
 
         estilo_info_despacho = TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),

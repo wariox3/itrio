@@ -10,11 +10,25 @@ class FormatoEncabezado():
         empresa = GenEmpresa.objects.get(pk=1)
         
         logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{empresa.imagen}'
+        #logo_url = f'https://semantica.sfo3.digitaloceanspaces.com/itrio/prod/empresa/logo_75_1.jpg'
         try:
             logo = ImageReader(logo_url)
-            p.drawImage(logo, 10, 680, width=100, height=100, mask='auto')
+
+            x, y = 28, 700
+
+            # Pintar el logo dentro del marco 90x90
+            p.drawImage(
+                logo,
+                x, y,
+                width=75, height=75,
+                preserveAspectRatio=True,
+                anchor='c',
+                mask='auto'
+            )
+
         except Exception as e:
             pass
+
         p.setFillColor(colors.lightgrey)
         p.rect(120, 757, 450, 17, stroke=0, fill=1)        
         p.setFillColor(colors.black)        
@@ -32,7 +46,3 @@ class FormatoEncabezado():
         p.drawString(120, 730, f"NIT: {nit}")
         p.drawString(120, 720, f"DIRECCIÓN: {direccion}")
         p.drawString(120, 710, f"TEL: {telefono}")
-
-     
-
-    
