@@ -176,8 +176,9 @@ class FormatoOrdenEntrega:
                 direccion = Paragraph(str(visita.destinatario_direccion), estilo_normal)
 
                 peso_formateado = str(int(visita.peso)) if visita.peso else "0"
+                unidad_formateado = str(int(visita.unidades)) if visita.unidades else "0"
                 peso = Paragraph(peso_formateado, estilo_numero)
-                unidad = Paragraph(peso_formateado, estilo_numero)
+                unidad = Paragraph(unidad_formateado, estilo_numero)
 
                 data.append([orden, id_visita, numero, documento, destinatario,
                              destinatario_telefono, direccion, unidad, peso])

@@ -9,8 +9,8 @@ class FormatoEncabezado():
         bucket = config('DO_BUCKET')  
         empresa = GenEmpresa.objects.get(pk=1)
         
-        logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{empresa.imagen}'
-        #logo_url = f'https://semantica.sfo3.digitaloceanspaces.com/itrio/prod/empresa/logo_75_1.jpg'
+        #logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{empresa.imagen}'
+        logo_url = f'https://semantica.sfo3.digitaloceanspaces.com/itrio/prod/empresa/logo_75_1.jpg'
         try:
             logo = ImageReader(logo_url)
 

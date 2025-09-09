@@ -104,6 +104,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             'destinatario_direccion': direccion_destinatario,
             'destinatario_telefono': request.data.get('destinatario_telefono', None),
             'destinatario_correo': request.data.get('destinatario_correo', None),
+            'unidades': request.data.get('unidades', None),
             'peso': request.data.get('peso', None),
             'volumen': request.data.get('volumen', None),
             'tiempo_servicio': request.data.get('tiempo_servicio', None),
@@ -177,7 +178,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         fecha = None                    
                     documento = str(row[2])
                     direccion_destinatario = VisitaServicio.limpiar_direccion(row[4])
-                    telefono_destinatario = str(row[6])
+                    telefono_destinatario = str(row[5])
                     if telefono_destinatario:
                         telefono_destinatario[:50]                    
                     data = {
@@ -186,9 +187,9 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                         'documento': documento[:30],
                         'destinatario': row[3],
                         'destinatario_direccion': direccion_destinatario,
-                        'ciudad': row[5],
                         'destinatario_telefono': telefono_destinatario,
-                        'destinatario_correo': row[7],
+                        'destinatario_correo': row[6],
+                        'unidades': row[7],
                         'peso': row[8],
                         'volumen': row[9],
                         'latitud': None,
@@ -592,6 +593,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         visitas = visitas.aggregate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0),
+            unidades=Coalesce(Sum('unidades'), 0.0),
             tiempo=Coalesce(Sum('tiempo'), Decimal(0.0)),
             tiempo_servicio=Coalesce(Sum('tiempo_servicio'), Decimal(0.0)),
             tiempo_trayecto=Coalesce(Sum('tiempo_trayecto'), Decimal(0.0))
@@ -626,6 +628,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         visitas = visitas.values('franja_codigo').annotate(
             cantidad=Count('id'), 
             peso=Coalesce(Sum('peso'), 0.0),
+            unidades=Coalesce(Sum('unidades'), 0.0),
             tiempo=Coalesce(Sum('tiempo'), Decimal(0.0)),
             tiempo_servicio=Coalesce(Sum('tiempo_servicio'), Decimal(0.0)),
             tiempo_trayecto=Coalesce(Sum('tiempo_trayecto'), Decimal(0.0)),
@@ -670,6 +673,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
         documento = raw.get('documento')
         destinatario = raw.get('destinatario')
         destinatario_telefono = raw.get('destinatario_telefono')
+        unidades = raw.get('unidades')
         peso = raw.get('peso')
         volumen = raw.get('volumen')
         if id and destinatario and destinatario_direccion:
@@ -718,6 +722,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 visita.documento = documento
                 visita.destinatario = destinatario
                 visita.destinatario_telefono = destinatario_telefono
+                visita.unidades = unidades
                 visita.peso = peso
                 visita.volumen = volumen
                 visita.save()               

@@ -1,6 +1,6 @@
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle ,Spacer
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer
 from general.formatos.encabezado import FormatoEncabezado
 from reportlab.lib.units import inch
 from utilidades.pdf_utilidades import PDFUtilidades
@@ -12,23 +12,41 @@ from reportlab.lib import colors
 class FormatoOrdenCargue:
     def generar_pdf(self, despacho_id):
         buffer = BytesIO()
+        
+        # Obtener datos del despacho primero
+        despacho = TteDespacho.objects.get(id=despacho_id)
+        despacho_detalles = TteDespachoDetalle.objects.filter(despacho_id=despacho_id)
+        fecha_formateada = despacho.fecha.strftime("%Y-%m-%d") if despacho.fecha else "N/A"
+        
+        # Configurar el documento con márgenes adecuados
         doc = SimpleDocTemplate(
             buffer,
             pagesize=letter,
-            leftMargin=0.4*inch, rightMargin=0.4*inch,
-            topMargin=1.1*inch, bottomMargin=0.5*inch
+            leftMargin=0.4*inch, 
+            rightMargin=0.4*inch,
+            topMargin=1.6*inch,  # Margen superior más grande para el encabezado
+            bottomMargin=0.5*inch
         )
         
         elementos = []
         estilos = PDFUtilidades.obtener_estilos()
-        def _encabezado(canvas, doc):
+
+        # Función de encabezado simple
+        def _encabezado_simple(canvas, doc):
             FormatoEncabezado().generar_pdf(canvas, "ORDEN DE CARGUE")
         
-        despacho = TteDespacho.objects.get(id=despacho_id)
-        despacho_detalles = TteDespachoDetalle.objects.filter(despacho_id=despacho_id)
-        fecha_formateada = despacho.fecha.strftime("%Y-%m-%d") if despacho.fecha else "N/A"
+        # Función de encabezado para páginas posteriores con espacio adicional
+        def _encabezado_con_espacio(canvas, doc):
+            FormatoEncabezado().generar_pdf(canvas, "ORDEN DE CARGUE")
+            
+            # Agregar espacio adicional moviendo el contenido hacia abajo
+            espacio_extra = 0.8 * inch  # Ajusta este valor según necesites
+            canvas.saveState()
+            canvas.translate(0, -espacio_extra)
+            canvas.restoreState()
 
-        elementos.append(Spacer(1,20))
+        # Solo agregar la información del despacho en la primera página
+        elementos.append(Spacer(1, 10))  # Espacio reducido
 
         fila1_data = [
             Paragraph("Despacho:", estilos['etiqueta']),
@@ -40,11 +58,11 @@ class FormatoOrdenCargue:
         ]
 
         fila2_data = [
-            Paragraph("Guias:",  estilos['etiqueta']),
+            Paragraph("Guias:", estilos['etiqueta']),
             Paragraph(str(despacho_detalles.count()), estilos['dato']),
             Paragraph("Peso:", estilos['etiqueta']),
             Paragraph(f"{int(despacho.peso)}" if despacho.peso else "0", estilos['dato']),
-            Paragraph("Volumen:",  estilos['etiqueta']),
+            Paragraph("Volumen:", estilos['etiqueta']),
             Paragraph(f"{int(despacho.volumen)}" if despacho.volumen else "0", estilos['dato'])
         ]
 
@@ -74,6 +92,7 @@ class FormatoOrdenCargue:
         elementos.append(tabla_fila2)
         elementos.append(Spacer(1, 12))
 
+        # Crear tabla de guías
         data = [["Id", "Guia", "Fecha", "Cliente", "Destinatario", "Dirección", "Und", "Peso"]]
 
         for detalle in despacho_detalles:
@@ -88,7 +107,7 @@ class FormatoOrdenCargue:
             peso = Paragraph(str(int(detalle.peso)) if detalle.peso is not None else "0", estilos['numero_tabla'])
             unidad = Paragraph(str(int(detalle.unidades)) if detalle.unidades is not None else "0", estilos['numero_tabla'])
 
-            data.append([id, guia, fecha, cliente, destinatario, destinatario_direccion, peso, unidad])
+            data.append([id, guia, fecha, cliente, destinatario, destinatario_direccion, unidad, peso])  # Corregí el orden: Und, Peso
 
         anchos_columnas_visitas = [
             ancho_total * 0.04,
@@ -110,7 +129,7 @@ class FormatoOrdenCargue:
             ("FONTSIZE", (0, 0), (-1, 0), 8),
             ("BOTTOMPADDING", (0, 0), (-1, 0), 6),
             ("ALIGN", (0, 1), (-1, -1), "LEFT"),
-            ("ALIGN", (6, 1), (6, -1), "RIGHT"),
+            ("ALIGN", (6, 1), (7, -1), "RIGHT"),  # Alinear números a la derecha
             ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
             ("FONTSIZE", (0, 1), (-1, -1), 7),
@@ -125,8 +144,8 @@ class FormatoOrdenCargue:
         
         doc.build(
             elementos,
-            onFirstPage=_encabezado,
-            onLaterPages=_encabezado,
+            onFirstPage=_encabezado_simple,
+            onLaterPages=_encabezado_con_espacio,
             canvasmaker=PDFUtilidades.PieDePagina
         )
         
