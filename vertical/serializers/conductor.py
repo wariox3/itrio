@@ -24,3 +24,8 @@ class VerConductorVerificarSerializador(serializers.ModelSerializer):
             'ciudad__nombre',
             'identificacion']
         select_related_fields = ['categoria_licencia', 'ciudad', 'identificacion']             
+
+class VerConductorSeleccionarSerializador(serializers.ModelSerializer):
+    class Meta:
+        model = VerConductor
+        fields = ['id', 'nombre_corto']

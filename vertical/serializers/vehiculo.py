@@ -22,4 +22,10 @@ class VerVehiculoSerializador(serializers.ModelSerializer):
                 'combustible', 'combustible__nombre', 'combustible__codigo', 'carroceria', 'carroceria__nombre', 'carroceria__codigo',
                 'configuracion', 'configuracion__nombre', 'configuracion__codigo']
         select_related_fields = ['color', 'marca', 'linea', 'combustible', 'carroceria', 'configuracion']  
+
+class VerVehiculoSeleccionarSerializador(serializers.ModelSerializer):
+  
+    class Meta:
+        model = VerVehiculo
+        fields = ['id', 'placa']          
         

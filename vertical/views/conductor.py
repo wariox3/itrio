@@ -2,7 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from vertical.models.conductor import VerConductor
-from vertical.serializers.conductor import VerConductorSerializador, VerConductorVerificarSerializador
+from vertical.serializers.conductor import VerConductorSerializador, VerConductorVerificarSerializador, VerConductorSeleccionarSerializador
 from django.db import transaction
 
 class ConductorViewSet(viewsets.ModelViewSet):
@@ -29,4 +29,18 @@ class ConductorViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
         
+    @action(detail=False, methods=["get"], url_path=r'seleccionar')
+    def seleccionar_action(self, request):
+        limit = request.query_params.get('limit', 10)
+        nombre_corto = request.query_params.get('nombre_corto__icontains', None)
+        queryset = self.get_queryset()
+        if nombre_corto:
+            queryset = queryset.filter(nombre_corto__icontains=nombre_corto)
+        try:
+            limit = int(limit)
+            queryset = queryset[:limit]
+        except ValueError:
+            pass    
+        serializer = VerConductorSeleccionarSerializador(queryset, many=True)        
+        return Response(serializer.data)         
    
