@@ -41,6 +41,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'vr_saldo': instance.vr_saldo,
             'vr_credito': instance.vr_credito,
             'vr_abono': instance.vr_abono,
+            'empresa_nombre' : instance.empresa_nombre,
+            'empresa_numero_identificacion' : instance.empresa_numero_identificacion,
             'cargo' : instance.cargo,
             'imagen': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen}",
             'imagen_thumbnail': f"https://{config('DO_BUCKET')}.{config('DO_REGION')}.digitaloceanspaces.com/{instance.imagen_thumbnail}",
@@ -59,5 +61,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class UserUpdateSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['nombre_corto', 'nombre', 'apellido', 'telefono', 'idioma', 'numero_identificacion', 'cargo', 'operacion_id', 'operacion_cargo_id']    
+        fields = ['nombre_corto', 'nombre', 'apellido', 'telefono', 'idioma', 'numero_identificacion', 'cargo', 'operacion_id', 'operacion_cargo_id',
+                  'empresa_nombre', 'empresa_numero_identificacion']    
       

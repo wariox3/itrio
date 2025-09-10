@@ -10,6 +10,7 @@ from seguridad.models import User
 
 class VerViaje(models.Model):            
     fecha = models.DateTimeField(auto_now_add=True, null=True)
+    numero_identificacion = models.CharField(max_length=20, null=True)
     cliente = models.CharField(max_length=200, null=True)
     unidades = models.FloatField(default=0)    
     flete = models.DecimalField(max_digits=20, decimal_places=6, default=0)

@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from transporte.models.negocio import TteNegocio
+from general.models.contacto import GenContacto
 from vertical.models.viaje import VerViaje
 from transporte.serializers.negocio import TteNegocioSerializador, TteNegocioSeleccionarSerializador
 from transporte.filters.negocio import NegocioFilter
@@ -76,6 +77,10 @@ class NegocioViewSet(viewsets.ModelViewSet):
             except VerViaje.DoesNotExist:
                 return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
             with transaction.atomic():
+                contacto_id = None
+                if viaje.numero_identificacion:
+                    contacto = GenContacto.objects.filter(numero_identificacion=viaje.numero_identificacion).first()
+                    contacto_id = contacto.id if contacto else None
                 data = {
                     'fecha': timezone.now().date(),
                     'servicio': viaje.servicio_id,
@@ -88,7 +93,9 @@ class NegocioViewSet(viewsets.ModelViewSet):
                     'comentario': viaje.comentario,
                     'ciudad_origen': viaje.ciudad_origen_id,
                     'ciudad_destino': viaje.ciudad_destino_id,    
-                    'puntos_entrega': viaje.puntos_entrega,    
+                    'puntos_entrega': viaje.puntos_entrega, 
+                    'operacion': 1,   
+                    'contacto': contacto_id,
                     'publicar': True       
                 }     
                 serializador_negocio = TteNegocioSerializador(data=data)

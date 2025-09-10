@@ -30,6 +30,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     apellido = models.CharField(max_length = 255, null = True)
     nombre_corto = models.CharField(max_length = 255, null = True)
     numero_identificacion = models.CharField(max_length=20, null = True)
+    empresa_nombre = models.CharField(max_length = 255, null = True)
+    empresa_numero_identificacion = models.CharField(max_length=20, null = True)    
     cargo = models.CharField(max_length=255, null = True)
     telefono = models.CharField(max_length = 50, null = True)
     idioma = models.CharField(max_length = 2, default='es')

@@ -12,7 +12,7 @@ class VerViajeSerializador(serializers.ModelSerializer):
     class Meta:
         model = VerViaje
         fields = [  
-                    'id', 'fecha', 'cliente', 'unidades', 'peso', 'volumen', 'negocio_id', 'contenedor_id', 'schema_name', 
+                    'id', 'fecha', 'numero_identificacion', 'cliente', 'unidades', 'peso', 'volumen', 'negocio_id', 'contenedor_id', 'schema_name', 
                     'solicitud_cliente', 'solicitud_transporte',
                     'estado_aceptado', 'estado_cancelado', 'flete', 'pago', 'puntos_entrega', 'comentario', 'propuestas',
                     'vehiculo', 
@@ -46,7 +46,7 @@ class VerViajeListaSerializador(serializers.ModelSerializer):
     empaque__nombre = serializers.CharField(source='empaque.nombre', read_only=True, allow_null=True, default=None)    
     class Meta:
         model = VerViaje
-        fields = [  'id', 'fecha', 'cliente', 'unidades', 'peso', 'volumen', 'puntos_entrega', 'comentario', 'propuestas', 'flete', 'pago', 'estado_aceptado',
+        fields = [  'id', 'fecha', 'numero_identificacion', 'cliente', 'unidades', 'peso', 'volumen', 'puntos_entrega', 'comentario', 'propuestas', 'flete', 'pago', 'estado_aceptado',
                     'ciudad_origen_id',
                     'ciudad_origen__nombre',
                     'ciudad_destino_id',
@@ -69,7 +69,7 @@ class VerViajeListaEspecialSerializador(serializers.ModelSerializer):
     usuario__nombre_corto = serializers.CharField(source='usuario.nombre_corto', read_only=True, allow_null=True, default=None)    
     class Meta:
         model = VerViaje
-        fields = [  'id', 'fecha', 'cliente', 'unidades', 'peso', 'volumen', 'puntos_entrega', 'comentario', 'propuestas', 'estado_aceptado', 'flete', 'pago',
+        fields = [  'id', 'fecha', 'numero_identificacion', 'cliente', 'unidades', 'peso', 'volumen', 'puntos_entrega', 'comentario', 'propuestas', 'estado_aceptado', 'flete', 'pago',
                     'ciudad_origen_id',
                     'ciudad_origen__nombre',
                     'ciudad_destino_id',
