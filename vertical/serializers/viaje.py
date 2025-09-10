@@ -14,7 +14,7 @@ class VerViajeSerializador(serializers.ModelSerializer):
         fields = [  
                     'id', 'fecha', 'cliente', 'unidades', 'peso', 'volumen', 'negocio_id', 'contenedor_id', 'schema_name', 
                     'solicitud_cliente', 'solicitud_transporte',
-                    'estado_aceptado', 'estado_cancelado', 'flete', 'puntos_entrega', 'comentario', 'propuestas',
+                    'estado_aceptado', 'estado_cancelado', 'flete', 'pago', 'puntos_entrega', 'comentario', 'propuestas',
                     'vehiculo', 
                     'conductor',
                     'ciudad_origen',
