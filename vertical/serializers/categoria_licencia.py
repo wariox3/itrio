@@ -7,3 +7,9 @@ class VerCategoriaLicenciaSerializador(serializers.ModelSerializer):
         model = VerCategoriaLicencia
         fields = ['id', 'nombre']
         
+
+class VerCategoriaLicenciaSeleccionarSerializador(serializers.ModelSerializer):
+
+    class Meta:
+        model = VerCategoriaLicencia
+        fields = ['id', 'nombre']        
