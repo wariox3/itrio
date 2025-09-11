@@ -6,4 +6,11 @@ class VerIdentificacionSerializador(serializers.ModelSerializer):
     class Meta:
         model = VerIdentificacion
         fields = ['id', 'nombre']
+
+
+class VerIdentificacionSeleccionarSerializador(serializers.ModelSerializer):
+
+    class Meta:
+        model = VerIdentificacion
+        fields = ['id', 'nombre']        
         
