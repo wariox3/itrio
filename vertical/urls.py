@@ -11,6 +11,9 @@ from .views.ciudad import CiudadViewSet
 from .views.precio_detalle import PrecioDetalleViewSet
 from .views.verificacion import VerificacionViewSet
 from .views.verificacion_detalle import VerificacionDetalleViewSet
+from .views.identificacion import IdentificacionViewSet
+from .views.categoria_licencia import CategoriaLicenciaViewSet
+from .views.ciudad import CiudadViewSet
 
 from rest_framework import routers
 
@@ -27,6 +30,9 @@ router.register(r'ciudad', CiudadViewSet)
 router.register(r'precio_detalle', PrecioDetalleViewSet)
 router.register(r'verificacion', VerificacionViewSet)
 router.register(r'verificacion_detalle', VerificacionDetalleViewSet)
+router.register(r'identificacion', IdentificacionViewSet)
+router.register(r'categoria_licencia', CategoriaLicenciaViewSet)
+router.register(r'ciudad', CiudadViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
