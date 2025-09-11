@@ -69,6 +69,7 @@ class PropuestaViewSet(viewsets.ModelViewSet):
                     propuesta.save()                    
                     viaje = propuesta.viaje
                     viaje.flete = propuesta.precio
+                    viaje.pago = propuesta.pago
                     viaje.estado_aceptado = True
                     viaje.contenedor_negocio_id = propuesta.contenedor_id
                     viaje.save()

@@ -7,7 +7,7 @@ class VerPrecioDetalleSerializador(serializers.ModelSerializer):
     class Meta:
         model = VerPrecioDetalle
         fields = [  
-                    'id', 'empresa', 'contenedor_id', 'schema_name', 'tonelada',
+                    'id', 'empresa', 'contenedor_id', 'schema_name', 'tonelada', 'tonelada_pago',
                     'ciudad_origen',
                     'ciudad_origen_id',
                     'ciudad_origen__nombre',

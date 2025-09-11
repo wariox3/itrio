@@ -5,6 +5,7 @@ from seguridad.models import User
 class VerPropuesta(models.Model):            
     fecha = models.DateTimeField(auto_now_add=True, null=True)
     precio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    pago = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     contenedor_id = models.IntegerField(null=True)
     estado_aceptado = models.BooleanField(default = False)
     empresa = models.CharField(max_length=200, null=True)

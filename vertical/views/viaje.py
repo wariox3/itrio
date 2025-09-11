@@ -65,11 +65,13 @@ class ViajeViewSet(viewsets.ModelViewSet):
                 viaje = viaje_serializador.save()
                 precios_detalles = VerPrecioDetalle.objects.filter(ciudad_origen_id=data['ciudad_origen'], ciudad_destino_id=data['ciudad_destino'])
                 for precio_detalle in precios_detalles:
-                    peso_toneladas = Decimal(viaje.peso) / Decimal(1000)                    
+                    peso_toneladas = Decimal(viaje.peso) / Decimal(1000)   
+
                     data = {
                         'viaje': viaje.id,
                         'usuario': viaje.usuario_id,
                         'precio': round(peso_toneladas * precio_detalle.tonelada),
+                        'pago': round(peso_toneladas * precio_detalle.tonelada_pago),
                         'contenedor_id': precio_detalle.contenedor_id,
                         'schema_name': precio_detalle.schema_name,
                         'empresa': precio_detalle.empresa

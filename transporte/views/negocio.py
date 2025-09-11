@@ -83,6 +83,7 @@ class NegocioViewSet(viewsets.ModelViewSet):
                     contacto_id = contacto.id if contacto else None
                 data = {
                     'fecha': timezone.now().date(),
+                    'nombre': viaje.cliente,
                     'servicio': viaje.servicio_id,
                     'producto': viaje.producto_id,
                     'empaque': viaje.empaque_id,
@@ -90,6 +91,7 @@ class NegocioViewSet(viewsets.ModelViewSet):
                     'peso': viaje.peso,
                     'volumen': viaje.volumen,
                     'flete': viaje.flete,
+                    'pago': viaje.pago,
                     'comentario': viaje.comentario,
                     'ciudad_origen': viaje.ciudad_origen_id,
                     'ciudad_destino': viaje.ciudad_destino_id,    
