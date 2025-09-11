@@ -25,7 +25,8 @@
       "pk": 3,
       "campos": {
         "nombre": "Impuesto nacional al consumo INC",
-        "codigo_interface": "00"
+        "codigo_interface": "00",
+        "inactivo": true
       }
     },
     {
@@ -33,7 +34,8 @@
       "pk": 4,
       "campos": {
         "nombre": "No responsable INC",
-        "codigo_interface": "00"
+        "codigo_interface": "00",
+        "inactivo": true
       }
     },
     {
@@ -41,7 +43,8 @@
       "pk": 5,
       "campos": {
         "nombre": "Responsable Iva e INC",
-        "codigo_interface": "00"
+        "codigo_interface": "00",
+        "inactivo": true
       }
     },
     {
@@ -49,7 +52,8 @@
       "pk": 6,
       "campos": {
         "nombre": "No aplica - Regimen especial",
-        "codigo_interface": "00"
+        "codigo_interface": "00",
+        "inactivo": true
       }
     }
   ]
