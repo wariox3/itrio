@@ -4,8 +4,9 @@ from rest_framework.decorators import action
 from transporte.models.despacho import TteDespacho
 from transporte.models.despacho_detalle import TteDespachoDetalle
 from transporte.models.negocio import TteNegocio
-from general.models.contacto import GenContacto
 from transporte.models.guia import TteGuia
+from transporte.models.vehiculo import TteVehiculo
+from general.models.contacto import GenContacto
 from vertical.models.viaje import VerViaje
 from transporte.serializers.despacho import TteDespachoSerializador, TteDespachoListaSerializador, TteDespachoDetalleVerSerializador
 from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
@@ -21,6 +22,7 @@ from datetime import datetime
 from transporte.formatos.orden_cargue import FormatoOrdenCargue
 from transporte.formatos.manifiesto import FormatoManifiesto
 from django.http import HttpResponse
+from django.utils import timezone
 
 class DespachoViewSet(viewsets.ModelViewSet):
     queryset = TteDespacho.objects.all()
@@ -69,18 +71,15 @@ class DespachoViewSet(viewsets.ModelViewSet):
         id = raw.get('id')
         if id:
             try:
-                with transaction.atomic():
-                    despacho = TteDespacho.objects.get(pk=id)                
-                    despacho_detalles = TteDespachoDetalle.objects.filter(despacho_id=id)
-                    respuesta = self.validacion_aprobar(despacho, despacho_detalles)
-                    if respuesta['error'] == False:                                                                      
-                        despacho.estado_aprobado = True
-                        despacho.save()
-                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+                despacho = TteDespacho.objects.get(pk=id)
             except TteDespacho.DoesNotExist:
-                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
+            with transaction.atomic():                                
+                respuesta = TteDespachoServicio.aprobar(despacho)
+                if respuesta['error'] == False:
+                    return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -100,29 +99,7 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La guia no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)           
             if guia.estado_despachado == False and guia.despacho_id == None:  
                 with transaction.atomic():   
-                    data = {
-                        'despacho':id,
-                        'guia':guia_id,
-                        'unidades': guia.unidades, 
-                        'peso': guia.peso, 
-                        'volumen': guia.volumen, 
-                        'peso_facturado': guia.peso_facturado, 
-                        'costo': guia.costo, 
-                        'declara': guia.declara,                         
-                        'flete':guia.flete, 
-                        'manejo':guia.manejo, 
-                        'recaudo':guia.recaudo, 
-                        'cobro_entrega':guia.cobro_entrega                        
-                    }
-                    serializador = TteDespachoDetalleSerializador(data=data)
-                    if serializador.is_valid():    
-                        serializador.save()                        
-                    else:
-                        return Response({'validaciones': serializador.errors, 'mensaje': 'Cuenta por pagar'}, status=status.HTTP_400_BAD_REQUEST)                        
-                    guia.despacho = despacho
-                    guia.estado_despachado = True
-                    guia.save()
-                    TteDespacho.objects.filter(pk=id).update(guias=F('guias') + 1)  
+                    TteDespachoServicio.adicionar_guia(despacho, guia)
                     return Response({'mensaje': f'Guia adicionada al despacho'}, status=status.HTTP_200_OK)                  
             else:
                 return Response({'mensaje':'La guia ya esta despachada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
@@ -229,19 +206,7 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
-
-    @staticmethod
-    def validacion_aprobar(despacho: TteDespacho, despacho_destalles: TteDespachoDetalle):
-        if despacho.estado_aprobado == False:  
-            if despacho_destalles:       
-                for despacho_detalle in despacho_destalles:
-                    pass
-                return {'error':False}                    
-            else:
-                return {'error':True, 'mensaje':'El despacho no tiene guias', 'codigo':1}  
-        else:
-            return {'error':True, 'mensaje':'El despacho ya esta aprobado', 'codigo':1}                
-                        
+                                        
     @action(detail=False, methods=["post"], url_path=r'imprimir',)
     def imprimir(self, request):
         raw = request.data
@@ -262,7 +227,6 @@ class DespachoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
         
-
     @action(detail=False, methods=["post"], url_path=r'imprimir-manifiesto',)
     def imprimirManifiesto(self, request):
         raw = request.data
@@ -294,4 +258,87 @@ class DespachoViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
             return Response({'mensaje': f'Despacho enviado'}, status=status.HTTP_200_OK)                  
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+
+    @action(detail=False, methods=["post"], url_path=r'nuevo-viaje',)
+    def nuevo_viaje_action(self, request):        
+        raw = request.data
+        viaje_id = raw.get('viaje_id')        
+        if viaje_id:
+            try:
+                viaje = VerViaje.objects.get(pk=viaje_id)
+            except VerViaje.DoesNotExist:
+                return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
+            try:
+                negocio = TteNegocio.objects.get(pk=viaje.negocio_id)
+            except TteNegocio.DoesNotExist:
+                return Response({'mensaje':'El negocio no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)  
+            try:
+                vehiculo = TteVehiculo.objects.filter(placa=viaje.vehiculo.placa).first()
+                if not vehiculo:
+                    raise TteVehiculo.DoesNotExist
+            except TteVehiculo.DoesNotExist:
+                return Response({'mensaje':'El vehiculo no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+            try:
+                conductor = GenContacto.objects.filter(numero_identificacion=viaje.conductor.numero_identificacion).first()
+                if not conductor:
+                    raise GenContacto.DoesNotExist
+            except GenContacto.DoesNotExist:
+                return Response({'mensaje':'El conductor no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)             
+
+            with transaction.atomic():                
+                data = {
+                    'fecha': timezone.now().date(),                        
+                    'operacion_ingreso': negocio.operacion_id,
+                    'operacion_cargo': negocio.operacion_id,
+                    'negocio': negocio.id,
+                    'contacto': negocio.contacto_id,
+                    'cliente': negocio.contacto_id,
+                    'unidades': negocio.unidades,
+                    'peso': negocio.peso,
+                    'volumen': negocio.volumen,
+                    'peso_facturado': negocio.peso,
+                    'flete': negocio.flete,        
+                    'destinatario_nombre' : 'PEDRO PEREZ',
+                    'destinatario_direccion' : 'CALLE 25 NRO 25 80',
+                    'ciudad_origen': negocio.ciudad_origen_id,
+                    'ciudad_destino': negocio.ciudad_destino_id,
+                    'remitente_nombre': negocio.contacto.nombre_corto,
+                    'servicio': negocio.servicio_id,
+                    'producto': negocio.producto_id,
+                    'empaque': negocio.empaque_id,
+                    'estado_recogido': True,
+                    'estado_ingreso': True,
+                    'liquidacion': 'M'
+                }     
+                guia_serializador = TteGuiaSerializador(data=data)
+                if guia_serializador.is_valid():
+                    guia = guia_serializador.save()   
+                    data = {
+                        "fecha": timezone.now().date(),
+                        "despacho_tipo":1,
+                        "servicio":negocio.servicio_id,
+                        "ciudad_origen":negocio.ciudad_origen_id,
+                        "ciudad_destino":negocio.ciudad_destino_id,
+                        "operacion":negocio.operacion_id,                        
+                        "contacto":vehiculo.poseedor_id,
+                        "vehiculo":vehiculo.id,
+                        "conductor":conductor.id,
+                        "pago":negocio.pago,
+                        "unidades":negocio.unidades,
+                        "peso":negocio.peso,
+                        "volumen":negocio.volumen,
+                        "guias": 1
+                    }      
+                    despacho_serializador = TteDespachoSerializador(data=data)
+                    if despacho_serializador.is_valid():    
+                        despacho = despacho_serializador.save()
+                        TteDespachoServicio.adicionar_guia(despacho, guia)
+                        TteDespachoServicio.aprobar(despacho)
+                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)                                           
+                    else:
+                        return Response({'validaciones': despacho_serializador.errors, 'mensaje': 'No se pudo crear el despacho'}, status=status.HTTP_400_BAD_REQUEST)                               
+                else:
+                    return Response({'validaciones': guia_serializador.errors, 'mensaje': 'No se pudo crear la guia'}, status=status.HTTP_400_BAD_REQUEST)                
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)              

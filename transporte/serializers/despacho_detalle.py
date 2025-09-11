@@ -23,7 +23,7 @@ class TteDespachoDetalleGuiaSerializador(serializers.ModelSerializer):
     despacho__conductor__nombre_corto = serializers.CharField(source='despacho.conductor.nombre_corto', read_only=True, allow_null=True, default=None)
     despacho__ciudad_origen__nombre = serializers.CharField(source='despacho.ciudad_origen.nombre', read_only=True, allow_null=True, default=None)
     despacho__ciudad_destino__nombre = serializers.CharField(source='despacho.ciudad_destino.nombre', read_only=True, allow_null=True, default=None)
-    despacho__estado_aprobado = serializers.CharField(source='despacho.despacho.estado_aprobado', read_only=True, allow_null=True, default=None)
+    despacho__estado_aprobado = serializers.CharField(source='despacho.estado_aprobado', read_only=True, allow_null=True, default=None)
     class Meta:
         model = TteDespachoDetalle
         fields = ['id', 

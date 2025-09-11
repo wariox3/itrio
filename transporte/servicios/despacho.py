@@ -1,12 +1,37 @@
-from ruteo.models.despacho import RutDespacho
+from transporte.models.despacho import TteDespacho
+from transporte.models.despacho_detalle import TteDespachoDetalle
+from transporte.models.guia import TteGuia
 from transporte.models.vehiculo import TteVehiculo
 from general.models.contacto import GenContacto
 from transporte.serializers.vehiculo import TteVehiculoSerializador
+from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
 from general.serializers.contacto import GenContactoSerializador
 from vertical.models.viaje import VerViaje
-from django.db import transaction
-
+from django.db.models import F
 class TteDespachoServicio():
+
+    @staticmethod
+    def aprobar(despacho: TteDespacho):
+        despacho_detalles = TteDespachoDetalle.objects.filter(despacho_id=despacho.id)
+        respuesta = TteDespachoServicio.validacion_aprobar(despacho, despacho_detalles)
+        if respuesta['error'] == False:                                                                      
+            despacho.estado_aprobado = True
+            despacho.save()
+            return {'error':False}
+        else:
+            return {'error':True, 'mensaje':respuesta['mensaje']}  
+
+    @staticmethod
+    def validacion_aprobar(despacho: TteDespacho, despacho_destalles: TteDespachoDetalle):
+        if despacho.estado_aprobado == False:  
+            if despacho_destalles:       
+                for despacho_detalle in despacho_destalles:
+                    pass
+                return {'error':False}                    
+            else:
+                return {'error':True, 'mensaje':'El despacho no tiene guias', 'codigo':1}  
+        else:
+            return {'error':True, 'mensaje':'El despacho ya esta aprobado', 'codigo':1}
 
     @staticmethod
     def validar_vehiculo_vertical(viaje: VerViaje):    
@@ -77,4 +102,34 @@ class TteDespachoServicio():
                 else:                    
                     raise ValueError('El conductor no existe')
         else:
-            raise ValueError('El viaje no tiene conductor asignado')              
+            raise ValueError('El viaje no tiene conductor asignado') 
+
+    @staticmethod
+    def adicionar_guia(despacho: TteDespacho, guia: TteGuia):
+        data = {
+            'despacho':despacho.id,
+            'guia':guia.id,
+            'unidades': guia.unidades, 
+            'peso': guia.peso, 
+            'volumen': guia.volumen, 
+            'peso_facturado': guia.peso_facturado, 
+            'costo': guia.costo, 
+            'declara': guia.declara,                         
+            'flete':guia.flete, 
+            'manejo':guia.manejo, 
+            'recaudo':guia.recaudo, 
+            'cobro_entrega':guia.cobro_entrega                        
+        }
+        serializador = TteDespachoDetalleSerializador(data=data)
+        if serializador.is_valid():    
+            serializador.save()                        
+            guia.despacho = despacho
+            guia.estado_despachado = True
+            guia.save()
+            TteDespacho.objects.filter(pk=despacho.id).update(guias=F('guias') + 1)             
+        else:
+            raise ValueError('Fallo la creacion del detalle del despacho: ' + str(serializador.errors))    
+
+                 
+
+                 
