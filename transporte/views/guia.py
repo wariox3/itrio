@@ -76,4 +76,18 @@ class GuiaViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'La guia no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
             return Response({'mensaje': f'Guia enviada'}, status=status.HTTP_200_OK)                  
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)     
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
+
+    @action(detail=False, methods=["post"], url_path=r'entregar',)
+    def entregar(self, request):                     
+        raw = request.data
+        id = raw.get('id')                             
+        if id:
+            try:
+                guia = TteGuia.objects.get(pk=id)
+            except TteGuia.DoesNotExist:
+                return Response({'mensaje':'La guia no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
+            return Response({'mensaje': f'Guia entregada con exíto'}, status=status.HTTP_200_OK)                  
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
