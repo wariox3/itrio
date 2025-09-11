@@ -3,8 +3,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from vertical.models.propuesta import VerPropuesta
 from vertical.models.viaje import VerViaje
-from vertical.models.conductor import VerConductor
-from general.models.configuracion import GenConfiguracion
 from vertical.serializers.propuesta import VerPropuestaSerializador
 from django.db import transaction
 from django.db.models import Sum, Count, F
