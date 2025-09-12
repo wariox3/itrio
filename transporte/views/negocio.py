@@ -4,8 +4,10 @@ from rest_framework.decorators import action
 from transporte.models.negocio import TteNegocio
 from general.models.contacto import GenContacto
 from vertical.models.viaje import VerViaje
+from vertical.models.propuesta import VerPropuesta
 from transporte.serializers.negocio import TteNegocioSerializador, TteNegocioSeleccionarSerializador
 from transporte.filters.negocio import NegocioFilter
+from transporte.servicios.negocio import TteNegocioServicio
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from utilidades.excel_exportar import ExcelExportar
@@ -70,12 +72,17 @@ class NegocioViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'nuevo-viaje',)
     def nuevo_viaje_action(self, request):        
         raw = request.data
-        viaje_id = raw.get('viaje_id')
-        if viaje_id:
+        viaje_id = raw.get('viaje_id', None)
+        propuesta_id = raw.get('propuesta_id', None)
+        if viaje_id and propuesta_id:
             try:
                 viaje = VerViaje.objects.get(pk=viaje_id)
             except VerViaje.DoesNotExist:
-                return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
+                return Response({'mensaje':'El viaje no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)      
+            try:
+                propuesta = VerPropuesta.objects.get(pk=propuesta_id)
+            except VerPropuesta.DoesNotExist:
+                return Response({'mensaje':'La propuesta no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)      
             with transaction.atomic():
                 contacto_id = None
                 if viaje.numero_identificacion:
@@ -105,6 +112,7 @@ class NegocioViewSet(viewsets.ModelViewSet):
                     negocio = serializador_negocio.save()                    
                     viaje.negocio_id = negocio.id
                     viaje.save()
+                    respuesta = TteNegocioServicio.aprobar(negocio, propuesta.contenedor_id, propuesta.schema_name)
                     return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)                                           
                 else:
                     return Response({'validaciones': serializador_negocio.errors, 'mensaje': 'No se pudo crear el negocio'}, status=status.HTTP_400_BAD_REQUEST)                
@@ -117,39 +125,14 @@ class NegocioViewSet(viewsets.ModelViewSet):
         id = raw.get('id')
         if id:
             try:
-                with transaction.atomic():
-                    negocio = TteNegocio.objects.get(pk=id)
-                    if negocio.estado_aprobado == False:
-                        if negocio.publicar:
-                            if negocio.pago <= 0:
-                                return Response({'mensaje':'El negocio no tiene pago definido', 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)
-                            if negocio.contacto is None:
-                                return Response({'mensaje':'El negocio no tiene contacto definido', 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)
-                            if negocio.operacion is None:
-                                return Response({'mensaje':'El negocio no tiene operacion definida', 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)
-                            viaje = VerViaje()
-                            viaje.servicio_id = negocio.servicio_id
-                            viaje.producto_id = negocio.producto_id
-                            viaje.empaque_id = negocio.empaque_id
-                            viaje.negocio_id = id   
-                            viaje.pago = negocio.pago                         
-                            viaje.unidades = negocio.unidades
-                            viaje.peso = negocio.peso
-                            viaje.volumen = negocio.volumen    
-                            viaje.puntos_entrega = negocio.puntos_entrega
-                            viaje.ciudad_origen_id = negocio.ciudad_origen_id
-                            viaje.ciudad_destino_id = negocio.ciudad_destino_id                       
-                            viaje.contenedor_id = request.tenant.id
-                            viaje.schema_name = request.tenant.schema_name
-                            viaje.usuario_id = request.user.id
-                            viaje.solicitud_transporte = True                            
-                            viaje.save()
-                        negocio.estado_aprobado = True
-                        negocio.save()
-                        return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'mensaje':'El negocio ya se encuentra aprobado', 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)
+                negocio = TteNegocio.objects.get(pk=id)
             except TteNegocio.DoesNotExist:
                 return Response({'mensaje':'El negocio no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+            with transaction.atomic():
+                respuesta = TteNegocioServicio.aprobar(negocio, request.tenant.id, request.tenant.schema_name)   
+                if respuesta['error'] == False:
+                    return Response({'estado_aprobado': True}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'mensaje':respuesta['mensaje'], 'codigo':16}, status=status.HTTP_400_BAD_REQUEST)                                             
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
