@@ -8,6 +8,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from utilidades.excel_exportar import ExcelExportar
 from transporte.filters.guia import GuiaFilter
 from django.db import models
+from django.db import transaction
+from datetime import datetime
 
 
 class GuiaViewSet(viewsets.ModelViewSet):
@@ -82,12 +84,27 @@ class GuiaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'entregar',)
     def entregar(self, request):                     
         raw = request.data
-        id = raw.get('id')                             
-        if id:
+        id = raw.get('id')
+        fecha = raw.get('fecha')
+        hora = raw.get('hora')
+        soporte = raw.get('soporte', False)                           
+        if id and fecha and hora:
             try:
+                fecha_hora_str = f"{fecha} {hora}"
+                fecha_entrega = datetime.strptime(fecha_hora_str, '%Y-%m-%d %H:%M')
                 guia = TteGuia.objects.get(pk=id)
+                if guia.estado_entregado == False:  
+                    with transaction.atomic():
+                        guia.estado_entregado = True
+                        guia.fecha_entrega = fecha_entrega 
+                        if soporte:
+                            guia.estado_soporte = True
+                            guia.fecha_soporte = fecha_entrega
+                        guia.save()
+                        return Response({'mensaje': f'Guia entregada con éxito'}, status=status.HTTP_200_OK)                  
+                else:
+                    return Response({'mensaje':'La guia ya esta despachada', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
             except TteGuia.DoesNotExist:
                 return Response({'mensaje':'La guia no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
-            return Response({'mensaje': f'Guia entregada con exíto'}, status=status.HTTP_200_OK)                  
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
