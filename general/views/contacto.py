@@ -60,6 +60,7 @@ class ContactoViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         nombre_corto = request.query_params.get('nombre_corto__icontains', None)
+        numero_identificacion = request.query_params.get('numero_identificacion__icontains', None)
         cliente = request.query_params.get('cliente', None)
         proveedor = request.query_params.get('proveedor', None)
         empleado = request.query_params.get('empleado', None)
@@ -67,6 +68,8 @@ class ContactoViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset()
         if nombre_corto:
             queryset = queryset.filter(nombre_corto__icontains=nombre_corto)
+        if numero_identificacion:
+            queryset = queryset.filter(numero_identificacion__icontains=numero_identificacion)
         if cliente:
             queryset = queryset.filter(cliente=cliente)
         if proveedor:
