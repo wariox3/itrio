@@ -3,7 +3,7 @@
     "modelo": "TteColor",
     "modelo_nativo": "tte_color",
     "actualizar_secuencia": false,
-    "pausa": false,
+    "pausa": true,
     "datos": [
         {
             "pk": 1,

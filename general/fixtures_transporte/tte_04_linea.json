@@ -3,7 +3,7 @@
     "modelo": "TteLinea",
     "modelo_nativo": "tte_linea",
     "actualizar_secuencia": false,
-    "pausa": false,
+    "pausa": true,
     "datos": [
         {
             "pk": 1,
