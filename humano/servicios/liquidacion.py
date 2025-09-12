@@ -1,5 +1,6 @@
 from general.models.configuracion import GenConfiguracion
 from humano.models.liquidacion import HumLiquidacion
+from humano.models.liquidacion_adicional import HumLiquidacionAdicional
 from utilidades.utilidades import Utilidades
 from utilidades.backblaze import Backblaze
 from datetime import timedelta
@@ -8,7 +9,15 @@ from datetime import timedelta
 class LiquidacionServicio():
 
     @staticmethod
-    def liquidar(liquidacion: HumLiquidacion):        
+    def liquidar(liquidacion: HumLiquidacion):  
+        adicionales = HumLiquidacionAdicional.objects.filter(liquidacion_id=liquidacion.pk)
+        total_adiciones = 0
+        total_deducciones = 0
+
+        for adicional in adicionales:
+            total_adiciones += adicional.adicional
+            total_deducciones += adicional.deduccion
+
         configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte')[0]
         auxilio_trasnporte = configuracion['hum_auxilio_transporte']
         fecha_desde = liquidacion.contrato.fecha_desde
@@ -47,7 +56,7 @@ class LiquidacionServicio():
         interes = round(cesantia * porcentaje_interes)
         prima = round(salario_promedio_prima * dias_prima / 360)              
         vacacion = round((salario_promedio_vacacion * dias_vacacion) / 720)         
-        total = cesantia + interes + prima + vacacion
+        total = cesantia + interes + prima + vacacion + total_adiciones - total_deducciones
         liquidacion.dias = dias
         liquidacion.dias_cesantia = dias_cesantia
         liquidacion.dias_prima = dias_prima
@@ -56,6 +65,8 @@ class LiquidacionServicio():
         liquidacion.interes = interes
         liquidacion.prima = prima
         liquidacion.vacacion = vacacion
+        liquidacion.deduccion = total_deducciones
+        liquidacion.adicion = total_adiciones
         liquidacion.total = total
         liquidacion.salario = liquidacion.contrato.salario
         liquidacion.fecha_ultimo_pago = liquidacion.contrato.fecha_ultimo_pago

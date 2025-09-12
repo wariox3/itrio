@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from humano.models.liquidacion import HumLiquidacion
+from humano.models.liquidacion_adicional import HumLiquidacionAdicional
 from humano.models.concepto import HumConcepto
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento import GenDocumento
@@ -64,6 +65,15 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
                 liquidacion = HumLiquidacion.objects.get(pk=id)
                 if liquidacion.estado_generado == False and liquidacion.estado_aprobado == False:
                     with transaction.atomic():
+
+                        adicionales = HumLiquidacionAdicional.objects.filter(liquidacion_id=id)
+                        total_adiciones = 0
+                        total_deducciones = 0
+
+                        for adicional in adicionales:
+                            total_adiciones += adicional.adicional
+                            total_deducciones += adicional.deduccion
+
                         data = {
                             'liquidacion': id,
                             'documento_tipo': 28,
@@ -139,14 +149,21 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
                             else:
                                 return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+                            total_devengado = data_general['devengado'] + total_adiciones
+                            total_deducciones_general = data_general['deduccion'] + total_deducciones
+
+
                             documento.base_cotizacion = data_general['base_cotizacion']
                             documento.base_prestacion = data_general['base_prestacion']
                             documento.base_prestacion_vacacion = data_general['base_prestacion_vacacion']
-                            documento.devengado = data_general['devengado']
-                            documento.deduccion = data_general['deduccion']
-                            documento.total = data_general['devengado'] - data_general['deduccion']
+                            documento.devengado = total_devengado
+                            documento.deduccion = total_deducciones_general
+                            documento.total = total_devengado - total_deducciones_general
                             documento.salario = liquidacion.salario
                             documento.save()
+                            liquidacion.adicion = total_adiciones
+                            liquidacion.deduccion = total_deducciones_general
+                            liquidacion.total = total_devengado - total_deducciones_general
                             liquidacion.estado_generado = True  
                             liquidacion.save()
                             return Response({'mensaje': 'Liquidación generada'}, status=status.HTTP_200_OK)                            
@@ -168,11 +185,23 @@ class HumLiquidacionViewSet(viewsets.ModelViewSet):
                 liquidacion = HumLiquidacion.objects.get(pk=id)
                 if liquidacion.estado_aprobado == False and liquidacion.estado_generado == True:
                     with transaction.atomic():
+
+                        adicionales = HumLiquidacionAdicional.objects.filter(liquidacion_id=id)
+                        total_adiciones = 0
+                        total_deducciones = 0
+
+                        for adicional in adicionales:
+                            total_adiciones += adicional.adicional
+                            total_deducciones += adicional.deduccion
+
                         documentos = GenDocumento.objects.filter(liquidacion_id=id)
                         for documento in documentos:
                             documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
                             documento_detalles.delete()
-                        documentos.delete()                                           
+                        documentos.delete()                
+                        liquidacion.total = 0
+                        liquidacion.adicion = 0
+                        liquidacion.deduccion = 0                           
                         liquidacion.estado_generado = False  
                         liquidacion.save()
                         return Response({'mensaje': 'Liquidación desgenerada'}, status=status.HTTP_200_OK)
