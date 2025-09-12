@@ -139,6 +139,8 @@ class ViajeViewSet(viewsets.ModelViewSet):
         usuario_id = request.query_params.get('usuario_id')
         estado_aceptado = request.query_params.get('estado_aceptado')
         estado_cancelado = request.query_params.get('estado_cancelado')
+        solicitud_cliente = request.query_params.get('solicitud_cliente')
+        solicitud_transporte = request.query_params.get('solicitud_transporte')
         queryset = VerViaje.objects.select_related(
             'ciudad_origen', 
             'ciudad_destino', 
@@ -156,7 +158,16 @@ class ViajeViewSet(viewsets.ModelViewSet):
         if estado_cancelado == True or estado_cancelado == 'true' or estado_cancelado == 'True':
             queryset = queryset.filter(estado_cancelado=True)
         if estado_cancelado == False or estado_cancelado == 'false' or estado_cancelado == 'False':
-            queryset = queryset.filter(estado_cancelado=False)                     
+            queryset = queryset.filter(estado_cancelado=False)  
+        if solicitud_cliente == True or solicitud_cliente == 'true' or solicitud_cliente == 'True':
+            queryset = queryset.filter(solicitud_cliente=True)
+        if solicitud_cliente == False or solicitud_cliente == 'false' or solicitud_cliente == 'False':
+            queryset = queryset.filter(solicitud_cliente=False)     
+        if solicitud_transporte == True or solicitud_transporte == 'true' or solicitud_transporte == 'True':
+            queryset = queryset.filter(solicitud_transporte=True)
+        if solicitud_transporte == False or solicitud_transporte == 'false' or solicitud_transporte == 'False':
+            queryset = queryset.filter(solicitud_transporte=False)                     
+
         viajes = queryset.prefetch_related(
             Prefetch(
                 'propuestas_viaje_rel',
