@@ -3,11 +3,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from vertical.models.ciudad import VerCiudad
 from vertical.serializers.ciudad import VerCiudadSerializador, VerCiudadSeleccionarSerializador
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 class CiudadViewSet(viewsets.ModelViewSet):
     queryset = VerCiudad.objects.all()
     serializer_class = VerCiudadSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter] 
+
 
     @action(detail=False, methods=["get"], url_path=r'seleccionar')
     def seleccionar_action(self, request):

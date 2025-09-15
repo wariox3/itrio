@@ -13,7 +13,12 @@ from .views.verificacion import VerificacionViewSet
 from .views.verificacion_detalle import VerificacionDetalleViewSet
 from .views.identificacion import IdentificacionViewSet
 from .views.categoria_licencia import CategoriaLicenciaViewSet
-from .views.ciudad import CiudadViewSet
+from .views.carroceria import CarroceriaViewSet
+from .views.color import ColorViewSet
+from .views.combustible import CombustibleViewSet
+from .views.vehiculo_configuracion import VehiculoConfiguracionViewSet
+from .views.linea import LineaViewSet
+from .views.marca import MarcaViewSet
 
 from rest_framework import routers
 
@@ -33,6 +38,12 @@ router.register(r'verificacion_detalle', VerificacionDetalleViewSet)
 router.register(r'identificacion', IdentificacionViewSet)
 router.register(r'categoria_licencia', CategoriaLicenciaViewSet)
 router.register(r'ciudad', CiudadViewSet)
+router.register(r'carroceria', CarroceriaViewSet)
+router.register(r'color', ColorViewSet)
+router.register(r'combustible', CombustibleViewSet)
+router.register(r'vehiculo_configuracion', VehiculoConfiguracionViewSet)
+router.register(r'linea', LineaViewSet)
+router.register(r'marca', MarcaViewSet)
 
 urlpatterns = [    
     path('', include(router.urls)),
