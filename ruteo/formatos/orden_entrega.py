@@ -99,10 +99,10 @@ class FormatoOrdenEntrega:
         fila2_data = [
             Paragraph("Complemento:", estilo_etiqueta),
             Paragraph(str(despacho.codigo_complemento) if hasattr(despacho, 'codigo_complemento') and despacho.codigo_complemento else "N/A", estilo_dato),
+            Paragraph("Unidades:", estilo_etiqueta),
+            Paragraph(f"{int(despacho.unidades)}" if despacho.unidades else "0", estilo_dato),
             Paragraph("Peso Total:", estilo_etiqueta),
             Paragraph(f"{int(despacho.peso)}" if despacho.peso else "0", estilo_dato),
-            Paragraph("Volumen Total:", estilo_etiqueta),
-            Paragraph(f"{int(despacho.volumen)}" if despacho.volumen else "0", estilo_dato),
             Paragraph("Total Visitas:", estilo_etiqueta),
             Paragraph(str(visitas.count()), estilo_dato)
         ]

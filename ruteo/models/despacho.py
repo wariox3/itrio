@@ -7,6 +7,7 @@ class RutDespacho(models.Model):
     fecha_ubicacion = models.DateTimeField(null=True)    
     peso = models.FloatField(default=0)
     volumen = models.FloatField(default=0)
+    unidades = models.FloatField(default=0)
     tiempo_servicio = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     tiempo_trayecto = models.DecimalField(max_digits=12, decimal_places=6, default=0)
     tiempo = models.DecimalField(max_digits=12, decimal_places=6, default=0)    

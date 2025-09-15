@@ -395,6 +395,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 vehiculo = flota_item.vehiculo
                 peso_total = 0
                 tiempo_total = 0
+                unidades_total = 0
                 despacho = None
 
                 # Procesar solo si el vehículo no está ya asignado
@@ -413,6 +414,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 tiempo=visita.tiempo,
                                 tiempo_servicio=visita.tiempo_servicio,
                                 tiempo_trayecto=visita.tiempo_trayecto,
+                                unidades=visita.unidades,
                                 visitas=1
                             )
                             vehiculo.estado_asignado = True
@@ -433,11 +435,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 decimal_6_places,
                                 rounding=ROUND_HALF_UP
                             )
+                            despacho.unidades += visita.unidades
                             despacho.visitas += 1
                             despacho.save()
 
                         peso_total += visita.peso
                         tiempo_total += visita.tiempo
+                        unidades_total += visita.unidades
                         
                         visita.estado_despacho = True
                         visita.despacho = despacho
@@ -472,6 +476,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     
                 peso_total = 0
                 tiempo_total = 0
+                unidades_total = 0
                 despacho = None
                 visitas_asignadas_este_vehiculo = 0
 
@@ -487,6 +492,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 tiempo=visita.tiempo,
                                 tiempo_servicio=visita.tiempo_servicio,
                                 tiempo_trayecto=visita.tiempo_trayecto,
+                                unidades=visita.unidades,
                                 visitas=1
                             )
                             vehiculo.estado_asignado = True
@@ -507,11 +513,13 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                                 decimal_6_places,
                                 rounding=ROUND_HALF_UP
                             )
+                            despacho.unidades += visita.unidades
                             despacho.visitas += 1
                             despacho.save()
 
                         peso_total += visita.peso
                         tiempo_total += visita.tiempo
+                        unidades_total += visita.unidades
                         
                         visita.estado_despacho = True
                         visita.despacho = despacho
