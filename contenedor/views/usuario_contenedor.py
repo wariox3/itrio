@@ -107,14 +107,6 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                 serializador = CtnVerificacionSerializador(data = data)
                 if serializador.is_valid():                                             
                     serializador.save() 
-                    aplicaciones = {
-                        'reddoc': {
-                            'nombre': 'RedDoc'
-                        },                    
-                        'ruteo': {
-                            'nombre': 'Ruteo.co'
-                        },
-                    }
                     url = f"https://app.{aplicacion_datos['dominio']}/auth/login/" + token
                     if config('ENV') == "test":
                         url = f"http://app.{aplicacion_datos['dominio_test']}/auth/login/" + token
