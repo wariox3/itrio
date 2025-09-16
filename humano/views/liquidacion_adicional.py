@@ -61,10 +61,15 @@ class HumLiquidacionAdicionalViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        liquidacion_adicional = serializer.save()        
-        liquidacion = liquidacion_adicional.liquidacion        
-        LiquidacionServicio.liquidar(liquidacion)
-    
+        liquidacion_adicional = serializer.save() 
+        liquidacion = liquidacion_adicional.liquidacion
+        if liquidacion_adicional.adicional > 0:
+            liquidacion.adicion += liquidacion_adicional.adicional
+            liquidacion.total += liquidacion_adicional.adicional
+        if liquidacion_adicional.deduccion > 0:
+            liquidacion.deduccion += liquidacion_adicional.deduccion
+            liquidacion.total -= liquidacion_adicional.deduccion
+        liquidacion.save()    
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)    
 
@@ -72,8 +77,15 @@ class HumLiquidacionAdicionalViewSet(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()    
         liquidacion = instance.liquidacion    
+        if instance.adicional > 0:
+            liquidacion.adicion -= instance.adicional
+            liquidacion.total -= instance.adicional
+        if instance.deduccion > 0:
+            liquidacion.deduccion -= instance.deduccion
+            liquidacion.total += instance.deduccion 
+        liquidacion.save()                           
         self.perform_destroy(instance)
-        LiquidacionServicio.liquidar(liquidacion)        
+           
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_destroy(self, instance):
