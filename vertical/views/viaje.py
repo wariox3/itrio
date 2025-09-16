@@ -10,9 +10,9 @@ from vertical.models.precio_detalle import VerPrecioDetalle
 from vertical.serializers.viaje import VerViajeSerializador, VerViajeListaSerializador, VerViajeListaEspecialSerializador
 from vertical.serializers.propuesta import VerPropuestaSerializador
 from vertical.filters.viaje import VerViajeFilter
-from django.db import transaction
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db import transaction
 from django.db.models import Prefetch
 
 class ViajeViewSet(viewsets.ModelViewSet):
