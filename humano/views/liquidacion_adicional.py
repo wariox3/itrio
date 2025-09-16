@@ -5,6 +5,8 @@ from humano.models.liquidacion_adicional import HumLiquidacionAdicional
 from humano.serializers.liquidacion_adicional import HumLiquidacionAdicionalSerializador
 from humano.filters.liquidacion_adicional import LiquidacionAdicionalFilter
 from utilidades.excel_exportar import ExcelExportar
+from humano.servicios.liquidacion import LiquidacionServicio
+from django.db import transaction
 
 class HumLiquidacionAdicionalViewSet(viewsets.ModelViewSet):
     queryset = HumLiquidacionAdicional.objects.all()
@@ -54,3 +56,25 @@ class HumLiquidacionAdicionalViewSet(viewsets.ModelViewSet):
                 exporter = ExcelExportar(serializer.data, nombre_hoja, nombre_archivo)
                 return exporter.exportar_estilo()            
         return super().list(request, *args, **kwargs)     
+    
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        liquidacion_adicional = serializer.save()        
+        liquidacion = liquidacion_adicional.liquidacion        
+        LiquidacionServicio.liquidar(liquidacion)
+    
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)    
+
+    @transaction.atomic
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()    
+        liquidacion = instance.liquidacion    
+        self.perform_destroy(instance)
+        LiquidacionServicio.liquidar(liquidacion)        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
