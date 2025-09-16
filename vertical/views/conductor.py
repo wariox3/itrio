@@ -15,6 +15,23 @@ class ConductorViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = VerConductorFilter
 
+    def get_serializer_class(self):
+        serializador_parametro = self.request.query_params.get('serializador', None)
+        if not serializador_parametro or serializador_parametro not in self.serializadores:
+            return VerConductorSerializador
+        return self.serializadores[serializador_parametro]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        serializer_class = self.get_serializer_class()        
+        select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
+        if select_related:
+            queryset = queryset.select_related(*select_related)        
+        campos = serializer_class.Meta.fields        
+        if campos and campos != '__all__':
+            queryset = queryset.only(*campos) 
+        return queryset 
+
     @action(detail=False, methods=["post"], url_path=r'verificar',)
     def verificar_action(self, request):        
         raw = request.data
