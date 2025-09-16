@@ -8,6 +8,7 @@ class VerConductorSerializador(serializers.ModelSerializer):
         model = VerConductor
         fields = ['id', 'identificacion' ,'numero_identificacion', 'nombre_corto', 'nombre1', 'nombre2', 'apellido1', 'apellido2',
                   'direccion', 'barrio', 'telefono', 'celular','correo', 'numero_licencia', 'fecha_vence_licencia', 'digito_verificacion', 
+                  'usuario',
                   'ciudad', 
                   'ciudad__nombre',
                   'categoria_licencia', 

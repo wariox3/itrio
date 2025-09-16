@@ -5,7 +5,6 @@ from vertical.models.conductor import VerConductor
 from vertical.models.servicio import VerServicio
 from vertical.models.producto import VerProducto
 from vertical.models.empaque import VerEmpaque
-
 from seguridad.models import User
 
 class VerViaje(models.Model):            

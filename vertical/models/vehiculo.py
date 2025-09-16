@@ -5,6 +5,7 @@ from vertical.models.color import VerColor
 from vertical.models.combustible import VerCombustible
 from vertical.models.carroceria import VerCarroceria
 from vertical.models.vehiculo_configuracion import VerVehiculoConfiguracion
+from seguridad.models import User
 
 class VerVehiculo(models.Model):        
     fecha_registro = models.DateTimeField(auto_now_add=True)  
@@ -23,6 +24,7 @@ class VerVehiculo(models.Model):
     propio = models.BooleanField(default = False)
     remolque = models.BooleanField(default = False)
     verificado = models.BooleanField(default = False)
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT, related_name='vehiculos_usuario_rel')
     marca = models.ForeignKey(VerMarca, on_delete=models.PROTECT, related_name='vehiculos_marca_rel')
     linea = models.ForeignKey(VerLinea, on_delete=models.PROTECT, related_name='vehiculos_linea_rel')
     color = models.ForeignKey(VerColor, on_delete=models.PROTECT, related_name='vehiculos_color_rel')
