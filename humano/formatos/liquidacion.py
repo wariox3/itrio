@@ -1,5 +1,6 @@
 from general.models.empresa import GenEmpresa
 from humano.models.liquidacion import HumLiquidacion
+from humano.models.liquidacion_adicional import HumLiquidacionAdicional
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -20,10 +21,13 @@ class FormatoLiquidacion():
             'contrato__contacto',
             'contrato__contacto__ciudad' 
         ).filter(id=id).first()
+
+        adicionales = HumLiquidacionAdicional.objects.filter(
+            liquidacion_id=id
+        ).select_related('concepto')
+
         left_margin = 20
-        right_margin = 20
         page_width = letter[0]
-        usable_width = page_width - left_margin - right_margin
 
         def dibujar_encabezado():
             region = config('DO_REGION')
@@ -40,7 +44,7 @@ class FormatoLiquidacion():
                 logo_url = imagen_defecto_url
                 logo = ImageReader(logo_url)
 
-            x = 20
+            x = 40
 
             y = 680
 
@@ -111,34 +115,34 @@ class FormatoLiquidacion():
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 610, "CORREO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 80, 610, str(empleado_correo.upper()))
+            p.drawString(x + 80, 610, str(empleado_correo).upper() if empleado_correo else "")
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x, 600, "COMENTARIO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 80, 600, str(liquidacion_comentario.upper()))
+            p.drawString(x + 80, 600, str(liquidacion_comentario).upper() if liquidacion_comentario else "")
 
 
             #Segunda columna
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 280, 650, "CIUDAD: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 330, 650, str(contrato_ciudad.upper()))      
+            p.drawString(x + 330, 650, str(contrato_ciudad).upper() if contrato_ciudad else "")
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 280, 640, "BANCO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 330, 640, str(empleado_banco.upper()))
+            p.drawString(x + 330, 640, str(empleado_banco).upper() if empleado_banco else "")
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 280, 630, "CUENTA: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 330, 630, str(empleado_cuenta.upper()))
+            p.drawString(x + 330, 630, str(empleado_cuenta).upper() if empleado_cuenta else "")
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 280, 620, "GRUPO: ")
             p.setFont("Helvetica", 8)
-            p.drawString(x + 330, 620, str(contrato_grupo.upper()))
+            p.drawString(x + 330, 620, str(contrato_grupo).upper() if contrato_grupo else "")
 
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 280, 610, "CELULAR: ")
@@ -221,8 +225,47 @@ class FormatoLiquidacion():
             p.drawRightString(x + 551, y_position, f"{liquidacion.total:,.0f}" if liquidacion.total is not None else "")     
             y_position -= 20
 
+            # Tabla de conceptos adicionales
+            if adicionales.exists():
+                y_position -= 20  # Espacio antes de la tabla adicional
+                
+                # Encabezado de la tabla adicional
+                p.setFont("Helvetica-Bold", 8)
+                p.drawString(x + 250, y_position, "ADICIONALES")
+                y_position -= 25
+            
+                # Encabezados de columnas
+                p.setFont("Helvetica-Bold", 8)
+                p.drawString(x + 150, y_position, "CONCEPTO")
+                p.drawString(x + 380, y_position, "ADICIONAL")
+                p.drawString(x + 480, y_position, "DEDUCCIÓN")
+                y_position -= 15
+                
+                # Línea separadora
+                p.line(x + 20, y_position, x + 550, y_position)
+                y_position -= 15
+                
+                # Filas de datos
+                p.setFont("Helvetica", 9)
+                for adicional in adicionales:
+                    if y_position < 100:
+                        p.showPage()
+                        dibujar_encabezado()
+                        y_position = 550
+                    
+                    concepto_nombre = adicional.concepto.nombre if adicional.concepto else ""
+                    adicion_valor = adicional.adicional or 0
+                    deduccion_valor = adicional.deduccion or 0
+                    
+                    # Dibujar los datos
+                    p.drawString(x + 30, y_position, concepto_nombre.upper())
+                    p.drawRightString(x + 440, y_position, f"{adicion_valor:,.0f}" if adicion_valor else "0")
+                    p.drawRightString(x + 540, y_position, f"{deduccion_valor:,.0f}" if deduccion_valor else "0")
+                    
+                    y_position -= 15
+
         def dibujar_pie_pagina():
-            y_position = 180
+            y_position = 140
             
             col1_x = left_margin + 120
             col2_x = page_width / 2 + 150
@@ -236,8 +279,8 @@ class FormatoLiquidacion():
             # Firma empresa
             p.drawCentredString(col2_x, y_position, "__________________________")
             p.drawCentredString(col2_x, y_position - 20, "FIRMA")
-            p.drawCentredString(col2_x, y_position - 40, empresa.nombre_corto.upper() if empresa.nombre_corto else "")
-            p.drawCentredString(col2_x, y_position - 60, "NIT " + str(empresa.numero_identificacion.upper() if empresa.numero_identificacion.upper() else ""))
+            p.drawCentredString(col2_x, y_position - 40, str(empresa.nombre_corto).upper() if empresa.nombre_corto else "")
+            p.drawCentredString(col2_x, y_position - 60, "NIT " + (str(empresa.numero_identificacion).upper() if empresa.numero_identificacion else ""))
 
         dibujar_encabezado()
         dibujar_cuerpo()
