@@ -12,8 +12,9 @@ class ParametroViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path=r'version-ruteo',)
     def version_ruteo_action(self, request):        
-        parametro = VerParametro.objects.filter(pk=1).values('version_ruteo').first()
+        parametro = VerParametro.objects.filter(pk=1).values('version_ruteo_android', 'version_ruteo_ios').first()
         if not parametro:
             return Response({'mensaje': 'No se han establecido parametros'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'version': parametro['version_ruteo']}, status=status.HTTP_200_OK)
+        
+        return Response({'version_ruteo_android': parametro['version_ruteo_android'], 'version_ruteo_ios': parametro['version_ruteo_ios']}, status=status.HTTP_200_OK)
            
