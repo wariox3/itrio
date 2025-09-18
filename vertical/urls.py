@@ -1,4 +1,5 @@
 from django.urls import path, include
+from .views.parametro import ParametroViewSet
 from .views.entrega import EntregaViewSet
 from .views.viaje import ViajeViewSet
 from .views.vehiculo import VehiculoViewSet
@@ -23,6 +24,7 @@ from .views.marca import MarcaViewSet
 from rest_framework import routers
 
 router = routers.DefaultRouter()
+router.register(r'parametro', ParametroViewSet)
 router.register(r'entrega', EntregaViewSet)
 router.register(r'viaje', ViajeViewSet)
 router.register(r'vehiculo', VehiculoViewSet)
