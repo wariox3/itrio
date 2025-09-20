@@ -819,7 +819,8 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             try:
                 visita = RutVisita.objects.get(pk=id)                            
             except RutVisita.DoesNotExist:
-                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)           
+                #return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)           
+                return Response({'mensaje': f'La visita no existe'}, status=status.HTTP_200_OK)
             if visita.estado_entregado == False:  
                 if visita.despacho_id:
                     try:
@@ -894,9 +895,10 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                             VisitaServicio.entrega_complemento(visita, imagenes_b64, firmas_b64, datos_entrega)
                         return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                  
+                    #return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                  
+                    return Response({'mensaje': f'La visita no tiene despacho'}, status=status.HTTP_200_OK)    
             else:
-                return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
+                return Response({'mensaje': f'La visita ya fue entregada con anterioridad'}, status=status.HTTP_200_OK)
                 #return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
