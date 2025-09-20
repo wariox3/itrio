@@ -815,91 +815,80 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                 if fecha_entrega > timezone.now():
                     return Response({'mensaje':'La fecha de entrega no puede ser mayor a la fecha actual', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                             
             except ValueError:
-                return Response({'mensaje':'Formato de fecha inválido. Use YYYY-MM-DD HH:MM', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'mensaje':'Formato de fecha inválido. Use YYYY-MM-DD HH:MM', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
             try:
                 visita = RutVisita.objects.get(pk=id)                            
             except RutVisita.DoesNotExist:
-                #return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)           
-                return Response({'mensaje': f'La visita no existe'}, status=status.HTTP_200_OK)
-            if visita.estado_entregado == False:  
-                if visita.despacho_id:
-                    try:
-                        despacho = RutDespacho.objects.get(pk=visita.despacho_id)
-                    except ValueError:
-                        return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
-                    with transaction.atomic():                                                                              
-                        datos_entrega = UtilidadGeneral.json_texto(datos_adicionales)
-                        visita.estado_entregado = True
-                        visita.fecha_entrega = fecha_entrega
-                        visita.datos_entrega = datos_entrega
-                        visita.save()
-                        RutDespacho.objects.filter(pk=visita.despacho_id).update(
-                            visitas_entregadas=F('visitas_entregadas') + 1
-                        )                                 
-                        backblaze = Backblaze()
-                        tenant = request.tenant.schema_name                    
+                return Response({'mensaje':'La visita no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                               
+            if visita.despacho_id == None:
+                return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+                            
+            if visita.estado_entregado == False:
+                with transaction.atomic():                                                                                              
+                    datos_entrega = UtilidadGeneral.json_texto(datos_adicionales)
+                    visita.estado_entregado = True
+                    visita.fecha_entrega = fecha_entrega
+                    visita.datos_entrega = datos_entrega
+                    visita.save()
+                    RutDespacho.objects.filter(pk=visita.despacho_id).update(visitas_entregadas=F('visitas_entregadas') + 1)                                 
+                    backblaze = Backblaze()
+                    tenant = request.tenant.schema_name                    
+                    if imagenes:                        
+                        for imagen in imagenes:       
+                            #file_content = imagen.read()                                  
+                            file_content = Imagen.comprimir_imagen_jpg(imagen, calidad=20, max_width=1920)
+                            nombre_archivo = f'{id}.jpg'                                                   
+                            id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                            archivo = GenArchivo()
+                            archivo.archivo_tipo_id = 2
+                            archivo.almacenamiento_id = id_almacenamiento
+                            archivo.nombre = nombre_archivo
+                            archivo.tipo = tipo
+                            archivo.tamano = tamano
+                            archivo.uuid = uuid
+                            archivo.codigo = id
+                            archivo.modelo = "RutVisita"
+                            archivo.url = url
+                            archivo.save()
+                    if firmas:
+                        for firma in firmas:       
+                            # No comprimir porque daña el png
+                            file_content = firma.read()                                                                                           
+                            nombre_archivo = f'{id}.png'                                                   
+                            id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
+                            archivo = GenArchivo()
+                            archivo.archivo_tipo_id = 3
+                            archivo.almacenamiento_id = id_almacenamiento
+                            archivo.nombre = nombre_archivo
+                            archivo.tipo = tipo
+                            archivo.tamano = tamano
+                            archivo.uuid = uuid
+                            archivo.codigo = id
+                            archivo.modelo = "RutVisita"
+                            archivo.url = url
+                            archivo.save()                        
+                    configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]
+                    if configuracion['rut_sincronizar_complemento']:
+                        imagenes_b64 = []
                         if imagenes:                        
-                            for imagen in imagenes:       
-                                #file_content = imagen.read()                                  
-                                file_content = Imagen.comprimir_imagen_jpg(imagen, calidad=20, max_width=1920)
-                                nombre_archivo = f'{id}.jpg'                                                   
-                                id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
-                                archivo = GenArchivo()
-                                archivo.archivo_tipo_id = 2
-                                archivo.almacenamiento_id = id_almacenamiento
-                                archivo.nombre = nombre_archivo
-                                archivo.tipo = tipo
-                                archivo.tamano = tamano
-                                archivo.uuid = uuid
-                                archivo.codigo = id
-                                archivo.modelo = "RutVisita"
-                                archivo.url = url
-                                archivo.save()
+                            for imagen in imagenes:    
+                                imagen.seek(0)   
+                                file_content = imagen.read()   
+                                base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
+                                imagenes_b64.append({
+                                    'base64': base64_encoded,
+                                })     
+                        firmas_b64 = []
                         if firmas:
-                            for firma in firmas:       
-                                # No comprimir porque daña el png
-                                file_content = firma.read()                                                                                           
-                                nombre_archivo = f'{id}.png'                                                   
-                                id_almacenamiento, tamano, tipo, uuid, url = backblaze.subir_data(file_content, tenant, nombre_archivo)
-                                archivo = GenArchivo()
-                                archivo.archivo_tipo_id = 3
-                                archivo.almacenamiento_id = id_almacenamiento
-                                archivo.nombre = nombre_archivo
-                                archivo.tipo = tipo
-                                archivo.tamano = tamano
-                                archivo.uuid = uuid
-                                archivo.codigo = id
-                                archivo.modelo = "RutVisita"
-                                archivo.url = url
-                                archivo.save()                        
-                        configuracion = GenConfiguracion.objects.filter(pk=1).values('rut_sincronizar_complemento')[0]
-                        if configuracion['rut_sincronizar_complemento']:
-                            imagenes_b64 = []
-                            if imagenes:                        
-                                for imagen in imagenes:    
-                                    imagen.seek(0)   
-                                    file_content = imagen.read()   
-                                    base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
-                                    imagenes_b64.append({
-                                        'base64': base64_encoded,
-                                    })     
-                            firmas_b64 = []
-                            if firmas:
-                                for firma in firmas:
-                                    firma.seek(0)       
-                                    file_content = firma.read()   
-                                    base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
-                                    firmas_b64.append({
-                                        'base64': base64_encoded,
-                                    })                                                                                                                                                                                                     
-                            VisitaServicio.entrega_complemento(visita, imagenes_b64, firmas_b64, datos_entrega)
-                        return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)
-                else:
-                    #return Response({'mensaje':'La visita no tiene despacho', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                  
-                    return Response({'mensaje': f'La visita no tiene despacho'}, status=status.HTTP_200_OK)    
-            else:
-                return Response({'mensaje': f'La visita ya fue entregada con anterioridad'}, status=status.HTTP_200_OK)
-                #return Response({'mensaje':'La visita ya fue entregada con anterioridad', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+                            for firma in firmas:
+                                firma.seek(0)       
+                                file_content = firma.read()   
+                                base64_encoded = base64.b64encode(file_content).decode('utf-8')                                                    
+                                firmas_b64.append({
+                                    'base64': base64_encoded,
+                                })                                                                                                                                                                                                     
+                        VisitaServicio.entrega_complemento(visita, imagenes_b64, firmas_b64, datos_entrega)
+            return Response({'mensaje': f'Entrega con exito'}, status=status.HTTP_200_OK)                                                                     
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
 
