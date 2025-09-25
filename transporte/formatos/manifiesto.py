@@ -770,6 +770,51 @@ class FormatoManifiesto:
 
             p.rect(488, titulo_y - 14, 52, 28)
 
+            # Usar la misma función que usas en otras partes del código
+            PDFUtilidades.dibujar_celda_con_borde(
+                p, 
+                540,
+                titulo_y - 28,     # y
+                230,          # ancho
+                42,           # alto
+                "",           # título (vacío)
+                "",
+                con_linea_divisora=False,
+                font_titulo="Helvetica", 
+                size_titulo=7,
+                font_valor="Helvetica",
+                size_valor=7,
+                padding=5,
+                alineacion_titulo="izquierda",
+                alineacion_valor="justificado"  # o "izquierda" según prefieras
+            )            
+
+            styles = getSampleStyleSheet()
+            estilo_legal = ParagraphStyle(
+                'LegalStyle',
+                parent=styles['Normal'],
+                fontName='Helvetica',
+                fontSize=7,
+                alignment=TA_JUSTIFY,
+                textColor='black',
+                spaceAfter=0,
+                spaceBefore=0,
+                leading=6
+            )
+            
+            # Crear el párrafo
+            parrafo_legal = Paragraph(despacho.comentario, estilo_legal)
+            
+            # Definir posición y tamaño del párrafo (a la derecha de los datos)
+            parrafo_x = width - 235
+            parrafo_y = titulo_y
+            parrafo_width = 200
+            parrafo_height = 60
+            
+            # Dibujar el párrafo en el canvas
+            parrafo_legal.wrapOn(p, parrafo_width, parrafo_height)
+            parrafo_legal.drawOn(p, parrafo_x, parrafo_y)                 
+
             titulo_y = y_actual - 28
 
             PDFUtilidades.dibujar_celda_con_borde(
@@ -940,6 +985,38 @@ class FormatoManifiesto:
                 alineacion_titulo="izquierda",
             )
 
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                620,
+                titulo_y,
+                80,
+                14,
+                "UNIDADES:",
+                valor=None,
+                font_titulo="Helvetica-Bold",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="izquierda",
+            )     
+
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                700,
+                titulo_y,
+                70,
+                14,
+                PDFUtilidades.formatear_numero(despacho.unidades, decimales=0, separador_miles=','),
+                valor=None,
+                font_titulo="Helvetica",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="derecha",
+            )              
+
             titulo_y = y_actual - 70
 
             PDFUtilidades.dibujar_celda_con_borde(
@@ -1022,7 +1099,39 @@ class FormatoManifiesto:
                 con_linea_divisora=False,
                 solo_titulo=True,
                 alineacion_titulo="izquierda",
-            )          
+            ) 
+
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                620,
+                titulo_y,
+                80,
+                14,
+                "PESO:",
+                valor=None,
+                font_titulo="Helvetica-Bold",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="izquierda",
+            )     
+
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                700,
+                titulo_y,
+                70,
+                14,
+                PDFUtilidades.formatear_numero(despacho.peso, decimales=0, separador_miles=','),
+                valor=None,
+                font_titulo="Helvetica",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="derecha",
+            )                      
 
             titulo_y = y_actual - 84
 
@@ -1106,7 +1215,39 @@ class FormatoManifiesto:
                 con_linea_divisora=False,
                 solo_titulo=True,
                 alineacion_titulo="izquierda",
-            )                    
+            ) 
+
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                620,
+                titulo_y,
+                80,
+                14,
+                "GUIAS:",
+                valor=None,
+                font_titulo="Helvetica-Bold",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="izquierda",
+            )     
+
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                700,
+                titulo_y,
+                70,
+                14,
+                PDFUtilidades.formatear_numero(despacho.guias, decimales=0, separador_miles=','),
+                valor=None,
+                font_titulo="Helvetica",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="derecha",
+            )                                   
 
             titulo_y = y_actual - 98
 
@@ -1174,7 +1315,7 @@ class FormatoManifiesto:
                 solo_titulo=True,
                 alineacion_titulo="derecha",
                 formatear_como_numero=True,
-            )
+            ) 
 
             PDFUtilidades.dibujar_celda_con_borde(
                 p,
@@ -1190,7 +1331,39 @@ class FormatoManifiesto:
                 con_linea_divisora=False,
                 solo_titulo=True,
                 alineacion_titulo="izquierda",
-            )        
+            )     
+
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                620,
+                titulo_y,
+                80,
+                14,
+                "CE:",
+                valor=None,
+                font_titulo="Helvetica-Bold",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="izquierda",
+            )     
+
+            PDFUtilidades.dibujar_celda_con_borde(
+                p,
+                700,
+                titulo_y,
+                70,
+                14,
+                "0",
+                valor=None,
+                font_titulo="Helvetica",
+                size_titulo=9,
+                padding=5,
+                con_linea_divisora=False,
+                solo_titulo=True,
+                alineacion_titulo="derecha",
+            )                       
 
             titulo_y = y_actual - 112      
 
@@ -1198,7 +1371,7 @@ class FormatoManifiesto:
                 p,
                 30,
                 titulo_y,
-                750,
+                740,
                 14,
                 f"EN CASO DE CUALQUIER NOVEDAD CON SEGURIDAD COMUNICARSE CON EL TELÉFONO: {validarVacio(empresa.telefono)}",
                 valor=None,
@@ -1216,7 +1389,7 @@ class FormatoManifiesto:
                 p,
                 30,
                 titulo_y,
-                750,
+                740,
                 14,
                 f"VALOR TOTAL EN LETRAS: {convertir_a_letras(despacho.pago)}",
                 valor=None,
@@ -1269,7 +1442,7 @@ class FormatoManifiesto:
                 p,
                 530,
                 titulo_y,
-                250,
+                240,
                 34,
                 "FIRMA Y HUELLA DEL CONDUCTOR",
                 valor=None,
@@ -1279,7 +1452,8 @@ class FormatoManifiesto:
                 con_linea_divisora=False,
                 solo_titulo=False,
                 alineacion_titulo="centro",
-            )            
+            )    
+               
 
         # Lógica principal para manejar múltiples páginas CORREGIDA
         total_detalles = len(detalles_despacho)
