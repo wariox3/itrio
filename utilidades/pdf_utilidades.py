@@ -41,49 +41,69 @@ class PDFUtilidades:
                 texto
             )
     
+
     @staticmethod
     def dibujar_celda_con_borde(p, x, y, ancho, alto, titulo, valor=None, 
                             font_titulo="Helvetica-Bold", font_valor="Helvetica", 
                             size_titulo=9, size_valor=8, padding=5,
                             con_linea_divisora=True, solo_titulo=False,
-                            ajuste_titulo=2):  # Nuevo parámetro para ajuste
+                            ajuste_titulo=2, alineacion_valor="centro",
+                            formatear_como_numero=False, decimales=0,
+                            alineacion_titulo="centro"):
         """
         Dibuja una celda con borde, con opción de solo título o título+valor
-        
-        Args:
-            ... [parámetros existentes] ...
-            ajuste_titulo: Ajuste vertical del título en puntos (positivo = subir)
         """
         
         # Dibujar el rectángulo del borde
         p.rect(x, y, ancho, alto)
         
         if solo_titulo:
-            # Modo solo título - título centrado vertical y horizontalmente
+            # Modo solo título - título alineado según alineacion_titulo
             p.setFont(font_titulo, size_titulo)
-            titulo_width = p.stringWidth(titulo.upper(), font_titulo, size_titulo)
-            titulo_x = x + (ancho - titulo_width) / 2
-            titulo_y = y + (alto - size_titulo) / 2 + ajuste_titulo  # Ajuste añadido
-            p.drawString(titulo_x, titulo_y, titulo.upper())
+            titulo_width = p.stringWidth(titulo, font_titulo, size_titulo)  # Quité .upper()
+            
+            # Calcular posición del título según alineación
+            if alineacion_titulo == "derecha":
+                titulo_x = x + ancho - titulo_width - padding
+            elif alineacion_titulo == "izquierda":
+                titulo_x = x + padding
+            else:  # centro (por defecto)
+                titulo_x = x + (ancho - titulo_width) / 2
+            
+            titulo_y = y + (alto - size_titulo) / 2 + ajuste_titulo
+            p.drawString(titulo_x, titulo_y, titulo)  # Quité .upper()
+            
         else:
-            # Modo título + valor
+            # Modo título + valor (código existente)
             p.setFont(font_titulo, size_titulo)
             titulo_width = p.stringWidth(titulo.upper(), font_titulo, size_titulo)
             titulo_x = x + (ancho - titulo_width) / 2
-            titulo_y = y + alto - size_titulo - padding + ajuste_titulo  # Ajuste añadido
+            titulo_y = y + alto - size_titulo - padding + ajuste_titulo
             p.drawString(titulo_x, titulo_y, titulo.upper())
             
             if con_linea_divisora:
-                # Ajustar también la línea divisora si es necesario
                 p.line(x, titulo_y - padding, x + ancho, titulo_y - padding)
             
             if valor is not None:
                 p.setFont(font_valor, size_valor)
-                valor_str = str(valor) if valor is not None else ""
-                valor_width = p.stringWidth(valor_str, font_valor, size_valor)
-                valor_x = x + (ancho - valor_width) / 2
+                
+                if formatear_como_numero:
+                    valor_str = PDFUtilidades.formatear_numero(valor, decimales)
+                else:
+                    valor_str = str(valor) if valor is not None else ""
+                
                 valor_y = y + padding
-                p.drawString(valor_x, valor_y, valor_str)
+                
+                if alineacion_valor == "derecha":
+                    valor_x = x + ancho - padding
+                    p.drawRightString(valor_x, valor_y, valor_str)
+                elif alineacion_valor == "izquierda":
+                    valor_x = x + padding
+                    p.drawString(valor_x, valor_y, valor_str)
+                else:  # centro
+                    valor_width = p.stringWidth(valor_str, font_valor, size_valor)
+                    valor_x = x + (ancho - valor_width) / 2
+                    p.drawString(valor_x, valor_y, valor_str)
         
         return x + ancho
     
@@ -208,3 +228,26 @@ class PDFUtilidades:
                 return str(fecha_obj)
         except (AttributeError, ValueError, TypeError):
             return str(fecha_obj) if fecha_obj else ""
+        
+    @staticmethod
+    def formatear_numero(valor, decimales=0, separador_miles=','):
+        """
+        Formatea un número al estilo americano: 5,500,000
+        """
+        if valor is None or valor == "":
+            return ""
+        
+        try:
+            numero = float(valor)
+            
+            if decimales == 0:
+                # Formatear como entero con separadores de miles
+                return f"{int(numero):,}".replace(",", separador_miles)
+            else:
+                # Formatear con decimales
+                formato = f"{{:,.{decimales}f}}"
+                numero_formateado = formato.format(numero)
+                return numero_formateado.replace(",", "X").replace(".", ",").replace("X", separador_miles)
+                
+        except (ValueError, TypeError):
+            return str(valor) if valor is not None else ""
