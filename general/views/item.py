@@ -236,6 +236,28 @@ class ItemViewSet(viewsets.ModelViewSet):
                     'impuesto_compra': row[13],
                 }
 
+                if data['precio'] is not None:
+                    try:
+                        precio_str = str(data['precio'])
+                        if '.' in precio_str:
+                            decimal_part = precio_str.split('.')[1]
+                            if len(decimal_part) > 2:
+                                errores = True
+                                error_dato = {
+                                    'fila': i,
+                                    'errores': {'precio': ['No puede tener más de 2 decimales']}
+                                }                                    
+                                errores_datos.append(error_dato)
+                                continue
+                    except (ValueError, TypeError):
+                        errores = True
+                        error_dato = {
+                            'fila': i,
+                            'errores': {'precio': ['Formato inválido']}
+                        }                                    
+                        errores_datos.append(error_dato)
+                        continue                
+
                 data['cuenta_venta'] = cuentas_map.get(data['cuenta_venta'])
                 data['cuenta_compra'] = cuentas_map.get(data['cuenta_compra'])  
                     
