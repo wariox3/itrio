@@ -34,30 +34,30 @@ class FormatoManifiesto:
             bucket = config('DO_BUCKET')
             entorno = config('ENV')
 
-            imagen_defecto_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
-
-            # Intenta cargar la imagen desde la URL
-            imagen_empresa = empresa.imagen
-
-            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
+            x = 10
+            y = height - 80 
+            tamano_cuadrado = 1 * inch
+            
+            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{empresa.imagen}'
             try:
                 logo = ImageReader(logo_url)
-            except Exception as e:
-                logo_url = imagen_defecto_url
-                logo = ImageReader(logo_url)
 
- 
+                p.drawImage(logo, 20, y - 40, width=tamano_cuadrado + 40, height=tamano_cuadrado + 40, mask='auto', preserveAspectRatio=True)
+
+            except Exception as e:
+                pass
+
             comentario = despacho.comentario if hasattr(despacho, 'comentario') else ''
-        
+
             if isinstance(comentario, str):
                 texto_comentario = "Obs:" + " " + comentario[:20]
             else:
                 texto_comentario = ''
-            
+
             contenido_qr = f"MEC:{despacho.numero_rndc if hasattr(despacho, 'numero_rndc') else ''}\n"
             contenido_qr += f"Fecha:{despacho.fecha_registro.strftime('%Y-%m-%d') if hasattr(despacho, 'fecha_registro') and despacho.fecha_registro else ''}\n"
             contenido_qr += f"Placa:{despacho.vehiculo.placa if hasattr(despacho.vehiculo, 'placa') and despacho.vehiculo.placa else ''}\n"
-            contenido_qr += f"Remolque:{despacho.remolque.placa if hasattr(despacho.remolque, 'placa') and despacho.remolque.plcada else ''}\n"
+            contenido_qr += f"Remolque:{despacho.remolque.placa if hasattr(despacho.remolque, 'placa') and despacho.remolque.placa else ''}\n"  # Corregido
             contenido_qr += f"Orig:{despacho.ciudad_origen.nombre if hasattr(despacho.ciudad_origen, 'nombre') and despacho.ciudad_origen.nombre else ''}\n"
             contenido_qr += f"Dest:{despacho.ciudad_destino.nombre if hasattr(despacho.ciudad_destino, 'nombre') and despacho.ciudad_destino.nombre else ''}\n"
             contenido_qr += "Mercancia:'VARIOS'\n"
@@ -68,15 +68,8 @@ class FormatoManifiesto:
 
             qr_code_drawing = generar_qr(contenido_qr)
 
-            renderPDF.draw(qr_code_drawing, p, 680, 520)                
-
-            # Variables de posición inicial
-            x = 10
-            y = height - 80 
-            tamano_cuadrado = 1 * inch
-
-            # Dibujar la imagen sin los cuadros
-            p.drawImage(logo, 20, y - 40, width=tamano_cuadrado + 40, height=tamano_cuadrado+ 40, mask='auto', preserveAspectRatio=True)
+            # Ajusta estas coordenadas según el tamaño de tu página
+            renderPDF.draw(qr_code_drawing, p, 680, 520)  # Coordenadas ajustadas
 
             # Agregar información de la empresa al lado de la imagen
             p.setFont("Helvetica-Bold", 12)
@@ -619,21 +612,18 @@ class FormatoManifiesto:
                     # NIT/CC REMITENTE
                     p.rect(x_actual, y_actual, anchos_columnas[8], altura_fila)
                     remitente_info = ""
-                    if hasattr(detalle.guia, 'remitente') and detalle.guia.remitente:
-                        nit = obtener_valor_seguro(detalle.guia.remitente, 'numero_identificacion', '')
-                        nombre = obtener_valor_seguro(detalle.guia.remitente, 'nombre_corto', '')
-                        remitente_info = f"{nit} {nombre}"[:25]
+                    if hasattr(detalle.guia, 'remitente_nombre') and detalle.guia.remitente_nombre:
+                        remitente_info = str(detalle.guia.remitente_nombre)[:25]
                     p.drawString(x_actual + 2, y_actual + 5, remitente_info)
                     x_actual += anchos_columnas[8]
                     
                     # NIT/CC DESTINATARIO
-                    p.rect(x_actual, y_actual, anchos_columnas[9], altura_fila)
+                    p.rect(x_actual, y_actual, anchos_columnas[8], altura_fila)
                     destinatario_info = ""
-                    if hasattr(detalle.guia, 'destinatario') and detalle.guia.destinatario:
-                        nit = obtener_valor_seguro(detalle.guia.destinatario, 'numero_identificacion', '')
-                        nombre = obtener_valor_seguro(detalle.guia.destinatario, 'nombre_corto', '')
-                        destinatario_info = f"{nit} {nombre}"[:25]
+                    if hasattr(detalle.guia, 'destinatario_nombre') and detalle.guia.destinatario_nombre:
+                        destinatario_info = str(detalle.guia.destinatario_nombre)[:25]
                     p.drawString(x_actual + 2, y_actual + 5, destinatario_info)
+                    x_actual += anchos_columnas[8]                    
                     
                     y_actual -= altura_fila
                             
