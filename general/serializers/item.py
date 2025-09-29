@@ -8,7 +8,7 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
     cuenta_compra = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     class Meta:
         model = GenItem
-        fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'precio', 'producto', 'servicio', 'inventario', 'negativo',
+        fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'costo_promedio', 'precio', 'producto', 'servicio', 'inventario', 'negativo',
                   'existencia', 'remision', 'disponible',
                   'cuenta_venta', 'cuenta_compra', 'favorito', 'venta', 'inactivo', 'imagen']
 
@@ -28,6 +28,7 @@ class GenItemSerializador(serializers.HyperlinkedModelSerializer):
             'codigo': instance.codigo,
             'nombre': instance.nombre,
             'referencia': instance.referencia,
+            'costo_promedio': instance.costo_promedio,
             'costo': instance.costo,
             'precio': instance.precio,
             'producto': instance.producto,
@@ -59,6 +60,7 @@ class GenItemListaSerializador(serializers.ModelSerializer):
                   'referencia',
                   'precio',
                   'costo',
+                  'costo_promedio',
                   'existencia',
                   'remision',
                   'disponible',
@@ -84,4 +86,4 @@ class GenItemSeleccionarSerializador(serializers.ModelSerializer):
 class GenItemInformeExistenciaSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenItem
-        fields = ['id', 'nombre', 'codigo', 'referencia', 'precio', 'costo', 'existencia', 'remision', 'disponible']
+        fields = ['id', 'nombre', 'codigo', 'referencia', 'precio', 'costo', 'costo_promedio', 'existencia', 'remision', 'disponible']

@@ -597,18 +597,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
                                     documento_afectado.save(update_fields=['afectado', 'pendiente'])     
                                     
-                            if documento_detalle.operacion_inventario != 0:
+                            if documento_detalle.operacion_inventario != 0:                                
+                                cantidad_anterior = 0
                                 existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
                                 if existencia:
+                                    cantidad_anterior = existencia.existencia
                                     existencia.existencia += documento_detalle.cantidad_operada
                                     existencia.disponible += documento_detalle.cantidad_operada
-                                    existencia.save(update_fields=['existencia', 'disponible'])
-                                else:
-                                    existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)
+                                    existencia.save(update_fields=['existencia', 'disponible'])                                    
+                                else:                                    
+                                    existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)                                
                                 item = GenItem.objects.get(id=documento_detalle.item_id)
                                 item.existencia += documento_detalle.cantidad_operada
                                 item.disponible += documento_detalle.cantidad_operada
-                                item.save(update_fields=['existencia', 'disponible'])
+                                # Mover costo promedio (compra, entrada)
+                                if documento.documento_tipo_id in (5,9):
+                                    pass
+                                    #costo_promedio = ((cantidad_anterior * item.costo_promedio) + (documento_detalle.cantidad_operada * documento_detalle.costo)) / existencia.existencia
+                                    #item.costo_promedio = costo_promedio
+                                item.save(update_fields=['existencia', 'disponible', 'costo_promedio'])
+                                
 
                             if documento_detalle.tipo_registro == 'D':
                                 activo = ConActivo.objects.get(id=documento_detalle.activo_id)
@@ -617,7 +625,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     depreciacion_saldo = activo.depreciacion_saldo - documento_detalle.precio
                                     activo.depreciacion_acumulada = depreciacion_acumulada
                                     activo.depreciacion_saldo = depreciacion_saldo
-                                    activo.save()
+                                    activo.save()                                    
                         
                         # Nota credito
                         if documento.documento_referencia:
