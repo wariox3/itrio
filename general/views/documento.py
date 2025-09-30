@@ -915,7 +915,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     # Costo de venta
                                     if documento.documento_tipo_id == 1:
                                         if documento_detalle.costo > 0:
-                                            costo_total = documento_detalle.costo * documento_detalle.cantidad
+                                            costo_total = documento_detalle.costo * Decimal(documento_detalle.cantidad)
                                             data = data_general.copy()                            
                                             data['cuenta'] = documento_detalle.item.cuenta_costo_venta_id
                                             data['contacto'] = documento.contacto_id                                                                        
