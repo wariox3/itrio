@@ -230,10 +230,11 @@ class ItemViewSet(viewsets.ModelViewSet):
                     'servicio': row[7],
                     'cuenta_venta': str(row[8]),
                     'cuenta_compra': str(row[9]),
-                    'negativo': row[10],
-                    'venta': row[11],
-                    'impuesto_venta': row[12],
-                    'impuesto_compra': row[13],
+                    'cuenta_costo_venta': str(row[10]),
+                    'negativo': row[11],
+                    'venta': row[12],
+                    'impuesto_venta': row[13],
+                    'impuesto_compra': row[14],
                 }
 
                 if data['precio'] is not None:
@@ -259,7 +260,8 @@ class ItemViewSet(viewsets.ModelViewSet):
                         continue                
 
                 data['cuenta_venta'] = cuentas_map.get(data['cuenta_venta'])
-                data['cuenta_compra'] = cuentas_map.get(data['cuenta_compra'])  
+                data['cuenta_compra'] = cuentas_map.get(data['cuenta_compra'])
+                data['cuenta_costo_venta'] = cuentas_map.get(data['cuenta_costo_venta'])  
                     
                 serializer = GenItemSerializador(data=data)
                 if serializer.is_valid():

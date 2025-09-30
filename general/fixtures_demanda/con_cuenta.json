@@ -1991,6 +1991,20 @@
                 "exige_grupo": false,
                 "permite_movimiento": true
             }
-        }
+        },
+        {
+            "pk": 143,
+            "campos": {
+                "codigo": 613595,
+                "nombre": "Venta de otros productos",
+                "cuenta_clase": 6,
+                "cuenta_grupo": 61,
+                "cuenta_cuenta": 6135,
+                "exige_base": false,
+                "exige_contacto": true,
+                "exige_grupo": false,
+                "permite_movimiento": true
+            }
+        }        
     ]
 }

@@ -5,9 +5,9 @@ class GenItem(models.Model):
     nombre = models.CharField(max_length=200)
     codigo = models.CharField(max_length=100, null=True)
     referencia = models.CharField(max_length=50, null=True)    
-    costo_promedio = models.FloatField(default=0)
-    costo = models.FloatField(default=0)
-    precio = models.FloatField(default=0)
+    costo_promedio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    costo = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    precio =models.DecimalField(max_digits=20, decimal_places=6, default=0)
     producto = models.BooleanField(default = False)
     servicio = models.BooleanField(default = False)
     inventario = models.BooleanField(default = False)
@@ -21,6 +21,8 @@ class GenItem(models.Model):
     imagen = models.TextField(null=True)
     cuenta_venta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='itemes_cuenta_venta_rel')
     cuenta_compra = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='itemes_cuenta_compra_rel')
+    cuenta_costo_venta = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='itemes_cuenta_costo_venta_rel')
+    cuenta_inventario = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='itemes_cuenta_inventario_rel')
 
     class Meta:
         db_table = "gen_item"  

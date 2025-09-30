@@ -610,13 +610,19 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 item = GenItem.objects.get(id=documento_detalle.item_id)
                                 item.existencia += documento_detalle.cantidad_operada
                                 item.disponible += documento_detalle.cantidad_operada
-                                # Mover costo promedio (compra, entrada)
-                                if documento.documento_tipo_id in (5,9):
-                                    pass
-                                    #costo_promedio = ((cantidad_anterior * item.costo_promedio) + (documento_detalle.cantidad_operada * documento_detalle.costo)) / existencia.existencia
-                                    #item.costo_promedio = costo_promedio
+                                # Generar costo promedio (compra, entrada)
+                                if documento.documento_tipo_id in (5,9):  
+                                    cantidad_anterior = Decimal(cantidad_anterior)
+                                    cantidad_existencia = Decimal(existencia.existencia)
+                                    cantidad_operada = Decimal(documento_detalle.cantidad_operada)
+                                    costo_promedio = ((cantidad_anterior * item.costo_promedio) + (cantidad_operada * documento_detalle.precio)) / cantidad_existencia
+                                    item.costo_promedio = costo_promedio
                                 item.save(update_fields=['existencia', 'disponible', 'costo_promedio'])
-                                
+
+                                # Asignar costo
+                                if documento.documento_tipo_id == 1:
+                                    documento_detalle.costo = item.costo_promedio
+                                    documento_detalle.save(update_fields=['costo'])
 
                             if documento_detalle.tipo_registro == 'D':
                                 activo = ConActivo.objects.get(id=documento_detalle.activo_id)
@@ -906,6 +912,44 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     else:
                                         return Response({'validaciones': movimiento_serializador.errors, 
                                                 'mensaje': 'El item no tiene una cuenta de venta establecida'}, status=status.HTTP_400_BAD_REQUEST) 
+                                    
+                                    # Costo de venta
+                                    if documento.documento_tipo_id == 1:
+                                        if documento_detalle.costo > 0:
+                                            costo_total = documento_detalle.costo * documento_detalle.cantidad
+                                            data = data_general.copy()                            
+                                            data['cuenta'] = documento_detalle.item.cuenta_costo_venta_id
+                                            data['contacto'] = documento.contacto_id                                                                        
+                                            data['naturaleza'] = 'D'
+                                            data['debito'] = costo_total
+                                            data['detalle'] = 'COSTO VENTA'
+                                            if documento_detalle.item.cuenta_costo_venta:
+                                                if documento_detalle.item.cuenta_costo_venta.exige_grupo:
+                                                    if documento.sede:
+                                                        data['grupo'] = documento.sede.grupo_id
+                                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                                            if movimiento_serializador.is_valid():
+                                                movimientos_validos.append(movimiento_serializador)
+                                            else:
+                                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                        'mensaje': 'El item no tiene una cuenta de costo establecida'}, status=status.HTTP_400_BAD_REQUEST)
+                                                                                        
+                                            data = data_general.copy()                            
+                                            data['cuenta'] = documento_detalle.item.cuenta_inventario_id
+                                            data['contacto'] = documento.contacto_id                                                                        
+                                            data['naturaleza'] = 'C'
+                                            data['credito'] = costo_total
+                                            data['detalle'] = 'INVENTARIO'
+                                            if documento_detalle.item.cuenta_inventario:
+                                                if documento_detalle.item.cuenta_inventario.exige_grupo:
+                                                    if documento.sede:
+                                                        data['grupo'] = documento.sede.grupo_id
+                                            movimiento_serializador = ConMovimientoSerializador(data=data)
+                                            if movimiento_serializador.is_valid():
+                                                movimientos_validos.append(movimiento_serializador)
+                                            else:
+                                                return Response({'validaciones': movimiento_serializador.errors, 
+                                                        'mensaje': 'El item no tiene una cuenta de inventario'}, status=status.HTTP_400_BAD_REQUEST)                                            
                                     
                                 if documento.documento_tipo.compra:
                                     data = data_general.copy()                            
