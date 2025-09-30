@@ -30,7 +30,8 @@ class ItemViewSet(viewsets.ModelViewSet):
     serializadores = {
         'lista': GenItemListaSerializador,
         'seleccionar' : GenItemSeleccionarSerializador,
-        'informe_existencia' : GenItemInformeExistenciaSerializador
+        'informe_existencia' : GenItemInformeExistenciaSerializador,
+        'informe_inventario_valorizado': GenItemInformeExistenciaSerializador,
         }
 
     def get_serializer_class(self):
@@ -231,10 +232,11 @@ class ItemViewSet(viewsets.ModelViewSet):
                     'cuenta_venta': str(row[8]),
                     'cuenta_compra': str(row[9]),
                     'cuenta_costo_venta': str(row[10]),
-                    'negativo': row[11],
-                    'venta': row[12],
-                    'impuesto_venta': row[13],
-                    'impuesto_compra': row[14],
+                    'cuenta_inventario': str(row[11]),
+                    'negativo': row[12],
+                    'venta': row[13],
+                    'impuesto_venta': row[14],
+                    'impuesto_compra': row[15],
                 }
 
                 if data['precio'] is not None:
@@ -261,7 +263,8 @@ class ItemViewSet(viewsets.ModelViewSet):
 
                 data['cuenta_venta'] = cuentas_map.get(data['cuenta_venta'])
                 data['cuenta_compra'] = cuentas_map.get(data['cuenta_compra'])
-                data['cuenta_costo_venta'] = cuentas_map.get(data['cuenta_costo_venta'])  
+                data['cuenta_costo_venta'] = cuentas_map.get(data['cuenta_costo_venta'])
+                data['cuenta_inventario'] = cuentas_map.get(data['cuenta_inventario'])
                     
                 serializer = GenItemSerializador(data=data)
                 if serializer.is_valid():

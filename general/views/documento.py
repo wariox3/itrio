@@ -597,30 +597,29 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
                                     documento_afectado.save(update_fields=['afectado', 'pendiente'])     
                                     
-                            if documento_detalle.operacion_inventario != 0:                                
-                                cantidad_anterior = 0
+                            if documento_detalle.operacion_inventario != 0:                                                                
                                 existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
-                                if existencia:
-                                    cantidad_anterior = existencia.existencia
+                                if existencia:                                    
                                     existencia.existencia += documento_detalle.cantidad_operada
-                                    existencia.disponible += documento_detalle.cantidad_operada
+                                    existencia.disponible += documento_detalle.cantidad_operada                                    
                                     existencia.save(update_fields=['existencia', 'disponible'])                                    
                                 else:                                    
-                                    existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)                                
+                                    existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)                                                                
                                 item = GenItem.objects.get(id=documento_detalle.item_id)
+                                existencia_anterior = Decimal(item.existencia)
+                                costo_promedio_anterior = item.costo_promedio
                                 item.existencia += documento_detalle.cantidad_operada
-                                item.disponible += documento_detalle.cantidad_operada
+                                item.disponible += documento_detalle.cantidad_operada   
+                                
                                 # Generar costo promedio (compra, entrada)
-                                if documento.documento_tipo_id in (5,9):  
-                                    cantidad_anterior = Decimal(cantidad_anterior)
-                                    cantidad_existencia = Decimal(existencia.existencia)
-                                    cantidad_operada = Decimal(documento_detalle.cantidad_operada)
-                                    costo_promedio = ((cantidad_anterior * item.costo_promedio) + (cantidad_operada * documento_detalle.precio)) / cantidad_existencia
-                                    item.costo_promedio = costo_promedio
-                                item.save(update_fields=['existencia', 'disponible', 'costo_promedio'])
+                                if documento.documento_tipo_id in (5,9):                                                                                                              
+                                    costo_promedio = ((existencia_anterior * costo_promedio_anterior) + (Decimal(documento_detalle.cantidad_operada) * documento_detalle.precio)) / Decimal(item.existencia)
+                                    item.costo_promedio = costo_promedio                                                                                                                                        
+                                item.costo_total = item.costo_promedio * Decimal(item.existencia)
+                                item.save(update_fields=['existencia', 'disponible', 'costo_promedio', 'costo_total'])
 
                                 # Asignar costo
-                                if documento.documento_tipo_id == 1:
+                                if documento.documento_tipo_id in(1,5,9):
                                     documento_detalle.costo = item.costo_promedio
                                     documento_detalle.save(update_fields=['costo'])
 

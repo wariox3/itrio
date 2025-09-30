@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from inventario.models.existencia import InvExistencia
 from general.models.item import GenItem
-from inventario.serializers.existencia import InvExistenciaSerializador, InvExistenciaInventarioValorizadoSerializador
+from inventario.serializers.existencia import InvExistenciaSerializador
 from inventario.filters.existencia import InvExistenciaFilter
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -16,7 +16,7 @@ class InvExistenciaViewSet(viewsets.ModelViewSet):
     filterset_class = InvExistenciaFilter 
 
     serializadores = {
-        'informe_inventario_valorizado': InvExistenciaInventarioValorizadoSerializador,
+        'informe_inventario_valorizado': InvExistenciaSerializador,
     }
 
     def get_serializer_class(self):
@@ -38,8 +38,6 @@ class InvExistenciaViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         if request.query_params.get('excel'):
-            documento_tipo_id = request.query_params.get('documento_tipo_id')
-            documento_clase_id = request.query_params.get('documento_tipo__documento_clase_id')
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)            
 

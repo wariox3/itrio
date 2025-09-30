@@ -2005,6 +2005,20 @@
                 "exige_grupo": false,
                 "permite_movimiento": true
             }
-        }        
+        },
+        {
+            "pk": 144,
+            "campos": {
+                "codigo": 143505,
+                "nombre": "Mercancías no fabricadas por la empresa",
+                "cuenta_clase": 1,
+                "cuenta_grupo": 14,
+                "cuenta_cuenta": 1435,
+                "exige_base": false,
+                "exige_contacto": true,
+                "exige_grupo": false,
+                "permite_movimiento": true
+            }
+        }         
     ]
 }

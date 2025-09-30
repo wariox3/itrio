@@ -15,7 +15,7 @@ class GenItemSerializador(serializers.ModelSerializer):
 
     class Meta:
         model = GenItem
-        fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'costo_promedio', 'precio', 'producto', 'servicio', 'inventario', 'negativo',
+        fields = ['id', 'codigo', 'nombre', 'referencia', 'costo', 'costo_promedio', 'costo_total', 'precio', 'producto', 'servicio', 'inventario', 'negativo',
                   'existencia', 'remision', 'disponible', 'favorito', 'venta', 'inactivo', 'imagen',
                   'cuenta_venta',
                   'cuenta_venta__nombre',
@@ -67,4 +67,4 @@ class GenItemSeleccionarSerializador(serializers.ModelSerializer):
 class GenItemInformeExistenciaSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenItem
-        fields = ['id', 'nombre', 'codigo', 'referencia', 'precio', 'costo', 'costo_promedio', 'existencia', 'remision', 'disponible']
+        fields = ['id', 'nombre', 'codigo', 'referencia', 'precio', 'costo', 'costo_promedio', 'costo_total', 'existencia', 'remision', 'disponible']

@@ -6,6 +6,7 @@ class GenItem(models.Model):
     codigo = models.CharField(max_length=100, null=True)
     referencia = models.CharField(max_length=50, null=True)    
     costo_promedio = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    costo_total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     costo = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     precio =models.DecimalField(max_digits=20, decimal_places=6, default=0)
     producto = models.BooleanField(default = False)
