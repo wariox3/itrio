@@ -160,7 +160,7 @@ class GenDocumentoDetalleInformeInventarioSerializador(serializers.ModelSerializ
     item__nombre = serializers.CharField(source='item.nombre', read_only=True)
     class Meta:
         model = GenDocumentoDetalle
-        fields = ['id', 'cantidad', 'costo', 'precio', 'subtotal', 'impuesto', 'total',
+        fields = ['id', 'cantidad', 'cantidad_operada', 'costo', 'precio', 'subtotal', 'impuesto', 'total',
                     'documento',
                     'documento__numero',
                     'documento__fecha',                   

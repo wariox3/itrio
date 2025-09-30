@@ -951,25 +951,47 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                         'mensaje': 'El item no tiene una cuenta de inventario'}, status=status.HTTP_400_BAD_REQUEST)                                            
                                     
                                 if documento.documento_tipo.compra:
-                                    data = data_general.copy()                            
-                                    data['cuenta'] = documento_detalle.item.cuenta_compra_id
-                                    data['contacto'] = documento.contacto_id     
-                                    if documento.documento_tipo_id in [6, 12]:
-                                        data['naturaleza'] = 'C'
-                                        data['credito'] = documento_detalle.subtotal
-                                    else:
-                                        data['naturaleza'] = 'D'
-                                        data['debito'] = documento_detalle.subtotal   
-                                    data['detalle'] = 'ITEM COMPRA'
-                                    if documento_detalle.item.cuenta_compra:
-                                        if documento_detalle.item.cuenta_compra.exige_grupo:
-                                            data['grupo'] = documento_detalle.grupo_id
-                                    movimiento_serializador = ConMovimientoSerializador(data=data)
-                                    if movimiento_serializador.is_valid():
-                                        movimientos_validos.append(movimiento_serializador)
-                                    else:
-                                        return Response({'validaciones': movimiento_serializador.errors, 
-                                                'mensaje': 'El item no tiene una cuenta de compra establecida'}, status=status.HTTP_400_BAD_REQUEST)  
+                                    # Si es un item de inventario debe cargar la cuenta de inventario
+                                    if documento_detalle.item.inventario:
+                                        data = data_general.copy()                            
+                                        data['cuenta'] = documento_detalle.item.cuenta_inventario_id
+                                        data['contacto'] = documento.contacto_id     
+                                        if documento.documento_tipo_id in [6, 12]:
+                                            data['naturaleza'] = 'C'
+                                            data['credito'] = documento_detalle.subtotal
+                                        else:
+                                            data['naturaleza'] = 'D'
+                                            data['debito'] = documento_detalle.subtotal   
+                                        data['detalle'] = 'INVENTARIO COMPRA'
+                                        if documento_detalle.item.cuenta_inventario:
+                                            if documento_detalle.item.cuenta_inventario.exige_grupo:
+                                                data['grupo'] = documento_detalle.grupo_id
+                                        movimiento_serializador = ConMovimientoSerializador(data=data)
+                                        if movimiento_serializador.is_valid():
+                                            movimientos_validos.append(movimiento_serializador)
+                                        else:
+                                            return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'El item no tiene una cuenta de inventario establecida'}, status=status.HTTP_400_BAD_REQUEST)                                         
+                                    else:                                    
+                                        data = data_general.copy()                            
+                                        data['cuenta'] = documento_detalle.item.cuenta_compra_id
+                                        data['contacto'] = documento.contacto_id     
+                                        if documento.documento_tipo_id in [6, 12]:
+                                            data['naturaleza'] = 'C'
+                                            data['credito'] = documento_detalle.subtotal
+                                        else:
+                                            data['naturaleza'] = 'D'
+                                            data['debito'] = documento_detalle.subtotal   
+                                        data['detalle'] = 'ITEM COMPRA'
+                                        if documento_detalle.item.cuenta_compra:
+                                            if documento_detalle.item.cuenta_compra.exige_grupo:
+                                                data['grupo'] = documento_detalle.grupo_id
+                                        movimiento_serializador = ConMovimientoSerializador(data=data)
+                                        if movimiento_serializador.is_valid():
+                                            movimientos_validos.append(movimiento_serializador)
+                                        else:
+                                            return Response({'validaciones': movimiento_serializador.errors, 
+                                                    'mensaje': 'El item no tiene una cuenta de compra establecida'}, status=status.HTTP_400_BAD_REQUEST)  
 
                             # Cuenta                                                                            
                             if documento_detalle.tipo_registro == 'C':                                    
