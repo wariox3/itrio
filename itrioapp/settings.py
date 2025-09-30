@@ -215,6 +215,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://ruteo.co",
     "http://ruteo.online",
     "http://app.ruteo.online",
+    "http://cargamasiva.com",
 ]
 
 
