@@ -69,6 +69,15 @@
     },
     {
       "model": "general.GenDocumentoClase",
+      "pk": 107,
+      "campos": {
+        "nombre": "Remision",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
       "pk": 200,
       "campos": {
         "nombre": "Pago",
