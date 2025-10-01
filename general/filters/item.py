@@ -7,6 +7,7 @@ class ItemFilter(django_filters.FilterSet):
         fields = {'id': ['exact'],
                   'nombre': ['exact','icontains'],
                   'codigo': ['exact','icontains'],
+                  'referencia': ['exact','icontains'],
                   'inventario': ['exact'],
                   'venta': ['exact'],
                   'inactivo': ['exact'],
