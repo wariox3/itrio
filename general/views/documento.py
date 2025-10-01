@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from general.formatos.remision import FormatoRemision
 from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.documento_impuesto import GenDocumentoImpuesto
@@ -596,7 +597,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documento_afectado.afectado += documento_detalle.precio
                                     documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
                                     documento_afectado.save(update_fields=['afectado', 'pendiente'])     
-                                    
+                            # Afectar inventario       
                             if documento_detalle.operacion_inventario != 0:                                                                
                                 existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
                                 if existencia:                                    
@@ -619,9 +620,25 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 item.save(update_fields=['existencia', 'disponible', 'costo_promedio', 'costo_total'])
 
                                 # Asignar costo
-                                if documento.documento_tipo_id in(1,5,9):
+                                if documento.documento_tipo_id in(1,2,17,24,27,5,6,9,10): # Venta, Nota credito, Cuenta de cobro, Factura pos electronica, Factura pos, Compra, Nota debito, Entrada, Salida
                                     documento_detalle.costo = item.costo_promedio
                                     documento_detalle.save(update_fields=['costo'])
+
+                            # Afectar remision
+                            if documento.documento_tipo_id == 29:                                                                
+                                cantidad_operada = (documento_detalle.cantidad * -1)
+                                existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
+                                if existencia:  
+                                                                     
+                                    existencia.remision += documento_detalle.cantidad
+                                    existencia.disponible += cantidad_operada                                    
+                                    existencia.save(update_fields=['remision', 'disponible'])                                    
+                                else:                                    
+                                    existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)                                                                
+                                item = GenItem.objects.get(id=documento_detalle.item_id)
+                                item.remision += documento_detalle.cantidad
+                                item.disponible += cantidad_operada                                   
+                                item.save(update_fields=['remision', 'disponible'])
 
                             if documento_detalle.tipo_registro == 'D':
                                 activo = ConActivo.objects.get(id=documento_detalle.activo_id)
@@ -913,7 +930,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 'mensaje': 'El item no tiene una cuenta de venta establecida'}, status=status.HTTP_400_BAD_REQUEST) 
                                     
                                     # Costo de venta
-                                    if documento.documento_tipo_id == 1:
+                                    if documento.documento_tipo_id in (1,2,17,24,27):
                                         if documento_detalle.costo > 0:
                                             costo_total = documento_detalle.costo * Decimal(documento_detalle.cantidad)
                                             data = data_general.copy()                            
@@ -1523,6 +1540,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     formato = FormatoFacturaPOS()
                     pdf = formato.generar_pdf(id)                                          
                     nombre_archivo = f"factura{documento.numero}.pdf" if documento.numero else f"factura.pdf"       
+
+                if documento.documento_tipo_id == 29:                                        
+                    formato = FormatoRemision()
+                    pdf = formato.generar_pdf(id)                                          
+                    nombre_archivo = f"remision{documento.numero}.pdf" if documento.numero else f"remision.pdf" 
 
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')
@@ -3288,9 +3310,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         pass
                     else:                        
                         return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
-                    
-                # Validar inventario
+                                    
                 for documento_detalle in documento_detalles:
+                    # Validar inventario
                     if documento_detalle.operacion_inventario == -1:
                         if documento_detalle.almacen and documento_detalle.item:
                             existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()                            
@@ -3301,7 +3323,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             if disponible < 0 and documento_detalle.item.negativo == False:
                                 return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
                         else:
-                            return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen o item', 'codigo':1}                                   
+                            return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen o item', 'codigo':1}   
+
+                    # Remision
+                    if documento.documento_tipo_id == 29:
+                        if documento_detalle.almacen and documento_detalle.item:
+                            existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()                            
+                            if not existencia:
+                                existencia = InvExistencia(item=documento_detalle.item, almacen=documento_detalle.almacen)
+                                existencia.save()
+                            disponible = existencia.disponible + (documento_detalle.cantidad * -1)
+                            if disponible < 0 and documento_detalle.item.negativo == False:
+                                return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
+                        else:
+                            return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen o item', 'codigo':1}                                                
                 
                 # Notas credito
                 if documento.documento_referencia:

@@ -47,8 +47,8 @@
         "cobrar": true,
         "operacion": 1,
         "contabilidad": true,
-        "inventario": true,
-        "operacion_inventario": -1,
+        "inventario": false,
+        "operacion_inventario": 0,
         "electronico": true
       }
     },
@@ -88,8 +88,8 @@
         "compra": true,
         "pagar": true,
         "operacion": -1,
-        "inventario": false,
-        "operacion_inventario": 0,
+        "inventario": true,
+        "operacion_inventario": -1,
         "contabilidad": true
       }
     },
