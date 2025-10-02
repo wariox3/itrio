@@ -117,7 +117,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 }  
 
                 if row[1]:       
-                    fecha_valida = datetime.strptime(row[1], "%Y%m%d").date()
+                    fecha_str = str(row[1])
+                    fecha_valida = datetime.strptime(fecha_str, "%Y%m%d").date()
                     data['fecha'] = fecha_valida                 
                 
                 data['cuenta'] = cuentas_map.get(data['cuenta'])
