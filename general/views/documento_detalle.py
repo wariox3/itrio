@@ -111,11 +111,12 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
             try:
                 documento = GenDocumento.objects.get(pk=documento_id)
                 if documento:
-                    for documento_detalle in documento_detalle_ids:
+                    for documento_detalle_id in documento_detalle_ids:
                         try:
-                            documento_detalle = GenDocumentoDetalle.objects.get(pk=documento_detalle)
+                            documento_detalle = GenDocumentoDetalle.objects.get(pk=documento_detalle_id)
                             nuevo_detalle_data = {
                                 'documento': documento.id,
+                                'documento_detalle_afectado': documento_detalle_id,
                                 'item': documento_detalle.item_id,
                                 'tipo_registro': documento_detalle.tipo_registro,
                                 'cantidad': documento_detalle.cantidad,
