@@ -11,12 +11,21 @@ class DocumentoDetalleFilter(django_filters.FilterSet):
         method='filtrar_inventario',
         label="Filtrar solo movimientos con efecto en inventario (1 o -1)"
     )
+    cantidad_pendiente = django_filters.BooleanFilter(
+        method='filtrar_cantidad_pendiente',
+        label="Filtrar items con cantidad pendiente > 0"
+    )    
 
     def filtrar_inventario(self, queryset, name, value):
         if value:
             return queryset.exclude(operacion_inventario=0)
         return queryset
     
+    def filtrar_cantidad_pendiente(self, queryset, name, value):
+        if value:
+            return queryset.filter(cantidad_pendiente__gt=0)
+        return queryset
+
     class Meta:
         model = GenDocumentoDetalle        
         fields = {

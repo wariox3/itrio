@@ -193,7 +193,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = GenDocumentoDetalle
-        fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'documento', 'documento_afectado', 'item', 'cuenta', 'activo', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
+        fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'cantidad_afectada', 'cantidad_pendiente', 'documento', 'documento_afectado', 'item', 'cuenta', 'activo', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 'operacion', 'operacion_inventario', 'pago_operado', 
@@ -250,6 +250,8 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'cuenta_nombre': cuenta_nombre,
             'cantidad': instance.cantidad,
             'cantidad_operada': instance.cantidad_operada,
+            'cantidad_afectada': instance.cantidad_afectada,
+            'cantidad_pendiente': instance.cantidad_pendiente,
             'precio': instance.precio,
             'pago': instance.pago,
             'pago_operado': instance.pago_operado,

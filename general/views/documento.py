@@ -628,19 +628,17 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documento_detalle.save(update_fields=['costo'])
 
                             # Afectar remision
-                            if documento.documento_tipo_id == 29:                                                                
-                                cantidad_operada = (documento_detalle.cantidad * -1)
+                            if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision                                                                                                
                                 existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
-                                if existencia:  
-                                                                     
+                                if existencia:                                                                       
                                     existencia.remision += documento_detalle.cantidad
-                                    existencia.disponible += cantidad_operada                                    
+                                    existencia.disponible += documento_detalle.cantidad_operada                                  
                                     existencia.save(update_fields=['remision', 'disponible'])                                    
                                 else:                                    
                                     existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)                                                                
                                 item = GenItem.objects.get(id=documento_detalle.item_id)
                                 item.remision += documento_detalle.cantidad
-                                item.disponible += cantidad_operada                                   
+                                item.disponible += documento_detalle.cantidad_operada                                   
                                 item.save(update_fields=['remision', 'disponible'])
 
                             if documento_detalle.tipo_registro == 'D':
