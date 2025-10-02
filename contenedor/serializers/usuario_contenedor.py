@@ -25,8 +25,9 @@ class UsuarioContenedorListaSerializador(serializers.ModelSerializer):
     contenedor__usuarios = serializers.CharField(source='contenedor.usuarios', read_only=True)
     contenedor__imagen = serializers.CharField(source='contenedor.imagen', read_only=True)
     contenedor__schema_name = serializers.CharField(source='contenedor.schema_name', read_only=True)
-    contenedor__reddoc = serializers.CharField(source='contenedor.reddoc', read_only=True)
+    contenedor__reddoc = serializers.CharField(source='contenedor.reddoc', read_only=True)    
     contenedor__ruteo = serializers.CharField(source='contenedor.ruteo', read_only=True)
+    contenedor__cortesia = serializers.BooleanField(source='contenedor.cortesia', read_only=True)
     contenedor__plan_id = serializers.CharField(source='contenedor.plan_id', read_only=True)
     contenedor__plan__nombre = serializers.CharField(source='contenedor.plan.nombre', read_only=True)
     contenedor__plan__usuarios_base = serializers.CharField(source='contenedor.plan.usuarios_base', read_only=True)
@@ -40,6 +41,7 @@ class UsuarioContenedorListaSerializador(serializers.ModelSerializer):
                   'contenedor__schema_name',
                   'contenedor__reddoc',
                   'contenedor__ruteo',
+                  'contenedor__cortesia',
                   'contenedor__plan_id',
                   'contenedor__plan__nombre',
                   'contenedor__plan__usuarios_base',
