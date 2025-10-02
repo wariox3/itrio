@@ -357,7 +357,17 @@
       "pk": 29,
       "campos": {
         "nombre": "REMISION",
-        "documento_clase": 107        
+        "documento_clase": 107,
+        "operacion_remision": -1       
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 30,
+      "campos": {
+        "nombre": "DEVOLUCION REMISION",
+        "documento_clase": 108,
+        "operacion_remision": 1        
       }
     }    
   ]

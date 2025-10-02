@@ -230,7 +230,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             documento_detalle = GenDocumentoDetalle.objects.filter(
                                 documento__fecha__gte=fecha_desde,
                                 documento__fecha__lte=fecha_hasta,                                                                
-                                documento__contrato_id=contrato.id
+                                documento__contrato_id=contrato.id,
+                                documento__documento_tipo__documento_clase_id=701
                             ).aggregate(
                                 ibc=Coalesce(Sum('base_cotizacion'), 0, output_field=DecimalField())
                             )
@@ -239,7 +240,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             documento_detalle = GenDocumentoDetalle.objects.filter(
                                 documento__fecha__gte=fecha_desde,
                                 documento__fecha__lte=fecha_hasta,                                                                
-                                documento__contrato_id=contrato.id                                
+                                documento__contrato_id=contrato.id,
+                                documento__documento_tipo__documento_clase_id=701                              
                             ).filter(
                                 Q(concepto_id=15) | Q(concepto_id=20)
                             ).aggregate(
@@ -250,7 +252,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             documento_detalle = GenDocumentoDetalle.objects.filter(
                                 documento__fecha__gte=fecha_desde,
                                 documento__fecha__lte=fecha_hasta,                                                                
-                                documento__contrato_id=contrato.id,
+                                documento__contrato_id=contrato.id,                                
+                                documento__documento_tipo__documento_clase_id=701,
                                 concepto_id=14                              
                             ).aggregate(
                                 total_salud=Coalesce(Sum('pago'), 0, output_field=DecimalField())

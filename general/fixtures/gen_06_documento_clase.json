@@ -78,6 +78,15 @@
     },
     {
       "model": "general.GenDocumentoClase",
+      "pk": 108,
+      "campos": {
+        "nombre": "Devolucion remision",
+        "codigo_dian": "01",
+        "grupo": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
       "pk": 200,
       "campos": {
         "nombre": "Pago",

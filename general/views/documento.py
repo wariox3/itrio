@@ -382,6 +382,9 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if item.inventario:
                                     detalle['operacion_inventario'] = documento_tipo.operacion_inventario
                                     detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
+                            if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
+                                detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_remision
+
                         detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
                         if detalleSerializador.is_valid():                        
                             documentoDetalle = detalleSerializador.save() 
