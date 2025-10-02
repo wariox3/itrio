@@ -345,7 +345,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         documento_detalles = GenDocumentoDetalle.objects.filter(
                             documento__fecha__gte=aporte.fecha_desde,
                             documento__fecha__lte=aporte.fecha_hasta,                                                                
-                            documento__contrato_id=aporte_contrato.contrato_id
+                            documento__contrato_id=aporte_contrato.contrato_id,
+                            documento__documento_tipo__documento_clase_id=701
                         ).exclude(
                             concepto_id=30
                         ).values(
