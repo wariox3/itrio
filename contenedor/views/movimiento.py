@@ -19,7 +19,7 @@ from decimal import Decimal
 from utilidades.space_do import SpaceDo
 import hashlib
 from decouple import config
-
+from utilidades.excel_exportar import ExcelExportar
 
 class MovimientoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]     
@@ -38,6 +38,18 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         if campos and campos != '__all__':
             queryset = queryset.only(*campos) 
         return queryset 
+
+    def list(self, request, *args, **kwargs):
+        if request.query_params.get('excel'):
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)                        
+            if request.query_params.get('excel_masivo'):
+                exporter = ExcelExportar(serializer.data, "movimientos", "movimientos.xlsx")
+                return exporter.exportar()              
+            else:
+                exporter = ExcelExportar(serializer.data, "movimientos", "movimientos.xlsx")
+                return exporter.exportar_estilo()
+        return super().list(request, *args, **kwargs)
 
     @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'generar-pedido',)
     def generar_pedido(self, request):
