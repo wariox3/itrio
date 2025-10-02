@@ -179,8 +179,9 @@ class GenDocumentoDetalleCreditoPagoSerializador(serializers.ModelSerializer):
 #deprecated
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())
-    item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), default=None, allow_null=True)
     documento_afectado = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all(), default=None, allow_null=True)
+    documento_detalle_afectado = serializers.PrimaryKeyRelatedField(queryset=GenDocumentoDetalle.objects.all(), default=None, allow_null=True)
+    item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), default=None, allow_null=True)    
     cuenta = serializers.PrimaryKeyRelatedField(queryset=ConCuenta.objects.all(), default=None, allow_null=True)
     activo = serializers.PrimaryKeyRelatedField(queryset=ConActivo.objects.all(), default=None, allow_null=True)
     grupo = serializers.PrimaryKeyRelatedField(queryset=ConGrupo.objects.all(), default=None, allow_null=True)
@@ -193,7 +194,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = GenDocumentoDetalle
-        fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'cantidad_afectada', 'cantidad_pendiente', 'documento', 'documento_afectado', 'item', 'cuenta', 'activo', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
+        fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'cantidad_afectada', 'cantidad_pendiente', 'documento', 'documento_afectado', 'documento_detalle_afectado', 'item', 'cuenta', 'activo', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 'operacion', 'operacion_inventario', 'pago_operado', 
@@ -280,6 +281,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'documento_afectado_documento_tipo_nombre': documento_afectado_documento_tipo_nombre,
             'documento_afectado_numero': documento_afectado_numero,
             'documento_afectado_contacto_nombre_corto':documento_afectado_contacto_nombre_corto,
+            'documento_detalle_afectado_id': instance.documento_detalle_afectado_id,
             'contacto_id': instance.contacto_id,
             'contacto_nombre_corto': contacto_nombre_corto,
             'naturaleza':instance.naturaleza,
