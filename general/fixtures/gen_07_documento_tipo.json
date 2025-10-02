@@ -358,7 +358,8 @@
       "campos": {
         "nombre": "REMISION",
         "documento_clase": 107,
-        "operacion_remision": -1       
+        "operacion_remision": -1,
+        "afecta_cantidad": true       
       }
     },
     {

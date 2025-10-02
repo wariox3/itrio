@@ -18,6 +18,7 @@ class GenDocumentoTipo(models.Model):
     operacion = models.BigIntegerField(default=0)
     operacion_inventario = models.BigIntegerField(default=0)
     operacion_remision = models.BigIntegerField(default=0)
+    afecta_cantidad = models.BooleanField(default = False)
     documento_clase = models.ForeignKey(GenDocumentoClase, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_documento_clase')
     resolucion = models.ForeignKey(GenResolucion, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_resolucion')
     cuenta_cobrar = models.ForeignKey(ConCuenta, null=True, on_delete=models.PROTECT, related_name='documentos_tipos_cuenta_cobrar')

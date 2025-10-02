@@ -77,7 +77,7 @@ class GenDocumento(models.Model):
     contacto = models.ForeignKey(GenContacto, null=True, on_delete=models.PROTECT, related_name='contactos_rel')    
     resolucion = models.ForeignKey(GenResolucion, null=True, on_delete=models.PROTECT, related_name='gen_documentos')
     empresa = models.ForeignKey(GenEmpresa, on_delete=models.PROTECT, related_name='gen_documentos')
-    documento_referencia = models.ForeignKey('self', null=True, on_delete=models.PROTECT, related_name='gen_documentos')
+    documento_referencia = models.ForeignKey('self', null=True, on_delete=models.PROTECT, related_name='documentos_documento_referencia_rel')
     metodo_pago = models.ForeignKey(GenMetodoPago, null=True, on_delete=models.PROTECT, related_name='gen_documentos_metodo_pago_rel')
     plazo_pago = models.ForeignKey(GenPlazoPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos_plazo_pago_rel')
     forma_pago = models.ForeignKey(GenFormaPago, null=True, on_delete=models.PROTECT,related_name='gen_documentos_forma_pago_rel')

@@ -377,6 +377,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     for detalle in detalles:                
                         detalle['documento'] = documento.id                    
                         if detalle['tipo_registro'] == "I":
+                            detalle['cantidad_pendiente'] = detalle['cantidad']
                             item = GenItem.objects.get(pk=detalle['item'])
                             if item:
                                 if item.inventario:
@@ -450,10 +451,13 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if detalle.get('id'):
                                     documentoDetalle = GenDocumentoDetalle.objects.get(pk=detalle['id'])
                                     if detalle['tipo_registro'] == "I":
+                                        detalle['cantidad_pendiente'] = detalle['cantidad']
                                         item = GenItem.objects.get(pk=detalle['item'])
                                         if item.inventario:
                                             detalle['operacion_inventario'] = documento.documento_tipo.operacion_inventario
-                                            detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario                              
+                                            detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario
+                                        if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
+                                            detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_remision                                                                          
                                     detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
                                 else:
                                     detalle['documento'] = documento.id
@@ -3338,7 +3342,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
                         else:
                             return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen o item', 'codigo':1}                                                
-                
+
+                    if documento_detalle.documento_detalle_afectado:
+                        if documento_detalle.documento_detalle_afectado.documento.documento_tipo.afecta_cantidad:
+                            if documento_detalle.cantidad > documento_detalle.documento_afectado.cantidad_pendiente:
+                                return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} la cantidad a afectar {documento_detalle.cantidad} supera la cantidad pendiente {documento_detalle.documento_afectado.cantidad_pendiente}", 'codigo':1}                        
+
                 # Notas credito
                 if documento.documento_referencia:
                     if documento.documento_tipo_id in [2, 6]:
