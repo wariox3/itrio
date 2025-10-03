@@ -57,7 +57,7 @@ class FormatoManifiesto:
             contenido_qr = f"MEC:{despacho.numero_rndc if hasattr(despacho, 'numero_rndc') else ''}\n"
             contenido_qr += f"Fecha:{despacho.fecha_registro.strftime('%Y-%m-%d') if hasattr(despacho, 'fecha_registro') and despacho.fecha_registro else ''}\n"
             contenido_qr += f"Placa:{despacho.vehiculo.placa if hasattr(despacho.vehiculo, 'placa') and despacho.vehiculo.placa else ''}\n"
-            contenido_qr += f"Remolque:{despacho.remolque.placa if hasattr(despacho.remolque, 'placa') and despacho.remolque.placa else ''}\n"  # Corregido
+            contenido_qr += f"Remolque:{despacho.remolque.placa if hasattr(despacho.remolque, 'placa') and despacho.remolque.placa else ''}\n"
             contenido_qr += f"Orig:{despacho.ciudad_origen.nombre if hasattr(despacho.ciudad_origen, 'nombre') and despacho.ciudad_origen.nombre else ''}\n"
             contenido_qr += f"Dest:{despacho.ciudad_destino.nombre if hasattr(despacho.ciudad_destino, 'nombre') and despacho.ciudad_destino.nombre else ''}\n"
             contenido_qr += "Mercancia:'VARIOS'\n"
