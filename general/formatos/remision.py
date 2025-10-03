@@ -29,15 +29,11 @@ class FormatoRemision():
         p.setTitle("factura")
         empresa = GenEmpresa.objects.get(pk=1)
         configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
-        documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=id).values(
-        'id', 'fecha', 'fecha_validacion', 'fecha_vence', 'numero', 'soporte', 'qr', 'cue', 'resolucion_id', 'contacto_id',
-        'subtotal', 'total', 'comentario', 'orden_compra', 'metodo_pago__nombre',
-        'contacto__nombre_corto', 'contacto__correo', 'contacto__telefono', 'contacto__numero_identificacion', 'contacto__direccion', 
-        'contacto__ciudad__nombre', 
+        documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'contacto__ciudad', 'empresa__tipo_persona',).filter(id=id).values(
+        'id', 'fecha', 'fecha_validacion', 'fecha_vence', 'numero', 'soporte', 'contacto_id','subtotal', 'total', 'comentario',
+        'contacto__nombre_corto', 'contacto__correo', 'contacto__telefono', 'contacto__numero_identificacion', 'contacto__direccion', 'contacto__ciudad__nombre', 
         'empresa__tipo_persona__nombre', 'empresa__numero_identificacion', 'empresa__digito_verificacion', 'empresa__direccion', 'empresa__telefono',
-        'empresa__nombre_corto', 'empresa__imagen', 'empresa__ciudad__nombre', 'documento_tipo__nombre', 'resolucion__prefijo',
-        'resolucion__consecutivo_desde', 'resolucion__consecutivo_hasta', 'resolucion__numero', 'resolucion__fecha_hasta',
-        'documento_referencia__numero', 'documento_tipo__documento_clase_id', 'plazo_pago__nombre', 'sede__nombre'
+        'empresa__nombre_corto', 'empresa__imagen', 'empresa__ciudad__nombre', 'documento_tipo__nombre','documento_tipo__documento_clase_id', 'sede__nombre'
         ).first()
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8, leading=8)
         informacion_factura_superior = configuracion['informacion_factura_superior'] if configuracion['informacion_factura_superior'] else ""

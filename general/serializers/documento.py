@@ -366,6 +366,7 @@ class GenDocumentoInformeCuentaCobrarSerializador(serializers.ModelSerializer):
         model = GenDocumento
         fields = ['id',
                   'numero',
+                  'orden_compra',
                   'fecha',
                   'fecha_vence',                                    
                   'documento_tipo_id',
