@@ -2,6 +2,7 @@ from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.documento_impuesto import GenDocumentoImpuesto
 from general.models.configuracion import GenConfiguracion
+from general.models.empresa import GenEmpresa
 from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
@@ -26,6 +27,7 @@ class FormatoRemision():
         buffer = BytesIO()   
         p = canvas.Canvas(buffer, pagesize=letter)
         p.setTitle("factura")
+        empresa = GenEmpresa.objects.get(pk=1)
         configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
         documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'resolucion', 'metodo_pago', 'contacto__ciudad', 'empresa__tipo_persona', 'documento_referencia', 'plazo_pago').filter(id=id).values(
         'id', 'fecha', 'fecha_validacion', 'fecha_vence', 'numero', 'soporte', 'qr', 'cue', 'resolucion_id', 'contacto_id',
@@ -35,15 +37,12 @@ class FormatoRemision():
         'empresa__tipo_persona__nombre', 'empresa__numero_identificacion', 'empresa__digito_verificacion', 'empresa__direccion', 'empresa__telefono',
         'empresa__nombre_corto', 'empresa__imagen', 'empresa__ciudad__nombre', 'documento_tipo__nombre', 'resolucion__prefijo',
         'resolucion__consecutivo_desde', 'resolucion__consecutivo_hasta', 'resolucion__numero', 'resolucion__fecha_hasta',
-        'documento_referencia__numero', 'documento_tipo__documento_clase_id', 'plazo_pago__nombre'
+        'documento_referencia__numero', 'documento_tipo__documento_clase_id', 'plazo_pago__nombre', 'sede__nombre'
         ).first()
         estilo_helvetica = ParagraphStyle(name='HelveticaStyle', fontName='Helvetica', fontSize=8, leading=8)
-        informacion_factura = configuracion['informacion_factura'] if configuracion['informacion_factura'] else ""
-        informacion_factura_con_saltos = informacion_factura.replace('\n', '<br/>')
         informacion_factura_superior = configuracion['informacion_factura_superior'] if configuracion['informacion_factura_superior'] else ""
         informacion_factura_superior_con_saltos = informacion_factura_superior.replace('\n', '<br/>')
         informacion_superior = Paragraph(informacion_factura_superior_con_saltos, estilo_helvetica)
-        informacionPago = Paragraph("<b>INFORMACIÓN DE PAGO: </b>" + informacion_factura_con_saltos, estilo_helvetica)
         comentario = Paragraph("<b>COMENTARIOS: </b>" +  str(documento['comentario'] if documento['comentario'] else  ""), estilo_helvetica)
 
         try:
@@ -56,28 +55,15 @@ class FormatoRemision():
 
             region = config('DO_REGION')
             bucket = config('DO_BUCKET')
-            entorno = config('ENV')
-            qr = ""
-            if documento['qr']:
-                qr = documento['qr']
-            qr_code_drawing = generar_qr(qr)
 
-            x_pos = 340
-            y_pos = 125
-            renderPDF.draw(qr_code_drawing, p, x_pos, y_pos)
-
-            imagen_defecto_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
-
-            # Intenta cargar la imagen desde la URL
-            imagen_empresa = documento['empresa__imagen']
-
-            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{imagen_empresa}'
+            logo_url = f'https://{bucket}.{region}.digitaloceanspaces.com/{empresa.imagen}'
             try:
                 logo = ImageReader(logo_url)
+
+                p.drawImage(logo, 20, y - 40, width=tamano_cuadrado + 40, height=tamano_cuadrado + 40, mask='auto', preserveAspectRatio=True)
+
             except Exception as e:
-                # Si se produce un error, establece la URL en la imagen de defecto
-                logo_url = imagen_defecto_url
-                logo = ImageReader(logo_url)
+                pass
 
             x = 24
             ancho_texto, alto_texto = informacion_superior.wrapOn(p, 480, 500)                        
@@ -117,47 +103,21 @@ class FormatoRemision():
 
             #Datos factura
             p.setFont("Helvetica-Bold", 9)
-            p.drawRightString(x + 540, 720, documento['documento_tipo__nombre'])
+            p.drawRightString(x + 520, 720, documento['documento_tipo__nombre'])
+            p.setFont("Helvetica", 9)
             p.setFont("Helvetica", 9)
             texto_resolucion = Utilidades.pdf_texto(documento['numero'])
-            if documento['resolucion_id']:                
-                if documento['documento_tipo__documento_clase_id'] == 100:
-                    texto_resolucion = f'{documento["resolucion__prefijo"]}{texto_resolucion}'
+            p.drawCentredString(x + 500, 710, texto_resolucion)
 
-            p.setFont("Helvetica-Bold", 9)
-            p.drawCentredString(x + 460, 710, texto_resolucion)
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 650, "FECHA EMISIÓN: ")
+            p.drawString(x + 350, 650, "FECHA ")
             p.setFont("Helvetica", 8)
             p.drawRightString(x + 560, 650, str(documento['fecha']))
 
             p.setFont("Helvetica-Bold", 8)
-            p.drawString(x + 350, 640, "FECHA VENCIMIENTO: ")
+            p.drawString(x + 350, 640, "SEDE: ")
             p.setFont("Helvetica", 8)
-            p.drawRightString(x + 560, 640, str(documento['fecha_vence']))
-
-            if documento['documento_tipo__documento_clase_id'] == 101 or documento['documento_tipo__documento_clase_id'] == 102:
-                p.setFont("Helvetica-Bold", 8)
-                p.drawString(x + 350, 630, "DOCUMENTO REFERENCIA: ")
-                p.setFont("Helvetica", 8)
-                p.drawRightString(x + 560, 630, Utilidades.pdf_texto(documento['documento_referencia__numero']))
-            else:
-                if 'metodo_pago__nombre' in documento and documento['metodo_pago__nombre']:
-
-                    p.setFont("Helvetica-Bold", 8)
-                    p.drawString(x + 350, 630, "METODO DE PAGO: ")
-                    p.setFont("Helvetica", 8)
-                    p.drawRightString(x + 560, 630, str(documento['metodo_pago__nombre'].upper()))
-
-                p.setFont("Helvetica-Bold", 8)
-                p.drawString(x + 350, 620, "PLAZO PAGO: ")
-                p.setFont("Helvetica", 8)
-                p.drawRightString(x + 560, 620, str(documento['plazo_pago__nombre'] if documento['plazo_pago__nombre'] else ""))
-
-                p.setFont("Helvetica-Bold", 8)
-                p.drawString(x + 350, 610, "ORDEN COMPRA: ")
-                p.setFont("Helvetica", 8)
-                p.drawRightString(x + 560, 610, documento['orden_compra'] if documento['orden_compra'] else "")
+            p.drawRightString(x + 560, 640, str(documento['sede__nombre']))
 
 
             #Cliente
@@ -210,7 +170,9 @@ class FormatoRemision():
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 5, 575, "#")
             p.drawString(x + 30, 575, "COD")
-            p.drawString(200, 575, "ÍTEM")
+            p.drawString(160, 575, "ÍTEM")
+            p.drawString(280, 575, "ALM")
+            p.drawString(332, 575, "REF")            
             p.drawString(x + 340, 575, "CANT")
             p.drawString(x + 380, 575, "PRECIO")
             p.drawString(x + 430, 575, "DESC")
@@ -220,87 +182,6 @@ class FormatoRemision():
 
             x = 30
 
-            valorLetras = convertir_a_letras(int(documento['total']))
-
-            consecutivoDesde = ""
-            consecutivoHasta = ""
-            numero = ""
-            fechaVigencia = ""
-            if documento['resolucion_id']:
-                consecutivoDesde = documento['resolucion__consecutivo_desde']
-                consecutivoHasta = documento['resolucion__consecutivo_hasta']
-                numero = documento['resolucion__numero']
-                fechaVigencia = documento['resolucion__fecha_hasta']
-
-            cue = ""
-            if documento['cue']:
-                cue = documento['cue']
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 120, str(valorLetras))
-
-            p.drawString(x, 110, "CUFE/CUDE: ")
-            p.setFont("Helvetica", 8)
-            p.drawString(105, 110, str(cue))
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 100, "NUMERO DE AUTORIZACIÓN:")
-            p.setFont("Helvetica", 8)
-            p.drawString(170, 100, str(numero))
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(250, 100, "RANGO AUTORIZADO DESDE: ")
-            p.setFont("Helvetica", 8)
-            p.drawString(370, 100, str(consecutivoDesde))
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(400, 100, "HASTA: ")
-            p.setFont("Helvetica", 8)
-            p.drawString(432, 100, str(consecutivoHasta))
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(465, 100, "VIGENCIA: ")
-            p.setFont("Helvetica", 8)
-            p.drawRightString(550, 100, str(fechaVigencia) if fechaVigencia is not None else "")
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 90, "GENERADO POR: ")
-            p.setFont("Helvetica", 8)
-            p.drawString(110, 90, "REDDOC")
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(250, 90, "PROVEEDOR TECNOLÓGICO: ")
-            p.setFont("Helvetica", 8)
-            p.drawString(370, 90, "KIAI S.A.S")
-
-            p.setFont("Helvetica-Bold", 8)
-            p.drawString(x, 80, "FECHA VALIDACIÓN: ")
-            p.setFont("Helvetica", 8)
-            fecha = documento['fecha_validacion']
-            if fecha:
-                fecha_local = localtime(fecha)
-                fecha_str = fecha_local.strftime('%Y-%m-%d %H:%M:%S')
-            else:
-                fecha_str = ""
-            p.drawString(120, 80, fecha_str)            
-
-            p.setStrokeColorRGB(0.8, 0.8, 0.8)
-            p.setLineWidth(0.5)
-            p.line(50, 45, 250, 45)
-            p.setStrokeColorRGB(0, 0, 0)
-            p.setFont("Helvetica-Bold", 8)
-            p.drawCentredString(150, 30, "ELABORADO POR")
-
-            p.setStrokeColorRGB(0.8, 0.8, 0.8)  # Color tenue (gris claro)
-            p.setLineWidth(0.5)  # Grosor de la línea
-            p.line(270, 45, 550, 45)  # Coordenadas para dibujar la segunda línea
-            p.setStrokeColorRGB(0, 0, 0)  # Restaurar el color a negro
-            p.drawCentredString(410, 30, "ACEPTADA, FIRMADA Y/O SELLO Y FECHA")
-    
-            p.drawCentredString(550, 20, "Página %d de %d" % (p.getPageNumber(), p.getPageNumber()))
-
-            #informacion pago
-            ancho_texto, alto_texto = informacionPago.wrapOn(p, 300, 400)
-            
             #comentarios
             ancho_texto, alto_texto = comentario.wrapOn(p, 300, 400)
             
@@ -308,8 +189,51 @@ class FormatoRemision():
             y = 235 - alto_texto
             y2 = 160
             comentario.drawOn(p, x, y)
-            informacionPago.drawOn(p, x, y2)
-            
+        
+
+        # Línea separadora y título ENTREGA (izquierda)
+        p.setFont("Helvetica-Bold", 9)
+        p.drawString(170, 150, "ENTREGA")
+
+        # Línea separadora y título RECIBE (derecha)
+        p.setStrokeColorRGB(0, 0, 0)
+        p.drawString(410, 150, "RECIBE")
+
+        # Espacio para firmas - SECCIÓN ENTREGA (izquierda)
+        p.setFont("Helvetica", 8)
+
+        # Configuración para líneas uniformes
+        left_section_x = 80      # Inicio sección izquierda
+        right_section_x = 320     # Inicio sección derecha
+        line_length = 150         # Longitud fija para todas las líneas
+
+        # Líneas para firma ENTREGA (izquierda)
+        y_position = 120
+        campos = ["FIRMA:", "NOMBRE:", "CEDULA:", "CARGO:", "FECHA:"]
+
+        for campo in campos:
+            p.drawString(left_section_x, y_position, campo)
+            # Dibujar línea más cerca del texto y un poco más abajo
+            p.setStrokeColorRGB(0.7, 0.7, 0.7)
+            p.setLineWidth(0.3)
+            p.line(left_section_x + 45, y_position + 2, left_section_x + 45 + line_length, y_position + 2)
+            p.setStrokeColorRGB(0, 0, 0)
+            y_position -= 20
+
+        # SECCIÓN RECIBE (derecha) - misma estructura
+        y_position = 120
+        for campo in campos:
+            p.drawString(right_section_x, y_position, campo)
+            # Dibujar línea más cerca del texto y un poco más abajo
+            p.setStrokeColorRGB(0.7, 0.7, 0.7)
+            p.setLineWidth(0.3)
+            p.line(right_section_x + 45, y_position + 2, right_section_x + 45 + line_length, y_position + 2)
+            p.setStrokeColorRGB(0, 0, 0)
+            y_position -= 20
+
+        # Número de página
+        p.drawCentredString(550, 20, "Página %d de %d" % (p.getPageNumber(), p.getPageNumber()))
+
         y = 555
 
         # Inicialización
@@ -321,15 +245,16 @@ class FormatoRemision():
         detalles_en_pagina = 0
         cantidad_total_items = 0
 
-        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'impuesto', 'total','item__nombre', 'item_id')
+        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'impuesto', 'total','item__nombre', 'item_id', 'item__referencia', 'almacen__nombre')
         for index, detalle in enumerate(documento_detalles):
 
+            # Texto del nombre del ítem
             itemNombre = ""
             if detalle['item__nombre'] is not None:
                 itemNombre = detalle['item__nombre']
-            item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7))
-            ancho, alto = item_nombre_paragraph.wrap(280, 100)        
-            altura_requerida = alto + 10
+            item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=6))  # Reducido a 6
+            ancho, alto = item_nombre_paragraph.wrap(180, 100)        
+            altura_requerida = alto + 10  # Reducido de 10 a 8
             
             # Verificar si hay suficiente espacio para el siguiente ítem
             if altura_acumulada + altura_requerida > max_altura_disponible:
@@ -343,17 +268,28 @@ class FormatoRemision():
             y -= altura_requerida
             altura_acumulada += altura_requerida
 
-            p.setFont("Helvetica", 7)
-            p.drawCentredString(x + 7, y + alto + 8, str(index + 1))
-            p.drawString(x + 25, y + alto + 8, str(detalle['item_id']))
-            p.drawRightString(x + 365, y + alto + 8, str(detalle['cantidad']))
-            p.drawRightString(x + 417, y + alto + 8, f"{detalle['precio']:,.0f}")
-            p.drawRightString(x + 458, y + alto + 8, f"{detalle['descuento']:,.0f}")
-            p.drawRightString(x + 505, y + alto + 8, f"{detalle['impuesto']:,.0f}")
-            p.drawRightString(x + 555, y + alto + 8, f"{detalle['subtotal']:,.0f}")
+            # Referencia como campo separado
+            referencia = ""
+            if detalle['item__referencia']:
+                referencia = str(detalle['item__referencia'])
 
-            y -= 10  # Ajuste de posición vertical para el siguiente ítem
-            altura_acumulada += 10
+            almacen = ""
+            if detalle['almacen__nombre']:
+                almacen = str(detalle['almacen__nombre'])                
+            
+            p.setFont("Helvetica", 7)
+            p.drawString(x + 300, y + alto + 6, f"{referencia[:10]}")
+            p.drawString(x + 245, y + alto + 6, f"{almacen[:10]}")
+            p.drawCentredString(x + 7, y + alto + 6, str(index + 1))
+            p.drawString(x + 25, y + alto + 6, str(detalle['item_id']))
+            p.drawRightString(x + 365, y + alto + 6, str(detalle['cantidad']))
+            p.drawRightString(x + 417, y + alto + 6, f"{detalle['precio']:,.0f}")
+            p.drawRightString(x + 458, y + alto + 6, f"{detalle['descuento']:,.0f}")
+            p.drawRightString(x + 505, y + alto + 6, f"{detalle['impuesto']:,.0f}")
+            p.drawRightString(x + 555, y + alto + 6, f"{detalle['subtotal']:,.0f}")
+
+            y -= 8  # Reducido de 10 a 8
+            altura_acumulada += 8
             detalles_en_pagina += 1
             cantidad_total_items += 1
 
