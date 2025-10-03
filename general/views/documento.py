@@ -3366,15 +3366,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def validacion_desaprobar(documento: GenDocumento):
-        fecha = date.today()                                 
-        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id)
-        for documento_detalle in documento_detalles:
-            if documento_detalle.operacion_inventario == 1:
-                existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()
-                disponible = existencia.disponible - documento_detalle.cantidad_operada
+        # Validar existencias
+        documento_detalles_validar = GenDocumentoDetalle.objects.values(
+                'item_id',
+                'almacen_id'
+            ).annotate(
+                cantidad_operada_total=Sum('cantidad_operada')
+            ).filter(
+                documento_id=documento.id,                        
+                item__negativo=False
+            ).filter(
+                Q(operacion_inventario=1) | Q(operacion_remision=1)
+            )
+        for documento_detalle_validar in documento_detalles_validar:
+            existencia = InvExistencia.objects.filter(item_id=documento_detalle_validar['item_id'], almacen_id=documento_detalle_validar['almacen_id']).first()
+            if existencia:
+                disponible = existencia.disponible + (documento_detalle_validar['cantidad_operada_total'] * -1) # Se invierte la operacion
                 if disponible < 0:
-                    return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} dejaria el item en existencia negativa {disponible}", 'codigo':1}
-        return {'error':False}  
+                    return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} almacen {documento_detalle_validar['almacen_id']} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
+            else:
+                return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} no tiene existencias", 'codigo':1}        
 
     @staticmethod
     def validacion_anular(documento: GenDocumento):

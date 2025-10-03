@@ -22,6 +22,8 @@ class LiquidacionServicio():
         auxilio_trasnporte = configuracion['hum_auxilio_transporte']
         fecha_desde = liquidacion.contrato.fecha_desde
         fecha_hasta = liquidacion.contrato.fecha_hasta
+        if fecha_hasta.day == 31:
+            fecha_hasta = fecha_hasta.replace(day=30)
         fecha_ultimo_pago_cesantia = fecha_desde
         fecha_ultimo_pago_prima = fecha_desde
         fecha_ultimo_pago_vacacion = fecha_desde   
@@ -41,7 +43,7 @@ class LiquidacionServicio():
             fecha_ultimo_pago_vacacion = liquidacion.contrato.fecha_ultimo_pago_vacacion + timedelta(days=1)
             fecha_ultimo_pago_vacacion_crudo = liquidacion.contrato.fecha_ultimo_pago_vacacion
 
-        dias = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
+        dias = Utilidades.dias_prestacionales(fecha_desde.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
         dias_cesantia = Utilidades.dias_prestacionales(fecha_ultimo_pago_cesantia.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
         dias_prima = Utilidades.dias_prestacionales(fecha_ultimo_pago_prima.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
         dias_vacacion = Utilidades.dias_prestacionales(fecha_ultimo_pago_vacacion.strftime("%Y-%m-%d"), fecha_hasta.strftime("%Y-%m-%d")) 
