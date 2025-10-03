@@ -209,8 +209,9 @@ class FormatoFactura():
             #Encabezado detalles
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 5, 575, "#")
-            p.drawString(x + 30, 575, "COD")
-            p.drawString(200, 575, "ÍTEM")
+            p.drawString(x + 22, 575, "ID")
+            p.drawString(x + 46, 575, "COD")
+            p.drawString(220, 575, "ÍTEM")
             p.drawString(x + 340, 575, "CANT")
             p.drawString(x + 380, 575, "PRECIO")
             p.drawString(x + 430, 575, "DESC")
@@ -321,14 +322,14 @@ class FormatoFactura():
         detalles_en_pagina = 0
         cantidad_total_items = 0
 
-        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'impuesto', 'total','item__nombre', 'item_id')
+        documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'impuesto', 'total','item__nombre', 'item_id', 'item__codigo')
         for index, detalle in enumerate(documento_detalles):
 
             itemNombre = ""
             if detalle['item__nombre'] is not None:
                 itemNombre = detalle['item__nombre']
             item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7))
-            ancho, alto = item_nombre_paragraph.wrap(280, 100)        
+            ancho, alto = item_nombre_paragraph.wrap(250, 100)        
             altura_requerida = alto + 10
             
             # Verificar si hay suficiente espacio para el siguiente ítem
@@ -339,13 +340,14 @@ class FormatoFactura():
                 altura_acumulada = 0
                 detalles_en_pagina = 0
 
-            item_nombre_paragraph.drawOn(p, x + 58, y - alto + 5)
+            item_nombre_paragraph.drawOn(p, x + 78, y - alto + 5)
             y -= altura_requerida
             altura_acumulada += altura_requerida
 
             p.setFont("Helvetica", 7)
             p.drawCentredString(x + 7, y + alto + 8, str(index + 1))
             p.drawString(x + 25, y + alto + 8, str(detalle['item_id']))
+            p.drawString(x + 45, y + alto + 8, str(detalle['item__codigo'][:5]))
             p.drawRightString(x + 365, y + alto + 8, str(detalle['cantidad']))
             p.drawRightString(x + 417, y + alto + 8, f"{detalle['precio']:,.0f}")
             p.drawRightString(x + 458, y + alto + 8, f"{detalle['descuento']:,.0f}")
