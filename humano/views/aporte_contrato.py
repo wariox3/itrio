@@ -52,3 +52,13 @@ class HumAporteContratoViewSet(viewsets.ModelViewSet):
                 return exporter.exportar_estilo()            
         return super().list(request, *args, **kwargs)
     
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()                        
+        aporte = instance.aporte
+        response = super().destroy(request, *args, **kwargs)
+        aporte.contratos -= 1
+        aporte.empleados -= 1
+        aporte.save()
+        return response
+            
+ 

@@ -30,6 +30,7 @@ from django.http import HttpResponse
 import calendar
 import io
 from datetime import datetime
+from datetime import timedelta
 from decimal import Decimal
 from django.db import transaction
 from utilidades.excel_exportar import ExcelExportar
@@ -103,11 +104,14 @@ class HumAporteViewSet(viewsets.ModelViewSet):
         # Ajustar fecha_hasta y fecha_hasta_periodo a 30 días, excepto para febrero
         if mes == 2:  # Febrero
             fecha_hasta = date(anio, mes, ultimo_dia_mes)
+            fecha_hasta_periodo = fecha_hasta
         else:
-            fecha_hasta = date(anio, mes, 30)  # Truncar a 30 días
-        
-        fecha_hasta_periodo = fecha_hasta  # Usar la misma fecha para fecha_hasta_periodo
-        
+            fecha_hasta = date(anio, mes, 30)                               
+            if ultimo_dia_mes == 31:                
+                fecha_hasta_periodo = date(anio, mes, 31)        
+                #fecha_hasta_periodo = fecha_hasta + timedelta(days=1)
+            else:
+                fecha_hasta_periodo = fecha_hasta        
         anio_salud = anio
         mes_salud = mes + 1
         if mes_salud > 12:  # Si el mes es diciembre, el siguiente mes es enero del próximo año
@@ -130,10 +134,14 @@ class HumAporteViewSet(viewsets.ModelViewSet):
         # Ajustar fecha_hasta y fecha_hasta_periodo a 30 días, excepto para febrero
         if mes == 2:  # Febrero
             fecha_hasta = date(anio, mes, ultimo_dia_mes)
+            fecha_hasta_periodo = fecha_hasta
         else:
             fecha_hasta = date(anio, mes, 30)  # Truncar a 30 días
-        
-        fecha_hasta_periodo = fecha_hasta  # Usar la misma fecha para fecha_hasta_periodo
+            if ultimo_dia_mes == 31:                
+                fecha_hasta_periodo = date(anio, mes, 31)        
+                #fecha_hasta_periodo = fecha_hasta + timedelta(days=1)
+            else:
+                fecha_hasta_periodo = fecha_hasta 
         
         anio_salud = anio
         mes_salud = mes + 1
@@ -157,13 +165,14 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 aporte = HumAporte.objects.get(pk=id)                                
                 if aporte.estado_generado == False:
                     cantidad = 0                    
+                    # No tocar esta consulta sin autorizacion. Mario A
                     contratos = HumContrato.objects.filter(
-                            Q(fecha_desde__lte=aporte.fecha_hasta_periodo)
+                            fecha_desde__lte=aporte.fecha_hasta_periodo                            
                         ).filter(
-                            Q(fecha_hasta__gte=aporte.fecha_desde) | Q(contrato_tipo_id=1)
+                            Q(fecha_hasta__gte=aporte.fecha_desde) | Q(estado_terminado=False)                                                    
                         ).filter(
                             sucursal_id=aporte.sucursal.id
-                        ) 
+                        )
                     #sql_query = str(contratos.query)
                     #print(sql_query)
                     empleados = contratos.values("contacto_id").distinct().count()
@@ -174,7 +183,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             if contrato.fecha_desde >= aporte.fecha_desde and contrato.fecha_desde <= aporte.fecha_hasta_periodo:
                                 ingreso = True                
                             retiro = False
-                            if contrato.fecha_hasta <= aporte.fecha_hasta and contrato.fecha_hasta >= aporte.fecha_desde and contrato.estado_terminado:
+                            if contrato.fecha_hasta <= aporte.fecha_hasta_periodo and contrato.fecha_hasta >= aporte.fecha_desde and contrato.estado_terminado:
                                 retiro = True
                             data = {
                                 'aporte': aporte.id,
@@ -323,9 +332,12 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         'tipo': 'ICBF',
                         'entidad_id': aporte.entidad_icbf_id,
                         'total': 0
-                    }                    
+                    }  
+                    cantidad_contactos = HumAporteContrato.objects.filter(aporte_id=id).values('contrato__contacto').distinct().count()                                        
+                    cantidad_contratos = 0
                     aporte_contratos = HumAporteContrato.objects.filter(aporte_id=id)                                           
                     for aporte_contrato in aporte_contratos:                              
+                        cantidad_contratos += 1
                         base_cotizacion = 0
                         dias_contrato = aporte_contrato.dias
                         dias_novedad_contrato = 0                        
@@ -703,8 +715,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         aporte_cotizacion_caja += aporte_contrato_cotizacion_caja   
                         aporte_cotizacion_sena += aporte_contrato_cotizacion_sena
                         aporte_cotizacion_icbf += aporte_contrato_cotizacion_icbf
-                        aporte_cotizacion_total += aporte_contrato_cotizacion_total        
-                    
+                        aporte_cotizacion_total += aporte_contrato_cotizacion_total                            
                     aporte.estado_generado = True                                        
                     aporte.cotizacion_pension = aporte_cotizacion_pension
                     aporte.cotizacion_pension_total = aporte_cotizacion_pension_total
@@ -723,7 +734,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                     aporte.cotizacion_icbf = aporte_cotizacion_icbf
                     aporte.cotizacion_total = aporte_cotizacion_total                                                                    
                     aporte.lineas = lineas   
-                    aporte.base_cotizacion = base_cotizacion_total           
+                    aporte.base_cotizacion = base_cotizacion_total    
+                    aporte.contratos = cantidad_contratos       
+                    aporte.empleados = cantidad_contactos
                     aporte.save()
                     aporte_entidades = {}
                     aporte_entidades.update(aporte_entidad_pension)

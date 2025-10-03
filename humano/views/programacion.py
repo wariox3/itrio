@@ -180,7 +180,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
                                         ingreso = True                
                                     retiro = False
-                                    if contrato.fecha_hasta <= programacion.fecha_hasta and contrato.fecha_hasta >= programacion.fecha_desde and contrato.estado_terminado:
+                                    if contrato.fecha_hasta <= programacion.fecha_hasta_periodo and contrato.fecha_hasta >= programacion.fecha_desde and contrato.estado_terminado:
                                         retiro = True
                                     data = {
                                         'programacion': programacion.id,
@@ -279,7 +279,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         documento__fecha__gte=fecha_desde_mes,
                                         documento__fecha__lte=fecha_hasta_mes,                                                                
                                         documento__contrato_id=contrato.id,
-                                        documento__estado_aprobado=True
+                                        documento__estado_aprobado=True,
+                                        documento__documento_tipo__documento_clase_id=701
                                     ).aggregate(
                                         ibc=Coalesce(Sum('base_cotizacion'), 0, output_field=DecimalField())
                                     )
