@@ -285,7 +285,7 @@ class ItemViewSet(viewsets.ModelViewSet):
                     # Procesar impuesto_venta
                     if impuesto_venta:
                         impuestos_venta_str = str(impuesto_venta)
-                        impuestos_venta_ids = [id_str.strip() for id_str in impuestos_venta_str.split(',') if id_str.strip()]
+                        impuestos_venta_ids = [id_str.strip() for id_str in impuestos_venta_str.split(';') if id_str.strip()]
                         for impuesto_id in impuestos_venta_ids:
                             id_numero = int(float(impuesto_id))
                             datos_impuesto_venta = {"item": item.id, "impuesto": id_numero}
@@ -296,7 +296,7 @@ class ItemViewSet(viewsets.ModelViewSet):
                     # Procesar impuesto_compra
                     if impuesto_compra:
                         impuestos_compra_str = str(impuesto_compra)
-                        impuestos_compra_ids = [id_str.strip() for id_str in impuestos_compra_str.split(',') if id_str.strip()]
+                        impuestos_compra_ids = [id_str.strip() for id_str in impuestos_compra_str.split(';') if id_str.strip()]
                         for impuesto_id in impuestos_compra_ids:
                             id_numero = int(float(impuesto_id))
                             datos_impuesto_compra = {"item": item.id, "impuesto": id_numero}
