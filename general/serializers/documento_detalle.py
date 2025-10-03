@@ -197,7 +197,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
         fields = ['tipo_registro', 'cantidad', 'cantidad_operada', 'cantidad_afectada', 'cantidad_pendiente', 'documento', 'documento_afectado', 'documento_detalle_afectado', 'item', 'cuenta', 'activo', 'grupo', 'contacto', 'precio', 'pago', 'porcentaje_descuento', 
                   'porcentaje', 'descuento', 'subtotal', 'total_bruto', 'total', 'base', 'base_impuesto', 'hora', 'naturaleza', 
                   'impuesto', 'impuesto_retencion', 'impuesto_operado', 
-                  'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 'operacion', 'operacion_inventario', 'pago_operado', 
+                  'detalle', 'numero', 'concepto', 'credito', 'novedad', 'base_cotizacion', 'base_prestacion', 'base_prestacion_vacacion', 'operacion', 'operacion_inventario', 'operacion_remision', 'pago_operado', 
                   'devengado', 'deduccion', 'dias', 'almacen', 'contrato']        
 
     def to_representation(self, instance):
@@ -274,6 +274,7 @@ class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
             'deduccion': instance.deduccion,
             'operacion': instance.operacion,
             'operacion_inventario': instance.operacion_inventario,
+            'operacion_remision': instance.operacion_remision,
             'base_cotizacion': instance.base_cotizacion,
             'base_prestacion': instance.base_prestacion,
             'base_prestacion_vacacion': instance.base_prestacion_vacacion,

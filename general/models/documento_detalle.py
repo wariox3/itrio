@@ -42,6 +42,7 @@ class GenDocumentoDetalle(models.Model):
     naturaleza = models.CharField(max_length=1, null=True)
     operacion = models.BigIntegerField(default=0)
     operacion_inventario = models.BigIntegerField(default=0)
+    operacion_remision = models.BigIntegerField(default=0)
     detalle = models.CharField(max_length=150, null=True)
     numero = models.IntegerField(null=True)
     documento = models.ForeignKey(GenDocumento, on_delete=models.PROTECT, related_name='documentos_detalles_documento_rel')

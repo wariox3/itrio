@@ -384,6 +384,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     detalle['operacion_inventario'] = documento_tipo.operacion_inventario
                                     detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
                             if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
+                                detalle['operacion_remision'] = documento_tipo.operacion_remision
                                 detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_remision
 
                         detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
@@ -457,15 +458,20 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             detalle['operacion_inventario'] = documento.documento_tipo.operacion_inventario
                                             detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario
                                         if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
+                                            detalle['operacion_remision'] = documento.documento_tipo.operacion_remision
                                             detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_remision                                                                          
                                     detalleSerializador = GenDocumentoDetalleSerializador(documentoDetalle, data=detalle, partial=True)    
                                 else:
                                     detalle['documento'] = documento.id
                                     if detalle['tipo_registro'] == "I":
+                                        detalle['cantidad_pendiente'] = detalle['cantidad']
                                         item = GenItem.objects.get(pk=detalle['item'])
                                         if item.inventario:
                                             detalle['operacion_inventario'] = documento.documento_tipo.operacion_inventario
                                             detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario
+                                        if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
+                                            detalle['operacion_remision'] = documento.documento_tipo.operacion_remision
+                                            detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_remision                                             
                                     detalleSerializador = GenDocumentoDetalleSerializador(data=detalle)
                                 if detalleSerializador.is_valid():
                                     documentoDetalle = detalleSerializador.save() 
@@ -3315,38 +3321,35 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         pass
                     else:                        
                         return {'error':True, 'mensaje':'El contacto no tiene nombre1 o apellido1', 'codigo':1}
-                                    
-                for documento_detalle in documento_detalles:
-                    # Validar inventario
-                    if documento_detalle.operacion_inventario == -1:
-                        if documento_detalle.almacen and documento_detalle.item:
-                            existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()                            
-                            if not existencia:
-                                existencia = InvExistencia(item=documento_detalle.item, almacen=documento_detalle.almacen)
-                                existencia.save()
-                            disponible = existencia.disponible + documento_detalle.cantidad_operada
-                            if disponible < 0 and documento_detalle.item.negativo == False:
-                                return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
-                        else:
-                            return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen o item', 'codigo':1}   
 
-                    # Remision
-                    if documento.documento_tipo_id == 29:
-                        if documento_detalle.almacen and documento_detalle.item:
-                            existencia = InvExistencia.objects.filter(item_id=documento_detalle.item_id, almacen_id=documento_detalle.almacen_id).first()                            
-                            if not existencia:
-                                existencia = InvExistencia(item=documento_detalle.item, almacen=documento_detalle.almacen)
-                                existencia.save()
-                            disponible = existencia.disponible + (documento_detalle.cantidad * -1)
-                            if disponible < 0 and documento_detalle.item.negativo == False:
-                                return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} el item {documento_detalle.item_id} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
-                        else:
-                            return {'error':True, 'mensaje':'El detalle afecta inventario no tiene almacen o item', 'codigo':1}                                                
+                # Validar existencias
+                documento_detalles_validar = GenDocumentoDetalle.objects.values(
+                        'item_id',
+                        'almacen_id'
+                    ).annotate(
+                        cantidad_operada_total=Sum('cantidad_operada')
+                    ).filter(
+                        documento_id=documento.id,                        
+                        item__negativo=False
+                    ).filter(
+                        Q(operacion_inventario=-1) | Q(operacion_remision=-1)
+                    )
+                for documento_detalle_validar in documento_detalles_validar:
+                    existencia = InvExistencia.objects.filter(item_id=documento_detalle_validar['item_id'], almacen_id=documento_detalle_validar['almacen_id']).first()
+                    if existencia:
+                        disponible = existencia.disponible + documento_detalle_validar['cantidad_operada_total']
+                        if disponible < 0:
+                            return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} almacen {documento_detalle_validar['almacen_id']} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
+                    else:
+                        return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} no tiene existencias", 'codigo':1}                                                                                                            
 
+                # validar cantidades a afectar (quedaria mejor controlando desde el detalle que se controlan las cantidades pendientes)  
+                '''for documento_detalle in documento_detalles:                                            
                     if documento_detalle.documento_detalle_afectado:
                         if documento_detalle.documento_detalle_afectado.documento.documento_tipo.afecta_cantidad:
                             if documento_detalle.cantidad > documento_detalle.documento_afectado.cantidad_pendiente:
                                 return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} la cantidad a afectar {documento_detalle.cantidad} supera la cantidad pendiente {documento_detalle.documento_afectado.cantidad_pendiente}", 'codigo':1}                        
+                '''
 
                 # Notas credito
                 if documento.documento_referencia:
