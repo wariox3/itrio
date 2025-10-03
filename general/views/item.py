@@ -6,6 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.item import GenItem
+from general.models.impuesto import GenImpuesto
 from general.models.item_impuesto import GenItemImpuesto
 from contabilidad.models.cuenta import ConCuenta
 from general.serializers.item import GenItemSerializador, GenItemListaSerializador, GenItemSeleccionarSerializador, GenItemInformeExistenciaSerializador
@@ -213,7 +214,8 @@ class ItemViewSet(viewsets.ModelViewSet):
             except Exception as e:     
                 return Response({'mensaje': 'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)  
             
-            cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}
+            cuentas_map = {c.codigo: c.id for c in ConCuenta.objects.all()}            
+            impuestos_map = {int(i.id): i for i in GenImpuesto.objects.all()}
             data_modelo = []
             errores = False
             errores_datos = []
@@ -276,7 +278,67 @@ class ItemViewSet(viewsets.ModelViewSet):
                         'fila': i,
                         'errores': serializer.errors
                     }                                    
-                    errores_datos.append(error_dato)    
+                    errores_datos.append(error_dato)   
+
+                if data['impuesto_venta']:
+                    impuestos_venta_str = str(data['impuesto_venta'])
+                    impuestos_venta_ids = [id_str.strip() for id_str in impuestos_venta_str.split(';') if id_str.strip()]
+                    for impuesto_id in impuestos_venta_ids:
+                        if impuesto_id.isdigit():
+                            impuesto_id = int(impuesto_id)
+                            impuesto = impuestos_map.get(impuesto_id)
+                            if impuesto:
+                                if impuesto.venta is False:
+                                    errores = True
+                                    error_dato = {
+                                        'fila': i,
+                                        'errores': {'impuesto_venta': [f'El impuesto venta con id {impuesto_id} no es de venta']}
+                                    }                                    
+                                    errores_datos.append(error_dato)
+                            else:
+                                errores = True
+                                error_dato = {
+                                    'fila': i,
+                                    'errores': {'impuesto_venta': [f'El impuesto venta con id {impuesto_id} no existe']}
+                                }                                    
+                                errores_datos.append(error_dato)
+                        else:
+                            errores = True
+                            error_dato = {
+                                'fila': i,
+                                'errores': {'impuesto_venta': ['El impuesto venta debe ser un numero y separado por ; si tiene mas de uno']}
+                            }                                    
+                            errores_datos.append(error_dato)
+
+                if data['impuesto_compra']:
+                    impuestos_compra_str = str(data['impuesto_compra'])
+                    impuestos_compra_ids = [id_str.strip() for id_str in impuestos_compra_str.split(';') if id_str.strip()]
+                    for impuesto_id in impuestos_compra_ids:
+                        if impuesto_id.isdigit():
+                            impuesto_id = int(impuesto_id)
+                            impuesto = impuestos_map.get(impuesto_id)
+                            if impuesto:
+                                if impuesto.compra is False:
+                                    errores = True
+                                    error_dato = {
+                                        'fila': i,
+                                        'errores': {'impuesto_compra': [f'El impuesto compra con id {impuesto_id} no es de compra']}
+                                    }                                    
+                                    errores_datos.append(error_dato)
+                            else:
+                                errores = True
+                                error_dato = {
+                                    'fila': i,
+                                    'errores': {'impuesto_compra': [f'El impuesto compra con id {impuesto_id} no existe']}
+                                }                                    
+                                errores_datos.append(error_dato)
+                        else:
+                            errores = True
+                            error_dato = {
+                                'fila': i,
+                                'errores': {'impuesto_compra': ['El impuesto compra debe ser un numero y separado por ; si tiene mas de uno']}
+                            }                                    
+                            errores_datos.append(error_dato)                                                             
 
             if not errores:
                 for detalle, impuesto_venta, impuesto_compra in data_modelo:
@@ -292,12 +354,13 @@ class ItemViewSet(viewsets.ModelViewSet):
                             item_impuesto_venta_serializer = GenItemImpuestoSerializador(data=datos_impuesto_venta)
                             if item_impuesto_venta_serializer.is_valid():
                                 item_impuesto_venta_serializer.save()
+                                   
 
                     # Procesar impuesto_compra
                     if impuesto_compra:
                         impuestos_compra_str = str(impuesto_compra)
                         impuestos_compra_ids = [id_str.strip() for id_str in impuestos_compra_str.split(';') if id_str.strip()]
-                        for impuesto_id in impuestos_compra_ids:
+                        for impuesto_id in impuestos_compra_ids:                            
                             id_numero = int(float(impuesto_id))
                             datos_impuesto_compra = {"item": item.id, "impuesto": id_numero}
                             item_impuesto_compra_serializer = GenItemImpuestoSerializador(data=datos_impuesto_compra)

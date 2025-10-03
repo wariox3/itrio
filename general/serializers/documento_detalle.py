@@ -184,6 +184,22 @@ class GenDocumentoDetalleCreditoPagoSerializador(serializers.ModelSerializer):
         model = GenDocumentoDetalle
         fields = ['id', 'pago']
 
+class GenDocumentoDetalleListaAgregarSerializador(serializers.ModelSerializer): 
+    documento__numero = serializers.IntegerField(source='documento.numero', read_only=True)
+    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
+    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
+    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
+    class Meta:
+        model = GenDocumentoDetalle
+        fields = [  'id', 'cantidad', 'cantidad_pendiente', 'precio',
+                    'documento__numero',     
+                    'documento__documento_tipo__nombre',   
+                    'documento__contacto__nombre_corto',
+                    'item',
+                    'item__nombre',                                
+                    ]
+        select_related_fields = ['documento','documento__documento_tipo', 'documento__contacto', 'item'] 
+
 #deprecated
 class GenDocumentoDetalleSerializador(serializers.HyperlinkedModelSerializer):
     documento = serializers.PrimaryKeyRelatedField(queryset=GenDocumento.objects.all())

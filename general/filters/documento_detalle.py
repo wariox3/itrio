@@ -9,6 +9,7 @@ class DocumentoDetalleFilter(django_filters.FilterSet):
     documento__contacto__nombre_corto = django_filters.CharFilter(field_name='documento__contacto__nombre_corto', lookup_expr='icontains')    
     documento__contacto__numero_identificacion = django_filters.CharFilter(field_name='documento__contacto__numero_identificacion', lookup_expr='icontains')    
     documento__programacion_detalle__programacion_id = django_filters.NumberFilter(field_name='documento__programacion_detalle__programacion_id')
+    documento__documento_tipo_id = django_filters.NumberFilter(field_name='documento__documento_tipo_id')
     
     inventario = django_filters.BooleanFilter(
         method='filtrar_inventario',
@@ -44,7 +45,5 @@ class DocumentoDetalleFilter(django_filters.FilterSet):
                     'documento__contacto__nombre_corto':['exact', 'icontains'],
                     'documento__contacto__numero_identificacion':['exact', 'icontains'],
                     'documento__documento_tipo__venta':['exact'],                                                            
-                    'documento__programacion_detalle__programacion_id': ['exact'],
-                    
-                    
+                    'documento__programacion_detalle__programacion_id': ['exact'],                                        
                 }

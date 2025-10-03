@@ -10,7 +10,7 @@ from general.models.item_impuesto import GenItemImpuesto
 from general.models.impuesto import GenImpuesto
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento_detalle import GenDocumentoDetalleListaDetalleCuentaSerializador, GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleAgregarDocumentoSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoDetalleNominaExcelSerializador, GenDocumentoDetalleCreditoPagoSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleListaDetalleCuentaSerializador, GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleAgregarDocumentoSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoDetalleNominaExcelSerializador, GenDocumentoDetalleCreditoPagoSerializador, GenDocumentoDetalleListaAgregarSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
@@ -32,7 +32,8 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         'nomina': GenDocumentoDetalleNominaSerializador,
         'lista_detalle_cuenta': GenDocumentoDetalleListaDetalleCuentaSerializador,
         'lista_detalle_item': GenDocumentoDetalleListaDetalleCuentaSerializador,
-        'credito_pago' : GenDocumentoDetalleCreditoPagoSerializador
+        'credito_pago' : GenDocumentoDetalleCreditoPagoSerializador,
+        'lista_agregar' : GenDocumentoDetalleListaAgregarSerializador
     }
     
     def get_serializer_class(self):
@@ -91,9 +92,13 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
     def lista_agregar_documento_detalle_action(self, request): 
         limit = request.query_params.get('limit', 10)
         documento_tipo = request.query_params.get('documento_tipo', None)
+        documento__contacto_id = request.query_params.get('documento__contacto_id', None)
         queryset = self.get_queryset()
         if documento_tipo:
             queryset = queryset.filter(documento__documento_tipo=documento_tipo)
+        if documento__contacto_id:
+            queryset = queryset.filter(documento__contacto_id=documento__contacto_id)
+
         try:
             limit = int(limit)
             queryset = queryset[:limit]
