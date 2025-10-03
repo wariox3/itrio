@@ -236,17 +236,18 @@ class FormatoLiquidacion():
             
                 # Encabezados de columnas
                 p.setFont("Helvetica-Bold", 8)
-                p.drawString(x + 150, y_position, "CONCEPTO")
-                p.drawString(x + 380, y_position, "ADICIONAL")
-                p.drawString(x + 480, y_position, "DEDUCCIÓN")
+                p.drawString(x + 18, y_position, "CONCEPTO")
+                p.drawString(x + 154, y_position, "DETALLE")
+                p.drawString(x + 420, y_position, "ADICIONAL")
+                p.drawString(x + 490, y_position, "DEDUCCIÓN")
                 y_position -= 15
                 
                 # Línea separadora
-                p.line(x + 20, y_position, x + 550, y_position)
+                p.line(x + 10, y_position, x + 560, y_position)
                 y_position -= 15
                 
                 # Filas de datos
-                p.setFont("Helvetica", 9)
+                p.setFont("Helvetica", 7)
                 for adicional in adicionales:
                     if y_position < 100:
                         p.showPage()
@@ -254,13 +255,15 @@ class FormatoLiquidacion():
                         y_position = 550
                     
                     concepto_nombre = adicional.concepto.nombre if adicional.concepto else ""
+                    concepto_detalle = adicional.detalle if adicional.detalle else ""
                     adicion_valor = adicional.adicional or 0
                     deduccion_valor = adicional.deduccion or 0
                     
                     # Dibujar los datos
-                    p.drawString(x + 30, y_position, concepto_nombre.upper())
-                    p.drawRightString(x + 440, y_position, f"{adicion_valor:,.0f}" if adicion_valor else "0")
-                    p.drawRightString(x + 540, y_position, f"{deduccion_valor:,.0f}" if deduccion_valor else "0")
+                    p.drawString(x + 17, y_position, concepto_nombre.upper()[:30])
+                    p.drawString(x + 154, y_position, concepto_detalle.upper()[:60])
+                    p.drawRightString(x + 480, y_position, f"{adicion_valor:,.0f}" if adicion_valor else "0")
+                    p.drawRightString(x + 550, y_position, f"{deduccion_valor:,.0f}" if deduccion_valor else "0")
                     
                     y_position -= 15
 
