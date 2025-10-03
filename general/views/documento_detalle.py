@@ -10,7 +10,7 @@ from general.models.item_impuesto import GenItemImpuesto
 from general.models.impuesto import GenImpuesto
 from inventario.models.almacen import InvAlmacen
 from contabilidad.models.grupo import ConGrupo
-from general.serializers.documento_detalle import GenDocumentoDetalleListaDetalleCuentaSerializador, GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleAgregarDocumentoSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoDetalleNominaExcelSerializador, GenDocumentoDetalleCreditoPagoSerializador, GenDocumentoDetalleListaAgregarSerializador
+from general.serializers.documento_detalle import GenDocumentoDetalleListaDetalleCuentaSerializador, GenDocumentoDetalleSerializador, GenDocumentoDetalleInformeVentaSerializador, GenDocumentoDetalleInformeInventarioSerializador, GenDocumentoDetalleNominaSerializador, GenDocumentoDetalleNominaExcelSerializador, GenDocumentoDetalleCreditoPagoSerializador, GenDocumentoDetalleListaAgregarSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.filters.documento_detalle import DocumentoDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
@@ -28,7 +28,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
         'informe_venta': GenDocumentoDetalleInformeVentaSerializador,
         'informe_inventario': GenDocumentoDetalleInformeInventarioSerializador,
         'informe_nomina_detalle': GenDocumentoDetalleNominaExcelSerializador,
-        'agregar_documento':  GenDocumentoDetalleAgregarDocumentoSerializador,
         'nomina': GenDocumentoDetalleNominaSerializador,
         'lista_detalle_cuenta': GenDocumentoDetalleListaDetalleCuentaSerializador,
         'lista_detalle_item': GenDocumentoDetalleListaDetalleCuentaSerializador,
@@ -87,80 +86,6 @@ class DocumentoDetalleViewSet(viewsets.ModelViewSet):
             documentoDetalleSerializador.save()            
             return Response({'documento': documentoDetalleSerializador.data}, status=status.HTTP_200_OK)
         return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': documentoDetalleSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=False, methods=["get"], url_path=r'lista_agregar_documento_detalle')
-    def lista_agregar_documento_detalle_action(self, request): 
-        limit = request.query_params.get('limit', 10)
-        documento_tipo = request.query_params.get('documento_tipo', None)
-        documento__contacto_id = request.query_params.get('documento__contacto_id', None)
-        queryset = self.get_queryset()
-        if documento_tipo:
-            queryset = queryset.filter(documento__documento_tipo=documento_tipo)
-        if documento__contacto_id:
-            queryset = queryset.filter(documento__contacto_id=documento__contacto_id)
-
-        try:
-            limit = int(limit)
-            queryset = queryset[:limit]
-        except ValueError:
-            pass    
-        serializer = GenDocumentoDetalleAgregarDocumentoSerializador(queryset, many=True)        
-        return Response(serializer.data)    
-    
-    @action(detail=False, methods=["post"], url_path=r'agregar_documento_detalle')
-    def agregar_documento_detalle_action(self, request): 
-        raw = request.data
-        documento_id = raw.get('documento_id')
-        documento_detalle_ids = raw.get('documento_detalle_ids')
-        if documento_id and documento_detalle_ids:
-            try:
-                documento = GenDocumento.objects.get(pk=documento_id)
-                if documento:
-                    for documento_detalle_id in documento_detalle_ids:
-                        try:
-                            documento_detalle = GenDocumentoDetalle.objects.get(pk=documento_detalle_id)
-                            nuevo_detalle_data = {
-                                'documento': documento.id,
-                                'documento_detalle_afectado': documento_detalle_id,
-                                'item': documento_detalle.item_id,
-                                'tipo_registro': documento_detalle.tipo_registro,
-                                'cantidad': documento_detalle.cantidad,
-                                'precio': documento_detalle.precio,
-                                'grupo' : documento_detalle.grupo_id,
-                                'almacen' : documento_detalle.almacen_id,
-                                'descuento' : documento_detalle.descuento,
-                                'porcentaje_descuento' : documento_detalle.porcentaje_descuento
-                            }
-                            if documento_detalle.tipo_registro == "I" and documento_detalle.item.inventario:
-                                nuevo_detalle_data['operacion_inventario'] = documento.documento_tipo.operacion_inventario
-                                nuevo_detalle_data['cantidad_operada'] = documento_detalle.cantidad * documento.documento_tipo.operacion_inventario
-
-                            detalle_serializer = GenDocumentoDetalleSerializador(data=nuevo_detalle_data)
-                            if detalle_serializer.is_valid():
-                                nuevo_detalle = detalle_serializer.save()
-                                impuestos_originales = GenDocumentoImpuesto.objects.filter(documento_detalle=documento_detalle)
-                                for impuesto_original in impuestos_originales:
-                                    nuevo_impuesto_data = {
-                                        'documento_detalle': nuevo_detalle.id,
-                                        'impuesto': impuesto_original.impuesto_id,
-                                        'base': impuesto_original.base,
-                                        'porcentaje': impuesto_original.porcentaje,
-                                        'total': impuesto_original.total,
-                                        'total_operado': impuesto_original.total_operado,
-                                        'porcentaje_base': impuesto_original.porcentaje_base,
-                                    }
-                                    impuesto_serializer = GenDocumentoImpuestoSerializador(data=nuevo_impuesto_data)
-                                    if impuesto_serializer.is_valid():
-                                        impuesto_serializer.save()
-                            else:
-                                return Response({'mensaje': 'Errores de validación en detalle', 'codigo': 14, 'validaciones': detalle_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-                        except GenDocumentoDetalle.DoesNotExist:
-                            return Response({'mensaje': 'El documento detalle no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-                    return Response({'mensaje': 'Se cargaron los detalles correctamente'}, status=status.HTTP_200_OK)
-            except GenDocumento.DoesNotExist:
-                return Response({'mensaje': 'El documento no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({'mensaje': 'Faltan parametros', 'codigo': 14}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path=r'importar_detalle_venta',)
     def importar_detalle_venta(self, request):

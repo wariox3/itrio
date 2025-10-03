@@ -13,29 +13,6 @@ from inventario.models.almacen import InvAlmacen
 
 from rest_framework import serializers
 
-class GenDocumentoDetalleAgregarDocumentoSerializador(serializers.ModelSerializer):
-    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
-    grupo__nombre = serializers.CharField(source='grupo.nombre', read_only=True)
-    almacen__nombre = serializers.CharField(source='almacen.nombre', read_only=True)
-    documento__numero = serializers.IntegerField(source='documento.numero', read_only=True)
-    documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
-    documento__contacto__numero_identificacion = serializers.CharField(source='documento.contacto.numero_identificacion', read_only=True)
-    documento__documento__tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
-    class Meta:
-        model = GenDocumentoDetalle
-        fields = ['id', 'cantidad', 'cantidad_operada', 'cantidad_pendiente', 'precio',
-                  'item', 
-                  'item__nombre', 
-                  'grupo',  
-                  'grupo__nombre', 
-                  'almacen', 
-                  'almacen__nombre',
-                  'documento__numero' ,
-                  'documento__documento__tipo__nombre', 
-                  'documento__contacto__nombre_corto',
-                  'documento__contacto__numero_identificacion']   
-        select_related_fields = ['item','grupo', 'almacen', 'documento', 'documento_tipo', 'contacto']     
-
 class GenDocumentoDetalleNominaSerializador(serializers.ModelSerializer):
     documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
     documento__contacto__numero_identificacion = serializers.CharField(source='documento.contacto.numero_identificacion', read_only=True)
