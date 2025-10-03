@@ -609,28 +609,44 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     documento_afectado = documento_detalle.documento_afectado                        
                                     documento_afectado.afectado += documento_detalle.precio
                                     documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
-                                    documento_afectado.save(update_fields=['afectado', 'pendiente'])     
+                                    documento_afectado.save(update_fields=['afectado', 'pendiente'])
+                            if documento_detalle.documento_detalle_afectado:
+                                documento_detalle_afectado = documento_detalle.documento_detalle_afectado
+                                documento_detalle_afectado.cantidad_afectada += documento_detalle.cantidad
+                                documento_detalle_afectado.cantidad_pendiente -= documento_detalle.cantidad
+                                documento_detalle_afectado.save(update_fields=['cantidad_afectada', 'cantidad_pendiente'])
+
                             # Afectar inventario       
-                            if documento_detalle.operacion_inventario != 0:                                                                
+                            if documento_detalle.operacion_inventario != 0:                     
+                                remision_afectada = False
+                                if documento_detalle.documento_detalle_afectado:
+                                    if documento_detalle.documento_detalle_afectado.documento.documento_tipo_id == 29:
+                                        remision_afectada = True
                                 existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
                                 if existencia:                                    
-                                    existencia.existencia += documento_detalle.cantidad_operada
-                                    existencia.disponible += documento_detalle.cantidad_operada                                    
-                                    existencia.save(update_fields=['existencia', 'disponible'])                                    
+                                    existencia.existencia += documento_detalle.cantidad_operada 
+                                    if remision_afectada == True:                                                                       
+                                        existencia.remision += documento_detalle.cantidad_operada                                    
+                                    else:
+                                        existencia.disponible += documento_detalle.cantidad_operada
+                                    existencia.save(update_fields=['existencia', 'disponible', 'remision'])                                    
                                 else:                                    
                                     existencia = InvExistencia.objects.create(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id, existencia=documento_detalle.cantidad_operada, disponible=documento_detalle.cantidad_operada)                                                                
                                 item = GenItem.objects.get(id=documento_detalle.item_id)
                                 existencia_anterior = Decimal(item.existencia)
                                 costo_promedio_anterior = item.costo_promedio
                                 item.existencia += documento_detalle.cantidad_operada
-                                item.disponible += documento_detalle.cantidad_operada   
+                                if remision_afectada == True:                                                                       
+                                    item.remision += documento_detalle.cantidad_operada
+                                else:
+                                    item.disponible += documento_detalle.cantidad_operada                                                                    
                                 
                                 # Generar costo promedio (compra, entrada)
                                 if documento.documento_tipo_id in (5,9):                                                                                                              
                                     costo_promedio = ((existencia_anterior * costo_promedio_anterior) + (Decimal(documento_detalle.cantidad_operada) * documento_detalle.precio)) / Decimal(item.existencia)
                                     item.costo_promedio = costo_promedio                                                                                                                                        
                                 item.costo_total = item.costo_promedio * Decimal(item.existencia)
-                                item.save(update_fields=['existencia', 'disponible', 'costo_promedio', 'costo_total'])
+                                item.save(update_fields=['existencia', 'disponible', 'remision', 'costo_promedio', 'costo_total'])
 
                                 # Asignar costo
                                 if documento.documento_tipo_id in(1,2,17,24,27,5,6,9,10): # Venta, Nota credito, Cuenta de cobro, Factura pos electronica, Factura pos, Compra, Nota debito, Entrada, Salida
@@ -711,17 +727,34 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                             documento_afectado.afectado -= documento_detalle.precio
                                             documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
                                             documento_afectado.save(update_fields=['afectado', 'pendiente'])
-                                                                                                    
+
+                                    if documento_detalle.documento_detalle_afectado:
+                                        documento_detalle_afectado = documento_detalle.documento_detalle_afectado
+                                        documento_detalle_afectado.cantidad_afectada -= documento_detalle.cantidad
+                                        documento_detalle_afectado.cantidad_pendiente += documento_detalle.cantidad
+                                        documento_detalle_afectado.save(update_fields=['cantidad_afectada', 'cantidad_pendiente'])                                                                                                    
+                                    # Afecta inventario
                                     if documento_detalle.operacion_inventario != 0:
+                                        remision_afectada = False
+                                        if documento_detalle.documento_detalle_afectado:
+                                            if documento_detalle.documento_detalle_afectado.documento.documento_tipo_id == 29:
+                                                remision_afectada = True
                                         existencia = InvExistencia.objects.filter(almacen_id=documento_detalle.almacen_id, item_id=documento_detalle.item_id).first()
                                         if existencia:
-                                            existencia.existencia -= documento_detalle.cantidad_operada
-                                            existencia.disponible -= documento_detalle.cantidad_operada
-                                            existencia.save(update_fields=['existencia', 'disponible'])
+                                            existencia.existencia -= documento_detalle.cantidad_operada                                            
+                                            if remision_afectada == True:                                                                       
+                                                existencia.remision -= documento_detalle.cantidad_operada                                    
+                                            else:
+                                                existencia.disponible -= documento_detalle.cantidad_operada
+                                            existencia.save(update_fields=['existencia', 'remision', 'disponible'])
+
                                         item = GenItem.objects.get(id=documento_detalle.item_id)
-                                        item.existencia -= documento_detalle.cantidad_operada
-                                        item.disponible -= documento_detalle.cantidad_operada
-                                        item.save(update_fields=['existencia', 'disponible'])  
+                                        item.existencia -= documento_detalle.cantidad_operada                                        
+                                        if remision_afectada == True:                                                                       
+                                            item.remision -= documento_detalle.cantidad_operada
+                                        else:
+                                            item.disponible -= documento_detalle.cantidad_operada                                         
+                                        item.save(update_fields=['existencia', 'remision', 'disponible'])  
 
                                 # Nota credito
                                 if documento.documento_referencia:
@@ -3330,9 +3363,28 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         cantidad_operada_total=Sum('cantidad_operada')
                     ).filter(
                         documento_id=documento.id,                        
-                        item__negativo=False
+                        item__negativo=False,
+                        operacion_inventario=-1
+                    )
+                for documento_detalle_validar in documento_detalles_validar:
+                    existencia = InvExistencia.objects.filter(item_id=documento_detalle_validar['item_id'], almacen_id=documento_detalle_validar['almacen_id']).first()
+                    if existencia:
+                        disponible = existencia.existencia + documento_detalle_validar['cantidad_operada_total']
+                        if disponible < 0:
+                            return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} almacen {documento_detalle_validar['almacen_id']} supera la cantidad existente {existencia.existencia}", 'codigo':1}                                                            
+                    else:
+                        return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} no tiene existencias", 'codigo':1}                                                                                                            
+
+                # Validar disponible
+                documento_detalles_validar = GenDocumentoDetalle.objects.values(
+                        'item_id',
+                        'almacen_id'
+                    ).annotate(
+                        cantidad_operada_total=Sum('cantidad_operada')
                     ).filter(
-                        Q(operacion_inventario=-1) | Q(operacion_remision=-1)
+                        documento_id=documento.id,                        
+                        item__negativo=False,
+                        operacion_remision=-1
                     )
                 for documento_detalle_validar in documento_detalles_validar:
                     existencia = InvExistencia.objects.filter(item_id=documento_detalle_validar['item_id'], almacen_id=documento_detalle_validar['almacen_id']).first()
@@ -3341,16 +3393,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         if disponible < 0:
                             return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} almacen {documento_detalle_validar['almacen_id']} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
                     else:
-                        return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} no tiene existencias", 'codigo':1}                                                                                                            
-
-                # validar cantidades a afectar (quedaria mejor controlando desde el detalle que se controlan las cantidades pendientes)  
-                '''for documento_detalle in documento_detalles:                                            
-                    if documento_detalle.documento_detalle_afectado:
-                        if documento_detalle.documento_detalle_afectado.documento.documento_tipo.afecta_cantidad:
-                            if documento_detalle.cantidad > documento_detalle.documento_afectado.cantidad_pendiente:
-                                return {'error':True, 'mensaje':f"En el detalle {documento_detalle.id} la cantidad a afectar {documento_detalle.cantidad} supera la cantidad pendiente {documento_detalle.documento_afectado.cantidad_pendiente}", 'codigo':1}                        
-                '''
-
+                        return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} no tiene existencias", 'codigo':1}                
+            
+                # Validar documentos afectado (cantidad)
+                documento_detalles_validar = GenDocumentoDetalle.objects.values(
+                        'documento_detalle_afectado_id',
+                        'documento_detalle_afectado__cantidad'
+                    ).annotate(
+                        cantidad_total=Sum('cantidad')
+                    ).filter(
+                        documento_id=documento.id
+                    ).filter(
+                        documento_detalle_afectado_id__isnull=False
+                    )
+                for documento_detalle_validar in documento_detalles_validar:
+                    if documento_detalle_validar['cantidad_total'] > documento_detalle_validar['documento_detalle_afectado__cantidad']:
+                        return {'error':True, 'mensaje':f"No se pueden afectar mas cantidades de las pendientes en el documento detalle afectado { documento_detalle_validar['documento_detalle_afectado_id']}", 'codigo':1}
+                                
                 # Notas credito
                 if documento.documento_referencia:
                     if documento.documento_tipo_id in [2, 6]:
@@ -3365,7 +3424,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return {'error':True, 'mensaje':'El documento ya esta aprobado', 'codigo':1}   
 
     @staticmethod
-    def validacion_desaprobar(documento: GenDocumento):
+    def validacion_desaprobar(documento: GenDocumento):                    
         # Validar existencias
         documento_detalles_validar = GenDocumentoDetalle.objects.values(
                 'item_id',
@@ -3374,18 +3433,18 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 cantidad_operada_total=Sum('cantidad_operada')
             ).filter(
                 documento_id=documento.id,                        
-                item__negativo=False
-            ).filter(
-                Q(operacion_inventario=1) | Q(operacion_remision=1)
+                item__negativo=False,
+                operacion_inventario=-1
             )
         for documento_detalle_validar in documento_detalles_validar:
             existencia = InvExistencia.objects.filter(item_id=documento_detalle_validar['item_id'], almacen_id=documento_detalle_validar['almacen_id']).first()
             if existencia:
-                disponible = existencia.disponible + (documento_detalle_validar['cantidad_operada_total'] * -1) # Se invierte la operacion
+                disponible = existencia.existencia + (documento_detalle_validar['cantidad_operada_total'] * -1) # Se invierte la operacion
                 if disponible < 0:
-                    return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} almacen {documento_detalle_validar['almacen_id']} supera la cantidad disponible {existencia.disponible}", 'codigo':1}                                                            
+                    return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} almacen {documento_detalle_validar['almacen_id']} supera la cantidad existente {existencia.existencia}", 'codigo':1}                                                            
             else:
-                return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} no tiene existencias", 'codigo':1}        
+                return {'error':True, 'mensaje':f"El item {documento_detalle_validar['item_id']} no tiene existencias", 'codigo':1} 
+        return {'error':False}
 
     @staticmethod
     def validacion_anular(documento: GenDocumento):
