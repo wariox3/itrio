@@ -76,6 +76,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     movimiento = CtnMovimiento(
                         tipo = "PEDIDO",                           
                         descripcion = 'SERVICIOS NUBE',
+                        fecha_desde_consumo = fecha_desde,
+                        fecha_hasta_consumo = fecha_hasta,
                         vr_total = total,
                         vr_total_operado = total,
                         vr_saldo = total,

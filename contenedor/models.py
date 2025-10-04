@@ -160,6 +160,8 @@ class UsuarioContenedor(models.Model):
 class CtnMovimiento(models.Model):
     tipo = models.CharField(max_length=20, null=True)
     fecha = models.DateTimeField(auto_now_add=True)    
+    fecha_desde_consumo = models.DateField(null=True)
+    fecha_hasta_consumo = models.DateField(null=True)    
     descripcion = models.CharField(max_length=250, null=True)
     vr_total = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     vr_total_operado = models.DecimalField(max_digits=16, decimal_places=2, default=0)

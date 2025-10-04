@@ -12,6 +12,8 @@ class CtnMovimientoSerializador(serializers.ModelSerializer):
             'id',   
             'tipo',         
             'fecha',
+            'fecha_desde_consumo',
+            'fecha_hasta_consumo',
             'descripcion',
             'vr_total',
             'vr_total_operado',
