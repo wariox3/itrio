@@ -221,4 +221,15 @@ class CtnDireccion(models.Model):
     ciudad = models.ForeignKey(CtnCiudad, on_delete=models.PROTECT, null=True)
     
     class Meta:
-        db_table = "cnt_direccion"        
+        db_table = "cnt_direccion"
+
+
+class CtnInvitacion(models.Model):    
+    fecha = models.DateTimeField(auto_now_add=True)        
+    usuario_invitado = models.EmailField(max_length=255, null=True)
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT)    
+    contenedor = models.ForeignKey(Contenedor, on_delete=models.PROTECT)
+
+    class Meta:
+        db_table = "cnt_invitacion" 
+        ordering = ["-id"]                 

@@ -7,6 +7,7 @@ from contenedor.models import Contenedor, UsuarioContenedor, CtnVerificacion
 from contenedor.serializers.contenedor import ContenedorSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador, UsuarioContenedorListaSerializador, UsuarioContenedorConfiguracionSerializador
 from contenedor.serializers.verificacion import CtnVerificacionSerializador
+from contenedor.serializers.invitacion import CntInvitacionSerializador
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from contenedor.filters.usuario_contenedor import UsuarioContenedorFilter
@@ -104,9 +105,17 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                     'contenedor_id': contenedor_id,
                     'usuario_invitado_username': invitado
                 }
-                serializador = CtnVerificacionSerializador(data = data)
-                if serializador.is_valid():                                             
+                serializador = CtnVerificacionSerializador(data = data)                
+                if serializador.is_valid():                                                                 
                     serializador.save() 
+                    data = {
+                        'usuario': usuario_id,                    
+                        'contenedor': contenedor_id,
+                        'usuario_invitado': invitado
+                    }
+                    serializador_invitacion = CntInvitacionSerializador(data = data)                
+                    if serializador_invitacion.is_valid():                                                                 
+                        serializador_invitacion.save() 
                     url = f"https://app.{aplicacion_datos['dominio']}/auth/login/" + token
                     if config('ENV') == "test":
                         url = f"http://app.{aplicacion_datos['dominio_test']}/auth/login/" + token
