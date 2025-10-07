@@ -26,7 +26,7 @@ class FormatoRemision():
     def generar_pdf(self, id):  
         buffer = BytesIO()   
         p = canvas.Canvas(buffer, pagesize=letter)
-        p.setTitle("factura")
+        p.setTitle("remision")
         empresa = GenEmpresa.objects.get(pk=1)
         configuracion = GenConfiguracion.objects.select_related('formato_factura').filter(empresa_id=1).values().first()
         documento = GenDocumento.objects.select_related('empresa', 'documento_tipo', 'contacto', 'contacto__ciudad', 'empresa__tipo_persona',).filter(id=id).values(
