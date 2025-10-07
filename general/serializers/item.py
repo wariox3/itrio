@@ -62,7 +62,7 @@ class GenItemListaSerializador(serializers.ModelSerializer):
 class GenItemSeleccionarSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenItem
-        fields = ['id', 'nombre']
+        fields = ['id', 'nombre', 'codigo']
 
 class GenItemInformeExistenciaSerializador(serializers.ModelSerializer):
     class Meta:
