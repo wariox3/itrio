@@ -93,12 +93,15 @@ class ItemViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         nombre = request.query_params.get('nombre__icontains', None)
+        codigo = request.query_params.get('codigo__icontains', None)
         inactivo = request.query_params.get('inactivo', None)
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
         if inactivo:
             queryset = queryset.filter(inactivo=inactivo)
+        if codigo:
+            queryset = queryset.filter(codigo__icontains=codigo)            
         try:
             limit = int(limit)
             queryset = queryset[:limit]
