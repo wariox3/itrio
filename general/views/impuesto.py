@@ -21,7 +21,7 @@ class ImpuestoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path=r'seleccionar')
     def seleccionar_action(self, request):
-        limit = request.query_params.get('limit', 10)
+        limit = request.query_params.get('limit', 20)
         nombre = request.query_params.get('nombre__icontains', None)
         venta = request.query_params.get('venta', None)
         compra = request.query_params.get('compra', None)
