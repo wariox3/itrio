@@ -97,3 +97,27 @@ class TteGuiaDetalleSerializador(serializers.ModelSerializer):
                   ]
         select_related_fields = ['contacto', 'ciudad_destino', 'ciudad_origen', 'cliente', 'empaque', 
                                  'servicio', 'producto', 'ruta', 'zona', 'operacion_cargo', 'operacion_ingreso', 'despacho']  
+class TteGuiaRndcSerializador(serializers.ModelSerializer):
+    cliente__numero_identificacion = serializers.CharField(source='cliente.numero_identificacion', read_only=True, allow_null=True, default=None)
+    cliente__digito = serializers.CharField(source='cliente.digito_verificacion', read_only=True, allow_null=True, default=None)
+    cliente__nombre_corto = serializers.CharField(source='cliente.nombre_corto', read_only=True, allow_null=True, default=None)
+    cliente__nombre1 = serializers.CharField(source='cliente.nombre1', read_only=True, allow_null=True, default=None)
+    cliente__apellido1 = serializers.CharField(source='cliente.apellido1', read_only=True, allow_null=True, default=None)
+    cliente__apellido2 = serializers.CharField(source='cliente.apellido2', read_only=True, allow_null=True, default=None)
+    cliente__telefono = serializers.CharField(source='cliente.telefono', read_only=True, allow_null=True, default=None)
+    cliente__direccion = serializers.CharField(source='cliente.direccion', read_only=True, allow_null=True, default=None)
+    cliente__identificacion__codigo = serializers.CharField(source='cliente.identificacion.codigo', read_only=True, allow_null=True, default=None)
+    ciudad_origen__codigo = serializers.CharField(source='ciudad_origen.codigo', read_only=True, allow_null=True, default=None)
+    ciudad_destino__codigo = serializers.CharField(source='ciudad_destino.codigo', read_only=True, allow_null=True, default=None)
+    empaque__codigo = serializers.CharField(source='empaque.codigo', read_only=True, allow_null=True, default=None)
+    producto__codigo = serializers.CharField(source='producto.codigo', read_only=True, allow_null=True, default=None)
+    producto__nombre = serializers.CharField(source='producto.nombre', read_only=True, allow_null=True, default=None)
+
+    class Meta:
+        model = TteGuia
+        fields = ['id', 'cliente__nombre_corto', 'cliente__identificacion__codigo', 'cliente__numero_identificacion', 'cliente__nombre1',  'cliente__apellido1', 'cliente__apellido2' ,'cliente__digito', 
+                  'cliente__telefono', 'cliente__direccion' ,'ciudad_origen', 'ciudad_origen__codigo', 'ciudad_destino', 'ciudad_destino__codigo', 'peso', 'servicio', 'estado_rndc', 'fecha_ingreso' ,
+                  'empaque__codigo', 'producto__codigo', 'producto__nombre']    
+    select_related_fields = ['cliente', 'cliente__identificacion', 'ciudad_origen', 'ciudad_destino', 'empaque', 'producto']  
+    
+     

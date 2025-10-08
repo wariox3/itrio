@@ -20,6 +20,11 @@ class GenConfiguracion(models.Model):
     rut_direccion_origen = models.TextField(null=True)
     rut_latitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
     rut_longitud = models.DecimalField(max_digits=25, decimal_places=15, null=True)
+    tte_usuario_rndc = models.CharField(max_length=50, null=True)
+    tte_clave_rndc = models.CharField(max_length=50, null=True)
+    tte_numero_poliza = models.CharField(max_length=50, null=True)
+    tte_fecha_vence_poliza = models.DateField(null=True)
+    tte_numero_identificacion_aseguradora = models.CharField(max_length=50, null=True)
     class Meta:
         db_table = "gen_configuracion"
         ordering = ["-id"]
