@@ -26,5 +26,6 @@ class GenItemImpuestoDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'impuesto_porcentaje_base': instance.impuesto.porcentaje_base,
             'impuesto_venta': instance.impuesto.venta,
             'impuesto_compra': instance.impuesto.compra,
-            'impuesto_operacion': instance.impuesto.operacion
+            'impuesto_operacion': instance.impuesto.operacion,
+            'impuesto_impuesto_tipo_id': instance.impuesto.impuesto_tipo_id
         }          
