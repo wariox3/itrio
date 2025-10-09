@@ -60,6 +60,7 @@ class ContenedorSerializador(serializers.ModelSerializer):
             'cortesia': instance.cortesia,
             'usuario_id': instance.usuario_id,
             'usuarios': instance.usuarios,
+            'fecha': instance.fecha,
             'acceso_restringido': acceso_restringido
         } 
     
