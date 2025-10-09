@@ -59,6 +59,7 @@ class ContenedorSerializador(serializers.ModelSerializer):
             'ruteo': instance.ruteo,
             'cortesia': instance.cortesia,
             'usuario_id': instance.usuario_id,
+            'usuarios': instance.usuarios,
             'acceso_restringido': acceso_restringido
         } 
     
