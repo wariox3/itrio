@@ -325,16 +325,19 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         resultados_json.sort(key=lambda x: str(x['codigo']))
         return resultados_json
 
-    def obtener_balance_prueba_tercero(self, fecha_desde, fecha_hasta, cierre = False, numero_identificacion = '', nombre_corto = ''):
+    def obtener_balance_prueba_tercero(self, fecha_desde, fecha_hasta, cierre = False, cuenta_con_movimiento = False, cuenta_desde = None, cuenta_hasta = None, contacto_id = None):
         parametro_cierre = ' AND ma.cierre = false '
         if cierre == True:
             parametro_cierre = ''
-        filtro_identificacion = ''
-        if numero_identificacion:
-            filtro_identificacion = f" AND co.numero_identificacion = '{numero_identificacion}'"                
-        filtro_nombre_corto = ''
-        if nombre_corto:
-                filtro_nombre_corto = f" AND co.nombre_corto LIKE '%%{nombre_corto}%%'"
+        filtro_cuenta_desde = ''
+        if cuenta_desde:
+            filtro_cuenta_desde = f"AND c.codigo >= '{cuenta_desde}' "  
+        filtro_cuenta_hasta = ''
+        if cuenta_hasta:
+            filtro_cuenta_hasta = f"AND c.codigo <= '{cuenta_hasta}' "              
+        filtro_contacto_id = ''
+        if contacto_id:
+            filtro_contacto_id = f" AND m.contacto_id = {contacto_id}"                
         query = f'''
             SELECT
                 MIN(m.id) AS id,
@@ -359,7 +362,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             LEFT JOIN
                 gen_contacto co ON m.contacto_id = co.id  
             WHERE 
-                m.fecha <= '{fecha_hasta}' and m.contacto_id is not null {filtro_identificacion} {filtro_nombre_corto}
+                m.fecha <= '{fecha_hasta}' and m.contacto_id is not null 
+                {filtro_cuenta_desde}
+                {filtro_cuenta_hasta}
+                {filtro_contacto_id} 
             GROUP BY
                 m.cuenta_id, m.contacto_id, co.nombre_corto, co.numero_identificacion ,c.codigo, c.nombre, c.cuenta_clase_id, c.cuenta_grupo_id, c.cuenta_cuenta_id, c.nivel
             ORDER BY
@@ -374,6 +380,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         for cuenta in resultados:
             saldo_anterior = cuenta.debito_anterior - cuenta.credito_anterior
             saldo_actual = saldo_anterior + (cuenta.debito - cuenta.credito)
+            if cuenta_con_movimiento and saldo_anterior == 0 and cuenta.debito == 0 and cuenta.credito == 0:
+                continue 
             resultados_json.append({
                 'tipo': 'TERCERO',
                 'cuenta_id': cuenta.cuenta_id,
@@ -721,12 +729,11 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = parametros['fecha_hasta']
         cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
         cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
-        numero_identificacion = parametros['numero_identificacion']
-        nombre_corto = parametros['nombre_corto']
+        contacto_id = parametros.get('contacto', None)        
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
-        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre ,numero_identificacion, nombre_corto)
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta, contacto_id)
         resultados = resultados_cuenta + resultados_tercero
         resultados.sort(key=lambda x: str(x['codigo']))
         if excel:
@@ -826,12 +833,11 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = parametros['fecha_hasta']
         cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
         cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
-        numero_identificacion = parametros['numero_identificacion']
-        nombre_corto = parametros['nombre_corto']
+        contacto_id = parametros['contacto_id']
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
-        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre, numero_identificacion, nombre_corto)        
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta, contacto_id)        
         resultados_json = resultados_cuenta + resultados_tercero
         resultados_json.sort(key=lambda x: str(x['codigo']))
         if excel:
@@ -884,7 +890,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
         comprobante = parametros['comprobante']   
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
-        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre)
+        resultados_tercero = self.obtener_balance_prueba_tercero(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
         resultados_movimiento = self.obtener_movimiento(fecha_desde, fecha_hasta, cierre, comprobante)
         resultados_json = resultados_cuenta + resultados_tercero + resultados_movimiento
         resultados_json.sort(key=lambda x: str(x['codigo']))
