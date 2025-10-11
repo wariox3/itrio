@@ -1,8 +1,9 @@
 from django.db import models
 
 class GenPrecio(models.Model):
-    nombre = models.CharField(max_length=200)
-    tipo = models.CharField(max_length=1)
+    nombre = models.CharField(max_length=200)  
+    venta = models.BooleanField(default = False) 
+    compra = models.BooleanField(default = False) 
     fecha_vence = models.DateField()
     
     class Meta:

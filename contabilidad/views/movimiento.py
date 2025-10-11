@@ -835,7 +835,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         fecha_hasta = parametros['fecha_hasta']
         cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
         cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
-        contacto_id = parametros['contacto_id']
+        contacto_id = parametros.get('contacto', None)
         cierre = parametros['incluir_cierre']
         cuenta_con_movimiento = parametros['cuenta_con_movimiento'] 
         resultados_cuenta = self.obtener_saldo_cuenta(fecha_desde, fecha_hasta, cierre, cuenta_con_movimiento, cuenta_codigo_desde, cuenta_codigo_hasta)
