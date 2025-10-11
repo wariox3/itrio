@@ -51,6 +51,10 @@ class PrecioViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset()
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)            
+        if venta:
+            queryset = queryset.filter(venta=True)
+        if compra:
+            queryset = queryset.filter(compra=True)
         try:
             limit = int(limit)
             queryset = queryset[:limit]
