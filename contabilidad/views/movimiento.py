@@ -336,8 +336,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         if cuenta_hasta:
             filtro_cuenta_hasta = f"AND c.codigo <= '{cuenta_hasta}' "              
         filtro_contacto_id = ''
+        filtro_grupo_contacto_id = ''
         if contacto_id:
-            filtro_contacto_id = f" AND m.contacto_id = {contacto_id}"                
+            filtro_contacto_id = f" AND m.contacto_id = {contacto_id}"
+            filtro_grupo_contacto_id = f" AND ma.contacto_id = {contacto_id}"                
         query = f'''
             SELECT
                 MIN(m.id) AS id,
@@ -351,10 +353,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 c.cuenta_grupo_id,
                 c.cuenta_cuenta_id,
                 c.nivel,   
-                COALESCE((SELECT SUM(debito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id and ma.fecha < '{fecha_desde}'), 0) AS debito_anterior,
-                COALESCE((SELECT SUM(credito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id and ma.fecha < '{fecha_desde}'), 0) AS credito_anterior,
-                COALESCE((SELECT SUM(debito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {parametro_cierre} and ma.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}'), 0) AS debito,
-                COALESCE((SELECT SUM(credito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {parametro_cierre} and ma.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}'), 0) AS credito
+                COALESCE((SELECT SUM(debito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {filtro_grupo_contacto_id} and ma.fecha < '{fecha_desde}'), 0) AS debito_anterior,
+                COALESCE((SELECT SUM(credito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {filtro_grupo_contacto_id} and ma.fecha < '{fecha_desde}'), 0) AS credito_anterior,
+                COALESCE((SELECT SUM(debito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {parametro_cierre} {filtro_grupo_contacto_id} and ma.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}'), 0) AS debito,
+                COALESCE((SELECT SUM(credito) FROM con_movimiento ma WHERE ma.cuenta_id = m.cuenta_id AND ma.contacto_id = m.contacto_id {parametro_cierre} {filtro_grupo_contacto_id} and ma.fecha BETWEEN '{fecha_desde}' AND '{fecha_hasta}'), 0) AS credito
             FROM
                 con_movimiento m
             LEFT JOIN
