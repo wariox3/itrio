@@ -1,16 +1,10 @@
 from general.models.precio_detalle import GenPrecioDetalle
-from general.models.precio import GenPrecio
-from general.models.item import GenItem
 from rest_framework import serializers
 
-class GenPrecioDetalleSerializador(serializers.HyperlinkedModelSerializer):
-    precio = serializers.PrimaryKeyRelatedField(queryset=GenPrecio.objects.all())
-    item = serializers.PrimaryKeyRelatedField(queryset=GenItem.objects.all(), allow_null=True)
+class GenPrecioDetalleSerializador(serializers.ModelSerializer):
+    item__nombre = serializers.CharField(source='item.nombre', read_only=True)
+
     class Meta:
         model = GenPrecioDetalle
-        fields = ['precio', 'vr_precio', 'item']
-
-    def to_representation(self, instance):
-        return {
-            'id': instance.id,
-        }        
+        fields = ['id', 'precio', 'vr_precio', 'item', 'item__nombre']
+        select_related_fields = ['item']         
