@@ -186,6 +186,15 @@
     },
     {
       "model": "general.GenDocumentoClase",
+      "pk": 502,
+      "campos": {
+        "nombre": "Traslado almacen",
+        "codigo_dian": "01",
+        "grupo": 5
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
       "pk": 601,
       "campos": {
         "nombre": "Asiento",

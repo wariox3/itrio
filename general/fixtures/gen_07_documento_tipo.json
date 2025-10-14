@@ -370,6 +370,16 @@
         "documento_clase": 108,
         "operacion_remision": 1        
       }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 31,
+      "campos": {
+        "nombre": "TRASLADO ALMACEN",
+        "documento_clase": 502,
+        "invenario": true,
+        "operacion_inventario": 1
+      }
     }    
   ]
 }
