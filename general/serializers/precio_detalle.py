@@ -7,4 +7,4 @@ class GenPrecioDetalleSerializador(serializers.ModelSerializer):
     class Meta:
         model = GenPrecioDetalle
         fields = ['id', 'precio', 'vr_precio', 'item', 'item__nombre']
-        select_related_fields = ['item']         
+        select_related_fields = ['item']
