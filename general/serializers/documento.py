@@ -530,9 +530,11 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):
         contacto_numero_identificacion = ""
         contacto_nombre_corto = ""
+        contacto_precio_id = ""
         if instance.contacto:
             contacto_numero_identificacion = instance.contacto.numero_identificacion
             contacto_nombre_corto = instance.contacto.nombre_corto
+            contacto_precio_id = instance.contacto.precio_id
         metodo_pago = instance.metodo_pago
         metodo_pago_nombre = ""
         if metodo_pago is not None:
@@ -585,7 +587,8 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
             'fecha_hasta' : instance.fecha_hasta, 
             'contacto_id' : instance.contacto_id,
             'contacto_numero_identificacion': contacto_numero_identificacion,
-            'contacto_nombre_corto' : contacto_nombre_corto,            
+            'contacto_nombre_corto' : contacto_nombre_corto,
+            'contacto_precio_id' : contacto_precio_id,
             'descuento': instance.descuento,
             'base_impuesto': instance.base_impuesto,
             'subtotal': instance.subtotal,  
