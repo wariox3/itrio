@@ -5,4 +5,4 @@ class PrecioDetalleFilter(django_filters.FilterSet):
     class Meta:
         model = GenPrecioDetalle        
         fields = {'id': ['exact'],
-                  'precio': ['exact']}
+                  'precio_id': ['exact']}
