@@ -35,7 +35,7 @@
       "model": "general.GenDocumentoClase",
       "pk": 103,
       "campos": {
-        "nombre": "Factura recurrente",
+        "nombre": "Factura venta recurrente",
         "codigo_dian": "01",
         "grupo": 1
       }
@@ -144,6 +144,15 @@
       "pk": 304,
       "campos": {
         "nombre": "Nota ajuste",
+        "codigo_dian": "01",
+        "grupo": 3
+      }
+    },
+    {
+      "model": "general.GenDocumentoClase",
+      "pk": 305,
+      "campos": {
+        "nombre": "Factura compra recurrente",
         "codigo_dian": "01",
         "grupo": 3
       }

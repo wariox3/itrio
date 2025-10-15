@@ -204,7 +204,7 @@
       "model": "general.GenDocumentoTipo",
       "pk": 16,
       "campos": {
-        "nombre": "FACTURA RECURRENTE",
+        "nombre": "FACTURA VENTA RECURRENTE",
         "documento_clase": 103,
         "venta": false
       }
@@ -379,6 +379,15 @@
         "documento_clase": 502,
         "invenario": true,
         "operacion_inventario": 1
+      }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 32,
+      "campos": {
+        "nombre": "FACTURA COMPRA RECURRENTE",
+        "documento_clase": 305,
+        "venta": false
       }
     }    
   ]

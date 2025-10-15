@@ -37,7 +37,10 @@
         "venta": true,
         "cartera": true,
         "compra": true,
-        "tesoreria": true
+        "tesoreria": true,
+        "contabilidad": true,
+        "inventario": true,
+        "humano": true
       }
     },
     {
@@ -75,7 +78,8 @@
         "compra": true,
         "tesoreria": true,
         "contabilidad": true,
-        "inventario": true
+        "inventario": true,
+        "humano": true
       }
     },
     {
