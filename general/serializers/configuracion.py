@@ -13,9 +13,21 @@ class GenConfiguracionSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = GenConfiguracion
         fields = ['id', 'empresa', 'informacion_factura', 'informacion_factura_superior', 
-            'gen_uvt', 'gen_emitir_automaticamente',
-            'hum_factor', 'hum_salario_minimo', 'hum_auxilio_transporte', 'hum_entidad_riesgo',
-            'pos_documento_tipo', 'rut_sincronizar_complemento', 'rut_rutear_franja', 'rut_direccion_origen', 'rut_latitud', 'rut_longitud'
+            'gen_uvt', 
+            'gen_emitir_automaticamente',
+            'gen_item_administracion',
+            'gen_item_imprevisto',
+            'gen_item_utilidad',
+            'hum_factor', 
+            'hum_salario_minimo', 
+            'hum_auxilio_transporte', 
+            'hum_entidad_riesgo',
+            'pos_documento_tipo', 
+            'rut_sincronizar_complemento', 
+            'rut_rutear_franja', 
+            'rut_direccion_origen', 
+            'rut_latitud', 
+            'rut_longitud'
         ]      
 
 class GenConfiguracionRndcSerializador(serializers.ModelSerializer):
