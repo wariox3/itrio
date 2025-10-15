@@ -1,5 +1,6 @@
 from django.db import models
 from general.models.empresa import GenEmpresa
+from general.models.item import GenItem
 from general.models.documento_tipo import GenDocumentoTipo
 from humano.models.entidad import HumEntidad
 
