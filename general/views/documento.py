@@ -381,8 +381,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             item = GenItem.objects.get(pk=detalle['item'])
                             if item:
                                 if item.inventario:
-                                    detalle['operacion_inventario'] = documento_tipo.operacion_inventario
-                                    detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_inventario
+                                    operacion_inventario = documento_tipo.operacion_inventario
+                                    if documento.documento_tipo_id == 31: # Traslado de almacen
+                                        operacion_inventario =  detalle['operacion_inventario']
+                                    detalle['operacion_inventario'] = operacion_inventario
+                                    detalle['cantidad_operada'] = detalle['cantidad'] * operacion_inventario
                             if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
                                 detalle['operacion_remision'] = documento_tipo.operacion_remision
                                 detalle['cantidad_operada'] = detalle['cantidad'] * documento_tipo.operacion_remision
@@ -455,8 +458,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         detalle['cantidad_pendiente'] = detalle['cantidad']
                                         item = GenItem.objects.get(pk=detalle['item'])
                                         if item.inventario:
-                                            detalle['operacion_inventario'] = documento.documento_tipo.operacion_inventario
-                                            detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario
+                                            operacion_inventario = documento.documento_tipo.operacion_inventario
+                                            if documento.documento_tipo_id == 31: # Traslado de almacen
+                                                operacion_inventario =  detalle['operacion_inventario']                                            
+                                            detalle['operacion_inventario'] = operacion_inventario
+                                            detalle['cantidad_operada'] = detalle['cantidad'] * operacion_inventario
                                         if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
                                             detalle['operacion_remision'] = documento.documento_tipo.operacion_remision
                                             detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_remision                                                                          
@@ -467,8 +473,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         detalle['cantidad_pendiente'] = detalle['cantidad']
                                         item = GenItem.objects.get(pk=detalle['item'])
                                         if item.inventario:
-                                            detalle['operacion_inventario'] = documento.documento_tipo.operacion_inventario
-                                            detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_inventario
+                                            operacion_inventario = documento.documento_tipo.operacion_inventario
+                                            if documento.documento_tipo_id == 31: # Traslado de almacen
+                                                operacion_inventario =  detalle['operacion_inventario']
+                                            detalle['operacion_inventario'] = operacion_inventario
+                                            detalle['cantidad_operada'] = detalle['cantidad'] * operacion_inventario
                                         if documento.documento_tipo_id in (29,30): # Remision, Devolucion remision
                                             detalle['operacion_remision'] = documento.documento_tipo.operacion_remision
                                             detalle['cantidad_operada'] = detalle['cantidad'] * documento.documento_tipo.operacion_remision                                             
