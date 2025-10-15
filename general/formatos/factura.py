@@ -317,7 +317,7 @@ class FormatoFactura():
         x = 24
         max_altura_disponible = 330  # Altura máxima disponible en la página para los ítems
         altura_acumulada = 0  # Altura acumulada por los ítems en la página
-        y = 550  # Posición vertical inicial
+        y = 560  # Posición vertical inicial
         detalles_en_pagina = 0
         cantidad_total_items = 0
 
@@ -330,28 +330,28 @@ class FormatoFactura():
                 itemNombre = itemNombre + " (" + detalle['detalle'] + ")"
             item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7))
             ancho, alto = item_nombre_paragraph.wrap(275, 100)        
-            altura_requerida = alto + 10
+            altura_requerida = alto + 5
             
             # Verificar si hay suficiente espacio para el siguiente ítem
             if altura_acumulada + altura_requerida > max_altura_disponible:
                 p.showPage()
-                y = 550  # Restablecer altura disponible para nueva página
+                y = 560  # Restablecer altura disponible para nueva página
                 draw_header()
                 altura_acumulada = 0
                 detalles_en_pagina = 0
 
-            item_nombre_paragraph.drawOn(p, x + 60, y - alto + 5)
+            item_nombre_paragraph.drawOn(p, x + 60, y - alto + 7)
             y -= altura_requerida
             altura_acumulada += altura_requerida
 
             p.setFont("Helvetica", 7)
-            p.drawCentredString(x + 7, y + alto + 8, str(index + 1))            
-            p.drawString(x + 25, y + alto + 8, str(detalle['item__codigo'][:5]))
-            p.drawRightString(x + 365, y + alto + 8, str(detalle['cantidad']))
-            p.drawRightString(x + 417, y + alto + 8, f"{detalle['precio']:,.0f}")
-            p.drawRightString(x + 458, y + alto + 8, f"{detalle['descuento']:,.0f}")
-            p.drawRightString(x + 505, y + alto + 8, f"{detalle['impuesto']:,.0f}")
-            p.drawRightString(x + 555, y + alto + 8, f"{detalle['subtotal']:,.0f}")
+            p.drawCentredString(x + 7, y + alto + 5, str(index + 1))            
+            p.drawString(x + 25, y + alto + 5, str(detalle['item__codigo'][:5]))
+            p.drawRightString(x + 365, y + alto + 5, str(detalle['cantidad']))
+            p.drawRightString(x + 417, y + alto + 5, f"{detalle['precio']:,.0f}")
+            p.drawRightString(x + 458, y + alto + 5, f"{detalle['descuento']:,.0f}")
+            p.drawRightString(x + 505, y + alto + 5, f"{detalle['impuesto']:,.0f}")
+            p.drawRightString(x + 555, y + alto + 5, f"{detalle['subtotal']:,.0f}")
 
             y -= 1  # Ajuste de posición vertical para el siguiente ítem
             altura_acumulada += 1
