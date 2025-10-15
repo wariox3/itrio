@@ -209,7 +209,7 @@ class FormatoFactura():
             #Encabezado detalles
             p.setFont("Helvetica-Bold", 8)
             p.drawString(x + 5, 575, "#")            
-            p.drawString(x + 46, 575, "COD")
+            p.drawString(x + 30, 575, "COD")
             p.drawString(220, 575, "ÍTEM")
             p.drawString(x + 340, 575, "CANT")
             p.drawString(x + 380, 575, "PRECIO")
@@ -329,7 +329,7 @@ class FormatoFactura():
             if detalle['detalle'] is not None:
                 itemNombre = itemNombre + " (" + detalle['detalle'] + ")"
             item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7))
-            ancho, alto = item_nombre_paragraph.wrap(250, 100)        
+            ancho, alto = item_nombre_paragraph.wrap(275, 100)        
             altura_requerida = alto + 10
             
             # Verificar si hay suficiente espacio para el siguiente ítem
@@ -340,29 +340,30 @@ class FormatoFactura():
                 altura_acumulada = 0
                 detalles_en_pagina = 0
 
-            item_nombre_paragraph.drawOn(p, x + 78, y - alto + 5)
+            item_nombre_paragraph.drawOn(p, x + 60, y - alto + 5)
             y -= altura_requerida
             altura_acumulada += altura_requerida
 
             p.setFont("Helvetica", 7)
             p.drawCentredString(x + 7, y + alto + 8, str(index + 1))            
-            p.drawString(x + 45, y + alto + 8, str(detalle['item__codigo'][:5]))
+            p.drawString(x + 25, y + alto + 8, str(detalle['item__codigo'][:5]))
             p.drawRightString(x + 365, y + alto + 8, str(detalle['cantidad']))
             p.drawRightString(x + 417, y + alto + 8, f"{detalle['precio']:,.0f}")
             p.drawRightString(x + 458, y + alto + 8, f"{detalle['descuento']:,.0f}")
             p.drawRightString(x + 505, y + alto + 8, f"{detalle['impuesto']:,.0f}")
             p.drawRightString(x + 555, y + alto + 8, f"{detalle['subtotal']:,.0f}")
 
-            y -= 10  # Ajuste de posición vertical para el siguiente ítem
-            altura_acumulada += 10
+            y -= 1  # Ajuste de posición vertical para el siguiente ítem
+            altura_acumulada += 1
             detalles_en_pagina += 1
             cantidad_total_items += 1
 
         p.drawString(x + 5, y, "CANTIDAD DE ÍTEMS: " + str(cantidad_total_items))
-        x = 440
+        x = 450
         totalFactura = documento['total']        
         p.setFont("Helvetica-Bold", 8)
         p.drawString(x, 230, "SUBTOTAL")
+        p.setFont("Helvetica", 8)
         p.drawRightString(x + 140, 230,  f"{documento['subtotal']:,.0f}")
 
         documento_impuestos = GenDocumentoImpuesto.objects.filter(
@@ -370,18 +371,30 @@ class FormatoFactura():
         ).values(
             'impuesto_id', 'impuesto__nombre_extendido'
         ).annotate(
-            total_operado=Sum('total_operado')
+            total_operado=Sum('total_operado'),
+            base=Sum('base')
         ).order_by('impuesto_id')
 
         y = 220
         for impuesto in documento_impuestos:
             nombre_impuesto = impuesto['impuesto__nombre_extendido']
-            total_acumulado = impuesto['total_operado']            
+            total_acumulado = impuesto['total_operado']
+            base = impuesto['base']
+            
+            p.setFont("Helvetica-Bold", 8)
+            p.drawString(x, y, "BASE")
+            p.setFont("Helvetica", 8)
+            p.drawRightString(x + 140, y, f"{base:,.0f}")
+            y -= 10
+            
+            p.setFont("Helvetica-Bold", 8)
             p.drawString(x, y, nombre_impuesto.upper())
+            p.setFont("Helvetica", 8)
             p.drawRightString(x + 140, y, f"{total_acumulado:,.0f}")
             y -= 10
-
+        p.setFont("Helvetica-Bold", 8)  
         p.drawString(x, y, "TOTAL GENERAL")
+        p.setFont("Helvetica", 8)   
         p.drawRightString(x + 140, y, f"{totalFactura:,.0f}")
 
         p.save()
