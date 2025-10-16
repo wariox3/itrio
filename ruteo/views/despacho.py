@@ -330,7 +330,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
             respuesta = holmio.despacho_detalle(parametros)
             if respuesta['error'] == False: 
                 despacho_complemento = respuesta['despacho']                
-                vehiculo = RutVehiculo.objects.filter(placa=despacho_complemento['codigoVehiculoFk']).first() 
+                vehiculo = RutVehiculo.objects.filter(placa=despacho_complemento['vehiculoPlaca']).first() 
                 if vehiculo:
                     with transaction.atomic():
                         data = {
