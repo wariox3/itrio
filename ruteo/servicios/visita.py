@@ -69,15 +69,15 @@ class VisitaServicio():
         cantidad = 0
         franjas = RutFranja.objects.all()        
         for visita in visitas:
-            respuesta = VisitaServicio.ubicar_punto(franjas, visita.latitud, visita.longitud)
-            if respuesta['encontrado']:
-                visita.franja_id = respuesta['franja']['id']
-                visita.franja_codigo = respuesta['franja']['codigo']
-                visita.estado_franja = True
-            else:
-                visita.franja_id = None
-                visita.franja_codigo = None
-                visita.estado_franja = False
+            visita.franja_id = None
+            visita.franja_codigo = None
+            visita.estado_franja = False
+            if visita.latitud and visita.longitud:
+                respuesta = VisitaServicio.ubicar_punto(franjas, visita.latitud, visita.longitud)
+                if respuesta['encontrado']:
+                    visita.franja_id = respuesta['franja']['id']
+                    visita.franja_codigo = respuesta['franja']['codigo']
+                    visita.estado_franja = True                
             visita.save()  
             cantidad += 1      
         return cantidad
