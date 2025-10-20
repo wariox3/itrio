@@ -99,6 +99,12 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             errores_datos = []
             registros_importados = 0
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                numero_identificacion = None
+                if row[8] is not None:
+                    if isinstance(row[8], (int, float)):
+                        numero_identificacion = str(int(row[8]))
+                    else:
+                        numero_identificacion = str(row[8]).strip()                    
                 data = {
                     'numero': row[0],
                     'fecha': None,
@@ -109,7 +115,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'comprobante': row[5],
                     'cuenta': str(row[6]),
                     'grupo': row[7],
-                    'contacto': row[8],
+                    'contacto': numero_identificacion,
                     'detalle': row[9],
                     'periodo': row[10],
                     'cierre': row[11],
