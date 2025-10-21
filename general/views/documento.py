@@ -2304,65 +2304,23 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)           
 
-    @action(detail=False, methods=["post"], url_path=r'generar-masivo')
-    def generar_masivo(self, request):      
+    @action(detail=False, methods=["post"], url_path=r'generar-recurrente')
+    def generar_recurrente_action(self, request):      
         raw = request.data
-        documento_tipo_id = raw.get('documento_tipo_id', 1)
-        documento_ids = raw.get('ids', []) 
-        generar_todos = raw.get('generar_todos', False)
-        
+        documento_ids = raw.get('ids', [])              
+        documento_tipo_id = raw.get('documento_tipo_id', None)
         if documento_tipo_id:
-            try:
-                documento_tipo = GenDocumentoTipo.objects.get(pk=documento_tipo_id)
-            except GenDocumentoTipo.DoesNotExist:
-                return Response({'mensaje': 'El tipo de documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
-            
-            if generar_todos:
-                documentos = GenDocumento.objects.filter(documento_tipo_id=16)
-            else:
-                if not documento_ids:
-                    return Response({'mensaje': 'Debe proporcionar los IDs de documentos o habilitar "generar_todos"', 'codigo': 3}, status=status.HTTP_400_BAD_REQUEST)
-                documentos = GenDocumento.objects.filter(id__in=documento_ids, documento_tipo_id=16)
-            
-            if not documentos.exists():
-                return Response({'mensaje': 'No se encontraron documentos para procesar', 'codigo': 4}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # Procesar documentos
-            for documento in documentos:
-                dias_plazo = documento.plazo_pago.dias
-                documento_data = documento.__dict__.copy()
-                documento_data.pop('id', None)           
-                documento_data.pop('_state', None)
-                documento_data['documento_tipo_id'] = documento_tipo_id
-                documento_data['resolucion_id'] = documento_tipo.resolucion_id
-                documento_data['fecha'] = timezone.now()
-                documento_data['fecha_contable'] = timezone.now()
-                documento_data['fecha_vence'] = timezone.now() + timedelta(days=dias_plazo)
-                
-                documento_nuevo = GenDocumento(**documento_data)
-                documento_nuevo.save()
-                
-                documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento.id).order_by('id')
-                for documento_detalle in documento_detalles:
-                    documento_detalle_data = documento_detalle.__dict__.copy()
-                    documento_detalle_data.pop('id', None)
-                    documento_detalle_data.pop('_state', None)
-                    documento_detalle_data['documento_id'] = documento_nuevo.id
-                    
-                    documento_detalle_nuevo = GenDocumentoDetalle(**documento_detalle_data)
-                    documento_detalle_nuevo.save()
-                    
-                    documento_impuestos = GenDocumentoImpuesto.objects.filter(documento_detalle_id=documento_detalle.id)
-                    for documento_impuesto in documento_impuestos:
-                        documento_impuesto_data = documento_impuesto.__dict__.copy()
-                        documento_impuesto_data.pop('id', None)
-                        documento_impuesto_data.pop('_state', None)
-                        documento_impuesto_data['documento_detalle_id'] = documento_detalle_nuevo.id
-                        
-                        documento_impuesto_nuevo = GenDocumentoImpuesto(**documento_impuesto_data)
-                        documento_impuesto_nuevo.save()
-            
-            return Response({'mensaje': 'Proceso exitoso'}, status=status.HTTP_200_OK)
+            if documento_tipo_id in [16, 32]:
+                #documento_ids = GenDocumento.objects.filter(documento_tipo_id=documento_tipo_id).values_list('id', flat=True)
+                documento_ids = list(GenDocumento.objects.filter(documento_tipo_id=documento_tipo_id).values_list('id', flat=True))
+        if documento_ids:
+            if not isinstance(documento_ids, list):
+                return Response({'mensaje': 'El parámetro ids debe ser una lista', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)            
+            respuesta = DocumentoServicio.generar_recurrente(documento_ids=documento_ids)
+            if respuesta['error']:
+                return Response({'mensaje': respuesta['mensaje']}, status=status.HTTP_400_BAD_REQUEST)
+            else:   
+                return Response({'documentos_creado': respuesta['documentos_creados']}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
