@@ -2320,7 +2320,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             if respuesta['error']:
                 return Response({'mensaje': respuesta['mensaje']}, status=status.HTTP_400_BAD_REQUEST)
             else:   
-                return Response({'documentos_creado': respuesta['documentos_creados']}, status=status.HTTP_200_OK)
+                return Response({'documentos_creados': respuesta['documentos_creados']}, status=status.HTTP_200_OK)
         else:
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
 
