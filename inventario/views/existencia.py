@@ -68,10 +68,11 @@ class InvExistenciaViewSet(viewsets.ModelViewSet):
                 if item:
                     if item.inventario:
                         existencia = InvExistencia.objects.filter(almacen_id=detalle['almacen'], item_id=detalle['item']).first()                
-                        if existencia:
+                        if existencia or item.negativo == False:
                             saldo = existencia.disponible - detalle['cantidad']
                             if saldo < 0:
-                                return Response({'mensaje':f'El item {detalle["item"]} tiene {existencia.disponible} cantidades disponibles, es insuficiente para descontar {detalle["cantidad"]}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+                                if item.negativo == False:
+                                    return Response({'mensaje':f'El item {detalle["item"]} tiene {existencia.disponible} cantidades disponibles, es insuficiente para descontar {detalle["cantidad"]}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
                         else:
                             return Response({'mensaje':f'El item {detalle["item"]} tiene 0 cantidades disponibles', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                                        
                 else:
