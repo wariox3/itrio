@@ -2760,6 +2760,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                                 "total_consumo" : "{0:.2f}".format(0),
                                                 "total_ica" : "{0:.2f}".format(0),
                                                 "documento_referencia": documento_referencia_id,
+                                                "comentario": documento.comentario,
                                                 "adquiriente" : {
                                                     "identificacion" : documento.contacto.identificacion.codigo,
                                                     "numero_identificacion" : documento.contacto.numero_identificacion,

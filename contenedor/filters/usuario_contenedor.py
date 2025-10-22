@@ -11,6 +11,7 @@ class UsuarioContenedorFilter(django_filters.FilterSet):
             'id': ['exact', 'lte'],
             'contenedor_id': ['exact'],
             'usuario_id': ['exact'],
+            'rol': ['exact'],
             'contenedor__nombre': ['icontains'],    
             'contenedor__reddoc': ['exact'],
             'contenedor__ruteo': ['exact'],
