@@ -369,7 +369,7 @@ class FormatoFactura():
         documento_impuestos = GenDocumentoImpuesto.objects.filter(
             documento_detalle__documento_id=documento['id']
         ).values(
-            'impuesto_id', 'impuesto__nombre_extendido'
+            'impuesto_id', 'impuesto__nombre'
         ).annotate(
             total_operado=Sum('total_operado'),
             base=Sum('base')
@@ -377,7 +377,7 @@ class FormatoFactura():
 
         y = 220
         for impuesto in documento_impuestos:
-            nombre_impuesto = impuesto['impuesto__nombre_extendido']
+            nombre_impuesto = impuesto['impuesto__nombre']
             total_acumulado = impuesto['total_operado']
             base = impuesto['base']
             

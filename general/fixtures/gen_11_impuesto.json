@@ -7,7 +7,7 @@
     {  
       "pk": 1,
       "campos": {
-        "nombre": "19%",
+        "nombre": "IVA 19%",
         "nombre_extendido": "IVA Ventas 19%",
         "porcentaje": "19",
         "porcentaje_base": "100",
@@ -20,7 +20,7 @@
     {      
       "pk": 2,
       "campos": {
-        "nombre": "5%",
+        "nombre": "IVA 5%",
         "nombre_extendido": "IVA Ventas 5%",
         "porcentaje": "5",
         "porcentaje_base": "100",
@@ -33,7 +33,7 @@
     {
       "pk": 3,
       "campos": {
-        "nombre": "19%",
+        "nombre": "IVA 19%",
         "nombre_extendido": "IVA Compras 19%",
         "porcentaje": "19",
         "porcentaje_base": "100",
@@ -46,7 +46,7 @@
     {
       "pk": 4,
       "campos": {
-        "nombre": "5%",
+        "nombre": "IVA 5%",
         "nombre_extendido": "IVA Compras 5%",
         "porcentaje": "5",
         "porcentaje_base": "100",
@@ -59,7 +59,7 @@
     {
       "pk": 5,
       "campos": {
-        "nombre": "19% AIU",
+        "nombre": "IVA 19% AIU",
         "nombre_extendido": "IVA AIU Ventas 19%",
         "porcentaje": "19",
         "porcentaje_base": "10",
@@ -72,7 +72,7 @@
     {
       "pk": 6,
       "campos": {
-        "nombre": "19% AIU",
+        "nombre": "IVA 19% AIU",
         "nombre_extendido": "IVA AIU compras 19%",
         "porcentaje": "19",
         "porcentaje_base": "10",

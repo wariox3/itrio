@@ -126,6 +126,7 @@ class GenContactoListaSerializador(serializers.ModelSerializer):
                   'numero_licencia',
                   'categoria_licencia',
                   'categoria_licencia__nombre',
+                  'precio_id',
                   'fecha_vence_licencia']
         select_related_fields = ['identificacion', 'ciudad', 'categoria_licencia']
 

@@ -1,6 +1,8 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from general.models.configuracion import GenConfiguracion
+from general.serializers.configuracion import GenConfiguracionRndcSerializador
 from transporte.models.despacho import TteDespacho
 from transporte.models.despacho_detalle import TteDespachoDetalle
 from transporte.models.negocio import TteNegocio
@@ -8,7 +10,7 @@ from transporte.models.guia import TteGuia
 from transporte.models.vehiculo import TteVehiculo
 from general.models.contacto import GenContacto
 from vertical.models.viaje import VerViaje
-from transporte.serializers.despacho import TteDespachoSerializador, TteDespachoListaSerializador, TteDespachoDetalleVerSerializador
+from transporte.serializers.despacho import TteDespachoSerializador, TteDespachoListaSerializador, TteDespachoDetalleVerSerializador, TteDespachoRndcSerializador
 from transporte.serializers.despacho_detalle import TteDespachoDetalleSerializador
 from transporte.serializers.guia import TteGuiaSerializador
 from transporte.filters.despacho import DespachoFilter
@@ -23,6 +25,7 @@ from transporte.formatos.orden_cargue import FormatoOrdenCargue
 from transporte.formatos.manifiesto import FormatoManifiesto
 from django.http import HttpResponse
 from django.utils import timezone
+from utilidades.rndc import Rndc
 
 class DespachoViewSet(viewsets.ModelViewSet):
     queryset = TteDespacho.objects.all()
@@ -247,19 +250,6 @@ class DespachoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
         
-    @action(detail=False, methods=["post"], url_path=r'enviar-rndc',)
-    def enviar_rndc_action(self, request):                     
-        raw = request.data
-        id = raw.get('id')                             
-        if id:
-            try:
-                despacho = TteDespacho.objects.get(pk=id)
-            except TteDespacho.DoesNotExist:
-                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
-            return Response({'mensaje': f'Despacho enviado'}, status=status.HTTP_200_OK)                  
-        else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
-
     @action(detail=False, methods=["post"], url_path=r'nuevo-viaje',)
     def nuevo_viaje_action(self, request):        
         raw = request.data
@@ -342,3 +332,122 @@ class DespachoViewSet(viewsets.ModelViewSet):
                     return Response({'validaciones': guia_serializador.errors, 'mensaje': 'No se pudo crear la guia'}, status=status.HTTP_400_BAD_REQUEST)                
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)              
+        
+    @action(detail=False, methods=["post"], url_path=r'enviar-rndc',)
+    def enviar_rndc_action(self, request):         
+        rndc = Rndc()                    
+        raw = request.data
+        id = raw.get('id')                             
+        if id:
+            try:
+                despacho = TteDespacho.objects.get(pk=id)
+                credenciales = GenConfiguracionRndcSerializador(GenConfiguracion.objects.get(pk=1)).data
+                if despacho.estado_rndc == False:
+                    serializador_rndc = TteDespachoRndcSerializador(despacho)
+                    datos_despacho = serializador_rndc.data
+                    if datos_despacho['servicio'] == 1:
+                        respuesta_poseedor = self.enviar_poseedor_rndc(datos_despacho, credenciales)
+                        if not respuesta_poseedor.get('error'):
+                            respuesta_propietario = self.enviar_propietario_rndc(datos_despacho, credenciales)
+                            if not respuesta_propietario.get('error'):
+                                respuesta_conductor = self.enviar_conductor_rndc(datos_despacho, credenciales)
+                            else:
+                                return Response({'mensaje': f"Error al enviar el propietario: {respuesta_propietario.get('errorMensaje')}", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+                        else:
+                            return Response({'mensaje': f"Error al enviar el poseedor: {respuesta_poseedor.get('errorMensaje')}", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'mensaje': f"El despacho: {id} tiene un tipo de servicio que no esta configurado para enviar el RNDC debe ser MUN o NAC", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'mensaje': 'El despachado ya fue enviado al rndc', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
+            except TteDespacho.DoesNotExist:
+                return Response({'mensaje':'El despacho no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                     
+            return Response({'mensaje': f'Despacho enviado'}, status=status.HTTP_200_OK)                  
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def enviar_poseedor_rndc(self, datos_despacho, credenciales):
+        rndc = Rndc()
+        
+        identificacion = datos_despacho['cliente__numero_identificacion'] or ""
+        nombre = datos_despacho['cliente__nombre1'] or ""
+
+        if datos_despacho['cliente__identificacion__codigo'] == '31':
+            identificacion += datos_despacho['cliente__digito']
+            nombre = datos_despacho['cliente__nombre_corto']
+        # Definir de donde salen los datos correctamente poseedor.
+        arr_propiedades = {
+            "CODTIPOIDTERCERO": datos_despacho['cliente__identificacion__codigo'],
+            "NUMIDTERCERO": identificacion,
+            "NOMIDTERCERO": self.convertir_encoding_rndc(nombre),
+            "PRIMERAPELLIDOIDTERCERO": self.convertir_encoding_rndc(datos_despacho['cliente__apellido1']),
+            "SEGUNDOAPELLIDOIDTERCERO": self.convertir_encoding_rndc(datos_despacho['cliente__apellido2']),
+            "CODSEDETERCERO": "1",
+            "NOMSEDETERCERO": "PRINCIPAL",
+            "NUMTELEFONOCONTACTO": datos_despacho['cliente__telefono'],
+            "NOMENCLATURADIRECCION": self.convertir_encoding_rndc(datos_despacho['cliente__direccion']), 
+            "CODMUNICIPIORNDC": datos_despacho['ciudad_origen__codigo']
+        }
+        
+        xml = rndc.crear_xml(credenciales, "1", "11", arr_propiedades)
+        return rndc.enviar(xml)
+    
+    def enviar_propietario_rndc(self, datos_despacho, credenciales):
+        rndc = Rndc()
+        
+        identificacion = datos_despacho['cliente__numero_identificacion'] or ""
+        nombre = datos_despacho['cliente__nombre1'] or ""
+
+        if datos_despacho['cliente__identificacion__codigo'] == '31':
+            identificacion += datos_despacho['cliente__digito']
+            nombre = datos_despacho['cliente__nombre_corto']
+        # Definir de donde salen los datos correctamente propietario.
+        arr_propiedades = {
+            "CODTIPOIDTERCERO": datos_despacho['cliente__identificacion__codigo'],
+            "NUMIDTERCERO": identificacion,
+            "NOMIDTERCERO": self.convertir_encoding_rndc(nombre),
+            "PRIMERAPELLIDOIDTERCERO": self.convertir_encoding_rndc(datos_despacho['cliente__apellido1']),
+            "SEGUNDOAPELLIDOIDTERCERO": self.convertir_encoding_rndc(datos_despacho['cliente__apellido2']),
+            "CODSEDETERCERO": "1",
+            "NOMSEDETERCERO": "PRINCIPAL",
+            "NUMTELEFONOCONTACTO": datos_despacho['cliente__telefono'],
+            "NOMENCLATURADIRECCION": self.convertir_encoding_rndc(datos_despacho['cliente__direccion']), 
+            "CODMUNICIPIORNDC": datos_despacho['ciudad_origen__codigo']
+        }
+        
+        xml = rndc.crear_xml(credenciales, "1", "11", arr_propiedades)
+        return rndc.enviar(xml)    
+    
+    def enviar_conductor_rndc(self, datos_despacho, credenciales):
+        rndc = Rndc()
+
+        tipoIdentificacion = 'C'
+        if datos_despacho['cliente__identificacion__codigo'] == '31':
+            tipoIdentificacion = 'N'
+        
+        arr_propiedades = {
+            "CODTIPOIDTERCERO": datos_despacho['cliente__identificacion__codigo'],
+            "NUMIDTERCERO": datos_despacho['conductor__numero_identificacion'],
+            "NOMIDTERCERO": self.convertir_encoding_rndc(datos_despacho['conductor__nombre1']),
+            "PRIMERAPELLIDOIDTERCERO": self.convertir_encoding_rndc(datos_despacho['conductor__apellido1']),
+            "SEGUNDOAPELLIDOIDTERCERO": self.convertir_encoding_rndc(datos_despacho['conductor__apellido2']),
+            "CODSEDETERCERO": "1",
+            "NOMSEDETERCERO": "PRINCIPAL",
+            "NUMTELEFONOCONTACTO": datos_despacho['conductor__telefono'],
+            "NOMENCLATURADIRECCION": self.convertir_encoding_rndc(datos_despacho['conductor__direccion']), 
+            "CODMUNICIPIORNDC": datos_despacho['conductor__ciudad__codigo'],
+            "CODCATEGORIALICENCIACONDUCCION": datos_despacho['conductor__ciudad__codigo'],
+            "NUMLICENCIACONDUCCION": datos_despacho['conductor__ciudad__codigo'],
+            "FECHAVENCIMIENTOLICENCIA": datos_despacho['conductor__ciudad__codigo'],
+        }
+        
+        xml = rndc.crear_xml(credenciales, "1", "11", arr_propiedades)
+        return rndc.enviar(xml)        
+
+    @staticmethod
+    def convertir_encoding_rndc(texto):
+        if texto is None:
+            return ""
+        try:
+            return str(texto).encode('iso-8859-1').decode('utf-8')
+        except:
+            return str(texto)  

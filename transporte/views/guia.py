@@ -111,72 +111,69 @@ class GuiaViewSet(viewsets.ModelViewSet):
                 if guia.estado_rndc == False:
                     serializador_rndc = TteGuiaRndcSerializador(guia)
                     datos_guia = serializador_rndc.data
-                    if datos_guia['estado_rndc'] == False:
-                        if datos_guia['servicio'] == 1:
-                            respuesta_remitente = self.enviar_remitente_rndc(datos_guia, credenciales)
-                            if not respuesta_remitente.get('error'):
-                                respuesta_destinatario = self.enviar_destinatario_rndc(datos_guia, credenciales)
-                                if not respuesta_destinatario.get('error'):
-                                    numero_identificacion = datos_guia['cliente__numero_identificacion']
-                                    if datos_guia['cliente__identificacion__codigo'] == '31':
-                                        numero_identificacion += datos_guia['cliente__digito']
+                    if datos_guia['servicio'] == 1:
+                        respuesta_remitente = self.enviar_remitente_rndc(datos_guia, credenciales)
+                        if not respuesta_remitente.get('error'):
+                            respuesta_destinatario = self.enviar_destinatario_rndc(datos_guia, credenciales)
+                            if not respuesta_destinatario.get('error'):
+                                numero_identificacion = datos_guia['cliente__numero_identificacion']
+                                if datos_guia['cliente__identificacion__codigo'] == '31':
+                                    numero_identificacion += datos_guia['cliente__digito']
 
-                                    arr_propiedades = {
-                                        "CONSECUTIVOREMESA": datos_guia['id'],
-                                        "CODOPERACIONTRANSPORTE": "G",
-                                        "CODNATURALEZACARGA": "1",
-                                        "CODNATURALEZACARGA": datos_guia['peso'],
-                                        "UNIDADMEDIDACAPACIDAD": "1",
-                                        "CODTIPOEMPAQUE": datos_guia['empaque__codigo'],
-                                        "MERCANCIAREMESA": datos_guia['producto__codigo'],
-                                        "DESCRIPCIONCORTAPRODUCTO": self.convertir_encoding_rndc(datos_guia['producto__nombre']),
-                                        "CODTIPOIDREMITENTE": datos_guia['cliente__identificacion__codigo'],
-                                        "NUMIDREMITENTE": numero_identificacion,
-                                        "CODSEDEREMITENTE": datos_guia['ciudad_origen'],
-                                        "CODTIPOIDDESTINATARIO": "C",
-                                        "NUMIDDESTINATARIO": "333333333",
-                                        "CODSEDEDESTINATARIO" : datos_guia['ciudad_destino'],
-                                        "CODTIPOIDPROPIETARIO" : datos_guia['cliente__identificacion__codigo'],
-                                        "NUMIDPROPIETARIO" : numero_identificacion,
-                                        "CODSEDEPROPIETARIO": datos_guia['ciudad_origen']
-                                    }
-                                    proceso = "83"
-                                    if datos_guia['servicio'] == 1:
-                                        proceso = "3"
-                                        arr_propiedades.update({
-                                            "DUENOPOLIZA": "E",
-                                            "NUMPOLIZATRANSPORTE": "",
-                                            "FECHAVENCIMIENTOPOLIZACARGA": "",
-                                            "COMPANIASEGURO": "",
-                                            "HORASPACTOCARGA": "1",
-                                            "MINUTOSPACTOCARGA": "1",
-                                            "FECHACITAPACTADACARGUE": datos_guia['fecha_ingreso'],
-                                            "HORACITAPACTADACARGUE": "08:00",
-                                            "HORASPACTODESCARGUE": "1",
-                                            "MINUTOSPACTODESCARGUE": "1",
-                                            "FECHACITAPACTADADESCARGUE": datos_guia['fecha_ingreso'],
-                                            "HORACITAPACTADADESCARGUEREMESA": "10:00"
-                                        })
-                                    xml = rndc.crear_xml(credenciales, "1", proceso, arr_propiedades)
-                                    respuesta = rndc.enviar(xml)
-                                    if not respuesta.get('error'):
-                                        if respuesta.get('ingresoid'):
-                                            guia.estado_rndc = True
-                                            guia.numero_rndc = respuesta.get('numero_rndc')
-                                            guia.save()
-                                            return Response({'mensaje': 'Guia enviada'}, status=status.HTTP_200_OK)
-                                    else:
-                                        return Response({'mensaje': f"Ocurrió un error enviando la guia {id}: {respuesta.get('errorMensaje', 'Error desconocido')}"}, status=status.HTTP_400_BAD_REQUEST) 
+                                arr_propiedades = {
+                                    "CONSECUTIVOREMESA": datos_guia['id'],
+                                    "CODOPERACIONTRANSPORTE": "G",
+                                    "CODNATURALEZACARGA": "1",
+                                    "CODNATURALEZACARGA": datos_guia['peso'],
+                                    "UNIDADMEDIDACAPACIDAD": "1",
+                                    "CODTIPOEMPAQUE": datos_guia['empaque__codigo'],
+                                    "MERCANCIAREMESA": datos_guia['producto__codigo'],
+                                    "DESCRIPCIONCORTAPRODUCTO": self.convertir_encoding_rndc(datos_guia['producto__nombre']),
+                                    "CODTIPOIDREMITENTE": datos_guia['cliente__identificacion__codigo'],
+                                    "NUMIDREMITENTE": numero_identificacion,
+                                    "CODSEDEREMITENTE": datos_guia['ciudad_origen'],
+                                    "CODTIPOIDDESTINATARIO": "C",
+                                    "NUMIDDESTINATARIO": "333333333",
+                                    "CODSEDEDESTINATARIO" : datos_guia['ciudad_destino'],
+                                    "CODTIPOIDPROPIETARIO" : datos_guia['cliente__identificacion__codigo'],
+                                    "NUMIDPROPIETARIO" : numero_identificacion,
+                                    "CODSEDEPROPIETARIO": datos_guia['ciudad_origen']
+                                }
+                                proceso = "83"
+                                if datos_guia['servicio'] == 1:
+                                    proceso = "3"
+                                    arr_propiedades.update({
+                                        "DUENOPOLIZA": "E",
+                                        "NUMPOLIZATRANSPORTE": "",
+                                        "FECHAVENCIMIENTOPOLIZACARGA": "",
+                                        "COMPANIASEGURO": "",
+                                        "HORASPACTOCARGA": "1",
+                                        "MINUTOSPACTOCARGA": "1",
+                                        "FECHACITAPACTADACARGUE": datos_guia['fecha_ingreso'],
+                                        "HORACITAPACTADACARGUE": "08:00",
+                                        "HORASPACTODESCARGUE": "1",
+                                        "MINUTOSPACTODESCARGUE": "1",
+                                        "FECHACITAPACTADADESCARGUE": datos_guia['fecha_ingreso'],
+                                        "HORACITAPACTADADESCARGUEREMESA": "10:00"
+                                    })
+                                xml = rndc.crear_xml(credenciales, "1", proceso, arr_propiedades)
+                                respuesta = rndc.enviar(xml)
+                                if not respuesta.get('error'):
+                                    if respuesta.get('ingresoid'):
+                                        guia.estado_rndc = True
+                                        guia.numero_rndc = respuesta.get('numero_rndc')
+                                        guia.save()
+                                        return Response({'mensaje': 'Guia enviada'}, status=status.HTTP_200_OK)
                                 else:
-                                    return Response({'mensaje': f"Error al enviar destinatario: {respuesta_destinatario.get('errorMensaje')}", 'codigo': 3}, status=status.HTTP_400_BAD_REQUEST)
+                                    return Response({'mensaje': f"Ocurrió un error enviando la guia {id}: {respuesta.get('errorMensaje', 'Error desconocido')}"}, status=status.HTTP_400_BAD_REQUEST) 
                             else:
-                                return Response({'mensaje': f"Error al enviar remitente: {respuesta_remitente.get('errorMensaje')}", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+                                return Response({'mensaje': f"Error al enviar destinatario: {respuesta_destinatario.get('errorMensaje')}", 'codigo': 3}, status=status.HTTP_400_BAD_REQUEST)
                         else:
-                            return Response({'mensaje': f"La guia: {id} tiene un tipo de servicio que no esta configurado para enviar el RNDC debe ser MUN o NAC", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({'mensaje': f"Error al enviar remitente: {respuesta_remitente.get('errorMensaje')}", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
                     else:
-                        return Response({'mensaje': f"La guia: {id} ya fue enviada al rndc", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje': f"La guia: {id} tiene un tipo de servicio que no esta configurado para enviar el RNDC debe ser MUN o NAC", 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response({'mensaje': 'La guia fue enviada al rndc', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
+                    return Response({'mensaje': 'La guia ya fue enviada al rndc', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
             except TteGuia.DoesNotExist:
                 return Response({'mensaje': 'La guia no existe', 'codigo': 15}, status=status.HTTP_400_BAD_REQUEST)                     
         else:
