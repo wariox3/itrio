@@ -523,7 +523,7 @@ class GenDocumentoRetrieveSerializador(serializers.HyperlinkedModelSerializer):
         model = GenDocumento
         fields = ['id', 'numero', 'fecha', 'fecha_vence', 'fecha_desde', 'fecha_hasta' ,'descuento', 'subtotal', 'impuesto', 'impuesto_retencion', 'impuesto_operado', 
                   'total_bruto', 'total', 'afectado', 'estado_aprobado', 'estado_contabilizado', 'contacto', 'documento_tipo', 'metodo_pago', 
-                  'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'forma_pago'
+                  'base_impuesto', 'estado_anulado', 'comentario', 'estado_electronico', 'soporte', 'forma_pago', 'fecha_validacion',
                   'estado_electronico_enviado', 'estado_electronico_notificado', 'estado_electronico_evento', 'orden_compra', 'remision', 
                   'documento_referencia', 'plazo_pago', 'cue', 'referencia_cue', 'referencia_numero', 'referencia_prefijo', 'almacen', 'resolucion']
 
