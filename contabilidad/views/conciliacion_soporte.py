@@ -52,7 +52,7 @@ class ConciliacionSoporteViewSet(viewsets.ModelViewSet):
     def cargar_soporte(self, request):
         raw = request.data        
         archivo_base64 = raw.get('archivo_base64')
-        id = raw.get('id')
+        id = raw.get('conciliacion_id')
         if archivo_base64:
             try:
                 archivo_data = base64.b64decode(archivo_base64)
