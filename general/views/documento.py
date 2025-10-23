@@ -1865,7 +1865,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 xml_content = base64.b64decode(b64)
                                 response = HttpResponse(xml_content, content_type='application/xml')                            
                                 filename = f"documento_{documento.id}.xml"
-                                response['Content-Disposition'] = f'attachment; filename="{filename}"'                                
+                                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                                response['Content-Disposition'] = f'attachment; filename="{filename}"' 
                                 return response                                
                                 #return Response({'eventos': 1}, status=status.HTTP_200_OK)
                             else:
