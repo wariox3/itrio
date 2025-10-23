@@ -71,14 +71,14 @@ class ConciliacionSoporteViewSet(viewsets.ModelViewSet):
             errores_datos = []
             registros_importados = 0
             for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
-                fila_errores = []
+                errores_fila = {}
                 fecha_raw = row[0]
                 valor_raw = row[1]
                 descripcion_raw = row[2] if len(row) > 2 else ''
 
                 fecha = None
                 if not fecha_raw:
-                    fila_errores.append("La fecha está vacía.")
+                    errores_fila["fecha"] = ["Este campo no puede ser nulo."]
                 else:
                     try:
                         if isinstance(fecha_raw, datetime):
@@ -86,16 +86,16 @@ class ConciliacionSoporteViewSet(viewsets.ModelViewSet):
                         else:
                             fecha = datetime.strptime(str(fecha_raw).strip(), "%Y%m%d").date()
                     except Exception:
-                        fila_errores.append("La fecha no es válida (formato esperado YYYYMMDD).")
+                        errores_fila["fecha"] = ["La fecha no es válida (formato esperado YYYYMMDD)."]
 
                 if valor_raw is None or valor_raw == '':
-                    fila_errores.append("El valor está vacío.")
+                    errores_fila["valor"] = ["Este campo no puede ser nulo."]
                 elif not isinstance(valor_raw, (int, float)):
-                    fila_errores.append("El valor debe ser numérico.")
+                    errores_fila["valor"] = ["El valor debe ser numérico."]
 
-                if fila_errores:
+                if errores_fila:
                     errores = True
-                    errores_datos.append({'fila': i, 'errores': fila_errores})
+                    errores_datos.append({'fila': i, 'errores': errores_fila})
                     continue
 
                 debito = valor_raw if valor_raw >= 0 else 0
