@@ -2,6 +2,7 @@ from general.models.archivo import GenArchivo
 from utilidades.utilidades import Utilidades
 from utilidades.backblaze import Backblaze
 from general.models.contacto import GenContacto
+from general.models.ciudad import GenCiudad
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.documento_tipo import GenDocumentoTipo
 from general.models.documento_impuesto import GenDocumentoImpuesto
@@ -28,7 +29,9 @@ class DocumentoZipServicio():
                             'numero_identificacion': '',
                             'nombre_corto': '',
                             'existe': False,
-                            'contacto_id': None
+                            'contacto_id': None,
+                            'ciudad': None,
+                            'ciudad_id': None
                         }
                         documento = {
                             'numero': '',
@@ -42,6 +45,7 @@ class DocumentoZipServicio():
                             'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
                             'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
                         } 
+
                         description = root.find('.//cac:Attachment/cac:ExternalReference/cbc:Description', namespaces=namespaces)
                         if description is not None and description.text:
                             cdata_content = description.text.strip()
@@ -53,25 +57,32 @@ class DocumentoZipServicio():
                                 'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
                                 'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
                             }
-                                                            
-                            contacto['numero_identificacion'] = root.findtext('.//cac:SenderParty/cac:PartyTaxScheme/cbc:CompanyID', namespaces=namespaces)                                                                
-                            contacto['nombre_corto'] = root.findtext('.//cac:SenderParty/cac:PartyTaxScheme/cbc:RegistrationName', namespaces=namespaces)                                
-                            contacto_local = GenContacto.objects.filter(numero_identificacion = contacto['numero_identificacion']).first()
-                            if contacto_local:
-                                contacto['existe'] = True
-                                contacto['contacto_id'] = contacto_local.id
-
+                            
+                            contacto['numero_identificacion'] = inner_root.findtext('.//cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cbc:CompanyID', namespaces=inner_namespaces)                            
+                            contacto['nombre_corto'] = inner_root.findtext('.//cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cbc:RegistrationName', namespaces=inner_namespaces)                                                                                    
+                            contacto['direccion'] = inner_root.findtext('.//cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cac:RegistrationAddress/cac:AddressLine/cbc:Line', namespaces=inner_namespaces)
+                            contacto['ciudad'] = inner_root.findtext('.//cac:AccountingSupplierParty/cac:Party/cac:PartyTaxScheme/cac:RegistrationAddress/cbc:ID', namespaces=inner_namespaces)
+                            if contacto['numero_identificacion']:
+                                contacto_local = GenContacto.objects.filter(numero_identificacion = contacto['numero_identificacion']).first()
+                                if contacto_local:
+                                    contacto['existe'] = True
+                                    contacto['contacto_id'] = contacto_local.id
+                            if contacto['ciudad']:
+                                ciudad = GenCiudad.objects.filter(codigo=contacto['ciudad']).first()
+                                if ciudad:
+                                    contacto['ciudad_id'] = ciudad.id                            
+                                    
                             documento['cue'] = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
                             documento['prefijo'] = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)                                
                             numero = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
                             if documento['prefijo'] and numero.startswith(documento['prefijo']):
                                 documento['numero'] = numero.replace(documento['prefijo'], '')
                             else:
-                                documento['numero'] = numero
-                                                            
+                                documento['numero'] = numero                                                
                             documento['comentario'] = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
                             documento['fecha'] = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
-                            documento['fecha_vence'] = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)                                                                
+                            documento['fecha_vence'] = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)                                                                                            
+
                         return {'error': False, 'documento':documento, 'contacto':contacto}
                 else:
                     return {'error': True, 'mensaje': 'El ZIP contiene múltiples archivos XML'}
