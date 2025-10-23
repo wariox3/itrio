@@ -3,10 +3,16 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from contabilidad.models.conciliacion import ConConciliacion
 from contabilidad.models.conciliacion_soporte import ConConciliacionSoporte
 from contabilidad.serializers.conciliacion_soporte import ConConciliacionSoporteSerializador
 from contabilidad.filters.conciliacion_soporte import ConciliacionSoporteFilter
 from utilidades.excel_exportar import ExcelExportar
+import base64
+from io import BytesIO
+import openpyxl
+import gc
+from datetime import datetime
 
 
 class ConciliacionSoporteViewSet(viewsets.ModelViewSet):
@@ -42,5 +48,88 @@ class ConciliacionSoporteViewSet(viewsets.ModelViewSet):
             return exporter.exportar()
         return super().list(request, *args, **kwargs)    
            
-        
+    @action(detail=False, methods=["post"], url_path=r'cargar-soporte',)
+    def cargar_soporte(self, request):
+        raw = request.data        
+        archivo_base64 = raw.get('archivo_base64')
+        id = raw.get('id')
+        if archivo_base64:
+            try:
+                archivo_data = base64.b64decode(archivo_base64)
+                archivo = BytesIO(archivo_data)
+                wb = openpyxl.load_workbook(archivo)
+                sheet = wb.active    
+            except Exception as e:     
+                return Response({f'mensaje':'Error procesando el archivo, valide que es un archivo de excel .xlsx', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST) 
+
+            conciliacion = ConConciliacion.objects.filter(pk=id).first()
+            if not conciliacion:
+                return Response({'mensaje': 'Conciliación no encontrada.', 'codigo': 2}, status=status.HTTP_404_NOT_FOUND)             
+            
+            data_modelo = []
+            errores = False
+            errores_datos = []
+            registros_importados = 0
+            for i, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
+                fila_errores = []
+                fecha_raw = row[0]
+                valor_raw = row[1]
+                descripcion_raw = row[2] if len(row) > 2 else ''
+
+                fecha = None
+                if not fecha_raw:
+                    fila_errores.append("La fecha está vacía.")
+                else:
+                    try:
+                        if isinstance(fecha_raw, datetime):
+                            fecha = fecha_raw.date()
+                        else:
+                            fecha = datetime.strptime(str(fecha_raw).strip(), "%Y%m%d").date()
+                    except Exception:
+                        fila_errores.append("La fecha no es válida (formato esperado YYYYMMDD).")
+
+                if valor_raw is None or valor_raw == '':
+                    fila_errores.append("El valor está vacío.")
+                elif not isinstance(valor_raw, (int, float)):
+                    fila_errores.append("El valor debe ser numérico.")
+
+                if fila_errores:
+                    errores = True
+                    errores_datos.append({'fila': i, 'errores': fila_errores})
+                    continue
+
+                debito = valor_raw if valor_raw >= 0 else 0
+                credito = abs(valor_raw) if valor_raw < 0 else 0
+                descripcion = str(descripcion_raw or '')[:300]
+
+                data = {
+                    'fecha': fecha,
+                    'detalle': descripcion,
+                    'debito': debito,
+                    'credito': credito,
+                    'conciliacion': conciliacion.id,
+                }
+                  
+
+                serializer = ConConciliacionSoporteSerializador(data=data)
+                if serializer.is_valid():
+                    data_modelo.append(serializer.validated_data)
+                    registros_importados += 1
+                else:
+                    errores = True
+                    error_dato = {
+                        'fila': i,
+                        'errores': serializer.errors
+                    }                                    
+                    errores_datos.append(error_dato)
+            if not errores:
+                for detalle in data_modelo:
+                    ConConciliacionSoporte.objects.create(**detalle)
+                gc.collect()
+                return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
+            else:
+                gc.collect()                    
+                return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+        else:
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
     
