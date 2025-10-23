@@ -126,6 +126,19 @@ class Wolframio():
             datos = respuesta['datos']
             return {'error':True, 'mensaje':f"Ocurrio un error en el servicio wolframio: {datos['mensaje']}"}    
 
+    def descargar_xml(self, documento_id):
+        url = "/api/documento/xml"
+        datos = {
+            "documentoId" : documento_id
+        }
+        respuesta = self.consumirPost(datos, url)
+        if respuesta['status'] == 200:
+            datos = respuesta['datos']
+            return {'error': False, 'b64': datos['b64']}
+        else:
+            datos = respuesta['datos']
+            return {'error':True, 'mensaje':f"Ocurrio un error en el servicio wolframio: {datos['mensaje']}"} 
+
     def contacto_consulta_nit(self, datos):
         url = "/api/contacto/consultanit"
         respuesta = self.consumirPost(datos, url)    
@@ -146,6 +159,7 @@ class Wolframio():
         if config('ENV') == "test":
             url_base = "http://prueba.rededoc.co" + url
         if config('ENV') == "dev":
+            #url_base = "http://rededoc.co" + url
             url_base = "http://prueba.rededoc.co" + url
             #url_base = "http://localhost/wolframio/public/index.php" + url
         json_data = json.dumps(data)

@@ -1820,7 +1820,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
             return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST) 
 
     @action(detail=False, methods=["post"], url_path=r'evento-dian')
-    def evento_dian(self, request):
+    def electronico_evento_dian(self, request):
         raw = request.data
         id = raw.get('id')
         if id:
@@ -1834,6 +1834,40 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             respuesta = wolframio.eventos(documento.electronico_id)                            
                             if respuesta['error'] == False: 
                                 return Response({'eventos': respuesta['eventos']}, status=status.HTTP_200_OK)
+                            else:
+                                return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                    
+                        else:
+                            return Response({'mensaje': 'La empresa no esta activa en facturacion electronica', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        return Response({'mensaje': 'El documento esta emitido pero no tiene electronico_id', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    
+                else:                      
+                    return Response({'mensaje': 'El documento no esta emitido a la DIAN', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+            except GenDocumento.DoesNotExist:
+                return Response({'mensaje': 'El documento no existe', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)     
+        else:
+            return Response({'mensaje': 'Faltan parámetros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path=r'electronico-descargar-xml')
+    def electronico_descargar_xml(self, request):
+        raw = request.data
+        id = raw.get('id')
+        if id:
+            try:
+                documento = GenDocumento.objects.get(id=id)
+                if documento.estado_electronico == True:                    
+                    if documento.electronico_id:
+                        empresa = GenEmpresa.objects.get(pk=1)
+                        if empresa.rededoc_id:                       
+                            wolframio = Wolframio()
+                            respuesta = wolframio.descargar_xml(documento.electronico_id)                            
+                            if respuesta['error'] == False: 
+                                b64 = respuesta['b64']
+                                xml_content = base64.b64decode(b64)
+                                response = HttpResponse(xml_content, content_type='application/xml')                            
+                                filename = f"documento_{documento.id}.xml"
+                                response['Content-Disposition'] = f'attachment; filename="{filename}"'                                
+                                return response                                
+                                #return Response({'eventos': 1}, status=status.HTTP_200_OK)
                             else:
                                 return Response({'mensaje': f"{respuesta['mensaje']}", 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)                                                                                                                    
                         else:
