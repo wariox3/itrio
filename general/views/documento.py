@@ -2637,39 +2637,35 @@ class DocumentoViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["post"], url_path=r'importar-zip-dian')
     def importar_compra_zip(self, request):
         raw = request.data
-        zip_base64 = raw.get('archivo_base64', None)
-        
-        if zip_base64:
-            # Definir namespaces del XML
-            namespaces = {
-                'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
-                'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
-            }
-            
-            # Decodificar el Base64
+        zip_base64 = raw.get('archivo_base64', None)        
+        if zip_base64:       
             zip_data = base64.b64decode(zip_base64)
-            zip_buffer = io.BytesIO(zip_data)
-            
+            zip_buffer = io.BytesIO(zip_data)            
             with zipfile.ZipFile(zip_buffer, 'r') as zip_ref:
-                xml_files = [f for f in zip_ref.namelist() if f.lower().endswith('.xml')]
-                
-                if xml_files:
-                    
-                    if len(xml_files) <= 1:
-                    
+                xml_files = [f for f in zip_ref.namelist() if f.lower().endswith('.xml')]                
+                if xml_files:                    
+                    if len(xml_files) <= 1:                    
                         xml_filename = xml_files[0]
                         with zip_ref.open(xml_filename) as xml_file:
                             xml_content = xml_file.read()
                             root = ET.fromstring(xml_content)
-                            
-                            prefix = ''
-                            company_id = ''
-                            document_uuid = ''
-                            document_id = ''
-                            issue_date = ''
-                            due_date = ''
-                            note = ''
-                            
+                            contacto = {
+                                'numero_identificacion': '',
+                                'nombre_corto': '',
+                                'existe': False,
+                            }
+                            documento = {
+                                'numero': '',
+                                'prefijo': '',
+                                'cue': '',
+                                'fecha': '',
+                                'fecha_vence': '',
+                                'comentario' : ''
+                            }
+                            namespaces = {
+                                'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
+                                'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
+                            } 
                             description = root.find('.//cac:Attachment/cac:ExternalReference/cbc:Description', namespaces=namespaces)
                             if description is not None and description.text:
                                 cdata_content = description.text.strip()
@@ -2681,39 +2677,26 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
                                     'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
                                 }
-                                
-                                registration_name = root.findtext('.//cac:SenderParty/cac:PartyTaxScheme/cbc:RegistrationName', namespaces=namespaces)
-                                prefix = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)
-                                company_id = inner_root.findtext('.//cbc:CompanyID', namespaces=inner_namespaces)
-                                document_uuid = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
-                                document_id = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
-                                issue_date = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
-                                due_date = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)
-                                note = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
-                                document_id_numerico = re.sub(r'\D', '', document_id) if document_id else ''
+                                                                
+                                contacto['numero_identificacion'] = root.findtext('.//cac:SenderParty/cac:PartyTaxScheme/cbc:CompanyID', namespaces=namespaces)                                                                
+                                contacto['nombre_corto'] = root.findtext('.//cac:SenderParty/cac:PartyTaxScheme/cbc:RegistrationName', namespaces=namespaces)                                
+                                contacto_local = GenContacto.objects.filter(numero_identificacion = contacto['numero_identificacion']).first()
+                                if contacto_local:
+                                    contacto['existe'] = True
 
-                            contacto = GenContacto.objects.filter(numero_identificacion = company_id).first()
-                            contactoSerializador = GenContactoSerializador(contacto)
-                            contacto = contactoSerializador.data
+                                documento['cue'] = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
+                                documento['prefijo'] = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)                                
+                                numero = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
+                                if documento['prefijo'] and numero.startswith(documento['prefijo']):
+                                    documento['numero'] = numero.replace(documento['prefijo'], '')
+                                else:
+                                    documento['numero'] = numero
+                                                                
+                                documento['comentario'] = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
+                                documento['fecha'] = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
+                                documento['fecha_vence'] = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)                                                                
 
-                            # Después de obtener los datos y antes de construir la respuesta
-                            referencia_numero = document_id_numerico if document_id_numerico else ''
-                            referencia_prefijo = prefix.strip() if prefix else ''
-
-                            # Si hay prefijo y número, y el número comienza con el prefijo
-                            if referencia_prefijo and referencia_numero and referencia_numero.startswith(referencia_prefijo):
-                                # Quitar el prefijo del número
-                                referencia_numero = referencia_numero[len(referencia_prefijo):]
-                            datos = {
-                                'contacto': contacto,
-                                'referencia_numero': referencia_numero,
-                                'referencia_cue': document_uuid.strip() if document_uuid else '',
-                                'referencia_prefijo': referencia_prefijo,
-                                'fecha': issue_date.strip() if issue_date else '',
-                                'comentario': note if note else '',
-                            }
-
-                            return Response(datos, status=status.HTTP_200_OK)
+                            return Response({'documento':documento, 'contacto':contacto}, status=status.HTTP_200_OK)
                     else:
                         return Response({'mensaje': 'El ZIP contiene múltiples archivos XML', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)
                 else:
