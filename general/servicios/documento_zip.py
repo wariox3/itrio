@@ -31,7 +31,8 @@ class DocumentoZipServicio():
                             'existe': False,
                             'contacto_id': None,
                             'ciudad': None,
-                            'ciudad_id': None
+                            'ciudad_id': None,
+                            'correo': None
                         }
                         documento = {
                             'numero': '',
@@ -39,7 +40,8 @@ class DocumentoZipServicio():
                             'cue': '',
                             'fecha': '',
                             'fecha_vence': '',
-                            'comentario' : ''
+                            'comentario' : '',
+                            'detalles':[]
                         }
                         namespaces = {
                             'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
@@ -71,7 +73,7 @@ class DocumentoZipServicio():
                                 ciudad = GenCiudad.objects.filter(codigo=contacto['ciudad']).first()
                                 if ciudad:
                                     contacto['ciudad_id'] = ciudad.id                            
-                                    
+
                             documento['cue'] = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
                             documento['prefijo'] = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)                                
                             numero = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
@@ -82,6 +84,18 @@ class DocumentoZipServicio():
                             documento['comentario'] = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
                             documento['fecha'] = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
                             documento['fecha_vence'] = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)                                                                                            
+                            detalles=[]
+                            lineas = inner_root.findall('.//cac:InvoiceLine', namespaces=inner_namespaces)                            
+                            for linea in lineas:
+                                detalle = {
+                                    'item': linea.findtext('cbc:ID', namespaces=inner_namespaces),
+                                    'item_nombre': linea.findtext('.//cac:Item/cbc:Description', namespaces=inner_namespaces),
+                                    'cantidad': linea.findtext('cbc:InvoicedQuantity', namespaces=inner_namespaces),
+                                    'precio_unitario': linea.findtext('.//cac:Price/cbc:PriceAmount', namespaces=inner_namespaces),
+                                    'valor_total': linea.findtext('cbc:LineExtensionAmount', namespaces=inner_namespaces)
+                                }
+                                detalles.append(detalle)
+                            documento['detalles'] = detalles
 
                         return {'error': False, 'documento':documento, 'contacto':contacto}
                 else:
