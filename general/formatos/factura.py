@@ -348,7 +348,7 @@ class FormatoFactura():
 
             p.setFont("Helvetica", 7)
             #p.drawCentredString(x + 7, y + alto + 5, str(index + 1))            
-            p.drawString(x + 7, y + alto + 5, str(detalle['item__codigo'])[:5] if detalle['item__codigo'] else "")
+            p.drawString(x + 7, y + alto + 5, str(detalle['item__codigo'])[:13] if detalle['item__codigo'] else "")
             p.drawRightString(x + 365, y + alto + 5, str(detalle['cantidad']))
             p.drawRightString(x + 417, y + alto + 5, f"{detalle['precio']:,.0f}")
             p.drawRightString(x + 458, y + alto + 5, f"{detalle['descuento']:,.0f}")
