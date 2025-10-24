@@ -32,6 +32,7 @@ class DocumentoZipServicio():
                             'contacto_id': None,
                             'ciudad': None,
                             'ciudad_id': None,
+                            'ciudad_nombre': None,
                             'correo': None
                         }
                         documento = {
@@ -72,7 +73,8 @@ class DocumentoZipServicio():
                             if contacto['ciudad']:
                                 ciudad = GenCiudad.objects.filter(codigo=contacto['ciudad']).first()
                                 if ciudad:
-                                    contacto['ciudad_id'] = ciudad.id                            
+                                    contacto['ciudad_id'] = ciudad.id
+                                    contacto['ciudad_nombre'] = f"{ciudad.nombre} - {ciudad.estado.nombre}"             
 
                             documento['cue'] = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
                             documento['prefijo'] = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)                                

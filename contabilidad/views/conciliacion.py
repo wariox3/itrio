@@ -4,6 +4,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.conciliacion import ConConciliacion
+from contabilidad.models.conciliacion_detalle import ConConciliacionDetalle
+from contabilidad.models.conciliacion_soporte import ConConciliacionSoporte
 from contabilidad.serializers.conciliacion import ConConciliacionSerializador
 from contabilidad.filters.conciliacion import ConciliacionFilter
 from utilidades.excel_exportar import ExcelExportar
@@ -43,4 +45,43 @@ class ConciliacionViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)    
            
         
-    
+    @action(detail=False, methods=["post"], url_path=r'conciliar')
+    def conciliar(self, request):
+        try:  
+            raw = request.data
+            id = raw.get('id')
+            if id:
+                conciliacion = ConConciliacion.objects.get(pk=id)
+                conciliacionDetalles = ConConciliacionDetalle.objects.filter(
+                    conciliacion_id=id,
+                    estado_conciliado = False
+                )
+
+                for conciliacionDetalle in conciliacionDetalles:
+                    if conciliacionDetalle.debito > 0:
+                        conciliacionSoporte = ConConciliacionSoporte.objects.filter(
+                            conciliacion_id=id,
+                            estado_conciliado = False,
+                            fecha = conciliacionDetalle.fecha,
+                            debito = conciliacionDetalle.debito
+                        ).first()
+                    if conciliacionDetalle.credito > 0:
+                        conciliacionSoporte = ConConciliacionSoporte.objects.filter(
+                            conciliacion_id=id,
+                            estado_conciliado = False,
+                            fecha = conciliacionDetalle.fecha,
+                            credito = conciliacionDetalle.credito
+                        ).first() 
+                    if conciliacionSoporte:
+                       conciliacionDetalle.estado_conciliado = True
+                       conciliacionDetalle.save()
+                       conciliacionSoporte.estado_conciliado = True
+                       conciliacionSoporte.save()
+
+                return Response({
+                    'mensaje': f'Se conciliaron los registros'
+                }, status=status.HTTP_200_OK)        
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                   
+        except ConConciliacion.DoesNotExist:
+            return Response({'mensaje':'La conciliación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
