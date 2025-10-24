@@ -7,4 +7,9 @@ class ConConciliacionSoporteSerializador(serializers.ModelSerializer):
         fields = ['id', 'fecha', 'debito', 'credito', 'detalle', 'estado_conciliado',
                   'conciliacion']  
         select_related_fields = ['conciliacion']              
-        
+
+class ConConciliacionSoporteExcelSerializador(serializers.ModelSerializer):      
+    class Meta:
+        model = ConConciliacionSoporte
+        fields = ['id', 'fecha'  ,'debito', 'credito', 'detalle', 'estado_conciliado']  
+        select_related_fields = []                       

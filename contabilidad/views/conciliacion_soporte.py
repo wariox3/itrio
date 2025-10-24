@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from contabilidad.models.conciliacion import ConConciliacion
 from contabilidad.models.conciliacion_detalle import ConConciliacionDetalle
 from contabilidad.models.conciliacion_soporte import ConConciliacionSoporte
-from contabilidad.serializers.conciliacion_soporte import ConConciliacionSoporteSerializador
+from contabilidad.serializers.conciliacion_soporte import ConConciliacionSoporteSerializador, ConConciliacionSoporteExcelSerializador
 from contabilidad.filters.conciliacion_soporte import ConciliacionSoporteFilter
 from utilidades.excel_exportar import ExcelExportar
 import base64
@@ -22,7 +22,8 @@ class ConciliacionSoporteViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ConciliacionSoporteFilter 
     permission_classes = [permissions.IsAuthenticated]
-    serializadores = {'lista': ConConciliacionSoporteSerializador}
+    serializadores = {'lista': ConConciliacionSoporteSerializador,
+                        'excel':  ConConciliacionSoporteExcelSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
