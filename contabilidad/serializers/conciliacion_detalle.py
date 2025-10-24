@@ -15,5 +15,14 @@ class ConConciliacionDetalleSerializador(serializers.ModelSerializer):
                   'documento',
                   'documento__numero',
                   'documento__documento_tipo__nombre']  
-        select_related_fields = ['conciliacion', 'cuenta', 'contacto', 'documento']              
-        
+        select_related_fields = ['conciliacion', 'cuenta', 'contacto', 'documento']       
+
+
+class ConConciliacionDetalleExcelSerializador(serializers.ModelSerializer):     
+    documento__numero = serializers.CharField(source='documento.numero', read_only=True)   
+    documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)   
+    cuenta__codigo = serializers.CharField(source='cuenta.codigo', read_only=True)   
+    class Meta:
+        model = ConConciliacionDetalle
+        fields = ['id', 'documento__documento_tipo__nombre', 'documento__numero' ,'fecha', 'cuenta__codigo' ,'debito', 'credito', 'detalle', 'estado_conciliado', ]  
+        select_related_fields = ['conciliacion', 'cuenta', 'contacto', 'documento']               

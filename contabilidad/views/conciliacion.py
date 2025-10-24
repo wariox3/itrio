@@ -84,4 +84,4 @@ class ConciliacionViewSet(viewsets.ModelViewSet):
             else:
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                   
         except ConConciliacion.DoesNotExist:
-            return Response({'mensaje':'La conciliación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)            
+            return Response({'mensaje':'La conciliación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)

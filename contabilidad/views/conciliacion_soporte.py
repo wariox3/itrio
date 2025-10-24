@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.conciliacion import ConConciliacion
+from contabilidad.models.conciliacion_detalle import ConConciliacionDetalle
 from contabilidad.models.conciliacion_soporte import ConConciliacionSoporte
 from contabilidad.serializers.conciliacion_soporte import ConConciliacionSoporteSerializador
 from contabilidad.filters.conciliacion_soporte import ConciliacionSoporteFilter
@@ -132,4 +133,19 @@ class ConciliacionSoporteViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
+        
+    @action(detail=False, methods=["post"], url_path=r'limpiar')
+    def limpiar(self, request):
+        try:
+            raw = request.data
+            id = raw.get('conciliacion_id')
+            if id:
+                ConConciliacionSoporte.objects.filter(conciliacion_id=id).delete()
+                ConConciliacionDetalle.objects.filter(conciliacion_id=id).update(estado_conciliado=False)
+
+                return Response({'mensaje': 'Conciliación soporte limpiada con exito', 'codigo': 0},status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        except ConConciliacion.DoesNotExist:
+            return Response({'mensaje':'La conciliación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)                
     

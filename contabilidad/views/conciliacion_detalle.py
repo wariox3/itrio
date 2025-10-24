@@ -5,8 +5,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from contabilidad.models.movimiento import ConMovimiento
 from contabilidad.models.conciliacion import ConConciliacion
+from contabilidad.models.conciliacion_soporte import ConConciliacionSoporte
 from contabilidad.models.conciliacion_detalle import ConConciliacionDetalle
-from contabilidad.serializers.conciliacion_detalle import ConConciliacionDetalleSerializador
+from contabilidad.serializers.conciliacion_detalle import ConConciliacionDetalleSerializador, ConConciliacionDetalleExcelSerializador
 from contabilidad.filters.conciliacion_detalle import ConciliacionDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
 
@@ -17,7 +18,8 @@ class ConciliacionDetalleViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = ConciliacionDetalleFilter 
     permission_classes = [permissions.IsAuthenticated]
-    serializadores = {'lista': ConConciliacionDetalleSerializador}
+    serializadores = {'lista': ConConciliacionDetalleSerializador,
+                      'excel':  ConConciliacionDetalleExcelSerializador}
 
     def get_serializer_class(self):
         serializador_parametro = self.request.query_params.get('serializador', None)
@@ -86,3 +88,18 @@ class ConciliacionDetalleViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
         except ConConciliacion.DoesNotExist:
             return Response({'mensaje':'La conciliación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
+        
+    @action(detail=False, methods=["post"], url_path=r'limpiar')
+    def limpiar(self, request):
+        try:
+            raw = request.data
+            id = raw.get('conciliacion_id')
+            if id:
+                ConConciliacionDetalle.objects.filter(conciliacion_id=id).delete()
+                ConConciliacionSoporte.objects.filter(conciliacion_id=id).update(estado_conciliado=False)
+
+                return Response({'mensaje': 'Conciliación detalle limpiada correctamente', 'codigo': 0},status=status.HTTP_200_OK)
+            else:
+                return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)    
+        except ConConciliacion.DoesNotExist:
+            return Response({'mensaje':'La conciliación no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)        
