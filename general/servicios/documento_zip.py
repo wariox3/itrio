@@ -33,7 +33,8 @@ class DocumentoZipServicio():
                             'ciudad': None,
                             'ciudad_id': None,
                             'ciudad_nombre': None,
-                            'correo': None
+                            'correo': None,
+                            'plazo_pago_id': None
                         }
                         documento = {
                             'numero': '',
@@ -70,6 +71,8 @@ class DocumentoZipServicio():
                                 if contacto_local:
                                     contacto['existe'] = True
                                     contacto['contacto_id'] = contacto_local.id
+                                    contacto['plazo_pago_id'] = contacto_local.plazo_pago_id
+                                    contacto['correo'] = contacto_local.correo_electronico
                             if contacto['ciudad']:
                                 ciudad = GenCiudad.objects.filter(codigo=contacto['ciudad']).first()
                                 if ciudad:
