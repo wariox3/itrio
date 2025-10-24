@@ -57,14 +57,14 @@ class FormatoCuentaCobro():
             region = config('DO_REGION')
             bucket = config('DO_BUCKET')
             entorno = config('ENV')
-            qr = ""
+            '''qr = ""
             if documento['qr']:
                 qr = documento['qr']
             qr_code_drawing = generar_qr(qr)
 
             x_pos = 340
             y_pos = 125
-            renderPDF.draw(qr_code_drawing, p, x_pos, y_pos)
+            renderPDF.draw(qr_code_drawing, p, x_pos, y_pos)'''
 
             imagen_defecto_url = f'https://{bucket}.{region}.digitaloceanspaces.com/itrio/{entorno}/empresa/logo_defecto.jpg'
 
