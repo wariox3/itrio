@@ -62,7 +62,7 @@ class ConciliacionDetalleViewSet(viewsets.ModelViewSet):
                     data = {
                         'conciliacion': conciliacion.id,
                         'documento': movimiento.documento_id,
-                        'cuenta': conciliacion.cuenta_banco.cuenta,
+                        'cuenta': conciliacion.cuenta_banco.cuenta_id,
                         'debito': movimiento.debito,
                         'credito': movimiento.credito,
                         'fecha': movimiento.fecha,
