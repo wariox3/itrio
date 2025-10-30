@@ -150,7 +150,7 @@
         "electronico": true,
         "operacion": 1,
         "inventario": true,
-        "operacion_inventario": 1,
+        "operacion_inventario": 0,
         "contabilidad": true
       }
     },
