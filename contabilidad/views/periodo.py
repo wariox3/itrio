@@ -146,14 +146,13 @@ class PeriodoViewSet(viewsets.ModelViewSet):
             periodo = ConPeriodo.objects.filter(anio=anio).first()
             if periodo:
                 return Response({'mensaje': 'Ya existen periodos con este año'}, status=status.HTTP_400_BAD_REQUEST)            
-            periodo_posterior = ConPeriodo.objects.filter(anio__gt=anio).first()
-            if periodo_posterior:
-                return Response({'mensaje': 'Ya existen periodos posteriores a este año'}, status=status.HTTP_400_BAD_REQUEST)            
-            periodo_salto = ConPeriodo.objects.order_by('id').last()
-            if periodo_salto:
-                if anio - periodo_salto.anio > 1:
-                    return Response({'mensaje': 'No se puede saltar mas de un año'}, status=status.HTTP_400_BAD_REQUEST)
-            
+            #periodo_posterior = ConPeriodo.objects.filter(anio__gt=anio).first()
+            #if periodo_posterior:
+            #    return Response({'mensaje': 'Ya existen periodos posteriores a este año'}, status=status.HTTP_400_BAD_REQUEST)            
+            #periodo_salto = ConPeriodo.objects.order_by('id').last()
+            #if periodo_salto:
+            #    if anio - periodo_salto.anio > 1:
+            #        return Response({'mensaje': 'No se puede saltar mas de un año'}, status=status.HTTP_400_BAD_REQUEST)            
             for i in range(1, 14):
                 codigo = f"{anio}{str(i).zfill(2)}"
                 ConPeriodo.objects.create(id=codigo, anio=anio, mes=i)
