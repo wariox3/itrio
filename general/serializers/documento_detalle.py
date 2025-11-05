@@ -119,6 +119,7 @@ class GenDocumentoDetalleInformeVentaSerializador(serializers.ModelSerializer):
     documento__numero = serializers.CharField(source='documento.numero', read_only=True)
     documento__fecha = serializers.CharField(source='documento.fecha', read_only=True)
     documento__documento_tipo__nombre = serializers.CharField(source='documento.documento_tipo.nombre', read_only=True)
+    documento__contacto__numero_identificacion = serializers.CharField(source='documento.contacto.numero_identificacion', read_only=True)
     documento__contacto__nombre_corto = serializers.CharField(source='documento.contacto.nombre_corto', read_only=True)
     item__nombre = serializers.CharField(source='item.nombre', read_only=True)
     class Meta:
@@ -127,6 +128,7 @@ class GenDocumentoDetalleInformeVentaSerializador(serializers.ModelSerializer):
                   'documento__documento_tipo__nombre',
                   'documento__numero',
                   'documento__fecha',
+                  'documento__contacto__numero_identificacion',
                   'documento__contacto__nombre_corto',
                   'item_id',
                   'item__nombre',

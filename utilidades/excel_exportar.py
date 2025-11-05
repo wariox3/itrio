@@ -18,6 +18,7 @@ class ExcelExportar:
         'contacto_id': 'Contacto ID',
         'contacto__numero_identificacion': 'Numero identificacion',
         'contacto__nombre_corto': 'Contacto',
+        'documento__contacto__numero_identificacion': 'Numero identificacion',
         'documento__contacto__nombre_corto': 'Contacto',
         'documento__fecha': 'Fecha',
         'documento__numero': 'Numero',
