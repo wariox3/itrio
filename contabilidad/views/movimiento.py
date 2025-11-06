@@ -108,9 +108,9 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 data = {
                     'numero': row[0],
                     'fecha': None,
-                    'debito': row[2] if row[2] is not None else 0,
-                    'credito': row[3] if row[3] is not None else 0,
-                    'base': row[4] if row[4] is not None else 0, 
+                    'debito': float(row[2]) if row[2] is not None else 0.0,
+                    'credito': float(row[3]) if row[3] is not None else 0.0,
+                    'base': float(row[4]) if row[4] is not None else 0.0,
                     'naturaleza': None,
                     'comprobante': row[5],
                     'cuenta': str(row[6]),
