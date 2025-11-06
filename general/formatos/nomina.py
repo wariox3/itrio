@@ -30,7 +30,7 @@ class FormatoNomina():
                 'periodo__nombre' 
                 ).first()
             documento['detalles'] = GenDocumentoDetalle.objects.filter(documento_id=documentos_id).values(
-                    'concepto_id', 'concepto__nombre', 'detalle', 'cantidad', 'dias', 'porcentaje', 'devengado', 'deduccion')            
+                    'concepto_id', 'concepto__nombre', 'detalle', 'cantidad', 'dias', 'porcentaje', 'devengado', 'deduccion').order_by('concepto__orden')            
             self.generar_pagina_nomina(p, documento)
             p.showPage()
 
