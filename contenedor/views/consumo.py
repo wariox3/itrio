@@ -6,7 +6,7 @@ from contenedor.serializers.consumo import CtnSerializador
 from seguridad.models import User
 from django.utils import timezone
 from datetime import datetime, timedelta
-from django.db.models import Sum, Q, F
+from django.db.models import Sum, Q, F, Count
 import calendar
 
 class ConsumoViewSet(viewsets.ModelViewSet):
@@ -89,7 +89,8 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                 ).values(
                     'usuario_id', 'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre', 'plan__precio'
                 ).annotate(
-                    vr_total=Sum('vr_total')
+                    vr_total=Sum('vr_total'),
+                    dias=Count('id')
                 )
             total_consumo = sum(item['vr_total'] for item in consumos) if consumos else 0
             total_consumo_redondeado = round(total_consumo, 0)
