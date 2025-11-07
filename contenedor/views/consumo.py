@@ -85,7 +85,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
             fechaDesde = datetime.strptime(fechaDesde, "%Y-%m-%d")
             fechaHasta = datetime.strptime(fechaHasta, "%Y-%m-%d")
             consumos = CtnConsumo.objects.filter(
-                fecha__range=(fechaDesde,fechaHasta), usuario_id=usuario_id
+                fecha__range=(fechaDesde,fechaHasta), usuario_id=usuario_id, cortesia=False
                 ).values(
                     'usuario_id', 'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre', 'plan__precio'
                 ).annotate(
