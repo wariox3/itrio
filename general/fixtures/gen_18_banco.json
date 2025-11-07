@@ -80,6 +80,13 @@
       "campos": {
         "nombre": "Banco de bogota"
       }
+    },
+    {
+      "model": "general.GenBanco",
+      "pk": 12,
+      "campos": {
+        "nombre": "Nu bank"
+      }
     }
   ]
 }
