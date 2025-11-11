@@ -30,7 +30,8 @@ class GenConfiguracionSerializador(serializers.ModelSerializer):
             'rut_rutear_franja', 
             'rut_direccion_origen', 
             'rut_latitud', 
-            'rut_longitud'
+            'rut_longitud',
+            'rut_decodificar_direcciones'
         ]   
         select_related_fields = ['empresa', 'hum_entidad_riesgo', 'pos_documento_tipo', 'gen_item_imprevisto', 'gen_item_administracion', 'gen_item_utilidad']   
 

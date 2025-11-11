@@ -342,9 +342,9 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                         if serializador.is_valid():
                             despacho = serializador.save()
                             respuesta = VisitaServicio.importar_complemento(limite=300, guia_desde=None, guia_hasta=None, fecha_desde=None, fecha_hasta=None, pendiente_despacho=False, codigo_contacto=None, codigo_destino=None, codigo_zona=None, codigo_despacho=despacho_id, despacho_id=despacho.id)
-                            visitas = RutVisita.objects.filter(despacho_id=despacho.id)
-                            VisitaServicio.ubicar(visitas)
-                            VisitaServicio.ordenar(visitas) 
+                            #visitas = RutVisita.objects.filter(despacho_id=despacho.id)
+                            #VisitaServicio.ubicar(visitas)
+                            #VisitaServicio.ordenar(visitas) 
                             DespachoServicio.regenerar_valores(despacho)
                             return Response({'mensaje': f'Se creo el despacho con exito'}, status=status.HTTP_200_OK)
                         else:
