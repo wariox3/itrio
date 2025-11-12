@@ -8,7 +8,9 @@ from vertical.models.vehiculo_configuracion import VerVehiculoConfiguracion
 from seguridad.models import User
 
 class VerVehiculo(models.Model):        
-    fecha_registro = models.DateTimeField(auto_now_add=True)  
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    fecha_verificacion = models.DateTimeField(null=True)
+    fecha_verificacion_vence = models.DateTimeField(null=True)
     placa = models.CharField(max_length=6)
     modelo = models.IntegerField()
     modelo_repotenciado = models.IntegerField(null=True)
@@ -24,6 +26,7 @@ class VerVehiculo(models.Model):
     propio = models.BooleanField(default = False)
     remolque = models.BooleanField(default = False)
     verificado = models.BooleanField(default = False)
+    verificado_proceso = models.BooleanField(default = False)
     usuario = models.ForeignKey(User, on_delete=models.PROTECT, related_name='vehiculos_usuario_rel')
     marca = models.ForeignKey(VerMarca, on_delete=models.PROTECT, related_name='vehiculos_marca_rel')
     linea = models.ForeignKey(VerLinea, on_delete=models.PROTECT, related_name='vehiculos_linea_rel')

@@ -5,4 +5,4 @@ class VerVerficacionSerializador(serializers.ModelSerializer):
 
     class Meta:
         model = VerVerificacion
-        fields = ['id', 'fecha_registro' ,'verificador', 'vehiculo', 'conductor']
+        fields = ['id', 'fecha_registro', 'verificacion_tipo_id','verificador', 'vehiculo', 'conductor']

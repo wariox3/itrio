@@ -1,0 +1,50 @@
+{
+  "aplicacion": "vertical",
+  "modelo": "VerVerificacionConcepto",
+  "modelo_nativo": "ver_verificacion_concepto",
+  "actualizar_secuencia": false,
+  "datos": [
+    {
+      "pk": 1,
+      "campos": {
+        "verificacion_tipo_id": 1,
+        "nombre": "VERIFICACION VEHICULO 1"
+      }
+    },
+    {
+      "pk": 2,
+      "campos": {
+        "verificacion_tipo_id": 1,
+        "nombre": "VERIFICACION VEHICULO 1"
+      }
+    },
+    {
+      "pk": 3,
+      "campos": {
+        "verificacion_tipo_id": 1,
+        "nombre": "VERIFICACION VEHICULO 1"
+      }
+    },  
+    {
+      "pk": 4,
+      "campos": {
+        "verificacion_tipo_id": 2,
+        "nombre": "VERIFICACION CONDUCTOR 1"
+      }
+    },
+    {
+      "pk": 5,
+      "campos": {
+        "verificacion_tipo_id": 2,
+        "nombre": "VERIFICACION CONDUCTOR 1"
+      }
+    },
+    {
+      "pk": 6,
+      "campos": {
+        "verificacion_tipo_id": 2,
+        "nombre": "VERIFICACION CONDUCTOR 1"
+      }
+    }      
+  ]
+}

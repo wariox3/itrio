@@ -2,7 +2,7 @@ from django.db import models
 
 class VerVerificacionConcepto(models.Model):        
     id = models.BigIntegerField(primary_key=True)
-    tipo = models.CharField(max_length=1)
+    verificacion_tipo_id = models.IntegerField()
     nombre = models.CharField(max_length=100)
     
     class Meta:
