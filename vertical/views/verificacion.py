@@ -10,11 +10,16 @@ from vertical.serializers.verificacion import VerVerficacionSerializador
 from vertical.serializers.verificacion_detalle import VerVerificacionDetalleSerializador
 from django.db import transaction
 from datetime import datetime, timedelta
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+from vertical.filters.verificacion import VerVerificacionFilter
 
 class VerificacionViewSet(viewsets.ModelViewSet):
     queryset = VerVerificacion.objects.all()
     serializer_class = VerVerficacionSerializador
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = VerVerificacionFilter    
 
 
     @action(detail=False, methods=["post"], url_path=r'nuevo',)
