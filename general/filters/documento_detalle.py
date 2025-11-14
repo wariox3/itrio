@@ -44,6 +44,8 @@ class DocumentoDetalleFilter(django_filters.FilterSet):
                     'item__nombre':['icontains'],
                     'documento__estado_aprobado':['exact'],
                     'documento__fecha':['lte', 'gte', 'exact'],
+                    'documento__fecha_desde':['lte', 'gte', 'exact'],
+                    'documento__fecha_hasta':['lte', 'gte', 'exact'],
                     'documento__numero':['exact', 'icontains'],
                     'documento__contacto_id':['exact'],
                     'documento__contacto__nombre_corto':['exact', 'icontains'],

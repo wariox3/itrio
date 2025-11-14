@@ -21,6 +21,7 @@ class DocumentoFilter(django_filters.FilterSet):
         fields = {'id': ['exact', 'lte'],
                   'numero': ['exact', 'icontains'],                   
                   'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'], 
+                  'fecha_desde': ['gte', 'lte', 'gt', 'lt', 'exact'], 
                   'fecha_hasta': ['gte', 'lte', 'gt', 'lt', 'exact'], 
                   'pendiente': ['gt'],
                   'contrato_id': ['exact'],                   
