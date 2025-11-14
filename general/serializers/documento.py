@@ -243,6 +243,7 @@ class GenDocumentoListaSerializador(serializers.ModelSerializer):
     contacto__numero_identificacion = serializers.CharField(source='contacto.numero_identificacion', read_only=True)
     documento_tipo__nombre = serializers.CharField(source='documento_tipo.nombre', read_only=True)
     cuenta_banco__nombre = serializers.CharField(source='cuenta_banco.nombre', read_only=True, allow_null=True)  
+    documento_referencia__numero = serializers.CharField(source='documento_referencia.numero', read_only=True, allow_null=True)  
     
     class Meta:
         model = GenDocumento
@@ -258,12 +259,13 @@ class GenDocumentoListaSerializador(serializers.ModelSerializer):
                   'subtotal',
                   'impuesto',
                   'total',
+                  'documento_referencia__numero',
                   'estado_aprobado',
                   'estado_anulado',
                   'estado_electronico',
                   'estado_electronico_evento',
                   'estado_contabilizado']
-        select_related_fields = ['contacto','documento_tipo', 'cuenta_banco']
+        select_related_fields = ['contacto','documento_tipo', 'cuenta_banco', 'documento_referencia']
 
 class GenDocumentoListaVentaSerializador(serializers.ModelSerializer):  
     contacto__nombre_corto = serializers.CharField(source='contacto.nombre_corto', read_only=True)

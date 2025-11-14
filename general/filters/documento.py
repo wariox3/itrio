@@ -15,6 +15,7 @@ class DocumentoFilter(django_filters.FilterSet):
     documento_tipo__pos = django_filters.BooleanFilter(field_name='documento_tipo__pos')
     documento_tipo__contabilidad = django_filters.BooleanFilter(field_name='documento_tipo__contabilidad')
     programacion_detalle__programacion_id = django_filters.NumberFilter(field_name='programacion_detalle__programacion_id')
+    documento_referencia__numero = django_filters.NumberFilter(field_name='documento_referencia__numero')
     class Meta:
         model = GenDocumento        
         fields = {'id': ['exact', 'lte'],
@@ -38,6 +39,7 @@ class DocumentoFilter(django_filters.FilterSet):
                   'documento_tipo__operacion' : ['exact'],
                   'documento_tipo__documento_clase__grupo' : ['exact'],
                   'documento_referencia_id' : ['exact'],                  
+                  'documento_referencia__numero' : ['exact'],                  
                   'estado_aprobado': ['exact'], 
                   'estado_anulado': ['exact'], 
                   'estado_electronico': ['exact'], 
