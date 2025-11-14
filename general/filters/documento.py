@@ -38,6 +38,7 @@ class DocumentoFilter(django_filters.FilterSet):
                   'documento_tipo__venta' : ['exact'],
                   'documento_tipo__operacion' : ['exact'],
                   'documento_tipo__documento_clase__grupo' : ['exact'],
+                  'referencia_numero' : ['exact'],                  
                   'documento_referencia_id' : ['exact'],                  
                   'documento_referencia__numero' : ['exact'],                  
                   'estado_aprobado': ['exact'], 
