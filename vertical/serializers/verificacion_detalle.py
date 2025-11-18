@@ -5,4 +5,4 @@ class VerVerificacionDetalleSerializador(serializers.ModelSerializer):
 
     class Meta:
         model = VerVerificacionDetalle
-        fields = ['id', 'verificado' ,'verificacion', 'verificacion_concepto']
+        fields = ['id','fecha_verificacion' ,'verificado' ,'verificacion', 'verificacion_concepto']
