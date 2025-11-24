@@ -59,5 +59,6 @@ class GenImpuestoSeleccionarSerializador(serializers.ModelSerializer):
             'impuesto_compra': instance.compra,
             'impuesto_venta': instance.venta,
             'impuesto_porcentaje_base': instance.porcentaje_base,
-            'impuesto_operacion': instance.operacion
+            'impuesto_operacion': instance.operacion,
+            'impuesto_tipo_id': instance.impuesto_tipo_id
         }
