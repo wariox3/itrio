@@ -650,9 +650,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                     item.disponible += documento_detalle.cantidad_operada                                                                    
                                 
                                 # Generar costo promedio (compra, entrada)
-                                if documento.documento_tipo_id in (5,9):                                                                                                              
-                                    costo_promedio = ((existencia_anterior * costo_promedio_anterior) + (Decimal(documento_detalle.cantidad_operada) * documento_detalle.precio)) / Decimal(item.existencia)
-                                    item.costo_promedio = costo_promedio                                                                                                                                        
+                                if documento.documento_tipo_id in (5,9):
+                                    if item.existencia > 0:                                                                                                              
+                                        costo_promedio = ((existencia_anterior * costo_promedio_anterior) + (Decimal(documento_detalle.cantidad_operada) * documento_detalle.precio)) / Decimal(item.existencia)
+                                        item.costo_promedio = costo_promedio    
+                                    else:
+                                        costo_promedio = costo_promedio_anterior                                                                                                                                                                      
                                 item.costo_total = item.costo_promedio * Decimal(item.existencia)
                                 item.save(update_fields=['existencia', 'disponible', 'remision', 'costo_promedio', 'costo_total'])
 
