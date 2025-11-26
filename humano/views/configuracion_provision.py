@@ -20,11 +20,8 @@ class HumConfiguracionProvisionViewSet(viewsets.ModelViewSet):
         return self.serializadores[serializador_parametro]
 
     def get_queryset(self):
-        page_size = self.request.query_params.get('page_size')
-        if page_size:
-            if page_size != '0':
-                self.pagination_class = PageNumberPagination
-                self.pagination_class.page_size = int(page_size)
+        self.pagination_class = PageNumberPagination
+        self.pagination_class.page_size = 100
         queryset = super().get_queryset()
         serializer_class = self.get_serializer_class()        
         select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
