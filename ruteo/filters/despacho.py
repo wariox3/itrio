@@ -6,6 +6,8 @@ class DespachoFilter(django_filters.FilterSet):
     class Meta:
         model = RutDespacho
         fields = {'id': ['exact'],
+                  'entrega_id': ['exact'],
+                  'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'], 
                   'vehiculo__placa': ['exact', 'icontains'],
                   'estado_aprobado': ['exact'], 
                   'estado_anulado': ['exact'],
