@@ -122,7 +122,7 @@ class HumContratoViewSet(viewsets.ModelViewSet):
             if contrato.estado_terminado == False:
                 with transaction.atomic():
                     fecha_terminacion = datetime.strptime(fecha_terminacion, '%Y-%m-%d').date()
-                    if fecha_terminacion > contrato.fecha_desde:
+                    if fecha_terminacion >= contrato.fecha_desde:
                         try:
                             motivo_terminacion = HumMotivoTerminacion.objects.get(pk=motivo_terminacion_id)
                         except HumMotivoTerminacion.DoesNotExist:
