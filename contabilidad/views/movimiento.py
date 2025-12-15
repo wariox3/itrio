@@ -676,6 +676,53 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             })         
         return resultados_json
 
+    def obtener_estado_resultados(self, fecha_desde, fecha_hasta):             
+        query = f'''            
+            select
+                MIN(m.id) AS id,
+                c.cuenta_clase_id,
+                cl.nombre as cuenta_clase_nombre,
+                c.cuenta_grupo_id,
+                cg.nombre as cuenta_grupo_nombre,
+                c.codigo as cuenta_codigo,
+                c.nombre as cuenta_nombre,
+                sum(m.debito) as debito,
+                sum(m.credito) as credito,
+                sum(m.debito-m.credito) *-1 as saldo
+            from
+                con_movimiento m
+            left join con_cuenta c on m.cuenta_id = c.id
+            left join con_cuenta_clase cl on c.cuenta_clase_id = cl.id
+            left join con_cuenta_grupo cg on c.cuenta_grupo_id = cg.id
+            where
+                m.fecha >= '{fecha_desde}' and m.fecha <= '{fecha_hasta}' and c.cuenta_clase_id >= 4
+            group by
+                c.cuenta_clase_id,
+                cl.nombre,
+                c.cuenta_grupo_id,
+                cg.nombre,
+                c.codigo,
+                c.nombre
+            order by
+                c.cuenta_clase_id,
+                c.cuenta_grupo_id
+        '''
+        resultados = ConMovimiento.objects.raw(query)   
+        resultados_json = []
+        for movimiento in resultados:            
+            resultados_json.append({                
+                'cuenta_clase_id': movimiento.id, 
+                'cuenta_clase_nombre': movimiento.cuenta_clase_nombre,
+                'cuenta_grupo_id': movimiento.cuenta_grupo_id,
+                'cuenta_grupo_nombre': movimiento.cuenta_grupo_nombre,
+                'cuenta_codigo': movimiento.cuenta_codigo,
+                'cuenta_nombre': movimiento.cuenta_nombre,
+                'debito': movimiento.debito,
+                'credito': movimiento.credito,
+                'saldo': movimiento.saldo,
+            })         
+        return resultados_json
+
     @action(detail=False, methods=["post"], url_path=r'informe-balance-prueba',)
     def informe_balance_prueba(self, request):    
         raw = request.data
@@ -1037,3 +1084,51 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return response
         else:
             return Response({'registros': resultados_json}, status=status.HTTP_200_OK)                            
+        
+    @action(detail=False, methods=["post"], url_path=r'informe-estado-resultados',)
+    def informe_estado_resultados(self, request):    
+        raw = request.data
+        parametros = raw.get("parametros", [])
+        excel = raw.get('excel', False)
+        pdf = raw.get('pdf', False)
+        fecha_desde = parametros['fecha_desde']
+        fecha_hasta = parametros['fecha_hasta']         
+        resultados_json = self.obtener_estado_resultados(fecha_desde, fecha_hasta)
+        #if pdf:
+        #    formato = FormatoBalancePrueba()
+        #    pdf = formato.generar_pdf(fecha_desde, fecha_hasta, resultados_json)
+        #    nombre_archivo = f"balance_prueba{fecha_desde}.pdf"
+        #    response = HttpResponse(pdf, content_type='application/pdf')
+        #    response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        #    response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+        #    return response
+        if excel:            
+            excel_funciones = ExcelFunciones()
+            wb = Workbook()
+            ws = wb.active
+            ws.title = "estado_resultados"                                                
+            excel_funciones.agregar_titulo(ws, "Estado de resultados", "A", "E")                                   
+            ws['A4'] = f"Fecha desde: {fecha_desde}"
+            ws['A4'].font = excel_funciones.fuente_general           
+            ws['A5'] = f"Fecha hasta: {fecha_hasta}"
+            ws['A5'].font = excel_funciones.fuente_general 
+            ws.append([])
+
+            headers = ["Clase", "Grupo", "Codigo cuenta", "Nombre cuenta", "Saldo ($)"]
+            ws.append(headers)
+            for registro in resultados_json:
+                ws.append([
+                    registro['cuenta_clase_nombre'],
+                    registro['cuenta_grupo_nombre'],
+                    registro['cuenta_codigo'],                    
+                    registro['cuenta_nombre'],
+                    registro['saldo']                    
+                ])    
+            excel_funciones.aplicar_estilos(ws, 7, [5])                                
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+            response['Content-Disposition'] = f'attachment; filename=estado_resultados.xlsx'
+            wb.save(response)
+            return response
+        else:
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)        
