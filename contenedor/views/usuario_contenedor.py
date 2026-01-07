@@ -160,9 +160,9 @@ class UsuarioContenedorViewSet(viewsets.ModelViewSet):
                                 return Response({'confirmar': True}, status=status.HTTP_200_OK)
                             return Response({'mensaje':'Errores en el registro de la verificacion', 'codigo':19, 'validaciones': usuarioContenedorSerializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                         else:
-                            return Response({'mensaje':"El usuario que inicio sesion no es el usuario invitado", 'codigo': 21}, status=status.HTTP_400_BAD_REQUEST)
+                            return Response({'mensaje':"El usuario que ha iniciado sesión no corresponde al usuario invitado.", 'codigo': 21}, status=status.HTTP_400_BAD_REQUEST)
                     else:
-                        return Response({'mensaje':'El usuario ya esta confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
+                        return Response({'mensaje':'El usuario ya está confirmado para esta empresa', 'codigo':20}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     return Response({'mensaje':"El usuario invitado no existe", 'codigo': 15}, status=status.HTTP_404_NOT_FOUND)
             else:
