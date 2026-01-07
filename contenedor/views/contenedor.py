@@ -56,7 +56,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
             if subdominio and usuario_id and nombre and plan_id and telefono and correo:
                 contenedorValidacion = Contenedor.objects.filter(**{'schema_name':subdominio})
                 if contenedorValidacion:
-                    return Response({'mensaje': f"Ya existe una empresa con el subdominio {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'mensaje': f"Ya existe una empresa con el nombre {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)
                 dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
                 imagenReferencia = f"itrio/logo_defecto.jpg"
@@ -136,7 +136,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
         try:
             subdominio = request.data.get('subdominio')
             Contenedor.objects.get(schema_name=subdominio)
-            return Response({'mensaje': f"Ya existe una empresa con el subdominio {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)    
+            return Response({'mensaje': f"Ya existe una empresa con el nombre {subdominio}", "codigo": 13}, status=status.HTTP_400_BAD_REQUEST)    
         except Contenedor.DoesNotExist:
             return Response({'validar':True}, status=status.HTTP_200_OK)        
         
