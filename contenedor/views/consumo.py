@@ -114,9 +114,12 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                     ct.fecha,
                     ct.usuarios,
                     ct.plan_id,
+                    p.nombre as plan_nombre,
+                    p.precio as plan_precio,
                     ct.reddoc,
                     ct.ruteo,
                     ct.usuario_id,
+                    u.username as usuario_username,                   
                     ct.fecha_ultima_conexion,
                     ct.cortesia,
                     ct.precio,
@@ -128,6 +131,8 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                             c.contenedor_id = ct.id and c.fecha >= '{fecha_desde}' and fecha <= '{fecha_hasta}' and cortesia=false) as vr_consumo
                 from
                     cnt_contenedor ct
+                    left join seguridad_user u on ct.usuario_id = u.id
+                    left join cnt_plan p on ct.plan_id = p.id 
                 order by ct.id
             '''
             resultados = CtnConsumo.objects.raw(query) 
@@ -140,9 +145,12 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                     'fecha': item.fecha,
                     'usuarios': item.usuarios,
                     'plan_id': item.plan_id,
+                    'plan_nombre': item.plan_nombre,
+                    'plan_precio': item.plan_precio,
                     'reddoc': item.reddoc,
                     'ruteo': item.ruteo,
                     'usuario_id': item.usuario_id,
+                    'usuario_username': item.usuario_username,
                     'fecha_ultima_conexion': item.fecha_ultima_conexion,
                     'cortesia': item.cortesia,
                     'precio': item.precio,
