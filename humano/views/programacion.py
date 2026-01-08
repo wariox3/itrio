@@ -369,8 +369,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     else:
                                         return Response({'validaciones':programacion_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                    
 
-                        # cesantias
-                        if programacion.pago_tipo_id == 3:
+                        # cesantias o intereses de cesantias
+                        if programacion.pago_tipo_id == 3 or programacion.pago_tipo_id == 4:
                             contratos = HumContrato.objects.filter(
                                     grupo_id=programacion.grupo_id                        
                                     ).filter(
@@ -739,8 +739,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
                                             else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-                                        
+                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                        
+
+                                # Intereses cesantias
+                                if programacion.pago_tipo_id == 4:
+                                    cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360                                                                        
                                     # Interes
                                     if programacion.pago_interes:
                                         concepto_interes = conceptos_nomina[14].concepto                                      
@@ -757,7 +760,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                             if documento_detalle_serializador.is_valid():
                                                 documento_detalle_serializador.save()
                                             else:
-                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                                                  
+                                                return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
                                 # Adicionales
                                 if programacion_detalle.adicional:
