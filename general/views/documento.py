@@ -2269,7 +2269,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 ultimo_dia_mes = calendar.monthrange(anio, mes)[1]
                 fecha_hasta = date(anio, mes, ultimo_dia_mes)
                 nominas_mes = GenDocumento.objects.filter(
-                        Q(documento_tipo_id=14) | Q(documento_tipo_id=20) | Q(documento_tipo_id=21),
+                        Q(documento_tipo_id=14) | Q(documento_tipo_id=28) | Q(documento_tipo_id=20) | Q(documento_tipo_id=21),
                         fecha__gte=fecha_desde, 
                         fecha__lte=fecha_hasta,                                                         
                         documento_referencia_id = None,
@@ -2308,7 +2308,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     if documento_serializador.is_valid():
                         documento = documento_serializador.save()
                         nominas = GenDocumento.objects.filter(
-                            Q(documento_tipo_id=14) | Q(documento_tipo_id=20) | Q(documento_tipo_id=21),
+                            Q(documento_tipo_id=14) | Q(documento_tipo_id=28) | Q(documento_tipo_id=20) | Q(documento_tipo_id=21),
                             fecha__gte=fecha_desde, 
                             fecha__lte=fecha_hasta, 
                             contacto_id = nomina_mes['contacto_id'],
