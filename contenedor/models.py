@@ -89,6 +89,7 @@ class CtnPlan(models.Model):
 class Contenedor(TenantMixin):
     schema_name = models.CharField(max_length=100)
     nombre = models.CharField(max_length=200, null=True)
+    numero_identificacion = models.CharField(max_length=20, null=True,  blank=True, default=None)
     fecha = models.DateTimeField(auto_now_add=True)
     fecha_ultima_conexion = models.DateTimeField(auto_now_add=True, null=True)
     imagen = models.TextField(null=True)    
