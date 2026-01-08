@@ -98,4 +98,56 @@ class ConsumoViewSet(viewsets.ModelViewSet):
             plan_precio = round(plan_precio, 0)            
             return Response({'consumos':consumos, 'total_consumo': total_consumo_redondeado, 'plan_precio': plan_precio}, status=status.HTTP_200_OK)
         else:
-            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST) 
+
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny], url_path=r'resumen',)
+    def resumen_action(self, request):
+        raw = request.data
+        fecha_desde = raw.get('fecha_desde')
+        fecha_hasta = raw.get('fecha_hasta')        
+        if fecha_desde and fecha_hasta:
+            query = f'''            
+                select
+                    ct.id,
+                    ct.nombre,
+                    ct.numero_identificacion,
+                    ct.fecha,
+                    ct.usuarios,
+                    ct.plan_id,
+                    ct.reddoc,
+                    ct.ruteo,
+                    ct.usuario_id,
+                    ct.fecha_ultima_conexion,
+                    ct.cortesia,
+                    ct.precio,
+                    (	select
+                            coalesce(SUM(c.vr_total), 0)
+                        from
+                            cnt_consumo c
+                        where
+                            c.contenedor_id = ct.id and c.fecha >= '{fecha_desde}' and fecha <= '{fecha_hasta}' and cortesia=false) as vr_consumo
+                from
+                    cnt_contenedor ct
+                order by ct.id
+            '''
+            resultados = CtnConsumo.objects.raw(query) 
+            consumos = []
+            for item in resultados:
+                consumos.append({
+                    'id': item.id,
+                    'nombre': item.nombre,
+                    'numero_identificacion': item.numero_identificacion,
+                    'fecha': item.fecha,
+                    'usuarios': item.usuarios,
+                    'plan_id': item.plan_id,
+                    'reddoc': item.reddoc,
+                    'ruteo': item.ruteo,
+                    'usuario_id': item.usuario_id,
+                    'fecha_ultima_conexion': item.fecha_ultima_conexion,
+                    'cortesia': item.cortesia,
+                    'precio': item.precio,
+                    'vr_consumo': item.vr_consumo  # Campo calculado
+                })                       
+            return Response({'consumos':consumos}, status=status.HTTP_200_OK)
+        else:
+            return Response({'Mensaje': 'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                    
