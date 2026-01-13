@@ -139,7 +139,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                         self.nuevo_complemento(novedad, imagenes_b64)
                     return Response({'id': novedad.id}, status=status.HTTP_200_OK)
                 else:
-                    return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)                              
+                    return Response({'mensaje':'Errores de validación', 'codigo':14, 'validaciones': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)                              
                 
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  

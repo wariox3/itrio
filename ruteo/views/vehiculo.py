@@ -128,6 +128,6 @@ class RutVehiculoViewSet(viewsets.ModelViewSet):
                     return Response({'registros_importados': registros_importados}, status=status.HTTP_200_OK)
             else:
                 gc.collect()                    
-                return Response({'mensaje': 'Errores de validacion', 'codigo': 1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
+                return Response({'mensaje': 'Errores de validación', 'codigo': 1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)       
         else:
             return Response({'mensaje': 'Faltan parametros', 'codigo': 1}, status=status.HTTP_400_BAD_REQUEST)    

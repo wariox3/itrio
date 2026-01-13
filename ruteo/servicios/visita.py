@@ -228,7 +228,7 @@ class VisitaServicio():
                     visitas_creadas.append(visita)
                     cantidad += 1                                                                                    
                 else:
-                    return {'error': True, 'mensaje': 'Errores de validacion', 'validaciones': visitaSerializador.errors}
+                    return {'error': True, 'mensaje': 'Errores de validación', 'validaciones': visitaSerializador.errors}
             return {'error': False, 'cantidad': cantidad, 'visitas_creadas': visitas_creadas}
         else:
             return {

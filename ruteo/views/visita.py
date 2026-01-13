@@ -247,7 +247,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
                     return Response({'mensaje': 'Se importó el archivo con éxito'}, status=status.HTTP_200_OK)                
                 else:
                     gc.collect()                    
-                    return Response({'mensaje':'Errores de validacion', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
+                    return Response({'mensaje':'Errores de validación', 'codigo':1, 'errores_validador': errores_datos}, status=status.HTTP_400_BAD_REQUEST)                                    
             else:
                 return Response({'mensaje':'Solo se permiten importar hasta 1000 registros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)
         else:

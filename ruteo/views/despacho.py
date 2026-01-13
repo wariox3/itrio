@@ -348,7 +348,7 @@ class RutDespachoViewSet(viewsets.ModelViewSet):
                             DespachoServicio.regenerar_valores(despacho)
                             return Response({'mensaje': f'Se creo el despacho con exito'}, status=status.HTTP_200_OK)
                         else:
-                            return Response({'mensaje':'Errores de validacion', 'codigo':14, 'validaciones': despacho.errors}, status=status.HTTP_400_BAD_REQUEST)                              
+                            return Response({'mensaje':'Errores de validación', 'codigo':14, 'validaciones': despacho.errors}, status=status.HTTP_400_BAD_REQUEST)                              
                 else:
                     return Response({'mensaje':f'No existe el vehiculo {despacho_complemento["vehiculoPlaca"]}', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)            
             else:
