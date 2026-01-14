@@ -822,60 +822,62 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                                 # Salud
                                 if programacion_detalle.descuento_salud:
-                                    salud = contrato.salud
-                                    if salud:
-                                        if salud.porcentaje_empleado > 0:                                                                                
-                                            concepto = salud.concepto     
-                                            base = data_general['base_cotizacion'] - data_general['base_licencia']
-                                            if contrato.tiempo_id == 2:
-                                                if base < base_salario_minimo:
-                                                    base = base_salario_minimo
-                                            if base > 0:                                  
-                                                pago = round((base * salud.porcentaje_empleado) / 100)
-                                                data = data_general_detalle.copy()
-                                                data['porcentaje'] = salud.porcentaje_empleado
-                                                data['pago'] = pago
-                                                data['concepto'] = concepto.id
-                                                contacto = GenContacto.objects.filter(numero_identificacion=programacion_detalle.contrato.entidad_salud.numero_identificacion).first()
-                                                if contacto:
-                                                    data['contacto'] = contacto.id
-                                                else:
-                                                    data['contacto'] = None
-                                                ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
-                                                documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
-                                                if documento_detalle_serializador.is_valid():
-                                                    documento_detalle_serializador.save()
-                                                else:
-                                                    return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
-
-                                # Pension
-                                if programacion_detalle.descuento_pension:
-                                    pension = contrato.pension
-                                    if pension:
-                                        if pension.porcentaje_empleado > 0:  
-                                            if data_general['base_cotizacion'] > 0:
-                                                concepto = pension.concepto  
-                                                base = data_general['base_cotizacion'] 
+                                    if contrato.tipo_cotizante.codigo != '12':
+                                        salud = contrato.salud
+                                        if salud:
+                                            if salud.porcentaje_empleado > 0:                                                                                
+                                                concepto = salud.concepto     
+                                                base = data_general['base_cotizacion'] - data_general['base_licencia']
                                                 if contrato.tiempo_id == 2:
                                                     if base < base_salario_minimo:
-                                                        base = base_salario_minimo 
-                                                if base > 0:
-                                                    pago = round((base * pension.porcentaje_empleado) / 100)                                        
+                                                        base = base_salario_minimo
+                                                if base > 0:                                  
+                                                    pago = round((base * salud.porcentaje_empleado) / 100)
                                                     data = data_general_detalle.copy()
-                                                    data['porcentaje'] = pension.porcentaje_empleado
+                                                    data['porcentaje'] = salud.porcentaje_empleado
                                                     data['pago'] = pago
                                                     data['concepto'] = concepto.id
-                                                    contacto = GenContacto.objects.filter(numero_identificacion=programacion_detalle.contrato.entidad_pension.numero_identificacion).first()
+                                                    contacto = GenContacto.objects.filter(numero_identificacion=programacion_detalle.contrato.entidad_salud.numero_identificacion).first()
                                                     if contacto:
                                                         data['contacto'] = contacto.id
                                                     else:
-                                                        data['contacto'] = None                                                    
+                                                        data['contacto'] = None
                                                     ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
                                                     documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
                                                     if documento_detalle_serializador.is_valid():
                                                         documento_detalle_serializador.save()
                                                     else:
-                                                        return Response({'mensaje': f'Validaciones en pension detalle {programacion_detalle.id}', 'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                                                        return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+                                # Pension
+                                if programacion_detalle.descuento_pension:
+                                    if contrato.tipo_cotizante.codigo != '12':
+                                        pension = contrato.pension
+                                        if pension:
+                                            if pension.porcentaje_empleado > 0:  
+                                                if data_general['base_cotizacion'] > 0:
+                                                    concepto = pension.concepto  
+                                                    base = data_general['base_cotizacion'] 
+                                                    if contrato.tiempo_id == 2:
+                                                        if base < base_salario_minimo:
+                                                            base = base_salario_minimo 
+                                                    if base > 0:
+                                                        pago = round((base * pension.porcentaje_empleado) / 100)                                        
+                                                        data = data_general_detalle.copy()
+                                                        data['porcentaje'] = pension.porcentaje_empleado
+                                                        data['pago'] = pago
+                                                        data['concepto'] = concepto.id
+                                                        contacto = GenContacto.objects.filter(numero_identificacion=programacion_detalle.contrato.entidad_pension.numero_identificacion).first()
+                                                        if contacto:
+                                                            data['contacto'] = contacto.id
+                                                        else:
+                                                            data['contacto'] = None                                                    
+                                                        ConceptoServicio.datos_documento_detalle(data_general, data, concepto)
+                                                        documento_detalle_serializador = GenDocumentoDetalleSerializador(data=data)
+                                                        if documento_detalle_serializador.is_valid():
+                                                            documento_detalle_serializador.save()
+                                                        else:
+                                                            return Response({'mensaje': f'Validaciones en pension detalle {programacion_detalle.id}', 'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
 
                                 # Fondo solidaridad
                                 if programacion_detalle.descuento_fondo_solidaridad:
