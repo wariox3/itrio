@@ -109,6 +109,7 @@ class RutVisitaViewSet(viewsets.ModelViewSet):
             'volumen': request.data.get('volumen', None),
             'tiempo_servicio': request.data.get('tiempo_servicio', None),
             'ciudad_id': request.data.get('ciudad', None),
+            'fecha': request.data.get('fecha', None),
             'estado_franja': False,
             'franja': None,
             'resultados': None,
