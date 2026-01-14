@@ -22,7 +22,7 @@ class HumConceptoViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path=r'seleccionar')
     def seleccionar_action(self, request):
-        limit = request.query_params.get('limit', 10)
+        limit = request.query_params.get('limit', 15)
         nombre = request.query_params.get('nombre__icontains', None)
         adicional = request.query_params.get('adicional', None)
         concepto_tipo = request.query_params.get('concepto_tipo', None)

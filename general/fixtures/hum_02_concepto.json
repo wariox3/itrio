@@ -558,6 +558,21 @@
                 "orden": 29,
                 "concepto_tipo": 25
             }
-        }
+        },
+        {
+            "model": "humano.HumConcepto",
+            "pk": 38,
+            "campos": {
+                "nombre": "Comision",
+                "porcentaje": 0,
+                "ingreso_base_prestacion": true,
+                "ingreso_base_prestacion_vacacion": true,
+                "ingreso_base_cotizacion": true,
+                "adicional": true,
+                "operacion": 1,
+                "orden": 30,
+                "concepto_tipo": 3
+            }
+        }        
     ]
 }
