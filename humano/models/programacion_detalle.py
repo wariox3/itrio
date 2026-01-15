@@ -42,6 +42,7 @@ class HumProgramacionDetalle(models.Model):
     deduccion = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     total = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     deduccion_fondo_pension_acumulado = models.DecimalField(max_digits=20, decimal_places=6, default=0)
+    prima_propuesto = models.DecimalField(max_digits=20, decimal_places=6, default=0)
     programacion = models.ForeignKey(HumProgramacion, on_delete=models.PROTECT, related_name='pogramaciones_detalles_programacion_rel')
     contrato = models.ForeignKey(HumContrato, on_delete=models.PROTECT, related_name='pogramaciones_detalles_contrato_rel')
 

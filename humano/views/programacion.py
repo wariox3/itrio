@@ -707,6 +707,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                 if programacion.pago_tipo_id == 2:
                                     if programacion.pago_prima:
                                         prima = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360
+                                        if programacion_detalle.prima_propuesto > 0:
+                                            prima = programacion_detalle.prima_propuesto                                       
                                         concepto_nomina = conceptos_nomina[12]
                                         concepto = concepto_nomina.concepto
                                         pago = round(prima)                                    
