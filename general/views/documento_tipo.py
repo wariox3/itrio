@@ -8,6 +8,7 @@ from general.models.resolucion import GenResolucion
 from general.serializers.documento_tipo import GenDocumentoTipoSerializador, GenDocumentoTipoAutocompletarSerializador, GenDocumentoTipoSeleccionarSerializador
 from general.filters.documento_tipo import DocumentoTipoFilter
 from utilidades.excel_exportar import ExcelExportar
+from rest_framework.pagination import PageNumberPagination
 
 class DocumentoTipoViewSet(viewsets.ModelViewSet):
     queryset = GenDocumentoTipo.objects.all().order_by('id')
@@ -26,6 +27,8 @@ class DocumentoTipoViewSet(viewsets.ModelViewSet):
         return self.serializadores[serializador_parametro]
     
     def get_queryset(self):
+        self.pagination_class = PageNumberPagination
+        self.pagination_class.page_size = 100
         queryset = super().get_queryset()
         serializer_class = self.get_serializer_class()        
         select_related = getattr(serializer_class.Meta, 'select_related_fields', [])
