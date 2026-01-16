@@ -397,9 +397,9 @@
         "nombre": "INTERES CESANTIA",
         "documento_clase": 701,
         "comprobante": 24,
-        "pagar": false,
+        "pagar": true,
         "operacion": 1,
-        "contabilidad": false
+        "contabilidad": true
       }
     }    
   ]
