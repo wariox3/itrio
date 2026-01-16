@@ -188,6 +188,14 @@
         "nombre": "LIQUIDACION",
         "codigo": "LIQ"
       }
-    }    
+    },
+    {
+      "model": "contabilidad.ConComprobante",
+      "pk": 24,
+      "campos": {
+        "nombre": "INTERES CESANTIA",
+        "codigo": "ICE"
+      }
+    }      
   ]
 }

@@ -389,6 +389,18 @@
         "documento_clase": 305,
         "venta": false
       }
+    },
+    {
+      "model": "general.GenDocumentoTipo",
+      "pk": 33,
+      "campos": {
+        "nombre": "INTERES CESANTIA",
+        "documento_clase": 701,
+        "comprobante": 24,
+        "pagar": false,
+        "operacion": 1,
+        "contabilidad": false
+      }
     }    
   ]
 }

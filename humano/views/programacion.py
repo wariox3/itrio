@@ -992,7 +992,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                 programacion = HumProgramacion.objects.get(pk=id)
                 if programacion.estado_generado == True and programacion.estado_aprobado == False:
                     with transaction.atomic():  
-                        documento_tipo_map = {1: 14, 2: 20, 3: 20}
+                        documento_tipo_map = {1: 14, 2: 20, 3: 21, 4: 33}
                         documento_tipo_id = documento_tipo_map.get(programacion.pago_tipo_id, 14)
                         documento_tipo = GenDocumentoTipo.objects.get(pk=documento_tipo_id)                                                                                                                  
                         programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                    

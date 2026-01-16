@@ -533,7 +533,7 @@
             "model": "humano.HumConcepto",
             "pk": 36,
             "campos": {
-                "nombre": "Intereses anuales",
+                "nombre": "Interes cesantia anual",
                 "porcentaje": 0,
                 "ingreso_base_prestacion": false,
                 "ingreso_base_prestacion_vacacion": false,
@@ -548,7 +548,7 @@
             "model": "humano.HumConcepto",
             "pk": 37,
             "campos": {
-                "nombre": "Intereses liquidacion",
+                "nombre": "Interes cesantia liquidacion",
                 "porcentaje": 0,
                 "ingreso_base_prestacion": false,
                 "ingreso_base_prestacion_vacacion": false,
