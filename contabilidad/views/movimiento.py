@@ -549,7 +549,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     def obtener_movimiento_certificado_retencion(self, fecha_desde, fecha_hasta, cuenta_desde = None, cuenta_hasta = None, contacto_id = None):
         where_contacto = ''
         if contacto_id:
-            where_contacto = f" AND m.contacto_id >= {contacto_id}"
+            where_contacto = f" AND m.contacto_id = {contacto_id}"
 
         where_cuenta_desde = ''
         if cuenta_desde:
