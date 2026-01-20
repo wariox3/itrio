@@ -17,4 +17,5 @@ class MovimientoFilter(django_filters.FilterSet):
                     'contacto__numero_identificacion':['icontains'],
                     'grupo__nombre':['icontains'],
                     'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'],
+                    'numero':['icontains', 'exact'],
                 }
