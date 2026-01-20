@@ -3,6 +3,7 @@ from contabilidad.models.movimiento import ConMovimiento
 
 class MovimientoFilter(django_filters.FilterSet):   
     cuenta__codigo = django_filters.CharFilter(field_name='cuenta__codigo', lookup_expr='icontains') 
+    comprobante__nombre = django_filters.CharFilter(field_name='comprobante__nombre', lookup_expr='icontains') 
     contacto__numero_identificacion = django_filters.CharFilter(field_name='contacto__numero_identificacion', lookup_expr='icontains')
     contacto__nombre_corto = django_filters.CharFilter(field_name='contacto__numero_identificacion', lookup_expr='icontains')
     grupo__nombre = django_filters.CharFilter(field_name='grupo__nombre', lookup_expr='icontains')
@@ -18,4 +19,5 @@ class MovimientoFilter(django_filters.FilterSet):
                     'grupo__nombre':['icontains'],
                     'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'],
                     'numero':['icontains', 'exact'],
+                    'comprobante__nombre':['icontains'],
                 }
