@@ -324,14 +324,18 @@ class FormatoFactura():
         documento_detalles = GenDocumentoDetalle.objects.filter(documento_id=documento['id']).values('id', 'cantidad', 'precio', 'descuento', 'subtotal', 'impuesto', 'total', 'detalle', 'item_id','item__nombre', 'item__codigo', 'item__referencia').order_by('id')
         for index, detalle in enumerate(documento_detalles):
             itemNombre = ""
+
             if detalle['item__nombre'] is not None:
                 itemNombre = detalle['item__nombre']
             if detalle['detalle'] is not None:
-                itemNombre = itemNombre + " (" + detalle['detalle'] + ")" + " REF." + detalle['item__referencia']
+                itemNombre = itemNombre + " (" + detalle['detalle'] + ")"
             if detalle['item__referencia'] is not None:
                 itemNombre = itemNombre + " Ref: " + detalle['item__referencia']
-            item_nombre_paragraph = Paragraph(itemNombre, ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7))
-            ancho, alto = item_nombre_paragraph.wrap(275, 100)        
+            item_nombre_paragraph = Paragraph(
+                itemNombre,
+                ParagraphStyle(name='ItemNombreStyle', fontName='Helvetica', fontSize=7)
+            )
+            ancho, alto = item_nombre_paragraph.wrap(275, 100)
             altura_requerida = alto + 5
             
             # Verificar si hay suficiente espacio para el siguiente ítem
