@@ -78,16 +78,16 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
         novedad_tipo_id = request.POST.get('novedad_tipo_id')
         fecha_texto = request.POST.get('fecha')
         descripcion = request.POST.get('descripcion')
-        if visita_id and novedad_tipo_id and fecha_texto:            
+        movil_token = request.POST.get('movil_token')
+        if visita_id and novedad_tipo_id and fecha_texto and movil_token:            
             try:
                 visita = RutVisita.objects.get(pk=visita_id)
             except RutVisita.DoesNotExist:
                 return Response({'mensaje': 'La visita no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)
             
-            if visita.estado_novedad:
-                novedad = RutNovedad.objects.filter(visita_id=visita_id, estado_solucion=False).first()
-                if novedad:
-                    return Response({'mensaje': 'La visita ya tiene una novedad activa', 'novedad_id': novedad.id}, status=status.HTTP_400_BAD_REQUEST)
+            novedad = RutNovedad.objects.filter(movil_token=movil_token).first()
+            if novedad:
+                return Response({'id': novedad.id}, status=status.HTTP_200_OK)            
 
             with transaction.atomic():
                 fecha_native = datetime.strptime(fecha_texto, '%Y-%m-%d %H:%M')
@@ -96,7 +96,8 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
                     'fecha': fecha,
                     'visita': visita_id,
                     'novedad_tipo': novedad_tipo_id,
-                    'descripcion': descripcion
+                    'descripcion': descripcion,
+                    'movil_token': movil_token
                 }
                 serializer = RutNovedadSerializador(data=data)
                 if serializer.is_valid():
