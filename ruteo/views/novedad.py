@@ -87,7 +87,7 @@ class RutNovedadViewSet(viewsets.ModelViewSet):
             if visita.estado_novedad:
                 novedad = RutNovedad.objects.filter(visita_id=visita_id, estado_solucion=False).first()
                 if novedad:
-                    return Response({'mensaje': 'La visita ya tiene una novedad activa', 'novedad_id': novedad.id}, status=status.HTTP_200_OK)
+                    return Response({'mensaje': 'La visita ya tiene una novedad activa', 'novedad_id': novedad.id}, status=status.HTTP_400_BAD_REQUEST)
 
             with transaction.atomic():
                 fecha_native = datetime.strptime(fecha_texto, '%Y-%m-%d %H:%M')
