@@ -21,6 +21,7 @@ from utilidades.workbook_estilos_deprecated import WorkbookEstilos
 from utilidades.excel_funciones import ExcelFunciones
 from openpyxl import Workbook
 from general.formatos.balance_prueba import FormatoBalancePrueba
+from general.formatos.certificado_retencion import FormatoCertificadoRetencion
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from contabilidad.filters.movimiento import MovimientoFilter
@@ -1098,39 +1099,60 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         cuenta_codigo_desde = parametros.get('cuenta_codigo_desde', None)
         cuenta_codigo_hasta = parametros.get('cuenta_codigo_hasta', None)
         contacto_id = parametros.get('contacto_id', None)
-        resultados_movimiento = self.obtener_movimiento_certificado_retencion(fecha_desde, fecha_hasta, cuenta_codigo_desde, cuenta_codigo_hasta, contacto_id)
+        
+        resultados_movimiento = self.obtener_movimiento_certificado_retencion(
+            fecha_desde, fecha_hasta, cuenta_codigo_desde, 
+            cuenta_codigo_hasta, contacto_id
+        )
         resultados_json = resultados_movimiento
-
-        if excel:
-            excel_funciones = ExcelFunciones()
-            wb = Workbook()
-            ws = wb.active
-            ws.title = "Certificado de retencion"                                                
-            excel_funciones.agregar_titulo(ws, "Certificado retenciones", "A", "F")                                   
-            ws['A4'] = f"Fecha desde: {fecha_desde}"
-            ws['A4'].font = excel_funciones.fuente_general           
-            ws['A5'] = f"Fecha hasta: {fecha_hasta}"
-            ws['A5'].font = excel_funciones.fuente_general 
-            ws.append([])
-            headers = ["Identificación", "Contacto", "Cuenta", "Nombre cuenta", "Monto del pago sujeto a retención ($)", "Retenido y consignado ($)"]
-            ws.append(headers)
-            for registro in resultados_json:
-                ws.append([
-                    registro['contacto_numero_identificacion'],
-                    registro['contacto_nombre_corto'],
-                    registro['cuenta_codigo'],
-                    registro['cuenta_nombre'],                                        
-                    registro['base_retenido'],
-                    registro['retenido'],
-                ])            
-            excel_funciones.aplicar_estilos(ws, 7, [7,8,9])                             
-            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            response['Access-Control-Expose-Headers'] = 'Content-Disposition'
-            response['Content-Disposition'] = f'attachment; filename=certificado_retencion.xlsx'
-            wb.save(response)
-            return response
+        
+        if pdf:
+            if contacto_id:
+                formato = FormatoCertificadoRetencion()
+                pdf_content = formato.generar_pdf(fecha_desde, fecha_hasta, resultados_json, contacto_id)
+                nombre_archivo = f"certificado_retencion{fecha_desde}.pdf"
+                response = HttpResponse(pdf_content, content_type='application/pdf')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+                return response
+            else:
+                return Response({'mensaje': 'Debe seleccionar un contacto','codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+            
+        elif excel:
+            try:
+                excel_funciones = ExcelFunciones()
+                wb = Workbook()
+                ws = wb.active
+                ws.title = "Certificado de retencion"                                                
+                excel_funciones.agregar_titulo(ws, "Certificado retenciones", "A", "F")                                   
+                ws['A4'] = f"Fecha desde: {fecha_desde}"
+                ws['A4'].font = excel_funciones.fuente_general           
+                ws['A5'] = f"Fecha hasta: {fecha_hasta}"
+                ws['A5'].font = excel_funciones.fuente_general 
+                ws.append([])
+                headers = ["Identificación", "Contacto", "Cuenta", "Nombre cuenta", "Monto del pago sujeto a retención ($)", "Retenido y consignado ($)"]
+                ws.append(headers)
+                for registro in resultados_json:
+                    ws.append([
+                        registro['contacto_numero_identificacion'],
+                        registro['contacto_nombre_corto'],
+                        registro['cuenta_codigo'],
+                        registro['cuenta_nombre'],                                        
+                        registro['base_retenido'],
+                        registro['retenido'],
+                    ])            
+                excel_funciones.aplicar_estilos(ws, 7, [7,8,9])                             
+                response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                response['Access-Control-Expose-Headers'] = 'Content-Disposition'
+                response['Content-Disposition'] = f'attachment; filename=certificado_retencion.xlsx'
+                wb.save(response)
+                return response
+            except Exception as e:
+                return Response({
+                    'mensaje': f'Error generando Excel: {str(e)}','codigo': 15}, status=status.HTTP_400_BAD_REQUEST)
+            
         else:
-            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)                            
+            return Response({'registros': resultados_json}, status=status.HTTP_200_OK)
         
     @action(detail=False, methods=["post"], url_path=r'informe-estado-resultados',)
     def informe_estado_resultados(self, request):    
