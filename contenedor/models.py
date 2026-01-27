@@ -92,6 +92,7 @@ class Contenedor(TenantMixin):
     numero_identificacion = models.CharField(max_length=20, null=True,  blank=True, default=None)
     fecha = models.DateTimeField(auto_now_add=True)
     fecha_ultima_conexion = models.DateTimeField(auto_now_add=True, null=True)
+    fecha_hasta_plan = models.DateTimeField(null=True)
     imagen = models.TextField(null=True)    
     usuarios = models.IntegerField(default=1) 
     reddoc = models.BooleanField(default = False)

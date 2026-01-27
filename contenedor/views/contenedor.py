@@ -60,7 +60,15 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 dominio = '.' + config('DOMINIO_BACKEND')
                 usuario = User.objects.get(pk=usuario_id)
                 imagenReferencia = f"itrio/logo_defecto.jpg"
-                call_command('create_tenant', 
+                
+                call_command(
+                    'create_tenant',
+                    schema_name=subdominio,
+                    domain_domain=subdominio + dominio,
+                    domain_is_primary=True,
+                    interactive=False)
+                
+                '''call_command('create_tenant', 
                              schema_name=subdominio, 
                              domain_domain=subdominio+dominio, 
                              nombre=nombre, 
@@ -73,7 +81,23 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                              ruteo=ruteo,
                              cortesia=False,
                              precio=0,
-                             numero_identificacion='0')  
+                             numero_identificacion='0',
+                             fecha_hasta_plan='')'''
+                
+                contenedor = Contenedor.objects.get(schema_name=subdominio)
+                contenedor.nombre = nombre
+                contenedor.imagen = imagenReferencia
+                contenedor.usuario = usuario
+                contenedor.plan_id = plan_id
+                contenedor.usuarios = 1
+                contenedor.reddoc = bool(reddoc)
+                contenedor.ruteo = bool(ruteo)
+                contenedor.cortesia = False
+                contenedor.precio = 0
+                contenedor.numero_identificacion = None
+                contenedor.fecha_hasta_plan = None
+                contenedor.save()                
+
                 #os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures/ --schema={subdominio}")
                 #os.system(f"python manage.py tenant_command actualizar_fixtures general/fixtures_inicio/ --schema={subdominio}")                                           
                 thread = Thread(
