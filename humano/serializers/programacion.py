@@ -29,7 +29,7 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'pago_cesantia', 'pago_interes', 'pago_prima',
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
-                  'descuento_credito', 'descuento_embargo', 'adicional', 'periodo']
+                  'descuento_credito', 'descuento_embargo', 'adicional', 'periodo', 'base_prestacion_minimo', 'base_prestacion_minimo_salario']
 
     def to_representation(self, instance):      
         pago_tipo_nombre = ''
@@ -75,7 +75,9 @@ class HumProgramacionSerializador(serializers.HyperlinkedModelSerializer):
             'periodo_id': instance.periodo_id,
             'periodo_nombre': periodo_nombre,
             'estado_generado': instance.estado_generado,
-            'estado_aprobado': instance.estado_aprobado
+            'estado_aprobado': instance.estado_aprobado,
+            'base_prestacion_minimo': instance.base_prestacion_minimo,
+            'base_prestacion_minimo_salario': instance.base_prestacion_minimo_salario
         }        
     
 class HumProgramacionExcelSerializador(serializers.HyperlinkedModelSerializer):

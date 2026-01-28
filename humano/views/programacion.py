@@ -736,10 +736,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                
                                 
                                 # Cesantias
-                                if programacion.pago_tipo_id == 3:
-                                    # Cesantia                                
-                                    cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360                                
+                                if programacion.pago_tipo_id == 3:                                                                        
                                     if programacion.pago_cesantia:
+                                        cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360                                
+                                        if programacion_detalle.cesantia_propuesto > 0:
+                                            cesantia = programacion_detalle.cesantia_propuesto  
                                         concepto_cesantias = conceptos_nomina[13].concepto                                
                                         pago = round(cesantia)                                    
                                         if pago > 0:
@@ -755,10 +756,9 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 return Response({'validaciones':documento_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)                                        
 
                                 # Intereses cesantias
-                                if programacion.pago_tipo_id == 4:
-                                    cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360                                                                        
-                                    # Interes
+                                if programacion.pago_tipo_id == 4:                                                                    
                                     if programacion.pago_interes:
+                                        cesantia = (programacion_detalle.salario_promedio * programacion_detalle.dias) / 360
                                         concepto_interes = conceptos_nomina[14].concepto                                      
                                         porcentaje_interes = ((programacion_detalle.dias * 12) / 360) / 100
                                         insteres = cesantia * porcentaje_interes
