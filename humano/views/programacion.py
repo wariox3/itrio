@@ -774,6 +774,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                         concepto_interes = conceptos_nomina[14].concepto                                      
                                         porcentaje_interes = ((programacion_detalle.dias * 12) / 360) / 100
                                         insteres = cesantia * porcentaje_interes
+                                        if programacion_detalle.interes_propuesto > 0:
+                                            insteres = programacion_detalle.interes_propuesto                                          
                                         pago = round(insteres)                                    
                                         if pago > 0:
                                             data = data_general_detalle.copy()
