@@ -385,10 +385,22 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                     if contrato.fecha_desde >= programacion.fecha_desde and contrato.fecha_desde <= programacion.fecha_hasta_periodo:
                                         ingreso = True                
 
+                                    documento_detalles = GenDocumentoDetalle.objects.filter(
+                                        documento__documento_tipo__documento_clase_id=701,
+                                        documento__contrato_id=contrato.id,
+                                        documento__estado_aprobado=True,
+                                        documento__fecha__gte=programacion.fecha_desde,
+                                        documento__fecha__lte=programacion.fecha_hasta_periodo,
+                                    ).aggregate(
+                                        suma_base_prestacion=Coalesce(Sum('base_prestacion'), 0, output_field=DecimalField())
+                                    )
+                                    
+                                    base_prestacion = documento_detalles['suma_base_prestacion']
                                     data = {
                                         'programacion': programacion.id,
                                         'contrato': contrato.id,
                                         'salario': contrato.salario,
+                                        'base_prestacion': base_prestacion,
                                         'dias_transporte': 0,
                                         'pago_horas': programacion.pago_horas,
                                         'pago_auxilio_transporte': programacion.pago_auxilio_transporte,
@@ -420,12 +432,11 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                                     dias = Utilidades.dias_prestacionales(data['fecha_desde'].strftime('%Y-%m-%d'),
                                                                                     data['fecha_hasta'].strftime('%Y-%m-%d'))                                
-                                    if contrato.auxilio_transporte:
+                                    '''if contrato.auxilio_transporte:
                                         salario_promedio_cesantias = contrato.salario + configuracion['hum_auxilio_transporte']
                                     else:
-                                        salario_promedio_cesantias = contrato.salario
-
-
+                                        salario_promedio_cesantias = contrato.salario '''
+                                    salario_promedio_cesantias = round(base_prestacion / dias * 30)
                                     data['dias'] = dias
                                     data['salario_promedio'] = salario_promedio_cesantias            
                                     programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
