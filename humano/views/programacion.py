@@ -432,11 +432,23 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                                     dias = Utilidades.dias_prestacionales(data['fecha_desde'].strftime('%Y-%m-%d'),
                                                                                     data['fecha_hasta'].strftime('%Y-%m-%d'))                                
-                                    '''if contrato.auxilio_transporte:
-                                        salario_promedio_cesantias = contrato.salario + configuracion['hum_auxilio_transporte']
-                                    else:
-                                        salario_promedio_cesantias = contrato.salario '''
-                                    salario_promedio_cesantias = round(base_prestacion / dias * 30)
+
+                                    salario_promedio_cesantias = base_prestacion / dias * 30
+                                    if programacion.base_prestacion_minimo:
+                                        if salario_promedio_cesantias < configuracion['hum_salario_minimo']:                                            
+                                            if contrato.auxilio_transporte:
+                                                salario_promedio_cesantias = configuracion['hum_salario_minimo'] + configuracion['hum_auxilio_transporte']
+                                            else:
+                                                salario_promedio_cesantias = configuracion['hum_salario_minimo']
+
+                                    if programacion.base_prestacion_minimo_salario:
+                                        if salario_promedio_cesantias < contrato.salario:                                            
+                                            if contrato.auxilio_transporte:
+                                                salario_promedio_cesantias = contrato.salario + configuracion['hum_auxilio_transporte']
+                                            else:
+                                                salario_promedio_cesantias = contrato.salario
+
+                                    salario_promedio_cesantias = round(salario_promedio_cesantias)
                                     data['dias'] = dias
                                     data['salario_promedio'] = salario_promedio_cesantias            
                                     programacion_detalle_serializador = HumProgramacionDetalleSerializador(data=data)
