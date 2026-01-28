@@ -28,7 +28,7 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
                   'pago_horas', 'pago_auxilio_transporte', 'pago_incapacidad', 'pago_licencia', 'pago_vacacion', 
                   'descuento_salud', 'descuento_pension', 'descuento_fondo_solidaridad', 'descuento_retencion_fuente', 
                   'descuento_credito', 'descuento_embargo', 'adicional', 
-                  'base_cotizacion_acumulado','deduccion_fondo_pension_acumulado', 'prima_propuesto', 'cesantia_propuesto', 'base_prestacion', 'devengado', 'deduccion', 'total']
+                  'base_cotizacion_acumulado','deduccion_fondo_pension_acumulado', 'prima_propuesto', 'cesantia_propuesto', 'interes_propuesto', 'base_prestacion', 'devengado', 'deduccion', 'total']
 
     def to_representation(self, instance):      
         contrato_contacto_id = ''        
@@ -86,8 +86,9 @@ class HumProgramacionDetalleSerializador(serializers.HyperlinkedModelSerializer)
             'devengado': instance.devengado,
             'deduccion': instance.deduccion,
             'deduccion_fondo_pension_acumulado': instance.deduccion_fondo_pension_acumulado,
-            'prima_popuesto': instance.prima_propuesto,
-            'cesantia_propuesto': instance.cesantia_propuesto
+            'prima_propuesto': instance.prima_propuesto,
+            'cesantia_propuesto': instance.cesantia_propuesto,
+            'interes_propuesto': instance.interes_propuesto
         }   
 
 class HumProgramacionDetalleInformeSerializador(serializers.ModelSerializer):
