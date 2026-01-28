@@ -26,24 +26,29 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                 usuarios_contenedores = UsuarioContenedor.objects.filter(rol='propietario')
                 consumos = []
                 for usuario_contenedor in usuarios_contenedores:      
-                    if usuario_contenedor.contenedor.plan_id >= 9 and usuario_contenedor.contenedor.plan_id <= 11:
+                    if usuario_contenedor.contenedor.precio > 0:
                         vrPlan = usuario_contenedor.contenedor.precio
                     else:
                         vrPlan = usuario_contenedor.contenedor.plan.precio
-                    vrPlanDia = vrPlan / cantidad_dias
-                    consumo = CtnConsumo(                        
-                        fecha=fecha_parametro,
-                        contenedor_id=usuario_contenedor.contenedor_id,
-                        contenedor=usuario_contenedor.contenedor.nombre,
-                        subdominio=usuario_contenedor.contenedor.schema_name,
-                        usuarios=usuario_contenedor.contenedor.usuarios,
-                        plan=usuario_contenedor.contenedor.plan,
-                        usuario=usuario_contenedor.usuario,
-                        vr_plan=vrPlanDia,
-                        vr_usuario_adicional=0,
-                        vr_total=vrPlanDia,
-                        cortesia=usuario_contenedor.contenedor.cortesia)
-                    consumos.append(consumo)
+                    if usuario_contenedor.contenedor.cortesia:
+                        vrPlan = 0
+                    if usuario_contenedor.contenedor.fecha_hasta_plan:
+                        if fecha_obj <= usuario_contenedor.contenedor.fecha_hasta_plan:
+                            vrPlan = 0                        
+                    if vrPlan > 0:    
+                        vrPlanDia = vrPlan / cantidad_dias
+                        consumo = CtnConsumo(                        
+                            fecha=fecha_parametro,
+                            contenedor_id=usuario_contenedor.contenedor_id,
+                            contenedor=usuario_contenedor.contenedor.nombre,
+                            subdominio=usuario_contenedor.contenedor.schema_name,
+                            usuarios=usuario_contenedor.contenedor.usuarios,
+                            plan=usuario_contenedor.contenedor.plan,
+                            usuario=usuario_contenedor.usuario,                        
+                            vr_dia=vrPlanDia,
+                            vr_total=vrPlanDia,
+                            vr_plan=vrPlan)
+                        consumos.append(consumo)
                 CtnConsumo.objects.bulk_create(consumos)
                 consumo_periodo = CtnConsumoPeriodo(fecha=fecha_parametro)
                 consumo_periodo.save()
@@ -85,7 +90,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
             fechaDesde = datetime.strptime(fechaDesde, "%Y-%m-%d")
             fechaHasta = datetime.strptime(fechaHasta, "%Y-%m-%d")
             consumos = CtnConsumo.objects.filter(
-                fecha__range=(fechaDesde,fechaHasta), usuario_id=usuario_id, cortesia=False
+                fecha__range=(fechaDesde,fechaHasta), usuario_id=usuario_id
                 ).values(
                     'usuario_id', 'contenedor_id', 'contenedor', 'subdominio', 'plan_id', 'plan__nombre', 'plan__precio'
                 ).annotate(

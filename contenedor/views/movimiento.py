@@ -61,8 +61,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             consumos = CtnConsumo.objects.values('usuario_id'
                 ).filter(
                     fecha__gte=fecha_desde,
-                    fecha__lte=fecha_hasta,
-                    cortesia=False
+                    fecha__lte=fecha_hasta
                 ).annotate(
                     vr_total=Sum('vr_total'))
             if usuario_id:
