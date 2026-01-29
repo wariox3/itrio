@@ -14,9 +14,10 @@ from decouple import config
 from utilidades.space_do import SpaceDo
 from django_tenants.utils import schema_context
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 from threading import Thread
+from utilidades.zinc import Zinc
 
 def cargar_fixtures_en_segundo_plano(schema_name):
     """
@@ -222,5 +223,45 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 return Response({'mensaje':'El contenedor no existe', 'codigo':15}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)  
+        
+    @action(detail=False, methods=["post"], url_path=r'aviso-eliminacion',)
+    def aviso_eliminacion_action(self, request):
+        contenedores = Contenedor.objects.filter(
+            fecha_ultima_conexion__lte=timezone.now() - timedelta(days=60),
+            cortesia=False
+        ).exclude(schema_name='public')
+        for contenedor in contenedores:
+            if contenedor.usuario.correo:
+                fecha_limite = contenedor.fecha_ultima_conexion + timedelta(days=65)
+                html_content = """                                             
+                                <p>Hola <strong>{usuario}</strong>,</p>                            
+                                <p>¿Todo bien? Hemos notado que hace un tiempo que no visitas tu espacio <strong>{nombre}</strong>.</p>                            
+                                <p>Solo queríamos avisarte que, como parte de nuestra política de gestión de recursos, los espacios 
+                                que permanecen inactivos por más de 2 meses son eliminados automáticamente.</p>                            
+                                <div class="highlight-box">
+                                    <strong>Tu espacio será eliminado el: {fecha_limite}</strong>
+                                </div>                            
+                                <p>¿Te gustaría conservarlo? Es muy sencillo:</p>                            
+                                <div class="steps">
+                                    <ol>
+                                        <li>Inicia sesión aquí: <strong>{enlace}</strong></li>
+                                        <li>Revisa tus contenedores <empresas></li>
+                                        <li>¡Listo! Tu espacio se mantendrá activo</li>
+                                    </ol>
+                                </div>                            
+                                <p>Si ya no necesitas este espacio, puedes ignorar este mensaje. Se eliminará automáticamente sin coste alguno.</p>                            
+                                <p>¿Preguntas? Estamos aquí para ayudarte.</p>                           
+                                """.format(
+                                    usuario=contenedor.usuario.nombre_corto, 
+                                    nombre=contenedor.nombre, 
+                                    enlace='https://app.reddoc.co/', 
+                                    fecha_limite=fecha_limite.strftime('%d/%m/%Y'))
+                correo = Zinc()                  
+                correo.correo(contenedor.usuario.correo, f'¡No te olvides de tus empresas en RedDoc!', html_content, 'reddoc')             
+                contenedor.notificacion_eliminacion = True
+                contenedor.save(update_fields=['notificacion_eliminacion'])
+        return Response({'contenedores_notificados':contenedores.count()}, status=status.HTTP_200_OK)
+
+     
 
                     
