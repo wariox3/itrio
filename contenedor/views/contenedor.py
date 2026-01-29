@@ -235,7 +235,7 @@ class ContenedorViewSet(viewsets.ModelViewSet):
                 fecha_limite = contenedor.fecha_ultima_conexion + timedelta(days=65)
                 html_content = """                                             
                                 <p>Hola <strong>{usuario}</strong>,</p>                            
-                                <p>¿Todo bien? Hemos notado que hace un tiempo que no visitas tu espacio <strong>{nombre}</strong>.</p>                            
+                                <p>¿Todo bien? Hemos notado que hace un tiempo no visitas tu espacio <strong>{nombre}</strong>.</p>                            
                                 <p>Solo queríamos avisarte que, como parte de nuestra política de gestión de recursos, los espacios 
                                 que permanecen inactivos por más de 2 meses son eliminados automáticamente.</p>                            
                                 <div class="highlight-box">
