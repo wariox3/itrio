@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from seguridad.models import User
 from contenedor.models import CtnVerificacion
@@ -12,6 +14,7 @@ from contenedor.models import CtnInformacionFacturacion
 from seguridad.serializers import UserSerializer, UserUpdateSerializer
 from contenedor.serializers.verificacion import CtnVerificacionSerializador
 from contenedor.serializers.informacion_facturacion import CtnInformacionFacturacionSerializador
+from seguridad.filters.usuario import UsuarioFilter
 from datetime import datetime, timedelta
 from utilidades.zinc import Zinc
 from decouple import config
@@ -24,7 +27,9 @@ class UsuarioViewSet(GenericViewSet, UpdateModelMixin):
     model = User
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    
+    filter_backends = [DjangoFilterBackend, OrderingFilter] 
+    filterset_class = UsuarioFilter   
+
     def get_object(self, pk):
         return get_object_or_404(self.model, pk=pk)
 

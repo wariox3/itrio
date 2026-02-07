@@ -2,7 +2,10 @@ from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.filters import OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from contenedor.models import Contenedor
+from contenedor.filters.contenedor import ContenedorFilter
 from contenedor.serializers.contenedor import ContenedorSerializador, ContenedorActualizarSerializador
 from contenedor.serializers.usuario_contenedor import UsuarioContenedorSerializador
 from general.serializers.empresa import GenEmpresaSerializador
@@ -37,9 +40,11 @@ def cargar_fixtures_en_segundo_plano(schema_name):
         print(f"Error cargando fixtures para {schema_name}: {str(e)}")
 
 class ContenedorViewSet(viewsets.ModelViewSet):
-    queryset = Contenedor.objects.all()
+    permission_classes = [permissions.IsAuthenticated]    
     serializer_class = ContenedorSerializador    
-    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    queryset = Contenedor.objects.all()  
+    filterset_class = ContenedorFilter    
 
     def get_object(self, pk):
         return get_object_or_404(Contenedor, pk=pk)

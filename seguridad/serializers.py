@@ -7,7 +7,7 @@ from decouple import config
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     pass
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
