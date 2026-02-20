@@ -123,14 +123,17 @@ class PeriodoViewSet(viewsets.ModelViewSet):
             documento_tipo__contabilidad=True,
             fecha__year=periodo.anio,
             fecha__month=periodo.mes,
-            estado_contabilizado=False).first()
+            estado_contabilizado=False
+        ).values_list('documento_tipo__nombre', flat=True).distinct()
+
         if documentos:
+            tipos_documentos = list(documentos)
             inconsistencias.append({
-                    'comprobante_id': None,
-                    'numero': None,
-                    'cuenta_id': None,
-                    'inconsistencia': 'Existen documentos sin contabilizar en el periodo'
-                })
+                'comprobante_id': None,
+                'numero': None,
+                'cuenta_id': None,
+                'inconsistencia': f'Existen documentos sin contabilizar en el periodo. Tipos: {", ".join(tipos_documentos)}'
+            })
         return inconsistencias
 
     @action(detail=False, methods=["get"], url_path=r'anio',)
