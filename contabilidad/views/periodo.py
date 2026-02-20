@@ -230,28 +230,6 @@ class PeriodoViewSet(viewsets.ModelViewSet):
         else:
             return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)   
 
-    @action(detail=False, methods=["post"], url_path=r'inconsistencia',)
-    def inconsistencia(self, request):
-        raw = request.data        
-        anio = raw.get('anio')
-        mes = raw.get('mes')
-        if anio:
-            inconsistencias_proceso = []
-            periodos = ConPeriodo.objects.filter(anio=anio)
-            if mes:
-                periodos.filter(mes=mes)
-            for periodo in periodos:                            
-                inconsistencias = self.analizar_inconsistencias(periodo)    
-                if inconsistencias:
-                    inconsistencias_proceso += inconsistencias
-                    periodo.estado_inconsistencia = True
-                else:
-                    periodo.estado_inconsistencia = False
-                periodo.save()
-            return Response({'inconsistencia': inconsistencias_proceso}, status=status.HTTP_200_OK)
-        else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
-
     @action(detail=False, methods=["post"], url_path=r'inconsistencia')
     def inconsistencia(self, request):
         raw = request.data        
