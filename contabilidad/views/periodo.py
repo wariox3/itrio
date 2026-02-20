@@ -132,7 +132,7 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                 'comprobante_id': None,
                 'numero': None,
                 'cuenta_id': None,
-                'inconsistencia': f'Existen documentos sin contabilizar en el periodo. Tipos: {", ".join(tipos_documentos)}'
+                'inconsistencia': f'Existen documentos sin contabilizar en el periodo en los siguientes tipos de documento: {", ".join(tipos_documentos)}'
             })
         return inconsistencias
 
@@ -250,4 +250,37 @@ class PeriodoViewSet(viewsets.ModelViewSet):
                 periodo.save()
             return Response({'inconsistencia': inconsistencias_proceso}, status=status.HTTP_200_OK)
         else:
-            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)                  
+            return Response({'mensaje':'Faltan parametros', 'codigo':1}, status=status.HTTP_400_BAD_REQUEST)        
+
+    @action(detail=False, methods=["post"], url_path=r'inconsistencia')
+    def inconsistencia(self, request):
+        raw = request.data        
+        anio = raw.get('anio')
+        mes = raw.get('mes')
+        
+        if anio and mes:
+            inconsistencias_proceso = []
+            
+            # Filtrar directamente por año y mes
+            periodo = ConPeriodo.objects.filter(anio=anio, mes=mes).first()
+            
+            if periodo:
+                inconsistencias = self.analizar_inconsistencias(periodo)    
+                if inconsistencias:
+                    inconsistencias_proceso = inconsistencias
+                    periodo.estado_inconsistencia = True
+                else:
+                    periodo.estado_inconsistencia = False
+                periodo.save()
+                
+                return Response({'inconsistencia': inconsistencias_proceso}, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    'mensaje': f'No existe período para el año {anio} y mes {mes}', 
+                    'codigo': 1
+                }, status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response({
+                'mensaje': 'Faltan parámetros: año y mes son requeridos', 
+                'codigo': 1
+            }, status=status.HTTP_400_BAD_REQUEST)                  
