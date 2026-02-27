@@ -3254,7 +3254,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
         if documento.estado_aprobado == False:
             if documento.total >= 0:
                 # Factura o documento soporte
-                if documento.documento_tipo.documento_clase_id in (100,303, 101, 102):
+                if documento.documento_tipo.documento_clase_id in (100,30):
                     # Si tiene detalles o es nomina electronica
                     if documento_detalles or documento.documento_tipo_id == 15:
                         if documento.resolucion:
