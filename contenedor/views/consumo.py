@@ -133,7 +133,7 @@ class ConsumoViewSet(viewsets.ModelViewSet):
                         from
                             cnt_consumo c
                         where
-                            c.contenedor_id = ct.id and c.fecha >= '{fecha_desde}' and fecha <= '{fecha_hasta}' and cortesia=false) as vr_consumo
+                            c.contenedor_id = ct.id and c.fecha >= '{fecha_desde}' and fecha <= '{fecha_hasta}') as vr_consumo
                 from
                     cnt_contenedor ct
                     left join seguridad_user u on ct.usuario_id = u.id
