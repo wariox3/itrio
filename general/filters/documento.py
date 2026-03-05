@@ -19,7 +19,7 @@ class DocumentoFilter(django_filters.FilterSet):
     class Meta:
         model = GenDocumento        
         fields = {'id': ['exact', 'lte'],
-                  'numero': ['exact', 'icontains'],                   
+                  'numero': ['exact', 'icontains', 'gte', 'lte', 'gt', 'lt'],                   
                   'fecha': ['gte', 'lte', 'gt', 'lt', 'exact'], 
                   'fecha_desde': ['gte', 'lte', 'gt', 'lt', 'exact'], 
                   'fecha_hasta': ['gte', 'lte', 'gt', 'lt', 'exact'], 
