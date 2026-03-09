@@ -225,8 +225,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://159.203.57.104",
     "http://138.197.140.230",
     "http://reddocapi.online",
+    "http://reddocapi.xyz",
     "http://reddoc.online",
+    "http://reddoc.xyz",
     "http://app.reddoc.online",
+    "http://app.reddoc.xyz",
     "http://reddoc.co",
     "https://reddoc.com.co",
     "https://reddocapi.co",
@@ -240,7 +243,7 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     #r"^https?://(\w+\.)?muup\.online$",
-    r"^https?://(\w+\.)?reddoc\.online$",
+    r"^https?://(\w+\.)?reddoc\.xyz",
     r"^https?://(\w+\.)?reddoc\.co$",
     r"^https?://(\w+\.)?ruteo\.co$",
     r"^https?://(\w+\.)?ruteo\.online$",
