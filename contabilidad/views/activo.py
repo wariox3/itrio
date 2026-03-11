@@ -46,7 +46,7 @@ class ActivoViewSet(viewsets.ModelViewSet):
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             exporter = ExcelExportar(serializer.data, nombre_hoja="activos", nombre_archivo="activos.xlsx", titulo="Activos")            
-            return exporter.exportar()
+            return exporter.exportar_estilo()
         return super().list(request, *args, **kwargs)   
 
     def calcular_depreciacion_periodo(self, valor_compra, duracion):
