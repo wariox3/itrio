@@ -34,7 +34,7 @@ class DocumentoZipServicio():
                             'ciudad_id': None,
                             'ciudad_nombre': None,
                             'correo': None,
-                            'plazo_pago_id': None
+                            'plazo_pago_proveedor_id': None
                         }
                         documento = {
                             'numero': '',
