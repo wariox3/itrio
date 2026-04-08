@@ -1533,9 +1533,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         secuencia += 1
                         buffer.write("\n") 
                     buffer.seek(0)          
-                    contenido_bytes = buffer.getvalue().encode("ISO-8859-15")          
+                    contenido_bytes = buffer.getvalue().encode("cp1252")          
                     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-                    response = HttpResponse(contenido_bytes, content_type='text/csv; charset=ISO-8859-15')
+                    response = HttpResponse(contenido_bytes, content_type='text/plain; charset=windows-1252')
                     response['Access-Control-Expose-Headers'] = 'Content-Disposition'
                     response['Content-Disposition'] = f'attachment; filename="pila{timestamp}.txt"'
                     return response
