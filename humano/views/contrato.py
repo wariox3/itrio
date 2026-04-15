@@ -408,7 +408,7 @@ class HumContratoViewSet(viewsets.ModelViewSet):
         fecha_ultimo_pago_vacacion = raw.get('fecha_ultimo_pago_vacacion')
         fecha_ultimo_pago_prima = raw.get('fecha_ultimo_pago_prima')
         fecha_ultimo_pago_cesantia = raw.get('fecha_ultimo_pago_cesantia')
-        if id and fecha_ultimo_pago and fecha_ultimo_pago_vacacion and fecha_ultimo_pago_cesantia and fecha_ultimo_pago_prima:
+        if id:
             try:
                 contrato = HumContrato.objects.get(pk=id)
                 contrato.fecha_ultimo_pago = fecha_ultimo_pago
