@@ -29,7 +29,6 @@ from general.serializers.documento import GenDocumentoDetalleCierreSerializador,
 from general.serializers.documento_detalle import GenDocumentoDetalleSerializador
 from general.serializers.documento_impuesto import GenDocumentoImpuestoSerializador
 from general.serializers.documento_pago import GenDocumentoPagoSerializador
-from general.serializers.contacto import GenContactoSerializador
 from contabilidad.serializers.movimiento import ConMovimientoSerializador
 from general.formatos.factura import FormatoFactura
 from general.formatos.cuenta_cobro import FormatoCuentaCobro
@@ -46,10 +45,10 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
 from django.db.models.functions import TruncDay
-from django.utils import timezone
+from django.db.models import Q, DecimalField, CharField
 from django.db.models.functions import Coalesce, Cast
-from django.db.models import Sum, Q, DecimalField, CharField
 from django.db import transaction
+from django.utils import timezone
 from utilidades.wolframio import Wolframio
 from utilidades.zinc import Zinc
 from utilidades.utilidades import Utilidades
@@ -61,8 +60,6 @@ import base64
 import openpyxl
 import calendar
 import gc
-import io
-import re
 
 def transformar_decimal(obj):
     if isinstance(obj, dict):
@@ -2436,10 +2433,6 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 documento = GenDocumento.objects.get(pk=id)
             except GenDocumentoTipo.DoesNotExist:
                 return Response({'mensaje': 'El documento no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)                                
-            try:
-                cuenta = ConCuenta.objects.get(pk=cuenta_cierre_id)
-            except ConCuenta.DoesNotExist:
-                return Response({'mensaje': 'La cuenta no existe', 'codigo': 2}, status=status.HTTP_400_BAD_REQUEST)             
             with transaction.atomic():
                 movimientos = ConMovimiento.objects.filter(
                         cuenta__codigo__gte=cuenta_desde_codigo,
@@ -2447,12 +2440,14 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                         fecha__lte=documento.fecha
                     ).values(
                         'cuenta_id',
+                        'cuenta__exige_base',
                         'contacto_id'
                     ).annotate(
+                        base=Sum('base'),
                         debito=Sum('debito'),
-                        credito=Sum('credito')                
-                    ).order_by('cuenta_id', 'contacto_id')  
-                #print(movimientos.query)            
+                        credito=Sum('credito')
+                    ).order_by('cuenta_id', 'contacto_id')
+                #print(movimientos.query)
                 for movimiento in movimientos:
                     saldo_final = movimiento['debito'] - movimiento['credito']
                     if saldo_final < 0 or saldo_final > 0:
@@ -2464,6 +2459,8 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                             'grupo': documento.grupo_contabilidad_id,
                             'detalle': 'CIERRE AÑO'
                         }
+                        if movimiento['cuenta__exige_base']:
+                            data['base'] = movimiento['base']
                         if saldo_final < 0:
                             data['naturaleza'] = 'D'
                             data['precio'] = saldo_final * -1
