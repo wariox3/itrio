@@ -4,6 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from general.formatos.remision import FormatoRemision
+from general.formatos.asiento import FormatoAsiento
 from general.models.documento import GenDocumento
 from general.models.documento_detalle import GenDocumentoDetalle
 from general.models.documento_impuesto import GenDocumentoImpuesto
@@ -1597,6 +1598,11 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                     formato = FormatoRemision()
                     pdf = formato.generar_pdf(id)                                          
                     nombre_archivo = f"remision{documento.numero}.pdf" if documento.numero else f"remision.pdf" 
+
+                if documento.documento_tipo_id == 13:
+                    formato = FormatoAsiento()
+                    pdf = formato.generar_pdf(id)                                        
+                    nombre_archivo = f"asiento{documento.numero}.pdf" if documento.numero else f"asiento.pdf"                    
 
                 if pdf:
                     response = HttpResponse(pdf, content_type='application/pdf')
