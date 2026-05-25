@@ -20,7 +20,7 @@ class ConMovimientoSerializador(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ConMovimiento
         fields = ['id', 'numero', 'fecha', 'debito', 'credito', 'base', 'naturaleza', 'cuenta', 'comprobante', 'contacto', 'documento', 
-                  'periodo', 'grupo', 'detalle', 'cierre']
+                  'periodo', 'grupo', 'detalle', 'cierre', 'saldo_inicial']
 
     def validate(self, data):        
         cuenta = data.get('cuenta')
@@ -116,7 +116,8 @@ class ConMovimientoListaSerializador(serializers.ModelSerializer):
                   'contacto__nombre_corto',
                   'documento',
                   'periodo',
-                  'detalle']
+                  'detalle',
+                  'saldo_inicial']
         select_related_fields = ['cuenta', 'comprobante', 'grupo', 'contacto'] 
 
 class ConMovimientoExcelSerializador(serializers.ModelSerializer):    

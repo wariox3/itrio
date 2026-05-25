@@ -15,6 +15,7 @@ class ConMovimiento(models.Model):
     naturaleza = models.CharField(max_length=1)
     detalle = models.CharField(max_length=150, null=True)
     cierre = models.BooleanField(default = False)
+    saldo_inicial = models.BooleanField(default = False)    
     comprobante = models.ForeignKey(ConComprobante, on_delete=models.PROTECT, related_name='movimientos_comprobante_rel')
     cuenta = models.ForeignKey(ConCuenta, on_delete=models.PROTECT, related_name='movimientos_cuenta_rel')
     grupo = models.ForeignKey(ConGrupo, null=True, on_delete=models.PROTECT, related_name='movimientos_grupo_rel')

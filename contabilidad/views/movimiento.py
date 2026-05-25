@@ -120,7 +120,8 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                     'detalle': row[9],
                     'periodo': row[10],
                     'cierre': row[11],
-                    'documento': None
+                    'documento': None,
+                    'saldo_inicial': True,
                 }  
 
                 if row[1]:       
@@ -1249,3 +1250,17 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             return response
         else:
             return Response({'registros': resultados_json}, status=status.HTTP_200_OK)              
+        
+    def destroy(self, request, *args, **kwargs):
+        movimiento = self.get_object()
+
+        if movimiento.saldo_inicial is not True:
+            return Response({'mensaje': 'Solo se pueden eliminar movimientos de saldo inicial'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if movimiento.periodo and (movimiento.periodo.estado_cerrado or movimiento.periodo.estado_bloqueado):
+            return Response({'mensaje': 'El periodo se encuentra cerrado o bloqueado'}, status=status.HTTP_400_BAD_REQUEST)
+
+        movimiento_id = movimiento.id
+        movimiento.delete()
+
+        return Response({'mensaje': 'Movimiento eliminado correctamente', 'detalle': movimiento_id}, status=status.HTTP_200_OK)
