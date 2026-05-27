@@ -11,6 +11,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta, date
 import io
 import zipfile
+import re
 
 class DocumentoZipServicio():
 
@@ -58,6 +59,7 @@ class DocumentoZipServicio():
                             inner_root = ET.fromstring(cdata_content)
                             inner_namespaces = {
                                 'sts': 'dian:gov:co:facturaelectronica:Structures-2-1',
+                                'sts_old': 'http://www.dian.gov.co/contratos/facturaelectronica/v1/Structures',
                                 'cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2',
                                 'cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
                             }
@@ -79,12 +81,21 @@ class DocumentoZipServicio():
                                     contacto['ciudad_nombre'] = f"{ciudad.nombre} - {ciudad.estado.nombre}"             
 
                             documento['cue'] = inner_root.findtext('.//cbc:UUID', namespaces=inner_namespaces)
-                            documento['prefijo'] = inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces)                                
-                            numero = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
-                            if documento['prefijo'] and numero.startswith(documento['prefijo']):
-                                documento['numero'] = numero.replace(documento['prefijo'], '')
+                            prefijo = (inner_root.findtext('.//sts:Prefix', namespaces=inner_namespaces) or 
+                                    inner_root.findtext('.//sts_old:Prefix', namespaces=inner_namespaces))
+                            numero_completo = inner_root.findtext('.//cbc:ID', namespaces=inner_namespaces)
+
+                            if prefijo:
+                                documento['prefijo'] = prefijo
+                                # Solo remover el prefijo si el número empieza exactamente con él
+                                if numero_completo and numero_completo.startswith(prefijo):
+                                    documento['numero'] = numero_completo[len(prefijo):]
+                                else:
+                                    documento['numero'] = numero_completo
                             else:
-                                documento['numero'] = numero                                                
+                                # No hay prefijo, el número se deja tal cual (aunque tenga letras al inicio)
+                                documento['prefijo'] = None
+                                documento['numero'] = numero_completo                                          
                             documento['comentario'] = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
                             documento['fecha'] = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
                             documento['fecha_vence'] = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)                                                                                            
@@ -107,3 +118,18 @@ class DocumentoZipServicio():
             else:
                 return {'error':True , 'mensaje': 'El ZIP no contiene archivos XML'}
     
+def separar_prefijo_numero(valor):
+    """
+    Separa la parte alfabética (prefijo) de la parte numérica.
+    Retorna (prefijo, numero)
+    """
+    if not valor:
+        return None, None
+    
+    # Buscar letras al inicio seguidas de números
+    match = re.match(r'^([A-Za-z]+)(\d+)$', valor)
+    if match:
+        return match.group(1), match.group(2)
+    else:
+        # Si no tiene el formato letras+números, el valor completo va a número
+        return None, valor
