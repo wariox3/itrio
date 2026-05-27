@@ -117,19 +117,3 @@ class DocumentoZipServicio():
                     return {'error': True, 'mensaje': 'El ZIP contiene múltiples archivos XML'}
             else:
                 return {'error':True , 'mensaje': 'El ZIP no contiene archivos XML'}
-    
-def separar_prefijo_numero(valor):
-    """
-    Separa la parte alfabética (prefijo) de la parte numérica.
-    Retorna (prefijo, numero)
-    """
-    if not valor:
-        return None, None
-    
-    # Buscar letras al inicio seguidas de números
-    match = re.match(r'^([A-Za-z]+)(\d+)$', valor)
-    if match:
-        return match.group(1), match.group(2)
-    else:
-        # Si no tiene el formato letras+números, el valor completo va a número
-        return None, valor
