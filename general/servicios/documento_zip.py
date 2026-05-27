@@ -99,6 +99,8 @@ class DocumentoZipServicio():
                             documento['comentario'] = inner_root.findtext('.//cbc:Note', namespaces=inner_namespaces)
                             documento['fecha'] = inner_root.findtext('.//cbc:IssueDate', namespaces=inner_namespaces)
                             documento['fecha_vence'] = inner_root.findtext('.//cbc:PaymentDueDate', namespaces=inner_namespaces)                                                                                            
+                            if not documento['fecha_vence']:
+                                documento['fecha_vence'] = documento['fecha']
                             detalles=[]
                             lineas = inner_root.findall('.//cac:InvoiceLine', namespaces=inner_namespaces)                            
                             for linea in lineas:
