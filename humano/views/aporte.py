@@ -437,7 +437,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                         fecha_fin_licencia_maternidad = aporte.fecha_hasta            
 
                                 # Licencia remunerada                                                     
-                                if documento_detalle['novedad__novedad_tipo_id'] == 5:
+                                if documento_detalle['novedad__novedad_tipo_id'] in [4, 5]:
                                     licencia_remunerada = True                                    
                                     tarifa_riesgos = 0
                                     fecha_inicio_vacaciones = documento_detalle['novedad__fecha_desde']
