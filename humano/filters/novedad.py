@@ -14,4 +14,5 @@ class NovedadFilter(django_filters.FilterSet):
             'contrato__contacto__nombre_corto': ['exact', 'icontains'],
             'fecha_desde': ['gte', 'lte', 'gt', 'lt', 'exact'], 
             'fecha_hasta': ['gte', 'lte', 'gt', 'lt', 'exact'], 
+            'contrato__id': ['exact', 'exact'],
         }
