@@ -678,7 +678,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             })         
         return resultados_json
 
-    def obtener_estado_resultados(self, fecha_desde, fecha_hasta):             
+    def obtener_estado_resultados(self, fecha_desde, fecha_hasta, cuenta_grupo_id=None):
         query = f'''            
             select
                 MIN(m.id) AS id,
@@ -697,7 +697,16 @@ class MovimientoViewSet(viewsets.ModelViewSet):
             left join con_cuenta_clase cl on c.cuenta_clase_id = cl.id
             left join con_cuenta_grupo cg on c.cuenta_grupo_id = cg.id
             where
-                m.fecha >= '{fecha_desde}' and m.fecha <= '{fecha_hasta}' and c.cuenta_clase_id >= 4
+                m.fecha >= '{fecha_desde}' 
+                and m.fecha <= '{fecha_hasta}' 
+                and c.cuenta_clase_id >= 4
+        '''
+        
+        # Agregar filtro por grupo_id si se proporciona
+        if cuenta_grupo_id is not None:
+            query += f" and c.cuenta_grupo_id = {cuenta_grupo_id}\n"
+        
+        query += '''
             group by
                 c.cuenta_clase_id,
                 cl.nombre,
@@ -709,6 +718,7 @@ class MovimientoViewSet(viewsets.ModelViewSet):
                 c.cuenta_clase_id,
                 c.cuenta_grupo_id
         '''
+        
         resultados = ConMovimiento.objects.raw(query)   
         resultados_json = []
         for movimiento in resultados:            
@@ -1163,7 +1173,10 @@ class MovimientoViewSet(viewsets.ModelViewSet):
         pdf = raw.get('pdf', False)
         fecha_desde = parametros['fecha_desde']
         fecha_hasta = parametros['fecha_hasta']         
-        resultados_json = self.obtener_estado_resultados(fecha_desde, fecha_hasta)
+        cuenta_grupo_id = parametros.get('cuenta_grupo_id')
+        if cuenta_grupo_id == '':
+            cuenta_grupo_id = None
+        resultados_json = self.obtener_estado_resultados(fecha_desde, fecha_hasta, cuenta_grupo_id)
         #if pdf:
         #    formato = FormatoBalancePrueba()
         #    pdf = formato.generar_pdf(fecha_desde, fecha_hasta, resultados_json)
