@@ -4,4 +4,7 @@ from contabilidad.models.grupo import ConGrupo
 class GrupoFilter(django_filters.FilterSet):    
     class Meta:
         model = ConGrupo
-        fields = {'id': ['exact']}
+        fields = {'id': ['exact', 'gte', 'lte'],
+                  'nombre': ['exact','icontains'],
+                  'codigo': ['exact','icontains']}
+        
