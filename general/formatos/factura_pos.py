@@ -107,13 +107,15 @@ class FormatoFacturaPOS():
     def calcular_altura_total(self, data):
         """Calcula la altura total necesaria para el PDF"""
         doc = data['documento']
-        altura = 10 * mm
+        altura = 10 * mm  # Margen inicial
 
-        # Encabezado y datos del cliente
+        # Encabezado: 4 líneas (nombre, nit, dirección, teléfono)
         altura += 4 * 4 * mm
+        
+        # Datos del cliente: 6 líneas (número, fecha, cliente, nit, dirección, teléfono)
         altura += 6 * 4 * mm
 
-        # Espacio inicial para tabla de productos
+        # Espacio para encabezado de tabla de productos
         altura += 8 * mm 
 
         # Detalles de productos
@@ -122,33 +124,42 @@ class FormatoFacturaPOS():
             item_paragraph.wrapOn(None, 40 * mm, 20 * mm)
             altura += max(item_paragraph.height, 7 * mm) + 1 * mm
 
-        # Totales y resumen
-        altura += 7 * 4 * mm
-        altura += 4 * mm
-        altura += len(data['impuestos']) * 4 * mm 
+        # Totales: 5 líneas (total, total items, subtotal, impuestos) + 2 líneas divisorias
+        altura += 5 * 4 * mm + 2 * 5 * mm
+
+        # Desglose de impuestos: encabezado + líneas de impuestos + línea divisoria
+        altura += 4 * mm  # Encabezado
+        altura += len(data['impuestos']) * 4 * mm  # Líneas de impuestos
+        altura += 5 * mm  # Línea divisoria
 
         # Resolución
         if doc.resolucion:
-            altura += 2 * 4 * mm
+            altura += 2 * 4 * mm  # Dos líneas de resolución
+            altura += 5 * mm  # Línea divisoria
 
         # Datos electrónicos
-        if doc.cue:
-            cue_paragraph = Paragraph(f"Cufe: {doc.cue}", self.estilo_normal)
-            cue_paragraph.wrapOn(None, 60 * mm, 20 * mm)
-            altura += cue_paragraph.height + 12 * mm
-            altura += 7 * mm  # Fecha aceptación DIAN
-            altura += 10 * mm
-
-        if doc.qr:
-            altura += 20 * mm  # Código QR
-            altura += 8 * mm   # Textos proveedor
-            altura += 4 * mm   # Margen
-
-        # Si tiene al menos una de las 3: resolución, cue o qr → margen adicional
-        if doc.resolucion or doc.cue or doc.qr:
-            return altura + 20 * mm
-        else:
-            return altura - 10 * mm
+        tiene_datos_electronicos = bool(doc.cue or doc.qr)
+        
+        if tiene_datos_electronicos:
+            altura += 5 * mm  # Línea divisoria
+            
+            if doc.cue:
+                # CUF + fecha aceptación
+                cue_paragraph = Paragraph(f"CUFE: {doc.cue}", self.estilo_negrita)
+                cue_paragraph.wrapOn(None, 60 * mm, 20 * mm)
+                altura += cue_paragraph.height + 4 * mm
+                altura += 2 * 4 * mm  # "Fecha aceptación DIAN:" + fecha
+            
+            if doc.qr:
+                altura += 20 * mm  # Código QR
+                altura += 2 * 4 * mm  # Textos proveedor tecnológico
+            
+            altura += 4 * mm  # Margen final para datos electrónicos
+        
+        # Margen final uniforme
+        altura += 8 * mm
+        
+        return altura
 
     def dibujar_encabezado(self, p, data, ancho, y, margen):
         doc = data['documento']
