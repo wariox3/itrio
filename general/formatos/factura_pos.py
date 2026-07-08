@@ -17,8 +17,8 @@ class FormatoFacturaPOS():
         # Configuración de estilos
         self.estilo_normal = ParagraphStyle(
             name='Normal',
-            fontName='Courier',
-            fontSize=7,
+            fontName='Helvetica',
+            fontSize=8,
             leading=7,
             spaceAfter=2,
             leftIndent=0,
@@ -28,8 +28,8 @@ class FormatoFacturaPOS():
         
         self.estilo_negrita = ParagraphStyle(
             name='Negrita',
-            fontName='Courier-Bold',
-            fontSize=7,
+            fontName='Helvetica-Bold',
+            fontSize=8,
             leading=7,
             spaceAfter=2,
             leftIndent=0,
@@ -39,9 +39,9 @@ class FormatoFacturaPOS():
         
         self.estilo_derecha = ParagraphStyle(
             name='Derecha',
-            fontName='Courier',
-            fontSize=7,
-            leading=6,
+            fontName='Helvetica',
+            fontSize=8,
+            leading=7,
             alignment=2
         )
 
@@ -175,15 +175,15 @@ class FormatoFacturaPOS():
             direccion += f" - {doc.empresa.ciudad.nombre.upper()}"
         
 
-        p.setFont("Courier-Bold", 8)
+        p.setFont("Helvetica-Bold", 8)
         nombre = doc.empresa.nombre_corto.upper() if doc.empresa.nombre_corto else ""
-        ancho_texto = p.stringWidth(nombre, "Courier-Bold", 8)
+        ancho_texto = p.stringWidth(nombre, "Helvetica-Bold", 8)
         p.drawString(centro_pagina - (ancho_texto/2), y, nombre)
         y -= 4 * mm
         
-        p.setFont("Courier", 7)
+        p.setFont("Helvetica", 8)
         nit_texto = f"NIT: {nit}"
-        ancho_texto = p.stringWidth(nit_texto, "Courier", 7)
+        ancho_texto = p.stringWidth(nit_texto, "Helvetica", 8)
         p.drawString(centro_pagina - (ancho_texto/2), y, nit_texto)
         y -= 4 * mm
 
@@ -191,12 +191,12 @@ class FormatoFacturaPOS():
         if doc.empresa.ciudad:
             direccion += f" - {doc.empresa.ciudad.nombre.upper()}"
 
-        ancho_texto = p.stringWidth(direccion, "Courier", 7)
+        ancho_texto = p.stringWidth(direccion, "Helvetica", 8)
         p.drawString(centro_pagina - (ancho_texto/2), y, direccion)
         y -= 4 * mm
         
         tel_texto = f"Tel: {doc.empresa.telefono}"
-        ancho_texto = p.stringWidth(tel_texto, "Courier", 7)
+        ancho_texto = p.stringWidth(tel_texto, "Helvetica", 8)
         p.drawString(centro_pagina - (ancho_texto/2), y, tel_texto)
         
         return y - 5 * mm
@@ -216,7 +216,7 @@ class FormatoFacturaPOS():
 
     def dibujar_detalles_productos(self, p, data, y, margen):
         # Encabezado tabla
-        p.setFont("Courier-Bold", 7)
+        p.setFont("Helvetica-Bold", 8)
         p.drawString(margen, y, "Ítem")
         p.drawString(margen + 40 * mm, y, "Cant")
         p.drawString(margen + 55 * mm, y, "Subtotal")
@@ -254,7 +254,7 @@ class FormatoFacturaPOS():
         
         y = self.dibujar_linea_divisoria(p, y, 80 * mm, margen)
         
-        p.setFont("Courier-Bold", 7)
+        p.setFont("Helvetica-Bold", 8)
         p.drawString(margen, y, "Total:")
         p.drawRightString(margen + 70 * mm, y, f"{doc.total:,.0f}")
         y -= 4 * mm
@@ -280,13 +280,13 @@ class FormatoFacturaPOS():
         
         y = self.dibujar_linea_divisoria(p, y, 80 * mm, margen)
         
-        p.setFont("Courier-Bold", 7)
+        p.setFont("Helvetica-Bold", 8)
         p.drawString(margen, y, "Descripción")
         p.drawString(margen + 36 * mm, y, "Vr base")
         p.drawString(margen + 55 * mm, y, "Vr impto")
         y -= 4 * mm
         
-        p.setFont("Courier", 7)
+        p.setFont("Helvetica", 8)
         
         subtotal = getattr(doc, 'subtotal', 0)
         base_impuesto = getattr(doc, 'base_impuesto', 0)
@@ -382,15 +382,15 @@ class FormatoFacturaPOS():
                     "Nit: 901337751 - 9"
                 ]
                 
-                p.setFont("Courier-Bold", 7)
+                p.setFont("Helvetica-Bold", 8)
                 for texto in textos_proveedor:
-                    ancho_texto = p.stringWidth(texto, "Courier-Bold", 7)
+                    ancho_texto = p.stringWidth(texto, "Helvetica-Bold", 8)
                     p.drawString((ancho - ancho_texto)/2, y, texto)
                     y -= 4 * mm
         
         return y
 
-    def dibujar_texto_centrado(self, p, texto, x, y, negrita=False, tamano=7):
+    def dibujar_texto_centrado(self, p, texto, x, y, negrita=False, tamano=8):
         """Versión con Paragraph para manejo de multilínea"""
         estilo = self.estilo_negrita if negrita else self.estilo_normal
         estilo.fontSize = tamano
@@ -403,7 +403,7 @@ class FormatoFacturaPOS():
         para.drawOn(p, pos_x, pos_y)
         return pos_y - 2
 
-    def dibujar_texto_izquierda(self, p, texto, x, y, negrita=False, tamano=7):
+    def dibujar_texto_izquierda(self, p, texto, x, y, negrita=False, tamano=8):
         estilo = self.estilo_negrita if negrita else self.estilo_normal
         estilo.fontSize = tamano
         
