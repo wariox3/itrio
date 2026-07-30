@@ -39,7 +39,7 @@
             "pk": 3,
             "campos": {
                 "nombre": "Festiva diurna",
-                "porcentaje": 180,
+                "porcentaje": 190,
                 "ingreso_base_prestacion": true,
                 "ingreso_base_prestacion_vacacion": true,
                 "ingreso_base_cotizacion": true,
@@ -54,7 +54,7 @@
             "pk": 4,
             "campos": {
                 "nombre": "Festiva nocturna",
-                "porcentaje": 215,
+                "porcentaje": 225,
                 "ingreso_base_prestacion": true,
                 "ingreso_base_prestacion_vacacion": true,
                 "ingreso_base_cotizacion": true,
@@ -99,7 +99,7 @@
             "pk": 7,
             "campos": {
                 "nombre": "Extra festiva diurna",
-                "porcentaje": 205,
+                "porcentaje": 215,
                 "ingreso_base_prestacion": true,
                 "ingreso_base_prestacion_vacacion": true,
                 "ingreso_base_cotizacion": true,
@@ -114,7 +114,7 @@
             "pk": 8,
             "campos": {
                 "nombre": "Extra festiva nocturna",
-                "porcentaje": 255,
+                "porcentaje": 265,
                 "ingreso_base_prestacion": true,
                 "ingreso_base_prestacion_vacacion": true,
                 "ingreso_base_cotizacion": true,
@@ -144,7 +144,7 @@
             "pk": 10,
             "campos": {
                 "nombre": "Recargo festivo diurno",
-                "porcentaje": 80,
+                "porcentaje": 90,
                 "ingreso_base_prestacion": true,
                 "ingreso_base_prestacion_vacacion": true,
                 "ingreso_base_cotizacion": true,
@@ -159,7 +159,7 @@
             "pk": 11,
             "campos": {
                 "nombre": "Recargo festivo nocturno",
-                "porcentaje": 115,
+                "porcentaje": 125,
                 "ingreso_base_prestacion": true,
                 "ingreso_base_prestacion_vacacion": true,
                 "ingreso_base_cotizacion": true,
