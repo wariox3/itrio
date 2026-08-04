@@ -13,7 +13,7 @@ class GenConfiguracion(models.Model):
     gen_item_administracion = models.ForeignKey(GenItem, on_delete=models.PROTECT, null=True, related_name='configuraciones_item_administracion_rel')
     gen_item_imprevisto = models.ForeignKey(GenItem, on_delete=models.PROTECT, null=True, related_name='configuraciones_item_imprevisto_rel')  
     gen_item_utilidad = models.ForeignKey(GenItem, on_delete=models.PROTECT, null=True, related_name='configuraciones_item_utilidad_rel')
-    hum_factor = models.DecimalField(max_digits=6, decimal_places=3, default=7.666)
+    hum_factor = models.DecimalField(max_digits=6, decimal_places=3, default=7)
     hum_salario_minimo = models.DecimalField(max_digits=20, decimal_places=6, default=1423500)
     hum_auxilio_transporte = models.DecimalField(max_digits=20, decimal_places=6, default=200000)
     empresa = models.ForeignKey(GenEmpresa, on_delete=models.PROTECT, default=1)    
