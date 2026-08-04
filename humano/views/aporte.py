@@ -384,9 +384,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 dias_incapacidad_laboral = 0
                                 base_cotizacion_novedad = documento_detalle['base_cotizacion']
                                 dias_novedad = documento_detalle['dias']  
-                                salario_novedad_dia = base_cotizacion_novedad / dias_novedad
-                                if salario_novedad_dia < salario_contrato_dia:
-                                    base_cotizacion_novedad = math.ceil(salario_contrato_dia * dias_novedad)
                                 dias_novedad_contrato += dias_novedad
                                 base_cotizacion_total += base_cotizacion_novedad
                                 tarifa_pension = 16
@@ -455,6 +452,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
 
                                 # Licencia no remunerada
                                 if documento_detalle['novedad__novedad_tipo_id'] == 6:
+                                    salario_novedad_dia = base_cotizacion_novedad / dias_novedad
+                                    if salario_novedad_dia < salario_contrato_dia:
+                                        base_cotizacion_novedad = math.ceil(salario_contrato_dia * dias_novedad)
                                     suspension_temporal_contrato = True                                    
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
