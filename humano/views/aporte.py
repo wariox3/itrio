@@ -28,6 +28,7 @@ from django.db.models.functions import Coalesce
 from utilidades.utilidades import Utilidades
 from django.http import HttpResponse
 import calendar
+import math
 import io
 from datetime import datetime
 from datetime import timedelta
@@ -340,7 +341,9 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         cantidad_contratos += 1
                         base_cotizacion = 0
                         dias_contrato = aporte_contrato.dias
-                        dias_novedad_contrato = 0                        
+                        dias_novedad_contrato = 0   
+                        salario_contrato = aporte_contrato.salario   
+                        salario_contrato_dia = salario_contrato / 30                  
                         # Variables para aporte_contrato
                         aporte_contrato_cotizacion_pension = 0
                         aporte_contrato_cotizacion_pension_total = 0
@@ -380,7 +383,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 vacaciones = False
                                 dias_incapacidad_laboral = 0
                                 base_cotizacion_novedad = documento_detalle['base_cotizacion']
-                                dias_novedad = documento_detalle['dias']
+                                dias_novedad = documento_detalle['dias']  
+                                salario_novedad_dia = base_cotizacion_novedad / dias_novedad
+                                if salario_novedad_dia < salario_contrato_dia:
+                                    base_cotizacion_novedad = math.ceil(salario_contrato_dia * dias_novedad)
                                 dias_novedad_contrato += dias_novedad
                                 base_cotizacion_total += base_cotizacion_novedad
                                 tarifa_pension = 16
