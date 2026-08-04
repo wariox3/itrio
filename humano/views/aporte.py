@@ -295,6 +295,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                 aporte = HumAporte.objects.get(pk=id)
                 if aporte.estado_generado == False and aporte.estado_aprobado == False:
                     configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo')[0]
+                    salario_minimo = configuracion['hum_salario_minimo']
+                    salario_minimo_dia = salario_minimo / 30 
                     base_cotizacion_total = 0
                     aporte_cotizacion_pension = 0
                     aporte_cotizacion_pension_total = 0
@@ -403,6 +405,15 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 fecha_inicio_suspension_temporal_contrato = None
                                 fecha_fin_suspension_temporal_contrato = None
 
+                                salario_novedad_dia = base_cotizacion_novedad / dias_novedad
+                                if documento_detalle['novedad__novedad_tipo_id'] in [1, 2]:
+                                    if salario_novedad_dia < salario_minimo_dia:
+                                        base_cotizacion_novedad = math.ceil(salario_minimo_dia * dias_novedad)
+
+                                if documento_detalle['novedad__novedad_tipo_id'] in [6]:                                    
+                                    if salario_novedad_dia < salario_contrato_dia:
+                                        base_cotizacion_novedad = math.ceil(salario_contrato_dia * dias_novedad)
+
                                 # Incapacidad general
                                 if documento_detalle['novedad__novedad_tipo_id'] == 1:
                                     incapacidad_general = True
@@ -452,9 +463,6 @@ class HumAporteViewSet(viewsets.ModelViewSet):
 
                                 # Licencia no remunerada
                                 if documento_detalle['novedad__novedad_tipo_id'] == 6:
-                                    salario_novedad_dia = base_cotizacion_novedad / dias_novedad
-                                    if salario_novedad_dia < salario_contrato_dia:
-                                        base_cotizacion_novedad = math.ceil(salario_contrato_dia * dias_novedad)
                                     suspension_temporal_contrato = True                                    
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
