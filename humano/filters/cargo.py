@@ -6,4 +6,5 @@ class CargoFilter(django_filters.FilterSet):
         model = HumCargo        
         fields = {
             'id': ['exact', 'lte'],
+            'nombre': ['exact', 'icontains'],
         }
