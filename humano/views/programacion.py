@@ -849,7 +849,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                                 # Salud
                                 if programacion_detalle.descuento_salud:
-                                    if contrato.tipo_cotizante.codigo != '12':
+                                    if contrato.tipo_cotizante_id != 5 and contrato.tipo_cotizante_id != 20:
                                         salud = contrato.salud
                                         if salud:
                                             if salud.porcentaje_empleado > 0:                                                                                
@@ -878,7 +878,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
 
                                 # Pension
                                 if programacion_detalle.descuento_pension:
-                                    if contrato.tipo_cotizante.codigo != '12':
+                                    if contrato.tipo_cotizante_id != 5 and contrato.tipo_cotizante_id != 20:
                                         pension = contrato.pension
                                         if pension:
                                             if pension.porcentaje_empleado > 0:  

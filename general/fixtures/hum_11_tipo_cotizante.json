@@ -9,7 +9,7 @@
             "pk": 1,
             "campos": {
                 "codigo": "01",
-                "nombre": "Dependiente"
+                "nombre": "01 Dependiente"
             }
         },
         {
@@ -17,7 +17,7 @@
             "pk": 2,
             "campos": {
                 "codigo": "02",
-                "nombre": "Servicio Doméstico"
+                "nombre": "02 Servicio Doméstico"
             }
         },
         {
@@ -25,7 +25,7 @@
             "pk": 3,
             "campos": {
                 "codigo": "03",
-                "nombre": "Independiente"
+                "nombre": "03 Independiente"
             }
         },
         {
@@ -33,7 +33,7 @@
             "pk": 4,
             "campos": {
                 "codigo": "04",
-                "nombre": "Madre Comunitaria"
+                "nombre": "04 Madre Comunitaria"
             }
         },
         {
@@ -41,7 +41,7 @@
             "pk": 5,
             "campos": {
                 "codigo": "12",
-                "nombre": "Aprendiz SENA en etapa lectiva"
+                "nombre": "12 Aprendiz SENA en etapa lectiva"
             }
         },
         {
@@ -49,7 +49,7 @@
             "pk": 6,
             "campos": {
                 "codigo": "15",
-                "nombre": "Desempleado con subsidio de caja de compensación familiar"
+                "nombre": "15 Desempleado con subsidio de caja de compensación familiar"
             }
         },
         {
@@ -57,7 +57,7 @@
             "pk": 7,
             "campos": {
                 "codigo": "16",
-                "nombre": "Independiente agremiado o asociado"
+                "nombre": "16 Independiente agremiado o asociado"
             }
         },
         {
@@ -65,7 +65,7 @@
             "pk": 8,
             "campos": {
                 "codigo": "18",
-                "nombre": "Funcionarios públicos sin tope máximo en el IBC"
+                "nombre": "18 Funcionarios públicos sin tope máximo en el IBC"
             }
         },
         {
@@ -73,7 +73,7 @@
             "pk": 9,
             "campos": {
                 "codigo": "19",
-                "nombre": "Aprendices SENA en etapa productiva"
+                "nombre": "19 Aprendices SENA en etapa productiva"
             }
         },
         {
@@ -81,7 +81,7 @@
             "pk": 10,
             "campos": {
                 "codigo": "20",
-                "nombre": "Estudiantes (Régimen especial-Ley 789/2002)"
+                "nombre": "20 Estudiantes (Régimen especial-Ley 789/2002)"
             }
         },
         {
@@ -89,7 +89,7 @@
             "pk": 11,
             "campos": {
                 "codigo": "21",
-                "nombre": "Estudiantes de postgrado en salud (Decreto 190 de 1996)"
+                "nombre": "21 Estudiantes de postgrado en salud (Decreto 190 de 1996)"
             }
         },
         {
@@ -97,7 +97,7 @@
             "pk": 12,
             "campos": {
                 "codigo": "22",
-                "nombre": "Profesor de establecimiento particular"
+                "nombre": "22 Profesor de establecimiento particular"
             }
         },
         {
@@ -105,7 +105,7 @@
             "pk": 13,
             "campos": {
                 "codigo": "23",
-                "nombre": "Estudiantes (Decreto 055 de 2015)"
+                "nombre": "23 Estudiantes (Decreto 055 de 2015)"
             }
         },
         {
@@ -113,7 +113,7 @@
             "pk": 14,
             "campos": {
                 "codigo": "30",
-                "nombre": "Dependiente entidades o universidades públicas con régimen especial en Salud"
+                "nombre": "30 Dependiente entidades o universidades públicas con régimen especial en Salud"
             }
         },
         {
@@ -121,7 +121,7 @@
             "pk": 15,
             "campos": {
                 "codigo": "31",
-                "nombre": "Cooperados o precooperativas de trabajo asociado"
+                "nombre": "31 Cooperados o precooperativas de trabajo asociado"
             }
         },
         {
@@ -129,7 +129,7 @@
             "pk": 16,
             "campos": {
                 "codigo": "32",
-                "nombre": "Cotizante miembro de la carrera diplomática o consular de un país extranjero o funcionario de organismo multilateral no sometido a la legislación c"
+                "nombre": "32 Cotizante miembro de la carrera diplomática o consular de un país extranjero o funcionario de organismo multilateral no sometido a la legislación c"
             }
         },
         {
@@ -137,7 +137,7 @@
             "pk": 17,
             "campos": {
                 "codigo": "33",
-                "nombre": "Beneficiario del fondo de solidaridad pensional"
+                "nombre": "33 Beneficiario del fondo de solidaridad pensional"
             }
         },
         {
@@ -145,7 +145,7 @@
             "pk": 18,
             "campos": {
                 "codigo": "34",
-                "nombre": "Concejal amparado por póliza de salud"
+                "nombre": "34 Concejal amparado por póliza de salud"
             }
         },
         {
@@ -153,7 +153,23 @@
             "pk": 19,
             "campos": {
                 "codigo": "51",
-                "nombre": "TRABAJADOR TIEMPO PARCIAL"
+                "nombre": "51 TRABAJADOR TIEMPO PARCIAL"
+            }
+        },
+        {
+            "model": "humano.HumTipoCotizante",
+            "pk": 20,
+            "campos": {
+                "codigo": "19",
+                "nombre": "19 Aprendiz SENA en etapa lectiva Ley 2466 de 2025"
+            }
+        },
+        {
+            "model": "humano.HumTipoCotizante",
+            "pk": 21,
+            "campos": {
+                "codigo": "01",
+                "nombre": "01 Aprendices SENA en etapa productiva Ley 2466 de 2025"
             }
         }
     ]

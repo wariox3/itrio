@@ -24,7 +24,7 @@ class HumTipoCotizanteViewSet(viewsets.ModelViewSet):
     def seleccionar_action(self, request):
         limit = request.query_params.get('limit', 10)
         nombre = request.query_params.get('nombre__icontains', None)
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().order_by('codigo')
         if nombre:
             queryset = queryset.filter(nombre__icontains=nombre)
         try:
