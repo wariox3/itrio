@@ -575,7 +575,10 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         
                         # Liquidar los dias restantes fuera de novedades
                         dias_contrato -= dias_novedad_contrato
-                        horas = dias_contrato * 8   
+                        horas = dias_contrato * 8  
+                        base_cotizacion_minimo = (salario_minimo / 30) * dias_contrato
+                        if base_cotizacion < base_cotizacion_minimo:
+                            base_cotizacion = base_cotizacion_minimo 
                         base_cotizacion_pension = base_cotizacion
                         base_cotizacion_salud = base_cotizacion
                         base_cotizacion_riesgos = base_cotizacion
@@ -586,6 +589,12 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         tarifa_caja = 4
                         tarifa_sena = 0
                         tarifa_icbf = 0
+                        if aporte_contrato.contrato.tipo_cotizante_id == 5 or aporte_contrato.contrato.tipo_cotizante_id == 10 or aporte_contrato.contrato.tipo_cotizante_id == 20 or aporte_contrato.contrato.tipo_cotizante_id == 13:
+                            base_cotizacion_pension = 0
+                            tarifa_pension = 0
+                            tarifa_salud = Decimal('12.5')
+                            base_cotizacion_caja = 0
+                            tarifa_caja = 0
                         fecha_ingreso = None
                         fecha_retiro = None
                         # Registrar fecha de ingreso o retiro
