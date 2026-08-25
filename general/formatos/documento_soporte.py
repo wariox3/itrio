@@ -119,9 +119,9 @@ class FormatoDocumentoSoporte():
 
             #Datos factura
             p.setFont("Helvetica-Bold", 9)
-            #p.drawRightString(x + 540, 720, documento['documento_tipo__nombre'])
+            p.drawRightString(x + 540, 720, documento['documento_tipo__nombre'])
 
-            p.drawRightString(x + 540, 720, 'DOCUMENTO SOPORTE ELECTRONICO')
+            # p.drawRightString(x + 540, 720, 'DOCUMENTO SOPORTE ELECTRONICO')
             p.setFont("Helvetica", 9)
             if documento['resolucion_id']:
                 if documento['numero']:

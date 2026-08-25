@@ -1561,8 +1561,12 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 
                 if documento.documento_tipo_id in (11, 12):
                     formato = FormatoDocumentoSoporte()
-                    pdf = formato.generar_pdf(id)              
-                    nombre_archivo = f"doc_soporte_{id}.pdf"
+                    pdf = formato.generar_pdf(id)     
+                    nombres_archivo = {
+                        303: f"doc_soporte{documento.numero}.pdf" if documento.numero else "DocumentoSoporte.pdf",
+                        304: f"notaAjusteDocSoporte{documento.numero}.pdf" if documento.numero else "NotaAjusteDocSoporte.pdf",
+                    }
+                    nombre_archivo = nombres_archivo.get(documento.documento_tipo.documento_clase.id)           
                 # Nomina
                 if documento.documento_tipo_id in (14, 20, 21):
                     formato = FormatoNomina()
