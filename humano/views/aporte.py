@@ -294,7 +294,7 @@ class HumAporteViewSet(viewsets.ModelViewSet):
             if id:
                 aporte = HumAporte.objects.get(pk=id)
                 if aporte.estado_generado == False and aporte.estado_aprobado == False:
-                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo')[0]
+                    configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo', 'hum_licencia_no_remunerada_afecta_pension')[0]
                     salario_minimo = configuracion['hum_salario_minimo']
                     salario_minimo_dia = salario_minimo / 30 
                     base_cotizacion_total = 0
@@ -463,10 +463,14 @@ class HumAporteViewSet(viewsets.ModelViewSet):
 
                                 # Licencia no remunerada
                                 if documento_detalle['novedad__novedad_tipo_id'] == 6:
-                                    suspension_temporal_contrato = True                                    
+                                    suspension_temporal_contrato = True
                                     tarifa_riesgos = 0
                                     tarifa_caja = 0
                                     tarifa_salud = 0
+                                    # Cuando la licencia no remunerada afecta la pension al empleado no se le
+                                    # descuenta el 4% en la nomina, por lo tanto solo se cotiza el 12% del empleador
+                                    if configuracion['hum_licencia_no_remunerada_afecta_pension']:
+                                        tarifa_pension = 12
                                     fecha_inicio_suspension_temporal_contrato = documento_detalle['novedad__fecha_desde']
                                     if fecha_inicio_suspension_temporal_contrato < aporte.fecha_desde:
                                         fecha_inicio_suspension_temporal_contrato = aporte.fecha_desde
