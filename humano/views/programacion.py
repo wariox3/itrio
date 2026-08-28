@@ -481,7 +481,7 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                         devengado_programacion = 0
                         deduccion_programacion = 0
                         conceptos_nomina = HumConceptoNomina.objects.all().order_by('id')
-                        configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo')[0]
+                        configuracion = GenConfiguracion.objects.filter(pk=1).values('hum_factor', 'hum_auxilio_transporte', 'hum_salario_minimo', 'hum_licencia_no_remunerada_afecta_pension')[0]
                         programacion_detalles = HumProgramacionDetalle.objects.filter(programacion_id=id)                                           
                         for programacion_detalle in programacion_detalles:                                  
                             documento_tipo = 14
@@ -885,6 +885,8 @@ class HumProgramacionViewSet(viewsets.ModelViewSet):
                                                 if data_general['base_cotizacion'] > 0:
                                                     concepto = pension.concepto  
                                                     base = data_general['base_cotizacion'] 
+                                                    if configuracion['hum_licencia_no_remunerada_afecta_pension']:
+                                                        base = data_general['base_cotizacion'] - data_general['base_licencia']
                                                     if contrato.tiempo_id == 2:
                                                         if base < base_salario_minimo:
                                                             base = base_salario_minimo 

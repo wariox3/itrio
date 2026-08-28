@@ -16,6 +16,7 @@ class GenConfiguracion(models.Model):
     hum_factor = models.DecimalField(max_digits=6, decimal_places=3, default=7)
     hum_salario_minimo = models.DecimalField(max_digits=20, decimal_places=6, default=1423500)
     hum_auxilio_transporte = models.DecimalField(max_digits=20, decimal_places=6, default=200000)
+    hum_licencia_no_remunerada_afecta_pension = models.BooleanField(default=False)
     empresa = models.ForeignKey(GenEmpresa, on_delete=models.PROTECT, default=1)    
     hum_entidad_riesgo = models.ForeignKey(HumEntidad, on_delete=models.PROTECT, null=True)  
     pos_documento_tipo = models.ForeignKey(GenDocumentoTipo, on_delete=models.PROTECT, null=True)  
