@@ -579,136 +579,137 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                         
                         # Liquidar los dias restantes fuera de novedades
                         dias_contrato -= dias_novedad_contrato
-                        horas = dias_contrato * 8  
-                        base_cotizacion_minimo = (salario_minimo / 30) * dias_contrato
-                        if base_cotizacion < base_cotizacion_minimo:
-                            base_cotizacion = base_cotizacion_minimo 
-                        base_cotizacion_pension = base_cotizacion
-                        base_cotizacion_salud = base_cotizacion
-                        base_cotizacion_riesgos = base_cotizacion
-                        base_cotizacion_caja = base_cotizacion
-                        tarifa_pension = 16
-                        tarifa_salud = 4
-                        tarifa_riesgos = aporte_contrato.riesgo.porcentaje
-                        tarifa_caja = 4
-                        tarifa_sena = 0
-                        tarifa_icbf = 0
-                        if aporte_contrato.contrato.tipo_cotizante_id == 5 or aporte_contrato.contrato.tipo_cotizante_id == 10 or aporte_contrato.contrato.tipo_cotizante_id == 20 or aporte_contrato.contrato.tipo_cotizante_id == 13:
-                            base_cotizacion_pension = 0
-                            tarifa_pension = 0
-                            tarifa_salud = Decimal('12.5')
-                            base_cotizacion_caja = 0
-                            tarifa_caja = 0
-                        fecha_ingreso = None
-                        fecha_retiro = None
-                        # Registrar fecha de ingreso o retiro
-                        if aporte_contrato.ingreso:
-                            fecha_ingreso = aporte_contrato.contrato.fecha_desde
-                        if aporte_contrato.retiro:
-                            fecha_retiro = aporte_contrato.contrato.fecha_hasta
+                        if dias_contrato > 0:
+                            horas = dias_contrato * 8  
+                            base_cotizacion_minimo = (salario_minimo / 30) * dias_contrato
+                            if base_cotizacion < base_cotizacion_minimo:
+                                base_cotizacion = base_cotizacion_minimo 
+                            base_cotizacion_pension = base_cotizacion
+                            base_cotizacion_salud = base_cotizacion
+                            base_cotizacion_riesgos = base_cotizacion
+                            base_cotizacion_caja = base_cotizacion
+                            tarifa_pension = 16
+                            tarifa_salud = 4
+                            tarifa_riesgos = aporte_contrato.riesgo.porcentaje
+                            tarifa_caja = 4
+                            tarifa_sena = 0
+                            tarifa_icbf = 0
+                            if aporte_contrato.contrato.tipo_cotizante_id == 5 or aporte_contrato.contrato.tipo_cotizante_id == 10 or aporte_contrato.contrato.tipo_cotizante_id == 20 or aporte_contrato.contrato.tipo_cotizante_id == 13:
+                                base_cotizacion_pension = 0
+                                tarifa_pension = 0
+                                tarifa_salud = Decimal('12.5')
+                                base_cotizacion_caja = 0
+                                tarifa_caja = 0
+                            fecha_ingreso = None
+                            fecha_retiro = None
+                            # Registrar fecha de ingreso o retiro
+                            if aporte_contrato.ingreso:
+                                fecha_ingreso = aporte_contrato.contrato.fecha_desde
+                            if aporte_contrato.retiro:
+                                fecha_retiro = aporte_contrato.contrato.fecha_hasta
 
-                        cotizacion_solidaridad_solidaridad = 0
-                        cotizacion_solidaridad_subsistencia = 0
-                        tope_fondo = configuracion['hum_salario_minimo'] * 4
-                        if base_cotizacion_pension >= tope_fondo:
-                            porcentaje_fondo = calcular_porcentaje_fondo(configuracion['hum_salario_minimo'], base_cotizacion_pension)
-                            porcentaje_fondo_solidaridad = Decimal('0.5')
-                            porcentaje_fondo_subsistencia = porcentaje_fondo - porcentaje_fondo_solidaridad
-                            cotizacion_solidaridad_solidaridad = base_cotizacion_pension * porcentaje_fondo_solidaridad / 100
-                            cotizacion_solidaridad_subsistencia = base_cotizacion_pension * porcentaje_fondo_subsistencia / 100
+                            cotizacion_solidaridad_solidaridad = 0
+                            cotizacion_solidaridad_subsistencia = 0
+                            tope_fondo = configuracion['hum_salario_minimo'] * 4
+                            if base_cotizacion_pension >= tope_fondo:
+                                porcentaje_fondo = calcular_porcentaje_fondo(configuracion['hum_salario_minimo'], base_cotizacion_pension)
+                                porcentaje_fondo_solidaridad = Decimal('0.5')
+                                porcentaje_fondo_subsistencia = porcentaje_fondo - porcentaje_fondo_solidaridad
+                                cotizacion_solidaridad_solidaridad = base_cotizacion_pension * porcentaje_fondo_solidaridad / 100
+                                cotizacion_solidaridad_subsistencia = base_cotizacion_pension * porcentaje_fondo_subsistencia / 100
 
-                        cotizacion_pension = Utilidades.redondear_cien(base_cotizacion_pension * tarifa_pension / 100)
-                        cotizacion_solidaridad_solidaridad = Utilidades.redondear_cien(cotizacion_solidaridad_solidaridad)
-                        cotizacion_solidaridad_subsistencia = Utilidades.redondear_cien(cotizacion_solidaridad_subsistencia)
-                        cotizacion_voluntario_pension_afiliado = Utilidades.redondear_cien(0)
-                        cotizacion_voluntario_pension_aportante = Utilidades.redondear_cien(0)
-                        cotizacion_salud = Utilidades.redondear_cien(base_cotizacion_salud * tarifa_salud / 100)
-                        cotizacion_riesgos = Utilidades.redondear_cien(base_cotizacion_riesgos * tarifa_riesgos / 100)                    
-                        cotizacion_caja = Utilidades.redondear_cien(base_cotizacion_caja * tarifa_caja / 100)
-                        cotizacion_sena = Utilidades.redondear_cien(0)
-                        cotizacion_icbf = Utilidades.redondear_cien(0)                        
-                        cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
-                        cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf
-                        
-                        aporte_contrato_cotizacion_pension += cotizacion_pension
-                        aporte_contrato_cotizacion_pension_total += cotizacion_pension_total
-                        aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
-                        aporte_contrato_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
-                        aporte_contrato_cotizacion_voluntario_pension_afiliado += cotizacion_voluntario_pension_afiliado
-                        aporte_contrato_cotizacion_voluntario_pension_aportante += cotizacion_voluntario_pension_aportante
-                        aporte_contrato_cotizacion_salud += cotizacion_salud
-                        aporte_contrato_cotizacion_riesgos += cotizacion_riesgos
-                        aporte_contrato_cotizacion_caja += cotizacion_caja   
-                        aporte_contrato_cotizacion_sena += aporte_cotizacion_sena
-                        aporte_contrato_cotizacion_icbf += aporte_cotizacion_icbf
-                        aporte_contrato_cotizacion_total += cotizacion_total
-                        lineas += 1
-                        data = {
-                            'aporte_contrato': aporte_contrato.id,
-                            'ingreso': aporte_contrato.ingreso,
-                            'retiro': aporte_contrato.retiro,
-                            'salario_integral': aporte_contrato.contrato.salario_integral,                            
-                            'horas': horas,
-                            'dias_pension': dias_contrato,
-                            'dias_salud': dias_contrato,
-                            'dias_riesgos': dias_contrato,
-                            'dias_caja': dias_contrato,
-                            'base_cotizacion_pension': base_cotizacion_pension,
-                            'base_cotizacion_salud': base_cotizacion_salud,
-                            'base_cotizacion_riesgos': base_cotizacion_riesgos,
-                            'base_cotizacion_caja': base_cotizacion_caja,
-                            'tarifa_pension': tarifa_pension,
-                            'tarifa_salud': tarifa_salud,
-                            'tarifa_riesgos': tarifa_riesgos,
-                            'tarifa_caja': tarifa_caja,
-                            'tarifa_sena': tarifa_sena,
-                            'tarifa_icbf': tarifa_icbf,
-                            'cotizacion_pension': cotizacion_pension,
-                            'cotizacion_solidaridad_solidaridad': cotizacion_solidaridad_solidaridad,
-                            'cotizacion_solidaridad_subsistencia': cotizacion_solidaridad_subsistencia,
-                            'cotizacion_voluntario_pension_afiliado': cotizacion_voluntario_pension_afiliado,
-                            'cotizacion_voluntario_pension_aportante': cotizacion_voluntario_pension_aportante,
-                            'cotizacion_salud': cotizacion_salud,
-                            'cotizacion_riesgos': cotizacion_riesgos,
-                            'cotizacion_caja': cotizacion_caja,
-                            'cotizacion_sena': cotizacion_sena,
-                            'cotizacion_icbf': cotizacion_icbf,
-                            'cotizacion_total': cotizacion_total,
-                            'fecha_ingreso': fecha_ingreso,
-                            'fecha_retiro': fecha_retiro                            
-                        }
-                        aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
-                        if aporte_detalle_serializador.is_valid():
-                            aporte_detalle = aporte_detalle_serializador.save()  
-                            if aporte_contrato.entidad_pension_id in aporte_entidad_pension:                                
-                                aporte_entidad_pension[aporte_contrato.entidad_pension_id]['total'] += aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia                                
-                            else:                                
-                                aporte_entidad_pension[aporte_contrato.entidad_pension_id] = {
-                                    'tipo': 'PENSION',
-                                    'entidad_id': aporte_contrato.entidad_pension_id,
-                                    'total': aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia
-                                }                                                          
-                            if aporte_contrato.entidad_salud_id in aporte_entidad_salud:                                
-                                aporte_entidad_salud[aporte_contrato.entidad_salud_id]['total'] += aporte_detalle.cotizacion_salud                                
-                            else:                                
-                                aporte_entidad_salud[aporte_contrato.entidad_salud_id] = {
-                                    'tipo': 'SALUD',
-                                    'entidad_id': aporte_contrato.entidad_salud_id,
-                                    'total': aporte_detalle.cotizacion_salud
-                                }   
-                            if aporte_contrato.entidad_caja_id in aporte_entidad_caja:                                
-                                aporte_entidad_caja[aporte_contrato.entidad_caja_id]['total'] += aporte_detalle.cotizacion_caja                                
-                            else:                                
-                                aporte_entidad_caja[aporte_contrato.entidad_caja_id] = {
-                                    'tipo': 'CAJA',
-                                    'entidad_id': aporte_contrato.entidad_caja_id,
-                                    'total': aporte_detalle.cotizacion_caja
-                                }            
-                            aporte_entidad_riesgos[aporte.entidad_riesgo_id]['total'] += aporte_detalle.cotizacion_riesgos
-                            aporte_entidad_sena[aporte.entidad_sena_id]['total'] += aporte_detalle.cotizacion_sena
-                            aporte_entidad_icbf[aporte.entidad_icbf_id]['total'] += aporte_detalle.cotizacion_icbf                                                                                                                                         
-                        else:
-                            return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
+                            cotizacion_pension = Utilidades.redondear_cien(base_cotizacion_pension * tarifa_pension / 100)
+                            cotizacion_solidaridad_solidaridad = Utilidades.redondear_cien(cotizacion_solidaridad_solidaridad)
+                            cotizacion_solidaridad_subsistencia = Utilidades.redondear_cien(cotizacion_solidaridad_subsistencia)
+                            cotizacion_voluntario_pension_afiliado = Utilidades.redondear_cien(0)
+                            cotizacion_voluntario_pension_aportante = Utilidades.redondear_cien(0)
+                            cotizacion_salud = Utilidades.redondear_cien(base_cotizacion_salud * tarifa_salud / 100)
+                            cotizacion_riesgos = Utilidades.redondear_cien(base_cotizacion_riesgos * tarifa_riesgos / 100)                    
+                            cotizacion_caja = Utilidades.redondear_cien(base_cotizacion_caja * tarifa_caja / 100)
+                            cotizacion_sena = Utilidades.redondear_cien(0)
+                            cotizacion_icbf = Utilidades.redondear_cien(0)                        
+                            cotizacion_pension_total = cotizacion_pension + cotizacion_solidaridad_solidaridad + cotizacion_solidaridad_subsistencia + cotizacion_voluntario_pension_afiliado + cotizacion_voluntario_pension_aportante
+                            cotizacion_total = cotizacion_pension_total + cotizacion_salud + cotizacion_riesgos + cotizacion_caja + aporte_cotizacion_sena + aporte_cotizacion_icbf
+                            
+                            aporte_contrato_cotizacion_pension += cotizacion_pension
+                            aporte_contrato_cotizacion_pension_total += cotizacion_pension_total
+                            aporte_contrato_cotizacion_solidaridad_solidaridad += cotizacion_solidaridad_solidaridad
+                            aporte_contrato_cotizacion_solidaridad_subsistencia += cotizacion_solidaridad_subsistencia
+                            aporte_contrato_cotizacion_voluntario_pension_afiliado += cotizacion_voluntario_pension_afiliado
+                            aporte_contrato_cotizacion_voluntario_pension_aportante += cotizacion_voluntario_pension_aportante
+                            aporte_contrato_cotizacion_salud += cotizacion_salud
+                            aporte_contrato_cotizacion_riesgos += cotizacion_riesgos
+                            aporte_contrato_cotizacion_caja += cotizacion_caja   
+                            aporte_contrato_cotizacion_sena += aporte_cotizacion_sena
+                            aporte_contrato_cotizacion_icbf += aporte_cotizacion_icbf
+                            aporte_contrato_cotizacion_total += cotizacion_total
+                            lineas += 1
+                            data = {
+                                'aporte_contrato': aporte_contrato.id,
+                                'ingreso': aporte_contrato.ingreso,
+                                'retiro': aporte_contrato.retiro,
+                                'salario_integral': aporte_contrato.contrato.salario_integral,                            
+                                'horas': horas,
+                                'dias_pension': dias_contrato,
+                                'dias_salud': dias_contrato,
+                                'dias_riesgos': dias_contrato,
+                                'dias_caja': dias_contrato,
+                                'base_cotizacion_pension': base_cotizacion_pension,
+                                'base_cotizacion_salud': base_cotizacion_salud,
+                                'base_cotizacion_riesgos': base_cotizacion_riesgos,
+                                'base_cotizacion_caja': base_cotizacion_caja,
+                                'tarifa_pension': tarifa_pension,
+                                'tarifa_salud': tarifa_salud,
+                                'tarifa_riesgos': tarifa_riesgos,
+                                'tarifa_caja': tarifa_caja,
+                                'tarifa_sena': tarifa_sena,
+                                'tarifa_icbf': tarifa_icbf,
+                                'cotizacion_pension': cotizacion_pension,
+                                'cotizacion_solidaridad_solidaridad': cotizacion_solidaridad_solidaridad,
+                                'cotizacion_solidaridad_subsistencia': cotizacion_solidaridad_subsistencia,
+                                'cotizacion_voluntario_pension_afiliado': cotizacion_voluntario_pension_afiliado,
+                                'cotizacion_voluntario_pension_aportante': cotizacion_voluntario_pension_aportante,
+                                'cotizacion_salud': cotizacion_salud,
+                                'cotizacion_riesgos': cotizacion_riesgos,
+                                'cotizacion_caja': cotizacion_caja,
+                                'cotizacion_sena': cotizacion_sena,
+                                'cotizacion_icbf': cotizacion_icbf,
+                                'cotizacion_total': cotizacion_total,
+                                'fecha_ingreso': fecha_ingreso,
+                                'fecha_retiro': fecha_retiro                            
+                            }
+                            aporte_detalle_serializador = HumAporteDetalleSerializador(data=data)
+                            if aporte_detalle_serializador.is_valid():
+                                aporte_detalle = aporte_detalle_serializador.save()  
+                                if aporte_contrato.entidad_pension_id in aporte_entidad_pension:                                
+                                    aporte_entidad_pension[aporte_contrato.entidad_pension_id]['total'] += aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia                                
+                                else:                                
+                                    aporte_entidad_pension[aporte_contrato.entidad_pension_id] = {
+                                        'tipo': 'PENSION',
+                                        'entidad_id': aporte_contrato.entidad_pension_id,
+                                        'total': aporte_detalle.cotizacion_pension + aporte_detalle.cotizacion_solidaridad_solidaridad + aporte_detalle.cotizacion_solidaridad_subsistencia
+                                    }                                                          
+                                if aporte_contrato.entidad_salud_id in aporte_entidad_salud:                                
+                                    aporte_entidad_salud[aporte_contrato.entidad_salud_id]['total'] += aporte_detalle.cotizacion_salud                                
+                                else:                                
+                                    aporte_entidad_salud[aporte_contrato.entidad_salud_id] = {
+                                        'tipo': 'SALUD',
+                                        'entidad_id': aporte_contrato.entidad_salud_id,
+                                        'total': aporte_detalle.cotizacion_salud
+                                    }   
+                                if aporte_contrato.entidad_caja_id in aporte_entidad_caja:                                
+                                    aporte_entidad_caja[aporte_contrato.entidad_caja_id]['total'] += aporte_detalle.cotizacion_caja                                
+                                else:                                
+                                    aporte_entidad_caja[aporte_contrato.entidad_caja_id] = {
+                                        'tipo': 'CAJA',
+                                        'entidad_id': aporte_contrato.entidad_caja_id,
+                                        'total': aporte_detalle.cotizacion_caja
+                                    }            
+                                aporte_entidad_riesgos[aporte.entidad_riesgo_id]['total'] += aporte_detalle.cotizacion_riesgos
+                                aporte_entidad_sena[aporte.entidad_sena_id]['total'] += aporte_detalle.cotizacion_sena
+                                aporte_entidad_icbf[aporte.entidad_icbf_id]['total'] += aporte_detalle.cotizacion_icbf                                                                                                                                         
+                            else:
+                                return Response({'validaciones':aporte_detalle_serializador.errors}, status=status.HTTP_400_BAD_REQUEST)
                         
                         cotizacion_pension_empresa = aporte_contrato_cotizacion_pension_total - aporte_contrato.cotizacion_pension_empleado
                         cotizacion_salud_empresa = aporte_contrato_cotizacion_salud - aporte_contrato.cotizacion_salud_empleado                        
