@@ -155,7 +155,8 @@ class Wolframio():
 
     def consumirPost(self, data, url):
         if config('ENV') == "prod":
-            url_base = "http://rededoc.co" + url
+            #url_base = "http://rededoc.co" + url
+            url_base = "http://apiold.rededoc.co" + url
         if config('ENV') == "test":
             url_base = "http://prueba.rededoc.co" + url
         if config('ENV') == "dev":
