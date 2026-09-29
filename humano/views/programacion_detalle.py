@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from humano.models.programacion_detalle import HumProgramacionDetalle
 from humano.models.programacion import HumProgramacion
-from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador, HumProgramacionDetalleInformeSerializador
+from humano.serializers.programacion_detalle import HumProgramacionDetalleSerializador, HumProgramacionDetalleInformeSerializador, HumProgramacionDetalleImportarHorasSerializador
 from humano.filters.programacion_detalle import ProgramacionDetalleFilter
 from utilidades.excel_exportar import ExcelExportar
 
@@ -14,7 +14,8 @@ class HumProgramacionDetalleViewSet(viewsets.ModelViewSet):
     filterset_class = ProgramacionDetalleFilter 
     serializadores = {
         'lista': HumProgramacionDetalleSerializador,
-        'informe_programacion_detalle' : HumProgramacionDetalleInformeSerializador
+        'informe_programacion_detalle' : HumProgramacionDetalleInformeSerializador,
+        'importar_horas': HumProgramacionDetalleImportarHorasSerializador
         }
 
     def get_serializer_class(self):
