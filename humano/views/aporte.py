@@ -608,6 +608,12 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                             if aporte_contrato.retiro:
                                 fecha_retiro = aporte_contrato.contrato.fecha_hasta
 
+                            # Variacion transitoria de salario: el IBC supera el salario proporcional a los dias
+                            # por pagos salariales variables (horas extra, recargos, comisiones, bonificaciones)
+                            variacion_transitoria_salario = False
+                            if base_cotizacion > math.ceil(salario_contrato_dia * dias_contrato):
+                                variacion_transitoria_salario = True
+
                             cotizacion_solidaridad_solidaridad = 0
                             cotizacion_solidaridad_subsistencia = 0
                             tope_fondo = configuracion['hum_salario_minimo'] * 4
@@ -648,7 +654,8 @@ class HumAporteViewSet(viewsets.ModelViewSet):
                                 'aporte_contrato': aporte_contrato.id,
                                 'ingreso': aporte_contrato.ingreso,
                                 'retiro': aporte_contrato.retiro,
-                                'salario_integral': aporte_contrato.contrato.salario_integral,                            
+                                'salario_integral': aporte_contrato.contrato.salario_integral,
+                                'variacion_transitoria_salario': variacion_transitoria_salario,
                                 'horas': horas,
                                 'dias_pension': dias_contrato,
                                 'dias_salud': dias_contrato,
