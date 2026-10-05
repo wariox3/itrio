@@ -614,7 +614,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                 if documento.documento_tipo.documento_clase_id in (200,400):
                                     documento_afectado = documento_detalle.documento_afectado                        
                                     documento_afectado.afectado += documento_detalle.precio
-                                    documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                    documento_afectado.pendiente = documento_afectado.total - (documento_afectado.afectado + documento_afectado.pago)
                                     documento_afectado.save(update_fields=['afectado', 'pendiente'])
                             if documento_detalle.documento_detalle_afectado:
                                 documento_detalle_afectado = documento_detalle.documento_detalle_afectado
@@ -734,7 +734,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         if documento.documento_tipo.documento_clase_id in (200,400):
                                             documento_afectado = documento_detalle.documento_afectado                        
                                             documento_afectado.afectado -= documento_detalle.precio
-                                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                            documento_afectado.pendiente = documento_afectado.total - (documento_afectado.afectado + documento_afectado.pago)
                                             documento_afectado.save(update_fields=['afectado', 'pendiente'])
 
                                     if documento_detalle.documento_detalle_afectado:
@@ -1462,7 +1462,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                                         documento_afectado = GenDocumento.objects.get(pk=documento_detalle.documento_afectado_id)
                                         if documento.documento_tipo.documento_clase_id in (200,400):                                                                    
                                             documento_afectado.afectado -= documento_detalle.pago
-                                            documento_afectado.pendiente = documento_afectado.total - documento_afectado.afectado
+                                            documento_afectado.pendiente = documento_afectado.total - (documento_afectado.afectado + documento_afectado.pago)
                                             documento_afectado.save(update_fields=['afectado', 'pendiente'])                                                                    
 
                                     if documento_detalle.operacion_inventario != 0:
@@ -1915,7 +1915,7 @@ class DocumentoViewSet(viewsets.ModelViewSet):
                 if documento_query.afectado != documento_query.afectado_detalle:
                     documento = GenDocumento.objects.get(id=documento_query.id)            
                     documento.afectado = documento_query.afectado_detalle
-                    documento.pendiente = documento.total - documento_query.afectado_detalle            
+                    documento.pendiente = documento.total - (documento_query.afectado_detalle + documento.pago)            
                     documentos_actualizar.append(documento)
                     actualizados += 1
             GenDocumento.objects.bulk_update(documentos_actualizar, ['afectado', 'pendiente'])                
