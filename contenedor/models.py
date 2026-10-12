@@ -97,6 +97,7 @@ class Contenedor(TenantMixin):
     usuarios = models.IntegerField(default=1) 
     reddoc = models.BooleanField(default = False)
     ruteo = models.BooleanField(default = False)
+    electronicos = models.BooleanField(default = False)
     cortesia = models.BooleanField(default = False)
     precio = models.DecimalField(max_digits=16, decimal_places=2, default=0)
     notificacion_eliminacion = models.BooleanField(default = False)
