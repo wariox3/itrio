@@ -28,41 +28,35 @@ class FormatoProgramacion():
             ).order_by('contrato__contacto__nombre_corto')
 
         x = 40
-        y = 680
-        alto_fila = 15  
-        tamano_texto_encabezado = 9   
-        p.setFont("Helvetica-Bold", tamano_texto_encabezado)    
-        p.drawString(40, y - alto_fila * 1, 'CODIGO')
-        p.drawString(40, y - alto_fila * 2, 'DESDE')
-        p.drawString(40, y - alto_fila * 3, 'HASTA')
-        p.drawString(40, y - alto_fila * 4, '')
-        p.setFont("Helvetica", tamano_texto_encabezado)
-        p.drawString(110, y - alto_fila * 1, str(programacion['id']))
-        p.drawString(110, y - alto_fila * 2, programacion['fecha_desde'].strftime('%Y-%m-%d'))
-        p.drawString(110, y - alto_fila * 3, programacion['fecha_hasta'].strftime('%Y-%m-%d'))
-        p.drawString(110, y - alto_fila * 4, '')    
-
-        p.setFont("Helvetica-Bold", tamano_texto_encabezado) 
-        p.drawString(270, y - alto_fila * 1, 'NOMBRE')
-        p.drawString(270, y - alto_fila * 2, '')
-        p.drawString(270, y - alto_fila * 3, '')
-        p.drawString(270, y - alto_fila * 4, '')
-        p.setFont("Helvetica", tamano_texto_encabezado)
-        p.drawString(320, y - alto_fila * 1, Utilidades.pdf_texto(programacion['nombre'], 30))
-        p.drawString(320, y - alto_fila * 2, '')
-        p.drawString(320, y - alto_fila * 3, '')
-        p.drawString(320, y - alto_fila * 4, '')  
-
-        p.setFont("Helvetica-Bold", tamano_texto_encabezado) 
-        p.drawString(460, y - alto_fila * 1, 'DEVENGADO')
-        p.drawString(460, y - alto_fila * 2, 'DEDUCCION')
-        p.drawString(460, y - alto_fila * 3, 'TOTAL')
-        p.drawString(460, y - alto_fila * 4, '')
-        p.setFont("Helvetica", tamano_texto_encabezado)
-        p.drawString(520, y - alto_fila * 1, f"{programacion['devengado']:,.0f}")
-        p.drawString(520, y - alto_fila * 2, f"{programacion['deduccion']:,.0f}")
-        p.drawString(520, y - alto_fila * 3, f"{programacion['total']:,.0f}")
-        p.drawString(520, y - alto_fila * 4, '')         
+        y = 670
+        alto_fila = 15
+        tamano_texto_encabezado = 8
+        ancho_encabezado = [60, 95, 60, 165, 65, 85]
+        filas_encabezado = [
+            ['CODIGO', str(programacion['id']), 'NOMBRE', Utilidades.pdf_texto(programacion['nombre'], 32), 'DEVENGADO', f"{programacion['devengado']:,.0f}"],
+            ['DESDE', programacion['fecha_desde'].strftime('%Y-%m-%d'), 'CANTIDAD', str(programacion_detalles.count()), 'DEDUCCION', f"{programacion['deduccion']:,.0f}"],
+            ['HASTA', programacion['fecha_hasta'].strftime('%Y-%m-%d'), '', '', 'TOTAL', f"{programacion['total']:,.0f}"],
+        ]
+        p.setStrokeColor(black)
+        for fila in filas_encabezado:
+            y -= alto_fila
+            for i, texto in enumerate(fila):
+                x_celda = x + sum(ancho_encabezado[:i])
+                es_titulo = i % 2 == 0
+                if es_titulo:
+                    p.setFillColor(grey)
+                    p.rect(x_celda, y, ancho_encabezado[i], alto_fila, fill=True, stroke=False)
+                    p.setFillColor(white)
+                    p.setFont("Helvetica-Bold", tamano_texto_encabezado)
+                else:
+                    p.setFillColor(black)
+                    p.setFont("Helvetica", tamano_texto_encabezado)
+                if i == 5:
+                    p.drawRightString(x_celda + ancho_encabezado[i] - 4, y + 4, texto)
+                else:
+                    p.drawString(x_celda + 4, y + 4, texto)
+                p.rect(x_celda, y, ancho_encabezado[i], alto_fila, fill=False, stroke=True)
+        p.setFillColor(black)
 
         y = 580
         margen = 2
@@ -76,26 +70,12 @@ class FormatoProgramacion():
         p.setFillColor(white)  # Texto blanco
 
         # Dibujar texto de encabezados
-        p.drawString(x + sum(ancho_columna[:0]) + margen, y + 4, 'IDENTIFICACIÓN - EMPLEADO')
-        p.drawString(x + sum(ancho_columna[:1]) + margen, y + 4, 'CUENTA')            
-        p.drawString(x + sum(ancho_columna[:2]) + margen, y + 4, 'BANCO')
-        p.drawString(x + sum(ancho_columna[:3]) + margen, y + 4, 'DEVENGADO')
-        p.drawString(x + sum(ancho_columna[:4]) + margen, y + 4, 'DEDUCCIÓN')
-        p.drawString(x + sum(ancho_columna[:5]) + margen, y + 4, 'TOTAL')
-
-        # Dibujar bordes de la tabla (encabezados)
-        p.setFillColor(grey)  # Fondo gris para los encabezados
-        p.rect(x, y, sum(ancho_columna), alto_fila, fill=True, stroke=False)  # Rellenar fondo de encabezados
-        p.setFillColor(white)  # Texto blanco para encabezados
-
-        # Dibujar texto de encabezados
-        p.setFont("Helvetica-Bold", 8)
-        p.drawString(x + sum(ancho_columna[:0]) + margen, y + 4, 'IDENTIFICACIÓN - EMPLEADO')
-        p.drawString(x + sum(ancho_columna[:1]) + margen, y + 4, 'CUENTA')            
-        p.drawString(x + sum(ancho_columna[:2]) + margen, y + 4, 'BANCO')
-        p.drawString(x + sum(ancho_columna[:3]) + margen, y + 4, 'DEVENGADO')
-        p.drawString(x + sum(ancho_columna[:4]) + margen, y + 4, 'DEDUCCIÓN')
-        p.drawString(x + sum(ancho_columna[:5]) + margen, y + 4, 'TOTAL')
+        p.drawCentredString(x + sum(ancho_columna[:0]) + ancho_columna[0] / 2, y + 4, 'IDENTIFICACIÓN - EMPLEADO')
+        p.drawCentredString(x + sum(ancho_columna[:1]) + ancho_columna[1] / 2, y + 4, 'CUENTA')            
+        p.drawCentredString(x + sum(ancho_columna[:2]) + ancho_columna[2] / 2, y + 4, 'BANCO')
+        p.drawCentredString(x + sum(ancho_columna[:3]) + ancho_columna[3] / 2, y + 4, 'DEVENGADO')
+        p.drawCentredString(x + sum(ancho_columna[:4]) + ancho_columna[4] / 2, y + 4, 'DEDUCCIÓN')
+        p.drawCentredString(x + sum(ancho_columna[:5]) + ancho_columna[5] / 2, y + 4, 'TOTAL')
 
         # Dibujar bordes de las celdas (encabezados)
         for i in range(6):
